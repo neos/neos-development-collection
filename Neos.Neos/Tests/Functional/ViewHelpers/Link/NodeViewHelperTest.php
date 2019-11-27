@@ -14,8 +14,9 @@ namespace Neos\Neos\Tests\Functional\ViewHelpers\Link;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -113,9 +114,10 @@ class NodeViewHelperTest extends FunctionalTestCase
 
         /** @var $requestHandler FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $httpRequest = $requestHandler->getHttpRequest();
-        $httpRequest->setBaseUri(new Uri('http://neos.test/'));
-        $controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments([]), new UriBuilder());
+        $httpRequest = $requestHandler->getComponentContext()->getHttpRequest();
+        $httpRequest = $httpRequest->withUri(new Uri('http://neos.test/'));
+        $requestHandler->getComponentContext()->replaceHttpRequest($httpRequest);
+        $controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder());
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
         $fusionObject = $this->getAccessibleMock(TemplateImplementation::class, ['dummy'], [], '', false);
@@ -125,9 +127,9 @@ class NodeViewHelperTest extends FunctionalTestCase
             'alternativeDocumentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')
         ]);
         $this->inject($fusionObject, 'runtime', $this->runtime);
-        /** @var AbstractTemplateView|\PHPUnit_Framework_MockObject_MockObject $mockView */
+        /** @var AbstractTemplateView|\PHPUnit\Framework\MockObject\MockObject $mockView */
         $mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
-        $mockView->expects($this->any())->method('getFusionObject')->willReturn($fusionObject);
+        $mockView->expects(self::any())->method('getFusionObject')->willReturn($fusionObject);
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
 
@@ -167,7 +169,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $targetNode = $propertyMapper->convert('/sites/example/home', Node::class);
 
         $result = $this->invoke(['node' => $targetNode]);
-        $this->assertSame('<a href="/en/home.html">' . $targetNode->getLabel() . '</a>', $result);
+        self::assertSame('<a href="/en/home.html">' . $targetNode->getLabel() . '</a>', $result);
     }
 
     /**
@@ -176,11 +178,11 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRendersUriViaAbsoluteNodePathString(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home']);
-        $this->assertSame('<a href="/en/home.html">Home</a>', $result);
+        self::assertSame('<a href="/en/home.html">Home</a>', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us']);
-        $this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
+        self::assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us/mission']);
-        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
+        self::assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
     }
 
     /**
@@ -189,13 +191,13 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRendersUriViaStringStartingWithTilde(): void
     {
         $result = $this->invoke(['node' => '~']);
-        $this->assertSame('<a href="/en/home.html">example.org</a>', $result);
+        self::assertSame('<a href="/en/home.html">example.org</a>', $result);
         $result = $this->invoke(['node' => '~/home']);
-        $this->assertSame('<a href="/en/home.html">Home</a>', $result);
+        self::assertSame('<a href="/en/home.html">Home</a>', $result);
         $result = $this->invoke(['node' => '~/home/about-us']);
-        $this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
+        self::assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
         $result = $this->invoke(['node' => '~/home/about-us/mission']);
-        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
+        self::assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
     }
 
     /**
@@ -205,12 +207,12 @@ class NodeViewHelperTest extends FunctionalTestCase
     {
         $this->runtime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
         $result = $this->invoke(['node' => '../history']);
-        $this->assertSame('<a href="/en/home/about-us/history.html">History</a>', $result);
+        self::assertSame('<a href="/en/home/about-us/history.html">History</a>', $result);
         $this->runtime->popContext();
         $result = $this->invoke(['node' => 'about-us/mission']);
-        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
+        self::assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
         $result = $this->invoke(['node' => './about-us/mission']);
-        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
+        self::assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
     }
 
     /**
@@ -222,11 +224,11 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRendersUriViaContextNodePathString(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home@live']);
-        $this->assertSame('<a href="/en/home.html">Home</a>', $result);
+        self::assertSame('<a href="/en/home.html">Home</a>', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us@live']);
-        $this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
+        self::assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us/mission@live']);
-        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
+        self::assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
 
         // The tests should also work in a regular fluid view, so we set that and repeat the tests
         $mockView = $this->getAccessibleMock(TemplateView::class, [], [], '', false);
@@ -234,11 +236,11 @@ class NodeViewHelperTest extends FunctionalTestCase
         $viewHelperVariableContainer->setView($mockView);
         $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
         $result = $this->invoke(['node' => '/sites/example/home@live']);
-        $this->assertSame('<a href="/en/home.html">Home</a>', $result);
+        self::assertSame('<a href="/en/home.html">Home</a>', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us@live']);
-        $this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
+        self::assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us/mission@live']);
-        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
+        self::assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
     }
 
     /**
@@ -247,11 +249,11 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRendersUriViaNodeUriPathString(): void
     {
         $result = $this->invoke(['node' => 'node://3239baee-3e7f-785c-0853-f4302ef32570']);
-        $this->assertSame('<a href="/en/home.html">Home</a>', $result);
+        self::assertSame('<a href="/en/home.html">Home</a>', $result);
         $result = $this->invoke(['node' => 'node://30e893c1-caef-0ca5-b53d-e5699bb8e506']);
-        $this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
+        self::assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $result);
         $result = $this->invoke(['node' => 'node://63b28f4d-8831-ecb0-f9a6-466d97ffe2c2']);
-        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
+        self::assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
     }
 
     /**
@@ -260,7 +262,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRespectsAbsoluteParameter(): void
     {
         $result = $this->invoke(['absolute' => true]);
-        $this->assertSame('<a href="http://neos.test/en/home.html">Home</a>', $result);
+        self::assertSame('<a href="http://neos.test/en/home.html">Home</a>', $result);
     }
 
     /**
@@ -269,7 +271,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRespectsBaseNodeNameParameter(): void
     {
         $result = $this->invoke(['baseNodeName' => 'alternativeDocumentNode']);
-        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
+        self::assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $result);
     }
 
     /**
@@ -281,7 +283,7 @@ class NodeViewHelperTest extends FunctionalTestCase
             'node' => '/sites/example/home@live',
             'arguments' => ['foo' => 'bar']
         ]);
-        $this->assertSame('<a href="/en/home.html?foo=bar">Home</a>', $result);
+        self::assertSame('<a href="/en/home.html?foo=bar">Home</a>', $result);
     }
 
     /**
@@ -290,7 +292,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperCatchesExceptionExceptionIfTargetNodeDoesNotExist(): void
     {
         $result = $this->invoke(['node' => '/sites/example/non-existing-node']);
-        $this->assertSame('<a></a>', $result);
+        self::assertSame('<a></a>', $result);
     }
 
     /**
@@ -299,7 +301,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperResolvesLinksToChildNodeShortcutPages(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home/shortcuts/shortcut-to-child-node']);
-        $this->assertSame('<a href="/en/home/shortcuts/shortcut-to-child-node/child-node.html">Shortcut to child node</a>', $result);
+        self::assertSame('<a href="/en/home/shortcuts/shortcut-to-child-node/child-node.html">Shortcut to child node</a>', $result);
     }
 
     /**
@@ -308,7 +310,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperResolvesLinksToParentNodeShortcutPages(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home/shortcuts/shortcut-to-parent-node']);
-        $this->assertSame('<a href="/en/home/shortcuts.html">Shortcut to parent node</a>', $result);
+        self::assertSame('<a href="/en/home/shortcuts.html">Shortcut to parent node</a>', $result);
     }
 
     /**
@@ -317,7 +319,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperResolvesLinksToTargetNodeShortcutPages(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home/shortcuts/shortcut-to-target-node']);
-        $this->assertSame('<a href="/en/home/shortcuts/shortcut-to-child-node/target-node.html">Shortcut to target node</a>', $result);
+        self::assertSame('<a href="/en/home/shortcuts/shortcut-to-child-node/target-node.html">Shortcut to target node</a>', $result);
     }
 
     /**
@@ -326,7 +328,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperResolvesLinksToUriShortcutPages(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home/shortcuts/shortcut-to-target-node']);
-        $this->assertSame('<a href="/en/home/shortcuts/shortcut-to-child-node/target-node.html">Shortcut to target node</a>', $result);
+        self::assertSame('<a href="/en/home/shortcuts/shortcut-to-child-node/target-node.html">Shortcut to target node</a>', $result);
     }
 
     /**
@@ -335,7 +337,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperUsesNodeTitleIfEmpty(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home@live']);
-        $this->assertSame('<a href="/en/home.html">Home</a>', $result);
+        self::assertSame('<a href="/en/home.html">Home</a>', $result);
     }
 
     /**
@@ -353,6 +355,6 @@ class NodeViewHelperTest extends FunctionalTestCase
             'node' => '/sites/example/home@live',
             'nodeVariableName' => 'alternativeLinkedNode'
         ]);
-        $this->assertSame('<a href="/en/home.html">Home</a>', $result);
+        self::assertSame('<a href="/en/home.html">Home</a>', $result);
     }
 }

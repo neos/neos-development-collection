@@ -105,12 +105,34 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
     /**
      * Returns all variants (if any) derived from this asset
      *
-     * @return array
+     * @return ImageVariant[]
      * @api
      */
-    public function getVariants()
+    public function getVariants(): array
     {
         return $this->variants->toArray();
+    }
+
+    /**
+     * Returns the variant identified by $presetIdentifier and $presetVariantName (if existing)
+     *
+     * @param string $presetIdentifier
+     * @param string $presetVariantName
+     * @return AssetVariantInterface|ImageVariant
+     */
+    public function getVariant(string $presetIdentifier, string $presetVariantName): ?AssetVariantInterface
+    {
+        if ($this->variants->isEmpty()) {
+            return null;
+        }
+
+        $filtered = $this->variants->filter(
+            static function (AssetVariantInterface $variant) use ($presetIdentifier, $presetVariantName) {
+                return ($variant->getPresetIdentifier() === $presetIdentifier && $variant->getPresetVariantName() === $presetVariantName);
+            }
+        );
+
+        return $filtered->isEmpty() ? null : $filtered->first();
     }
 
     /**

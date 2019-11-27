@@ -1,243 +1,199 @@
-#neos-menu-button {
-	float: left;
-	width: $menuButtonWidth;
-	height: $unit;
-	background-color: $grayDark;
-	border-right: 1px solid $grayLight;
+.neos-menu-button {
+  float: left;
+  width: $menuButtonWidth;
+  height: $unit;
+  background-color: $grayDark;
 
-	@include transition-property(top);
-	@include transition-duration(0.2s);
+  transition-property: top;
+  transition-duration: 0.2s;
 
-	&:hover,
-	&.neos-pressed {
-		&:before {
-			border-top: 3px solid $blue;
-			border-bottom: 3px solid $blue;
-		}
+  &:hover,
+  &.neos-pressed {
+    background: transparent !important;
 
-		&:after {
-			background-color: $blue;
-		}
-	}
+    &:before {
+      border-top: 3px solid $blue;
+      border-bottom: 3px solid $blue;
+    }
 
-	&.neos-pressed {
-		height: $unit + 1px;
-	}
+    &:after {
+      background-color: $blue;
+    }
+  }
 
-	&:before {
-		display: block;
-		position: absolute;
-		left: $defaultMargin;
-		top: 12px;
-		width: 22px;
-		height: 3px;
-		border-top: 3px solid #fff;
-		border-bottom: 3px solid #fff;
-		content: "";
-	}
+  &.neos-pressed {
+    height: $unit + 1px;
+  }
 
-	&:after {
-		display: block;
-		position: absolute;
-		left: $defaultMargin;
-		top: 24px;
-		width: 22px;
-		height: 3px;
-		background-color: #fff;
-		content: "";
-	}
+  &:before {
+    display: block;
+    position: absolute;
+    left: $defaultMargin;
+    top: 12px;
+    width: 22px;
+    height: 3px;
+    border-top: 3px solid #fff;
+    border-bottom: 3px solid #fff;
+    content: '';
+  }
+
+  &:after {
+    display: block;
+    position: absolute;
+    left: $defaultMargin;
+    top: 24px;
+    width: 22px;
+    height: 3px;
+    background-color: #fff;
+    content: '';
+  }
 }
 
-#neos-menu-panel {
-	position: fixed;
-	top: $unit;
-	bottom: 0;
-	left: -($menuWidth + 1px);
-	width: $menuWidth;
-	background-color: $grayDark;
-	z-index: 10020;
-	border-top: 1px solid $grayLight;
-	border-right: 1px solid $grayLight;
-	padding-top: 1px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	@include transition-property(left, width);
-	@include transition-duration(.2s);
-	@include font;
+.neos-menu {
+  .neos-menu-button {
+    outline: none;
+  }
+}
 
-	.neos-menu-panel-open & {
-		left: 0;
-	}
+.neos-menu-panel {
+  display: none;
+  position: fixed;
+  top: $unit;
+  bottom: 0;
+  left: -($menuWidth + 1px);
+  width: $menuWidth;
+  background-color: $grayDark;
+  z-index: 10020;
+  border-right: 1px solid $grayLight;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition-property: left, width;
+  transition-duration: 0.2s;
+  @include font;
 
-	.neos-menu-panel-sticky & {
-		left: -($menuButtonWidth + 1px);
-		width: $menuButtonWidth - 1px;
-	}
+  .neos-menu-wrapper {
+    margin: 0;
+    padding: 0;
+  }
 
-	.neos-menu-panel-open.neos-menu-panel-sticky & {
-		left: 0;
-	}
+  .neos-menu-panel-open & {
+    left: 0;
+    display: block;
+  }
 
-	&.neos-noscript {
-		top: 0;
-		left: 0;
-	}
+  &.neos-noscript {
+    top: 0;
+    left: 0;
+  }
 
-	& > .neos-menu-section:first-child .neos-menu-headline {
-		border: none;
-	}
+  & > .neos-menu-section:first-child .neos-menu-headline {
+    border: none;
+  }
 
-	a {
-		@include font;
-		color: #fff;
-		&:hover,
-		&:active {
-			color: $blue;
-			text-decoration: none;
-		}
-	}
+  a {
+    @include font;
+    color: #fff;
+    &:hover,
+    &:active {
+      color: $blue;
+      text-decoration: none;
+    }
+  }
 
-	.neos-menu-container {
-		height: 100%;
-	}
+  .neos-menu-container {
+    height: 100%;
+  }
 
-	.neos-menu-section {
-		position: relative;
+  .neos-menu-section {
+    position: relative;
 
-		.neos-menu-headline {
-			@include box-sizing(border-box);
-			padding-left: $menuButtonWidth;
-			height: $unit;
-			border-top: 1px solid $grayLight;
-			cursor: pointer;
-			line-height: $unit;
-			position: relative;
+    .neos-menu-section-header {
+      .neos-menu-panel-toggle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: transparent;
+        outline: none;
 
-			.neos-menu-panel-sticky & {
-				padding-left: 0;
-			}
-		}
+        &:hover {
+          i {
+            color: $blue;
+            text-decoration: none;
+          }
+        }
+      }
+    }
 
-		.neos-menu-collapse {
-			position: absolute;
-			right: 0;
-			top: 0;
-			width: $unit;
-			height: $unit;
-			cursor: pointer;
+    .neos-menu-section-content {
+      display: none;
+      opacity: 0;
+    }
 
-			&:hover {
-				background-color: $blue;
-				color: #fff;
+    &.neos-open {
+      .neos-menu-section-content {
+        display: block;
+        opacity: 1;
+        transition: opacity 0.25s ease-in;
+      }
+    }
 
-				.neos-menu-panel-sticky & {
-					background-color: transparent;
-				}
-			}
+    .neos-menu-headline {
+      box-sizing: border-box;
+      padding-left: $menuButtonWidth;
+      height: $unit;
+      border-top: 1px solid $grayLight;
+      cursor: pointer;
+      line-height: $unit;
+      position: relative;
+    }
 
-			&::before {
-				content: "›";
-				font-size: 26px;
-				font-weight: normal;
-				display: inline-block;
-				position: relative;
-				top: 0;
-				line-height: $unit;
-			}
+    a,
+    span.neos-menu-item {
+      display: block;
+      @include font;
+      font-size: 14px;
+      font-weight: bold;
+      line-height: $unit;
+      height: $unit;
+      user-select: none;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding-left: 38px;
+      padding-right: $defaultMargin;
 
-			&.neos-collapsed::before {
-				@include rotate(90deg);
-				left: 19px;
-			}
+      &:hover,
+      &.neos-active {
+        color: $blue;
+      }
 
-			&.neos-open::before {
-				@include rotate(-90deg);
-				left: 13px;
-			}
-		}
+      &.neos-disabled {
+        color: $textSubtle;
+      }
 
-		a,
-		span.neos-menu-item {
-			display: block;
-			@include font;
-			font-size: 14px;
-			font-weight: bold;
-			line-height: $unit;
-			height: $unit;
-			@include user-select(none);
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			padding-left: 38px;
-			padding-right: $defaultMargin;
+      i {
+        display: block;
+        position: absolute;
+        background-color: $grayDark;
+        top: 0;
+        left: 0;
+        width: $menuButtonWidth;
+        height: $unit;
+        font-size: 14px;
+        line-height: $unit;
+        vertical-align: middle;
+        text-align: center;
+        z-index: 10010;
+      }
+    }
 
-			&.neos-active {
-				color: $blue;
-			}
-
-			&.neos-disabled {
-				color: $textSubtle;
-
-			}
-
-			i {
-				display: block;
-				position: absolute;
-				background-color: $grayDark;
-				top: 0;
-				left: 0;
-				width: $menuButtonWidth;
-				height: $unit;
-				font-size: 20px;
-				line-height: $unit;
-				vertical-align: middle;
-				text-align: center;
-				z-index: 10010;
-			}
-		}
-
-		.neos-menu-list {
-			a,
-			span.neos-menu-item {
-				padding-left: $menuButtonWidth;
-				position: relative;
-				font-weight: normal;
-
-				.neos-menu-panel-sticky & {
-					padding-left: 0;
-				}
-			}
-		}
-	}
-
-	#neos-menu-sticky-button {
-		position: absolute;
-		z-index: 10015;
-		bottom: 0;
-		left: 0;
-		width: $menuButtonWidth - 1;
-		height: $unit + 2;
-		background-color: $grayDark;
-		background-image: none;
-		@include text-shadow(none);
-		@include box-shadow(none);
-
-		&::before {
-			position: relative;
-			top: 1px;
-			@include font;
-			font-size: 26px;
-			line-height: 26px;
-			font-weight: normal;
-			content: "‹";
-		}
-
-		&:hover {
-			background-color: $blue;
-		}
-
-		&.neos-pressed::before {
-			content: "›";
-		}
-	}
+    .neos-menu-list {
+      a,
+      span.neos-menu-item {
+        padding-left: $menuButtonWidth;
+        position: relative;
+        font-weight: normal;
+      }
+    }
+  }
 }

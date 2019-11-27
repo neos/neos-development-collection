@@ -12,12 +12,14 @@ namespace Neos\Neos\Controller\Frontend;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\TypeConverter\NodeConverter;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -70,6 +72,22 @@ class NodeController extends ActionController
     protected $propertyMapper;
 
     /**
+     * Allow invisible nodes to be redirected to
+     *
+     * @return void
+     */
+    protected function initializeShowAction()
+    {
+        if ($this->arguments->hasArgument('node')
+            && $this->request->hasArgument('showInvisible')
+            && (bool)$this->request->getArgument('showInvisible')
+            && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+        ) {
+            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN, true);
+        }
+    }
+
+    /**
      * Shows the specified node and takes visibility and access restrictions into
      * account.
      *
@@ -91,7 +109,7 @@ class NodeController extends ActionController
 
         if ($inBackend) {
             $this->overrideViewVariablesFromInternalArguments();
-            $this->response->setHeader('Cache-Control', 'no-cache');
+            $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'no-cache');
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setFusionPath('rawContent');
             }
@@ -122,7 +140,7 @@ class NodeController extends ActionController
         }
 
         if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {
-            $this->response->setHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
+            $this->response->setComponentParameter(SetHeaderComponent::class, 'X-Neos-AffectedNodePath', $affectedNodeContextPath);
         }
 
         if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {

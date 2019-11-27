@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Plugin View</source>
-			<target state="translated">Плагины</target><alt-trans><target>Плагин вид</target></alt-trans></trans-unit>
+			<target state="final">Плагины</target><alt-trans><target>Плагин вид</target></alt-trans></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve" approved="yes">
 				<source>Plugin Views</source>
-			<target state="translated">Плагины</target></trans-unit>
+			<target state="final">Плагины</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve" approved="yes">
 				<source>Master View</source>
-			<target state="translated">Главный вид</target></trans-unit>
+			<target state="final">Главный вид</target></trans-unit>
       <trans-unit id="properties.view" xml:space="preserve" approved="yes">
 				<source>Plugin View</source>
-			<target state="translated">Плагины</target><alt-trans><target>Плагин вид</target></alt-trans></trans-unit>
+			<target state="final">Плагины</target><alt-trans><target>Плагин вид</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

@@ -244,6 +244,11 @@ class WorkspaceCommandController extends CommandController
             $this->quit(1);
         }
 
+        if ($workspace->getName() === 'live') {
+            $this->outputLine('Did not delete workspace "live" because it is required for Neos CMS to work properly.');
+            $this->quit(2);
+        }
+
         if ($workspace->isPersonalWorkspace()) {
             $this->outputLine('Did not delete workspace "%s" because it is a personal workspace. Personal workspaces cannot be deleted manually.', [$workspaceName]);
             $this->quit(2);
@@ -303,6 +308,11 @@ class WorkspaceCommandController extends CommandController
             $this->quit(1);
         }
 
+        if ($workspace->getName() === 'live') {
+            $this->outputLine('The workspace "live" cannot be rebased as it is the global base workspace.');
+            $this->quit(2);
+        }
+
         $baseWorkspaceName = $baseWorkspace;
         $baseWorkspace = $this->workspaceRepository->findOneByName($baseWorkspaceName);
         if (!$baseWorkspace instanceof Workspace) {
@@ -314,38 +324,6 @@ class WorkspaceCommandController extends CommandController
         $this->workspaceRepository->update($workspace);
 
         $this->outputLine('Set "%s" as the new base workspace for "%s".', [$baseWorkspaceName, $workspaceName]);
-    }
-
-    /**
-     * Publish changes of a workspace
-     *
-     * This command publishes all modified, created or deleted nodes in the specified workspace to the live workspace.
-     *
-     * @param string $workspaceName Name of the workspace, for example "user-john"
-     * @param boolean $verbose If enabled, information about individual nodes will be displayed
-     * @return void
-     * @deprecated since 1.2
-     * @see neos.neos:workspace:publish
-     */
-    public function publishAllCommand($workspaceName, $verbose = false)
-    {
-        $this->publishCommand($workspaceName, $verbose);
-    }
-
-    /**
-     * Discard changes in workspace
-     *
-     * This command discards all modified, created or deleted nodes in the specified workspace.
-     *
-     * @param string $workspaceName Name of the workspace, for example "user-john"
-     * @param boolean $verbose If enabled, information about individual nodes will be displayed
-     * @return void
-     * @deprecated since 1.2
-     * @see neos.neos:workspace:discard
-     */
-    public function discardAllCommand($workspaceName, $verbose = false)
-    {
-        $this->discardCommand($workspaceName, $verbose);
     }
 
     /**

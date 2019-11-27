@@ -7,7 +7,7 @@
 	width: 512px;
 	padding-top: 8px;
 	@include font;
-	@include translate(-50%, 0);
+	transform: translate(-50%, 0);
 
 	> .neos-notification {
 		color: white;
@@ -17,8 +17,8 @@
 		margin: 0 auto $tightMargin;
 		word-wrap: break-word;
 		overflow: hidden;
-		@include box-sizing(border-box);
-		@include box-shadow(0 0 14px rgba(0, 0, 0, .15));
+		box-sizing: border-box;
+		box-shadow: 0 0 14px rgba(0, 0, 0, .15);
 
 		&::before {
 			content: '';
@@ -130,7 +130,7 @@
 						font-weight: normal;
 						display: inline-block;
 						position: relative;
-						@include rotate(90deg);
+						rotate: 90deg;
 						top: 5px;
 						left: 16px;
 						line-height: 0;
@@ -139,7 +139,7 @@
 
 				&.expanded {
 					.neos-notification-heading::after {
-						@include rotate(-90deg);
+						rotate: -90deg;
 						left: 10px;
 					}
 				}

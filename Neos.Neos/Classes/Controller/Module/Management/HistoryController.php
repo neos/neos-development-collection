@@ -85,6 +85,6 @@ class HistoryController extends AbstractModuleController
     {
         parent::initializeView($view);
         /** @var FusionView $view */
-        $view->setFusionPathPattern('resource://Neos.Neos/Private/Fusion/Backend');
+        $view->setFusionPathPattern('resource://Neos.Neos/Private/Fusion/Backend/History');
     }
 }

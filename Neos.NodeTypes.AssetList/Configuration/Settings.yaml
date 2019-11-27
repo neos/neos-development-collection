@@ -1,6 +1,8 @@
-
 Neos:
   Neos:
+    fusion:
+      autoInclude:
+        Neos.NodeTypes.AssetList: true
     userInterface:
       translation:
         autoInclude:

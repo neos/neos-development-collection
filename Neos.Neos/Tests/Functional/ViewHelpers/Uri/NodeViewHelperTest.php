@@ -11,10 +11,12 @@ namespace Neos\Neos\Tests\Functional\ViewHelpers\Uri;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -105,9 +107,10 @@ class NodeViewHelperTest extends FunctionalTestCase
 
         /** @var $requestHandler \Neos\Flow\Tests\FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $httpRequest = $requestHandler->getHttpRequest();
-        $httpRequest->setBaseUri('http://neos.test/');
-        $controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments([]), new UriBuilder());
+        $httpRequest = $requestHandler->getComponentContext()->getHttpRequest();
+        $httpRequest = $httpRequest->withUri(new Uri('http://neos.test/'));
+        $requestHandler->getComponentContext()->replaceHttpRequest($httpRequest);
+        $controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder());
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
         $fusionObject = $this->getAccessibleMock(TemplateImplementation::class, ['dummy'], [], '', false);
@@ -118,7 +121,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         ]);
         $this->inject($fusionObject, 'runtime', $this->runtime);
         $mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
-        $mockView->expects($this->any())->method('getFusionObject')->willReturn($fusionObject);
+        $mockView->expects(self::any())->method('getFusionObject')->willReturn($fusionObject);
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
 
@@ -272,7 +275,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperCatchesExceptionAndReturnsEmptyStringIfTargetNodeDoesNotExist(): void
     {
         $result = $this->invoke(['node' => '/sites/example/non-existing-node']);
-        $this->assertSame('', $result);
+        self::assertSame('', $result);
     }
 
     /**
@@ -284,6 +287,6 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     protected function assertOutputLinkValid(string $expected, string $actual): void
     {
-        $this->assertStringEndsWith($expected, $actual);
+        self::assertStringEndsWith($expected, $actual);
     }
 }

@@ -7,4 +7,6 @@ Coding Guideline Reference
 	:titlesonly:
 
 	PHP
-	JavaScript
+
+Everything about our Neos UI can be found at `https://docs.neos.io/cms/contributing-to-neos/neos-ui
+<https://docs.neos.io/cms/contributing-to-neos/neos-ui>`

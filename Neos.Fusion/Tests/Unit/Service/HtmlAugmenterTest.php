@@ -37,7 +37,7 @@ class HtmlAugmenterTest extends UnitTestCase
     public function addAttributesDoesNotAlterHtmlIfAttributesArrayIsEmpty()
     {
         $html = '<p>This is some html</p><p>Without a unique root element</p>';
-        $this->assertSame($html, $this->htmlAugmenter->addAttributes($html, []));
+        self::assertSame($html, $this->htmlAugmenter->addAttributes($html, []));
     }
 
     public function addAttributesDataProvider()
@@ -191,6 +191,13 @@ class HtmlAugmenterTest extends UnitTestCase
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<p data-bar="öäüß" data-foo="öäüß">valid characters are decoded</p>',
             ],
+            [
+                'html' => '<p data-foo="öäüß🦆">valid characters are untouched</p>',
+                'attributes' => ['data-bar' => 'öäüß🦆'],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'expectedResult' => '<p data-bar="öäüß🦆" data-foo="öäüß🦆">valid characters are untouched</p>',
+            ],
 
             // exclusive attributes
             [
@@ -261,7 +268,7 @@ class HtmlAugmenterTest extends UnitTestCase
             $fallbackTagName = 'div';
         }
         $actualResult = $this->htmlAugmenter->addAttributes($html, $attributes, $fallbackTagName, $exclusiveAttributes);
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**

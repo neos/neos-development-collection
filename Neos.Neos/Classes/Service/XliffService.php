@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Service;
 
 /*
@@ -128,16 +129,16 @@ class XliffService
     }
 
     /**
-     * @return integer The current cache version identifier
+     * @return string The current cache version identifier
      */
-    public function getCacheVersion()
+    public function getCacheVersion(): string
     {
         $version = $this->xliffToJsonTranslationsCache->get('ConfigurationVersion');
         if ($version === false) {
             $version = time();
             $this->xliffToJsonTranslationsCache->set('ConfigurationVersion', (string)$version);
         }
-        return $version;
+        return (string) $version;
     }
 
     /**

@@ -22,7 +22,7 @@ ul.neos-dynatree-container {
 
 		&.neos-dynatree-loading span {
 			vertical-align: middle;
-			background-image: url('../Images/ajax-preloader-222222.gif');
+			background-image: url('../../Public/Images/ajax-preloader-222222.gif');
 			background-repeat: no-repeat;
 			background-position: 5px 3px;
 
@@ -39,7 +39,7 @@ ul.neos-dynatree-container {
 		position: relative;
 		height: 24px;
 		line-height: 24px;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		border-left: 3px solid transparent;
 
 		&.neos-hidden {
@@ -56,7 +56,7 @@ ul.neos-dynatree-container {
 				width: 8px;
 				margin-top: 11px;
 				line-height: 9px;
-				@include border-radius(10px);
+				border-radius: 10px;
 			}
 		}
 
@@ -75,13 +75,13 @@ ul.neos-dynatree-container {
 				width: 10px;
 				margin-top: 11px;
 				line-height: 9px;
-				@include border-radius(10px);
+				border-radius: 10px;
 			}
 		}
 
 		&.neos-hiddenInIndex {
 			span + span {
-				@include opacity(.5);
+				opacity: .5;
 			}
 		}
 
@@ -131,7 +131,11 @@ ul.neos-dynatree-container {
 				line-height: 24px;
 				@extend .#{$fa-css-prefix}-caret-right;
 				@extend .fas;
-				@include rotate(90deg);
+				-webkit-transform: rotate(90deg);
+				-moz-transform: rotate(90deg);
+				-ms-transform: rotate(90deg);
+				-o-transform: rotate(90deg);
+				transform: rotate(90deg);
 
 				&:before {
 					left: 11px;
@@ -143,10 +147,10 @@ ul.neos-dynatree-container {
 			.neos-dynatree-connector,
 			.neos-dynatree-expander {
 				vertical-align: middle;
-				background-image: url('../Images/ajax-preloader-222222.gif');
+				background-image: url('../../Public/Images/ajax-preloader-222222.gif');
 				background-repeat: no-repeat;
 				background-position: 5px 4px;
-				@include rotate(0);
+				rotate: 0;
 
 				&:before {
 					display: none;
@@ -190,7 +194,7 @@ ul.neos-dynatree-container {
 
 		&.dynatree-drag-source {
 			background-color: $grayMedium;
-			@include opacity(.5);
+			opacity: .5;
 		}
 
 		&.dynatree-drop-before,
@@ -266,7 +270,7 @@ ul.neos-dynatree-container {
 			max-width: $unit * 5.5;
 			padding-right: $relatedMargin;
 			font-size: $generalFontSize;
-			@include text-shadow(none);
+			text-shadow: none;
 			&:hover,
 			&:focus {
 				text-decoration: none;
@@ -277,18 +281,67 @@ ul.neos-dynatree-container {
 
 	$selector: 'ul';
 	$level: 0;
-	$levels: 20;
-	@while $level < $levels {
-		#{$selector} .neos-dynatree-node {
-			@if $level == 0 {
-				padding-left: 0;
-			} @else {
-				padding-left: ($defaultMargin - $tightMargin) * $level - 3;
-			}
-		}
-		$selector: #{nest(#{$selector}, 'ul')};
-		$level: $level + 1;
-	}
+  $levels: 20;
+	ul .neos-dynatree-node {
+    padding-left: 0;
+  }
+  ul ul .neos-dynatree-node {
+    padding-left: 9px;
+  }
+  ul ul ul .neos-dynatree-node {
+    padding-left: 21px;
+  }
+  ul ul ul ul .neos-dynatree-node {
+    padding-left: 33px;
+  }
+  ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 45px;
+  }
+  ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 57px;
+  }
+  ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 69px;
+  }
+  ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 81px;
+  }
+  ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 93px;
+  }
+  ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 105px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 117px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 129px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 141px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 153px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 165px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 177px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 189px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 201px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 213px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 225px;
+  }
 }
 
 .neos-tree-drag-in-progress {

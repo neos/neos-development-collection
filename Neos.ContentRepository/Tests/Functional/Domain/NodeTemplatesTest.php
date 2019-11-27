@@ -82,8 +82,8 @@ class NodeTemplatesTest extends FunctionalTestCase
     public function nodeTemplateConverterCanConvertArray()
     {
         $nodeTemplate = $this->generateBasicNodeTemplate();
-        $this->assertInstanceOf(NodeTemplate::class, $nodeTemplate);
-        $this->assertEquals('Neos rules!', $nodeTemplate->getProperty('test1'));
+        self::assertInstanceOf(NodeTemplate::class, $nodeTemplate);
+        self::assertEquals('Neos rules!', $nodeTemplate->getProperty('test1'));
     }
 
     /**
@@ -95,7 +95,7 @@ class NodeTemplatesTest extends FunctionalTestCase
 
         $rootNode = $this->context->getNode('/');
         $node = $rootNode->createNodeFromTemplate($nodeTemplate, 'just-a-node');
-        $this->assertInstanceOf(NodeInterface::class, $node);
+        self::assertInstanceOf(NodeInterface::class, $node);
     }
 
     /**
@@ -114,7 +114,7 @@ class NodeTemplatesTest extends FunctionalTestCase
         $node = $rootNode->createNodeFromTemplate($nodeTemplate, 'just-a-node');
 
         $workspace = $node->getWorkspace();
-        $this->assertEquals('user1', $workspace->getName(), 'Node should be created in workspace of context');
+        self::assertEquals('user1', $workspace->getName(), 'Node should be created in workspace of context');
     }
 
     /**

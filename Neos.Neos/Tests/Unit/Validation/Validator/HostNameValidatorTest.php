@@ -53,6 +53,6 @@ class HostNameValidatorTest extends UnitTestCase
         $validator = new HostnameValidator();
 
         $actual = !$validator->validate($hostName)->hasErrors();
-        $this->assertEquals($valid, $actual, sprintf('The validator returned %s but should return %s.', $actual === true ? 'true' : 'false', $valid === true ? 'true' : 'false'));
+        self::assertEquals($valid, $actual, sprintf('The validator returned %s but should return %s.', $actual === true ? 'true' : 'false', $valid === true ? 'true' : 'false'));
     }
 }

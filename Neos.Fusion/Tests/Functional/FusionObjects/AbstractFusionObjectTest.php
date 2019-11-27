@@ -11,7 +11,6 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
@@ -19,6 +18,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\View\FusionView;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**
  * Testcase for the Fusion View
@@ -40,8 +40,10 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     {
         $view = new FusionView();
 
-        $httpRequest = Request::createFromEnvironment();
-        $request = new ActionRequest($httpRequest);
+        /** @var ServerRequestFactoryInterface $httpRequestFactory */
+        $httpRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
+        $httpRequest = $httpRequestFactory->createServerRequest('GET', 'http://localhost/');
+        $request = ActionRequest::fromHttpRequest($httpRequest);
 
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
@@ -54,7 +56,6 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
         );
 
         $view->setControllerContext($this->controllerContext);
-        $view->disableFallbackView();
         $view->setPackageKey('Neos.Fusion');
         $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
         $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
@@ -89,6 +90,6 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     {
         $view = $this->buildView();
         $view->setFusionPath($path);
-        $this->assertSame($expected, $view->render(), 'Fusion at path "' . $path . '" produced wrong results.');
+        self::assertSame($expected, $view->render(), 'Fusion at path "' . $path . '" produced wrong results.');
     }
 }

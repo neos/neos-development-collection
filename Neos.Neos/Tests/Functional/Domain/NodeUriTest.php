@@ -51,7 +51,7 @@ class NodeUriTest extends AbstractNodeTest
         $historyNode->moveInto($homeNode->getNode('products'));
 
         $uriPathSegment = $historyNode->getProperty('uriPathSegment');
-        $this->assertEquals('neos-1', $uriPathSegment);
+        self::assertEquals('neos-1', $uriPathSegment);
     }
 
     /**
@@ -70,6 +70,6 @@ class NodeUriTest extends AbstractNodeTest
         $historyNode->moveInto($homeNodeInNonDefaultDimension->getNode('products'));
 
         $uriPathSegment = $historyNode->getProperty('uriPathSegment');
-        $this->assertEquals('neos-1', $uriPathSegment);
+        self::assertEquals('neos-1', $uriPathSegment);
     }
 }

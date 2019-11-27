@@ -20,7 +20,7 @@
 	background: $grayMedium;
 	border: none;
 	border-radius: 0;
-	@include box-shadow(1px 2px 5px $grayDark);
+	box-shadow: 1px 2px 5px $grayDark;
 
 	&.neos-select2-large .neos-select2-results {
 		max-height: $unit * 10.5 + 10px;
@@ -84,7 +84,7 @@
 
 			&.neos-select2-searching {
 				color: transparent;
-				background-image: url('../Images/ajax-preloader-222222.gif');
+				background-image: url('../../Public/Images/ajax-preloader-222222.gif');
 				background-repeat: no-repeat;
 				background-position: $defaultMargin 13px;
 			}
@@ -103,7 +103,7 @@
 			.neos-select2-result-label {
 				line-height: $unit - $defaultMargin;
 				padding: ($unit - $defaultMargin * 2) 0;
-				@include box-sizing(border-box);
+				box-sizing: border-box;
 				overflow: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis;
@@ -122,7 +122,7 @@
 					width: 24px;
 					height: 24px;
 					border: 1px solid $grayLight;
-					@include box-sizing(border-box);
+					box-sizing: border-box;
 				}
 
 				.neos-select2-result-path {
@@ -270,7 +270,7 @@
 .neos-select2-container-multi {
 	&.neos-select2-container-active .neos-select2-choices {
 		border: none;
-		@include box-shadow(none);
+		box-shadow: none;
 	}
 
 	.neos-select2-choices {
@@ -314,7 +314,7 @@
 			background: $grayMedium;
 			width: $inspectorWidth - $defaultMargin * 2;
 			color: #fff;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 
 			box-shadow: none;
 			border-top: none;
@@ -357,7 +357,7 @@
 				&:hover {
 					background-color: $blue;
 					outline: none;
-					@include transition(none);
+					transition: none;
 				}
 
 				i {
@@ -399,7 +399,7 @@
 
 			&:focus {
 				outline: none;
-				@include box-shadow(none);
+				box-shadow: none;
 			}
 		}
 	}

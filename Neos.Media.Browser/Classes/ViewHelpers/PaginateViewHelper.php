@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Media\Browser\ViewHelpers;
 
@@ -15,6 +16,7 @@ namespace Neos\Media\Browser\ViewHelpers;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 use Neos\Media\Browser\ViewHelpers\Controller\PaginateController;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 
 /**
  * This ViewHelper renders a pagination for asset proxy objects
@@ -60,7 +62,6 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
      */
     public function render(): string
     {
-        $response = $this->initiateSubRequest();
-        return $response->getContent();
+        return $this->initiateSubRequest();
     }
 }

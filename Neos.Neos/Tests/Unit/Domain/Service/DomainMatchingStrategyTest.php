@@ -27,12 +27,12 @@ class DomainMatchingStrategyTest extends UnitTestCase
     public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly()
     {
         $mockDomains = [$this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock()];
-        $mockDomains[0]->expects($this->any())->method('getHostname')->will($this->returnValue('www.neos.io'));
+        $mockDomains[0]->expects(self::any())->method('getHostname')->will(self::returnValue('www.neos.io'));
         $expectedDomains = [$mockDomains[0]];
 
         $strategy = new DomainMatchingStrategy();
         $actualDomains = $strategy->getSortedMatches('www.neos.io', $mockDomains);
-        $this->assertSame($expectedDomains, $actualDomains);
+        self::assertSame($expectedDomains, $actualDomains);
     }
 
     /**
@@ -58,7 +58,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
 
         $strategy = new DomainMatchingStrategy();
         $actualDomains = $strategy->getSortedMatches('flow.neos.io', $mockDomains);
-        $this->assertSame($expectedDomains, $actualDomains);
+        self::assertSame($expectedDomains, $actualDomains);
     }
 
     /**
@@ -76,6 +76,6 @@ class DomainMatchingStrategyTest extends UnitTestCase
 
         $strategy = new DomainMatchingStrategy();
         $actualDomains = $strategy->getSortedMatches('neos.io', $mockDomains);
-        $this->assertSame($expectedDomains, $actualDomains);
+        self::assertSame($expectedDomains, $actualDomains);
     }
 }

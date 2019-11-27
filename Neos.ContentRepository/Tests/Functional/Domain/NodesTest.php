@@ -130,7 +130,7 @@ class NodesTest extends FunctionalTestCase
 
         $fooNode->setName('quux');
 
-        $this->assertEquals('/quux/bar/baz', $bazNode->getPath());
+        self::assertEquals('/quux/bar/baz', $bazNode->getPath());
     }
 
     /**
@@ -147,8 +147,8 @@ class NodesTest extends FunctionalTestCase
         $fooNode->setName('quux');
         $barNode->setName('lax');
 
-        $this->assertNull($rootNode->getNode('foo'));
-        $this->assertEquals('/quux/lax/baz', $bazNode->getPath());
+        self::assertNull($rootNode->getNode('foo'));
+        self::assertEquals('/quux/lax/baz', $bazNode->getPath());
     }
 
     /**
@@ -159,11 +159,11 @@ class NodesTest extends FunctionalTestCase
         $rootNode = $this->context->getRootNode();
         $fooNode = $rootNode->createNode('foo');
 
-        $this->assertSame($fooNode, $rootNode->getNode('foo'));
+        self::assertSame($fooNode, $rootNode->getNode('foo'));
 
         $this->persistenceManager->persistAll();
 
-        $this->assertSame($fooNode, $rootNode->getNode('foo'));
+        self::assertSame($fooNode, $rootNode->getNode('foo'));
     }
 
     /**
@@ -177,7 +177,7 @@ class NodesTest extends FunctionalTestCase
         $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType');
         $fooNode = $rootNode->createNode('foo', $testNodeType);
 
-        $this->assertSame('default value 1', $fooNode->getProperty('test1'));
+        self::assertSame('default value 1', $fooNode->getProperty('test1'));
     }
 
     /**
@@ -191,7 +191,7 @@ class NodesTest extends FunctionalTestCase
         $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithProcessor');
         $fooNode = $rootNode->createNode('foo', $testNodeType);
 
-        $this->assertSame('The value of "someOption" is "someOverriddenValue", the value of "someOtherOption" is "someOtherValue"', $fooNode->getProperty('test1'));
+        self::assertSame('The value of "someOption" is "someOverriddenValue", the value of "someOtherOption" is "someOtherValue"', $fooNode->getProperty('test1'));
     }
 
     /**
@@ -205,8 +205,8 @@ class NodesTest extends FunctionalTestCase
         $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithSubnodes');
         $fooNode = $rootNode->createNode('foo', $testNodeType);
         $firstSubnode = $fooNode->getNode('subnode1');
-        $this->assertInstanceOf(Node::class, $firstSubnode);
-        $this->assertSame('default value 1', $firstSubnode->getProperty('test1'));
+        self::assertInstanceOf(Node::class, $firstSubnode);
+        self::assertSame('default value 1', $firstSubnode->getProperty('test1'));
     }
 
     /**
@@ -218,12 +218,12 @@ class NodesTest extends FunctionalTestCase
 
         $rootNode->createNode('quux');
         $rootNode->getNode('quux')->remove();
-        $this->assertNull($rootNode->getNode('quux'));
+        self::assertNull($rootNode->getNode('quux'));
 
         $barNode = $rootNode->createNode('bar');
         $barNode->remove();
         $this->persistenceManager->persistAll();
-        $this->assertNull($rootNode->getNode('bar'));
+        self::assertNull($rootNode->getNode('bar'));
 
         $rootNode->createNode('baz');
         $this->persistenceManager->persistAll();
@@ -231,7 +231,7 @@ class NodesTest extends FunctionalTestCase
         $bazNode = $rootNode->getNode('baz');
         // workaround for PHPUnit trying to "render" the result *if* not NULL
         $bazNodeResult = $bazNode === null ? null : 'instance-of-' . get_class($bazNode);
-        $this->assertNull($bazNodeResult);
+        self::assertNull($bazNodeResult);
     }
 
     /**
@@ -243,12 +243,12 @@ class NodesTest extends FunctionalTestCase
         $rootNode->createNode('foo');
         $rootNode->getNode('foo')->remove();
 
-        $this->assertFalse($rootNode->hasChildNodes(), 'First check.');
+        self::assertFalse($rootNode->hasChildNodes(), 'First check.');
 
         $rootNode->createNode('bar');
         $this->persistenceManager->persistAll();
 
-        $this->assertTrue($rootNode->hasChildNodes(), 'Second check.');
+        self::assertTrue($rootNode->hasChildNodes(), 'Second check.');
 
         $context = $this->contextFactory->create(['workspaceName' => 'user-admin']);
         $rootNode = $context->getRootNode();
@@ -256,7 +256,7 @@ class NodesTest extends FunctionalTestCase
         $rootNode->getNode('bar')->remove();
         $this->persistenceManager->persistAll();
 
-        $this->assertFalse($rootNode->hasChildNodes(), 'Third check.');
+        self::assertFalse($rootNode->hasChildNodes(), 'Third check.');
     }
 
     /**
@@ -274,11 +274,11 @@ class NodesTest extends FunctionalTestCase
 
         $retrievedNode = $rootNode->getNode('/firstlevel/secondlevel/thirdlevel');
 
-        $this->assertInstanceOf(NodeInterface::class, $retrievedNode);
+        self::assertInstanceOf(NodeInterface::class, $retrievedNode);
 
-        $this->assertEquals('/firstlevel/secondlevel/thirdlevel', $retrievedNode->getPath());
-        $this->assertEquals('thirdlevel', $retrievedNode->getName());
-        $this->assertEquals(3, $retrievedNode->getDepth());
+        self::assertEquals('/firstlevel/secondlevel/thirdlevel', $retrievedNode->getPath());
+        self::assertEquals('thirdlevel', $retrievedNode->getName());
+        self::assertEquals(3, $retrievedNode->getDepth());
     }
 
     /**
@@ -293,15 +293,15 @@ class NodesTest extends FunctionalTestCase
         $node2 = $parentNode->createNode('node2');
         $node3 = $parentNode->createNode('node3');
 
-        $this->assertTrue($parentNode->hasChildNodes());
+        self::assertTrue($parentNode->hasChildNodes());
         $childNodes = $parentNode->getChildNodes();
-        $this->assertSameOrder([$node1, $node2, $node3], $childNodes);
+        self::assertSameOrder([$node1, $node2, $node3], $childNodes);
 
         $this->persistenceManager->persistAll();
 
-        $this->assertTrue($parentNode->hasChildNodes());
+        self::assertTrue($parentNode->hasChildNodes());
         $childNodes = $parentNode->getChildNodes();
-        $this->assertSameOrder([$node1, $node2, $node3], $childNodes);
+        self::assertSameOrder([$node1, $node2, $node3], $childNodes);
     }
 
     /**
@@ -315,15 +315,15 @@ class NodesTest extends FunctionalTestCase
         $node2 = $rootNode->createNode('node2');
         $node3 = $rootNode->createNode('node3');
 
-        $this->assertTrue($rootNode->hasChildNodes(), 'child node check before persistAll()');
+        self::assertTrue($rootNode->hasChildNodes(), 'child node check before persistAll()');
         $childNodes = $rootNode->getChildNodes();
-        $this->assertSameOrder([$node1, $node2, $node3], $childNodes);
+        self::assertSameOrder([$node1, $node2, $node3], $childNodes);
 
         $this->persistenceManager->persistAll();
 
-        $this->assertTrue($rootNode->hasChildNodes(), 'child node check after persistAll()');
+        self::assertTrue($rootNode->hasChildNodes(), 'child node check after persistAll()');
         $childNodes = $rootNode->getChildNodes();
-        $this->assertSameOrder([$node1, $node2, $node3], $childNodes);
+        self::assertSameOrder([$node1, $node2, $node3], $childNodes);
     }
 
     /**
@@ -341,12 +341,12 @@ class NodesTest extends FunctionalTestCase
         $node6 = $rootNode->createNode('node6');
 
         $childNodes = $rootNode->getChildNodes();
-        $this->assertSameOrder([$node1, $node2, $node3, $node4, $node5, $node6], $childNodes);
+        self::assertSameOrder([$node1, $node2, $node3, $node4, $node5, $node6], $childNodes);
 
         $this->persistenceManager->persistAll();
 
         $childNodes = $rootNode->getChildNodes(null, 3, 2);
-        $this->assertSameOrder([$node3, $node4, $node5], $childNodes);
+        self::assertSameOrder([$node3, $node4, $node5], $childNodes);
     }
 
     /**
@@ -358,7 +358,7 @@ class NodesTest extends FunctionalTestCase
 
         $node = $rootNode->createNode('node');
 
-        $this->assertSame($node, $rootNode->getNode('nOdE'));
+        self::assertSame($node, $rootNode->getNode('nOdE'));
     }
 
     /**
@@ -390,7 +390,7 @@ class NodesTest extends FunctionalTestCase
             $childNodeG
         ];
         $actualChildNodes = $parentNode->getChildNodes();
-        $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
+        self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
     /**
@@ -407,9 +407,9 @@ class NodesTest extends FunctionalTestCase
 
         $childNodeB->moveInto($childNodeA);
 
-        $this->assertNull($parentNode->getNode('child-node-b'));
-        $this->assertSame($childNodeB, $childNodeA->getNode('child-node-b'));
-        $this->assertSame($childNodeB1, $childNodeA->getNode('child-node-b')->getNode('child-node-b1'));
+        self::assertNull($parentNode->getNode('child-node-b'));
+        self::assertSame($childNodeB, $childNodeA->getNode('child-node-b'));
+        self::assertSame($childNodeB1, $childNodeA->getNode('child-node-b')->getNode('child-node-b1'));
     }
 
     /**
@@ -428,13 +428,13 @@ class NodesTest extends FunctionalTestCase
 
         $childNodeB->moveBefore($childNodeC1);
 
-        $this->assertNull($parentNode->getNode('child-node-b'));
-        $this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
-        $this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
+        self::assertNull($parentNode->getNode('child-node-b'));
+        self::assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
+        self::assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
         $expectedChildNodes = [$childNodeB, $childNodeC1];
         $actualChildNodes = $childNodeC->getChildNodes();
-        $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
+        self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
     /**
@@ -453,13 +453,13 @@ class NodesTest extends FunctionalTestCase
 
         $childNodeB->moveAfter($childNodeC1);
 
-        $this->assertNull($parentNode->getNode('child-node-b'));
-        $this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
-        $this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
+        self::assertNull($parentNode->getNode('child-node-b'));
+        self::assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
+        self::assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
         $expectedChildNodes = [$childNodeC1, $childNodeB];
         $actualChildNodes = $childNodeC->getChildNodes();
-        $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
+        self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
     /**
@@ -496,7 +496,7 @@ class NodesTest extends FunctionalTestCase
         ];
         $actualChildNodes = $parentNode->getChildNodes();
 
-        $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
+        self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
     /**
@@ -533,7 +533,7 @@ class NodesTest extends FunctionalTestCase
         ];
         $actualChildNodes = $parentNode->getChildNodes();
 
-        $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
+        self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
     /**
@@ -566,7 +566,7 @@ class NodesTest extends FunctionalTestCase
         ];
         $actualChildNodes = $parentNode->getChildNodes();
 
-        $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
+        self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
     /**
@@ -599,7 +599,7 @@ class NodesTest extends FunctionalTestCase
         ];
         $actualChildNodes = $parentNode->getChildNodes();
 
-        $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
+        self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
     /**
@@ -620,9 +620,9 @@ class NodesTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $this->assertNull($parentNode->getNode('child-node-b'));
-        $this->assertSame($childNodeB, $childNodeA->getNode('child-node-b'));
-        $this->assertSame($childNodeB1, $childNodeA->getNode('child-node-b')->getNode('child-node-b1'));
+        self::assertNull($parentNode->getNode('child-node-b'));
+        self::assertSame($childNodeB, $childNodeA->getNode('child-node-b'));
+        self::assertSame($childNodeB1, $childNodeA->getNode('child-node-b')->getNode('child-node-b1'));
     }
 
     /**
@@ -645,13 +645,13 @@ class NodesTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $this->assertNull($parentNode->getNode('child-node-b'));
-        $this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
-        $this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
+        self::assertNull($parentNode->getNode('child-node-b'));
+        self::assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
+        self::assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
         $expectedChildNodes = [$childNodeB, $childNodeC1];
         $actualChildNodes = $childNodeC->getChildNodes();
-        $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
+        self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
     /**
@@ -674,13 +674,13 @@ class NodesTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $this->assertNull($parentNode->getNode('child-node-b'));
-        $this->assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
-        $this->assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
+        self::assertNull($parentNode->getNode('child-node-b'));
+        self::assertSame($childNodeB, $childNodeC->getNode('child-node-b'));
+        self::assertSame($childNodeB1, $childNodeC->getNode('child-node-b')->getNode('child-node-b1'));
 
         $expectedChildNodes = [$childNodeC1, $childNodeB];
         $actualChildNodes = $childNodeC->getChildNodes();
-        $this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
+        self::assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
     }
 
     /**
@@ -717,7 +717,7 @@ class NodesTest extends FunctionalTestCase
         ];
         $actualChildNodes = $parentNode->getChildNodes();
 
-        $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
+        self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
     /**
@@ -754,7 +754,7 @@ class NodesTest extends FunctionalTestCase
         ];
         $actualChildNodes = $parentNode->getChildNodes();
 
-        $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
+        self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
     /**
@@ -786,7 +786,7 @@ class NodesTest extends FunctionalTestCase
         ];
         $actualChildNodes = $parentNode->getChildNodes();
 
-        $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
+        self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
     /**
@@ -827,7 +827,7 @@ class NodesTest extends FunctionalTestCase
         ];
         $actualChildNodes = $userParentNode->getChildNodes();
 
-        $this->assertSameOrder($expectedChildNodes, $actualChildNodes);
+        self::assertSameOrder($expectedChildNodes, $actualChildNodes);
     }
 
     /**
@@ -888,10 +888,10 @@ class NodesTest extends FunctionalTestCase
         $childNodeB->moveInto($childNodeA, 'renamed-child-node-b');
         $childNodeC->moveInto($childNodeB, 'child-node-now-unique');
         $this->persistenceManager->persistAll();
-        $this->assertNull($parentNode->getNode('child-node-b'));
-        $this->assertSame($childNodeB, $childNodeA->getNode('renamed-child-node-b'));
-        $this->assertSame($childNodeB1, $childNodeA->getNode('renamed-child-node-b')->getNode('child-node-b1'));
-        $this->assertSame($childNodeC, $childNodeB->getNode('child-node-now-unique'));
+        self::assertNull($parentNode->getNode('child-node-b'));
+        self::assertSame($childNodeB, $childNodeA->getNode('renamed-child-node-b'));
+        self::assertSame($childNodeB1, $childNodeA->getNode('renamed-child-node-b')->getNode('child-node-b1'));
+        self::assertSame($childNodeC, $childNodeB->getNode('child-node-now-unique'));
     }
 
     /**
@@ -940,7 +940,7 @@ class NodesTest extends FunctionalTestCase
             $nodes[1],
             $nodes[4]
         ];
-        $this->assertSameOrder($newNodeOrder, $actualChildNodes);
+        self::assertSameOrder($newNodeOrder, $actualChildNodes);
     }
 
     /**
@@ -965,7 +965,7 @@ class NodesTest extends FunctionalTestCase
 
         ksort($nodes);
         $actualChildNodes = $liveParentNode->getChildNodes();
-        $this->assertSameOrder($nodes, $actualChildNodes);
+        self::assertSameOrder($nodes, $actualChildNodes);
     }
 
     /**
@@ -1019,8 +1019,8 @@ class NodesTest extends FunctionalTestCase
         $actualChildNodesA = $liveParentNodeA->getChildNodes();
         $actualChildNodesB = $liveParentNodeB->getChildNodes();
 
-        $this->assertSameOrder($nodesA, $actualChildNodesA);
-        $this->assertSameOrder($nodesB, $actualChildNodesB);
+        self::assertSameOrder($nodesA, $actualChildNodesA);
+        self::assertSameOrder($nodesB, $actualChildNodesB);
     }
 
     /**
@@ -1047,7 +1047,7 @@ class NodesTest extends FunctionalTestCase
             }
             next($expectedNodes);
         }
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     /**
@@ -1057,7 +1057,7 @@ class NodesTest extends FunctionalTestCase
     {
         $node = $this->context->getNode('/');
 
-        $this->assertEquals('unstructured ()', $node->getLabel());
+        self::assertEquals('unstructured ()', $node->getLabel());
     }
 
     /**
@@ -1073,14 +1073,14 @@ class NodesTest extends FunctionalTestCase
 
         $bachNode = $fluxNode->copyBefore($bazNode, 'bach');
         $flussNode = $fluxNode->copyAfter($bazNode, 'fluss');
-        $this->assertNotSame($fluxNode, $flussNode);
-        $this->assertNotSame($fluxNode, $bachNode);
-        $this->assertEquals($fluxNode->getProperties(), $bachNode->getProperties());
-        $this->assertEquals($fluxNode->getProperties(), $flussNode->getProperties());
+        self::assertNotSame($fluxNode, $flussNode);
+        self::assertNotSame($fluxNode, $bachNode);
+        self::assertEquals($fluxNode->getProperties(), $bachNode->getProperties());
+        self::assertEquals($fluxNode->getProperties(), $flussNode->getProperties());
         $this->persistenceManager->persistAll();
 
-        $this->assertSame($bachNode, $rootNode->getNode('bach'));
-        $this->assertSame($flussNode, $rootNode->getNode('fluss'));
+        self::assertSame($bachNode, $rootNode->getNode('bach'));
+        self::assertSame($flussNode, $rootNode->getNode('fluss'));
     }
 
     /**
@@ -1101,7 +1101,7 @@ class NodesTest extends FunctionalTestCase
         array_walk($childNodes, function ($value, $key, &$names) {
             $names->names[] = $value->getName();
         }, $names);
-        $this->assertSame(['fluss', 'baz', 'flux'], $names->names);
+        self::assertSame(['fluss', 'baz', 'flux'], $names->names);
     }
 
     /**
@@ -1122,7 +1122,7 @@ class NodesTest extends FunctionalTestCase
         array_walk($childNodes, function ($value, $key, &$names) {
             $names->names[] = $value->getName();
         }, $names);
-        $this->assertSame(['baz', 'fluss', 'flux'], $names->names);
+        self::assertSame(['baz', 'fluss', 'flux'], $names->names);
     }
 
     /**
@@ -1138,7 +1138,7 @@ class NodesTest extends FunctionalTestCase
 
         $bravoNode->copyInto($alfaNode, 'charlie');
 
-        $this->assertSame(true, $alfaNode->getNode('charlie')->getProperty('test'));
+        self::assertSame(true, $alfaNode->getNode('charlie')->getProperty('test'));
     }
 
     /**
@@ -1153,8 +1153,8 @@ class NodesTest extends FunctionalTestCase
 
         $bravoNode = $alfaNode->copyInto($alfaNode, 'bravo');
 
-        $this->assertSame(true, $bravoNode->getProperty('test'));
-        $this->assertSame($bravoNode, $alfaNode->getNode('bravo'));
+        self::assertSame(true, $bravoNode->getProperty('test'));
+        self::assertSame($bravoNode, $alfaNode->getNode('bravo'));
     }
 
     /**
@@ -1177,7 +1177,7 @@ class NodesTest extends FunctionalTestCase
         array_walk($copiedChildNodes, function ($value, $key, &$names) {
             $names->names[] = $value->getName();
         }, $names);
-        $this->assertSame(['capacitor', 'second', 'third'], $names->names);
+        self::assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
     /**
@@ -1200,7 +1200,7 @@ class NodesTest extends FunctionalTestCase
         array_walk($copiedChildNodes, function ($value, $key, &$names) {
             $names->names[] = $value->getName();
         }, $names);
-        $this->assertSame(['capacitor', 'second', 'third'], $names->names);
+        self::assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
     /**
@@ -1218,9 +1218,9 @@ class NodesTest extends FunctionalTestCase
 
         $deltaNode = $bravoNode->copyInto($alfaNode, 'delta');
 
-        $this->assertSame($alfaNode->getNode('delta'), $deltaNode);
-        $this->assertSame($alfaNode->getNode('delta')->getProperty('test'), true);
-        $this->assertSame($alfaNode->getNode('delta')->getNode('charlie')->getProperty('test2'), true);
+        self::assertSame($alfaNode->getNode('delta'), $deltaNode);
+        self::assertSame($alfaNode->getNode('delta')->getProperty('test'), true);
+        self::assertSame($alfaNode->getNode('delta')->getNode('charlie')->getProperty('test2'), true);
     }
 
     /**
@@ -1236,8 +1236,8 @@ class NodesTest extends FunctionalTestCase
 
         $charlieNode = $alfaNode->copyInto($alfaNode, 'charlie');
 
-        $this->assertSame($alfaNode->getNode('charlie'), $charlieNode);
-        $this->assertSame($alfaNode->getNode('charlie')->getNode('bravo')->getProperty('test'), true);
+        self::assertSame($alfaNode->getNode('charlie'), $charlieNode);
+        self::assertSame($alfaNode->getNode('charlie')->getNode('bravo')->getProperty('test'), true);
     }
 
     /**
@@ -1297,10 +1297,10 @@ class NodesTest extends FunctionalTestCase
         $nodeB = $rootNode->createNode('node-b', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
 
         $nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
-        $this->assertSame($nodeB, $nodeA->getProperty('property2'));
+        self::assertSame($nodeB, $nodeA->getProperty('property2'));
 
         $nodeA->setProperty('property2', $nodeB);
-        $this->assertSame($nodeB, $nodeA->getProperty('property2'));
+        self::assertSame($nodeB, $nodeA->getProperty('property2'));
     }
 
     /**
@@ -1322,10 +1322,10 @@ class NodesTest extends FunctionalTestCase
             '81c848ed-abb5-7608-a5db-7eea0331ccfa',
             'e3b99700-f632-4a4c-2f93-0ad07eaf733f'
         ]);
-        $this->assertSame($expectedNodes, $nodeA->getProperty('property3'));
+        self::assertSame($expectedNodes, $nodeA->getProperty('property3'));
 
         $nodeA->setProperty('property3', $expectedNodes);
-        $this->assertSame($expectedNodes, $nodeA->getProperty('property3'));
+        self::assertSame($expectedNodes, $nodeA->getProperty('property3'));
     }
 
     /**
@@ -1350,8 +1350,8 @@ class NodesTest extends FunctionalTestCase
         ]);
 
         $actualProperties = $nodeA->getProperties();
-        $this->assertSame($nodeB, $actualProperties['property2']);
-        $this->assertSame($expectedNodes, $actualProperties['property3']);
+        self::assertSame($nodeB, $actualProperties['property2']);
+        self::assertSame($expectedNodes, $actualProperties['property3']);
     }
 
     /**
@@ -1377,10 +1377,10 @@ class NodesTest extends FunctionalTestCase
 
         $nodeB->setHidden(true);
 
-        $this->assertNull($nodeA->getProperty('property2'));
+        self::assertNull($nodeA->getProperty('property2'));
         $property3 = $nodeA->getProperty('property3');
-        $this->assertCount(1, $property3);
-        $this->assertSame($nodeC, reset($property3));
+        self::assertCount(1, $property3);
+        self::assertSame($nodeC, reset($property3));
     }
 
     /**
@@ -1404,12 +1404,12 @@ class NodesTest extends FunctionalTestCase
         $testNode = $testRootNode->getNode('node');
 
         $referencedNodeProperty = $node->getProperty('property2');
-        $this->assertNotSame($referencedNodeProperty->getWorkspace(), $testReferencedNode->getWorkspace());
-        $this->assertSame($referencedNodeProperty->getWorkspace(), $referencedNode->getWorkspace());
+        self::assertNotSame($referencedNodeProperty->getWorkspace(), $testReferencedNode->getWorkspace());
+        self::assertSame($referencedNodeProperty->getWorkspace(), $referencedNode->getWorkspace());
 
         $testReferencedNodeProperty = $testNode->getProperty('property2');
-        $this->assertNotSame($testReferencedNodeProperty->getWorkspace(), $referencedNode->getWorkspace());
-        $this->assertSame($testReferencedNodeProperty->getWorkspace(), $testReferencedNode->getWorkspace());
+        self::assertNotSame($testReferencedNodeProperty->getWorkspace(), $referencedNode->getWorkspace());
+        self::assertSame($testReferencedNodeProperty->getWorkspace(), $testReferencedNode->getWorkspace());
     }
 
     /**
@@ -1427,8 +1427,8 @@ class NodesTest extends FunctionalTestCase
         $nodeDataB = new NodeData('/', $this->context->getWorkspace(), '30e893c1-caef-0ca5-b53d-e5699bb8e506', ['test' => [2]]);
         $variantNodeB = $nodeFactory->createFromNodeData($nodeDataB, $this->context);
 
-        $this->assertSame($variantNodeA1, $variantNodeA2);
-        $this->assertSame($variantNodeA1, $variantNodeB);
+        self::assertSame($variantNodeA1, $variantNodeA2);
+        self::assertSame($variantNodeA1, $variantNodeB);
     }
 
     /**
@@ -1454,7 +1454,7 @@ class NodesTest extends FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+        self::assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
             return [$value];
         }, $variantContextB->getTargetDimensions()));
     }
@@ -1484,7 +1484,7 @@ class NodesTest extends FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+        self::assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
             return [$value];
         }, $variantContextB->getTargetDimensions()));
     }
@@ -1513,10 +1513,10 @@ class NodesTest extends FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test', null, $identifier);
 
         // Same context
-        $this->assertSame($variantContextA->adoptNode($variantNodeA), $variantNodeA);
+        self::assertSame($variantContextA->adoptNode($variantNodeA), $variantNodeA);
 
         // Different context with fallback
-        $this->assertNotSame($variantContextB->adoptNode($variantNodeA)->getDimensions(), $variantNodeA->getDimensions(), 'Dimensions of $variantNodeA should change when adopted in $variantContextB');
+        self::assertNotSame($variantContextB->adoptNode($variantNodeA)->getDimensions(), $variantNodeA->getDimensions(), 'Dimensions of $variantNodeA should change when adopted in $variantContextB');
     }
 
     /**
@@ -1542,7 +1542,7 @@ class NodesTest extends FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantContextB->adoptNode($variantNodeA);
 
-        $this->assertSame($variantNodeB->getDimensions(), $variantContextB->getTargetDimensionValues());
+        self::assertSame($variantNodeB->getDimensions(), $variantContextB->getTargetDimensionValues());
     }
 
     /**
@@ -1576,7 +1576,7 @@ class NodesTest extends FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->getNode('test');
         $variantNodeB = $variantContextB->adoptNode($variantNodeA);
 
-        $this->assertSame($variantNodeA->getDimensions(), $variantNodeB->getDimensions());
+        self::assertSame($variantNodeA->getDimensions(), $variantNodeB->getDimensions());
     }
 
     /**
@@ -1594,10 +1594,10 @@ class NodesTest extends FunctionalTestCase
         $bazNode = $happyNode->createNode('baz', $headlineNodeType);
 
         $this->assertNotInstanceOf(HappyNode::class, $fooNode);
-        $this->assertInstanceOf(HappyNode::class, $happyNode);
+        self::assertInstanceOf(HappyNode::class, $happyNode);
         $this->assertNotInstanceOf(HappyNode::class, $bazNode);
 
-        $this->assertEquals('bar claps hands!', $happyNode->clapsHands());
+        self::assertEquals('bar claps hands!', $happyNode->clapsHands());
     }
 
 
@@ -1613,7 +1613,7 @@ class NodesTest extends FunctionalTestCase
         $node = $this->context->getRootNode()->createNode('node-with-child-node', $documentNodeType);
         $node->createNode('headline', $headlineNodeType);
         $node->createNode('text', $imageNodeType);
-        $this->assertCount(1, $node->getChildNodes('Neos.ContentRepository.Testing:Headline'));
+        self::assertCount(1, $node->getChildNodes('Neos.ContentRepository.Testing:Headline'));
     }
 
     /**
@@ -1654,12 +1654,12 @@ class NodesTest extends FunctionalTestCase
         ]);
 
         // Both containers should be available due to fallbacks
-        $this->assertCount(2, $variantContextB->getRootNode()->getChildNodes());
+        self::assertCount(2, $variantContextB->getRootNode()->getChildNodes());
 
         // This should NOT find the node created in variantContextA as
         // a better matching (with "b" dimension value) variant (same identifier) exists in container two
-        $this->assertCount(0, $variantContextB->getNode('/container1')->getChildNodes());
+        self::assertCount(0, $variantContextB->getNode('/container1')->getChildNodes());
         // This is the better matching variant and should be found.
-        $this->assertCount(1, $variantContextB->getNode('/container2')->getChildNodes());
+        self::assertCount(1, $variantContextB->getNode('/container2')->getChildNodes());
     }
 }

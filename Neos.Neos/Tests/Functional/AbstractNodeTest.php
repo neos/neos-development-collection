@@ -79,7 +79,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
         /* @var $propertyMapper \Neos\Flow\Property\PropertyMapper */
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);
         $node = $propertyMapper->convert($contextPath, Node::class);
-        $this->assertFalse($propertyMapper->getMessages()->hasErrors(), 'There were errors converting ' . $contextPath);
+        self::assertFalse($propertyMapper->getMessages()->hasErrors(), 'There were errors converting ' . $contextPath);
         return $node;
     }
 

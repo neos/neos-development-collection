@@ -64,7 +64,7 @@ class ProcessorTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath($path);
-        $this->assertEquals('Foobaz', $view->render());
+        self::assertEquals('Foobaz', $view->render());
     }
 
     /**

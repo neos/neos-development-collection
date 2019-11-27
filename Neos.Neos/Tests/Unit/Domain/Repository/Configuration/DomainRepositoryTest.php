@@ -35,15 +35,15 @@ class DomainRepositoryTest extends UnitTestCase
         $expectedDomains = [$mockDomains[0], $mockDomains[2]];
 
         $mockDomainMatchingStrategy = $this->getMockBuilder(DomainMatchingStrategy::class)->disableOriginalConstructor()->getMock();
-        $mockDomainMatchingStrategy->expects($this->any())->method('getSortedMatches')->with('myhost', $mockDomains)->will($this->returnValue($expectedDomains));
+        $mockDomainMatchingStrategy->expects(self::any())->method('getSortedMatches')->with('myhost', $mockDomains)->will(self::returnValue($expectedDomains));
 
         $mockResult = $this->createMock(QueryResultInterface::class);
-        $mockResult->expects($this->once())->method('toArray')->will($this->returnValue($mockDomains));
+        $mockResult->expects(self::once())->method('toArray')->will(self::returnValue($mockDomains));
         $domainRepository = $this->getAccessibleMock(DomainRepository::class, ['findAll'], [], '', false);
-        $domainRepository->expects($this->once())->method('findAll')->will($this->returnValue($mockResult));
+        $domainRepository->expects(self::once())->method('findAll')->will(self::returnValue($mockResult));
         $domainRepository->_set('domainMatchingStrategy', $mockDomainMatchingStrategy);
 
         $actualDomains = $domainRepository->findByHost('myhost');
-        $this->assertSame($expectedDomains, $actualDomains);
+        self::assertSame($expectedDomains, $actualDomains);
     }
 }

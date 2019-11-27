@@ -17,7 +17,6 @@ use Doctrine\ORM\EntityNotFoundException;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
@@ -72,6 +71,7 @@ class AssetController extends ActionController
 {
     use CreateContentContextTrait;
     use BackendUserTranslationTrait;
+    use AddFlashMessageTrait;
 
     protected const TAG_GIVEN = 0;
     protected const TAG_ALL = 1;
@@ -135,12 +135,6 @@ class AssetController extends ActionController
      * @var AssetService
      */
     protected $assetService;
-
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
 
     /**
      * @Flow\Inject
@@ -213,6 +207,12 @@ class AssetController extends ActionController
      */
     public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
     {
+        $allCollectionsCount = 0;
+        // Calculating the asset-count of all collections before applying filters.
+        foreach ($this->assetSources as $assetSource) {
+            $allCollectionsCount += $assetSource->getAssetProxyRepository()->countAll();
+        }
+
         // First, apply all options given to indexAction() and save them in the BrowserState object.
         // Note that the order of these apply*() method calls plays a role, because they may depend on previous results:
         $this->applyActiveAssetSourceToBrowserState($assetSourceIdentifier);
@@ -234,7 +234,6 @@ class AssetController extends ActionController
         $tags = [];
         $assetProxies = [];
 
-        $allCollectionsCount = 0;
         $allCount = 0;
         $searchResultCount = 0;
         $untaggedCount = 0;
@@ -261,7 +260,6 @@ class AssetController extends ActionController
                 $assetProxies = $assetProxyRepository->findAll();
             }
 
-            $allCollectionsCount = $assetProxyRepository->countAll();
             $allCount = ($activeAssetCollection ? $this->assetRepository->countByAssetCollection($activeAssetCollection) : $allCollectionsCount);
             $searchResultCount = isset($assetProxies) ? $assetProxies->count() : 0;
             $untaggedCount = ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countUntagged() : 0);
@@ -552,7 +550,7 @@ class AssetController extends ActionController
         }
 
         $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
-        $this->response->setStatus(201);
+        $this->response->setStatusCode(201);
         return '';
     }
 
@@ -808,26 +806,6 @@ class AssetController extends ActionController
         }
 
         return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
-    }
-
-    /**
-     * Add a translated flashMessage.
-     *
-     * @param string $messageBody The translation id for the message body.
-     * @param string $messageTitle The translation id for the message title.
-     * @param string $severity
-     * @param array $messageArguments
-     * @param integer $messageCode
-     * @return void
-     */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null): void
-    {
-        if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'Neos.Media.Browser') ?: $messageBody;
-        }
-
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'Neos.Media.Browser');
-        parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 
     /**

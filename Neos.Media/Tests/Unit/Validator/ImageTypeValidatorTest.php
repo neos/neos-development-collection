@@ -27,7 +27,7 @@ class ImageTypeValidatorTest extends UnitTestCase
     {
         $validator = new ImageTypeValidator(['allowedTypes' => ['png']]);
         $value = new \stdClass();
-        $this->assertTrue($validator->validate($value)->hasErrors());
+        self::assertTrue($validator->validate($value)->hasErrors());
     }
 
     /**
@@ -54,10 +54,10 @@ class ImageTypeValidatorTest extends UnitTestCase
     public function validatorTests(array $options, $actualMediaType, $supposedToBeValid)
     {
         $image = $this->getMockBuilder(Image::class)->disableOriginalConstructor()->getMock();
-        $image->expects($this->any())->method('getMediaType')->will($this->returnValue($actualMediaType));
+        $image->expects(self::any())->method('getMediaType')->will(self::returnValue($actualMediaType));
 
         $validator = new ImageTypeValidator($options);
         $validationResult = $validator->validate($image);
-        $this->assertEquals($supposedToBeValid, !$validationResult->hasErrors());
+        self::assertEquals($supposedToBeValid, !$validationResult->hasErrors());
     }
 }
