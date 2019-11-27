@@ -3,14 +3,26 @@
 
 <f:section name="content">
 	<f:for each="{availableConfigurationTypes}" as="availableConfigurationType">
-		<f:link.action action="index" arguments="{type: availableConfigurationType}" class="neos-button{f:if(condition: '{availableConfigurationType} === {type}', then: ' neos-active')}">{availableConfigurationType}</f:link.action>
+		<f:link.action
+			action="index"
+			arguments="{type: availableConfigurationType}"
+			class="neos-button{f:if(condition: '{availableConfigurationType} === {type}', then: ' neos-active')}"
+			>{availableConfigurationType}</f:link.action
+		>
 	</f:for>
 	<f:if condition="{validationResult.flattenedErrors -> f:count()} > 0">
 		<ul id="neos-notifications-inline">
-			<li data-type="warning" data-title="{neos:backend.translate(id: 'numberValidationErrors', source: 'ValidationErrors', arguments: {0: '{validationResult.flattenedErrors-> f:count()}'}, value: '{validationResult.flattenedErrors -> f:count()} errors were found')}">
+			<li
+				data-type="warning"
+				data-title="{neos:backend.translate(id: 'numberValidationErrors', source: 'ValidationErrors', arguments: {0: '{validationResult.flattenedErrors-> f:count()}'}, value: '{validationResult.flattenedErrors -> f:count()} errors were found')}"
+			>
 				<f:for each="{validationResult.flattenedErrors}" key="path" as="errors">
 					<f:for each="{errors}" as="error">
-						<pre>{path} -> {neos:backend.translate(id: error.code, source: 'ValidationErrors', package: 'Neos.Flow', arguments: error.arguments, value: error)}</pre>
+						<pre
+							>{path} -> {neos:backend.translate(id: error.code, source:
+							'ValidationErrors', package: 'Neos.Flow', arguments:
+							error.arguments, value: error)}</pre
+						>
 					</f:for>
 				</f:for>
 			</li>
@@ -25,65 +37,4 @@
 			</li>
 		</ul>
 	</div>
-	<script>
-		$(function() {
-			var cookieId = "typo3-neos-module-configuration-{f:format.case(value: type, mode: 'lower')}";
-			require(
-				{
-					baseUrl: 'resource://Neos.Neos/Public/JavaScript',
-					paths: requirePaths,
-					context: 'neos',
-					locale: 'en'
-				},
-				[
-					'Library/jquery-with-dependencies'
-				],
-				function($) {
-					$('#configuration').dynatree({
-						keyboard: true,
-						selectMode: 1,
-						minExpandLevel: 2,
-						classNames: {
-							container: 'neos-dynatree-container',
-							node: 'neos-dynatree-node',
-							folder: 'neos-dynatree-folder',
-
-							empty: 'neos-dynatree-empty',
-							vline: 'neos-dynatree-vline',
-							expander: 'neos-dynatree-expander',
-							connector: 'neos-dynatree-connector',
-							checkbox: 'neos-dynatree-checkbox',
-							nodeIcon: 'neos-dynatree-icon',
-							title: 'neos-dynatree-title',
-							noConnector: 'neos-dynatree-no-connector',
-
-							nodeError: 'neos-dynatree-statusnode-error',
-							nodeWait: 'neos-dynatree-statusnode-wait',
-							hidden: 'neos-dynatree-hidden',
-							combinedExpanderPrefix: 'neos-dynatree-exp-',
-							combinedIconPrefix: 'neos-dynatree-ico-',
-							nodeLoading: 'neos-dynatree-loading',
-							hasChildren: 'neos-dynatree-has-children',
-							active: 'neos-dynatree-active',
-							selected: 'neos-dynatree-selected',
-							expanded: 'neos-dynatree-expanded',
-							lazy: 'neos-dynatree-lazy',
-							focused: 'neos-dynatree-focused',
-							partsel: 'neos-dynatree-partsel',
-							lastsib: 'neos-dynatree-lastsib'
-						},
-						noLink: true,
-						autoFocus: false,
-						clickFolderMode: 3,
-						debugLevel: 0, // 0: quiet, 1: normal, 2: debug
-						persist: true,
-						cookieId: cookieId,
-						cookie: {
-							expires: 365
-						}
-					});
-				}
-			);
-		});
-	</script>
 </f:section>
