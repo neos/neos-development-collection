@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\Service;
 
 /*
@@ -14,6 +16,7 @@ namespace Neos\Media\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -38,12 +41,6 @@ class ThumbnailService
 {
     /**
      * @Flow\Inject
-     * @var ImageService
-     */
-    protected $imageService;
-
-    /**
-     * @Flow\Inject
      * @var ThumbnailRepository
      */
     protected $thumbnailRepository;
@@ -62,13 +59,13 @@ class ThumbnailService
 
     /**
      * @Flow\InjectConfiguration("image.defaultOptions.convertFormats")
-     * @var boolean
+     * @var array
      */
     protected $formatConversions;
 
     /**
      * @Flow\InjectConfiguration("thumbnailPresets")
-     * @var boolean
+     * @var array
      */
     protected $presets;
 
@@ -78,30 +75,16 @@ class ThumbnailService
     protected $thumbnailCache = [];
 
     /**
+     * @Flow\Inject
      * @var LoggerInterface
      */
     private $logger;
 
     /**
+     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
     private $throwableStorage;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @param ThrowableStorageInterface $throwableStorage
-     */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
-    {
-        $this->throwableStorage = $throwableStorage;
-    }
 
     /**
      * Returns a thumbnail of the given asset
@@ -172,14 +155,14 @@ class ThumbnailService
                 $asset->addThumbnail($thumbnail);
 
                 // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
-                $this->persistenceManager->whiteListObject($thumbnail);
+                $this->persistenceManager->whitelistObject($thumbnail);
                 $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
             } catch (NoThumbnailAvailableException $exception) {
                 $logMessage = $this->throwableStorage->logThrowable($exception);
                 $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 return null;
             }
-            $this->persistenceManager->whiteListObject($thumbnail);
+            $this->persistenceManager->whitelistObject($thumbnail);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
         } elseif ($thumbnail->getResource() === null && $async === false) {
             try {
@@ -215,15 +198,15 @@ class ThumbnailService
         }
         $presetConfiguration = $this->presets[$preset];
         $thumbnailConfiguration = new ThumbnailConfiguration(
-            isset($presetConfiguration['width']) ? $presetConfiguration['width'] : null,
-            isset($presetConfiguration['maximumWidth']) ? $presetConfiguration['maximumWidth'] : null,
-            isset($presetConfiguration['height']) ? $presetConfiguration['height'] : null,
-            isset($presetConfiguration['maximumHeight']) ? $presetConfiguration['maximumHeight'] : null,
-            isset($presetConfiguration['allowCropping']) ? $presetConfiguration['allowCropping'] : false,
-            isset($presetConfiguration['allowUpScaling']) ? $presetConfiguration['allowUpScaling'] : false,
+            $presetConfiguration['width'] ?? null,
+            $presetConfiguration['maximumWidth'] ?? null,
+            $presetConfiguration['height'] ?? null,
+            $presetConfiguration['maximumHeight'] ?? null,
+            $presetConfiguration['allowCropping'] ?? false,
+            $presetConfiguration['allowUpScaling'] ?? false,
             $async,
-            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null,
-            isset($presetConfiguration['format']) ? $presetConfiguration['format'] : null
+            $presetConfiguration['quality'] ?? null,
+            $presetConfiguration['format'] ?? null
         );
         return $thumbnailConfiguration;
     }
@@ -260,11 +243,12 @@ class ThumbnailService
      *
      * @param Thumbnail $thumbnail
      * @return void
+     * @throws IllegalObjectTypeException
      */
     public function refreshThumbnail(Thumbnail $thumbnail)
     {
         $thumbnail->refresh();
-        $this->persistenceManager->whiteListObject($thumbnail);
+        $this->persistenceManager->whitelistObject($thumbnail);
         if (!$this->persistenceManager->isNewObject($thumbnail)) {
             $this->thumbnailRepository->update($thumbnail);
         }
