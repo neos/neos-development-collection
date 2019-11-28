@@ -27,14 +27,22 @@ export default class Tree {
 
 	_onNodeClick(event) {
 		event.preventDefault();
+		event.stopPropagation();
 		const node = event.target.closest('.neos-tree-node');
 		if (!isNil(node)) {
+			this._deselectCurrentActiveNode();
 			node.classList.toggle('neos-tree-active');
 		}
 
 		if (this._isFolder(node)) {
-			this._toggle();
+			this._toggle(node);
 		}
+	}
+
+	_deselectCurrentActiveNode() {
+		this._root.querySelectorAll('.neos-tree-active').forEach(_node => {
+			_node.classList.remove('neos-tree-active');
+		});
 	}
 
 	_createExpandIcon() {
@@ -54,7 +62,8 @@ export default class Tree {
 		return !isNil(node) && node.classList.contains('neos-tree-folder');
 	}
 
-	_toggle() {
-		console.log('toogle');
+	_toggle(node) {
+		// @todo save node state in session
+		node.classList.toggle('neos-tree-open');
 	}
 }
