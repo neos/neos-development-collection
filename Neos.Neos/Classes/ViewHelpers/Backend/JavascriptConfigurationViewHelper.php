@@ -118,9 +118,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
         $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://Neos.Neos/Public/JavaScript');
 
         $configuration[] = 'window.T3Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
-        if ($this->backendAssetsUtility->shouldLoadMinifiedJavascript()) {
-            $configuration[] = 'window.T3Configuration.neosJavascriptVersion = ' . json_encode($this->backendAssetsUtility->getJavascriptBuiltVersion()) . ';';
-        }
 
         if ($this->bootstrap->getContext()->isDevelopment()) {
             $configuration[] = 'window.T3Configuration.DevelopmentMode = true;';

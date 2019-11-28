@@ -50,7 +50,7 @@ class AssetServiceTest extends UnitTestCase
         $mockAsset = $this->getMockBuilder($modelClassName)->disableOriginalConstructor()->getMock();
 
         $mockObjectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())
+        $mockObjectManager->expects(self::once())
             ->method('get')
             ->willReturn($this->createMock($expectedRepositoryClassName));
 

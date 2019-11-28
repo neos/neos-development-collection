@@ -12,7 +12,8 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Http\BaseUriProvider;
+use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -20,6 +21,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
@@ -29,6 +31,7 @@ use Neos\Neos\Exception as NeosException;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -115,24 +118,31 @@ class LinkingService
     protected $siteRepository;
 
     /**
-     * @param string|Uri $uri
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
+
+    /**
+     * @param string|UriInterface $uri
      * @return boolean
      */
     public function hasSupportedScheme($uri): bool
     {
-        if ($uri instanceof Uri) {
+        if ($uri instanceof UriInterface) {
             $uri = (string)$uri;
         }
+
         return preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
     }
 
     /**
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @return string
      */
     public function getScheme($uri): string
     {
-        if ($uri instanceof Uri) {
+        if ($uri instanceof UriInterface) {
             return $uri->getScheme();
         }
 
@@ -146,7 +156,7 @@ class LinkingService
     /**
      * Resolves a given node:// URI to a "normal" HTTP(S) URI for the addressed node.
      *
-     * @param string|Uri $uri
+     * @param string $uri
      * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
      * @param bool $absolute
@@ -161,15 +171,17 @@ class LinkingService
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
             $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
+
             return null;
         }
+
         return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
     }
 
     /**
      * Resolves a given asset:// URI to a "normal" HTTP(S) URI for the addressed asset's resource.
      *
-     * @param string|Uri $uri
+     * @param string $uri
      * @return string|null If the URI cannot be resolved, null is returned
      */
     public function resolveAssetUri(string $uri): ?string
@@ -177,21 +189,23 @@ class LinkingService
         $targetObject = $this->convertUriToObject($uri);
         if ($targetObject === null) {
             $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
+
             return null;
         }
+
         return $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
     }
 
     /**
      * Return the object the URI addresses or NULL.
      *
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @param NodeInterface $contextNode
      * @return NodeInterface|AssetInterface|NULL
      */
     public function convertUriToObject($uri, NodeInterface $contextNode = null)
     {
-        if ($uri instanceof Uri) {
+        if ($uri instanceof UriInterface) {
             $uri = (string)$uri;
         }
 
@@ -229,6 +243,7 @@ class LinkingService
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
+     * @throws HttpException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
@@ -308,19 +323,19 @@ class LinkingService
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
-        $baseUri = $request->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI);
+        $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
         if ($site->hasActiveDomains()) {
             $requestUriHost = $baseUri->getHost();
-            $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+            $activeHostPatterns = $site->getActiveDomains()->map(static function (Domain $domain) {
                 return $domain->getHostname();
             })->toArray();
             if (!in_array($requestUriHost, $activeHostPatterns, true)) {
                 $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
             } elseif ($absolute === true) {
-                $uri = $baseUri. ltrim($uri, '/');
+                $uri = $baseUri . ltrim($uri, '/');
             }
         } elseif ($absolute === true) {
-            if (substr($uri, 0, 7) !== 'http://' && substr($uri, 0, 8) !== 'https://') {
+            if (strncmp($uri, 'http://', 7) !== 0 && strncmp($uri, 'https://', 8) !== 0) {
                 $uri = $baseUri . ltrim($uri, '/');
             }
         }
@@ -333,6 +348,7 @@ class LinkingService
      * @param Site $site
      * @return string
      * @throws NeosException
+     * @throws HttpException
      */
     public function createSiteUri(ControllerContext $controllerContext, Site $site): string
     {
@@ -341,7 +357,8 @@ class LinkingService
             throw new NeosException(sprintf('Cannot link to a site "%s" since it has no active domains.', $site->getName()), 1460443524);
         }
         $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
-        $baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
+        // TODO: Should probably directly use \Neos\Flow\Http\Helper\RequestInformationHelper::getRelativeRequestPath() and even that is tricky.
+        $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
         $port = $primaryDomain->getPort() ?: $requestUri->getPort();
         return sprintf(
             '%s://%s%s%s',

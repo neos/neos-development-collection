@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Media\Browser\ViewHelpers;
 
@@ -13,7 +14,6 @@ namespace Neos\Media\Browser\ViewHelpers;
 */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 use Neos\Media\Browser\ViewHelpers\Controller\PaginateController;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;

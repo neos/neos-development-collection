@@ -5,7 +5,7 @@
 <f:section name="Title">Edit tag</f:section>
 
 <f:section name="Content">
-    <f:form method="post" action="updateTag" object="{tag}" objectName="tag">
+    <f:form method="post" action="updateTag" controller="Asset" object="{tag}" objectName="tag">
         <legend>{neos:backend.translate(id: 'editTag', package: 'Neos.Media.Browser')}</legend>
         <div class="neos-row-fluid">
             <div class="neos-span6 neos-image-inputs">
@@ -47,7 +47,7 @@
                         </div>
                         <div class="neos-modal-footer">
                             <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
-                            <button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteTag', arguments: {tag: tag})}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'message.confirmDeleteTag', package: 'Neos.Media.Browser')}</button>
+                            <button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteTag', controller: 'Asset', arguments: {tag: tag})}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'message.confirmDeleteTag', package: 'Neos.Media.Browser')}</button>
                         </div>
                     </div>
                 </div>

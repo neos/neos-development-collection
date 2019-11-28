@@ -45,7 +45,7 @@ class WorkspaceTest extends UnitTestCase
         $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
 
         $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['add'])->getMock();
-        $mockNodeDataRepository->expects($this->once())->method('add');
+        $mockNodeDataRepository->expects(self::once())->method('add');
 
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
@@ -64,7 +64,7 @@ class WorkspaceTest extends UnitTestCase
         $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
-        $mockNodeDataRepository->expects($this->once())->method('countByWorkspace')->with($workspace)->will($this->returnValue(42));
+        $mockNodeDataRepository->expects(self::once())->method('countByWorkspace')->with($workspace)->will(self::returnValue(42));
 
         self::assertSame(42, $workspace->getNodeCount());
     }
@@ -77,7 +77,7 @@ class WorkspaceTest extends UnitTestCase
         $targetWorkspace = new Workspace('live');
 
         $currentWorkspace = $this->getAccessibleMock(Workspace::class, ['verifyPublishingTargetWorkspace'], ['live']);
-        $currentWorkspace->expects($this->never())->method('verifyPublishingTargetWorkspace');
+        $currentWorkspace->expects(self::never())->method('verifyPublishingTargetWorkspace');
 
         $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
 
@@ -98,9 +98,9 @@ class WorkspaceTest extends UnitTestCase
         $workspace->setBaseWorkspace($liveWorkspace);
 
         $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
+        $mockNode->expects(self::any())->method('getWorkspace')->will(self::returnValue($workspace));
 
-        $workspace->expects($this->never())->method('emitBeforeNodePublishing');
+        $workspace->expects(self::never())->method('emitBeforeNodePublishing');
 
         $workspace->publishNode($mockNode, $workspace);
     }
@@ -188,9 +188,9 @@ class WorkspaceTest extends UnitTestCase
         $this->inject($liveWorkspace, 'nodeDataRepository', $nodeDataRepository);
 
         $node = $this->createMock(NodeInterface::class);
-        $node->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
+        $node->expects(self::any())->method('getWorkspace')->will(self::returnValue($liveWorkspace));
 
-        $nodeDataRepository->expects($this->never())->method('findOneByIdentifier');
+        $nodeDataRepository->expects(self::never())->method('findOneByIdentifier');
 
         $personalWorkspace->publishNode($node, $liveWorkspace);
     }

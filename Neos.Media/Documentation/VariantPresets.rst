@@ -72,19 +72,16 @@ Neos:
               crop:
                 type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
                 options:
-                  aspectRatio:
-                    width: 16
-                    height: 9
-          'lowerRight':
-            label: 'Lower Right'
+                  aspectRatio: '16:9'
+          'portrait':
+            label: 'Portrait'
             description: ''
             icon: ''
             adjustments:
               crop:
                 type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
                 options:
-                  width: '50%'
-                  height: '50%'
+                  aspectRatio: '3:4'
           'square':
             label: 'Square'
             description: ''
@@ -93,9 +90,7 @@ Neos:
               crop:
                 type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
                 options:
-                  aspectRatio:
-                    width: 1
-                    height: 1
+                  aspectRatio: '1:1'
 ```
 
 The automatic variant generation for new assets has to be enabled via setting as
@@ -106,4 +101,16 @@ by default this feature is disabled.
 Neos:
   Media:
     autoCreateImageVariantPresets: true
+```
+
+To show and edit the variants in the media module the variants tab has to be enabled.
+
+.. code-block:: yaml
+```yaml
+Neos:
+  Media:
+    Browser:
+      features:
+        variantsTab:
+          enable: true
 ```

@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target state="translated">Général</target></trans-unit>
+			<target state="final">Général</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">Métadonnées</target></trans-unit>
+			<target state="final">Métadonnées</target></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">Métadonnées</target></trans-unit>
+			<target state="final">Métadonnées</target></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target state="translated">Informations complémentaires</target></trans-unit>
+			<target state="final">Informations complémentaires</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target state="translated">Modifier le type</target></trans-unit>
+			<target state="final">Modifier le type</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target state="translated">Type</target></trans-unit>
+			<target state="final">Type</target></trans-unit>
     </body>
   </file>
 </xliff>

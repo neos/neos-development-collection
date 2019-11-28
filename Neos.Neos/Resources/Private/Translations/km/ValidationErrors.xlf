@@ -5,18 +5,18 @@
       <!-- UserDoesNotExistValidator -->
       <trans-unit id="1325156008" xml:space="preserve" approved="yes">
 				<source>The username is already in use.</source>
-			<target state="translated">ឈ្មោះ​អ្នកប្រើប្រាស់នេះត្រូវបានប្រើប្រាស់</target><alt-trans><target>គណនីនេះត្រូវបានប្រើប្រាស់</target></alt-trans></trans-unit>
+			<target state="final">ឈ្មោះ​អ្នកប្រើប្រាស់នេះត្រូវបានប្រើប្រាស់</target><alt-trans><target>គណនីនេះត្រូវបានប្រើប្រាស់</target></alt-trans></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve" approved="yes">
 				<source>The hostname "{0}" was not valid.</source>
-			<target state="translated">មិនមាន Hostname "{0}"</target></trans-unit>
+			<target state="final">មិនមាន Hostname "{0}"</target></trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve" approved="yes">
 				<source>The given password was empty.</source>
-			<target state="translated">គ្មានលេខកូតសំងាត់ត្រូវបានផ្តល់</target></trans-unit>
+			<target state="final">គ្មានលេខកូតសំងាត់ត្រូវបានផ្តល់</target></trans-unit>
       <trans-unit id="1324640997" xml:space="preserve" approved="yes">
 				<source>The passwords did not match.</source>
-			<target state="translated">ការផ្គូរផ្គងលេខកូតសំងាត់ពំុត្រឹមត្រូវ</target></trans-unit>
+			<target state="final">ការផ្គូរផ្គងលេខកូតសំងាត់ពំុត្រឹមត្រូវ</target></trans-unit>
     </body>
   </file>
 </xliff>

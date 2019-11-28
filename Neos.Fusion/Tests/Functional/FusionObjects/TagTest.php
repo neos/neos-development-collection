@@ -50,6 +50,56 @@ class TagTest extends AbstractFusionObjectTest
     /**
      * @test
      */
+    public function tagWithFusionAttributesWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/fusionAttributes');
+        self::assertSame('<div key="value" list="foo bar"></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function tagWithAttributesFromDataStructureWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/dataStructureAttributes');
+        self::assertSame('<div key="value" list="foo bar"></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function tagWithBooleanAttributesWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/booleanAttributes');
+        self::assertSame('<div foo></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function tagWithBooleanAttributesAndForbiddenEmptyAttributesWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/booleanAttributesAndForbiddenEmptyAttributes');
+        self::assertSame('<div foo=""></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function tagWithBooleanAndAllowEmptyAttributesAttributesWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/booleanAttributesAndAllowEmptyAttributes');
+        self::assertSame('<div foo></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
     public function tagWithContentFromNonFusionObjectWorks()
     {
         $view = $this->buildView();

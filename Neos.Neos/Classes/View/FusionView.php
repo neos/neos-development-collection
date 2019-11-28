@@ -72,7 +72,7 @@ class FusionView extends AbstractView
     /**
      * Renders the view
      *
-     * @return string The rendered view
+     * @return string|ResponseInterface The rendered view
      * @throws \Exception if no node is given
      * @api
      */
@@ -86,7 +86,8 @@ class FusionView extends AbstractView
         if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
             $currentLocale = new Locale($dimensions['language'][0]);
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
+            array_shift($dimensions['language']);
+            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => true, 'order' => $dimensions['language']]);
         }
 
         $fusionRuntime->pushContextArray([
@@ -108,7 +109,7 @@ class FusionView extends AbstractView
 
     /**
      * @param string $output
-     * @return mixed If output is a string with a HTTP preamble a ResponseInterface otherwise the original output.
+     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface otherwise the original output.
      */
     protected function parsePotentialRawHttpResponse($output)
     {

@@ -25,3 +25,11 @@
 		font-family: inherit;
 	}
 }
+
+@mixin clearfix {
+	&:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+}

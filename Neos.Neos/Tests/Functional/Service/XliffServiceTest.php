@@ -58,16 +58,16 @@ class XliffServiceTest extends FunctionalTestCase
         $mockPackageManager = $this->getMockBuilder(PackageManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $mockPackageManager->expects($this->any())
+        $mockPackageManager->expects(self::any())
             ->method('getFlowPackages')
-            ->will($this->returnValue($this->packages));
-        $mockPackageManager->expects($this->any())
+            ->will(self::returnValue($this->packages));
+        $mockPackageManager->expects(self::any())
             ->method('getPackage')
             ->with($this->logicalOr(
                 $this->equalTo('Vendor.BasePackage'),
                 $this->equalTo('Vendor.DependentPackage')
             ))
-            ->will($this->returnCallback([$this, 'myCallback']));
+            ->will(self::returnCallback([$this, 'myCallback']));
         $this->inject($this->xliffService, 'packageManager', $mockPackageManager);
         $this->inject($this->fileProvider, 'packageManager', $mockPackageManager);
 

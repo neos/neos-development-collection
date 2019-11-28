@@ -89,11 +89,11 @@ class ContentElementEditableServiceTest extends UnitTestCase
         $this->mockContentContext = $this->getMockBuilder(\Neos\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockNode = $this->getMockBuilder(\Neos\ContentRepository\Domain\Model\NodeInterface::class)->getMock();
-        $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
-        $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
+        $this->mockNode->expects(self::any())->method('getContext')->will(self::returnValue($this->mockContentContext));
+        $this->mockNode->expects(self::any())->method('getNodeType')->will(self::returnValue(new NodeType('Acme.Test:Headline', [], [])));
 
         $this->mockContext = ['node' => $this->mockNode];
-        $this->mockRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockContext));
+        $this->mockRuntime->expects(self::any())->method('getCurrentContext')->will(self::returnValue($this->mockContext));
     }
 
     /**
@@ -101,8 +101,8 @@ class ContentElementEditableServiceTest extends UnitTestCase
      */
     public function wrapContentPropertyDoesNotAddEditingMetaDataAttributesIfInLiveWorkspace()
     {
-        $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('live'));
-        $this->mockHtmlAugmenter->expects($this->never())->method('addAttributes');
+        $this->mockContentContext->expects(self::atLeastOnce())->method('getWorkspaceName')->will(self::returnValue('live'));
+        $this->mockHtmlAugmenter->expects(self::never())->method('addAttributes');
         $this->contentElementEditableService->wrapContentProperty($this->mockNode, 'someProperty', '<div>someRenderedPropertyValue</div>');
     }
 
@@ -111,9 +111,9 @@ class ContentElementEditableServiceTest extends UnitTestCase
      */
     public function wrapContentPropertyDoesNotAddEditingMetaDataAttributesIfUserHasNoAccessToBackend()
     {
-        $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-        $this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('Neos.Neos:Backend.GeneralAccess')->will($this->returnValue(false));
-        $this->mockHtmlAugmenter->expects($this->never())->method('addAttributes');
+        $this->mockContentContext->expects(self::atLeastOnce())->method('getWorkspaceName')->will(self::returnValue('not-live'));
+        $this->mockPrivilegeManager->expects(self::atLeastOnce())->method('isPrivilegeTargetGranted')->with('Neos.Neos:Backend.GeneralAccess')->will(self::returnValue(false));
+        $this->mockHtmlAugmenter->expects(self::never())->method('addAttributes');
         $this->contentElementEditableService->wrapContentProperty($this->mockNode, 'someProperty', '<div>someRenderedPropertyValue</div>');
     }
 
@@ -122,10 +122,10 @@ class ContentElementEditableServiceTest extends UnitTestCase
      */
     public function wrapContentPropertyAddsEditingMetaDataAttributesIfInUserWorkspaceAndUserHasAccessToBackendAndEditNodePrivilegeIsGranted()
     {
-        $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-        $this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('Neos.Neos:Backend.GeneralAccess')->will($this->returnValue(true));
-        $this->mockNodeAuthorizationService->expects($this->atLeastOnce())->method('isGrantedToEditNode')->will($this->returnValue(true));
-        $this->mockHtmlAugmenter->expects($this->atLeastOnce())->method('addAttributes');
+        $this->mockContentContext->expects(self::atLeastOnce())->method('getWorkspaceName')->will(self::returnValue('not-live'));
+        $this->mockPrivilegeManager->expects(self::atLeastOnce())->method('isPrivilegeTargetGranted')->with('Neos.Neos:Backend.GeneralAccess')->will(self::returnValue(true));
+        $this->mockNodeAuthorizationService->expects(self::atLeastOnce())->method('isGrantedToEditNode')->will(self::returnValue(true));
+        $this->mockHtmlAugmenter->expects(self::atLeastOnce())->method('addAttributes');
         $this->contentElementEditableService->wrapContentProperty($this->mockNode, 'someProperty', '<div>someRenderedPropertyValue</div>');
     }
 
@@ -134,10 +134,10 @@ class ContentElementEditableServiceTest extends UnitTestCase
      */
     public function wrapContentPropertyDoesNotAddEditingMetaDataIfEditNodePrivilegeIsNotGranted()
     {
-        $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-        $this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('Neos.Neos:Backend.GeneralAccess')->will($this->returnValue(true));
-        $this->mockNodeAuthorizationService->expects($this->atLeastOnce())->method('isGrantedToEditNode')->will($this->returnValue(false));
-        $this->mockHtmlAugmenter->expects($this->never())->method('addAttributes');
+        $this->mockContentContext->expects(self::atLeastOnce())->method('getWorkspaceName')->will(self::returnValue('not-live'));
+        $this->mockPrivilegeManager->expects(self::atLeastOnce())->method('isPrivilegeTargetGranted')->with('Neos.Neos:Backend.GeneralAccess')->will(self::returnValue(true));
+        $this->mockNodeAuthorizationService->expects(self::atLeastOnce())->method('isGrantedToEditNode')->will(self::returnValue(false));
+        $this->mockHtmlAugmenter->expects(self::never())->method('addAttributes');
         $this->contentElementEditableService->wrapContentProperty($this->mockNode, 'someProperty', '<div>someRenderedPropertyValue</div>');
     }
 }

@@ -11,17 +11,6 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		@position = 'start'
 		tagName = 'html'
 		omitClosingTag = true
-
-		attributes {
-			version = 'HTML+RDFa 1.1'
-			version.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-			xmlns = 'http://www.w3.org/1999/xhtml'
-			xmlns.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-			xmlns:typo3 = 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/'
-			xmlns:typo3.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-			xmlns:xsd = 'http://www.w3.org/2001/XMLSchema#'
-			xmlns:xsd.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-		}
 	}
 
 	headerComment = Neos.Fusion:Template {
@@ -51,42 +40,6 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		titleTag = Neos.Fusion:Tag {
 			tagName = 'title'
 			content = ${q(node).property('title')}
-		}
-
-		neosBackendHeader = Neos.Fusion:Value {
-			@position = 'end 10000'
-			value = Neos.Fusion:Template {
-				templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendHeaderData.html'
-				node = ${documentNode}
-
-				@cache {
-					mode = 'uncached'
-					context {
-						1 = 'documentNode'
-					}
-				}
-			}
-
-			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-		}
-
-
-		neosBackendEndpoints = Neos.Fusion:Value {
-			@position = 'end 10001'
-			value = Neos.Fusion:Template {
-				templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendEndpoints.html'
-				node = ${documentNode}
-				account = ${Security.getAccount()}
-
-				@cache {
-					mode = 'uncached'
-					context {
-						1 = 'documentNode'
-					}
-				}
-			}
-
-			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
 		# Link tags for stylesheets in the head should go here
@@ -121,12 +74,6 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		}
 	}
 
-	# Required for the backend to work.
-	neosBackendDocumentNodeData = Neos.Neos:DocumentMetadata {
-		@position = 'before body'
-		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-	}
-
 	# Content of the body tag. To be defined by the integrator.
 	body = Neos.Fusion:Template {
 		@position = 'after bodyTag'
@@ -138,25 +85,6 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		# This processor appends the rendered javascripts Array to the rendered template
 		@process.appendJavaScripts = ${value + this.javascripts}
 	}
-
-	# Required for the backend to work.
-	neosBackendContainer = Neos.Fusion:Value {
-		@position = 'before closingBodyTag'
-		value = Neos.Fusion:Template {
-			templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendContainer.html'
-			node = ${documentNode}
-
-			@cache {
-				mode = 'uncached'
-				context {
-					1 = 'documentNode'
-				}
-			}
-		}
-
-		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-	}
-
 
 	# This enables redirecting to the last visited page after login
 	lastVisitedNodeScript = Neos.Fusion:Tag {
@@ -170,13 +98,6 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 			}
 			async = true
 		}
-	}
-
-	neosBackendFooter = Neos.Fusion:Template {
-		@position = 'after lastVisitedNodeScript 10000'
-		templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendFooterData.html'
-		node = ${node}
-		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
 
 	closingBodyTag = '</body>'

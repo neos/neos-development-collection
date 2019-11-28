@@ -5,6 +5,18 @@
     main:
       type: 'Neos.Neos:ContentCollection'
 
+'Acme.Demo:TwoColumn':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Two column content'
+    group: 'structure'
+  childNodes:
+    column0:
+      type: 'Neos.Neos:ContentCollection'
+    column1:
+      type: 'Neos.Neos:ContentCollection'
+
 'Acme.Demo:ThreeColumn':
   superTypes:
     'Neos.Neos:Content': true
@@ -120,7 +132,7 @@
       type: 'Neos.Neos:ContentCollection'
       constraints:
         nodeTypes:
-          'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType': true
+          'Neos.Neos.BackendSchemaControllerTest:SimpleNodeType': true
     column1:
       type: 'Neos.Neos:ContentCollection'
       constraints:
@@ -130,25 +142,20 @@
           '*': true
 
 
-'Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType':
+'Neos.Neos.BackendSchemaControllerTest:ParentSimpleNodeType':
   properties:
     text:
+      type: string
+      defaultValue: 'Vanjie'
       ui:
-        aloha:
-          alignment:
-            'left': true
-            'center': true
-            'right': true
-            'justify': false
+        label: 'Ru String'
 
-'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType':
+'Neos.Neos.BackendSchemaControllerTest:SimpleNodeType':
   superTypes:
-    'Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType': true
+    'Neos.Neos.BackendSchemaControllerTest:ParentSimpleNodeType': true
   properties:
     text:
+      type: string
+      defaultValue: '0'
       ui:
-        aloha:
-          format:
-            'h3': true
-            'sup': true
-            'code': false
+        label: 'suddenly 0'

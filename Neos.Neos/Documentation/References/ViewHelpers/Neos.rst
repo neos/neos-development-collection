@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2019-05-06
+This reference was automatically generated from code on 2019-11-06
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -21,7 +21,7 @@ Renders a label for the given authentication provider identifier
 Arguments
 *********
 
-* ``identifier`` (string)
+* ``identifier`` (string): The identifier to render the label for
 
 
 
@@ -62,9 +62,9 @@ Generates a color code for a given string
 Arguments
 *********
 
-* ``string`` (string, *optional*)
+* ``string`` (string, *optional*): This is hashed (MD%) and then used as base for the resulting color, if not given the children are used
 
-* ``minimalBrightness`` (integer, *optional*)
+* ``minimalBrightness`` (integer, *optional*): Brightness, from 0 to 255
 
 
 
@@ -100,7 +100,7 @@ For performance reasons, this is done inside a ViewHelper instead of Fluid itsel
 Arguments
 *********
 
-* ``configuration`` (array)
+* ``configuration`` (array): Configuration to show
 
 
 
@@ -121,7 +121,7 @@ the Neos backend into a website.
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface)
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface): Node
 
 
 
@@ -154,7 +154,7 @@ Render a bread crumb path by using the labels of documents leading to the given 
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface): A node
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface): Node
 
 
 
@@ -167,19 +167,6 @@ neos:backend.interfaceLanguage
 ViewHelper for rendering the current backend users interface language.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Backend\\InterfaceLanguageViewHelper
-
-
-
-
-
-.. _`Neos ViewHelper Reference: neos:backend.javascriptBuiltVersion`:
-
-neos:backend.javascriptBuiltVersion
------------------------------------
-
-Returns a shortened md5 of the built JavaScript file
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\JavascriptBuiltVersionViewHelper
 
 
 
@@ -328,7 +315,7 @@ This ViewHelper is *WORK IN PROGRESS* and *NOT STABLE YET*
 Arguments
 *********
 
-* ``format`` (string, *optional*): Supported are "fullFirstName", "initials" and "fullName
+* ``format`` (string, *optional*): Supported are "fullFirstName", "initials" and "fullName"
 
 
 
@@ -375,12 +362,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``property`` (string): Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
-
-* ``tag`` (string, *optional*): The name of the tag that should be wrapped around the property. By default this is a <div>
-
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the Fusion context by default.
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -398,6 +379,12 @@ Arguments
 * ``tabindex`` (integer, *optional*): Specifies the tab order of this element
 
 * ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+* ``property`` (string): Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
+
+* ``tag`` (string, *optional*): The name of the tag that should be wrapped around the property. By default this is a <div>
+
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the Fusion context by default
 
 
 
@@ -424,7 +411,7 @@ templates. This is useful if you want to make properties of a custom document no
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the Fusion context by default.
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Node
 
 
 
@@ -444,7 +431,7 @@ View helper to check if a given value is an array.
 Arguments
 *********
 
-* ``value`` (mixed, *optional*): The value to determine the type of
+* ``value`` (mixed, *optional*): The value to get the type of
 
 
 
@@ -494,22 +481,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``path`` (string): Target module path
-
-* ``action`` (string, *optional*): Target module action
-
-* ``arguments`` (array, *optional*): Arguments
-
-* ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``format`` (string, *optional*): The requested format, e.g. ".html
-
-* ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
-
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
-
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -535,6 +506,22 @@ Arguments
 * ``rev`` (string, *optional*): Specifies the relationship between the linked document and the current document
 
 * ``target`` (string, *optional*): Specifies where to open the linked document
+
+* ``path`` (string): Target module path
+
+* ``action`` (string, *optional*): Target module action
+
+* ``arguments`` (array, *optional*): Arguments
+
+* ``section`` (string, *optional*): The anchor to be added to the URI
+
+* ``format`` (string, *optional*): The requested format, e.g. ".html"
+
+* ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
+
+* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
+
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 
 
@@ -595,26 +582,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``node`` (mixed, *optional*): A node object, a string node path (absolute or relative), a string node://-uri or NULL
-
-* ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json
-
-* ``absolute`` (boolean, *optional*): If set, an absolute URI is rendered
-
-* ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
-
-* ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
-
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
-
-* ``baseNodeName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
-
-* ``nodeVariableName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
-
-* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -640,6 +607,26 @@ Arguments
 * ``rev`` (string, *optional*): Specifies the relationship between the linked document and the current document
 
 * ``target`` (string, *optional*): Specifies where to open the linked document
+
+* ``node`` (mixed, *optional*): A node object, a string node path (absolute or relative), a string node://-uri or NULL
+
+* ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json"
+
+* ``absolute`` (boolean, *optional*): If set, an absolute URI is rendered
+
+* ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
+
+* ``section`` (string, *optional*): The anchor to be added to the URI
+
+* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
+
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
+
+* ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
+
+* ``nodeVariableName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
+
+* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself
 
 
 
@@ -741,7 +728,7 @@ ViewHelper to find the closest document node to a given node
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface)
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface): Node
 
 
 
@@ -761,7 +748,7 @@ ViewHelper to find out if Neos is rendering the backend.
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*)
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Node
 
 
 
@@ -927,7 +914,7 @@ the ViewHelper or have "node" set as template variable at least.
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*)
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Node
 
 
 
@@ -1015,17 +1002,17 @@ Arguments
 
 * ``action`` (string, *optional*): Target module action
 
-* ``arguments`` (array, *optional*): Arguments
+* ``arguments`` (string, *optional*): Arguments
 
 * ``section`` (string, *optional*): The anchor to be added to the URI
 
-* ``format`` (string, *optional*): The requested format, e.g. ".html
+* ``format`` (string, *optional*): The requested format, e.g. ".html"
 
-* ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
+* ``additionalParams`` (string, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
 
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
+* ``addQueryString`` (string, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
+* ``argumentsToBeExcludedFromQueryString`` (string, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 
 
@@ -1084,13 +1071,13 @@ Arguments
 
 * ``node`` (mixed, *optional*): A node object, a string node path (absolute or relative), a string node://-uri or NULL
 
-* ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json
+* ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json"
 
 * ``absolute`` (boolean, *optional*): If set, an absolute URI is rendered
 
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
-* ``section`` (string, *optional*)
+* ``section`` (string, *optional*): The anchor to be added to the URI
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 

@@ -42,15 +42,15 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
  *
  * Example (node type):
  *
- * 	q(node).find('[instanceof Neos.NodeTypes:Text]')
+ * 	q(node).find('[instanceof Acme.Com:Text]')
  *
  * Example (multiple node types):
  *
- * 	q(node).find('[instanceof Neos.NodeTypes:Text],[instanceof Neos.NodeTypes:Image]')
+ * 	q(node).find('[instanceof Acme.Com:Text],[instanceof Acme.Com:Image]')
  *
  * Example (node type with filter):
  *
- * 	q(node).find('[instanceof Neos.NodeTypes:Text][text*="Neos"]')
+ * 	q(node).find('[instanceof Acme.Com:Text][text*="Neos"]')
  *
  */
 class FindOperation extends AbstractOperation

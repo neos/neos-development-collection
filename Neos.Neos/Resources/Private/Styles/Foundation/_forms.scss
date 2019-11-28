@@ -117,15 +117,15 @@ input[type="color"],
 .neos-uneditable-input {
   background-color: $inputBackground;
   border: 1px solid $inputBorder;
-  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
-  @include transition(border linear .2s, box-shadow linear .2s);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  transition: border linear .2s, box-shadow linear .2s;
 
   // Focus state
   &:focus {
     border-color: rgba(82,168,236,.8);
     outline: 0;
     outline: thin dotted \9; /* IE6-9 */
-    @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6));
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
   }
 }
 
@@ -188,7 +188,7 @@ input[type="checkbox"]:focus {
   color: $grayLight;
   background-color: darken($inputBackground, 1%);
   border-color: $inputBorder;
-  @include box-shadow(inset 0 1px 2px rgba(0,0,0,.025));
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.025);
   cursor: not-allowed;
 }
 
@@ -373,7 +373,7 @@ select:focus:invalid {
   border-color: #ee5f5b;
   &:focus {
     border-color: darken(#ee5f5b, 10%);
-    @include box-shadow(0 0 6px lighten(#ee5f5b, 20%));
+    box-shadow: 0 0 6px lighten(#ee5f5b, 20%);
   }
 }
 
@@ -408,7 +408,6 @@ select:focus:invalid {
 
 .neos-help-inline {
   display: inline-block;
-  @include ie7-inline-block();
   vertical-align: middle;
   padding-left: 5px;
 }
@@ -443,7 +442,7 @@ select:focus:invalid {
     margin-bottom: 0; // prevent bottom margin from screwing up alignment in stacked forms
     *margin-left: 0;
     vertical-align: top;
-    @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
+    border-radius: 0 $inputBorderRadius $inputBorderRadius 0;
     // Make input on top when focused so blue border and shadow always show
     &:focus {
       z-index: 2;
@@ -467,7 +466,7 @@ select:focus:invalid {
   .neos-button,
   .neos-button-group > .neos-dropdown-toggle {
     vertical-align: top;
-    @include border-radius(0);
+    border-radius: 0;
   }
   .neos-active {
     background-color: lighten($green, 30);
@@ -483,7 +482,7 @@ select:focus:invalid {
   .neos-add-on:first-child,
   .neos-button:first-child {
     // FYI, `.neos-button:first-child` accounts for a button group that's prepended
-    @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
+    border-radius: $inputBorderRadius 0 0 $inputBorderRadius;
   }
 }
 
@@ -491,9 +490,9 @@ select:focus:invalid {
   input,
   select,
   .neos-uneditable-input {
-    @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
+    border-radius: $inputBorderRadius 0 0 $inputBorderRadius;
     + .neos-button-group .neos-button:last-child {
-      @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
+      border-radius: 0 $inputBorderRadius $inputBorderRadius 0;
     }
   }
   .neos-add-on,
@@ -504,7 +503,7 @@ select:focus:invalid {
   .neos-add-on:last-child,
   .neos-button:last-child,
   .neos-button-group:last-child > .neos-dropdown-toggle {
-    @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
+    border-radius: 0 $inputBorderRadius $inputBorderRadius 0;
   }
 }
 
@@ -513,20 +512,20 @@ select:focus:invalid {
   input,
   select,
   .neos-uneditable-input {
-    @include border-radius(0);
+    border-radius: 0;
     + .neos-button-group .neos-button {
-      @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
+      border-radius: 0 $inputBorderRadius $inputBorderRadius 0;
     }
   }
   .neos-add-on:first-child,
   .neos-button:first-child {
     margin-right: -1px;
-    @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
+    border-radius: $inputBorderRadius 0 0 $inputBorderRadius;
   }
   .neos-add-on:last-child,
   .neos-button:last-child {
     margin-left: -1px;
-    @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
+    border-radius: 0 $inputBorderRadius $inputBorderRadius 0;
   }
   .neos-button-group:first-child {
     margin-left: 0;
@@ -545,25 +544,25 @@ input.neos-search-query {
   padding-left: 14px;
   padding-left: 4px \9; /* IE7-8 doesn't have border-radius, so don't indent the padding */
   margin-bottom: 0; // Remove the default margin on all inputs
-  @include border-radius(15px);
+  border-radius: 15px;
 }
 
 /* Allow for input prepend/append in search forms */
 .neos-form-search .neos-input-append .neos-search-query,
 .neos-form-search .neos-input-prepend .neos-search-query {
-  @include border-radius(0); // Override due to specificity
+  border-radius: 0; // Override due to specificity
 }
 .neos-form-search .neos-input-append .neos-search-query {
-  @include border-radius(14px 0 0 14px);
+  border-radius: 14px 0 0 14px;
 }
 .neos-form-search .neos-input-append .neos-button {
-  @include border-radius(0 14px 14px 0);
+  border-radius: 0 14px 14px 0;
 }
 .neos-form-search .neos-input-prepend .neos-search-query {
-  @include border-radius(0 14px 14px 0);
+  border-radius: 0 14px 14px 0;
 }
 .neos-form-search .neos-input-prepend .neos-button {
-  @include border-radius(14px 0 0 14px);
+  border-radius: 14px 0 0 14px;
 }
 
 // HORIZONTAL & VERTICAL FORMS
@@ -583,7 +582,6 @@ input.neos-search-query {
   .neos-input-prepend,
   .neos-input-append {
     display: inline-block;
-    @include ie7-inline-block();
     margin-bottom: 0;
     vertical-align: middle;
   }
