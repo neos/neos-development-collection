@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target state="translated">Galvenais</target></trans-unit>
+			<target state="final">Galvenais</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">Metadati</target></trans-unit>
+			<target state="final">Metadati</target></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">Metadati</target></trans-unit>
+			<target state="final">Metadati</target></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target state="translated">Papildus info</target></trans-unit>
+			<target state="final">Papildus info</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target state="translated">Mainīt veidu</target></trans-unit>
+			<target state="final">Mainīt veidu</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target state="translated">Veids</target></trans-unit>
+			<target state="final">Veids</target></trans-unit>
     </body>
   </file>
 </xliff>

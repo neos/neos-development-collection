@@ -28,6 +28,8 @@ use Neos\Neos\Domain\Repository\SiteRepository;
  */
 class AssetCollectionController extends ActionController
 {
+    use AddFlashMessageTrait;
+
     /**
      * @Flow\Inject
      * @var AssetCollectionRepository

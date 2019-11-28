@@ -142,7 +142,7 @@ class AssetTest extends AbstractTest
         $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->setMethods(['findOneByLocalAssetIdentifier'])->getMock();
         $this->inject($asset, 'importedAssetRepository', $mockImportedAssetRepository);
 
-        $mockImportedAssetRepository->expects($this->atLeastOnce())->method('findOneByLocalAssetIdentifier')->with($asset->getIdentifier())->willReturn(null);
+        $mockImportedAssetRepository->expects(self::atLeastOnce())->method('findOneByLocalAssetIdentifier')->with($asset->getIdentifier())->willReturn(null);
         self::assertNull($asset->getAssetProxy());
     }
 

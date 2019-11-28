@@ -70,7 +70,7 @@
 			<target state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target state="needs-translation">View</target></trans-unit>
+			<target state="translated">Προβολή</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
 			<target state="needs-translation">View asset</target></trans-unit>
@@ -184,13 +184,13 @@
 			<target state="needs-translation">Thumbnail view</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target state="needs-translation">Connection error</target></trans-unit>
+			<target state="translated">Σφάλμα σύνδεσης</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="needs-translation">Media source</target></trans-unit>
+			<target state="translated">Πηγή πολυμέσων</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="needs-translation">Media sources</target></trans-unit>
+			<target state="translated">Πηγές πολυμέσων</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			<target state="needs-translation">Collections</target></trans-unit>

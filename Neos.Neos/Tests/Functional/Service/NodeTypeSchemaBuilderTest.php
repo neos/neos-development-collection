@@ -58,16 +58,19 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
      */
     public function nodeTypesContainCorrectSuperTypes()
     {
-        self::assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['nodeTypes']), 'AlohaNodeType');
+        self::assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:SimpleNodeType', $this->schema['nodeTypes']), 'SimpleNodeType');
 
-        $expectedSuperTypes = ['Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => true];
+        $expectedSuperTypes = ['Neos.Neos.BackendSchemaControllerTest:ParentSimpleNodeType' => true];
         $expectedPropertyConfiguration = [
-            'alignment' => ['left', 'center', 'right'],
-            'format' => ['h3', 'sup']
+            'type' => 'string',
+            'ui' => [
+                'label' => 'suddenly 0'
+            ],
+            'defaultValue' => '0'
         ];
 
-        self::assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['superTypes']);
-        self::assertEquals($expectedPropertyConfiguration, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha']);
+        self::assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:SimpleNodeType']['superTypes']);
+        self::assertEquals($expectedPropertyConfiguration, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:SimpleNodeType']['properties']['text']);
     }
 
     /**
@@ -82,22 +85,6 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         self::assertContains('Neos.Neos.BackendSchemaControllerTest:Page', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
         self::assertContains('Neos.Neos.BackendSchemaControllerTest:SubPage', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
         self::assertContains('Neos.Neos.BackendSchemaControllerTest:Text', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
-    }
-
-    /**
-     * @test
-     */
-    public function alohaUiConfigurationPartsAreActualArrayAndDontContainExcludedElements()
-    {
-        $alohaConfiguration = $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha'];
-        self::assertIsArray($alohaConfiguration['alignment']);
-        self::assertIsArray($alohaConfiguration['format']);
-
-        self::assertArrayNotHasKey('h3', $alohaConfiguration['format']);
-        self::assertArrayNotHasKey('sup', $alohaConfiguration['format']);
-
-        self::assertEquals(['left', 'center', 'right'], $alohaConfiguration['alignment']);
-        self::assertEquals(['h3', 'sup'], $alohaConfiguration['format']);
     }
 
     /**
@@ -120,6 +107,6 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     public function constraintsForNamedChildNodeTypesAreEvaluatedForANodeType()
     {
         self::assertFalse(array_key_exists('Neos.Neos.BackendSchemaControllerTest:SubPage', $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']));
-        self::assertContains('Neos.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']);
+        self::assertContains('Neos.Neos.BackendSchemaControllerTest:SimpleNodeType', $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']);
     }
 }

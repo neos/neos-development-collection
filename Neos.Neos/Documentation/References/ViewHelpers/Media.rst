@@ -3,7 +3,7 @@
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2019-05-06
+This reference was automatically generated from code on 2019-11-06
 
 
 .. _`Media ViewHelper Reference: neos.media:fileTypeIcon`:
@@ -25,16 +25,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``file`` (mixed, *optional*): The Asset object. DEPRECATED, use $asset instead!
-
-* ``asset`` (mixed, *optional*): An Asset object to determine the file type icon for. Alternatively $filename can be specified.
-
-* ``filename`` (string, *optional*):  A filename to determine the file type icon for. Alternatively $asset can be specified.
-
-* ``width`` (mixed, *optional*)
-
-* ``height`` (mixed, *optional*)
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -52,6 +42,14 @@ Arguments
 * ``tabindex`` (integer, *optional*): Specifies the tab order of this element
 
 * ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+* ``asset`` (Neos\Media\Domain\Model\AssetInterface, *optional*): An Asset object to determine the file type icon for. Alternatively $filename can be specified.
+
+* ``filename`` (string, *optional*): A filename to determine the file type icon for. Alternatively $asset can be specified.
+
+* ``width`` (integer, *optional*): Desired width of the icon
+
+* ``height`` (integer, *optional*): Desired height of the icon
 
 
 
@@ -102,10 +100,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``checked`` (boolean, *optional*): Specifies that the input element should be preselected
-
-* ``multiple`` (boolean, *optional*): Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)
-
 * ``name`` (string, *optional*): Name of input tag
 
 * ``value`` (mixed): Value of input tag. Required for checkboxes
@@ -133,6 +127,10 @@ Arguments
 * ``tabindex`` (integer, *optional*): Specifies the tab order of this element
 
 * ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+* ``checked`` (boolean, *optional*): Specifies that the input element should be preselected
+
+* ``multiple`` (boolean, *optional*): Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)
 
 
 
@@ -189,7 +187,7 @@ Renders a DateTime formatted relative to the current date
 Arguments
 *********
 
-* ``date`` (DateTime, *optional*)
+* ``date`` (DateTimeInterface, *optional*): The date to be formatted
 
 
 
@@ -212,28 +210,6 @@ Arguments
 * ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
-
-* ``image`` (Neos\Media\Domain\Model\ImageInterface, *optional*): The image to be rendered as an image
-
-* ``width`` (integer, *optional*): Desired width of the image
-
-* ``maximumWidth`` (integer, *optional*): Desired maximum width of the image
-
-* ``height`` (integer, *optional*): Desired height of the image
-
-* ``maximumHeight`` (integer, *optional*): Desired maximum height of the image
-
-* ``allowCropping`` (boolean, *optional*): Whether the image should be cropped if the given sizes would hurt the aspect ratio
-
-* ``allowUpScaling`` (boolean, *optional*): Whether the resulting image size might exceed the size of the original image
-
-* ``async`` (boolean, *optional*): Return asynchronous image URI in case the requested image does not exist already
-
-* ``preset`` (string, *optional*): Preset used to determine image configuration
-
-* ``quality`` (integer, *optional*): Image quality, from 0 to 100
-
-* ``format`` (string, *optional*): Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -258,6 +234,28 @@ Arguments
 * ``ismap`` (string, *optional*): Specifies an image as a server-side image-map. Rarely used. Look at usemap instead
 
 * ``usemap`` (string, *optional*): Specifies an image as a client-side image-map
+
+* ``image`` (Neos\Media\Domain\Model\ImageInterface, *optional*): The image to be rendered as an image
+
+* ``width`` (integer, *optional*): Desired width of the image
+
+* ``maximumWidth`` (integer, *optional*): Desired maximum width of the image
+
+* ``height`` (integer, *optional*): Desired height of the image
+
+* ``maximumHeight`` (integer, *optional*): Desired maximum height of the image
+
+* ``allowCropping`` (boolean, *optional*): Whether the image should be cropped if the given sizes would hurt the aspect ratio
+
+* ``allowUpScaling`` (boolean, *optional*): Whether the resulting image size might exceed the size of the original asset
+
+* ``async`` (boolean, *optional*): Return asynchronous image URI in case the requested image does not exist already
+
+* ``preset`` (string, *optional*): Preset used to determine image configuration
+
+* ``quality`` (integer, *optional*): Quality of the image, from 0 to 100
+
+* ``format`` (string, *optional*): Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
 
 
 
@@ -341,26 +339,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``asset`` (Neos\Media\Domain\Model\AssetInterface, *optional*): The asset to be rendered as a thumbnail
-
-* ``width`` (integer, *optional*): Desired width of the thumbnail
-
-* ``maximumWidth`` (integer, *optional*): Desired maximum width of the thumbnail
-
-* ``height`` (integer, *optional*): Desired height of the thumbnail
-
-* ``maximumHeight`` (integer, *optional*): Desired maximum height of the thumbnail
-
-* ``allowCropping`` (boolean, *optional*): Whether the thumbnail should be cropped if the given sizes would hurt the aspect ratio
-
-* ``allowUpScaling`` (boolean, *optional*): Whether the resulting thumbnail size might exceed the size of the original asset
-
-* ``async`` (boolean, *optional*): Return asynchronous image URI in case the requested image does not exist already
-
-* ``preset`` (string, *optional*): Preset used to determine image configuration
-
-* ``quality`` (integer, *optional*): Quality of the image
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -380,6 +358,26 @@ Arguments
 * ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
 
 * ``alt`` (string): Specifies an alternate text for an asset
+
+* ``asset`` (Neos\Media\Domain\Model\AssetInterface): The asset to be rendered as a thumbnail
+
+* ``width`` (integer, *optional*): Desired width of the thumbnail
+
+* ``maximumWidth`` (integer, *optional*): Desired maximum width of the thumbnail
+
+* ``height`` (integer, *optional*): Desired height of the thumbnail
+
+* ``maximumHeight`` (integer, *optional*): Desired maximum height of the thumbnail
+
+* ``allowCropping`` (boolean, *optional*): Whether the thumbnail should be cropped if the given sizes would hurt the aspect ratio
+
+* ``allowUpScaling`` (boolean, *optional*): Whether the resulting thumbnail size might exceed the size of the original asset
+
+* ``async`` (boolean, *optional*): Return asynchronous image URI in case the requested image does not exist already
+
+* ``preset`` (string, *optional*): Preset used to determine image configuration
+
+* ``quality`` (integer, *optional*): Quality of the image, from 0 to 100
 
 
 
@@ -459,7 +457,7 @@ Renders the src path of a thumbnail image of a given Neos.Media image instance
 Arguments
 *********
 
-* ``image`` (Neos\Media\Domain\Model\ImageInterface, *optional*): The image to retrieve the path from
+* ``image`` (Neos\Media\Domain\Model\ImageInterface, *optional*): The image to be rendered as an image
 
 * ``width`` (integer, *optional*): Desired width of the image
 
@@ -471,13 +469,13 @@ Arguments
 
 * ``allowCropping`` (boolean, *optional*): Whether the image should be cropped if the given sizes would hurt the aspect ratio
 
-* ``allowUpScaling`` (boolean, *optional*): Whether the resulting image size might exceed the size of the original image
+* ``allowUpScaling`` (boolean, *optional*): Whether the resulting image size might exceed the size of the original asset
 
 * ``async`` (boolean, *optional*): Return asynchronous image URI in case the requested image does not exist already
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
 
-* ``quality`` (integer, *optional*): Image quality, from 0 to 100
+* ``quality`` (integer, *optional*): Quality of the image, from 0 to 100
 
 * ``format`` (string, *optional*): Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
 
@@ -526,7 +524,7 @@ Renders the src path of a thumbnail image of a given Neos.Media asset instance
 Arguments
 *********
 
-* ``asset`` (Neos\Media\Domain\Model\AssetInterface, *optional*)
+* ``asset`` (Neos\Media\Domain\Model\AssetInterface): The asset to be rendered as a thumbnail
 
 * ``width`` (integer, *optional*): Desired width of the thumbnail
 

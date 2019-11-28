@@ -343,6 +343,25 @@ Example::
 		}
 	}
 
+.. _Neos_Fusion__Fragment:
+
+Neos.Fusion:Fragment
+--------------------
+
+A fragment is a component that renders the given `content` without additional markup.
+That way conditions can be defined for bigger chunks of afx instead of single tags.
+
+:content: (string) The value which gets rendered
+
+Example::
+
+	renderer = afx`
+		<Neos.Fusion:Fragment @if.isEnabled={props.enable}>
+			<h1>Example</h1>
+			<h2>Content</h2>
+		</Neos.Fusion:Fragment>
+	`
+
 .. _Neos_Fusion__Augmenter:
 
 Neos.Fusion:Augmenter
@@ -468,7 +487,8 @@ Render an HTML tag with attributes and optional body
 :omitClosingTag: (boolean) Whether to render the element ``content`` and the closing tag, defaults to ``FALSE``
 :selfClosingTag: (boolean) Whether the tag is a self-closing tag with no closing tag. Will be resolved from ``tagName`` by default, so default HTML tags are treated correctly.
 :content: (string) The inner content of the element, will only be rendered if the tag is not self-closing and the closing tag is not omitted
-:attributes: (:ref:`Neos_Fusion__Attributes`) Tag attributes
+:attributes: (iterable) Tag attributes as key-value pairs. Default is ``Neos.Fusion:DataStructure``. If a non iterable is returned the value is casted to string.
+:allowEmptyAttributes: (boolean) Whether empty attributes (HTML5 syntax) should be used for empty, false or null attribute values. By default this is ``true``
 
 Example:
 ^^^^^^^^
@@ -499,6 +519,10 @@ render the attributes of a tag. But it's also useful standalone to render extens
 
 :[key]: (string) A single attribute, array values are joined with whitespace. Boolean values will be rendered as an empty or absent attribute.
 :@allowEmpty: (boolean) Whether empty attributes (HTML5 syntax) should be used for empty, false or null attribute values
+
+.. note:: The ``Neos.Fusion:Attributes`` object is DEPRECATED in favor of a solution inside Neos.Fusion:Tag which takes attributes
+   as ``Neos.Fusion:DataStructure`` now. If you have to render attributes as string without a tag you can use
+   ``Neos.Fusion:Join`` with ``@glue` but you will have to concatenate array attributes yourself.
 
 Example:
 ^^^^^^^^
@@ -837,7 +861,7 @@ arbitrary logic.
 :controller: (array) The controller name (e.g. 'Registration')
 :action: (string) The action name, defaults to `'index'`
 :argumentNamespace: (string) Namespace for action arguments, will be resolved from node type by default
-:[key]: (mixed) Pass an internal argument to the controller action (access with argument name ``_key``)
+:[key]: (mixed) Pass an internal argument to the controller action (access with argument name ``__key``)
 
 Example::
 
@@ -845,6 +869,23 @@ Example::
 		package = 'My.Site'
 		controller = 'Registration'
 	}
+
+Example with argument passed to controller action::
+
+  prototype(My.Site:Registration) < prototype(Neos.Neos:Plugin) {
+    package = 'My.Site'
+    controller = 'Registration'
+    action = 'register'
+    additionalArgument = 'foo'
+  }
+
+Get argument in controller action::
+
+  public function registerAction()
+  {
+    $additionalArgument = $this->request->getInternalArgument('__additionalArgument');
+    [...]
+  }
 
 .. _Neos_Neos__Menu:
 

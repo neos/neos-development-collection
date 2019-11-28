@@ -8,7 +8,7 @@
 			margin-bottom: 0;
 			line-height: $unit;
 			font-size: inherit;
-			@include user-select(none);
+			user-select: none;
 		}
 
 		.fold-toggle {

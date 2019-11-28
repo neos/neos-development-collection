@@ -16,9 +16,9 @@ Feature: Publish user workspace
   Scenario: Publish a new ContentCollection with Content
     Given I am authenticated with role "Neos.Neos:Editor"
     When I create the following nodes:
-      | Path                                     | Node Type                      | Properties              | Workspace |
-      | /sites/example/main/twocol               | Neos.NodeTypes:TwoColumn | {}                      | user-demo |
-      | /sites/example/main/twocol/column0/text  | Neos.NodeTypes:Text      | {"text": "Hello world"} | user-demo |
+      | Path                                     | Node Type           | Properties              | Workspace |
+      | /sites/example/main/twocol               | Acme.Demo:TwoColumn | {}                      | user-demo |
+      | /sites/example/main/twocol/column0/text  | Acme.Demo:Text      | {"text": "Hello world"} | user-demo |
     And I publish the workspace "user-demo"
     And I get a node by path "/sites/example/main/twocol/column0/text" with the following context:
       | Workspace |
@@ -29,9 +29,9 @@ Feature: Publish user workspace
   Scenario: Unpublished nodes returns the correct count before publish
     Given I am authenticated with role "Neos.Neos:Editor"
     And I create the following nodes:
-      | Path                                     | Node Type                      | Properties              | Workspace |
-      | /sites/example/main/twocol               | Neos.NodeTypes:TwoColumn | {}                      | user-demo |
-      | /sites/example/main/twocol/column0/text  | Neos.NodeTypes:Text      | {"text": "Hello world"} | user-demo |
+      | Path                                     | Node Type           | Properties              | Workspace |
+      | /sites/example/main/twocol               | Acme.Demo:TwoColumn | {}                      | user-demo |
+      | /sites/example/main/twocol/column0/text  | Acme.Demo:Text      | {"text": "Hello world"} | user-demo |
     # We expect 4, the 2 column element with 2 columns (3) and the text element (1)
     Then I expect to have 4 unpublished nodes for the following context:
       | Workspace |
@@ -41,9 +41,9 @@ Feature: Publish user workspace
   Scenario: Unpublished nodes returns the correct count after publish
     Given I am authenticated with role "Neos.Neos:Editor"
     And I create the following nodes:
-      | Path                                     | Node Type                      | Properties              | Workspace |
-      | /sites/example/main/twocol              | Neos.NodeTypes:TwoColumn | {}                      | user-demo |
-      | /sites/example/main/twocol/column0/text | Neos.NodeTypes:Text      | {"text": "Hello world"} | user-demo |
+      | Path                                    | Node Type           | Properties              | Workspace |
+      | /sites/example/main/twocol              | Acme.Demo:TwoColumn | {}                      | user-demo |
+      | /sites/example/main/twocol/column0/text | Acme.Demo:Text      | {"text": "Hello world"} | user-demo |
     And I publish the workspace "user-demo"
     Then I expect to have 0 unpublished nodes for the following context:
       | Workspace |

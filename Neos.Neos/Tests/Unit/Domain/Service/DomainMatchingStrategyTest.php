@@ -27,7 +27,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
     public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly()
     {
         $mockDomains = [$this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock()];
-        $mockDomains[0]->expects($this->any())->method('getHostname')->will($this->returnValue('www.neos.io'));
+        $mockDomains[0]->expects(self::any())->method('getHostname')->will(self::returnValue('www.neos.io'));
         $expectedDomains = [$mockDomains[0]];
 
         $strategy = new DomainMatchingStrategy();

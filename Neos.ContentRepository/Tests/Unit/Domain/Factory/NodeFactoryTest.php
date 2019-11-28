@@ -108,7 +108,7 @@ class NodeFactoryTest extends UnitTestCase
         $this->inject($this->nodeFactory, 'contextFactory', $mockContextFactory);
 
         $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $mockNodeData->expects(self::any())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
+        $mockNodeData->expects(self::any())->method('getWorkspace')->will(self::returnValue($mockWorkspace));
         $mockNodeData->expects(self::any())->method('getDimensionValues')->willReturn($dimensionValues);
 
         $context = $this->nodeFactory->createContextMatchingNodeData($mockNodeData);

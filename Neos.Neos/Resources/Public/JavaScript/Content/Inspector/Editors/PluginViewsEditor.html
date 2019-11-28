@@ -1,5 +1,0 @@
-{{#if view.content.pageNode}}
-	<b>{{view.content.label}}</b> {{translate id='content.inspector.editors.pluginViewsEditor.displayedOnPage' fallback='view is displayed on page'}} <a href="{{unbound view.content.pageNode.uri}}" class="neos-link-ajax">{{view.content.pageNode.title}}</a>
-{{else}}
-	<b>{{view.content.label}}</b> {{translate id='content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage' fallback='view is displayed on current page'}}
-{{/if}}
