@@ -79,7 +79,7 @@ class NodeController extends ActionController
      *
      * @return void
      */
-    protected function initializeShowAction()
+    protected function initializeAction()
     {
         if ($this->arguments->hasArgument('node')
             && $this->request->hasArgument('showInvisible')
@@ -141,10 +141,9 @@ class NodeController extends ActionController
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setFusionPath('rawContent');
             }
-        }
-
-        if ($this->session->isStarted() && $inBackend) {
-            $this->session->putData('lastVisitedNode', $node->getContextPath());
+            if ($this->session->isStarted()) {
+                $this->session->putData('lastVisitedNode', $node->getContextPath());
+            }
         }
     }
 
