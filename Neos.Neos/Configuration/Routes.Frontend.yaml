@@ -4,7 +4,7 @@
 
 -
   name:          'Preview'
-  uriPattern:    'preview'
+  uriPattern:    'neos/preview'
   defaults:
     '@action':   'preview'
   appendExceedingArguments: true
