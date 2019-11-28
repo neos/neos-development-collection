@@ -14,7 +14,6 @@ menuPanelElements.forEach(panelElement => {
 const treeElements = document.querySelectorAll('.neos-tree-container');
 treeElements.forEach(treeElement => {
 	new Tree(treeElement);
-	console.log(treeElement);
 });
 
 
