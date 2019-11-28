@@ -361,7 +361,7 @@ The following options are allowed for defining a NodeType:
       ``editorListeners``
         Allows to observe changes of other properties in order to react to them. For details see :ref:`depending-properties`
 
-    ``showInCreationDialog``
+    ``showInCreationDialog`` (since Neos 5.1)
       If `true` the corresponding property will appear in the Node Creation Dialog. Editor configuration
       will be copied from the respective ``ui.inspector`` settings in that case and can be overridden with
       the ``creationDialog.elements.<propertyName>``, see `Node Creation Dialog Configuration`_
