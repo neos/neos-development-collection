@@ -361,6 +361,11 @@ The following options are allowed for defining a NodeType:
       ``editorListeners``
         Allows to observe changes of other properties in order to react to them. For details see :ref:`depending-properties`
 
+    ``showInCreationDialog``
+      If `true` the corresponding property will appear in the Node Creation Dialog. Editor configuration
+      will be copied from the respective ``ui.inspector`` settings in that case and can be overridden with
+      the ``creationDialog.elements.<propertyName>``, see :ref:`node-creation-dialog`
+
   ``validation``
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
