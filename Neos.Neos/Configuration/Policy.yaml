@@ -18,7 +18,10 @@ privilegeTargets:
       matcher: 'method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\ContentRepository\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
 
     'Neos.Neos:PublicFrontendAccess':
-      matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->(show|preview)Action())'
+      matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->showAction())'
+
+    'Neos.Neos:ContentPreview':
+      matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->previewAction())'
 
     'Neos.Neos:BackendLogin':
       matcher: 'method(Neos\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
@@ -169,6 +172,10 @@ roles:
     privileges:
       -
         privilegeTarget: 'Neos.Neos:Backend.GeneralAccess'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Neos:ContentPreview'
         permission: GRANT
 
       -
