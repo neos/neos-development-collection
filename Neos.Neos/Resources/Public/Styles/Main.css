@@ -40,10 +40,7 @@
 .neos .neos-modal-content .neos-modal-header .neos-close,
 .neos ul.neos-tree-container .neos-tree-node.neos-hidden span + span:after,
 .neos ul.neos-tree-container .neos-tree-node.neos-timedVisibility span + span:after,
-.neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-e .neos-tree-expander,
-.neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-ed .neos-tree-expander,
-.neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-el .neos-tree-expander,
-.neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-edl .neos-tree-expander,
+.neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander,
 .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
@@ -804,13 +801,13 @@ readers do not read off random characters that represent icons */
 .fa-car-side:before {
   content: "\f5e4"; }
 
-.fa-caret-down:before {
+.fa-caret-down:before, .neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander:before {
   content: "\f0d7"; }
 
 .fa-caret-left:before {
   content: "\f0d9"; }
 
-.fa-caret-right:before, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-e .neos-tree-expander:before, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-ed .neos-tree-expander:before, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-el .neos-tree-expander:before, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-edl .neos-tree-expander:before, .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander:before {
+.fa-caret-right:before, .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander:before {
   content: "\f0da"; }
 
 .fa-caret-square-down:before {
@@ -4424,10 +4421,7 @@ readers do not read off random characters that represent icons */
 .neos .neos-modal-content .neos-modal-header .neos-close,
 .neos ul.neos-tree-container .neos-tree-node.neos-hidden span + span:after,
 .neos ul.neos-tree-container .neos-tree-node.neos-timedVisibility span + span:after,
-.neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-e .neos-tree-expander,
-.neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-ed .neos-tree-expander,
-.neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-el .neos-tree-expander,
-.neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-edl .neos-tree-expander,
+.neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander,
 .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
@@ -7157,9 +7151,7 @@ readers do not read off random characters that represent icons */
       line-height: 24px;
       box-sizing: border-box;
       border-left: 3px solid transparent;
-      padding-left: 33px; }
-      .neos ul.neos-tree-container .neos-tree-node.neos-tree-folder {
-        padding-left: 9px; }
+      z-index: 10; }
       .neos ul.neos-tree-container .neos-tree-node.neos-hidden span + span:after {
         content: "\f057";
         position: absolute;
@@ -7195,7 +7187,7 @@ readers do not read off random characters that represent icons */
         .neos ul.neos-tree-container .neos-tree-node.neos-tree-focused a {
           color: #adadad; }
       .neos ul.neos-tree-container .neos-tree-node.neos-tree-active {
-        background-color: #323232; }
+        background: linear-gradient(to bottom, #323232 24px, #222 24px); }
         .neos ul.neos-tree-container .neos-tree-node.neos-tree-active span + span,
         .neos ul.neos-tree-container .neos-tree-node.neos-tree-active a {
           color: #fff; }
@@ -7215,11 +7207,15 @@ readers do not read off random characters that represent icons */
         height: 24px;
         vertical-align: top;
         color: #adadad; }
-      .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-e .neos-tree-expander, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-ed .neos-tree-expander, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-el .neos-tree-expander, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-edl .neos-tree-expander {
-        line-height: 24px;
-        rotate: 90deg; }
-        .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-e .neos-tree-expander:before, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-ed .neos-tree-expander:before, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-el .neos-tree-expander:before, .neos ul.neos-tree-container .neos-tree-node.neos-tree-exp-edl .neos-tree-expander:before {
-          left: 11px; }
+      .neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander {
+        display: inline-block;
+        line-height: 24px; }
+        .neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander:before {
+          left: 7px; }
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-node {
+        display: none; }
+      .neos ul.neos-tree-container .neos-tree-node.neos-tree-open > ul > .neos-tree-node {
+        display: block; }
       .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander {
         line-height: 24px;
         cursor: pointer;
@@ -7255,6 +7251,66 @@ readers do not read off random characters that represent icons */
         .neos ul.neos-tree-container .neos-tree-node a:hover, .neos ul.neos-tree-container .neos-tree-node a:focus {
           text-decoration: none;
           outline: none; }
+  .neos ul.neos-tree-container ul .neos-tree-node {
+    z-index: 10; }
+  .neos ul.neos-tree-container ul .neos-tree-node > span:first-child {
+    padding-left: 0px; }
+  .neos ul.neos-tree-container ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 24px; }
+  .neos ul.neos-tree-container ul ul .neos-tree-node {
+    z-index: 20; }
+  .neos ul.neos-tree-container ul ul .neos-tree-node > span:first-child {
+    padding-left: 9px; }
+  .neos ul.neos-tree-container ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 33px; }
+  .neos ul.neos-tree-container ul ul ul .neos-tree-node {
+    z-index: 30; }
+  .neos ul.neos-tree-container ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 21px; }
+  .neos ul.neos-tree-container ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 45px; }
+  .neos ul.neos-tree-container ul ul ul ul .neos-tree-node {
+    z-index: 40; }
+  .neos ul.neos-tree-container ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 33px; }
+  .neos ul.neos-tree-container ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 57px; }
+  .neos ul.neos-tree-container ul ul ul ul ul .neos-tree-node {
+    z-index: 50; }
+  .neos ul.neos-tree-container ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 45px; }
+  .neos ul.neos-tree-container ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 69px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node {
+    z-index: 60; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 57px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 81px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node {
+    z-index: 70; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 69px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 93px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul .neos-tree-node {
+    z-index: 80; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 81px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 105px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul .neos-tree-node {
+    z-index: 90; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 93px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 117px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul ul .neos-tree-node {
+    z-index: 100; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 105px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 129px; }
   .neos form {
     text-align: left;
     margin: 0px;
