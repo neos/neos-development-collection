@@ -14,6 +14,7 @@ namespace Neos\Neos\Controller\Frontend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\Exception\SessionNotStartedException;
@@ -75,22 +76,6 @@ class NodeController extends ActionController
     protected $propertyMapper;
 
     /**
-     * Allow invisible nodes to be redirected to
-     *
-     * @return void
-     */
-    protected function initializeAction()
-    {
-        if ($this->arguments->hasArgument('node')
-            && $this->request->hasArgument('showInvisible')
-            && (bool)$this->request->getArgument('showInvisible')
-            && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
-        ) {
-            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN, true);
-        }
-    }
-
-    /**
      * Shows the specified node and takes visibility and access restrictions into
      * account.
      *
@@ -111,6 +96,19 @@ class NodeController extends ActionController
         }
 
         $this->view->assign('value', $node);
+    }
+
+    /**
+     * Allow invisible nodes to be previewed
+     *
+     * @return void
+     * @throws NoSuchArgumentException
+     */
+    protected function initializePreviewAction(): void
+    {
+        if ($this->arguments->hasArgument('node') && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN, true);
+        }
     }
 
     /**
