@@ -21,7 +21,7 @@ const loadStorageData = (path, defaultValue) => {
 			isNil(defaultValue) ? null : defaultValue
 		);
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(initialStorageData));
-		return initialStorageData;
+		return getCollectionValueByPath(initialStorageData, path);;
 	}
 
 	return storageData;
