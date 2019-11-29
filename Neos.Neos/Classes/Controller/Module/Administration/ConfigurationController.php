@@ -55,7 +55,12 @@ class ConfigurationController extends AbstractModuleController
         ]);
 
         if (in_array($type, $availableConfigurationTypes)) {
-            $this->view->assign('configuration', $this->configurationManager->getConfiguration($type));
+            $this->view->assignMultiple(
+                [
+                    'configuration' => $this->configurationManager->getConfiguration($type),
+                    'type' => strtolower($type)
+                ]
+            );
 
             try {
                 $this->view->assign('validationResult', $this->configurationSchemaValidator->validate($type));
