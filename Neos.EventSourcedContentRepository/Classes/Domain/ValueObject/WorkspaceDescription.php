@@ -35,6 +35,11 @@ class WorkspaceDescription implements \JsonSerializable
         $this->setDescription($description);
     }
 
+    public static function fromString(string $value): self
+    {
+        return new static($value);
+    }
+
     /**
      * @param string $description
      */
