@@ -302,8 +302,7 @@ class LinkingService
 
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
-        #$action = $node->getContext()->isLive() ? 'show' : 'preview';
-        $action = $resolvedNode->getContext()->getWorkspace()->isPublicWorkspace() ? 'show' : 'preview';
+        $action = $resolvedNode->getContext()->getWorkspace()->isPublicWorkspace() && !$resolvedNode->isHidden() ? 'show' : 'preview';
         $uri = $uriBuilder
             ->reset()
             ->setSection($section)
