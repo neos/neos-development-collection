@@ -118,6 +118,7 @@ class DataStructureImplementationTest extends UnitTestCase
     public function evaluateRendersKeysSortedByPositionMetaProperty($message, $subElements, $expectedKeyOrder)
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+        $mockRuntime->method('canRender')->willReturn(true);
 
         $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
             $renderedPaths[] = $path;
