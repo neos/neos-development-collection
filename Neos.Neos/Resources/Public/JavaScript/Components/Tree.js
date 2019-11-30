@@ -1,4 +1,4 @@
-import { isNil, isEmpty, createCollectionByPath } from "../Helper";
+import { isNil, isEmpty } from "../Helper";
 import { loadStorageData, saveStorageData } from "../Services/Storage";
 
 const VALUE_PATH = "module.configuration";
@@ -81,7 +81,6 @@ export default class Tree {
 	}
 
 	_toggle(node) {
-		// @todo save node state in session
 		node.classList.toggle("neos-tree-open");
 		this._changeTreeBranchState(
 			node.getAttribute("title"),
