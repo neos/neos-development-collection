@@ -99,7 +99,9 @@ export default class Tree {
 		if (!isNil(init) && init === true) {
 			this._initializeTreeState(storageData);
 		}
-		return !Array.isArray(storageData) ? storageData : [];
+
+		this._treeBranchStates = Array.isArray(storageData) ? storageData : [];
+		return this._treeBranchStates;
 	}
 
 	_saveTreeBranchStates() {
