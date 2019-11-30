@@ -27,4 +27,4 @@ indent_style = tab
 
 # SASS should use tabs, to reduce conflicts
 [*.scss]
-indent_style = space
+indent_style = tab
