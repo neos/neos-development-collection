@@ -17,7 +17,8 @@ export default class Tree {
 			if (_node.firstChild.nodeName.toLowerCase() !== "ul") {
 				this._wrapElementWithNodeTitle(_node.firstChild);
 			}
-			if (this._isFolder(_node)) {
+			const hasSubnodes = _node.querySelectorAll(".neos-tree-node");
+			if (this._isFolder(_node) && !isNil(hasSubnodes) && hasSubnodes.length > 0) {
 				const expandIcon = this._createExpandIcon();
 				_node.insertBefore(expandIcon, _node.firstChild);
 			}
