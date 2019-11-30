@@ -26,7 +26,7 @@
       "neos/demo": "@dev",
 
       "neos/neos-ui": "dev-event-sourced-patch as dev-master",
-      "neos/neos-ui-compiled": "@dev",
+      "neos/neos-ui-compiled": "dev-master as dev-event-sourced-patch",
 
       "neos/party": "@dev",
       "neos/seo": "@dev",
