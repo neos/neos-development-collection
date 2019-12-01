@@ -126,6 +126,11 @@ class PluginViewImplementation extends PluginImplementation
             return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment() ? '<p>' . $message . '</p>' : '<!-- ' . $message . '-->';
         }
         $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
+
+        foreach ($pluginResponse->getHeaders()->getAll() as $key => $value) {
+            $parentResponse->getHeaders()->set($key, $value, true);
+        }
+
         return $pluginResponse->getContent();
     }
 }
