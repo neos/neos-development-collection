@@ -775,7 +775,7 @@
 			<target state="translated">打ち間違い</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
-			<target state="needs-translation">Link</target></trans-unit>
+			<target state="translated">リンク</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
 			<target state="translated">順序付きリスト</target></trans-unit>
