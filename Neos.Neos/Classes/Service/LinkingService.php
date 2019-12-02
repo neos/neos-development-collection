@@ -244,6 +244,7 @@ class LinkingService
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      * @throws HttpException
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
     {
@@ -301,6 +302,7 @@ class LinkingService
 
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
+        $action = $resolvedNode->getContext()->getWorkspace()->isPublicWorkspace() && !$resolvedNode->isHidden() ? 'show' : 'preview';
         $uri = $uriBuilder
             ->reset()
             ->setSection($section)
@@ -308,7 +310,7 @@ class LinkingService
             ->setAddQueryString($addQueryString)
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
             ->setFormat($format ?: $request->getFormat())
-            ->uriFor('show', ['node' => $resolvedNode], 'Frontend\Node', 'Neos.Neos');
+            ->uriFor($action, ['node' => $resolvedNode], 'Frontend\Node', 'Neos.Neos');
 
         $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
         if ($siteNode instanceof NodeInterface && NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
