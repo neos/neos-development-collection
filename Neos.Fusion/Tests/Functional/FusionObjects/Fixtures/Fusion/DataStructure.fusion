@@ -98,3 +98,12 @@ dataStructure.nestingWithAndWithoutObjectName = Neos.Fusion:DataStructure {
   }
   keyWithValue = 789
 }
+
+dataStructure.nestingWithNonExistingChildObject = Neos.Fusion:DataStructure {
+  keyWithoutType {
+    bar {
+      baz = 123
+    }
+  }
+  errorProperty = Some.NonExisting:Prototype
+}

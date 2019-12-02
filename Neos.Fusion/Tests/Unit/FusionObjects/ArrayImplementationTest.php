@@ -26,7 +26,6 @@ class ArrayImplementationTest extends UnitTestCase
     public function evaluateWithEmptyArrayRendersNull()
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $mockRuntime->method('canRender')->willReturn(true);
         $path = 'array/test';
         $fusionObjectName = 'Neos.Fusion:Array';
         $renderer = new ArrayImplementation($mockRuntime, $path, $fusionObjectName);
@@ -119,7 +118,6 @@ class ArrayImplementationTest extends UnitTestCase
     public function evaluateRendersKeysSortedByPositionMetaProperty($message, $subElements, $expectedKeyOrder)
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $mockRuntime->method('canRender')->willReturn(true);
 
         $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
             $renderedPaths[] = $path;
