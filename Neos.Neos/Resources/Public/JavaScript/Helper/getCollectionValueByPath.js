@@ -6,6 +6,9 @@ const getCollectionValueByPath = (collection, path) => {
 	}
 
 	return path.split('.').reduce((value, index) => {
+		if (isNil(value)) {
+			return null;
+		}
 		return value[index];
 	}, collection);
 };

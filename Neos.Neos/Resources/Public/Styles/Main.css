@@ -38,13 +38,10 @@
 .neos .neos-button[class*=" fa-"],
 .neos .neos-modal .neos-modal-header .neos-close,
 .neos .neos-modal-content .neos-modal-header .neos-close,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander,
-.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
+.neos ul.neos-tree-container .neos-tree-node.neos-hidden span + span:after,
+.neos ul.neos-tree-container .neos-tree-node.neos-timedVisibility span + span:after,
+.neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander,
+.neos ul.neos-tree-container .neos-tree-node .neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after,
@@ -144,9 +141,9 @@
 .neos .fa-pull-left.neos-button[class*=" fa-"],
 .neos .neos-modal .neos-modal-header .fa-pull-left.neos-close,
 .neos .neos-modal-content .neos-modal-header .fa-pull-left.neos-close,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span.fa-pull-left:after,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span.fa-pull-left:after,
-.neos ul.neos-dynatree-container .neos-dynatree-node .fa-pull-left.neos-dynatree-expander,
+.neos ul.neos-tree-container .neos-tree-node.neos-hidden span + span.fa-pull-left:after,
+.neos ul.neos-tree-container .neos-tree-node.neos-timedVisibility span + span.fa-pull-left:after,
+.neos ul.neos-tree-container .neos-tree-node .fa-pull-left.neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-left::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-left::before,
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div.fa-pull-left:after,
@@ -170,9 +167,9 @@
 .neos .fa-pull-right.neos-button[class*=" fa-"],
 .neos .neos-modal .neos-modal-header .fa-pull-right.neos-close,
 .neos .neos-modal-content .neos-modal-header .fa-pull-right.neos-close,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span.fa-pull-right:after,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span.fa-pull-right:after,
-.neos ul.neos-dynatree-container .neos-dynatree-node .fa-pull-right.neos-dynatree-expander,
+.neos ul.neos-tree-container .neos-tree-node.neos-hidden span + span.fa-pull-right:after,
+.neos ul.neos-tree-container .neos-tree-node.neos-timedVisibility span + span.fa-pull-right:after,
+.neos ul.neos-tree-container .neos-tree-node .fa-pull-right.neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-right::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-right::before,
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div.fa-pull-right:after,
@@ -804,13 +801,13 @@ readers do not read off random characters that represent icons */
 .fa-car-side:before {
   content: "\f5e4"; }
 
-.fa-caret-down:before {
+.fa-caret-down:before, .neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander:before {
   content: "\f0d7"; }
 
 .fa-caret-left:before {
   content: "\f0d9"; }
 
-.fa-caret-right:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+.fa-caret-right:before, .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander:before {
   content: "\f0da"; }
 
 .fa-caret-square-down:before {
@@ -4422,13 +4419,10 @@ readers do not read off random characters that represent icons */
 .neos .neos-button[class*=" fa-"],
 .neos .neos-modal .neos-modal-header .neos-close,
 .neos .neos-modal-content .neos-modal-header .neos-close,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander,
-.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander,
-.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
+.neos ul.neos-tree-container .neos-tree-node.neos-hidden span + span:after,
+.neos ul.neos-tree-container .neos-tree-node.neos-timedVisibility span + span:after,
+.neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander,
+.neos ul.neos-tree-container .neos-tree-node .neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after,
@@ -7141,7 +7135,7 @@ readers do not read off random characters that represent icons */
     .neos button, .neos .button {
       transition: none;
       box-shadow: none; } }
-  .neos ul.neos-dynatree-container {
+  .neos ul.neos-tree-container {
     padding: 0;
     margin: 0;
     background-color: transparent;
@@ -7150,32 +7144,15 @@ readers do not read off random characters that represent icons */
     height: 100%;
     white-space: nowrap;
     display: table; }
-    .neos ul.neos-dynatree-container.neos-dynatree-no-connector > li > span span {
-      display: inline-block;
-      width: 24px;
-      height: 24px;
-      line-height: 20px;
-      vertical-align: middle;
-      text-align: center;
-      cursor: pointer;
-      position: relative; }
-    .neos ul.neos-dynatree-container.neos-dynatree-no-connector > li > span.neos-dynatree-loading span {
-      vertical-align: middle;
-      background-image: url(data:image/gif;base64,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);
-      background-repeat: no-repeat;
-      background-position: 5px 3px; }
-      .neos ul.neos-dynatree-container.neos-dynatree-no-connector > li > span.neos-dynatree-loading span:before {
-        display: none; }
-    .neos ul.neos-dynatree-container .neos-dynatree-node {
-      display: table-cell;
+    .neos ul.neos-tree-container .neos-tree-node {
       min-width: 100%;
-      float: left;
       position: relative;
       height: 24px;
       line-height: 24px;
       box-sizing: border-box;
-      border-left: 3px solid transparent; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after {
+      border-left: 3px solid transparent;
+      z-index: 10; }
+      .neos ul.neos-tree-container .neos-tree-node.neos-hidden span + span:after {
         content: "\f057";
         position: absolute;
         left: 12px;
@@ -7188,7 +7165,7 @@ readers do not read off random characters that represent icons */
         margin-top: 11px;
         line-height: 9px;
         border-radius: 10px; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after {
+      .neos ul.neos-tree-container .neos-tree-node.neos-timedVisibility span + span:after {
         content: "\f017";
         font-weight: 400;
         position: absolute;
@@ -7202,63 +7179,53 @@ readers do not read off random characters that represent icons */
         margin-top: 11px;
         line-height: 9px;
         border-radius: 10px; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-hiddenInIndex span + span {
-        opacity: .5; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-focused {
+      .neos ul.neos-tree-container .neos-tree-node.neos-hiddenInIndex span + span {
+        opacity: 0.5; }
+      .neos ul.neos-tree-container .neos-tree-node.neos-tree-focused {
         background-color: #323232; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-focused span + span,
-        .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-focused a {
+        .neos ul.neos-tree-container .neos-tree-node.neos-tree-focused span + span,
+        .neos ul.neos-tree-container .neos-tree-node.neos-tree-focused a {
           color: #adadad; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active {
-        background-color: #323232; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active span + span,
-        .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active a {
+      .neos ul.neos-tree-container .neos-tree-node.neos-tree-active {
+        background: linear-gradient(to bottom, #323232 24px, #222 24px); }
+        .neos ul.neos-tree-container .neos-tree-node.neos-tree-active span + span,
+        .neos ul.neos-tree-container .neos-tree-node.neos-tree-active a {
           color: #fff; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-dirty {
+      .neos ul.neos-tree-container .neos-tree-node.neos-tree-dirty {
         border-left: 3px solid #ff8700; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-empty,
-      .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-vline,
-      .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-connector,
-      .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
-      .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-icon,
-      .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-checkbox,
-      .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-radio,
-      .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-drag-helper-img,
-      .neos ul.neos-dynatree-container .neos-dynatree-node #neos-dynatree-drop-marker {
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-empty,
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-vline,
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-connector,
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander,
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-icon,
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-checkbox,
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-radio,
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-drag-helper-img,
+      .neos ul.neos-tree-container .neos-tree-node #neos-tree-drop-marker {
         display: inline-block;
         width: 24px;
         height: 24px;
         vertical-align: top;
         color: #adadad; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander {
-        line-height: 24px;
-        -webkit-transform: rotate(90deg);
-        -moz-transform: rotate(90deg);
-        -ms-transform: rotate(90deg);
-        -o-transform: rotate(90deg);
-        transform: rotate(90deg); }
-        .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before {
-          left: 11px; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-connector,
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-expander {
-        vertical-align: middle;
-        background-image: url(data:image/gif;base64,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);
-        background-repeat: no-repeat;
-        background-position: 5px 4px;
-        rotate: 0; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-connector:before,
-        .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-expander:before {
-          display: none; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander {
+      .neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander {
+        display: inline-block;
+        line-height: 24px; }
+        .neos ul.neos-tree-container .neos-tree-node.neos-tree-open > .neos-tree-expander:before {
+          left: 7px; }
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-node {
+        display: none; }
+      .neos ul.neos-tree-container .neos-tree-node.neos-tree-open > ul > .neos-tree-node {
+        display: block; }
+      .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander {
         line-height: 24px;
         cursor: pointer;
         font-size: 16px; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+        .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander:before {
           position: relative;
           left: 10px; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:hover {
+        .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander:hover {
           color: #00b5ff; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node span + span {
+      .neos ul.neos-tree-container .neos-tree-node span + span {
         display: inline-block;
         width: 24px;
         height: 24px;
@@ -7267,45 +7234,9 @@ readers do not read off random characters that represent icons */
         text-align: center;
         cursor: pointer;
         position: relative; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-selected a {
+      .neos ul.neos-tree-container .neos-tree-node.neos-tree-selected a {
         color: #00b5ff; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drag-source {
-        background-color: #323232;
-        opacity: .5; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-before:after, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-after:after {
-        width: 100%;
-        height: 2px;
-        margin-left: 30px;
-        position: absolute;
-        content: ""; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-before:after {
-        top: 0; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-after:after {
-        bottom: 0; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) {
-        background-color: #00b5ff; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) span + span,
-        .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) a {
-          color: #fff; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-before:after, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-after:after {
-        display: block;
-        background-color: #00b5ff; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject {
-        cursor: not-allowed !important; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject .neos-dynatree-expander,
-        .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject span + span,
-        .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject a {
-          cursor: not-allowed !important; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drag-source:hover, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) {
-          background-color: #ff460d; }
-          .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drag-source:hover span + span,
-          .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drag-source:hover a, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) span + span,
-          .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) a {
-            color: #fff; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drop-before:after, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drop-after:after {
-          display: block;
-          background-color: #ff460d; }
-      .neos ul.neos-dynatree-container .neos-dynatree-node a {
+      .neos ul.neos-tree-container .neos-tree-node a {
         display: inline-block;
         color: #fff;
         vertical-align: top;
@@ -7317,55 +7248,69 @@ readers do not read off random characters that represent icons */
         padding-right: 8px;
         font-size: 14px;
         text-shadow: none; }
-        .neos ul.neos-dynatree-container .neos-dynatree-node a:hover, .neos ul.neos-dynatree-container .neos-dynatree-node a:focus {
+        .neos ul.neos-tree-container .neos-tree-node a:hover, .neos ul.neos-tree-container .neos-tree-node a:focus {
           text-decoration: none;
           outline: none; }
-    .neos ul.neos-dynatree-container ul .neos-dynatree-node {
-      padding-left: 0; }
-    .neos ul.neos-dynatree-container ul ul .neos-dynatree-node {
-      padding-left: 9px; }
-    .neos ul.neos-dynatree-container ul ul ul .neos-dynatree-node {
-      padding-left: 21px; }
-    .neos ul.neos-dynatree-container ul ul ul ul .neos-dynatree-node {
-      padding-left: 33px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 45px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 57px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 69px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 81px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 93px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 105px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 117px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 129px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 141px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 153px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 165px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 177px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 189px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 201px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 213px; }
-    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-      padding-left: 225px; }
-  .neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node {
-    cursor: move; }
-    .neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
-    .neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node span + span,
-    .neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node a {
-      cursor: move; }
+  .neos ul.neos-tree-container ul .neos-tree-node {
+    z-index: 10; }
+  .neos ul.neos-tree-container ul .neos-tree-node > span:first-child {
+    padding-left: 0px; }
+  .neos ul.neos-tree-container ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 24px; }
+  .neos ul.neos-tree-container ul ul .neos-tree-node {
+    z-index: 20; }
+  .neos ul.neos-tree-container ul ul .neos-tree-node > span:first-child {
+    padding-left: 9px; }
+  .neos ul.neos-tree-container ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 33px; }
+  .neos ul.neos-tree-container ul ul ul .neos-tree-node {
+    z-index: 30; }
+  .neos ul.neos-tree-container ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 21px; }
+  .neos ul.neos-tree-container ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 45px; }
+  .neos ul.neos-tree-container ul ul ul ul .neos-tree-node {
+    z-index: 40; }
+  .neos ul.neos-tree-container ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 33px; }
+  .neos ul.neos-tree-container ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 57px; }
+  .neos ul.neos-tree-container ul ul ul ul ul .neos-tree-node {
+    z-index: 50; }
+  .neos ul.neos-tree-container ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 45px; }
+  .neos ul.neos-tree-container ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 69px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node {
+    z-index: 60; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 57px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 81px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node {
+    z-index: 70; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 69px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 93px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul .neos-tree-node {
+    z-index: 80; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 81px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 105px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul .neos-tree-node {
+    z-index: 90; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 93px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 117px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul ul .neos-tree-node {
+    z-index: 100; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
+    padding-left: 105px; }
+  .neos ul.neos-tree-container ul ul ul ul ul ul ul ul ul ul .neos-tree-node > span:first-child.neos-tree-title {
+    padding-left: 129px; }
   .neos form {
     text-align: left;
     margin: 0px;
@@ -8177,26 +8122,24 @@ readers do not read off random characters that represent icons */
     color: #fff;
     margin: 0;
     /* wrapper for dark background */ }
-    .neos.neos-module.neos-module-administration-configuration #configuration > ul {
-      display: none; }
-      .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container {
-        display: block; }
-        .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container > li > span {
+    .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-tree-container {
+      display: block; }
+      .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-tree-container > li > span {
+        display: none; }
+      .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-tree-container .neos-tree-node {
+        cursor: pointer;
+        height: auto; }
+        .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-tree-container .neos-tree-node.neos-tree-folder .neos-tree-title {
+          user-select: none; }
+        .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-tree-container .neos-tree-node .neos-tree-icon {
           display: none; }
-        .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container .neos-dynatree-node {
-          cursor: pointer;
-          height: auto; }
-          .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-folder .neos-dynatree-title {
-            user-select: none; }
-          .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-icon {
-            display: none; }
-          .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-title {
-            width: calc(100% - 24px);
-            height: auto;
-            white-space: normal;
-            text-align: left;
-            word-break: break-word;
-            word-wrap: break-word; }
+        .neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-tree-container .neos-tree-node .neos-tree-title {
+          width: calc(100% - 24px);
+          height: auto;
+          white-space: normal;
+          text-align: left;
+          word-break: break-word;
+          word-wrap: break-word; }
     .neos.neos-module.neos-module-administration-configuration #configuration .key,
     .neos.neos-module.neos-module-administration-configuration #configuration .value {
       display: inline; }
