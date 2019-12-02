@@ -16,3 +16,6 @@ indent_size = 4
 # JS should use tabs, to reduce conflicts
 [*.js]
 indent_style = tab
+
+[*.scss]
+indent_style = tab
