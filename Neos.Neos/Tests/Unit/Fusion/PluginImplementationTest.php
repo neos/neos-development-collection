@@ -109,6 +109,8 @@ class PluginImplementationTest extends UnitTestCase
             $this->_setHeadersIntoResponse($response, $input['plugin']);
         }));
 
+        $this->mockRuntime->expects($this->any())->method('getCurrentContext')->willReturn(['node' => null, 'documentNode' => null]);
+
         $this->pluginImplementation->evaluate();
 
         foreach ($expected as $expectedKey => $expectedValue) {
