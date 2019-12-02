@@ -297,8 +297,12 @@ final class WorkspaceCommandHandler
             $event = $eventEnvelope->getDomainEvent();
             if ($event instanceof CopyableAcrossContentStreamsInterface) {
                 $events = $events->appendEvent(
+                    // We need to add the event metadata here for rebasing in nested workspace situations (and for exporting)
                     DecoratedEvent::addIdentifier(
-                        $event->createCopyForContentStream($baseContentStreamIdentifier),
+                        DecoratedEvent::addMetadata(
+                            $event->createCopyForContentStream($baseContentStreamIdentifier),
+                            $eventEnvelope->getRawEvent()->getMetadata()
+                        ),
                         Uuid::uuid4()->toString()
                     )
                 );

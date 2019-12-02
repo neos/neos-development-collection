@@ -74,17 +74,11 @@ Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEve
           1:
             value: 'ContentRepository'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Neos\EventSourcedContentRepository\Command\ContentStreamCommandController:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
