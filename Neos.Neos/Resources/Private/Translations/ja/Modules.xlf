@@ -603,13 +603,13 @@
 			<target state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			<target state="needs-translation">No sites available</target></trans-unit>
+			<target state="translated">サイトはありません</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
-			<target state="needs-translation">New site</target></trans-unit>
+			<target state="translated">新しいサイト</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
@@ -621,16 +621,16 @@
 			<target state="translated">ドメインの編集</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">ドメインデータ</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
-			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
+			<target state="translated">例えば www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
-			<target state="needs-translation">State</target></trans-unit>
+			<target state="translated">状態</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
-			<target state="needs-translation">Create</target></trans-unit>
+			<target state="translated">作成</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target state="needs-translation">Configuration</target></trans-unit>
