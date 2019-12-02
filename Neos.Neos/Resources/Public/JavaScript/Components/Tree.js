@@ -90,7 +90,8 @@ export default class Tree {
 	}
 
 	_getPathForType() {
-		return VALUE_PATH + (!isEmpty(this._type) ? "." + this._type : "");
+		const path = VALUE_PATH + (!isEmpty(this._type) ? "." + this._type : "");
+		return path.toLowerCase();
 	}
 
 	_loadTreeBranchStates(init) {
