@@ -224,7 +224,7 @@ The following options are allowed for defining a NodeType:
       ``collapsed``
         If the group should be collapsed by default (true or false). If left empty, the group will be expanded.
   ``creationDialog``
-    Creation dialog elements configuration. See :ref:`node-creation-dialog` for more details.
+    Creation dialog elements configuration. See `Node Creation Dialog Configuration`_ for more details.
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.
 
@@ -361,6 +361,11 @@ The following options are allowed for defining a NodeType:
       ``editorListeners``
         Allows to observe changes of other properties in order to react to them. For details see :ref:`depending-properties`
 
+    ``showInCreationDialog`` (since Neos 5.1)
+      If `true` the corresponding property will appear in the Node Creation Dialog. Editor configuration
+      will be copied from the respective ``ui.inspector`` settings in that case and can be overridden with
+      the ``creationDialog.elements.<propertyName>``, see `Node Creation Dialog Configuration`_
+
   ``validation``
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
@@ -434,3 +439,5 @@ Here is one of the standard Neos node types (slightly shortened)::
 	        inlineEditable: true
 
 
+
+.. _Node Creation Dialog Configuration: https://docs.neos.io/cms/manual/content-repository/node-creation-dialog

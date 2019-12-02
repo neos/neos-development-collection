@@ -29,7 +29,7 @@ interface VariantSupportInterface
      *
      * @param string $presetIdentifier
      * @param string $presetVariantName
-     * @return ImageVariant
+     * @return AssetVariantInterface
      */
-    public function getVariant(string $presetIdentifier, string $presetVariantName): ?ImageVariant;
+    public function getVariant(string $presetIdentifier, string $presetVariantName): ?AssetVariantInterface;
 }
