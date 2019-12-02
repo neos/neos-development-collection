@@ -6,9 +6,9 @@
 		<f:link.action
 			action="index"
 			arguments="{type: availableConfigurationType}"
-			class="neos-button{f:if(condition: '{availableConfigurationType} === {type}', then: ' neos-active')}"
-			>{availableConfigurationType}</f:link.action
-		>
+			class="neos-button{f:if(condition: '{availableConfigurationType} === {type}', then: ' neos-active')}">
+				{availableConfigurationType}
+		</f:link.action>
 	</f:for>
 	<f:if condition="{validationResult.flattenedErrors -> f:count()} > 0">
 		<ul id="neos-notifications-inline">
@@ -18,11 +18,11 @@
 			>
 				<f:for each="{validationResult.flattenedErrors}" key="path" as="errors">
 					<f:for each="{errors}" as="error">
-						<pre
-							>{path} -> {neos:backend.translate(id: error.code, source:
+						<pre>
+							{path} -> {neos:backend.translate(id: error.code, source:
 							'ValidationErrors', package: 'Neos.Flow', arguments:
-							error.arguments, value: error)}</pre
-						>
+							error.arguments, value: error)}
+						</pre>
 					</f:for>
 				</f:for>
 			</li>
