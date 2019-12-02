@@ -280,6 +280,6 @@ class ApplyTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('apply/renderWithNestedProps');
-        self::assertEquals('example', $view->render());
+        self::assertEquals('::example::', $view->render());
     }
 }

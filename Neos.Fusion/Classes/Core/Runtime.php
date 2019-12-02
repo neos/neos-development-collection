@@ -87,18 +87,11 @@ class Runtime
     protected $currentContext = null;
 
     /**
-     * Stack of evaluated "@apply" values
-     *
-     * @var array
-     */
-    protected $applyValueStack = [];
-
-    /**
      * Reference to the current apply value
      *
      * @var array
      */
-    protected $currentApplyValue = null;
+    protected $currentApplyValues = [];
 
     /**
      * Default context with helper definitions
@@ -264,24 +257,11 @@ class Runtime
         return $this->currentContext;
     }
 
-    /**
-     * @param null|array $values
-     * @return void
-     */
-    public function pushApplyValues(?array $values)
+    public function popApplyValues(array $paths): void
     {
-        $this->applyValueStack[] = $values;
-        $this->currentApplyValue = $values;
-    }
-
-    /**
-     * @return null|array the topmost "@apply" values as associative array
-     */
-    public function popApplyValues()
-    {
-        $lastItem = array_pop($this->applyValueStack);
-        $this->currentApplyValue = end($this->applyValueStack);
-        return $lastItem;
+        foreach ($paths as $path) {
+            unset($this->currentApplyValues[$path]);
+        }
     }
 
     /**
@@ -422,12 +402,12 @@ class Runtime
 
         // Check if the current "@apply" contain an entry for the requested fusionPath
         // in which case this value is returned after applying @if and @process rules
-        if (isset($this->currentApplyValue[$fusionPath])) {
+        if (isset($this->currentApplyValues[$fusionPath])) {
             if (isset($fusionConfiguration['__meta']['if']) && $this->evaluateIfCondition($fusionConfiguration, $fusionPath, $contextObject) === false) {
                 return null;
             }
-            $appliedValue = $this->currentApplyValue[$fusionPath]['value'];
-            if (isset($this->currentApplyValue[$fusionPath]['lazy'])) {
+            $appliedValue = $this->currentApplyValues[$fusionPath]['value'];
+            if (isset($this->currentApplyValues[$fusionPath]['lazy'])) {
                 $appliedValue = $appliedValue();
             }
             if (isset($fusionConfiguration['__meta']['process'])) {
@@ -460,26 +440,27 @@ class Runtime
             return null;
         }
 
+        $applyPathsToPop = [];
         try {
-            $needToPopApply = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
+            $applyPathsToPop = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
             $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration);
             $needToPopContext = $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
             $output = $this->evaluateObjectOrRetrieveFromCache($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
         } catch (StopActionException $stopActionException) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
             throw $stopActionException;
         } catch (SecurityException $securityException) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
             throw $securityException;
         } catch (RuntimeException $runtimeException) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
             throw $runtimeException;
         } catch (\Exception $exception) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
             return $this->handleRenderingException($fusionPath, $exception, true);
         }
 
-        $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
+        $this->finalizePathEvaluation($cacheContext, $needToPopContext, $applyPathsToPop);
         return $output;
     }
 
@@ -560,17 +541,23 @@ class Runtime
      *
      * @param string $fusionPath
      * @param array $fusionConfiguration
-     * @return boolean
+     * @return array Paths to pop
      * @throws Exception
      * @throws RuntimeException
      * @throws SecurityException
      * @throws StopActionException
      */
-    protected function prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration)
+    protected function prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration): array
     {
         $spreadValues = $this->evaluateApplyValues($fusionConfiguration, $fusionPath);
-        $this->pushApplyValues($spreadValues);
-        return true;
+        if ($spreadValues === null) {
+            return [];
+        }
+
+        foreach ($spreadValues as $path => $entry) {
+            $this->currentApplyValues[$path] = $entry;
+        }
+        return array_keys($spreadValues);
     }
 
     /**
@@ -618,17 +605,17 @@ class Runtime
      *
      * @param array $cacheContext
      * @param boolean $needToPopContext
-     * @param boolean $needToPopApplyValues
+     * @param array $applyPathsToPop
      * @return void
      */
-    protected function finalizePathEvaluation($cacheContext, $needToPopContext = false, $needToPopApplyValues = false)
+    protected function finalizePathEvaluation($cacheContext, $needToPopContext = false, array $applyPathsToPop = [])
     {
         if ($needToPopContext) {
             $this->popContext();
         }
 
-        if ($needToPopApplyValues) {
-            $this->popApplyValues();
+        if ($applyPathsToPop !== []) {
+            $this->popApplyValues($applyPathsToPop);
         }
 
         $this->runtimeContentCache->leave($cacheContext);
@@ -829,8 +816,8 @@ class Runtime
             ObjectAccess::setProperty($fusionObject, $key, $value);
         }
 
-        if (is_array($this->currentApplyValue)) {
-            foreach ($this->currentApplyValue as $path => $property) {
+        if (is_array($this->currentApplyValues)) {
+            foreach ($this->currentApplyValues as $path => $property) {
                 $key = $property['key'];
                 if (isset($property['lazy'])) {
                     $valueAst = [

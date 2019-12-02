@@ -59,16 +59,15 @@ final class LazyProps implements \ArrayAccess, \Iterator
 
     public function offsetExists($path)
     {
-        return isset($this->keys[$path]);
+        return array_key_exists($path, $this->keys);
     }
 
     public function offsetGet($path)
     {
-        if (!isset($this->valueCache[$path])) {
+        if (!array_key_exists($path, $this->valueCache)) {
             $this->runtime->pushContextArray($this->effectiveContext);
             try {
-                $this->valueCache[$path] = $this->runtime->evaluate($this->parentPath . '/' . $path,
-                    $this->fusionObject);
+                $this->valueCache[$path] = $this->runtime->evaluate($this->parentPath . '/' . $path, $this->fusionObject);
             } finally {
                 $this->runtime->popContext();
             }
