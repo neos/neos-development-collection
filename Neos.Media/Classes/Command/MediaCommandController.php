@@ -379,7 +379,7 @@ class MediaCommandController extends CommandController
      *
      * @param integer $limit Limit the amount of variants to be rendered to avoid memory exhaustion
      * @param bool $quiet If set, only errors will be displayed.
-     * @param bool $recreate
+     * @param bool $recreate If set, existing asset variants will be re-generated and replaced
      * @return void
      * @throws AssetVariantGeneratorException
      * @throws IllegalObjectTypeException
@@ -392,6 +392,10 @@ class MediaCommandController extends CommandController
         $configuredPresets = $this->assetVariantGenerator->getVariantPresets();
         foreach ($configuredPresets as $configuredPreset) {
             $configuredVariantsCount += count($configuredPreset->variants());
+        }
+        if ($configuredVariantsCount === 0) {
+            $this->outputLine('There are no image variant presets configured, exiting…');
+            $this->quit();
         }
 
         $classNames = $this->reflectionService->getAllImplementationClassNamesForInterface(VariantSupportInterface::class);
