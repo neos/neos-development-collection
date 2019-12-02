@@ -13,14 +13,12 @@ const getStorage = () => {
 };
 
 const loadStorageData = (path) => {
-	path = path.toLowerCase();
 	const storage = getStorage();
 	const storageData = getCollectionValueByPath(storage, path);
 	return storageData;
 };
 
 const saveStorageData = (path, value) => {
-	path = path.toLowerCase();
 	const storage = getStorage();
 	const updatedStorageData = createCollectionByPath(storage, path, value);
 	if (!isNil(updatedStorageData)) {
