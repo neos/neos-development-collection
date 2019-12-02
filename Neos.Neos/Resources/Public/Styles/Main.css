@@ -8432,7 +8432,12 @@ readers do not read off random characters that represent icons */
       position: relative;
       background: #222;
       padding: 80px 54px 40px 54px; }
-    .neos.neos-module h1, .neos.neos-module h2, .neos.neos-module h3, .neos.neos-module h4, .neos.neos-module h5, .neos.neos-module h6 {
+    .neos.neos-module h1,
+    .neos.neos-module h2,
+    .neos.neos-module h3,
+    .neos.neos-module h4,
+    .neos.neos-module h5,
+    .neos.neos-module h6 {
       text-rendering: optimizelegibility; }
     .neos.neos-module p {
       line-height: 1.6em; }
@@ -8614,14 +8619,14 @@ readers do not read off random characters that represent icons */
           color: #252525; }
       .neos.neos-module .neos-select:before {
         display: block;
-        content: '';
+        content: "";
         position: absolute;
         width: 1px;
         height: 24px;
         top: 8px;
         right: 41px;
         background-color: #fff;
-        opacity: .15; }
+        opacity: 0.15; }
       .neos.neos-module .neos-select:after {
         content: "\f0d7";
         display: block;
@@ -8802,7 +8807,7 @@ readers do not read off random characters that represent icons */
       padding-left: 0 !important;
       padding-right: 0 !important;
       border-top: 1px solid #323232; }
-      .neos.neos-module table.neos-table tr.neos-folder td i[class*='icon'] {
+      .neos.neos-module table.neos-table tr.neos-folder td i[class*="icon"] {
         height: 40px;
         line-height: 40px;
         padding: 0 16px;
@@ -8810,13 +8815,17 @@ readers do not read off random characters that represent icons */
         text-align: center;
         font-size: 10px;
         vertical-align: middle; }
-        .neos.neos-module table.neos-table tr.neos-folder td i[class*='icon']:hover {
+        .neos.neos-module table.neos-table tr.neos-folder td i[class*="icon"]:hover {
           background: #00b5ff; }
     .neos.neos-module table.neos-table th.check,
     .neos.neos-module table.neos-table td.check {
       padding-right: 8px !important; }
     .neos.neos-module table.neos-table .neos-label {
-      background-color: #5b5b5b; }
+      background-color: #3f3f3f;
+      box-shadow: #2d2d2d 0 0 10px 5px;
+      font-weight: normal;
+      letter-spacing: 0.05em;
+      padding: 2px 0.5em; }
     .neos.neos-module table.neos-info-table {
       width: 100%;
       margin-bottom: 32px; }
@@ -8838,7 +8847,7 @@ readers do not read off random characters that represent icons */
         .neos.neos-module table.neos-info-table tbody th span {
           font-weight: normal;
           color: #eee;
-          font-size: .9em; }
+          font-size: 0.9em; }
       .neos.neos-module table.neos-info-table tbody tr:first-child th,
       .neos.neos-module table.neos-info-table tbody tr:first-child td {
         border-top: 0; }
