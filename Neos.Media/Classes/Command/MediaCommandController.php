@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Command;
 
 /*
@@ -13,19 +15,28 @@ namespace Neos\Media\Command;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Model\Tag;
+use Neos\Media\Domain\Model\VariantSupportInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
+use Neos\Media\Domain\Service\AssetVariantGenerator;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
+use Neos\Media\Exception\AssetServiceException;
+use Neos\Media\Exception\AssetVariantGeneratorException;
+use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
@@ -70,7 +81,6 @@ class MediaCommandController extends CommandController
     protected $thumbnailService;
 
     /**
-     * If enabled
      * @Flow\InjectConfiguration("asyncThumbnails")
      * @var bool
      */
@@ -83,6 +93,18 @@ class MediaCommandController extends CommandController
     protected $mappingStrategy;
 
     /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
+
+    /**
+     * @Flow\Inject
+     * @var AssetVariantGenerator
+     */
+    protected $assetVariantGenerator;
+
+    /**
      * Import resources to asset management
      *
      * This command detects Flow "PersistentResource"s which are not yet available as "Asset" objects and thus don't appear
@@ -92,6 +114,8 @@ class MediaCommandController extends CommandController
      * @param bool $simulate If set, this command will only tell what it would do instead of doing it right away
      * @param bool $quiet
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws DBALException
      */
     public function importResourcesCommand(bool $simulate = false, bool $quiet = false)
     {
@@ -152,6 +176,8 @@ class MediaCommandController extends CommandController
      * @param string $onlyTags Comma-separated list of asset tags, that should be taken into account
      * @param int $limit Limit the result of unused assets displayed and removed for this run.
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws AssetServiceException
      */
     public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = null)
     {
@@ -260,6 +286,7 @@ class MediaCommandController extends CommandController
      * @param bool $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
      * @param bool $quiet If set, only errors will be displayed.
      * @return void
+     * @throws ThumbnailServiceException
      */
     public function createThumbnailsCommand(string $preset = null, bool $async = null, bool $quiet = false)
     {
@@ -291,6 +318,8 @@ class MediaCommandController extends CommandController
      * @param string $preset Preset name, if provided only thumbnails matching that preset are cleared
      * @param bool $quiet If set, only errors will be displayed.
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws ThumbnailServiceException
      */
     public function clearThumbnailsCommand(string $preset = null, bool $quiet = false)
     {
@@ -338,7 +367,83 @@ class MediaCommandController extends CommandController
                 break;
             }
         }
-        !$quiet && $this->output->progressFinish();
+    }
+
+    /**
+     * Render asset variants
+     *
+     * Loops over missing configured asset variants and renders them. Optional ``limit`` parameter to
+     * limit the amount of variants to be rendered to avoid memory exhaustion.
+     *
+     * If the re-render parameter is given, any existing variants will be rendered again, too.
+     *
+     * @param integer $limit Limit the amount of variants to be rendered to avoid memory exhaustion
+     * @param bool $quiet If set, only errors will be displayed.
+     * @param bool $recreate If set, existing asset variants will be re-generated and replaced
+     * @return void
+     * @throws AssetVariantGeneratorException
+     * @throws IllegalObjectTypeException
+     */
+    public function renderVariantsCommand($limit = null, bool $quiet = false, bool $recreate = false): void
+    {
+        $resultMessage = null;
+        $generatedVariants = 0;
+        $configuredVariantsCount = 0;
+        $configuredPresets = $this->assetVariantGenerator->getVariantPresets();
+        foreach ($configuredPresets as $configuredPreset) {
+            $configuredVariantsCount += count($configuredPreset->variants());
+        }
+        if ($configuredVariantsCount === 0) {
+            $this->outputLine('There are no image variant presets configured, exiting…');
+            $this->quit();
+        }
+
+        $classNames = $this->reflectionService->getAllImplementationClassNamesForInterface(VariantSupportInterface::class);
+        foreach ($classNames as $className) {
+            /** @var AssetRepository $repository */
+            $repositoryClassName = $this->reflectionService->getClassSchema($className)->getRepositoryClassName();
+            $repository = $this->objectManager->get($repositoryClassName);
+
+            if (!method_exists($repository, 'findAssetIdentifiersWithVariants')) {
+                !$quiet && $this->outputLine('Repository %s does not provide findAssetIdentifiersWithVariants(), skipping…', [$repositoryClassName]);
+                continue;
+            }
+
+            $assetCount = $repository->countAll();
+            $variantCount = $configuredVariantsCount * $assetCount;
+
+            !$quiet && $this->outputLine('Checking up to %u variants for %s for existence…', [$variantCount, $className]);
+            !$quiet && $this->output->progressStart($variantCount);
+
+            $currentAsset = null;
+            /** @var AssetInterface $currentAsset */
+            foreach ($repository->findAssetIdentifiersWithVariants() as $assetIdentifier => $assetVariants) {
+                foreach ($configuredPresets as $presetIdentifier => $preset) {
+                    foreach ($preset->variants() as $presetVariantName => $presetVariant) {
+                        if ($recreate || !isset($assetVariants[$presetIdentifier][$presetVariantName])) {
+                            $currentAsset = $repository->findByIdentifier($assetIdentifier);
+                            $createdVariant = $recreate ? $this->assetVariantGenerator->recreateVariant($currentAsset, $presetIdentifier, $presetVariantName) : $this->assetVariantGenerator->createVariant($currentAsset, $presetIdentifier, $presetVariantName);
+                            if ($createdVariant !== null) {
+                                $repository->update($currentAsset);
+                                if (++$generatedVariants % 10 === 0) {
+                                    $this->persistenceManager->persistAll();
+                                }
+                                if ($generatedVariants === $limit) {
+                                    $resultMessage = sprintf('Generated %u variants, exiting after reaching limit', $limit);
+                                    !$quiet && $this->output->progressFinish();
+                                    break 3;
+                                }
+                            }
+                        }
+                        !$quiet && $this->output->progressAdvance(1);
+                    }
+                }
+            }
+            !$quiet && $this->output->progressFinish();
+        }
+
+        !$quiet && $this->outputLine();
+        !$quiet && $this->outputLine($resultMessage ?? sprintf('Generated %u variants', $generatedVariants));
     }
 
     /**
@@ -346,7 +451,7 @@ class MediaCommandController extends CommandController
      *
      * @return void
      */
-    protected function initializeConnection()
+    protected function initializeConnection(): void
     {
         if (!$this->entityManager instanceof EntityManager) {
             $this->outputLine('This command only supports database connections provided by the Doctrine ORM Entity Manager.
