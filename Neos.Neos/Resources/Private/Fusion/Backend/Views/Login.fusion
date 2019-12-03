@@ -124,10 +124,10 @@ prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
 
             <div class="neos-actions">
                 <Neos.Fusion.Form:Button attributes.class="neos-span5 neos-pull-right neos-button neos-login-btn">
-                    {I18n.id('login').value('Login').package('Neos.Neos').source('Main')}
+                    {I18n.id('login').value('Login').package('Neos.Neos').source('Main').translate()}
                 </Neos.Fusion.Form:Button>
                 <Neos.Fusion.Form:Button attributes.class="neos-span5 neos-pull-right neos-button neos-login-btn neos-disabled neos-hidden">
-                    {I18n.id('authenticating').value('Authenticating').package('Neos.Neos').source('Main')} <span class="neos-ellipsis"></span>
+                    {I18n.id('authenticating').value('Authenticating').package('Neos.Neos').source('Main').translate()} <span class="neos-ellipsis"></span>
                 </Neos.Fusion.Form:Button>
 
                 <Neos.Fusion:Loop items={props.flashMessages} itemName="flashMessage">
