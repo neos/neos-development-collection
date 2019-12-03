@@ -1,10 +1,10 @@
 include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+include: resource://Neos.Fusion.Form/Private/Fusion/Root.fusion
 include: Views/*.fusion
 
 Neos.Neos.LoginController.index = Neos.Neos:View.Login {
   site = ${site}
   styles = ${styles}
   username = ${username}
-  trustedPropertiesToken = ${trustedPropertiesToken}
   flashMessages = ${flashMessages}
 }

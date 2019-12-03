@@ -16,7 +16,6 @@ use Neos\Cache\Frontend\StringFrontend;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Mvc\View\ViewInterface;
@@ -84,12 +83,6 @@ class LoginController extends AbstractAuthenticationController
 
     /**
      * @Flow\Inject
-     * @var MvcPropertyMappingConfigurationService
-     */
-    protected $mvcPropertyMappingConfigurationService;
-
-    /**
-     * @Flow\Inject
      * @var FlashMessageService
      */
     protected $flashMessageService;
@@ -141,17 +134,10 @@ class LoginController extends AbstractAuthenticationController
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
         $currentSite = $currentDomain !== null ? $currentDomain->getSite() : $this->siteRepository->findDefault();
 
-        $trustedPropertiesToken = $this->mvcPropertyMappingConfigurationService->generateTrustedPropertiesToken([
-            'lastVisitedNode',
-            '__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]',
-            '__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]',
-        ]);
-
         $this->view->assignMultiple([
             'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
             'username' => $username,
             'site' => $currentSite,
-            'trustedPropertiesToken' => $trustedPropertiesToken,
             'flashMessages' => $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush(),
         ]);
     }
