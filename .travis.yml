@@ -1,4 +1,5 @@
 language: php
+dist: bionic
 branches:
   only:
   - /(master|\d+\.\d+)/
@@ -29,21 +30,21 @@ matrix:
       env: DB=mysql BEHAT=true
       addons:
         mariadb: '10.2'
-    - php: 7.4snapshot
+    - php: 7.4
       env: DB=pgsql
       sudo: required
       addons:
         postgresql: "9.4"
-    - php: 7.4snapshot
+    - php: 7.4
       env: DB=pgsql BEHAT=true
       sudo: required
       addons:
         postgresql: "9.4"
-    - php: 7.4snapshot
+    - php: 7.4
       env: DB=mysql
       addons:
         mariadb: '10.2'
-    - php: 7.4snapshot
+    - php: 7.4
       env: DB=mysql BEHAT=true
       addons:
         mariadb: '10.2'
@@ -54,7 +55,7 @@ before_install:
   - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
   - export NEOS_TARGET_VERSION=4.3
   - if [ "$DB" = "pgsql" ]; then sudo mount -o remount,size=25% /var/ramfs ; fi
-  - phpenv config-rm xdebug.ini
+  - phpenv config-rm xdebug.ini || echo "xdebug not available"
   - env
   - sudo add-apt-repository ppa:git-core/ppa -y
   - sudo apt-get update
