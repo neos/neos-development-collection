@@ -16,12 +16,14 @@ use Neos\Cache\Frontend\StringFrontend;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\View\JsonView;
+use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
-use Neos\FluidAdaptor\View\TemplateView;
+use Neos\Fusion\View\FusionView;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\BackendRedirectionService;
@@ -31,6 +33,11 @@ use Neos\Neos\Service\BackendRedirectionService;
  */
 class LoginController extends AbstractAuthenticationController
 {
+
+    /**
+     * @var string
+     */
+    protected $defaultViewObjectName = FusionView::class;
 
     /**
      * @Flow\Inject
@@ -75,11 +82,17 @@ class LoginController extends AbstractAuthenticationController
     protected $sessionName;
 
     /**
+     * @Flow\Inject
+     * @var FlashMessageService
+     */
+    protected $flashMessageService;
+
+    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = [
-        'html' => TemplateView::class,
-        'json' => JsonView::class
+        'html' => FusionView::class,
+        'json' => JsonView::class,
     ];
 
     /**
@@ -87,7 +100,7 @@ class LoginController extends AbstractAuthenticationController
      */
     protected $supportedMediaTypes = [
         'text/html',
-        'application/json'
+        'application/json',
     ];
 
     /**
@@ -120,10 +133,12 @@ class LoginController extends AbstractAuthenticationController
         }
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
         $currentSite = $currentDomain !== null ? $currentDomain->getSite() : $this->siteRepository->findDefault();
+
         $this->view->assignMultiple([
             'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
             'username' => $username,
-            'site' => $currentSite
+            'site' => $currentSite,
+            'flashMessages' => $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->getMessagesAndFlush(),
         ]);
     }
 
@@ -243,5 +258,18 @@ class LoginController extends AbstractAuthenticationController
     {
         $sessionCookie = new Cookie($this->sessionName, $sessionIdentifier);
         $this->response->setCookie($sessionCookie);
+    }
+
+    /**
+     * Simply sets the Fusion path pattern on the view.
+     *
+     * @param ViewInterface $view
+     * @return void
+     */
+    protected function initializeView(ViewInterface $view)
+    {
+        parent::initializeView($view);
+        /** @var FusionView $view */
+        $view->setFusionPathPattern('resource://Neos.Neos/Private/Fusion/Backend');
     }
 }
