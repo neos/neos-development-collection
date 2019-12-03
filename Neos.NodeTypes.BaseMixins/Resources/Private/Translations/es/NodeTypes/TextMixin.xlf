@@ -2,7 +2,7 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="es-ES">
     <body>
-      <trans-unit id="properties.text.aloha.placeholder" xml:space="preserve" approved="yes">
+      <trans-unit id="properties.text.ui.inline.editorOptions.placeholder" xml:space="preserve" approved="yes">
 				<source><![CDATA[<p>Enter text here</p>]]></source>
 			<target state="final"><![CDATA[<p>Ingrese texto aqui</p>]]></target></trans-unit>
     </body>

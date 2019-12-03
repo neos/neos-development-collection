@@ -11,6 +11,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\Exception\MissingFusionImplementationException;
+
 /**
  * Testcase for the Fusion Dictionary
  */
@@ -69,5 +71,28 @@ class DataStructureTest extends AbstractFusionObjectTest
 
         $view->setFusionPath('dataStructure/ignoreProperties');
         self::assertEquals(['c' => 'Xbefore', 'a' => 'Xafter'], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function nestedKeysWithoutObjectTypesRenderAsDataStructure(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/nestingWithAndWithoutObjectName');
+        self::assertEquals(['keyWithoutType' => ['bar' => ['baz' => 123 ]], 'keyWithType' => 456, 'keyWithValue' => 789], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function nestingWithNonExistingChildObjectThrowsException(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/nestingWithNonExistingChildObject');
+
+        $this->expectException(MissingFusionImplementationException::class);
+
+        $view->render();
     }
 }
