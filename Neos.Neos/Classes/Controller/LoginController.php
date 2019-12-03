@@ -24,10 +24,10 @@ use Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationControlle
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
-use Neos\Fusion\View\FusionView;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\BackendRedirectionService;
+use Neos\Neos\Ui\View\BackendFusionView;
 
 /**
  * A controller which allows for logging into the backend
@@ -38,7 +38,7 @@ class LoginController extends AbstractAuthenticationController
     /**
      * @var string
      */
-    protected $defaultViewObjectName = FusionView::class;
+    protected $defaultViewObjectName = BackendFusionView::class;
 
     /**
      * @Flow\Inject
@@ -98,8 +98,8 @@ class LoginController extends AbstractAuthenticationController
      * @var array
      */
     protected $viewFormatToObjectNameMap = [
-        'html' => FusionView::class,
-        'json' => JsonView::class
+        'html' => BackendFusionView::class,
+        'json' => JsonView::class,
     ];
 
     /**
@@ -273,18 +273,5 @@ class LoginController extends AbstractAuthenticationController
     {
         $sessionCookie = new Cookie($this->sessionName, $sessionIdentifier);
         $this->response->setCookie($sessionCookie);
-    }
-
-    /**
-     * Simply sets the Fusion path pattern on the view.
-     *
-     * @param ViewInterface $view
-     * @return void
-     */
-    protected function initializeView(ViewInterface $view)
-    {
-        parent::initializeView($view);
-        /** @var FusionView $view */
-        $view->setFusionPathPattern('resource://Neos.Neos/Private/Fusion/Backend/Login');
     }
 }
