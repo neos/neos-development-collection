@@ -7,6 +7,13 @@
   constraints:
     nodeTypes:
       '*': false
+  postprocessors:
+    'CreationDialogPostprocessor':
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor'
+  options:
+    nodeCreationHandlers:
+      creationDialogProperties:
+        nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\CreationDialogPropertiesCreationHandler'
   ui:
     label: i18n
     icon: 'icon-square-o'

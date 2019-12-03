@@ -3,6 +3,13 @@
 #                                                                        #
 
 -
+  name:          'Preview'
+  uriPattern:    'neos/preview'
+  defaults:
+    '@action':   'preview'
+  appendExceedingArguments: true
+
+-
   name: 'Homepage'
   uriPattern: '{node}'
   routeParts:
