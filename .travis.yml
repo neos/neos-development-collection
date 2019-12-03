@@ -34,12 +34,12 @@ matrix:
       env: DB=pgsql
       sudo: required
       addons:
-        postgresql: "9.4"
+        postgresql: "9.5"
     - php: 7.4
       env: DB=pgsql BEHAT=true
       sudo: required
       addons:
-        postgresql: "9.4"
+        postgresql: "9.5"
     - php: 7.4
       env: DB=mysql
       addons:
