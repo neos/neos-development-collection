@@ -55,8 +55,8 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
 
     /**
      * @param integer $initializationCause
-     * @throws ImageFileException
      * @return void
+     * @throws ImageFileException
      */
     public function initializeObject($initializationCause)
     {
@@ -74,8 +74,8 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
     /**
      * Calculates image width and height from the image resource.
      *
-     * @throws ImageFileException
      * @return void
+     * @throws ImageFileException
      */
     public function refresh()
     {
@@ -98,6 +98,28 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
     {
         if ($variant->getOriginalAsset() !== $this) {
             throw new \InvalidArgumentException('Could not add the given ImageVariant to the list of this Image\'s variants because the variant refers to a different original asset.', 1381416726);
+        }
+        $this->variants->add($variant);
+    }
+
+    /**
+     * Replace a variant of this image, based on preset identifier and preset variant name.
+     *
+     * If the variant is not based on a preset, it is simply added.
+     *
+     * @param ImageVariant $variant The new variant to replace an existing one
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    public function replaceVariant(ImageVariant $variant)
+    {
+        if ($variant->getOriginalAsset() !== $this) {
+            throw new \InvalidArgumentException('Could not add the given ImageVariant to the list of this Image\'s variants because the variant refers to a different original asset.', 1574159416);
+        }
+
+        $existingVariant = $this->getVariant($variant->getPresetIdentifier(), $variant->getPresetVariantName());
+        if ($existingVariant instanceof AssetVariantInterface) {
+            $this->variants->removeElement($existingVariant);
         }
         $this->variants->add($variant);
     }
