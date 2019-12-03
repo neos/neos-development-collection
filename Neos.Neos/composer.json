@@ -13,6 +13,7 @@
         "neos/twitter-bootstrap": "*",
         "neos/content-repository": "*",
         "neos/fusion": "*",
+        "neos/fusion-afx": "*",
         "neos/fluid-adaptor": "*",
         "behat/transliterator": "~1.0",
         "neos/media": "*"
