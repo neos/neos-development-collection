@@ -13,10 +13,8 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		omitClosingTag = true
 	}
 
-	headerComment = Neos.Fusion:Template {
-		@position = 'before headTag'
-		templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosLicenseHeader.html'
-	}
+  headerComment = ${Configuration.setting('Neos.Neos.headerComment')}
+  headerComment.@position = 'before headTag'
 
 	# The opening head tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
 	headTag = Neos.Fusion:Tag {
