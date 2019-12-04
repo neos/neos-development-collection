@@ -15,9 +15,11 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
         path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
       }
 
+      headerComment = ${Configuration.setting('Neos.Neos.headerComment')}
+
       renderer = afx`
         <html lang="en">
-            <Neos.Fusion:Template templatePath="resource://Neos.Neos/Private/Templates/FusionObjects/NeosLicenseHeader.html" />
+            {props.headerComment}
             <head>
                 <meta charset="utf-8" />
                 <meta name="robots" content="noindex" />
