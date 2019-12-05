@@ -31,8 +31,7 @@ class Version20191125132700 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on "mysql".');
-        $this->addSql('UPDATE neos_media_domain_model_adjustment_abstractimageadjustment SET ratiomode=\'inset\' WHERE ratiomode IS NULL AND dtype=\'neos_media_adjustment_resizeimageadjustment\'');
-        $this->addSql('ALTER TABLE neos_media_domain_model_adjustment_abstractimageadjustment CHANGE ratiomode ratiomode VARCHAR(255) NOT NULL');
+        $this->addSql('UPDATE neos_media_domain_model_adjustment_abstractimageadjustment SET ratiomode=\'inset\' WHERE (ratiomode IS NULL OR ratiomode=\'\') AND dtype=\'neos_media_adjustment_resizeimageadjustment\'');
     }
 
     /**
@@ -44,6 +43,5 @@ class Version20191125132700 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on "mysql".');
-        $this->addSql('ALTER TABLE neos_media_domain_model_adjustment_abstractimageadjustment CHANGE ratiomode ratiomode VARCHAR(255) NULL');
     }
 }
