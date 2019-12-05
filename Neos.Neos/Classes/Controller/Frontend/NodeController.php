@@ -20,7 +20,6 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
-use Neos\Neos\TypeConverter\NodeConverter;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -71,22 +70,6 @@ class NodeController extends ActionController
      * @var PropertyMapper
      */
     protected $propertyMapper;
-
-    /**
-     * Allow invisible nodes to be redirected to
-     *
-     * @return void
-     */
-    protected function initializeShowAction()
-    {
-        if ($this->arguments->hasArgument('node')
-            && $this->request->hasArgument('showInvisible')
-            && (bool)$this->request->getArgument('showInvisible')
-            && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
-        ) {
-            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN, true);
-        }
-    }
 
     /**
      * Shows the specified node and takes visibility and access restrictions into
