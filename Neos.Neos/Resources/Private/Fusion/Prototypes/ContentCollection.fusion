@@ -16,7 +16,7 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Loop) {
 	iterationName = 'iterator'
 
 	# Using a processor here and not an Array as ContentCollectionRenderer to not push important userland properties further down.
-	@process.appendRemovedContentForBackend = Neos.Fusion:Array {
+	@process.appendRemovedContentForBackend = Neos.Fusion:Join {
 		visibleContent = ${value}
 
 		removedContent = Neos.Fusion:Loop {
