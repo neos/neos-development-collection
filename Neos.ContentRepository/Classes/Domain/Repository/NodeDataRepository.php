@@ -15,12 +15,17 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
+use Neos\ContentRepository\Domain\Repository\Query\NodeDataQuery;
+use Neos\ContentRepository\Domain\Repository\Query\NodeParentFilter;
+use Neos\ContentRepository\Domain\Repository\Query\NodePropertyFilter;
+use Neos\ContentRepository\Domain\Repository\Query\NodePropertyFulltextFilter;
+use Neos\ContentRepository\Domain\Repository\Query\NodeTypeFilter;
+use Neos\ContentRepository\Domain\Utility\NodeDataUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Utility\Arrays;
-use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -189,16 +194,16 @@ class NodeDataRepository extends Repository
             return $workspace->getRootNodeData();
         }
 
-        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
+        $workspaces = NodeDataUtility::collectWorkspaceAndAllBaseWorkspaces($workspace);
         $nodes = $this->findRawNodesByPath($path, $workspace, $dimensions);
         $dimensions = $dimensions === null ? [] : $dimensions;
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
+        $foundNodes = NodeDataUtility::reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
         $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspace, $dimensions, $removedNodes);
 
         if ($removedNodes === true) {
             $foundNodes = $this->onlyRemovedNodes($foundNodes);
         } elseif ($removedNodes === false) {
-            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+            $foundNodes = NodeDataUtility::withoutRemovedNodes($foundNodes);
         }
 
         if ($foundNodes !== []) {
@@ -218,10 +223,10 @@ class NodeDataRepository extends Repository
      */
     public function findShadowNodeByPath($path, Workspace $workspace, array $dimensions = null)
     {
-        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
+        $workspaces = NodeDataUtility::collectWorkspaceAndAllBaseWorkspaces($workspace);
         $nodes = $this->findRawNodesByPath($path, $workspace, $dimensions, true);
         $dimensions = $dimensions === null ? [] : $dimensions;
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
+        $foundNodes = NodeDataUtility::reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
         $foundNodes = $this->onlyRemovedNodes($foundNodes);
 
         if ($foundNodes !== []) {
@@ -271,7 +276,7 @@ class NodeDataRepository extends Repository
         }
         $queryBuilder = $this->createQueryBuilder($workspaces);
         if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
+            NodeDataUtility::addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         }
         $this->addPathConstraintToQueryBuilder($queryBuilder, $path);
         if ($onlyShadowNodes) {
@@ -352,7 +357,7 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere('n.movedTo IS NULL');
         }
         if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
+            NodeDataUtility::addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         } else {
             $dimensions = [];
         }
@@ -361,9 +366,9 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $nodes = $query->getResult();
 
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
+        $foundNodes = NodeDataUtility::reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
         if ($removedNodes === false) {
-            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+            $foundNodes = NodeDataUtility::withoutRemovedNodes($foundNodes);
         }
 
         if ($foundNodes !== []) {
@@ -589,11 +594,11 @@ class NodeDataRepository extends Repository
      */
     protected function getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false, $recursive = false)
     {
-        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
+        $workspaces = NodeDataUtility::collectWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
+            NodeDataUtility::addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         } else {
             $dimensions = [];
         }
@@ -605,13 +610,13 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $nodes = $query->getResult();
 
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
+        $foundNodes = NodeDataUtility::reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
         $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $removedNodes);
 
         if ($removedNodes === true) {
             $foundNodes = $this->onlyRemovedNodes($foundNodes);
         } elseif ($removedNodes === false) {
-            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+            $foundNodes = NodeDataUtility::withoutRemovedNodes($foundNodes);
         }
 
         return $foundNodes;
@@ -629,7 +634,7 @@ class NodeDataRepository extends Repository
     public function findByParentWithoutReduce($parentPath, Workspace $workspace)
     {
         $parentPath = strtolower($parentPath);
-        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
+        $workspaces = NodeDataUtility::collectWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath);
@@ -667,7 +672,7 @@ class NodeDataRepository extends Repository
      */
     public function findByIdentifierWithoutReduce($identifier, Workspace $workspace)
     {
-        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
+        $workspaces = NodeDataUtility::collectWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addIdentifierConstraintToQueryBuilder($queryBuilder, $identifier);
@@ -967,12 +972,12 @@ class NodeDataRepository extends Repository
             throw new \InvalidArgumentException('Invalid paths: path of starting point must be first part of end point path.', 1284391181);
         }
 
-        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
+        $workspaces = NodeDataUtility::collectWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
 
         if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
+            NodeDataUtility::addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         } else {
             $dimensions = [];
         }
@@ -996,11 +1001,11 @@ class NodeDataRepository extends Repository
 
         $query = $queryBuilder->getQuery();
         $foundNodes = $query->getResult();
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
+        $foundNodes = NodeDataUtility::reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
         $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $includeRemovedNodes);
 
         if ($includeRemovedNodes === false) {
-            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+            $foundNodes = NodeDataUtility::withoutRemovedNodes($foundNodes);
         }
 
         $nodesByDepth = [];
@@ -1018,57 +1023,42 @@ class NodeDataRepository extends Repository
      *
      * This method is internal and will be replaced with better search capabilities.
      *
-     * @param string|array $term Search term
-     * @param string $nodeTypeFilter Node type filter
+     * @param string|array $properties Search term
+     * @param string $nodeTypes Node type filter
      * @param Workspace $workspace
      * @param array $dimensions
      * @param string $pathStartingPoint
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData>
+     * @throws Exception\NodeException
+     * @throws Exception\NodeTypeNotFoundException
      */
-    public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = null)
+    public function findByProperties($properties, string $nodeTypes, Workspace $workspace, array $dimensions, string $pathStartingPoint = null): array
     {
-        if (empty($term)) {
-            throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
+        $query = new NodeDataQuery($workspace, $dimensions);
+
+        if ($pathStartingPoint !== null) {
+            $query->filter(new NodeParentFilter(new NodeData($pathStartingPoint, $workspace), true));
         }
-        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
-        $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
-        $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
-
-        if (is_array($term)) {
-            if (count($term) !== 1) {
-                throw new \InvalidArgumentException('Currently only a 1-dimensional key => value array term is supported.', 1460437584);
+        if (is_array($properties)) {
+            foreach ($properties as $propertyName => $propertyValue) {
+                $query->filter(new NodePropertyFilter($propertyName, $propertyValue));
             }
-
-            // Build the like parameter as "key": "value" to search by a specific key and value
-            $likeParameter = '%' . UnicodeFunctions::strtolower(trim(json_encode($term, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE), "{}\n\t ")) . '%';
         } else {
-            // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
-            $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+            $query->filter(new NodePropertyFulltextFilter((string)$properties));
         }
 
-        $queryBuilder->andWhere("LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :term")->setParameter('term', $likeParameter);
-
-        if (strlen($pathStartingPoint) > 0) {
-            $pathStartingPoint = strtolower($pathStartingPoint);
-            $queryBuilder->andWhere(
-                $queryBuilder->expr()->orx()
-                    ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
-                    ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
-                ->setParameter('parentPathHash', md5($pathStartingPoint))
-                ->setParameter('pathHash', md5($pathStartingPoint))
-                ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
+        $nodeTypes = $this->getNodeTypeFilterConstraintsForDql($nodeTypes);
+        foreach ($nodeTypes['includeNodeTypes'] as $nodeTypeName) {
+            $query->filter(new NodeTypeFilter($this->nodeTypeManager->getNodeType($nodeTypeName)));
+        }
+        foreach ($nodeTypes['excludeNodeTypes'] as $nodeTypeName) {
+            $query->filter(new NodeTypeFilter($this->nodeTypeManager->getNodeType($nodeTypeName), '!='));
         }
 
-        $query = $queryBuilder->getQuery();
-        $foundNodes = $query->getResult();
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->withoutRemovedNodes($foundNodes);
-
-        return $foundNodes;
+        return $query->get();
     }
+
 
     /**
      * Flushes the addedNodes and removedNodes registry.
@@ -1202,19 +1192,6 @@ class NodeDataRepository extends Repository
     }
 
     /**
-     * Returns a subset of $nodes which are not flagged as removed.
-     *
-     * @param array $nodes NodeData including removed entries
-     * @return array Only those NodeData instances which are not flagged as removed
-     */
-    protected function withoutRemovedNodes(array $nodes)
-    {
-        return array_filter($nodes, function (NodeData $node) {
-            return !$node->isRemoved();
-        });
-    }
-
-    /**
      * Returns a subset of $nodes which are flagged as removed.
      *
      * @param array $nodes NodeData including removed entries
@@ -1251,92 +1228,6 @@ class NodeDataRepository extends Repository
      */
     protected function emitRepositoryObjectsPersisted()
     {
-    }
-
-    /**
-     * If $dimensions is not empty, adds join constraints to the given $queryBuilder
-     * limiting the query result to matching hits.
-     *
-     * @param QueryBuilder $queryBuilder
-     * @param array $dimensions
-     * @return void
-     */
-    protected function addDimensionJoinConstraintsToQueryBuilder(QueryBuilder $queryBuilder, array $dimensions)
-    {
-        $count = 0;
-        foreach ($dimensions as $dimensionName => $dimensionValues) {
-            $dimensionAlias = 'd' . $count;
-            $queryBuilder->andWhere(
-                'EXISTS (SELECT ' . $dimensionAlias . ' FROM Neos\ContentRepository\Domain\Model\NodeDimension ' . $dimensionAlias . ' WHERE ' . $dimensionAlias . '.nodeData = n AND ' . $dimensionAlias . '.name = \'' . $dimensionName . '\' AND ' . $dimensionAlias . '.value IN (:' . $dimensionAlias . ')) ' .
-                'OR NOT EXISTS (SELECT ' . $dimensionAlias . '_c FROM Neos\ContentRepository\Domain\Model\NodeDimension ' . $dimensionAlias . '_c WHERE ' . $dimensionAlias . '_c.nodeData = n AND ' . $dimensionAlias . '_c.name = \'' . $dimensionName . '\')'
-            );
-            $queryBuilder->setParameter($dimensionAlias, $dimensionValues);
-            $count++;
-        }
-    }
-
-    /**
-     * Given an array with duplicate nodes (from different workspaces and dimensions) those are reduced to uniqueness (by node identifier)
-     *
-     * @param array $nodes NodeData result with multiple and duplicate identifiers (different nodes and redundant results for node variants with different dimensions)
-     * @param array $workspaces
-     * @param array $dimensions
-     * @return array Array of unique node results indexed by identifier
-     * @throws Exception\NodeException
-     */
-    protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
-    {
-        $reducedNodes = [];
-
-        $minimalDimensionPositionsByIdentifier = [];
-        foreach ($nodes as $node) {
-            /** @var NodeData $node */
-            $nodeDimensions = $node->getDimensionValues();
-
-            // Find the position of the workspace, a smaller value means more priority
-            $workspaceNames = array_map(
-                function (Workspace $workspace) {
-                    return $workspace->getName();
-                },
-                $workspaces
-            );
-            $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
-            if ($workspacePosition === false) {
-                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
-            }
-
-            // Find positions in dimensions, add workspace in front for highest priority
-            $dimensionPositions = [];
-
-            // Special case for no dimensions
-            if ($dimensions === []) {
-                // We can just decide if the given node has no dimensions.
-                $dimensionPositions[] = ($nodeDimensions === []) ? 0 : 1;
-            }
-
-            foreach ($dimensions as $dimensionName => $dimensionValues) {
-                if (isset($nodeDimensions[$dimensionName])) {
-                    foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
-                        $position = array_search($nodeDimensionValue, $dimensionValues);
-                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            $position) : $position;
-                    }
-                } else {
-                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            PHP_INT_MAX) : PHP_INT_MAX;
-                }
-            }
-            $dimensionPositions[] = $workspacePosition;
-
-            $identifier = $node->getIdentifier();
-            // Yes, it seems to work comparing arrays that way!
-            if (!isset($minimalDimensionPositionsByIdentifier[$identifier]) || $dimensionPositions < $minimalDimensionPositionsByIdentifier[$identifier]) {
-                $reducedNodes[$identifier] = $node;
-                $minimalDimensionPositionsByIdentifier[$identifier] = $dimensionPositions;
-            }
-        }
-
-        return $reducedNodes;
     }
 
     /**
@@ -1438,7 +1329,7 @@ class NodeDataRepository extends Repository
     public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = false, $recursive = false)
     {
         $path = strtolower($path);
-        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
+        $workspaces = NodeDataUtility::collectWorkspaceAndAllBaseWorkspaces($workspace);
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addPathConstraintToQueryBuilder($queryBuilder, $path, $recursive);
@@ -1454,7 +1345,7 @@ class NodeDataRepository extends Repository
 
         $foundNodes = $this->reduceNodeVariantsByWorkspaces($foundNodes, $workspaces);
         if ($includeRemovedNodes === false) {
-            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+            $foundNodes = NodeDataUtility::withoutRemovedNodes($foundNodes);
         }
 
         return $foundNodes;
@@ -1528,7 +1419,7 @@ class NodeDataRepository extends Repository
      * @param array $workspaces
      * @return QueryBuilder
      */
-    protected function createQueryBuilder(array $workspaces)
+    public function createQueryBuilder(array $workspaces): QueryBuilder
     {
         $workspacesNames = array_map(static function (Workspace $workspace) {
             return $workspace->getName();
@@ -1607,7 +1498,7 @@ class NodeDataRepository extends Repository
      */
     protected function filterNodeDataByBestMatchInContext(array $nodeDataObjects, Workspace $workspace, array $dimensions, $includeRemovedNodes = false)
     {
-        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
+        $workspaces = NodeDataUtility::collectWorkspaceAndAllBaseWorkspaces($workspace);
         $nonPersistedNodes = [];
         $nodeIdentifier = [];
 
@@ -1628,7 +1519,7 @@ class NodeDataRepository extends Repository
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         if ($dimensions !== null) {
-            $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
+            NodeDataUtility::addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         } else {
             $dimensions = [];
         }
@@ -1642,35 +1533,18 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $nodes = $query->getResult();
         $foundNodes = array_merge($nodes, $nonPersistedNodes);
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
+        $foundNodes = NodeDataUtility::reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
 
         if ($includeRemovedNodes === true) {
             $foundNodes = $this->onlyRemovedNodes($foundNodes);
         } elseif ($includeRemovedNodes === false) {
-            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+            $foundNodes = NodeDataUtility::withoutRemovedNodes($foundNodes);
         }
 
         /** @var NodeData $nodeData */
         return array_filter($nodeDataObjects, function (NodeData $nodeData) use ($foundNodes) {
             return (isset($foundNodes[$nodeData->getIdentifier()]) && $foundNodes[$nodeData->getIdentifier()] === $nodeData);
         });
-    }
-
-    /**
-     * Returns an array that contains the given workspace and all base (parent) workspaces of it.
-     *
-     * @param Workspace $workspace
-     * @return array
-     */
-    protected function collectWorkspaceAndAllBaseWorkspaces(Workspace $workspace)
-    {
-        $workspaces = [];
-        while ($workspace !== null) {
-            $workspaces[] = $workspace;
-            $workspace = $workspace->getBaseWorkspace();
-        }
-
-        return $workspaces;
     }
 
     /**
