@@ -83,7 +83,7 @@ final class IntegrityViolationCommandHandler
                 if ($this->tetheredNodeExists($contentStreamIdentifier, $node->getNodeAggregateIdentifier(), $tetheredNodeName)) {
                     continue;
                 }
-                $event = new NodeAggregateWithNodeWasCreated(
+                $event = DecoratedEvent::addIdentifier(new NodeAggregateWithNodeWasCreated(
                     $contentStreamIdentifier,
                     $tetheredNodeAggregateIdentifier,
                     NodeTypeName::fromString($tetheredNodeNodeType->getName()),
@@ -94,7 +94,7 @@ final class IntegrityViolationCommandHandler
                     $initialTetheredNodePropertyValues,
                     NodeAggregateClassification::tethered(),
                     $succeedingNodeAggregateIdentifier
-                );
+                ), Uuid::uuid4()->toString());
 
                 $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
                 $this->nodeAggregateEventPublisher->publish($contentStreamEventStreamName->getEventStreamName(), $event);

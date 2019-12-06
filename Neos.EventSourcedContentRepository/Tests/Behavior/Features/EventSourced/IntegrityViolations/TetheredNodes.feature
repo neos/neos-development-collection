@@ -29,13 +29,13 @@ Feature: Tethered Nodes integrity violations
       | currentContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier       | "system-user"        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"                                                                                                                                                                                  |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                                                                                             |
-      | visibleInDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserIdentifier      | "system-user"                                                                                                                                                                                             |
-      | nodeAggregateClassification   | "root"                                                                                                                                                                                                    |
+      | Key                         | Value                                                                                                                                                                                                     |
+      | contentStreamIdentifier     | "cs-identifier"                                                                                                                                                                                           |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                                                                                                                                                  |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                                                                                             |
+      | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | initiatingUserIdentifier    | "system-user"                                                                                                                                                                                             |
+      | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -44,7 +44,7 @@ Feature: Tethered Nodes integrity violations
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}         |
-      | visibleInDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]       |
+      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
@@ -56,7 +56,7 @@ Feature: Tethered Nodes integrity violations
       | nodeAggregateIdentifier       | "nodewyn-tetherton"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}         |
-      | visibleInDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]       |
+      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]       |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "tethered-node"                           |
       | nodeAggregateClassification   | "tethered"                                |
@@ -68,7 +68,7 @@ Feature: Tethered Nodes integrity violations
       | nodeAggregateIdentifier       | "nodimer-tetherton"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:TetheredLeaf" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}             |
-      | visibleInDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]           |
+      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]           |
       | parentNodeAggregateIdentifier | "nodewyn-tetherton"                           |
       | nodeName                      | "tethered-leaf"                               |
       | nodeAggregateClassification   | "tethered"                                    |
@@ -110,9 +110,9 @@ Feature: Tethered Nodes integrity violations
     """
     And I add missing tethered nodes for node type "Neos.ContentRepository.Testing:Document" and node name "some-new-child"
     And the graph projection is fully up to date
-    Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     When I add missing tethered nodes for node type "Neos.ContentRepository.Testing:Document" and node name "some-new-child"
-    Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
 
   Scenario: Adjusting the schema removing a tethered node leads to a DisallowedTetheredNode integrity violation
     Given I have the following additional NodeTypes configuration:

@@ -16,6 +16,7 @@ use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Command\AddMissingTetheredNodes;
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationDetector;
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violations;
@@ -68,11 +69,11 @@ trait IntegrityViolationTrait
         // FIXME Hack to initialize the node type (to be fixed in NodeType::getTypeOfAutoCreatedChildNode())
         $nodeType->getFullConfiguration();
 
-        $this->lastCommandOrEventResult = $this->integrityViolationResolver->handleAddMissingTetheredNodes($nodeType, NodeName::fromString($tetheredNodeName));
+        $this->lastCommandOrEventResult = $this->integrityViolationResolver->handleAddMissingTetheredNodes(new AddMissingTetheredNodes($nodeType, NodeName::fromString($tetheredNodeName)));
     }
 
     /**
-     * @Then /^I expect no tethered node violations for type "([^"]*)"$/
+     * @Then I expect no tethered node violations for type :nodeTypeName
      * @param string $nodeTypeName
      * @throws NodeTypeNotFoundException
      */
