@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInTraversableNode;
 
-interface ContextInTraversableNodeInterface {
+interface ContextInTraversableNodeInterface
+{
     public function getContext();
 }

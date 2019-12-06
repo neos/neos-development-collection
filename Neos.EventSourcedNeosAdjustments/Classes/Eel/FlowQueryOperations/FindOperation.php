@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
@@ -25,7 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -82,6 +82,12 @@ class FindOperation extends AbstractOperation
      * @var ContentGraphInterface
      */
     protected $contentGraph;
+
+    /**
+     * @Flow\Inject
+     * @var NodeTypeConstraintFactory
+     */
+    protected $nodeTypeConstraintFactory;
 
     /**
      * {@inheritdoc}
@@ -244,7 +250,7 @@ class FindOperation extends AbstractOperation
                 return $node->getNodeAggregateIdentifier();
             }, $entryPoint['nodes']);
 
-            foreach ($subgraph->findDescendants($entryIdentifiers, new NodeTypeConstraints(false, [$nodeTypeName])) as $descendant) {
+            foreach ($subgraph->findDescendants($entryIdentifiers, $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeName->jsonSerialize()), null) as $descendant) {
                 $result[] = new TraversableNode($descendant, $subgraph);
             }
         }

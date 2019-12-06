@@ -15,7 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Service;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;

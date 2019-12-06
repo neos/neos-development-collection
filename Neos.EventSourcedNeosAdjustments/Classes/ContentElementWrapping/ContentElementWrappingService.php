@@ -15,7 +15,6 @@ namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Session\SessionInterface;
@@ -101,7 +100,7 @@ class ContentElementWrappingService
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
@@ -112,7 +111,7 @@ class ContentElementWrappingService
      * @param string $content
      * @param string $fusionPath
      * @return string
-     * @throws \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
     public function wrapContentObject(TraversableNodeInterface $node, $content, $fusionPath): ?string
     {
@@ -155,7 +154,7 @@ class ContentElementWrappingService
      * @param TraversableNodeInterface $documentNode
      * @return mixed
      * @throws \Neos\Eel\Exception
-     * @throws \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
     protected function appendNonRenderedContentNodeMetadata(TraversableNodeInterface $documentNode)
     {
@@ -201,7 +200,7 @@ class ContentElementWrappingService
      * @param TraversableNodeInterface $documentNode
      * @return string
      * @throws \Neos\Eel\Exception
-     * @throws \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
     public function getNonRenderedContentNodeMetadata(TraversableNodeInterface $documentNode)
     {

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
 
 /*
@@ -13,20 +14,24 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
+use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePolicyService;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Neos\Ui\Fusion\Helper\WorkspaceHelper;
 use Neos\Flow\Annotations as Flow;
@@ -43,8 +48,6 @@ use Neos\Neos\Ui\Domain\Model\Feedback\Messages\Info;
 use Neos\Neos\Ui\Domain\Model\Feedback\Messages\Success;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\Redirect;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\RemoveNode;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\Neos\Ui\Domain\Service\NodeTreeBuilder;
 use Neos\Eel\FlowQuery\FlowQuery;
 
@@ -127,6 +130,12 @@ class BackendServiceController extends ActionController
     protected $workspaceCommandHandler;
 
     /**
+     * @Flow\Inject
+     * @var NodeClipboard
+     */
+    protected $clipboard;
+
+    /**
      * Set the controller context on the feedback collection after the controller
      * has been initialized
      *
@@ -134,7 +143,7 @@ class BackendServiceController extends ActionController
      * @param ResponseInterface $response
      * @return void
      */
-    public function initializeController(RequestInterface $request, ResponseInterface $response)
+    protected function initializeController(ActionRequest $request, ActionResponse $response)
     {
         parent::initializeController($request, $response);
         $this->feedbackCollection->setControllerContext($this->getControllerContext());
@@ -213,8 +222,6 @@ class BackendServiceController extends ActionController
             $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspaceName);
             $this->feedbackCollection->add($success);
             $this->feedbackCollection->add($updateWorkspaceInfo);
-
-            $this->persistenceManager->persistAll();
         } catch (\Exception $e) {
             $error = new Error();
             $error->setMessage($e->getMessage());
@@ -234,43 +241,24 @@ class BackendServiceController extends ActionController
     public function discardAction(array $nodeContextPaths)
     {
         try {
+            $workspaceName = new WorkspaceName($this->userService->getPersonalWorkspaceName());
+
+            $nodeAddresses = [];
             foreach ($nodeContextPaths as $contextPath) {
-                $node = $this->nodeService->getNodeFromContextPath($contextPath, null, null, true);
-                if ($node->isRemoved() === true) {
-                    // When discarding node removal we should re-create it
-                    $updateNodeInfo = new UpdateNodeInfo();
-                    $updateNodeInfo->setNode($node);
-                    $updateNodeInfo->recursive();
-
-                    $updateParentNodeInfo = new UpdateNodeInfo();
-                    $updateParentNodeInfo->setNode($node->getParent());
-
-                    $this->feedbackCollection->add($updateNodeInfo);
-                    $this->feedbackCollection->add($updateParentNodeInfo);
-
-                    // Reload document for content node changes
-                    // (as we can't RenderContentOutOfBand from here, we don't know dom addresses)
-                    if (!$this->nodeService->isDocument($node)) {
-                        $reloadDocument = new ReloadDocument();
-                        $this->feedbackCollection->add($reloadDocument);
-                    }
-                } elseif (!$this->nodeService->nodeExistsInWorkspace($node, $node->getWorkSpace()->getBaseWorkspace())) {
-                    // If the node doesn't exist in the target workspace, tell the UI to remove it
-                    $removeNode = new RemoveNode();
-                    $removeNode->setNode($node);
-                    $this->feedbackCollection->add($removeNode);
-                }
-
-                $this->publishingService->discardNode($node);
+                $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
             }
+            $command = new DiscardIndividualNodesFromWorkspace(
+                $workspaceName,
+                $nodeAddresses
+            );
+            $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
 
             $success = new Success();
             $success->setMessage(sprintf('Discarded %d node(s).', count($nodeContextPaths)));
 
-            $this->updateWorkspaceInfo($nodeContextPaths[0]);
+            $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspaceName);
             $this->feedbackCollection->add($success);
-
-            $this->persistenceManager->persistAll();
+            $this->feedbackCollection->add($updateWorkspaceInfo);
         } catch (\Exception $e) {
             $error = new Error();
             $error->setMessage($e->getMessage());
@@ -284,7 +272,7 @@ class BackendServiceController extends ActionController
     /**
      * Change base workspace of current user workspace
      *
-     * @param string $targetWorkspaceName,
+     * @param string $targetWorkspaceName ,
      * @param NodeInterface $documentNode
      * @return void
      * @throws \Exception
@@ -353,6 +341,41 @@ class BackendServiceController extends ActionController
         $this->view->assign('value', $this->feedbackCollection);
     }
 
+
+    /**
+     * Persists the clipboard node on copy
+     *
+     * @param NodeAddress $node
+     * @return void
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     */
+    public function copyNodeAction(NodeAddress $node)
+    {
+        $this->clipboard->copyNode($node);
+    }
+
+    /**
+     * Clears the clipboard state
+     *
+     * @return void
+     */
+    public function clearClipboardAction()
+    {
+        $this->clipboard->clear();
+    }
+
+    /**
+     * Persists the clipboard node on cut
+     *
+     * @param NodeAddress $node
+     * @return void
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     */
+    public function cutNodeAction(NodeAddress $node)
+    {
+        $this->clipboard->cutNode($node);
+    }
+
     public function getWorkspaceInfoAction()
     {
         $workspaceHelper = new WorkspaceHelper();
@@ -394,18 +417,25 @@ class BackendServiceController extends ActionController
     public function getAdditionalNodeMetadataAction(array $nodes)
     {
         $result = [];
-        // TODO implement lateron
-        /** @var NodeInterface $node */
-        /*foreach ($nodes as $node) {
-            $otherNodeVariants = array_values(array_filter(array_map(function ($node) {
+        /** @var NodeAddress $nodeAddress */
+        foreach ($nodes as $nodeAddress) {
+            $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                $nodeAddress->getContentStreamIdentifier(),
+                $nodeAddress->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+
+            // TODO finish implementation
+            /*$otherNodeVariants = array_values(array_filter(array_map(function ($node) {
                 return $this->getCurrentDimensionPresetIdentifiersForNode($node);
-            }, $node->getOtherNodeVariants())));
-            $result[$node->getContextPath()] = [
+            }, $node->getOtherNodeVariants())));*/
+            $result[$nodeAddress->serializeForUri()] = [
                 'policy' => $this->nodePolicyService->getNodePolicyInformation($node),
-                'dimensions' => $this->getCurrentDimensionPresetIdentifiersForNode($node),
-                'otherNodeVariants' => $otherNodeVariants
+                //'dimensions' => $this->getCurrentDimensionPresetIdentifiersForNode($node),
+                //'otherNodeVariants' => $otherNodeVariants
             ];
-        }*/
+        }
 
         $this->view->assign('value', $result);
     }
@@ -430,7 +460,7 @@ class BackendServiceController extends ActionController
     public function getPolicyInformationAction(array $nodes)
     {
         $result = [];
-        /** @var NodeAddress $nodeAddress */
+        /** @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $nodeAddress */
         foreach ($nodes as $nodeAddress) {
             $subgraph = $this->contentGraph
                 ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());

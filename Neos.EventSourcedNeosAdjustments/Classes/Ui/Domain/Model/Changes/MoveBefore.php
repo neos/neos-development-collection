@@ -57,15 +57,18 @@ class MoveBefore extends AbstractMove
             $subject = $this->getSubject();
             $succeedingSibling = $this->getSiblingNode();
 
+            $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($succeedingSibling->findParentNode()->getNodeAggregateIdentifier());
+
             $command = new MoveNodeAggregate(
                 $subject->getContentStreamIdentifier(),
                 $subject->getDimensionSpacePoint(),
                 $subject->getNodeAggregateIdentifier(),
-                $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
-                 $succeedingSibling->getNodeAggregateIdentifier(),
+                $hasEqualParentNode ? null : $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
+                $succeedingSibling->getNodeAggregateIdentifier(),
                 RelationDistributionStrategy::gatherAll()
             );
 
+            $this->contentCacheFlusher->registerNodeChange($subject);
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
 
             $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();

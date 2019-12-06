@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
  */
 
 use Neos\Flow\Mvc\Routing;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
 /**
  * The interface for content subgraph URI processors
@@ -21,7 +21,7 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 interface ContentSubgraphUriProcessorInterface
 {
     /**
-     * @param NodeAddress $nodeAddress
+     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $nodeAddress
      * @return Routing\Dto\UriConstraints
      */
     public function resolveDimensionUriConstraints(NodeAddress $nodeAddress): Routing\Dto\UriConstraints;

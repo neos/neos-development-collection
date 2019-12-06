@@ -16,8 +16,8 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\ContentDimensionValueUriProcessorResolver;
 
 /**
@@ -50,7 +50,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
     protected $supportEmptySegmentForDimensions;
 
     /**
-     * @param NodeAddress $nodeAddress
+     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $nodeAddress
      * @param bool $currentNodeIsSiteNode
      * @return UriConstraints
      * @throws ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException

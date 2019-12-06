@@ -169,7 +169,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 return $node->getNodeAggregateIdentifier();
             }, $menuLevelCollection);
 
-            $subtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
+            $childSubtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
         } else {
             $entryParentNode = $this->findMenuStartingPoint();
             if (!$entryParentNode) {
@@ -178,14 +178,14 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
             $entryNodeAggregateIdentifiers = [$entryParentNode->getNodeAggregateIdentifier()];
 
-            $subtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
-            $subtree = $subtree->getChildren()[0];
+            $childSubtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
+            $childSubtree = $childSubtree->getChildren()[0];
         }
 
         $items = [];
-        foreach ($subtree->getChildren() as $subtree) {
-            if (!$this->isNodeHidden($subtree->getNode())) {
-                $items[] = $this->traverseChildren($subtree);
+        foreach ($childSubtree->getChildren() as $childSubtree) {
+            if (!$this->isNodeHidden($childSubtree->getNode())) {
+                $items[] = $this->traverseChildren($childSubtree);
             }
         }
 
@@ -200,9 +200,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         $children = [];
 
-        foreach ($subtree->getChildren() as $childNode) {
-            if (!$this->isNodeHidden($subtree->getNode())) {
-                $children[] = $this->traverseChildren($childNode);
+        foreach ($subtree->getChildren() as $childSubtree) {
+            if (!$this->isNodeHidden($childSubtree->getNode())) {
+                $children[] = $this->traverseChildren($childSubtree);
             }
         }
 

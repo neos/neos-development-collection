@@ -17,8 +17,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeUriPathSegmentGenerator;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 
 class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 {
@@ -57,13 +57,14 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                 ));
             }
 
+            $uriPathSegment = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, $data['title']);
             $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
                 PropertyValues::fromArray(
                     [
-                        'uriPathSegment' => new PropertyValue($data['title'], 'string')
+                        'uriPathSegment' => new PropertyValue($uriPathSegment, 'string')
                     ]
                 )
             ))->blockUntilProjectionsAreUpToDate();

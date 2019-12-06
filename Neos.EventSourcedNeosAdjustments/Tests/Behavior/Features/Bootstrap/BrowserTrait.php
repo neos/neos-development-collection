@@ -12,8 +12,9 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Request;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -26,7 +27,7 @@ trait BrowserTrait
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     abstract protected function getObjectManager();
-    abstract public function getCurrentNodeAddress(string $alias = null): \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+    abstract public function getCurrentNodeAddress(string $alias = null): \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
     /**
      * @var \Neos\Flow\Http\Client\Browser
@@ -48,18 +49,18 @@ trait BrowserTrait
 
         $bootstrap->setActiveRequestHandler(new \Neos\Flow\Tests\FunctionalTestRequestHandler($bootstrap));
         $requestHandler = $bootstrap->getActiveRequestHandler();
-        $request = Request::create(new \Neos\Flow\Http\Uri('http://localhost/flow/test'));
-        $componentContext = new ComponentContext($request, new \Neos\Flow\Http\Response());
+        $request = new ServerRequest('GET', new Uri('http://localhost/flow/test'));
+        $componentContext = new ComponentContext($request, new \GuzzleHttp\Psr7\Response());
         $requestHandler->setComponentContext($componentContext);
     }
 
     /**
-     * @var \Neos\Flow\Http\Response
+     * @var \Psr\Http\Message\ResponseInterface
      */
     protected $currentResponse;
 
     /**
-     * @var Request
+     * @var \Psr\Http\Message\ServerRequestInterface
      */
     protected $currentRequest;
 
@@ -71,7 +72,7 @@ trait BrowserTrait
         if (strpos($uriPath, 'CURRENT_NODE_ADDRESS') !== false) {
             $uriPath = str_replace('CURRENT_NODE_ADDRESS', $this->getCurrentNodeAddress()->serializeForUri(), $uriPath);
         }
-        $this->currentResponse = $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost' . $uriPath));
+        $this->currentResponse = $this->browser->request(new Uri('http://localhost' . $uriPath));
         $this->currentRequest = $this->browser->getLastRequest();
     }
 
@@ -129,7 +130,7 @@ trait BrowserTrait
     {
         $nodeAddresses = $this->getCurrentNodeAddresses();
         foreach ($nodeAddresses as $alias => $nodeAddress) {
-            /* @var $nodeAddress \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress */
+            /* @var $nodeAddress \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress */
             $nodeAddressString = str_replace($alias, $nodeAddress->serializeForUri(), $nodeAddressString);
         }
 

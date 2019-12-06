@@ -132,8 +132,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array
-    {
+    ): array {
         $nodes = $this->subgraph->findSiblings($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
         $traversableNodes = [];
@@ -156,8 +155,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array
-    {
+    ): array {
         $nodes = $this->subgraph->findPrecedingSiblings($this->node->getNodeAggregateIdentifier());
 
         $traversableNodes = [];
@@ -180,8 +178,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array
-    {
+    ): array {
         $nodes = $this->subgraph->findSucceedingSiblings($this->node->getNodeAggregateIdentifier());
 
         $traversableNodes = [];
@@ -194,6 +191,9 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
     /**
      * Retrieves and returns all nodes referenced by this node from its subgraph.
      * If node type constraints are specified, only nodes of that type are returned.
+     *
+     * This is the FORWARD direction of reference traversal, i.e.
+     * to find all nodes referenced by a `reference` or `references` property
      *
      * @return TraversableNodes
      */

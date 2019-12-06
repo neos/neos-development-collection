@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInTraversableNode;
 
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
@@ -84,6 +84,13 @@ class EmulatedLegacyContext
             return $workspaceName->getName();
         }
         return null;
+    }
+
+    public function getWorkspace(): EmulatedLegacyWorkspace
+    {
+        $this->legacyLogger->info('context.workspace called', LogEnvironment::fromMethodName(__METHOD__));
+
+        return new EmulatedLegacyWorkspace($this->getNodeAddressOfContextNode());
     }
 
     public function __call($methodName, $args)

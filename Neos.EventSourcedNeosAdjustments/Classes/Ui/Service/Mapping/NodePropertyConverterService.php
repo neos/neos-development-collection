@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
 
 /*
@@ -13,9 +14,12 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\Exception as PropertyException;
 use Neos\Flow\Property\PropertyMapper;
@@ -24,6 +28,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Psr\Log\LoggerInterface;
 
 /**
  * Creates PropertyMappingConfigurations to map NodeType properties for the Neos interface.
@@ -57,16 +62,36 @@ class NodePropertyConverterService
     protected $generatedPropertyMappingConfigurations = [];
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
 
     /**
      * @Flow\Inject
      * @var NodeHiddenStateFinder
      */
     protected $nodeHiddenStateFinder;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * Get a single property reduced to a simple type (no objects) representation
@@ -80,17 +105,34 @@ class NodePropertyConverterService
         if ($propertyName === '_hidden') {
             return $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden();
         }
-        if ($propertyName[0] === '_' && $propertyName !== '_hiddenInIndex') {
+
+        $propertyType = $node->getNodeType()->getPropertyType($propertyName);
+
+        // We handle "reference" and "references" differently than other properties; because we need to use another API for querying these references.
+        if ($propertyType === 'reference') {
+            $references = $node->findNamedReferencedNodes(PropertyName::fromString($propertyName));
+            if ($references->isEmpty()) {
+                return null;
+            } else {
+                $nodeIdentifierStrings = $this->toNodeIdentifierStrings($references);
+                return reset($nodeIdentifierStrings);
+            }
+        } elseif ($propertyType === 'references') {
+            $references = $node->findNamedReferencedNodes(PropertyName::fromString($propertyName));
+
+            return $this->toNodeIdentifierStrings($references);
+        // Here, the normal property access logic starts.
+        } elseif ($propertyName[0] === '_' && $propertyName !== '_hiddenInIndex') {
             $propertyValue = ObjectAccess::getProperty($node, ltrim($propertyName, '_'));
         } else {
             $propertyValue = $node->getProperty($propertyName);
         }
 
-        $dataType = $node->getNodeType()->getPropertyType($propertyName);
         try {
-            $convertedValue = $this->convertValue($propertyValue, $dataType);
+            $convertedValue = $this->convertValue($propertyValue, $propertyType);
         } catch (PropertyException $exception) {
-            $this->systemLogger->logException($exception);
+            $logMessage = $this->throwableStorage->logThrowable($exception);
+            $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
             $convertedValue = null;
         }
 
@@ -98,15 +140,25 @@ class NodePropertyConverterService
             $convertedValue = $this->getDefaultValueForProperty($node->getNodeType(), $propertyName);
             if ($convertedValue !== null) {
                 try {
-                    $convertedValue = $this->convertValue($convertedValue, $dataType);
+                    $convertedValue = $this->convertValue($convertedValue, $propertyType);
                 } catch (PropertyException $exception) {
-                    $this->systemLogger->logException($exception);
+                    $logMessage = $this->throwableStorage->logThrowable($exception);
+                    $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                     $convertedValue = null;
                 }
             }
         }
 
         return $convertedValue;
+    }
+
+    private function toNodeIdentifierStrings(TraversableNodes $nodes)
+    {
+        $identifiers = [];
+        foreach ($nodes as $node) {
+            $identifiers[] = $node->getNodeAggregateIdentifier()->jsonSerialize();
+        }
+        return $identifiers;
     }
 
     /**

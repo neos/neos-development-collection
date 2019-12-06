@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -60,6 +61,17 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
             } else {
                 throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', PropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
             }
+        }
+
+        return new static($values);
+    }
+
+    public static function fromNode(NodeInterface $node): self
+    {
+        $values = [];
+
+        foreach ($node->getProperties() as $propertyName => $propertyValue) {
+            $values[$propertyName] = new PropertyValue($propertyValue, $node->getNodeType()->getPropertyType($propertyName));
         }
 
         return new static($values);

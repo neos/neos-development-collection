@@ -34,6 +34,14 @@ class WorkspaceTitle implements \JsonSerializable
     }
 
     /**
+     * @param string $value
+     * @return static
+     */
+    public static function fromString(string $value): self
+    {
+        return new static($value);
+    }
+    /**
      * @param string $title
      */
     protected function setTitle(string $title)

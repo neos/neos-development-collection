@@ -18,6 +18,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Remo
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveNode;
@@ -33,6 +34,12 @@ class Remove extends AbstractChange
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var ContentCacheFlusher
+     */
+    protected $contentCacheFlusher;
 
     /**
      * Checks whether this change can be applied to the subject
@@ -58,6 +65,9 @@ class Remove extends AbstractChange
         if ($this->canApply()) {
             $node = $this->getSubject();
             $parentNode = $node->findParentNode();
+
+            // we have to remember what parts of the content cache to flush before we actually delete the node; otherwise we cannot find the parent nodes anymore.
+            $this->contentCacheFlusher->registerNodeChange($node);
 
             // we have to schedule an the update workspace info before we actually delete the node; otherwise we cannot find the parent nodes anymore.
             $this->updateWorkspaceInfo();

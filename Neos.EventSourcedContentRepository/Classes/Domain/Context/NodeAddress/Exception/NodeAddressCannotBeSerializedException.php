@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception;
 
 /*
  * This file is part of the Neos.Neos package.

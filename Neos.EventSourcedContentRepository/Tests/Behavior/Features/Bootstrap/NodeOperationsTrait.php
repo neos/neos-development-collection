@@ -120,8 +120,11 @@ trait NodeOperationsTrait
                 );
             }
 
-            /** @var ConfigurationBasedContentDimensionSource $contentDimensionSource */
             $contentDimensionSource = $this->getObjectManager()->get(ContentDimensionSourceInterface::class);
+            if (!$contentDimensionSource instanceof ConfigurationBasedContentDimensionSource) {
+                throw new \RuntimeException(sprintf('$contentDimensionSource must be of type ConfigurationBasedContentDimensionSource, %s given', get_class($contentDimensionSource)), 1571293359);
+            }
+
             ObjectAccess::setProperty($contentDimensionSource, 'contentDimensions', $dimensions, true);
 
             $this->resetDimensionSpaceRepositories();
@@ -133,8 +136,11 @@ trait NodeOperationsTrait
      */
     public function iHaveNoContentDimensions()
     {
-        /** @var ConfigurationBasedContentDimensionSource $contentDimensionSource */
         $contentDimensionSource = $this->getObjectManager()->get(ContentDimensionSourceInterface::class);
+        if (!$contentDimensionSource instanceof ConfigurationBasedContentDimensionSource) {
+            throw new \RuntimeException(sprintf('$contentDimensionSource must be of type ConfigurationBasedContentDimensionSource, %s given', get_class($contentDimensionSource)), 1571293359);
+        }
+
         ObjectAccess::setProperty($contentDimensionSource, 'contentDimensions', [], true);
 
         $this->resetDimensionSpaceRepositories();

@@ -11,59 +11,46 @@ declare(strict_types=1);
  * source code.
  */
 
-require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContext.php');
+require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/NodeOperationsTrait.php');
 require_once(__DIR__ . '/NodeAuthorizationTrait.php');
-require_once(__DIR__ . '/IntegrityViolationTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
-use Neos\Behat\Tests\Behat\FlowContext;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\IntegrityViolationTrait;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 
 /**
  * Features context
  */
-class FeatureContext extends \Behat\Behat\Context\BehatContext
+class FeatureContext implements \Behat\Behat\Context\Context
 {
+    use FlowContextTrait;
     use NodeOperationsTrait;
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
     use EventSourcedTrait;
-    use IntegrityViolationTrait;
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
 
     /**
      * @var string
      */
     protected $behatTestHelperObjectName = \Neos\EventSourcedContentRepository\Tests\Functional\Command\BehatTestHelper::class;
 
-    /**
-     * Initializes the context
-     *
-     * @param array $parameters Context parameters (configured through behat.yml)
-     */
-    public function __construct(array $parameters)
+    public function __construct()
     {
-        $this->useContext('flow', new FlowContext($parameters));
-        /** @var FlowContext $flowContext */
-        $flowContext = $this->getSubcontext('flow');
-        $this->objectManager = $flowContext->getObjectManager();
+        if (self::$bootstrap === null) {
+            self::$bootstrap = $this->initializeFlow();
+        }
+        $this->objectManager = self::$bootstrap->getObjectManager();
 
         $this->setupSecurity();
         $this->setupEventSourcedTrait();
-        $this->setupIntegrityViolationTrait();
     }
 
     /**

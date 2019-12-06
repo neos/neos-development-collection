@@ -23,9 +23,11 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
 use Neos\EventSourcedNeosAdjustments\Ui\View\BackendFusionView;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Session\SessionInterface;
@@ -127,6 +129,12 @@ class BackendController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var NodeClipboard
+     */
+    protected $clipboard;
+
+    /**
+     * @Flow\Inject
      * @var ContentDimensionSourceInterface
      */
     protected $contentDimensionSource;
@@ -145,7 +153,7 @@ class BackendController extends ActionController
     /**
      * Displays the backend interface
      *
-     * @param NodeAddress $node The node that will be displayed on the first tab
+     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node The node that will be displayed on the first tab
      * @return void
      */
     public function indexAction(NodeAddress $node = null)
@@ -177,6 +185,8 @@ class BackendController extends ActionController
         $this->view->assign('user', $user);
         $this->view->assign('documentNode', $node);
         $this->view->assign('site', $siteNode);
+        $this->view->assign('clipboardNode', $this->clipboard->getSerializedNodeAddress());
+        $this->view->assign('clipboardMode', $this->clipboard->getMode());
         $this->view->assign('headScripts', $this->styleAndJavascriptInclusionService->getHeadScripts());
         $this->view->assign('headStylesheets', $this->styleAndJavascriptInclusionService->getHeadStylesheets());
         $this->view->assign('splashScreenPartial', $this->splashScreenPartial);
@@ -190,13 +200,15 @@ class BackendController extends ActionController
     }
 
     /**
-     * @param NodeAddress $node
+     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function redirectToAction(NodeAddress $node)
     {
-        $this->response->getHeaders()->setCacheControlDirective('no-cache');
-        $this->response->getHeaders()->setCacheControlDirective('no-store');
+        $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', [
+            'no-cache',
+            'no-store'
+        ]);
         $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $node]);
     }
 
