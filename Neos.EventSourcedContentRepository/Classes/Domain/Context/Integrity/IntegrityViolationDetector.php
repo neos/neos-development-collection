@@ -44,7 +44,7 @@ final class IntegrityViolationDetector
      */
     public function detectTetheredNodeViolations(NodeType $nodeType): Violations
     {
-        $expectedTetheredNodes = array_map(static function(NodeType $nodeType) {
+        $expectedTetheredNodes = array_map(static function (NodeType $nodeType) {
             return $nodeType->getName();
         }, $nodeType->getAutoCreatedChildNodes());
         $violations = Violations::create();
@@ -90,5 +90,4 @@ final class IntegrityViolationDetector
             }
         }
     }
-
 }

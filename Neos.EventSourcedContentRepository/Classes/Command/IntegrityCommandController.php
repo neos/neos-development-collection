@@ -19,7 +19,6 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Command\AddMissingTetheredNodes;
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationDetector;
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\Node;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\StopActionException;

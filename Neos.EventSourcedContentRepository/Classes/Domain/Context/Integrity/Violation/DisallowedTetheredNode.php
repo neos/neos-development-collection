@@ -45,5 +45,4 @@ final class DisallowedTetheredNode implements ViolationInterface
     {
         return ['nodeName' => $this->nodeName];
     }
-
 }

@@ -46,5 +46,4 @@ final class AddMissingTetheredNodes
     {
         return $this->tetheredNodeName;
     }
-
 }

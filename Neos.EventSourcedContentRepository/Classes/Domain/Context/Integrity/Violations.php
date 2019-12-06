@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Integrity;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violation\ViolationInterface;
 use Neos\Flow\Annotations as Flow;
-use Traversable;
 
 /**
  * @Flow\Proxy(false)

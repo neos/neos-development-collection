@@ -45,5 +45,4 @@ final class MissingTetheredNode implements ViolationInterface
     {
         return ['nodeName' => $this->nodeName];
     }
-
 }
