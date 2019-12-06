@@ -16,8 +16,10 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Command\AddMissingTetheredNodes;
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationDetector;
-use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationResolver;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Node;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -39,9 +41,9 @@ final class IntegrityCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var IntegrityViolationResolver
+     * @var IntegrityViolationCommandHandler
      */
-    protected $integrityViolationResolver;
+    protected $integrityViolationCommandHandler;
 
     /**
      * @param string $nodeType
@@ -79,7 +81,8 @@ final class IntegrityCommandController extends CommandController
     public function addMissingTetheredNodesCommand(string $nodeType, string $name): void
     {
         $nodeTypeToFix = $this->resolveNodeType($nodeType);
-        $this->integrityViolationResolver->addMissingTetheredNodes($nodeTypeToFix, NodeName::fromString($name));
+        $command = new AddMissingTetheredNodes($nodeTypeToFix, NodeName::fromString($name));
+        $this->integrityViolationCommandHandler->handleAddMissingTetheredNodes($nodeTypeToFix, NodeName::fromString($name));
         $this->outputLine('<success>Done</success>');
     }
 

@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationDetector;
-use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationResolver;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violations;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
@@ -34,7 +34,7 @@ trait IntegrityViolationTrait
     protected $integrityViolationDetector;
 
     /**
-     * @var IntegrityViolationResolver
+     * @var IntegrityViolationCommandHandler
      */
     protected $integrityViolationResolver;
 
@@ -51,7 +51,7 @@ trait IntegrityViolationTrait
     protected function setupIntegrityViolationTrait(): void
     {
         $this->integrityViolationDetector = $this->getObjectManager()->get(IntegrityViolationDetector::class);
-        $this->integrityViolationResolver = $this->getObjectManager()->get(IntegrityViolationResolver::class);
+        $this->integrityViolationResolver = $this->getObjectManager()->get(IntegrityViolationCommandHandler::class);
         $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
     }
 
@@ -68,7 +68,7 @@ trait IntegrityViolationTrait
         // FIXME Hack to initialize the node type (to be fixed in NodeType::getTypeOfAutoCreatedChildNode())
         $nodeType->getFullConfiguration();
 
-        $this->lastCommandOrEventResult = $this->integrityViolationResolver->addMissingTetheredNodes($nodeType, NodeName::fromString($tetheredNodeName));
+        $this->lastCommandOrEventResult = $this->integrityViolationResolver->handleAddMissingTetheredNodes($nodeType, NodeName::fromString($tetheredNodeName));
     }
 
     /**

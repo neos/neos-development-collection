@@ -19,47 +19,50 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Command\AddMissingTetheredNodes;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\Exception as PropertyException;
+use Neos\Flow\Security\Exception as SecurityException;
 
 /**
  * @Flow\Scope("singleton")
  */
-final class IntegrityViolationResolver
+final class IntegrityViolationCommandHandler
 {
 
     /**
-     * @Flow\Inject
-     * @var NodeAggregateCommandHandler
+     * @var NodeAggregateEventPublisher
      */
-    protected $nodeAggregateCommandHandler;
+    private $nodeAggregateEventPublisher;
 
     /**
-     * @Flow\Inject
-     * @var IntegrityViolationDetector
-     */
-    protected $integrityViolationDetector;
-
-    /**
-     * @Flow\Inject
-     * @var EventStoreManager
-     */
-    protected $eventStoreManager;
-
-    /**
-     * @Flow\Inject
      * @var ContentGraphInterface
      */
-    protected $contentGraph;
+    private $contentGraph;
 
-    public function addMissingTetheredNodes(NodeType $nodeType, NodeName $tetheredNodeName): CommandResult
+    public function __construct(NodeAggregateEventPublisher $nodeAggregateEventPublisher, ContentGraphInterface $contentGraph)
     {
+        $this->nodeAggregateEventPublisher = $nodeAggregateEventPublisher;
+        $this->contentGraph = $contentGraph;
+    }
+
+    /**
+     * @param AddMissingTetheredNodes $command
+     * @return CommandResult
+     * @throws PropertyException | SecurityException
+     */
+    public function handleAddMissingTetheredNodes(AddMissingTetheredNodes $command): CommandResult
+    {
+        $nodeType = $command->getNodeType();
+        $tetheredNodeName = $command->getTetheredNodeName();
         try {
             $tetheredNodeNodeType = $nodeType->getTypeOfAutoCreatedChildNode($tetheredNodeName);
         } catch (NodeTypeNotFoundException $exception) {
@@ -71,26 +74,31 @@ final class IntegrityViolationResolver
 
         $publishedEvents = DomainEvents::createEmpty();
         $nodeTypeName = NodeTypeName::fromString($nodeType->getName());
+        $initialTetheredNodePropertyValues = $this->getDefaultPropertyValues($tetheredNodeNodeType);
         foreach ($this->nodesOfType($nodeTypeName) as $contentStreamIdentifier => $nodeAggregate) {
-            // FIXME this should probably be filled with ids using NodeAggregateIdentifier::forAutoCreatedChildNode() to be deterministic
-            $nodeAggregateIdentifiers = new NodeAggregateIdentifiersByNodePaths([]);
+            $tetheredNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($tetheredNodeName, $nodeAggregate->getIdentifier());
+            // TODO determine succeeding node
+            $succeedingNodeAggregateIdentifier = null;
             foreach ($nodeAggregate->getNodesByOccupiedDimensionSpacePoint() as $node) {
                 if ($this->tetheredNodeExists($contentStreamIdentifier, $node->getNodeAggregateIdentifier(), $tetheredNodeName)) {
                     continue;
                 }
-                $events = $this->nodeAggregateCommandHandler->createTetheredChildNode(
+                $event = new NodeAggregateWithNodeWasCreated(
                     $contentStreamIdentifier,
-                    $nodeAggregate->getCoveredDimensionSpacePoints(),
+                    $tetheredNodeAggregateIdentifier,
+                    NodeTypeName::fromString($tetheredNodeNodeType->getName()),
                     $node->getOriginDimensionSpacePoint(),
-                    $node->getNodeAggregateIdentifier(),
-                    $nodeAggregateIdentifiers,
+                    $nodeAggregate->getCoveredDimensionSpacePoints(),
+                    $nodeAggregate->getIdentifier(),
                     $tetheredNodeName,
-                    $tetheredNodeNodeType
+                    $initialTetheredNodePropertyValues,
+                    NodeAggregateClassification::tethered(),
+                    $succeedingNodeAggregateIdentifier
                 );
+
                 $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
-                $eventStore = $this->eventStoreManager->getEventStoreForStreamName($contentStreamEventStreamName->getEventStreamName());
-                $eventStore->commit($contentStreamEventStreamName->getEventStreamName(), $events);
-                $publishedEvents = $publishedEvents->appendEvents($events);
+                $this->nodeAggregateEventPublisher->publish($contentStreamEventStreamName->getEventStreamName(), $event);
+                $publishedEvents = $publishedEvents->appendEvent($event);
             }
         }
         return CommandResult::fromPublishedEvents($publishedEvents);
@@ -120,6 +128,19 @@ final class IntegrityViolationResolver
             }
         }
         return false;
+    }
+
+    private function getDefaultPropertyValues(NodeType $nodeType): PropertyValues
+    {
+        $rawDefaultPropertyValues = [];
+        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
+            $rawDefaultPropertyValues[$propertyName] = [
+                'type' => $nodeType->getPropertyType($propertyName),
+                'value' => $defaultValue
+            ];
+        }
+
+        return PropertyValues::fromArray($rawDefaultPropertyValues);
     }
 
 }
