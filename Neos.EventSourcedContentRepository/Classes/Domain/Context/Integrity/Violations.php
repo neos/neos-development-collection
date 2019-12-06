@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Integrity;
+namespace Neos\EventSourcedContentRepository\Domain\Context\Integrity;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\Integrity;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Integrity\Violation\ViolationInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violation\ViolationInterface;
 use Neos\Flow\Annotations as Flow;
 use Traversable;
 

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Integrity;
+namespace Neos\EventSourcedContentRepository\Domain\Context\Integrity;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -16,9 +16,9 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
-use Neos\EventSourcedContentRepository\Integrity\Violation\DisallowedTetheredNode;
-use Neos\EventSourcedContentRepository\Integrity\Violation\InvalidTetheredNodeType;
-use Neos\EventSourcedContentRepository\Integrity\Violation\MissingTetheredNode;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violation\DisallowedTetheredNode;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violation\InvalidTetheredNodeType;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violation\MissingTetheredNode;
 use Neos\Flow\Annotations as Flow;
 
 /**

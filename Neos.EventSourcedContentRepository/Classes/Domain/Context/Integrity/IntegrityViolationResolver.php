@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Integrity;
+namespace Neos\EventSourcedContentRepository\Domain\Context\Integrity;
 
 /*
  * This file is part of the Neos.ContentRepository package.

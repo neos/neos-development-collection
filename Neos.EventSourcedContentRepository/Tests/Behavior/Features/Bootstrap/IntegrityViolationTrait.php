@@ -16,9 +16,9 @@ use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\EventSourcedContentRepository\Integrity\IntegrityViolationDetector;
-use Neos\EventSourcedContentRepository\Integrity\IntegrityViolationResolver;
-use Neos\EventSourcedContentRepository\Integrity\Violations;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationDetector;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationResolver;
+use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violations;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
