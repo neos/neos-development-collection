@@ -60,6 +60,13 @@ interface ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeTypeName $nodeTypeName
+     * @return NodeAggregate[]|\Iterator
+     */
+    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): \Iterator;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeAggregate|null
      * @throws NodeAggregatesTypeIsAmbiguous
@@ -131,6 +138,13 @@ interface ContentGraphInterface
     public function getDimensionSpacePointsOccupiedByChildNodeName(ContentStreamIdentifier $contentStreamIdentifier, NodeName $nodeName, NodeAggregateIdentifier $parentNodeAggregateIdentifier, DimensionSpacePoint $parentNodeOriginDimensionSpacePoints, DimensionSpacePointSet $dimensionSpacePointsToCheck);
 
     public function countNodes(): int;
+
+    /**
+     * Returns all content stream identifiers
+     *
+     * @return ContentStreamIdentifier[]
+     */
+    public function findContentStreamIdentifiers(): array;
 
     /**
      * Enable all caches. All READ requests should enable the cache.
