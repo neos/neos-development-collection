@@ -440,7 +440,7 @@ final class ContentGraph implements ContentGraphInterface
         $connection = $this->client->getConnection();
 
         $rows = $connection->executeQuery('SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation')->fetchAll();
-        return array_map(function(array $row) {
+        return array_map(function (array $row) {
             return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
         }, $rows);
     }

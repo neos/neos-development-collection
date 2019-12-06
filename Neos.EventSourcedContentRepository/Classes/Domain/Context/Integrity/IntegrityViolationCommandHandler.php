@@ -164,5 +164,4 @@ final class IntegrityViolationCommandHandler
 
         return PropertyValues::fromArray($rawDefaultPropertyValues);
     }
-
 }
