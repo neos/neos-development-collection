@@ -23,14 +23,17 @@ use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Command\AddMissi
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\Exception as PropertyException;
 use Neos\Flow\Security\Exception as SecurityException;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @Flow\Scope("singleton")
@@ -77,11 +80,20 @@ final class IntegrityViolationCommandHandler
         $initialTetheredNodePropertyValues = $this->getDefaultPropertyValues($tetheredNodeNodeType);
         foreach ($this->nodesOfType($nodeTypeName) as $contentStreamIdentifier => $nodeAggregate) {
             $tetheredNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($tetheredNodeName, $nodeAggregate->getIdentifier());
-            // TODO determine succeeding node
-            $succeedingNodeAggregateIdentifier = null;
             foreach ($nodeAggregate->getNodesByOccupiedDimensionSpacePoint() as $node) {
                 if ($this->tetheredNodeExists($contentStreamIdentifier, $node->getNodeAggregateIdentifier(), $tetheredNodeName)) {
                     continue;
+                }
+                $succeedingNodeAggregateIdentifier = null;
+                $succeedingTetheredNodeName = $this->getSucceedingTetheredNodeName($nodeType, $tetheredNodeName);
+                if ($succeedingTetheredNodeName !== null) {
+                    $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+                    if ($subgraph !== null) {
+                        $succeedingNode = $subgraph->findChildNodeConnectedThroughEdgeName($nodeAggregate->getIdentifier(), $succeedingTetheredNodeName);
+                        if ($succeedingNode !== null) {
+                            $succeedingNodeAggregateIdentifier = $succeedingNode->getNodeAggregateIdentifier();
+                        }
+                    }
                 }
                 $event = DecoratedEvent::addIdentifier(new NodeAggregateWithNodeWasCreated(
                     $contentStreamIdentifier,
@@ -128,6 +140,16 @@ final class IntegrityViolationCommandHandler
             }
         }
         return false;
+    }
+
+    private function getSucceedingTetheredNodeName(NodeType $nodeType, NodeName $tetheredNodeName): ?NodeName
+    {
+        $tetheredNodeNames = array_keys($nodeType->getAutoCreatedChildNodes());
+        $index = array_search((string)$tetheredNodeName, $tetheredNodeNames, true);
+        if ($index === false || !array_key_exists($index + 1, $tetheredNodeNames)) {
+            return null;
+        }
+        return NodeName::fromString($tetheredNodeNames[$index + 1]);
     }
 
     private function getDefaultPropertyValues(NodeType $nodeType): PropertyValues
