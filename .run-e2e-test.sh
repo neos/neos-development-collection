@@ -2,6 +2,7 @@
 
 # this file is to be executed at the root of the distribution.
 
-for file in $(find Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Behavior/Features/EndToEnd -name *.feature); do
-  bin/behat -f progress -c Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Behavior/behat.yml.dist $file
+cd Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Behavior
+for file in $(find Features/EndToEnd -name *.feature); do
+  ../../../../../bin/behat -f progress -c behat.yml.dist $file
 done
