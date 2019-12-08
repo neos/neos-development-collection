@@ -518,6 +518,50 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
         });
     }
 
+    public function whenContentStreamWasRemoved(ContentRepository\Context\ContentStream\Event\ContentStreamWasRemoved $event)
+    {
+        $this->transactional(function () use ($event) {
+
+            // Drop hierarchy relations
+            $this->getDatabaseConnection()->executeUpdate('
+                DELETE FROM neos_contentgraph_hierarchyrelation
+                WHERE
+                    contentstreamidentifier = :contentStreamIdentifier
+            ', [
+                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+            ]);
+
+            // Drop non-referenced nodes (which do not have a hierarchy relation anymore)
+            $this->getDatabaseConnection()->executeUpdate('
+                DELETE FROM neos_contentgraph_node
+                WHERE NOT EXISTS
+                    (
+                        SELECT 1 FROM neos_contentgraph_hierarchyrelation
+                        WHERE neos_contentgraph_hierarchyrelation.childnodeanchor = neos_contentgraph_node.relationanchorpoint
+                    )
+            ');
+
+            // Drop non-referenced reference relations (i.e. because the referenced nodes are gone by now)
+            $this->getDatabaseConnection()->executeUpdate('
+                DELETE FROM neos_contentgraph_referencerelation
+                WHERE NOT EXISTS
+                    (
+                        SELECT 1 FROM neos_contentgraph_node
+                        WHERE neos_contentgraph_node.relationanchorpoint = neos_contentgraph_referencerelation.nodeanchorpoint
+                    )
+            ');
+
+            // Drop restriction relations
+            $this->getDatabaseConnection()->executeUpdate('
+                DELETE FROM neos_contentgraph_restrictionrelation
+                WHERE
+                    contentstreamidentifier = :contentStreamIdentifier
+            ', [
+                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+            ]);
+        });
+    }
+
     /**
      * @param NodePropertiesWereSet $event
      * @throws \Throwable

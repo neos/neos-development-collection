@@ -62,6 +62,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
+use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
@@ -81,10 +82,13 @@ use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventStore\EventEnvelope;
+use Neos\EventSourcing\EventStore\EventListenerTrigger\EventListenerTrigger;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\EventStore\StreamName;
+use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
@@ -1855,5 +1859,52 @@ trait EventSourcedTrait
         }
 
         return null;
+    }
+
+
+    /**
+     * @Then the content stream :contentStreamIdentifier has state :expectedState
+     */
+    public function theContentStreamHasState(string $contentStreamIdentifier, string $expectedState)
+    {
+        // NOTE: this code here is kinda messy; triggering the event listeners and then doing a retry until we find what we want...
+        // No clue how to write this in a nicer way; as it has nothing to do with the specific testcase.
+
+        $this->getObjectManager()->get(EventListenerTrigger::class)->invoke();
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
+        /** @var ContentStreamFinder $contentStreamFinder */
+        $contentStreamFinder = $this->getObjectManager()->get(ContentStreamFinder::class);
+
+        for ($i = 0; $i < 10; $i++) {
+            $actual = $contentStreamFinder->findStateForContentStream($contentStreamIdentifier);
+            if ($actual !== null) {
+                // we found the result
+                break;
+            }
+
+            // we might need to retry, because the projection is not yet up to date.
+            usleep(100000);
+        }
+
+        Assert::assertEquals($expectedState, $actual);
+    }
+
+    /**
+     * @Then the current content stream has state :expectedState
+     */
+    public function theCurrentContentStreamHasState(string $expectedState)
+    {
+        $this->theContentStreamHasState($this->contentStreamIdentifier->jsonSerialize(), $expectedState);
+    }
+
+    /**
+     * @When I prune unused content streams
+     */
+    public function iPruneUnusedContentStreams()
+    {
+        /** @var ConfigurationManager $configurationManager */
+        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
+        $flowSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
+        Scripts::executeCommand('neos.eventsourcedcontentrepository:contentstream:prune', $flowSettings, false);
     }
 }

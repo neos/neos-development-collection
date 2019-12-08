@@ -109,6 +109,24 @@ final class ContentStreamCommandHandler
         return CommandResult::fromPublishedEvents($events);
     }
 
+    public function handleRemoveContentStream(Command\RemoveContentStream $command): CommandResult
+    {
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
+
+        $events = DomainEvents::withSingleEvent(
+            DecoratedEvent::addIdentifier(
+                new Event\ContentStreamWasRemoved(
+                    $command->getContentStreamIdentifier()
+                ),
+                Uuid::uuid4()->toString()
+            )
+        );
+        $this->eventStore->commit($streamName, $events);
+        return CommandResult::fromPublishedEvents($events);
+    }
+
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

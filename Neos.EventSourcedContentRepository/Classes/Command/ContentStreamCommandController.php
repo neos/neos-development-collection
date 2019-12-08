@@ -1,7 +1,10 @@
 <?php
 namespace Neos\EventSourcedContentRepository\Command;
 
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\RemoveContentStream;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
 use Neos\EventSourcing\Projection\ProjectionManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -40,6 +43,18 @@ class ContentStreamCommandController extends CommandController
      * @var WorkspaceCommandHandler
      */
     protected $workspaceCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var ContentStreamFinder
+     */
+    protected $contentStreamFinder;
+
+    /**
+     * @Flow\Inject
+     * @var ContentStreamCommandHandler
+     */
+    protected $contentStreamCommandHandler;
 
     public function __construct(EventStore $contentRepositoryEventStore)
     {
@@ -145,5 +160,30 @@ class ContentStreamCommandController extends CommandController
         $this->outputLine('');
         $this->outputLine('Finished importing events.');
         $this->outputLine('Your events and projections are probably out of sync now, <error>make sure you replay all projections via "./flow projection:replayall"</error>.');
+    }
+
+    public function pruneCommand()
+    {
+        $unusedContentStreams = $this->contentStreamFinder->findUnusedContentStreams();
+
+        if (!count($unusedContentStreams)) {
+            $this->outputLine('There are no unused content streams.');
+            return;
+        }
+        foreach ($unusedContentStreams as $contentStream) {
+            $this->outputFormatted('Removing %s', [$contentStream]);
+            $this->contentStreamCommandHandler->handleRemoveContentStream(new RemoveContentStream($contentStream));
+        }
+    }
+
+    public function pruneFromEventStreamCommand()
+    {
+        // TODO throw away events
+
+        // This is not so easy for nested workspaces / content streams:
+        //   - As long as content streams are used as basis for others which are IN_USE_BY_WORKSPACE,
+        //     these dependent Content Streams are not allowed to be removed in the event store.
+        //
+        //   - Otherwise, we cannot replay the other content streams correctly (if the base content streams are missing).
     }
 }
