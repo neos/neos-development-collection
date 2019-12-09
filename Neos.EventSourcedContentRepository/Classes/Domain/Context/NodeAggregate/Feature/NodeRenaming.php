@@ -18,8 +18,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAg
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
+use Ramsey\Uuid\Uuid;
 
 trait NodeRenaming
 {
@@ -39,12 +40,13 @@ trait NodeRenaming
         $events = DomainEvents::fromArray([]);
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
             $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
+                DecoratedEvent::addIdentifier(
                     new NodeAggregateNameWasChanged(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $command->getNewNodeName()
-                    )
+                    ),
+                    Uuid::uuid4()->toString()
                 )
             );
 

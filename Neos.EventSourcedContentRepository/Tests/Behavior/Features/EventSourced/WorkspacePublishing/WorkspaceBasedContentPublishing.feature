@@ -4,7 +4,7 @@ Feature: Workspace based content publishing
   This is an END TO END test; testing all layers of the related functionality step by step together
 
   Basic fixture setup is:
-  - root workspace with a single "root" node inside
+  - root workspace with a single "root" node inside; and an additional child node.
   - then, a nested workspace is created based on the "root" node
 
   Background:
@@ -206,3 +206,59 @@ Feature: Workspace based content publishing
     And I expect this node to have the properties:
       | Key  | Value         |
       | text | Modified anew |
+
+  Scenario: Discarding a full workspace works
+    When the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                          |
+      | contentStreamIdentifier   | "user-cs-identifier"                           |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                             |
+      | originDimensionSpacePoint | {}                                             |
+      | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
+    And I expect this node to have the properties:
+      | Key  | Value    |
+      | text | Modified |
+
+    # Discarding
+    When the command DiscardWorkspace is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "user-test" |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
+    And I expect this node to have the properties:
+      | Key  | Value    |
+      | text | Original |
+
+  Scenario: Discarding a full workspace shows the most up-to-date base workspace when the base WS was modified in the meantime
+    When the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                          |
+      | contentStreamIdentifier   | "user-cs-identifier"                           |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                             |
+      | originDimensionSpacePoint | {}                                             |
+      | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
+    And the graph projection is fully up to date
+
+    And the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                                            |
+      | contentStreamIdentifier   | "cs-identifier"                                                  |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                               |
+      | originDimensionSpacePoint | {}                                                               |
+      | propertyValues            | {"text": {"value":"Modified in live workspace","type":"string"}} |
+    And the graph projection is fully up to date
+
+    # Discarding
+    When the command DiscardWorkspace is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "user-test" |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
+    And I expect this node to have the properties:
+      | Key  | Value                      |
+      | text | Modified in live workspace |

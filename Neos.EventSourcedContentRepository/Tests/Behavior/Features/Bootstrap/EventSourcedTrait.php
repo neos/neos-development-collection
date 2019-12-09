@@ -47,8 +47,13 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeSubtreeSnapshot;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardIndividualNodesFromWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
@@ -56,6 +61,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
@@ -71,17 +77,19 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventNormalizer;
-use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\EventStore;
+use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Features context
@@ -94,9 +102,9 @@ trait EventSourcedTrait
     private $eventTypeResolver;
 
     /**
-     * @var EventStoreManager
+     * @var EventStore
      */
-    private $eventStoreManager;
+    private $eventStore;
 
     /**
      * @var ContentGraphInterface
@@ -173,7 +181,9 @@ trait EventSourcedTrait
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
         $this->eventTypeResolver = $this->getObjectManager()->get(EventTypeResolver::class);
-        $this->eventStoreManager = $this->getObjectManager()->get(EventStoreManager::class);
+        /* @var $eventStoreFactory EventStoreFactory */
+        $eventStoreFactory = $this->getObjectManager()->get(EventStoreFactory::class);
+        $this->eventStore = $eventStoreFactory->create('ContentRepository');
         $this->contentGraph = $this->getObjectManager()->get(ContentGraphInterface::class);
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
@@ -417,10 +427,9 @@ trait EventSourcedTrait
     protected function publishEvent($eventType, StreamName $streamName, $eventPayload)
     {
         $event = $this->eventNormalizer->denormalize($eventPayload, $eventType);
-        $event = EventWithIdentifier::create($event);
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $event = DecoratedEvent::addIdentifier($event, Uuid::uuid4()->toString());
         $events = DomainEvents::withSingleEvent($event);
-        $eventStore->commit($streamName, $events);
+        $this->eventStore->commit($streamName, $events);
         $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events);
     }
 
@@ -746,6 +755,26 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the command DiscardWorkspace is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws ContentStreamDoesNotExistYet
+     * @throws NodeException
+     * @throws ContentStreamAlreadyExists
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
+     * @throws WorkspaceDoesNotExist
+     * @throws Exception
+     */
+    public function theCommandDiscardWorkspaceIsExecuted(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $command = DiscardWorkspace::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
+            ->handleDiscardWorkspace($command);
+    }
+
+    /**
      * @Given /^the command PublishIndividualNodesFromWorkspace is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws ContentStreamDoesNotExistYet
@@ -763,6 +792,26 @@ trait EventSourcedTrait
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
             ->handlePublishIndividualNodesFromWorkspace($command);
+    }
+
+    /**
+     * @Given /^the command DiscardIndividualNodesFromWorkspace is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws ContentStreamDoesNotExistYet
+     * @throws NodeException
+     * @throws ContentStreamAlreadyExists
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
+     * @throws WorkspaceDoesNotExist
+     * @throws Exception
+     */
+    public function theCommandDiscardIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $command = DiscardIndividualNodesFromWorkspace::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
+            ->handleDiscardIndividualNodesFromWorkspace($command);
     }
 
     /**
@@ -834,6 +883,21 @@ trait EventSourcedTrait
         $this->lastCommandOrEventResult = $this->getContentStreamCommandHandler()
             ->handleForkContentStream($command);
     }
+
+    /**
+     * @When /^the command CopyNodesRecursively is executed, copying the current node aggregate with payload:$/
+     */
+    public function theCommandCopynodesrecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+        $currentTraversableNode = new TraversableNode($this->currentNode, $subgraph);
+        $commandArguments['nodeToInsert'] = json_decode(json_encode(NodeSubtreeSnapshot::fromTraversableNode($currentTraversableNode)), true);
+        $command = CopyNodesRecursively::fromArray($commandArguments);
+        $this->lastCommandOrEventResult = $this->getNodeDuplicationCommandHandler()
+            ->handleCopyNodesRecursively($command);
+    }
+
 
     /**
      * @When /^the command "([^"]*)" is executed with payload:$/
@@ -989,8 +1053,7 @@ trait EventSourcedTrait
     public function iExpectExactlyEventToBePublishedOnStream(int $numberOfEvents, string $streamName)
     {
         $streamName = StreamName::fromString($streamName);
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $stream = $eventStore->load($streamName);
+        $stream = $this->eventStore->load($streamName);
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
         Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
     }
@@ -1004,8 +1067,7 @@ trait EventSourcedTrait
     {
         $streamName = StreamName::forCategory($streamName);
 
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $stream = $eventStore->load($streamName);
+        $stream = $this->eventStore->load($streamName);
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
         Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
     }
@@ -1769,6 +1831,14 @@ trait EventSourcedTrait
     {
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
+
+        return $commandHandler;
+    }
+
+    protected function getNodeDuplicationCommandHandler(): NodeDuplicationCommandHandler
+    {
+        /** @var NodeDuplicationCommandHandler $commandHandler */
+        $commandHandler = $this->getObjectManager()->get(NodeDuplicationCommandHandler::class);
 
         return $commandHandler;
     }

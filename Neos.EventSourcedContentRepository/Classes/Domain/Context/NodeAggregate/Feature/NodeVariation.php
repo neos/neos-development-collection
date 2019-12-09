@@ -31,8 +31,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNode
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
+use Ramsey\Uuid\Uuid;
 
 trait NodeVariation
 {
@@ -93,7 +94,10 @@ trait NodeVariation
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $events, &$publishedEvents) {
             foreach ($events as $event) {
                 $domainEvents = DomainEvents::withSingleEvent(
-                    EventWithIdentifier::create($event)
+                    DecoratedEvent::addIdentifier(
+                        $event,
+                        Uuid::uuid4()->toString()
+                    )
                 );
 
                 $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(

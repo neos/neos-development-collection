@@ -16,7 +16,7 @@ namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector;
 use Neos\EventSourcing\EventListener\EventListenerInvoker;
-use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\EventStore;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -38,9 +38,9 @@ class ImportProjectionPerformanceService
 
     /**
      * @Flow\Inject
-     * @var EventStoreManager
+     * @var EventStore
      */
-    protected $eventStoreManager;
+    protected $eventStore;
 
     /**
      * @Flow\Inject
@@ -70,9 +70,8 @@ class ImportProjectionPerformanceService
 
     private function disableJobQueueForProjectionUpdateAndEnsureProjectorsAreRunSynchronously()
     {
-        $eventStore = $this->eventStoreManager->getEventStoreForBoundedContext('Neos.EventSourcedContentRepository');
-        $eventStore->enableEventListenerTrigger(false);
-        $eventStore->onPostCommit(function () {
+        $this->eventStore->enableEventListenerTrigger(false);
+        $this->eventStore->onPostCommit(function () {
             $this->eventListenerInvoker->catchUp($this->graphProjector);
             $this->eventListenerInvoker->catchUp($this->workspaceProjector);
         });

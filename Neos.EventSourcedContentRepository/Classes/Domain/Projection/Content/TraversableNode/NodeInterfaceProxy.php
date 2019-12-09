@@ -60,7 +60,7 @@ trait NodeInterfaceProxy
         return $this->node->getNodeType();
     }
 
-    public function getNodeName(): NodeName
+    public function getNodeName(): ?NodeName
     {
         return $this->node->getNodeName();
     }

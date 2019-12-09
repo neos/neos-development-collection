@@ -76,6 +76,8 @@ class ChangeProjector implements ProjectorInterface
         }
     }
 
+    // TODO: Node Creation
+
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event)
     {
         $this->transactional(function () use ($event) {

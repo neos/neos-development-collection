@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
@@ -38,8 +39,13 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
                 throw new \InvalidArgumentException('NodeAggregateIdentifiersByNodePaths objects can only be composed of NodeAggregateIdentifiers.', 1541751553);
             }
 
-            $this->nodeAggregateIdentifiers[(string) $nodePath] = $nodeAggregateIdentifier;
+            $this->nodeAggregateIdentifiers[(string)$nodePath] = $nodeAggregateIdentifier;
         }
+    }
+
+    public static function createEmpty(): self
+    {
+        return new NodeAggregateIdentifiersByNodePaths([]);
     }
 
     public static function fromArray(array $array): self
@@ -57,15 +63,15 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
         return new NodeAggregateIdentifiersByNodePaths(array_merge($this->nodeAggregateIdentifiers, $nodeAggregateIdentifiers->getNodeAggregateIdentifiers()));
     }
 
-    public function getNodeAggregateIdentifier(NodePath $nodePath): ? NodeAggregateIdentifier
+    public function getNodeAggregateIdentifier(NodePath $nodePath): ?NodeAggregateIdentifier
     {
-        return $this->nodeAggregateIdentifiers[(string) $nodePath] ?? null;
+        return $this->nodeAggregateIdentifiers[(string)$nodePath] ?? null;
     }
 
     public function add(NodePath $nodePath, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregateIdentifiersByNodePaths
     {
         $nodeAggregateIdentifiers = $this->nodeAggregateIdentifiers;
-        $nodeAggregateIdentifiers[(string) $nodePath] = $nodeAggregateIdentifier;
+        $nodeAggregateIdentifiers[(string)$nodePath] = $nodeAggregateIdentifier;
 
         return new NodeAggregateIdentifiersByNodePaths($nodeAggregateIdentifiers);
     }

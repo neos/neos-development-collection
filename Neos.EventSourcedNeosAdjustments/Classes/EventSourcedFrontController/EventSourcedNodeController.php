@@ -29,6 +29,7 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingSer
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Session\SessionInterface;
@@ -170,7 +171,7 @@ class EventSourcedNodeController extends ActionController
 
         if ($inBackend) {
             $this->overrideViewVariablesFromInternalArguments();
-            $this->response->setHeader('Cache-Control', 'no-cache');
+            $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'no-cache');
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setFusionPath('rawContent');
             }
@@ -215,7 +216,7 @@ class EventSourcedNodeController extends ActionController
         }
 
         if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {
-            $this->response->setHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
+            $this->response->setComponentParameter(SetHeaderComponent::class, 'X-Neos-AffectedNodePath', $affectedNodeContextPath);
         }
 
         if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {
@@ -270,11 +271,13 @@ class EventSourcedNodeController extends ActionController
         $nodePathCache = $inMemoryCache->getNodePathCache();
 
         $node = $subtree->getNode();
-        $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
+        if ($node->getNodeName() !== null) {
+            $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
+            $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
+            $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeAggregateIdentifier(), $node->getNodeName(), $node);
+        }
 
         $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier());
-        $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeAggregateIdentifier(), $node->getNodeName(), $node);
-        $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
 
         $allChildNodes = [];
         foreach ($subtree->getChildren() as $childSubtree) {

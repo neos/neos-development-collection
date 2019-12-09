@@ -32,7 +32,7 @@ use Neos\Utility\ObjectAccess;
 
 class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * source code.
  */
 
-require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContext.php');
+require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
@@ -19,7 +19,6 @@ require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests
 require_once(__DIR__ . '/BrowserTrait.php');
 require_once(__DIR__ . '/FlowSubcommandTrait.php');
 require_once(__DIR__ . '/FlowQueryTrait.php');
-use Neos\Behat\Tests\Behat\FlowContext;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -28,13 +27,9 @@ use Neos\Flow\Utility\Environment;
 /**
  * Features context
  */
-class FeatureContext extends \Behat\Behat\Context\BehatContext
+class FeatureContext implements \Behat\Behat\Context\Context
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
+    use \Neos\Behat\Tests\Behat\FlowContextTrait;
     use FlowSubcommandTrait;
     use BrowserTrait;
     use EventSourcedTrait;
@@ -42,17 +37,12 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
     use FlowQueryTrait;
     use IsolatedBehatStepsTrait;
 
-    /**
-     * Initializes the context
-     *
-     * @param array $parameters Context parameters (configured through behat.yml)
-     */
-    public function __construct(array $parameters)
+    public function __construct()
     {
-        $this->useContext('flow', new FlowContext($parameters));
-        /** @var FlowContext $flowContext */
-        $flowContext = $this->getSubcontext('flow');
-        $this->objectManager = $flowContext->getObjectManager();
+        if (self::$bootstrap === null) {
+            self::$bootstrap = $this->initializeFlow();
+        }
+        $this->objectManager = self::$bootstrap->getObjectManager();
 
         $this->setupFlowSubcommandTrait();
         $this->setupEventSourcedTrait();

@@ -12,14 +12,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
+use Doctrine\ORM\EntityManagerInterface;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
-use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
-use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
-use Neos\EventSourcing\Event\Decorator\DomainEventWithIdentifierInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
@@ -57,11 +56,9 @@ class WorkspaceProjector implements ProjectorInterface, AfterInvokeInterface
         $this->assumeProjectorRunsSynchronously = true;
     }
 
-    public function injectEntityManager(DoctrineObjectManager $entityManager): void
+    public function injectEntityManager(EntityManagerInterface $entityManager): void
     {
-        if ($entityManager instanceof DoctrineEntityManager) {
-            $this->dbal = $entityManager->getConnection();
-        }
+        $this->dbal = $entityManager->getConnection();
     }
 
     public function isEmpty(): bool
@@ -135,8 +132,8 @@ class WorkspaceProjector implements ProjectorInterface, AfterInvokeInterface
             return true;
         }
         foreach ($events as $event) {
-            if (!$event instanceof DomainEventWithIdentifierInterface) {
-                throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that does not implement the %s interface', get_class($event), DomainEventWithIdentifierInterface::class), 1550314769);
+            if (!$event instanceof DecoratedEvent) {
+                throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that is no DecoratedEvent', get_class($event)), 1550314769);
             }
             if (!$this->processedEventsCache->has(md5($event->getIdentifier()))) {
                 return false;

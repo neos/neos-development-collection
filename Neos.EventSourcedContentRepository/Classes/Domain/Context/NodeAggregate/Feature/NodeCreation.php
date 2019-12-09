@@ -40,8 +40,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
+use Ramsey\Uuid\Uuid;
 
 trait NodeCreation
 {
@@ -50,6 +51,8 @@ trait NodeCreation
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
+
+    abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
 
@@ -94,7 +97,7 @@ trait NodeCreation
         DimensionSpacePointSet $coveredDimensionSpacePoints
     ): DomainEvents {
         $events = DomainEvents::withSingleEvent(
-            EventWithIdentifier::create(
+            DecoratedEvent::addIdentifier(
                 new RootNodeAggregateWithNodeWasCreated(
                     $command->getContentStreamIdentifier(),
                     $command->getNodeAggregateIdentifier(),
@@ -102,7 +105,8 @@ trait NodeCreation
                     $coveredDimensionSpacePoints,
                     NodeAggregateClassification::root(),
                     $command->getInitiatingUserIdentifier()
-                )
+                ),
+                Uuid::uuid4()->toString()
             )
         );
 
@@ -157,7 +161,7 @@ trait NodeCreation
                 $coveredDimensionSpacePoints
             );
         }
-        $descendantNodeAggregateIdentifiers = $this->populateNodeAggregateIdentifiers($nodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
+        $descendantNodeAggregateIdentifiers = self::populateNodeAggregateIdentifiers($nodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
         // Write the auto-created descendant node aggregate identifiers back to the command; so that when rebasing the command, it stays
         // fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIdentifiers($descendantNodeAggregateIdentifiers);
@@ -204,7 +208,7 @@ trait NodeCreation
         PropertyValues $initialPropertyValues
     ): DomainEvents {
         $events = DomainEvents::withSingleEvent(
-            EventWithIdentifier::create(
+            DecoratedEvent::addIdentifier(
                 new NodeAggregateWithNodeWasCreated(
                     $command->getContentStreamIdentifier(),
                     $command->getNodeAggregateIdentifier(),
@@ -216,7 +220,8 @@ trait NodeCreation
                     $initialPropertyValues,
                     NodeAggregateClassification::regular(),
                     $command->getSucceedingSiblingNodeAggregateIdentifier()
-                )
+                ),
+                Uuid::uuid4()->toString()
             )
         );
 
@@ -307,7 +312,7 @@ trait NodeCreation
         NodeAggregateIdentifier $precedingNodeAggregateIdentifier = null
     ): DomainEvents {
         $events = DomainEvents::withSingleEvent(
-            EventWithIdentifier::create(
+            DecoratedEvent::addIdentifier(
                 new NodeAggregateWithNodeWasCreated(
                     $command->getContentStreamIdentifier(),
                     $nodeAggregateIdentifier,
@@ -319,7 +324,8 @@ trait NodeCreation
                     $initialPropertyValues,
                     NodeAggregateClassification::tethered(),
                     $precedingNodeAggregateIdentifier
-                )
+                ),
+                Uuid::uuid4()->toString()
             )
         );
 
@@ -351,7 +357,7 @@ trait NodeCreation
      * @param NodePath|null $childPath
      * @return NodeAggregateIdentifiersByNodePaths
      */
-    private function populateNodeAggregateIdentifiers(NodeType $nodeType, NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths
+    private static function populateNodeAggregateIdentifiers(NodeType $nodeType, NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths
     {
         // TODO: handle Multiple levels of autocreated child nodes
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawChildName => $childNodeType) {
