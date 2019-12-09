@@ -147,7 +147,7 @@ The resulting `composer.json` file should look something like this:
         "neos/demo": "@dev",
         
         "neos/neos-ui": "dev-event-sourced-patch as dev-master",
-        "neos/neos-ui-compiled": "@dev",
+        "neos/neos-ui-compiled": "dev-master as dev-event-sourced-patch",
         
         "neos/party": "@dev",
         "neos/seo": "@dev",
@@ -252,7 +252,7 @@ Neos:
 
 15. To set up Behavioral tests, do the following:
 
-    - install Behat: `composer require --dev --prefer-source --no-interaction neos/behat ~5.0.0`
+    - install Behat: `composer require neos/behat ^6.0`
     - clear the cache: `rm -Rf Data/Temporary; rm -Rf Build/Behat`
     - set up behat: `./flow behat:setup`
     - Create a new database for behat

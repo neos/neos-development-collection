@@ -164,6 +164,9 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return $this->occupiedDimensionSpacePoints->contains(OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint));
     }
 
+    /**
+     * @return NodeInterface[]
+     */
     public function getNodesByOccupiedDimensionSpacePoint(): array
     {
         return $this->nodesByOccupiedDimensionSpacePoint;
