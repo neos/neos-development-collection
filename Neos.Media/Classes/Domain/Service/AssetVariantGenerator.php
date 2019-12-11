@@ -14,8 +14,6 @@ namespace Neos\Media\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
-use Neos\Flow\ResourceManagement\Exception;
 use Neos\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
@@ -24,7 +22,6 @@ use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\ValueObject\Configuration;
 use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 use Neos\Media\Exception\AssetVariantGeneratorException;
-use Neos\Media\Exception\ImageFileException;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -64,17 +61,13 @@ class AssetVariantGenerator
 
     /**
      * @param AssetInterface $asset
-     * @return ImageVariant[] The created variants (if any), with the preset identifier as array key
+     * @return AssetVariantInterface[] The created variants (if any), with the preset identifier as array key
      * @throws AssetVariantGeneratorException
-     * @throws Exception
-     * @throws ImageFileException
-     * @throws InvalidConfigurationException
      */
     public function createVariants(AssetInterface $asset): array
     {
         // Currently only Image Variants are supported. Other asset classes can be supported, as soon as there is a common
         // interface for creating and adding variants.
-        //
         if (!$asset instanceof Image) {
             return [];
         }
@@ -83,8 +76,7 @@ class AssetVariantGenerator
         foreach ($this->getVariantPresets() as $presetIdentifier => $preset) {
             if ($preset->matchesMediaType($asset->getMediaType())) {
                 foreach ($preset->variants() as $variantIdentifier => $variantConfiguration) {
-                    $createdVariants[$presetIdentifier . ':' . $variantIdentifier] = $this->createVariant($asset, $presetIdentifier, $variantConfiguration);
-                    $asset->addVariant($createdVariants[$presetIdentifier . ':' . $variantIdentifier]);
+                    $createdVariants[$presetIdentifier . ':' . $variantIdentifier] = $this->createVariant($asset, $presetIdentifier, $variantIdentifier);
                 }
             }
         }
@@ -93,16 +85,100 @@ class AssetVariantGenerator
     }
 
     /**
-     * @param Image $originalAsset
+     * @param AssetInterface $asset
+     * @return AssetVariantInterface[] The created variants (if any), with the preset identifier as array key
+     * @throws AssetVariantGeneratorException
+     */
+    public function recreateVariants(AssetInterface $asset): array
+    {
+        // Currently only Image Variants are supported. Other asset classes can be supported, as soon as there is a common
+        // interface for creating and adding variants.
+        if (!$asset instanceof Image) {
+            return [];
+        }
+
+        $createdVariants = [];
+        foreach ($this->getVariantPresets() as $presetIdentifier => $preset) {
+            if ($preset->matchesMediaType($asset->getMediaType())) {
+                foreach ($preset->variants() as $variantIdentifier => $variantConfiguration) {
+                    $createdVariants[$presetIdentifier . ':' . $variantIdentifier] = $this->recreateVariant($asset, $presetIdentifier, $variantIdentifier);
+                }
+            }
+        }
+
+        return $createdVariants;
+    }
+
+    /**
+     * @param AssetInterface $asset
+     * @param string $presetIdentifier
+     * @param string $variantIdentifier
+     * @return AssetVariantInterface The created variant (if any)
+     * @throws AssetVariantGeneratorException
+     */
+    public function createVariant(AssetInterface $asset, string $presetIdentifier, string $variantIdentifier): ?AssetVariantInterface
+    {
+        // Currently only Image Variants are supported. Other asset classes can be supported, as soon as there is a common
+        // interface for creating and adding variants.
+        if (!$asset instanceof Image) {
+            return null;
+        }
+
+        $createdVariant = null;
+        $preset = $this->getVariantPresets()[$presetIdentifier] ?? null;
+        if ($preset instanceof VariantPreset && $preset->matchesMediaType($asset->getMediaType())) {
+            $variantConfiguration = $preset->variants()[$variantIdentifier] ?? null;
+
+            if ($variantConfiguration instanceof Configuration\Variant) {
+                $createdVariant = $this->renderVariant($asset, $presetIdentifier, $variantConfiguration);
+                // for the time being only ImageVariant is possible
+                assert($createdVariant instanceof ImageVariant);
+                $asset->addVariant($createdVariant);
+            }
+        }
+
+        return $createdVariant;
+    }
+
+    /**
+     * @param AssetInterface $asset
+     * @param string $presetIdentifier
+     * @param string $variantIdentifier
+     * @return AssetVariantInterface The created variant (if any)
+     * @throws AssetVariantGeneratorException
+     */
+    public function recreateVariant(AssetInterface $asset, string $presetIdentifier, string $variantIdentifier): ?AssetVariantInterface
+    {
+        // Currently only Image Variants are supported. Other asset classes can be supported, as soon as there is a common
+        // interface for creating and adding variants.
+        if (!$asset instanceof Image) {
+            return null;
+        }
+
+        $createdVariant = null;
+        $preset = $this->getVariantPresets()[$presetIdentifier] ?? null;
+        if ($preset instanceof VariantPreset && $preset->matchesMediaType($asset->getMediaType())) {
+            $variantConfiguration = $preset->variants()[$variantIdentifier] ?? null;
+
+            if ($variantConfiguration instanceof Configuration\Variant) {
+                $createdVariant = $this->renderVariant($asset, $presetIdentifier, $variantConfiguration);
+                // for the time being only ImageVariant is possible
+                assert($createdVariant instanceof ImageVariant);
+                $asset->replaceVariant($createdVariant);
+            }
+        }
+
+        return $createdVariant;
+    }
+
+    /**
+     * @param AssetInterface $originalAsset
      * @param string $presetIdentifier
      * @param Configuration\Variant $variantConfiguration
-     * @return ImageVariant
+     * @return AssetVariantInterface
      * @throws AssetVariantGeneratorException
-     * @throws Exception
-     * @throws ImageFileException
-     * @throws InvalidConfigurationException
      */
-    protected function createVariant(Image $originalAsset, string $presetIdentifier, Configuration\Variant $variantConfiguration): AssetVariantInterface
+    protected function renderVariant(AssetInterface $originalAsset, string $presetIdentifier, Configuration\Variant $variantConfiguration): AssetVariantInterface
     {
         $adjustments = [];
         foreach ($variantConfiguration->adjustments() as $adjustmentConfiguration) {
@@ -121,23 +197,32 @@ class AssetVariantGenerator
             $adjustments[] = $adjustment;
         }
 
-        $imageVariant = $this->createImageVariant($originalAsset);
-        $imageVariant->setPresetIdentifier($presetIdentifier);
-        $imageVariant->setPresetVariantName($variantConfiguration->identifier());
+        $assetVariant = $this->createAssetVariant($originalAsset);
+        $assetVariant->setPresetIdentifier($presetIdentifier);
+        $assetVariant->setPresetVariantName($variantConfiguration->identifier());
 
-        foreach ($adjustments as $adjustment) {
-            $imageVariant->addAdjustment($adjustment);
+        try {
+            foreach ($adjustments as $adjustment) {
+                $assetVariant->addAdjustment($adjustment);
+            }
+        } catch (\Throwable $exception) {
+            throw new AssetVariantGeneratorException('Error when adding adjustments to asset', 1570022741, $exception);
         }
 
-        return $imageVariant;
+        return $assetVariant;
     }
 
     /**
-     * @param Image $imageAsset
-     * @return ImageVariant
+     * @param AssetInterface $asset
+     * @return AssetVariantInterface
+     * @throws AssetVariantGeneratorException
      */
-    protected function createImageVariant(Image $imageAsset): ImageVariant
+    protected function createAssetVariant(AssetInterface $asset): AssetVariantInterface
     {
-        return new ImageVariant($imageAsset);
+        if ($asset instanceof Image) {
+            return new ImageVariant($asset);
+        }
+
+        throw new AssetVariantGeneratorException('Only Image assets are supported so far', 1570023645);
     }
 }

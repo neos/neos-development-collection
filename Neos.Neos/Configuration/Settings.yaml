@@ -35,6 +35,16 @@ Neos:
     # which is displayed if no domain pattern matches the current request
     defaultSiteNodeName: null
 
+    # The license header that is rendered in every neos page and the login form
+    headerComment: |
+
+      <!--
+      This website is powered by Neos, the Open Source Content Application Platform licensed under the GNU/GPL.
+      Neos is based on Flow, a powerful PHP application framework licensed under the MIT license.
+
+      More information and contribution opportunities at https://www.neos.io
+      -->
+
     routing:
       # Setting this to true allows to use an empty uriSegment for default dimensions.
       # The only limitation is that all segments must be unique across all dimenions.
