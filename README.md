@@ -317,6 +317,20 @@ Neos.Fusion:Tag {
 	}
 }
 ```
+### HTML Comments
+
+AFX accepts html comments but they are not transpiled to any fusion. However if you are converting html to afx it is allowed to have comments insode and you can use comments for disabeling parts of your afx during testing.
+
+```
+foo<!-- comment -->bar
+```
+Is transpiled as: 
+```
+Neos.Fusion:Array {
+    item_1 = 'foo'
+    item_2 = 'bar'
+}
+```
 
 ## Examples
 
