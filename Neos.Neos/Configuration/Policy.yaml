@@ -20,6 +20,9 @@ privilegeTargets:
     'Neos.Neos:PublicFrontendAccess':
       matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->showAction())'
 
+    'Neos.Neos:ContentPreview':
+      matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->previewAction())'
+
     'Neos.Neos:BackendLogin':
       matcher: 'method(Neos\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
 
@@ -169,6 +172,10 @@ roles:
     privileges:
       -
         privilegeTarget: 'Neos.Neos:Backend.GeneralAccess'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Neos:ContentPreview'
         permission: GRANT
 
       -

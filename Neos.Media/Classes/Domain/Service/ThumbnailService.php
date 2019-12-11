@@ -15,16 +15,14 @@ namespace Neos\Media\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
-use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
-use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Model\Thumbnail;
+use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
-use Neos\Media\Exception\NoThumbnailAvailableException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
@@ -97,7 +95,7 @@ class ThumbnailService
      * @return ImageInterface
      * @throws \Exception
      */
-    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
+    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration): ImageInterface
     {
         // Enforce format conversions if needed. This replaces the actual
         // thumbnail-configuration with one that also enforces the target format
@@ -139,39 +137,28 @@ class ThumbnailService
         }
         $async = $configuration->isAsync();
         if ($thumbnail === null) {
-            try {
-                $thumbnail = new Thumbnail($asset, $configuration);
-                $this->emitThumbnailCreated($thumbnail);
+            $thumbnail = new Thumbnail($asset, $configuration);
+            $this->emitThumbnailCreated($thumbnail);
 
-                // If the thumbnail strategy failed to generate a valid thumbnail
-                if ($async === false && $thumbnail->getResource() === null && $thumbnail->getStaticResource() === null) {
-                    $this->thumbnailRepository->remove($thumbnail);
-                    return null;
-                }
-
-                if (!$this->persistenceManager->isNewObject($asset)) {
-                    $this->thumbnailRepository->add($thumbnail);
-                }
-                $asset->addThumbnail($thumbnail);
-
-                // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
-                $this->persistenceManager->whitelistObject($thumbnail);
-                $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
-            } catch (NoThumbnailAvailableException $exception) {
-                $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
+            // If the thumbnail strategy failed to generate a valid thumbnail
+            if ($async === false && $thumbnail->getResource() === null && $thumbnail->getStaticResource() === null) {
+                $this->thumbnailRepository->remove($thumbnail);
                 return null;
             }
+
+            if (!$this->persistenceManager->isNewObject($asset)) {
+                $this->thumbnailRepository->add($thumbnail);
+            }
+            $asset->addThumbnail($thumbnail);
+
+            // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
             $this->persistenceManager->whitelistObject($thumbnail);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
-        } elseif ($thumbnail->getResource() === null && $async === false) {
-            try {
-                $this->refreshThumbnail($thumbnail);
-            } catch (NoThumbnailAvailableException $exception) {
-                $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
-                return null;
-            }
+
+            $this->persistenceManager->whitelistObject($thumbnail);
+            $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
+        } elseif ($async === false && $thumbnail->getResource() === null) {
+            $this->refreshThumbnail($thumbnail);
         }
 
         return $thumbnail;
@@ -180,7 +167,7 @@ class ThumbnailService
     /**
      * @return array Returns preset configuration for all presets
      */
-    public function getPresets()
+    public function getPresets(): array
     {
         return $this->presets;
     }
@@ -191,13 +178,13 @@ class ThumbnailService
      * @return ThumbnailConfiguration
      * @throws ThumbnailServiceException
      */
-    public function getThumbnailConfigurationForPreset($preset, $async = false)
+    public function getThumbnailConfigurationForPreset($preset, $async = false): ThumbnailConfiguration
     {
         if (!isset($this->presets[$preset])) {
             throw new ThumbnailServiceException(sprintf('Thumbnail preset configuration for "%s" not found.', $preset), 1447664950);
         }
         $presetConfiguration = $this->presets[$preset];
-        $thumbnailConfiguration = new ThumbnailConfiguration(
+        return new ThumbnailConfiguration(
             $presetConfiguration['width'] ?? null,
             $presetConfiguration['maximumWidth'] ?? null,
             $presetConfiguration['height'] ?? null,
@@ -208,7 +195,6 @@ class ThumbnailService
             $presetConfiguration['quality'] ?? null,
             $presetConfiguration['format'] ?? null
         );
-        return $thumbnailConfiguration;
     }
 
     /**
@@ -245,7 +231,7 @@ class ThumbnailService
      * @return void
      * @throws IllegalObjectTypeException
      */
-    public function refreshThumbnail(Thumbnail $thumbnail)
+    public function refreshThumbnail(Thumbnail $thumbnail): void
     {
         $thumbnail->refresh();
         $this->persistenceManager->whitelistObject($thumbnail);
@@ -259,7 +245,7 @@ class ThumbnailService
      * @return string
      * @throws ThumbnailServiceException
      */
-    public function getUriForThumbnail(ImageInterface $thumbnail)
+    public function getUriForThumbnail(ImageInterface $thumbnail): string
     {
         $resource = $thumbnail->getResource();
         if ($resource) {
@@ -284,7 +270,7 @@ class ThumbnailService
      * @param Thumbnail $thumbnail
      * @return void
      */
-    public function emitThumbnailPersisted(Thumbnail $thumbnail)
+    public function emitThumbnailPersisted(Thumbnail $thumbnail): void
     {
     }
 
@@ -295,7 +281,7 @@ class ThumbnailService
      * @param Thumbnail $thumbnail
      * @return void
      */
-    protected function emitThumbnailCreated(Thumbnail $thumbnail)
+    protected function emitThumbnailCreated(Thumbnail $thumbnail): void
     {
     }
 }
