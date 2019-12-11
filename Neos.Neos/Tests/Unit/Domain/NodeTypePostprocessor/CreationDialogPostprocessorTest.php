@@ -120,5 +120,4 @@ class CreationDialogPostprocessorTest extends UnitTestCase
 
         self::assertSame($expected, $configuration);
     }
-
 }
