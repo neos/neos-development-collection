@@ -45,7 +45,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
             ],
         ];
 
-        $this->mockNodeType->method('getConfiguration')->willReturnCallback(static function($propertyPath) use ($configuration) {
+        $this->mockNodeType->method('getConfiguration')->willReturnCallback(static function ($propertyPath) use ($configuration) {
             return ObjectAccess::getPropertyPath($configuration, $propertyPath);
         });
 
@@ -99,7 +99,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
             ],
         ];
 
-        $this->mockNodeType->method('getConfiguration')->willReturnCallback(static function($propertyPath) use ($configuration) {
+        $this->mockNodeType->method('getConfiguration')->willReturnCallback(static function ($propertyPath) use ($configuration) {
             return ObjectAccess::getPropertyPath($configuration, $propertyPath);
         });
 
