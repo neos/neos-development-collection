@@ -29,7 +29,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
     /**
      * @test
      */
-    public function processCopiesInspectorConfigurationToCreationDialogElements()
+    public function processCopiesInspectorConfigurationToCreationDialogElements(): void
     {
         $configuration = [
             'properties' => [
@@ -84,7 +84,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
     /**
      * @test
      */
-    public function bla()
+    public function processDoesNotCreateEmptyCreationDialogs(): void
     {
         $configuration = [
             'properties' => [
