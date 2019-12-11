@@ -78,13 +78,13 @@ class ThumbnailService
      * @Flow\Inject
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * @Flow\Inject
      * @var ThrowableStorageInterface
      */
-    private $throwableStorage;
+    protected $throwableStorage;
 
     /**
      * Returns a thumbnail of the given asset
