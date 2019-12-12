@@ -348,9 +348,7 @@ class AssetController extends ActionController
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll()
             ]);
-        } catch (AssetNotFoundExceptionInterface $e) {
-            $this->throwStatus(404, 'Asset not found');
-        } catch (AssetSourceConnectionExceptionInterface $e) {
+        } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
     }
@@ -403,9 +401,7 @@ class AssetController extends ActionController
                 'assetSource' => $assetSource,
                 'canShowVariants' => ($assetProxy instanceof NeosAssetProxy) && ($assetProxy->getAsset() instanceof VariantSupportInterface)
             ]);
-        } catch (AssetNotFoundExceptionInterface $e) {
-            $this->throwStatus(404, 'Asset not found');
-        } catch (AssetSourceConnectionExceptionInterface $e) {
+        } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
     }
@@ -448,9 +444,7 @@ class AssetController extends ActionController
                 'originalInformation' => (new ImageMapper($asset))->getMappingResult(),
                 'variantsInformation' => $variantInformation
             ]);
-        } catch (AssetNotFoundExceptionInterface $e) {
-            $this->throwStatus(404, 'Original asset not found');
-        } catch (AssetSourceConnectionExceptionInterface $e) {
+        } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
     }

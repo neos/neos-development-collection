@@ -270,7 +270,7 @@ class Runtime
      * Compared to $this->evaluate, this adds some more comments helpful for debugging.
      *
      * @param string $fusionPath
-     * @return string
+     * @return mixed
      * @throws \Exception
      * @throws SecurityException
      */

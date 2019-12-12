@@ -73,11 +73,11 @@ class RenderViewHelper extends AbstractViewHelper
      * @param string $path Relative Fusion path to be rendered
      * @param array $context Additional context variables to be set.
      * @param string $fusionPackageKey The key of the package to load Fusion from, if not from the current context.
-     * @return string
+     * @return mixed
      * @throws \Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function render(): string
+    public function render()
     {
         $path = $this->arguments['path'];
         if (strpos($path, '/') === 0 || strpos($path, '.') === 0) {

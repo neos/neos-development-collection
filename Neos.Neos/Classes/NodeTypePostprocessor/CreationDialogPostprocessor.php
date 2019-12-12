@@ -72,7 +72,9 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
             }
             $creationDialogElements[$propertyName] = $creationDialogElement;
         }
-        $configuration['ui']['creationDialog']['elements'] = (new PositionalArraySorter($creationDialogElements))->toArray();
+        if ($creationDialogElements !== []) {
+            $configuration['ui']['creationDialog']['elements'] = (new PositionalArraySorter($creationDialogElements))->toArray();
+        }
     }
 
     /**
