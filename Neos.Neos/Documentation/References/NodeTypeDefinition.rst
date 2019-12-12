@@ -38,7 +38,7 @@ The following options are allowed for defining a NodeType:
 
 ``constraints``
   Constraint definitions stating which nested child node types are allowed. Also see the dedicated chapter
-  :ref:`node-constraints` for detailed explanation::
+  `NodeType Constraints`_ for detailed explanation::
 
     constraints:
       nodeTypes:
@@ -163,7 +163,7 @@ The following options are allowed for defining a NodeType:
 
     ``message``
       Help text for the node type. It supports markdown to format the help text and can
-      be translated (see :ref:`translate-nodetypes`).
+      be translated (see `NodeType Translations`_).
 
     ``thumbnail``
       This is shown in the popover and can be supplied in two ways:
@@ -252,7 +252,7 @@ The following options are allowed for defining a NodeType:
 
       ``message``
         Help text for this property. It supports markdown to format the help text and can
-        be translated (see :ref:`translate-nodetypes`).
+        be translated (see `NodeType Translations`_).
 
     ``reloadIfChanged``
       If `true`, the whole content element needs to be re-rendered on the server side if the value
@@ -279,7 +279,7 @@ The following options are allowed for defining a NodeType:
         The default editor is configurable in Settings.yaml under the key `Neos.Neos.Ui.frontendConfiguration.defaultInlineEditor`.
         It is strongly recommended to start using CKeditor5 today, as the CKeditor4 integration will be deprecated and removed in the future versions.
         Additional custom inline editors are registered via the `inlineEditors` registry.
-        See :ref:`ui-extensibility` for the detailed information on the topic.
+        See `Extending the Content User Interface`_ for the detailed information on the topic.
 
       ``editorOptions``
         This section controls the text formatting options the user has available for this property.
@@ -289,7 +289,7 @@ The following options are allowed for defining a NodeType:
 
         ``placeholder``
           A text that is shown when the field is empty. Supports i18n.
-        
+
         ``autoparagraph``
           When configured to false, automatic creation of paragraphs is disabled for this property and <enter>
           key would create soft line breaks instead (equivalent to configuring an editable on a span tag).
@@ -358,8 +358,8 @@ The following options are allowed for defining a NodeType:
       ``editorOptions``
         A set of options for the given editor, see the :ref:`property-editor-reference`.
 
-      ``editorListeners``
-        Allows to observe changes of other properties in order to react to them. For details see :ref:`depending-properties`
+      ``editorListeners`` (removed since Neos 3.3)
+        This feature has been removed in favor of `Depending Properties`_ with Neos 3.3
 
     ``showInCreationDialog`` (since Neos 5.1)
       If `true` the corresponding property will appear in the Node Creation Dialog. Editor configuration
@@ -439,5 +439,8 @@ Here is one of the standard Neos node types (slightly shortened)::
 	        inlineEditable: true
 
 
-
 .. _Node Creation Dialog Configuration: https://docs.neos.io/cms/manual/content-repository/node-creation-dialog
+.. _NodeType Constraints: https://docs.neos.io/cms/manual/content-repository/node-constraints
+.. _NodeType Translations: https://docs.neos.io/cms/manual/content-repository/nodetype-translations
+.. _Extending the Content User Interface: https://docs.neos.io/cms/manual/extending-the-user-interface
+.. _Depending Properties: https://docs.neos.io/cms/manual/content-repository/nodetype-properties#depending-properties

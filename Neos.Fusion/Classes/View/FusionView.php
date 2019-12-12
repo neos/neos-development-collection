@@ -137,7 +137,7 @@ class FusionView extends AbstractView
     /**
      * Render the view
      *
-     * @return string The rendered view
+     * @return mixed The rendered view
      * @api
      */
     public function render()
@@ -245,7 +245,7 @@ class FusionView extends AbstractView
 
     /**
      * Render the given Fusion and return the rendered page
-     * @return string
+     * @return mixed
      * @throws \Exception
      */
     protected function renderFusion()
