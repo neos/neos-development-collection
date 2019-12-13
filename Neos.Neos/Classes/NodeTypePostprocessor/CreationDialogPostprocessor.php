@@ -13,6 +13,7 @@ namespace Neos\Neos\NodeTypePostprocessor;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\NodeTypePostprocessor\NodeTypePostprocessorInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 
@@ -50,6 +51,19 @@ use Neos\Utility\PositionalArraySorter;
  */
 class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
 {
+
+    /**
+     * @var array
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
+     */
+    protected $dataTypesDefaultConfiguration;
+
+    /**
+     * @var array
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.editors")
+     */
+    protected $editorDefaultConfiguration;
+
     /**
      * @param NodeType $nodeType (uninitialized) The node type to process
      * @param array $configuration input configuration
@@ -66,7 +80,7 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
             if (!isset($propertyConfiguration['ui']['showInCreationDialog']) || $propertyConfiguration['ui']['showInCreationDialog'] !== true) {
                 continue;
             }
-            $creationDialogElement = $this->convertPropertyConfiguration($nodeType->getConfiguration('properties.' . $propertyName) ?? []);
+            $creationDialogElement = $this->convertPropertyConfiguration($propertyName, $propertyConfiguration);
             if (isset($configuration['ui']['creationDialog']['elements'][$propertyName])) {
                 $creationDialogElement = Arrays::arrayMergeRecursiveOverrule($creationDialogElement, $configuration['ui']['creationDialog']['elements'][$propertyName]);
             }
@@ -80,15 +94,41 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
     /**
      * Converts a NodeType property configuration to the corresponding creationDialog "element" configuration
      *
+     * @param string $propertyName
      * @param array $propertyConfiguration
      * @return array
      */
-    private function convertPropertyConfiguration(array $propertyConfiguration): array
+    private function convertPropertyConfiguration(string $propertyName, array $propertyConfiguration): array
     {
-        $convertedConfiguration = $propertyConfiguration;
-        unset($convertedConfiguration['ui']['inspector']);
-        $editor = $propertyConfiguration['ui']['inspector']['editor'] ?? null;
+        $dataType = $propertyConfiguration['type'] ?? 'string';
+        $dataTypeDefaultConfiguration = $this->dataTypesDefaultConfiguration[$dataType] ?? [];
+        $convertedConfiguration = [
+            'type' => $dataType,
+            'ui' => [
+                'label' => $propertyConfiguration['ui']['label'] ?? $propertyName,
+            ],
+        ];
+        if (isset($propertyConfiguration['defaultValue'])) {
+            $convertedConfiguration['defaultValue'] = $propertyConfiguration['defaultValue'];
+        }
+        if (isset($propertyConfiguration['ui']['help'])) {
+            $convertedConfiguration['ui']['help'] = $propertyConfiguration['ui']['help'];
+        }
+        if (isset($propertyConfiguration['validation'])) {
+            $convertedConfiguration['validation'] = $propertyConfiguration['validation'];
+        }
+        if (isset($propertyConfiguration['position'])) {
+            $convertedConfiguration['position'] = $propertyConfiguration['position'];
+        }
+
+        $editor = $propertyConfiguration['ui']['inspector']['editor'] ?? $dataTypeDefaultConfiguration['editor'] ?? 'Neos.Neos/Inspector/Editors/TextFieldEditor';
         $editorOptions = $propertyConfiguration['ui']['inspector']['editorOptions'] ?? [];
+        if (isset($dataTypeDefaultConfiguration['editorOptions'])) {
+            $editorOptions = Arrays::arrayMergeRecursiveOverrule($dataTypeDefaultConfiguration['editorOptions'], $editorOptions);
+        }
+        if (isset($this->editorDefaultConfiguration[$editor]['editorOptions'])) {
+            $editorOptions = Arrays::arrayMergeRecursiveOverrule($this->editorDefaultConfiguration[$editor]['editorOptions'], $editorOptions);
+        }
 
         // The following editors don't (completely) work in the Creation Dialog so they are disabled
         // TODO should be adjusted if fixed. See https://github.com/neos/neos-ui/issues/1034
