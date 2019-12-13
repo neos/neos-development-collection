@@ -14,6 +14,7 @@ namespace Neos\Media\TypeConverter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
@@ -66,7 +67,7 @@ class AssetCollectionToArrayConverter extends AbstractTypeConverter
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {
-        $sourceChildPropertiesToBeConverted = [
+        return [
             'tags' => $source->getTags()
         ];
 
@@ -105,7 +106,7 @@ class AssetCollectionToArrayConverter extends AbstractTypeConverter
 
         return [
             '__identity' => $identity,
-            '__type' => "Neos\\Media\\Domain\\Model\\AssetCollection",
+            '__type' => AssetCollection::class,
             'title' => $source->getTitle(),
             'tags' => $convertedChildProperties['tags'],
         ];

@@ -14,6 +14,7 @@ namespace Neos\Media\TypeConverter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
@@ -66,9 +67,7 @@ class TagToArrayConverter extends AbstractTypeConverter
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {
-        $sourceChildPropertiesToBeConverted = [];
-
-        return $sourceChildPropertiesToBeConverted;
+        return [];
     }
 
     /**
@@ -99,7 +98,7 @@ class TagToArrayConverter extends AbstractTypeConverter
 
         return [
             '__identity' => $identity,
-            '__type' => "Neos\\Media\\Domain\\Model\\Tag",
+            '__type' => Tag::class,
             'label' => $source->getLabel(),
         ];
     }
