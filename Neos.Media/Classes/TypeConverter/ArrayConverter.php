@@ -14,13 +14,13 @@ namespace Neos\Media\TypeConverter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ImageVariant;
-use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * This converter transforms Neos.Media AssetInterface instances to arrays.
@@ -60,7 +60,6 @@ class ArrayConverter extends AbstractTypeConverter
     {
         return ($source instanceof AssetInterface);
     }
-
 
     /**
      * Return a list of sub-properties inside the source object.
@@ -149,7 +148,7 @@ class ArrayConverter extends AbstractTypeConverter
                     'caption' => $source->getCaption(),
                     'resource' => $convertedChildProperties['resource'],
                     'tags' => $convertedChildProperties['tags'],
-                    'assetCollections' => $convertedChildProperties['assetCollections'],
+                    'assetCollections' => $convertedChildProperties['assetCollections']
                 ];
         }
     }

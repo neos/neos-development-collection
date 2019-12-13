@@ -12,7 +12,10 @@ namespace Neos\Media\TypeConverter;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Exception\UnknownObjectException;
+use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Media\Domain\Model\Tag;
 
@@ -46,7 +49,8 @@ class TagConverter extends PersistentObjectConverter
      * @param string $targetType must implement 'Neos\Media\Domain\Model\Tag'
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return Error|Tag The converted Tag, a Validation Error or NULL
+     * @return Tag|TargetNotFoundError The converted Tag, a Validation Error or NULL
+     * @throws UnknownObjectException
      * @throws InvalidTargetException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
