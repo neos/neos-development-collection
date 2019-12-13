@@ -73,30 +73,16 @@ class ThumbnailService
     protected $thumbnailCache = [];
 
     /**
+     * @Flow\Inject
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
+     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
-    private $throwableStorage;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function injectLogger(LoggerInterface $logger): void
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @param ThrowableStorageInterface $throwableStorage
-     */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
-    {
-        $this->throwableStorage = $throwableStorage;
-    }
+    protected $throwableStorage;
 
     /**
      * Returns a thumbnail of the given asset
@@ -166,10 +152,10 @@ class ThumbnailService
             $asset->addThumbnail($thumbnail);
 
             // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
-            $this->persistenceManager->whiteListObject($thumbnail);
+            $this->persistenceManager->whitelistObject($thumbnail);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
 
-            $this->persistenceManager->whiteListObject($thumbnail);
+            $this->persistenceManager->whitelistObject($thumbnail);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
         } elseif ($async === false && $thumbnail->getResource() === null) {
             $this->refreshThumbnail($thumbnail);
@@ -248,7 +234,7 @@ class ThumbnailService
     public function refreshThumbnail(Thumbnail $thumbnail): void
     {
         $thumbnail->refresh();
-        $this->persistenceManager->whiteListObject($thumbnail);
+        $this->persistenceManager->whitelistObject($thumbnail);
         if (!$this->persistenceManager->isNewObject($thumbnail)) {
             $this->thumbnailRepository->update($thumbnail);
         }
