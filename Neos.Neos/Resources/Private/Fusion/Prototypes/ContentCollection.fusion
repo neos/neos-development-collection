@@ -72,8 +72,8 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
 		}
 
 		entryTags {
-			1 = ${'DescendantOf_' + node.identifier}
-			2 = ${'Node_' + node.identifier}
+			1 = ${Neos.Caching.descendantOfTag(node)}
+			2 = ${Neos.Caching.nodeTag(node)}
 		}
 
 		maximumLifetime = ${q(node).context({'invisibleContentShown': true}).children().cacheLifetime()}

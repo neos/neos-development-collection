@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -10,14 +9,15 @@
  * source code.
  */
 
-require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContext.php');
+require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/NodeOperationsTrait.php');
 require_once(__DIR__ . '/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
-use Neos\Behat\Tests\Behat\FlowContext;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Behat\Behat\Context\Context;
+use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\ContentRepository\Tests\Functional\Command\BehatTestHelper;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
@@ -29,8 +29,9 @@ use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait
 /**
  * Features context
  */
-class FeatureContext extends \Behat\Behat\Context\BehatContext
+class FeatureContext implements Context
 {
+    use FlowContextTrait;
     use NodeOperationsTrait;
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
@@ -39,31 +40,23 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
     /**
      * @var string
      */
-    protected $behatTestHelperObjectName = \Neos\ContentRepository\Tests\Functional\Command\BehatTestHelper::class;
+    protected $behatTestHelperObjectName = BehatTestHelper::class;
 
     /**
-     * Initializes the context
-     *
-     * @param array $parameters Context parameters (configured through behat.yml)
+     * @var Environment
      */
-    public function __construct(array $parameters)
+    protected $environment;
+
+    public function __construct()
     {
-        $this->useContext('flow', new FlowContext($parameters));
-        /** @var FlowContext $flowContext */
-        $flowContext = $this->getSubcontext('flow');
-        $this->objectManager = $flowContext->getObjectManager();
+        if (self::$bootstrap === null) {
+            self::$bootstrap = $this->initializeFlow();
+        }
+        $this->objectManager = self::$bootstrap->getObjectManager();
         $this->environment = $this->objectManager->get(Environment::class);
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $this->setupSecurity();
-    }
-
-    /**
-     * @return ObjectManagerInterface
-     */
-    protected function getObjectManager()
-    {
-        return $this->objectManager;
     }
 
     /**

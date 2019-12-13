@@ -12,7 +12,6 @@ namespace Neos\Neos\EventLog\Integrations;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Context;
 use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 
 abstract class AbstractIntegrationService

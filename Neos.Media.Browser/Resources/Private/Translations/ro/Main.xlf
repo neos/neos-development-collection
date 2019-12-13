@@ -26,6 +26,9 @@
       <trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target state="needs-translation">Caption</target></trans-unit>
+      <trans-unit id="field.copyrightnotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			<target state="needs-translation">Last modified</target></trans-unit>
@@ -58,10 +61,10 @@
 			<target state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target state="translated">Direcția de sortare Ascendentă</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target state="translated">Direcția de sortare Descendentă</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
@@ -106,7 +109,7 @@
 			<target state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="needs-translation">Replace asset resource</target></trans-unit>
+			<target state="translated">Înlocuirea resurselor active</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target state="needs-translation">Save</target></trans-unit>
@@ -299,6 +302,15 @@
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target state="needs-translation">Preview</target></trans-unit>
+      <trans-unit id="download" xml:space="preserve">
+				<source>Download</source>
+			<target state="needs-translation">Download</target></trans-unit>
+      <trans-unit id="next" xml:space="preserve">
+				<source>Next</source>
+			<target state="needs-translation">Next</target></trans-unit>
+      <trans-unit id="previous" xml:space="preserve">
+				<source>Previous</source>
+			<target state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target state="needs-translation">Cannot upload the file</target></trans-unit>
@@ -414,7 +426,7 @@
 			<target state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target state="translated">Resursele de tipul "{0}" pot fi înlocuite doar de resurse similare. Primesc tipul "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
 			<target state="needs-translation">No access to workspace "{0}"</target></trans-unit>

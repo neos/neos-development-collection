@@ -11,10 +11,19 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
+use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Tests\Functional\Command\TableNode;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
@@ -31,17 +40,17 @@ trait NodeOperationsTrait
     /**
      * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
-    private $currentNodes = array();
+    private $currentNodes = [];
 
     /**
      * @var array
      */
-    private $nodeTypesConfiguration = array();
+    private $nodeTypesConfiguration = [];
 
     /**
      * @return mixed
      */
-    abstract protected function getObjectManager();
+    abstract protected function getObjectManager(): ObjectManagerInterface;
 
     /**
      * @return PublishingServiceInterface
@@ -76,11 +85,10 @@ trait NodeOperationsTrait
     public function iHaveTheFollowingNodes($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
         } else {
             /** @var \Neos\ContentRepository\Domain\Service\NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
-
+            $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
             $rows = $table->getHash();
             foreach ($rows as $row) {
                 $path = $row['Path'];
@@ -128,7 +136,7 @@ trait NodeOperationsTrait
             }
 
             // Make sure we do not use cached instances
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -139,10 +147,10 @@ trait NodeOperationsTrait
     public function iHaveTheFollowingWorkspaces($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
         } else {
             $rows = $table->getHash();
-            $workspaceRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class);
+            $workspaceRepository = $this->getObjectManager()->get(WorkspaceRepository::class);
             foreach ($rows as $row) {
                 $name = $row['Name'];
                 $baseWorkspaceName = $row['Base Workspace'];
@@ -150,7 +158,7 @@ trait NodeOperationsTrait
                 $baseWorkspace = $workspaceRepository->findOneByName($baseWorkspaceName);
                 $workspace = new Workspace($name, $baseWorkspace);
                 $workspaceRepository->add($workspace);
-                $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+                $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             }
         }
     }
@@ -161,14 +169,14 @@ trait NodeOperationsTrait
     public function iHaveTheFollowingContentDimensions($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
-            $dimensions = array();
+            $dimensions = [];
             $presetsFound = false;
             foreach ($table->getHash() as $row) {
-                $dimensions[$row['Identifier']] = array(
+                $dimensions[$row['Identifier']] = [
                     'default' => $row['Default']
-                );
+                ];
 
                 $defaultPreset = '';
                 if (isset($row['Presets'])) {
@@ -176,13 +184,13 @@ trait NodeOperationsTrait
                     // parse a preset string like:
                     // preset1=dimensionValue1,dimensionValue2; preset2=dimensionValue3
                     $presetStrings = Arrays::trimExplode(';', $row['Presets']);
-                    $presets = array();
+                    $presets = [];
                     foreach ($presetStrings as $presetString) {
                         list($presetName, $presetValues) = Arrays::trimExplode('=', $presetString);
-                        $presets[$presetName] = array(
+                        $presets[$presetName] = [
                             'values' => Arrays::trimExplode(',', $presetValues),
                             'uriSegment' => $presetName
-                        );
+                        ];
 
                         if ($defaultPreset === '') {
                             $defaultPreset = $presetName;
@@ -193,11 +201,11 @@ trait NodeOperationsTrait
                     $dimensions[$row['Identifier']]['defaultPreset'] = $defaultPreset;
                 }
             }
-            $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
+            $contentDimensionRepository = $this->getObjectManager()->get(ContentDimensionRepository::class);
             $contentDimensionRepository->setDimensionsConfiguration($dimensions);
 
             if ($presetsFound === true) {
-                $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
+                $contentDimensionPresetSource = $this->getObjectManager()->get(ContentDimensionPresetSourceInterface::class);
                 $contentDimensionPresetSource->setConfiguration($dimensions);
             }
         }
@@ -209,7 +217,7 @@ trait NodeOperationsTrait
     public function iCopyANodeToPath($position, $path, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($position), 'string', escapeshellarg($path), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($position), 'string', escapeshellarg($path), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
@@ -223,7 +231,7 @@ trait NodeOperationsTrait
             } else {
                 $node->copyBefore($referenceNode, $node->getName() . '-1');
             }
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -234,7 +242,7 @@ trait NodeOperationsTrait
     public function iMoveANodeToPath($position, $path, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($position), 'string', escapeshellarg($path), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($position), 'string', escapeshellarg($path), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
@@ -257,7 +265,7 @@ trait NodeOperationsTrait
     public function iGetANodeByPathWithTheFollowingContext($path, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($path), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($path), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
@@ -266,7 +274,7 @@ trait NodeOperationsTrait
                 // FIXME: Adjust to changed getWorkspace() method -> workspace needs to be created in another way
                 $context->getWorkspace(true);
 
-                $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+                $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
                 $this->resetNodeInstances();
 
                 $context = $this->getContextForProperties($rows[0]);
@@ -274,9 +282,9 @@ trait NodeOperationsTrait
 
             $node = $context->getNode($path);
             if ($node !== null) {
-                $this->currentNodes = array($node);
+                $this->currentNodes = [$node];
             } else {
-                $this->currentNodes = array();
+                $this->currentNodes = [];
             }
         }
     }
@@ -287,16 +295,16 @@ trait NodeOperationsTrait
     public function iGetANodeByIdentifierWithTheFollowingContext($identifier, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($identifier), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($identifier), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
 
             $node = $context->getNodeByIdentifier($identifier);
             if ($node !== null) {
-                $this->currentNodes = array($node);
+                $this->currentNodes = [$node];
             } else {
-                $this->currentNodes = array();
+                $this->currentNodes = [];
             }
         }
     }
@@ -307,7 +315,7 @@ trait NodeOperationsTrait
     public function iGetTheChildNodesOfWithTheFollowingContext($path, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($path), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($path), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
@@ -324,7 +332,7 @@ trait NodeOperationsTrait
     public function iGetTheChildNodesOfWithFilterAndTheFollowingContext($path, $filter, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($path), 'string', escapeshellarg($filter), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($path), 'string', escapeshellarg($filter), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
@@ -341,7 +349,7 @@ trait NodeOperationsTrait
     public function iGetTheNodesOnPathToWithTheFollowingContext($startingPoint, $endPoint, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($startingPoint), 'string', escapeshellarg($endPoint), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($startingPoint), 'string', escapeshellarg($endPoint), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
@@ -391,7 +399,7 @@ trait NodeOperationsTrait
             $publishingService = $this->getPublishingService();
             $publishingService->publishNode($node);
 
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -411,12 +419,12 @@ trait NodeOperationsTrait
              * The method ``iPublishTheNode`` keeps all this information intact.
              **/
 
-            $sourceContext = $this->getContextForProperties(array('Workspace' => $sourceWorkspaceName));
+            $sourceContext = $this->getContextForProperties(['Workspace' => $sourceWorkspaceName]);
             $sourceWorkspace = $sourceContext->getWorkspace();
 
             $sourceWorkspace->publish($sourceWorkspace->getBaseWorkspace());
 
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -429,14 +437,14 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($workspaceName)));
         } else {
-            $context = $this->getContextForProperties(array('Workspace' => $workspaceName));
+            $context = $this->getContextForProperties(['Workspace' => $workspaceName]);
             $workspace = $context->getWorkspace();
 
             /** @var PublishingServiceInterface $publishingService */
             $publishingService = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\PublishingServiceInterface::class);
             $publishingService->discardNodes($publishingService->getUnpublishedNodes($workspace));
 
-            $this->getSubcontext('flow')->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -454,7 +462,7 @@ trait NodeOperationsTrait
             $publishingService = $this->getPublishingService();
             $publishingService->discardNode($node);
 
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -465,10 +473,10 @@ trait NodeOperationsTrait
     public function iUseThePublishingServiceToPublishNodesInTheWorkspace($sourceWorkspaceName, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($sourceWorkspaceName), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($sourceWorkspaceName), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             /** @var PublishingServiceInterface $publishingService */
-            $publishingService = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\PublishingServiceInterface::class);
+            $publishingService = $this->getObjectManager()->get(PublishingServiceInterface::class);
 
             $rows = $table->getHash();
             $rows[0]['Workspace'] = $sourceWorkspaceName;
@@ -478,7 +486,7 @@ trait NodeOperationsTrait
 
             $publishingService->publishNodes($publishingService->getUnpublishedNodes($sourceWorkspace));
 
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -515,7 +523,7 @@ trait NodeOperationsTrait
             $node = $this->iShouldHaveOneNode();
             $node->remove();
 
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -571,7 +579,7 @@ trait NodeOperationsTrait
                     throw new \InvalidArgumentException('Unknown move action "' . $action . '"');
             }
 
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -657,7 +665,7 @@ trait NodeOperationsTrait
             $currentNode = $this->iShouldHaveOneNode();
             $currentNode->setProperty($propertyName, $propertyValue);
 
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -673,7 +681,7 @@ trait NodeOperationsTrait
             $currentNode = $this->iShouldHaveOneNode();
             $currentNode->setName($name);
 
-            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }
@@ -698,7 +706,7 @@ trait NodeOperationsTrait
     public function iShouldHaveANodeWithPathAndValueForPropertyForTheFollowingContext($path, $propertyValue, $propertyName, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s %s %s', 'string', escapeshellarg($path), 'string', escapeshellarg($propertyValue), 'string', escapeshellarg($propertyName), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s %s %s', 'string', escapeshellarg($path), 'string', escapeshellarg($propertyValue), 'string', escapeshellarg($propertyName), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $this->iGetANodeByPathWithTheFollowingContext($path, $table);
             $this->theNodePropertyShouldBe($propertyName, $propertyValue);
@@ -711,13 +719,13 @@ trait NodeOperationsTrait
     public function iAdoptTheNodeToTheFollowingContext($recursive, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($recursive), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($recursive), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
 
             $currentNode = $this->iShouldHaveOneNode();
-            $this->currentNodes = array($context->adoptNode($currentNode, $recursive !== ''));
+            $this->currentNodes = [$context->adoptNode($currentNode, $recursive !== '')];
         }
     }
 
@@ -727,7 +735,7 @@ trait NodeOperationsTrait
     public function iShouldHaveTheFollowingNodes($orderIndependent, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($orderIndependent), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($orderIndependent), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
 
@@ -777,7 +785,7 @@ trait NodeOperationsTrait
                         unset($rows[$rowIndex]);
                     }
                 }
-                Assert::assertEquals(array(), $rows, 'All examples should have matched');
+                Assert::assertEquals([], $rows, 'All examples should have matched');
                 Assert::assertCount(0, $currentNodes, 'All nodes should be matched');
             }
         }
@@ -791,9 +799,9 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($workspaceName), 'integer', escapeshellarg($count)));
         } else {
-            $workspaceRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class);
+            $workspaceRepository = $this->getObjectManager()->get(WorkspaceRepository::class);
             $workspace = $workspaceRepository->findOneByName($workspaceName);
-            $publishingService = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\PublishingServiceInterface::class);
+            $publishingService = $this->getObjectManager()->get(PublishingServiceInterface::class);
             $unpublishedNodesCount = $publishingService->getUnpublishedNodesCount($workspace);
             Assert::assertEquals($count, $unpublishedNodesCount);
         }
@@ -821,7 +829,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes(array());
+            $this->getObjectManager()->get(NodeTypeManager::class)->overrideNodeTypes([]);
         }
     }
 
@@ -839,7 +847,7 @@ trait NodeOperationsTrait
                 $this->nodeTypesConfiguration = Yaml::parse($nodeTypesConfiguration->getRaw());
                 $configuration = $this->nodeTypesConfiguration;
             }
-            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes($configuration);
+            $this->getObjectManager()->get(NodeTypeManager::class)->overrideNodeTypes($configuration);
         }
     }
 
@@ -852,7 +860,7 @@ trait NodeOperationsTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($not)), 'integer', escapeshellarg($nodeTypeName)));
         } else {
             $currentNode = $this->iShouldHaveOneNode();
-            $nodeType = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->getNodeType($nodeTypeName);
+            $nodeType = $this->getObjectManager()->get(NodeTypeManager::class)->getNodeType($nodeTypeName);
             if (empty($not)) {
                 // ALLOWED to create node
                 Assert::assertTrue($currentNode->isNodeTypeAllowedAsChildNode($nodeType), 'isNodeTypeAllowed returned the wrong value');
@@ -867,7 +875,7 @@ trait NodeOperationsTrait
                 try {
                     $currentNode->createNode(uniqid('custom-node'), $nodeType);
                     Assert::fail('It was possible to create a custom node, although it should have been prevented');
-                } catch (\Neos\ContentRepository\Exception\NodeConstraintException $nodeConstraintExceptio) {
+                } catch (NodeConstraintException $nodeConstraintExceptio) {
                     // Expected exception
                 }
             }
@@ -893,7 +901,7 @@ trait NodeOperationsTrait
     public function iGetNodeVariantsOfWithTheFollowingContext($identifier, $table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($identifier), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($identifier), escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $context = $this->getContextForProperties($rows[0]);
@@ -926,7 +934,7 @@ trait NodeOperationsTrait
         $node = $this->iShouldHaveOneNode();
         $node->setHidden(false);
 
-        $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+        $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
         $this->resetNodeInstances();
     }
 
@@ -938,7 +946,7 @@ trait NodeOperationsTrait
         $node = $this->iShouldHaveOneNode();
         $node->setHidden(true);
 
-        $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+        $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
         $this->resetNodeInstances();
     }
 
@@ -954,9 +962,9 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class)->flushNodeRegistry();
-            $this->objectManager->get(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class)->reset();
-            $this->objectManager->get(\Neos\ContentRepository\Domain\Factory\NodeFactory::class)->reset();
+            $this->objectManager->get(NodeDataRepository::class)->flushNodeRegistry();
+            $this->objectManager->get(ContextFactoryInterface::class)->reset();
+            $this->objectManager->get(NodeFactory::class)->reset();
         }
     }
 
@@ -969,11 +977,11 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
-            /** @var \Neos\ContentRepository\Domain\Repository\ContentDimensionRepository $contentDimensionRepository */
+            $contentDimensionRepository = $this->getObjectManager()->get(ContentDimensionRepository::class);
+            /** @var ContentDimensionRepository $contentDimensionRepository */
 
             // Set the content dimensions to a fixed value for Behat scenarios
-            $contentDimensionRepository->setDimensionsConfiguration(array('language' => array('default' => 'mul_ZZ')));
+            $contentDimensionRepository->setDimensionsConfiguration(['language' => ['default' => 'mul_ZZ']]);
         }
     }
 
@@ -990,9 +998,9 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($humanReadableContextProperties), 'integer', escapeshellarg($addDimensionDefaults)));
         } else {
-            /** @var \Neos\ContentRepository\Domain\Service\ContextFactoryInterface $contextFactory */
-            $contextFactory = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class);
-            $contextProperties = array();
+            /** @var ContextFactoryInterface $contextFactory */
+            $contextFactory = $this->getObjectManager()->get(ContextFactoryInterface::class);
+            $contextProperties = [];
 
             if (isset($humanReadableContextProperties['Language'])) {
                 $contextProperties['dimensions']['language'] = Arrays::trimExplode(',', $humanReadableContextProperties['Language']);
@@ -1025,7 +1033,7 @@ trait NodeOperationsTrait
             }
 
             if ($addDimensionDefaults) {
-                $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
+                $contentDimensionRepository = $this->getObjectManager()->get(ContentDimensionRepository::class);
                 $availableDimensions = $contentDimensionRepository->findAll();
                 foreach ($availableDimensions as $dimension) {
                     if (isset($contextProperties['dimensions'][$dimension->getIdentifier()]) && !in_array($dimension->getDefault(), $contextProperties['dimensions'][$dimension->getIdentifier()])) {

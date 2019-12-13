@@ -49,12 +49,12 @@ class NodeFactoryTest extends UnitTestCase
      */
     protected function setUp()
     {
-        $this->nodeFactory = $this->getMockBuilder(NodeFactory::class)->setMethods(array('filterNodeByContext'))->getMock();
+        $this->nodeFactory = $this->getMockBuilder(NodeFactory::class)->setMethods(['filterNodeByContext'])->getMock();
 
         $this->nodeFactory->expects(self::any())->method('filterNodeByContext')->willReturnArgument(0);
 
         $this->reflectionServiceMock = $this->createMock(ReflectionService::class);
-        $this->reflectionServiceMock->expects(self::any())->method('getAllImplementationClassNamesForInterface')->with(NodeInterface::class)->willReturn(array(Node::class));
+        $this->reflectionServiceMock->expects(self::any())->method('getAllImplementationClassNamesForInterface')->with(NodeInterface::class)->willReturn([Node::class]);
 
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->objectManagerMock->expects(self::any())->method('get')->with(ReflectionService::class)->willReturn($this->reflectionServiceMock);
@@ -88,7 +88,7 @@ class NodeFactoryTest extends UnitTestCase
      */
     public function createContextMatchingNodeDataCreatesMatchingContext()
     {
-        $dimensionValues = array('language' => array('is'));
+        $dimensionValues = ['language' => ['is']];
         $workspaceName = 'some-workspace';
 
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
@@ -97,13 +97,13 @@ class NodeFactoryTest extends UnitTestCase
         $mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue($workspaceName));
 
         $mockContextFactory = $this->createMock(ContextFactoryInterface::class);
-        $mockContextFactory->expects(self::once())->method('create')->with(array(
+        $mockContextFactory->expects(self::once())->method('create')->with([
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => true,
             'inaccessibleContentShown' => true,
             'removedContentShown' => true,
             'dimensions' => $dimensionValues
-        ))->willReturn($mockContext);
+        ])->willReturn($mockContext);
 
         $this->inject($this->nodeFactory, 'contextFactory', $mockContextFactory);
 

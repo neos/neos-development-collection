@@ -32,7 +32,7 @@ class NodePublishingDependencySolverTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->setConstructorArgs(array('live'))->getMock();
+        $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->setConstructorArgs(['live'])->getMock();
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
     }
 
@@ -45,7 +45,7 @@ class NodePublishingDependencySolverTest extends UnitTestCase
         $nodeCompany = $this->buildNodeMock('/sites/typo3cr/company');
         $nodeAboutUs = $this->buildNodeMock('/sites/typo3cr/company/about-us');
 
-        $unpublishedNodes = array($nodeAboutUs, $nodeService, $nodeCompany);
+        $unpublishedNodes = [$nodeAboutUs, $nodeService, $nodeCompany];
 
         $solver = new NodePublishingDependencySolver();
         $sortedNodes = $solver->sort($unpublishedNodes);
@@ -67,7 +67,7 @@ class NodePublishingDependencySolverTest extends UnitTestCase
         // "service" was moved to "company"
         $nodeService = $this->buildNodeMock('/sites/typo3cr/service', $nodeCompany->getNodeData());
 
-        $unpublishedNodes = array($nodeAboutUs, $nodeService, $nodeCompany, $nodeEnterprise);
+        $unpublishedNodes = [$nodeAboutUs, $nodeService, $nodeCompany, $nodeEnterprise];
 
         $solver = new NodePublishingDependencySolver();
         $sortedNodes = $solver->sort($unpublishedNodes);
@@ -86,10 +86,10 @@ class NodePublishingDependencySolverTest extends UnitTestCase
      */
     protected function buildNodeMock($path, $movedTo = null)
     {
-        $mockNodeData = $this->getMockBuilder(NodeData::class)->setConstructorArgs(array($path, $this->mockWorkspace))->getMock();
+        $mockNodeData = $this->getMockBuilder(NodeData::class)->setConstructorArgs([$path, $this->mockWorkspace])->getMock();
         $mockNodeData->expects($this->any())->method('getMovedTo')->will($this->returnValue($movedTo));
         $mockNodeData->expects($this->any())->method('getPath')->will($this->returnValue($path));
-        $mockNode = $this->getMockBuilder(Node::class)->setConstructorArgs(array($mockNodeData, $this->mockContext))->getMock();
+        $mockNode = $this->getMockBuilder(Node::class)->setConstructorArgs([$mockNodeData, $this->mockContext])->getMock();
         $mockNode->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData));
         $mockNode->expects($this->any())->method('getPath')->will($this->returnValue($path));
         $parentPath = substr($path, 0, strrpos($path, '/'));

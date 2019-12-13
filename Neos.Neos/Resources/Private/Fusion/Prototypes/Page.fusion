@@ -203,9 +203,11 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 			documentNode = ${node}
 		}
 		entryTags {
-			1 = ${'Node_' + node.identifier}
+			1 = ${Neos.Caching.nodeTag(node)}
 		}
 	}
+
+  @process.debugDump = Neos.Fusion:DebugDump
 
 	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
 }

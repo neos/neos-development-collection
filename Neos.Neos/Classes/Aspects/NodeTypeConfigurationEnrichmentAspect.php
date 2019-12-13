@@ -152,7 +152,7 @@ class NodeTypeConfigurationEnrichmentAspect
                 // - take configuration from editor defaults
                 // - take configuration from dataType
                 // - take configuration from properties (NodeTypes)
-                $mergedInspectorConfiguration = array();
+                $mergedInspectorConfiguration = [];
                 if (isset($this->editorDefaultConfiguration[$editor])) {
                     $mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor];
                 }

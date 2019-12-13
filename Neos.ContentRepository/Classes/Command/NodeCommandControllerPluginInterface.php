@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\ContentRepository\Domain\Model\NodeType;
 

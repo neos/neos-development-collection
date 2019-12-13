@@ -41,7 +41,7 @@ Feature: Privilege to restrict removing of nodes
       | Workspace  |
       | user-admin |
     Then I should not be granted to remove the node
-    And I should get FALSE when asking the node authorization service if removal of the node is granted
+    And I should get false when asking the node authorization service if removal of the node is granted
 
   @Isolated @fixtures
   Scenario: Anonymous users are granted to remove company node
@@ -50,7 +50,7 @@ Feature: Privilege to restrict removing of nodes
       | Workspace  |
       | user-admin |
     Then I should be granted to remove the node
-    And I should get TRUE when asking the node authorization service if removal of the node is granted
+    And I should get true when asking the node authorization service if removal of the node is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to remove service node
@@ -59,4 +59,4 @@ Feature: Privilege to restrict removing of nodes
       | Workspace  |
       | user-admin |
     Then I should be granted to remove the node
-    And I should get TRUE when asking the node authorization service if removal of the node is granted
+    And I should get true when asking the node authorization service if removal of the node is granted

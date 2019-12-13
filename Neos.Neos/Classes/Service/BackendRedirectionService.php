@@ -141,7 +141,7 @@ class BackendRedirectionService
         $uriBuilder->setRequest($actionRequest);
         $uriBuilder->setFormat('html');
         $uriBuilder->setCreateAbsoluteUri(true);
-        return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'Neos.Neos');
+        return $uriBuilder->uriFor('show', ['node' => $lastVisitedNode], 'Frontend\\Node', 'Neos.Neos');
     }
 
     /**
@@ -172,11 +172,11 @@ class BackendRedirectionService
      */
     protected function createContext($workspaceName)
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => true,
             'inaccessibleContentShown' => true
-        );
+        ];
 
         return $this->contextFactory->create($contextProperties);
     }

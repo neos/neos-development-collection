@@ -1,0 +1,38 @@
+// Core variables and mixins
+@import "compass";
+@import "Foundation/variables";
+
+.neos {
+  color: $white;
+}
+
+.neos-setup-btn {
+  background: $blue;
+  width: 100%;
+}
+
+.neos-error-details-toggle {
+  .neos-error-details-toggle__header {
+    margin-bottom: 0;
+    cursor: pointer;
+    position: relative;
+    display: block;
+    &:before {
+      content: '▼';
+      padding-right: .4rem;
+      font-size: $fontSizeSmall;
+    }
+  }
+  .neos-error-details-toggle__body {
+    overflow: hidden;
+  }
+
+  &--closed {
+    .neos-error-details-toggle__header:before {
+      content: '▶';
+    }
+    .neos-error-details-toggle__body {
+      height: 0;
+    }
+  }
+}

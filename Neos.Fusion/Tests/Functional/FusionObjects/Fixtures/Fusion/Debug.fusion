@@ -26,6 +26,6 @@ debug.fusionObjectExpression = Debug {
 }
 
 debug.multipleValues = Debug {
-  foo = 'foo'
-  bar = 'bar'
+	foo = 'foo'
+	bar = 'bar'
 }

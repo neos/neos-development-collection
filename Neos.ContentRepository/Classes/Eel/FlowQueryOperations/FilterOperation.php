@@ -11,10 +11,11 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Utility\ObjectAccess;
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * This filter implementation contains specific behavior for use on ContentRepository
@@ -29,17 +30,6 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  * will in fact use `isOfType()` on the `NodeType` of context elements to
  * filter. This filter allow also to filter the current context by a given
  * node. Anything else remains unchanged.
- *
- * Note: A supertype that is set to false after having been assigned, is still
- * returning true here. Fixing that potentially breaks sites in non-obvious ways,
- * so we did not fix that. See these links for details:
- *
- * - https://github.com/neos/neos-development-collection/issues/1983
- * - https://github.com/neos/neos-development-collection/pull/2139
- * - https://github.com/neos/neos-development-collection/pull/2145
- * - https://github.com/neos/neos-development-collection/pull/2217
- * - https://github.com/neos/neos-development-collection/pull/2265
- * - https://discuss.neos.io/t/breaking-bugfixes/3882
  */
 class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperation
 {
@@ -75,7 +65,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
         }
 
         if ($arguments[0] instanceof NodeInterface) {
-            $filteredContext = array();
+            $filteredContext = [];
             $context = $flowQuery->getContext();
             foreach ($context as $element) {
                 if ($element === $arguments[0]) {
@@ -98,25 +88,31 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {
-        return ($element->getName() === $propertyNameFilter);
+        /* @var NodeInterface $element */
+        try {
+            return ((string)$element->getNodeName() === $propertyNameFilter);
+        } catch (\InvalidArgumentException $e) {
+            // in case the Element has no valid node name, we do not match!
+            return false;
+        }
     }
 
     /**
      * {@inheritdoc}
      *
-     * @param object $element
+     * @param NodeInterface $element
      * @param string $identifier
      * @return boolean
      */
     protected function matchesIdentifierFilter($element, $identifier)
     {
-        return (strtolower($element->getIdentifier()) === strtolower($identifier));
+        return (strtolower((string)$element->getNodeAggregateIdentifier()) === strtolower($identifier));
     }
 
     /**
      * {@inheritdoc}
      *
-     * @param object $element
+     * @param NodeInterface $element
      * @param string $propertyPath
      * @return mixed
      */
@@ -142,7 +138,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
         if ($operator === 'instanceof' && $value instanceof NodeInterface) {
             if ($this->operandIsSimpleType($operand)) {
                 return $this->handleSimpleTypeOperand($operand, $value);
-            } elseif ($operand === NodeInterface::class || $operand === Node::class) {
+            } elseif ($operand === NodeInterface::class || $operand === Node::class || $operand === \Neos\ContentRepository\Domain\Model\NodeInterface::class || $operand === TraversableNodeInterface::class) {
                 return true;
             } else {
                 $isOfType = $value->getNodeType()->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);

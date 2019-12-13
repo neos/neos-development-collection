@@ -107,7 +107,7 @@ class ResourceUriImplementation extends AbstractFusionObject
             throw new FusionException('Neither "resource" nor "path" were specified', 1386458763);
         }
         if (strpos($path, 'resource://') === 0) {
-            $matches = array();
+            $matches = [];
             if (preg_match('#^resource://([^/]+)/Public/(.*)#', $path, $matches) !== 1) {
                 throw new FusionException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
             }
@@ -126,7 +126,7 @@ class ResourceUriImplementation extends AbstractFusionObject
         if ($localize === true) {
             $resourcePath = 'resource://' . $package . '/Public/' . $path;
             $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
-            $matches = array();
+            $matches = [];
             if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
                 $package = $matches[1];
                 $path = $matches[2];

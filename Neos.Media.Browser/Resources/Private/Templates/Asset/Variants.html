@@ -1,0 +1,31 @@
+{namespace m=Neos\Media\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="EditImage"/>
+
+<f:section name="Title">Edit view</f:section>
+
+<f:section name="Content">
+
+    <ul class="neos-nav neos-nav-tabs" role="tablist">
+        <li role="presentation">
+            <f:link.action action="{overviewAction}" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}">Overview</f:link.action>
+        </li>
+        <li role="presentation" class="neos-active">
+            <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}">Variants</f:link.action>
+        </li>
+    </ul>
+
+    <div class="neos-tab-content neos-media-browser">
+        <div role="tabpanel" class="neos-tab-pane neos-active neos-media-assets" id="variants-app">
+        </div>
+        <script id="variants-information" type="application/json">{variantsInformation -> f:format.json() -> f:format.raw()}</script>
+        <script id="original-information" type="application/json">{originalInformation -> f:format.json() -> f:format.raw()}</script>
+    </div>
+    <f:form action="update" controller="ImageVariant" package="Neos.Media.Browser" format="json" id="postHelper" method="post" useParentRequest="true"></f:form>
+</f:section>
+
+<f:section name="Scripts">
+    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/select.js')}"></script>
+    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/Vendor.js')}"></script>
+    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/Main.js')}"></script>
+</f:section>

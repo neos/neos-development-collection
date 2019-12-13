@@ -37,7 +37,7 @@ class ImageController extends AssetController
     protected $importedAssetRepository;
 
     /**
-     * List existing immages
+     * List existing images
      *
      * @param string $view
      * @param string $sortBy
@@ -52,7 +52,7 @@ class ImageController extends AssetController
      * @return void
      * @throws \Neos\Utility\Exception\FilesException
      */
-    public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null, $assetSourceIdentifier = null)
+    public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
     {
         $this->view->assign('disableFilter', true);
         parent::indexAction($view, $sortBy, $sortDirection, 'Image', $tagMode, $tag, $searchTerm, $collectionMode, $assetCollection, $assetSourceIdentifier);
@@ -66,12 +66,14 @@ class ImageController extends AssetController
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
-    public function editAction(string $assetSourceIdentifier = null, string $assetProxyIdentifier = null, Asset $asset = null)
+    public function editAction(string $assetSourceIdentifier = null, string $assetProxyIdentifier = null, Asset $asset = null): void
     {
         if ($assetSourceIdentifier !== null && $assetProxyIdentifier !== null) {
             parent::editAction($assetSourceIdentifier, $assetProxyIdentifier);
             return;
-        } elseif ($asset instanceof AssetSourceAwareInterface) {
+        }
+
+        if ($asset instanceof AssetSourceAwareInterface) {
             /** @var ImportedAsset $importedAsset */
             $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($asset->getIdentifier());
             parent::editAction($asset->getAssetSourceIdentifier(), $importedAsset ? $importedAsset->getRemoteAssetIdentifier() : $asset->getIdentifier());

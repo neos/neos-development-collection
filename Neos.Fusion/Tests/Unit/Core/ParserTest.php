@@ -37,9 +37,9 @@ class ParserTest extends UnitTestCase
     protected function setUp()
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
+        $this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback([$this, 'objectManagerIsRegisteredCallback']));
 
-        $this->parser = $this->getAccessibleMock(Parser::class, array('dummy'));
+        $this->parser = $this->getAccessibleMock(Parser::class, ['dummy']);
         $this->parser->_set('objectManager', $this->mockObjectManager);
     }
 
@@ -49,7 +49,7 @@ class ParserTest extends UnitTestCase
      */
     public function objectManagerCallback()
     {
-        $arguments = array_merge(func_get_args(), array($this->mockObjectManager));
+        $arguments = array_merge(func_get_args(), [$this->mockObjectManager]);
         $objectName = array_shift($arguments);
 
         $class = new \ReflectionClass($objectName);
@@ -62,7 +62,7 @@ class ParserTest extends UnitTestCase
      */
     public function objectManagerIsRegisteredCallback()
     {
-        $arguments = array_merge(func_get_args(), array($this->mockObjectManager));
+        $arguments = array_merge(func_get_args(), [$this->mockObjectManager]);
         $objectName = array_shift($arguments);
         switch ($objectName) {
             case 'Neos\Fusion\Fixtures\Text':
@@ -88,22 +88,22 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture01');
 
-        $expectedParseTree = array(
-            'test' => array(
+        $expectedParseTree = [
+            'test' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Hello world!'
-            ),
-            'secondTest' => array(
+            ],
+            'secondTest' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 23,
                 'value-with-dash' => 42,
                 'value:with:colon' => 59
-            )
-        );
+            ]
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
 
@@ -131,27 +131,27 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture02');
 
-        $expectedParseTree = array(
-            'myObject' => array(
+        $expectedParseTree = [
+            'myObject' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => "Sorry, we're closed -- double quotes like \" do not need to be escaped."
-            ),
-            'anotherObject' => array(
+            ],
+            'anotherObject' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'And I said: "Hooray" -- single quotes like \' do not need to be escaped'
-            ),
-            'kaspersObject' => array(
+            ],
+            'kaspersObject' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The end of this line is a backslash\\',
                 'bar' => 'Here comes \ a backslash in the middle'
-            )
-        );
+            ]
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 02.');
@@ -166,39 +166,39 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture03');
 
-        $expectedParseTree = array(
-            'object1' => array(
-                'mySubObject' => array(
-                    'mySubSubObject' => array(
+        $expectedParseTree = [
+            'object1' => [
+                'mySubObject' => [
+                    'mySubSubObject' => [
                         '__objectType' => 'Neos.Fusion:Text',
                         '__value' => null,
                         '__eelExpression' => null,
                         'value' => 'Espresso is a fine beverage.'
-                    )
-                )
-            ),
-            'object2' => array(
+                    ]
+                ]
+            ],
+            'object2' => [
                 '__objectType' => 'Neos.Fusion:ObjectWithArrayProperty',
                 '__value' => null,
                 '__eelExpression' => null,
-                'theArray' => array(
+                'theArray' => [
                     'theKey' => 'theValue'
-                )
-            ),
-            'object3' => array(
+                ]
+            ],
+            'object3' => [
                 '__objectType' => 'Neos.Fusion:ObjectWithArrayProperty',
                 '__value' => null,
                 '__eelExpression' => null,
-                'theArray' => array(
-                    'theKey' => array(
+                'theArray' => [
+                    'theKey' => [
                         '__objectType' => 'Neos.Fusion:Text',
                         '__value' => null,
                         '__eelExpression' => null,
                         'value' => 'theValue'
-                    )
-                )
-            )
-        );
+                    ]
+                ]
+            ]
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 03.');
@@ -213,61 +213,61 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture04');
 
-        $expectedParseTree = array(
-            'myArrayObject' => array(
+        $expectedParseTree = [
+            'myArrayObject' => [
                 '__objectType' => 'Neos.Fusion:ContentArray',
                 '__value' => null,
                 '__eelExpression' => null,
-                10 => array(
+                10 => [
                     '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Hello ',
-                    '__meta' => array(
+                    '__meta' => [
                         'position' => 'after 10'
-                    )
-                ),
-                20 => array(
+                    ]
+                ],
+                20 => [
                     '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'world!'
-                ),
-                30 => array(
+                ],
+                30 => [
                     '__objectType' => 'Neos.Fusion:ContentArray',
                     '__value' => null,
                     '__eelExpression' => null,
-                    20 => array(
+                    20 => [
                         '__objectType' => 'Neos.Fusion:ContentArray',
                         '__value' => null,
                         '__eelExpression' => null,
-                        10 => array(
+                        10 => [
                             '__objectType' => 'Neos.Fusion:Text',
                             '__value' => null,
                             '__eelExpression' => null,
                             'value' => 'Huh?'
-                        )
-                    )
-                )
-            ),
-            'anotherObject' => array(
-                'sub1' => array(
-                    'sub2' => array(
-                        'sub3' => array(
+                        ]
+                    ]
+                ]
+            ],
+            'anotherObject' => [
+                'sub1' => [
+                    'sub2' => [
+                        'sub3' => [
                             '__objectType' => 'Neos.Fusion:ContentArray',
                             '__value' => null,
                             '__eelExpression' => null,
-                            1 => array(
+                            1 => [
                                 '__objectType' => 'Neos.Fusion:Text',
                                 '__value' => null,
                                 '__eelExpression' => null,
                                 'value' => 'Yawn'
-                            )
-                        )
-                    )
-                )
-            )
-        );
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 04.');
@@ -282,61 +282,61 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture05');
 
-        $expectedParseTree = array(
-            'firstObject' => array(
+        $expectedParseTree = [
+            'firstObject' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Go outside. The graphics are AMAZING!'
-            ),
-            'firstObject2' => array(
+            ],
+            'firstObject2' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Go outside. The graphics are AMAZING!'
-            ),
-            'firstObject3' => array(
+            ],
+            'firstObject3' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Overridden value'
-            ),
-            'firstObject4' => array(
+            ],
+            'firstObject4' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Ugly syntax with no space works!'
-            ),
-            'secondObject' => array(
-                'subObject' => array(
+            ],
+            'secondObject' => [
+                'subObject' => [
                     '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => '27°C and a blue sky.'
-                )
-            ),
-            'thirdObject' => array(
-                'subObject' => array(
-                    'subSubObject' => array(
-                        'someMessage' => array(
+                ]
+            ],
+            'thirdObject' => [
+                'subObject' => [
+                    'subSubObject' => [
+                        'someMessage' => [
                             '__objectType' => 'Neos.Fusion:Text',
                             '__value' => null,
                             '__eelExpression' => null,
                             'value' => 'Fully or hard tail?',
                             'value2' => 'I don\'t know.'
-                        )
-                    ),
-                    'anotherSubSubObject' => array(
-                        'someMessage' => array(
+                        ]
+                    ],
+                    'anotherSubSubObject' => [
+                        'someMessage' => [
                             '__objectType' => 'Neos.Fusion:Text',
                             '__value' => null,
                             '__eelExpression' => null,
                             'value' => 'Hard',
-                        )
-                    )
-                )
-            ),
-        );
+                        ]
+                    ]
+                ]
+            ],
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 05.');
@@ -351,13 +351,13 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture07');
 
-        $expectedParseTree = array(
-            'object3' => array(
+        $expectedParseTree = [
+            'object3' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null
-            )
-        );
+            ]
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 07.');
@@ -373,55 +373,55 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture08');
 
-        $expectedParseTree = array(
-            'object1' => array(
+        $expectedParseTree = [
+            'object1' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Hello world!',
                 'foo' => 42
-            ),
-            'object2' => array(
+            ],
+            'object2' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Hello world!',
                 'foo' => 42
-            ),
-            'lib' => array(
-                'object3' => array(
+            ],
+            'lib' => [
+                'object3' => [
                     '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Another message'
-                ),
-                'object4' => array(
+                ],
+                'object4' => [
                     '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Another message'
-                ),
-                'object5' => array(
+                ],
+                'object5' => [
                     '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Another message'
-                ),
-                'object6' => array(
+                ],
+                'object6' => [
                     '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Hello world!',
                     'foo' => 21
-                ),
-            ),
-            'object7' => array(
+                ],
+            ],
+            'object7' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Hello world!'
-            )
-        );
+            ]
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 08.');
@@ -436,71 +436,71 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture10');
 
-        $expectedParseTree = array(
+        $expectedParseTree = [
 
-            'newObject1' => array(
+            'newObject1' => [
                 '__objectType' =>'Neos.Fusion:Text',
-                'value' => array(
+                'value' => [
                     '__value' => 'Hello',
                     '__objectType' => null,
                     '__eelExpression' => null,
-                    '__meta' => array(
-                        'process' => array(
-                            1 => array(
+                    '__meta' => [
+                        'process' => [
+                            1 => [
                                 '__eelExpression' => 'value + \' world\'',
                                 '__value' => null,
                                 '__objectType' => null,
-                            ),
-                            'other' => array(
+                            ],
+                            'other' => [
                                 '__eelExpression' => 'value + \' world\'',
                                 '__value' => null,
                                 '__objectType' => null,
-                            ),
-                            'default' => array(
-                                'expression' => array(
+                            ],
+                            'default' => [
+                                'expression' => [
                                     '__eelExpression' => 'value + \' world\'',
                                     '__value' => null,
                                     '__objectType' => null,
-                                ),
-                                '__meta' => array(
+                                ],
+                                '__meta' => [
                                     'position' => 'start'
-                                )
-                            )
-                        )
-                    )
-                ),
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
                 '__value' => null,
                 '__eelExpression' => null,
-            ),
-            'newObject2' => array(
+            ],
+            'newObject2' => [
                 '__objectType' =>'Neos.Fusion:Text',
                 'value' => 'Hello',
-                '__meta' => array(
-                    'process' => array(
-                        1 => array(
+                '__meta' => [
+                    'process' => [
+                        1 => [
                             '__eelExpression' => 'value + \' world\'',
                             '__value' => null,
                             '__objectType' => null,
-                        ),
-                    )
-                ),
+                        ],
+                    ]
+                ],
                 '__value' => null,
                 '__eelExpression' => null,
-            ),
-            '__prototypes' => array(
-                'Neos.Fusion:Foo' => array(
-                    '__meta' => array(
-                        'process' => array(
-                            1 => array(
+            ],
+            '__prototypes' => [
+                'Neos.Fusion:Foo' => [
+                    '__meta' => [
+                        'process' => [
+                            1 => [
                                 '__eelExpression' => 'value + \' world\'',
                                 '__value' => null,
                                 '__objectType' => null,
-                            ),
-                        )
-                    )
-                )
-            )
-        );
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 10.');
@@ -515,44 +515,44 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture13');
 
-        $expectedParseTree = array(
-            'object1' => array(
+        $expectedParseTree = [
+            'object1' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => chr(10) . '	Some text.' . chr(10)
-            ),
-            'object2' => array(
+            ],
+            'object2' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => chr(10) . '	Some text.' . chr(10)
-            ),
-            'object3' => array(
+            ],
+            'object3' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The text might start' . chr(10) . '	at some line\' and' . chr(10) . '	end at some other line'
-            ),
-            'object4' => array(
+            ],
+            'object4' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The text might start' . chr(10) . '	at some line "and' . chr(10) . '	end at some other line'
-            ),
-            'object5' => array(
+            ],
+            'object5' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The text might start' . chr(10) . '	at "some" line and' . chr(10) . '	end at some other line'
-            ),
-            'object6' => array(
+            ],
+            'object6' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The text might start' . chr(10) . '	at \'some\' line and' . chr(10) . '	end at some other line'
-            ),
-        );
+            ],
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 13.');
@@ -567,32 +567,32 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture14');
 
-        $expectedParseTree = array(
-            'object1' => array(
+        $expectedParseTree = [
+            'object1' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Curly braces like this {} or {that} are ignored.'
-            ),
-            'object2' => array(
+            ],
+            'object2' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Curly braces like this {} or {that} are ignored.'
-            ),
-            'object3' => array(
+            ],
+            'object3' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Slashes // or hashes # or /* signs are not interpreted as comments.'
-            ),
-            'object4' => array(
+            ],
+            'object4' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Slashes // or hashes # or /* signs are not interpreted as comments.'
-            ),
-        );
+            ],
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 14.');
@@ -605,14 +605,14 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture15');
 
-        $expectedParseTree = array(
-            'foo' => array(
+        $expectedParseTree = [
+            'foo' => [
                 '__objectType' => 'Neos.Fusion:Bar',
                 '__value' => null,
                 '__eelExpression' => null,
                 'prop' => 'myValue'
-            )
-        );
+            ]
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 15.');
@@ -620,82 +620,82 @@ class ParserTest extends UnitTestCase
 
     protected function getExpectedParseTreeForFixture16()
     {
-        $expectedParseTree = array(
-            '__prototypes' => array(
-                'Neos.Foo:Bar' => array(
+        $expectedParseTree = [
+            '__prototypes' => [
+                'Neos.Foo:Bar' => [
                     'baz' => 'Hallo'
-                ),
-                'Neos.Foo:Bar2' => array(
+                ],
+                'Neos.Foo:Bar2' => [
                     'baz' => 'Foo',
                     'test2' => 42
-                ),
-                'Foo.Bar:Baz' => array(
-                    '__prototypes' => array(
-                        'Foo.Bar:Baz2' => array(
+                ],
+                'Foo.Bar:Baz' => [
+                    '__prototypes' => [
+                        'Foo.Bar:Baz2' => [
                             'test' => 'asdf'
-                        )
-                    )
-                ),
-                'Neos.Foo:Bar3' => array(
+                        ]
+                    ]
+                ],
+                'Neos.Foo:Bar3' => [
                     '__prototypeObjectName' => 'Neos.Foo:Bar2',
-                    '__prototypeChain' => array(
+                    '__prototypeChain' => [
                         'Neos.Foo:Bar2'
-                    )
-                )
-            ),
-            'test' => array(
-                '__prototypes' => array(
-                    'Neos.Foo:Bar' => array(
+                    ]
+                ]
+            ],
+            'test' => [
+                '__prototypes' => [
+                    'Neos.Foo:Bar' => [
                         'baz' => 'Hallo'
-                    )
-                ),
-            ),
-            'foo' => array(
-                'bar' => array(
-                    '__prototypes' => array(
-                        'Neos.Foo:Bar2' => array(
+                    ]
+                ],
+            ],
+            'foo' => [
+                'bar' => [
+                    '__prototypes' => [
+                        'Neos.Foo:Bar2' => [
                             'baz' => 'Foo',
                             'test2' => 42,
-                            'blah' => array(
+                            'blah' => [
                                 '__eelExpression' => 'my.expression()',
                                 '__value' => null,
                                 '__objectType' => null
-                            ),
-                            'blah2' => array(
+                            ],
+                            'blah2' => [
                                 '__eelExpression' => "my.expression('asdf')",
                                 '__value' => null,
                                 '__objectType' => null
-                            ),
-                            'blah3' => array(
+                            ],
+                            'blah3' => [
                                 '__eelExpression' => 'my.expression("as' . "		some stuff }		" . '" + "df")',
                                 '__value' => null,
                                 '__objectType' => null
-                            ),
-                            'multiline2' => array(
+                            ],
+                            'multiline2' => [
                                 '__eelExpression' => "my.expression(		Foo.bar(\"foo\")	)",
                                 '__value' => null,
                                 '__objectType' => null
-                            ),
-                            'multiline3' => array(
+                            ],
+                            'multiline3' => [
                                 '__eelExpression' => "		my.expression(			Bar.foo(\"bar\")		)	",
                                 '__value' => null,
                                 '__objectType' => null
-                            ),
-                            'multiline4' => array(
+                            ],
+                            'multiline4' => [
                                 '__eelExpression' => "my.expression(		\"bla\",		\"blubb\",		Test()	)",
                                 '__value' => null,
                                 '__objectType' => null
-                            ),
-                            'multiline5' => array(
+                            ],
+                            'multiline5' => [
                                 '__eelExpression' => "'col-sm-'+		String.split(q(node).parent().property('layout'), '-')[multiColumnIteration.index]",
                                 '__value' => null,
                                 '__objectType' => null
-                            )
-                        )
-                    )
-                )
-            )
-        );
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
 
         return $expectedParseTree;
     }
@@ -739,11 +739,11 @@ class ParserTest extends UnitTestCase
         // Check that values were overridden by fixture #17:
         $expectedParseTree['__prototypes']['Neos.Foo:Bar2']['baz'] = 'New Value';
 
-        $text = array(
+        $text = [
             '__objectType' => 'Neos.Fusion:Text',
             '__value' => null,
             '__eelExpression' => null
-        );
+        ];
 
         // Make sure that the namespace declaration for "default" is also available when fixture #17b is parsed:
         $expectedParseTree['object'] = $text;
@@ -770,50 +770,50 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture18');
 
-        $expectedParseTree = array(
-            'object1' => array(
+        $expectedParseTree = [
+            'object1' => [
                 '__objectType' => 'Neos.Neos:Text',
                 '__value' => null,
                 '__eelExpression' => null
-            ),
-            'object2' => array(
+            ],
+            'object2' => [
                 '__objectType' => 'Neos.Neos:Text',
                 '__value' => null,
                 '__eelExpression' => null
-            ),
-            'object3' => array(
+            ],
+            'object3' => [
                 '__objectType' => 'Neos.Schirmchen:Text',
                 '__value' => null,
                 '__eelExpression' => null
-            ),
-            'object4' => array(
+            ],
+            'object4' => [
                 '__objectType' => 'Neos.Future:Text',
                 '__value' => null,
                 '__eelExpression' => null
-            ),
-            '__prototypes' => array(
-                'Neos.Neos:Foo' => array(
-                    '__meta' => array(
+            ],
+            '__prototypes' => [
+                'Neos.Neos:Foo' => [
+                    '__meta' => [
                         'class' => ArrayImplementation::class
-                    )
-                ),
-                'Neos.Neos:Bar' => array(
-                    '__meta' => array(
+                    ]
+                ],
+                'Neos.Neos:Bar' => [
+                    '__meta' => [
                         'class' => ArrayImplementation::class
-                    )
-                ),
-                'Neos.Schirmchen:Baz' => array(
-                    '__meta' => array(
+                    ]
+                ],
+                'Neos.Schirmchen:Baz' => [
+                    '__meta' => [
                         'class' => ArrayImplementation::class
-                    )
-                ),
-                'Neos.Future:Quux' => array(
-                    '__meta' => array(
+                    ]
+                ],
+                'Neos.Future:Quux' => [
+                    '__meta' => [
                         'class' => ArrayImplementation::class
-                    )
-                )
-            )
-        );
+                    ]
+                ]
+            ]
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
@@ -828,15 +828,15 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture19');
 
-        $expectedParseTree = array(
-            'somepath' => array(
+        $expectedParseTree = [
+            'somepath' => [
                 'stringValue' => 'A string value',
                 'booleanValueFalse' => false,
                 'booleanValueTrue' => true,
                 'nullValue' => null,
                 'integerValue' => 42
-            ),
-        );
+            ],
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 19.');
@@ -851,18 +851,18 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture20');
 
-        $expectedParseTree = array(
-            'somepath' => array(
+        $expectedParseTree = [
+            'somepath' => [
                 '_stringValue' => 'A string value',
                 '_booleanValueFalse' => false,
                 '_booleanValueTrue' => true,
                 '_integerValue' => 42,
                 'value_with_underscores_inBetween' => 42,
-                'nested_value' => array(
+                'nested_value' => [
                     'is' => 21
-                )
-            ),
-        );
+                ]
+            ],
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 20.');
@@ -897,16 +897,16 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture23');
 
-        $expectedParseTree = array(
-            '__prototypes' => array(
-                '4Testing:Example' => array(
+        $expectedParseTree = [
+            '__prototypes' => [
+                '4Testing:Example' => [
                     'someValue' => true
-                )
-            ),
-            'somepath' => array(
+                ]
+            ],
+            'somepath' => [
                 '101Neos' => 'A string value',
-            ),
-        );
+            ],
+        ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 23.');
@@ -932,7 +932,7 @@ class ParserTest extends UnitTestCase
     public function parserCorrectlyParsesComments01()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionComments01');
-        $expected = array(); // Fixture contains only comments, so expect empty parse tree
+        $expected = []; // Fixture contains only comments, so expect empty parse tree
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestFusionComments01.fusion`');
     }
@@ -944,7 +944,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserInvokesFusionDslParsingIfADslPatternIsDetected()
     {
-        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->setMethods(array('invokeAndParseDsl'))->getMock();
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->setMethods(['invokeAndParseDsl'])->getMock();
 
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
 

@@ -18,7 +18,6 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
-use Neos\Neos\Domain\Model\UserInterfaceMode;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;

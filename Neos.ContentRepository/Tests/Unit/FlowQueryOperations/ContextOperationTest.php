@@ -11,17 +11,16 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ContextOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery ContextOperation
  */
-class ContextOperationTest extends UnitTestCase
+class ContextOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var ContextOperation
@@ -47,7 +46,7 @@ class ContextOperationTest extends UnitTestCase
     {
         $mockNode = $this->createMock(NodeInterface::class);
 
-        $result = $this->operation->canEvaluate(array($mockNode));
+        $result = $this->operation->canEvaluate([$mockNode]);
         $this->assertTrue($result);
     }
 
@@ -56,9 +55,9 @@ class ContextOperationTest extends UnitTestCase
      */
     public function evaluateCreatesModifiedContextFromFactoryUsingMergedProperties()
     {
-        $suppliedContextProperties = array('infiniteImprobabilityDrive' => true);
-        $nodeContextProperties = array('infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true);
-        $expectedModifiedContextProperties = array('infiniteImprobabilityDrive' => true, 'autoRemoveUnsuitableContent' => true);
+        $suppliedContextProperties = ['infiniteImprobabilityDrive' => true];
+        $nodeContextProperties = ['infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true];
+        $expectedModifiedContextProperties = ['infiniteImprobabilityDrive' => true, 'autoRemoveUnsuitableContent' => true];
 
         $mockNode = $this->createMock(NodeInterface::class);
         $mockFlowQuery = $this->buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties);
@@ -67,7 +66,7 @@ class ContextOperationTest extends UnitTestCase
 
         $this->mockContextFactory->expects($this->atLeastOnce())->method('create')->with($expectedModifiedContextProperties)->will($this->returnValue($modifiedNodeContext));
 
-        $this->operation->evaluate($mockFlowQuery, array($suppliedContextProperties));
+        $this->operation->evaluate($mockFlowQuery, [$suppliedContextProperties]);
     }
 
     /**
@@ -75,8 +74,8 @@ class ContextOperationTest extends UnitTestCase
      */
     public function evaluateGetsAndSetsNodesInContextFromModifiedContextByIdentifier()
     {
-        $suppliedContextProperties = array('infiniteImprobabilityDrive' => true);
-        $nodeContextProperties = array('infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true);
+        $suppliedContextProperties = ['infiniteImprobabilityDrive' => true];
+        $nodeContextProperties = ['infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true];
         $nodeIdentifier = 'c575c430-c971-11e3-a6e7-14109fd7a2dd';
 
         $mockNode = $this->createMock(NodeInterface::class);
@@ -89,9 +88,9 @@ class ContextOperationTest extends UnitTestCase
         $this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($modifiedNodeContext));
 
         $modifiedNodeContext->expects($this->once())->method('getNodeByIdentifier')->with($nodeIdentifier)->will($this->returnValue($nodeInModifiedContext));
-        $mockFlowQuery->expects($this->atLeastOnce())->method('setContext')->with(array($nodeInModifiedContext));
+        $mockFlowQuery->expects($this->atLeastOnce())->method('setContext')->with([$nodeInModifiedContext]);
 
-        $this->operation->evaluate($mockFlowQuery, array($suppliedContextProperties));
+        $this->operation->evaluate($mockFlowQuery, [$suppliedContextProperties]);
     }
 
     /**
@@ -99,8 +98,8 @@ class ContextOperationTest extends UnitTestCase
      */
     public function evaluateSkipsNodesNotAvailableInModifiedContext()
     {
-        $suppliedContextProperties = array('infiniteImprobabilityDrive' => true);
-        $nodeContextProperties = array('infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true);
+        $suppliedContextProperties = ['infiniteImprobabilityDrive' => true];
+        $nodeContextProperties = ['infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true];
         $nodeIdentifier = 'c575c430-c971-11e3-a6e7-14109fd7a2dd';
 
         $mockNode = $this->createMock(NodeInterface::class);
@@ -111,9 +110,9 @@ class ContextOperationTest extends UnitTestCase
         $this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($modifiedNodeContext));
 
         $modifiedNodeContext->expects($this->once())->method('getNodeByIdentifier')->with($nodeIdentifier)->will($this->returnValue(null));
-        $mockFlowQuery->expects($this->atLeastOnce())->method('setContext')->with(array());
+        $mockFlowQuery->expects($this->atLeastOnce())->method('setContext')->with([]);
 
-        $this->operation->evaluate($mockFlowQuery, array($suppliedContextProperties));
+        $this->operation->evaluate($mockFlowQuery, [$suppliedContextProperties]);
     }
 
     /**
@@ -129,7 +128,7 @@ class ContextOperationTest extends UnitTestCase
         $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockNodeContext));
 
         $mockFlowQuery = $this->getMockBuilder(FlowQuery::class)->disableOriginalConstructor()->getMock();
-        $mockFlowQuery->expects($this->any())->method('getContext')->will($this->returnValue(array($mockNode)));
+        $mockFlowQuery->expects($this->any())->method('getContext')->will($this->returnValue([$mockNode]));
         return $mockFlowQuery;
     }
 }

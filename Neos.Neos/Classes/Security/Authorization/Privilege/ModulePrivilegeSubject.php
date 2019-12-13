@@ -11,9 +11,7 @@ namespace Neos\Neos\Security\Authorization\Privilege;
  * source code.
  */
 
-use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A subject for the ModulePrivilege

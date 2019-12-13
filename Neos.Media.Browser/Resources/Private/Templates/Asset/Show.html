@@ -5,14 +5,27 @@
 <f:section name="Title">Show view</f:section>
 
 <f:section name="Content">
+        <f:if condition="{variantsTabFeatureEnabled} && {assetProxy.localAssetIdentifier}">
+            <ul class="neos-nav neos-nav-tabs" role="tablist">
+                <li role="presentation" class="neos-active">
+                    <a href="#" role="tab">Overview</a>
+                </li>
+                <li role="presentation">
+                    <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier, overviewAction: 'show'}">Variants</f:link.action>
+                </li>
+            </ul>
+        </f:if>
+
         <div class="neos-row-fluid">
             <div class="neos-span6 neos-image-inputs">
                 <fieldset>
                     <legend>{neos:backend.translate(id: 'basics', package: 'Neos.Media.Browser')}</legend>
                     <label for="title">{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}</label>
-                    <input id="title" readonly="readonly" value="{assetProxy.iptcProperties.Title}"/>
+                    <input type="text" id="title" readonly="readonly" value="{assetProxy.iptcProperties.Title}"/>
                     <label for="caption">{neos:backend.translate(id: 'field.caption', package: 'Neos.Media.Browser')}</label>
-                    <textarea id="caption" rows="3" readonly="readonly">{assetProxy.iptcProperties.CaptionAbstract}</textarea>
+                    <textarea id="caption" rows="2" readonly="readonly">{assetProxy.iptcProperties.CaptionAbstract}</textarea>
+                    <label for="copyrightnotice">{neos:backend.translate(id: 'field.copyrightnotice', package: 'Neos.Media.Browser')}</label>
+                    <textarea id="copyrightnotice" rows="2" readonly="readonly">{assetProxy.iptcProperties.CopyrightNotice}</textarea>
                 </fieldset>
                 <fieldset>
                     <legend>{neos:backend.translate(id: 'metadata', package: 'Neos.Media.Browser')}</legend>

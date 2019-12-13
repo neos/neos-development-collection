@@ -75,7 +75,7 @@ class NodeServiceTest extends FunctionalTestCase
         parent::setUp();
         $this->nodeDataRepository = new NodeDataRepository();
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
         $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $this->contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
         $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
@@ -88,7 +88,7 @@ class NodeServiceTest extends FunctionalTestCase
     public function tearDown()
     {
         parent::tearDown();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
         $configuredDimensions = $this->objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepository.contentDimensions');
         $this->contentDimensionRepository->setDimensionsConfiguration($configuredDimensions);
     }

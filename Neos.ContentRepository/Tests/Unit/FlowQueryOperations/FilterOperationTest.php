@@ -10,32 +10,31 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+
 use Neos\ContentRepository\Eel\FlowQueryOperations\FilterOperation;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery FilterOperation
  */
-class FilterOperationTest extends UnitTestCase
+class FilterOperationTest extends AbstractQueryOperationsTest
 {
+
     /**
      * @test
      */
-    public function filterWithIdentifierUsesNodeIdentifier()
+    public function filterWithIdentifierUsesNodeAggregateIdentifier()
     {
-        $node1 = $this->createMock(NodeInterface::class);
-        $node2 = $this->createMock(NodeInterface::class);
-        $node2->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-identifier-uuid'));
+        $node1 = $this->mockNode('node1-identifier-uuid');
+        $node2 = $this->mockNode('node2-identifier-uuid');
 
-        $context = array($node1, $node2);
+        $context = [$node1, $node2];
         $q = new FlowQuery($context);
 
         $operation = new FilterOperation();
-        $operation->evaluate($q, array('#node-identifier-uuid'));
+        $operation->evaluate($q, ['#node2-identifier-uuid']);
 
-        $this->assertEquals(array($node2), $q->getContext());
+        $this->assertEquals([$node2], $q->getContext());
     }
 
     /**
@@ -43,15 +42,15 @@ class FilterOperationTest extends UnitTestCase
      */
     public function filterWithNodeInstanceIsSupported()
     {
-        $node1 = $this->createMock(NodeInterface::class);
-        $node2 = $this->createMock(NodeInterface::class);
+        $node1 = $this->mockNode('node1');
+        $node2 = $this->mockNode('node2');
 
-        $context = array($node1, $node2);
+        $context = [$node1, $node2];
         $q = new FlowQuery($context);
 
         $operation = new FilterOperation();
-        $operation->evaluate($q, array($node2));
+        $operation->evaluate($q, [$node2]);
 
-        $this->assertEquals(array($node2), $q->getContext());
+        $this->assertEquals([$node2], $q->getContext());
     }
 }

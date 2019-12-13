@@ -30,7 +30,7 @@ class UserPreferences
      *
      * @var array
      */
-    protected $preferences = array();
+    protected $preferences = [];
 
     /**
      * Get preferences

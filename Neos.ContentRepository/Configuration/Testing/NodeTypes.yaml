@@ -109,6 +109,7 @@
 'Neos.ContentRepository.Testing:Column':
   superTypes:
     'Neos.ContentRepository.Testing:Content': true
+    'Neos.ContentRepository.Testing:ContentMixin': false
   abstract: true
 
 'Neos.ContentRepository.Testing:TwoColumn':
@@ -132,9 +133,13 @@
       type: 'Neos.ContentRepository.Testing:ContentCollection'
 
 'Neos.ContentRepository.Testing:Content':
+  superTypes:
+    'Neos.ContentRepository.Testing:ContentMixin': true
   constraints:
     nodeTypes:
       '*': false
+
+'Neos.ContentRepository.Testing:ContentMixin': []
 
 'Neos.ContentRepository.Testing:Text':
   superTypes:

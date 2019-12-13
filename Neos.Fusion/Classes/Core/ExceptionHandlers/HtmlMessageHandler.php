@@ -11,8 +11,9 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Psr\Log\LoggerInterface;
 
 /**
  * Renders the exception as HTML.
@@ -20,10 +21,14 @@ use Neos\Flow\Log\SystemLoggerInterface;
 class HtmlMessageHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
 
     /**
      * Whether or not to render technical details (i.e. the Fusion stacktrace) in the exception message
@@ -31,6 +36,22 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      * @var bool
      */
     private $renderTechnicalDetails;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * @param bool $renderTechnicalDetails whether or not to render technical details (i.e. the Fusion stacktrace) in the exception message
@@ -50,9 +71,9 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
-        $messageBody = sprintf('<p class="neos-message-content">%s</p>', htmlspecialchars($exception->getMessage()));
-
+        $messageBody = '';
         if ($this->renderTechnicalDetails) {
+            $messageBody .= sprintf('<p class="neos-message-content">%s</p>', htmlspecialchars($exception->getMessage()));
             $messageBody .= sprintf('<p class="neos-message-stacktrace"><code>%s</code></p>', $this->formatFusionPath($fusionPath));
         }
 
@@ -66,7 +87,8 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
             $messageBody
         );
 
-        $this->systemLogger->logException($exception);
+        $logMessage = $this->throwableStorage->logThrowable($exception);
+        $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
         return $message;
     }
 
@@ -100,7 +122,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      */
     protected function formatFusionPath($fusionPath)
     {
-        $pathSegments = array();
+        $pathSegments = [];
         $spacer = '';
         foreach (explode('/', $fusionPath) as $segment) {
             $pathSegments[] = $spacer . $segment . '/';

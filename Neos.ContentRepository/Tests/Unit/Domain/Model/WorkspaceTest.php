@@ -41,9 +41,9 @@ class WorkspaceTest extends UnitTestCase
      */
     public function onInitializationANewlyCreatedWorkspaceCreatesItsOwnRootNode()
     {
-        $workspace = $this->getAccessibleMock(Workspace::class, array('dummy'), array(), '', false);
+        $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
 
-        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('add'))->getMock();
+        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['add'])->getMock();
         $mockNodeDataRepository->expects($this->once())->method('add');
 
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
@@ -58,9 +58,9 @@ class WorkspaceTest extends UnitTestCase
      */
     public function getNodeCountCallsRepositoryFunction()
     {
-        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('countByWorkspace'))->getMock();
+        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['countByWorkspace'])->getMock();
 
-        $workspace = $this->getAccessibleMock(Workspace::class, array('dummy'), array(), '', false);
+        $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
         $mockNodeDataRepository->expects($this->once())->method('countByWorkspace')->with($workspace)->will($this->returnValue(42));
@@ -75,7 +75,7 @@ class WorkspaceTest extends UnitTestCase
     {
         $targetWorkspace = new Workspace('live');
 
-        $currentWorkspace = $this->getAccessibleMock(Workspace::class, array('verifyPublishingTargetWorkspace'), array('live'));
+        $currentWorkspace = $this->getAccessibleMock(Workspace::class, ['verifyPublishingTargetWorkspace'], ['live']);
         $currentWorkspace->expects($this->never())->method('verifyPublishingTargetWorkspace');
 
         $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
@@ -93,7 +93,7 @@ class WorkspaceTest extends UnitTestCase
     public function publishNodeReturnsIfTheTargetWorkspaceIsTheSameAsTheSourceWorkspace()
     {
         $liveWorkspace = new Workspace('live');
-        $workspace = $this->getMockBuilder(Workspace::class)->setMethods(array('emitBeforeNodePublishing'))->setConstructorArgs(array('some-campaign'))->getMock();
+        $workspace = $this->getMockBuilder(Workspace::class)->setMethods(['emitBeforeNodePublishing'])->setConstructorArgs(['some-campaign'])->getMock();
         $workspace->setBaseWorkspace($liveWorkspace);
 
         $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
@@ -111,7 +111,7 @@ class WorkspaceTest extends UnitTestCase
     {
         $someBaseWorkspace = new Workspace('live');
         $reviewWorkspace = new Workspace('review', $someBaseWorkspace);
-        $currentWorkspace = $this->getAccessibleMock(Workspace::class, array('dummy'), array('user-foo', $reviewWorkspace));
+        $currentWorkspace = $this->getAccessibleMock(Workspace::class, ['dummy'], ['user-foo', $reviewWorkspace]);
 
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $reviewWorkspace);
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $someBaseWorkspace);
@@ -125,7 +125,7 @@ class WorkspaceTest extends UnitTestCase
     public function verifyPublishingTargetWorkspaceThrowsAnExceptionIfWorkspaceIsNotBasedOnTheSpecifiedWorkspace()
     {
         $someBaseWorkspace = new Workspace('live');
-        $currentWorkspace = $this->getAccessibleMock(Workspace::class, array('dummy'), array('user-foo', $someBaseWorkspace));
+        $currentWorkspace = $this->getAccessibleMock(Workspace::class, ['dummy'], ['user-foo', $someBaseWorkspace]);
         $otherWorkspace = new Workspace('user-bar', $someBaseWorkspace);
 
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $otherWorkspace);
@@ -136,12 +136,12 @@ class WorkspaceTest extends UnitTestCase
      */
     public function validContextNodePaths()
     {
-        return array(
-            array('foo@user-bar'),
-            array('foo/bar/baz@user-bar'),
-            array('foo@user-UpperCamelCasedUser'),
-            array('foo/bar/baz@user-UpperCamelCasedUser')
-        );
+        return [
+            ['foo@user-bar'],
+            ['foo/bar/baz@user-bar'],
+            ['foo@user-UpperCamelCasedUser'],
+            ['foo/bar/baz@user-UpperCamelCasedUser']
+        ];
     }
 
     /**
@@ -159,10 +159,10 @@ class WorkspaceTest extends UnitTestCase
      */
     public function invalidContextNodePaths()
     {
-        return array(
-            array('foo@user-bar.html'),
-            array('foo/bar/baz')
-        );
+        return [
+            ['foo@user-bar.html'],
+            ['foo/bar/baz']
+        ];
     }
 
     /**

@@ -35,8 +35,8 @@ $maxImageHeight: $maxImageWidth / 4 * 3;
 			position: relative;
 
 			&:before {
+				@extend .fas;
 				color: #fff;
-				@include fa-icon();
 				content: fa-content($fa-var-arrow-down);
 				position: absolute;
 				top: 50%;

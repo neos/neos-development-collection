@@ -1,0 +1,56 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="Default"/>
+
+
+<f:section name="head">
+  <title>Welcome to Neos</title>
+  <link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Login.css', package: 'Neos.Neos')}"/>
+  <link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Welcome.css', package: 'Neos.Neos')}"/>
+  <style type="text/css">
+    .neos-login-box:before {
+      background-image: url({f:uri.resource(path: 'Images/Login/Wallpaper.jpg', package: 'Neos.Neos')});
+    }
+  </style>
+  <script src="{f:uri.resource(path: 'Library/jquery/jquery-2.0.3.js', package:'Neos.Neos')}"></script>
+</f:section>
+
+<f:section name="body">
+  <body class="neos"
+        style="background-image:url({f:uri.resource(path: 'Images/Login/Wallpaper.jpg', package:'Neos.Neos')});">
+  <div class="neos-modal-centered">
+    <main class="neos-login-main">
+      <div class="neos-login-box background-image-active">
+        <figure class="neos-login-box-logo">
+          <img class="neos-login-box-logo-resource"
+               src="{f:uri.resource(path: 'Images/Login/Logo.svg', package:'Neos.Neos')}" width="200px" height="200px"
+               alt="Neos Logo"/>
+        </figure>
+
+        <h1>{neos:backend.translate(id: 'error.exception.welcomeToNeos', package: 'Neos.Neos')}</h1>
+        <div class="neos-login-body neos">
+          <p>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.description', package:
+            'Neos.Neos') -> f:format.nl2br()}</p>
+          <p>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.setupMessage', package:
+            'Neos.Neos')}</p>
+          <div class="neos-actions">
+            <p><a href="/setup" class="btn neos-setup-btn">{neos:backend.translate(id: 'error.exception.goToSetup',
+              package: 'Neos.Neos')}</a></p>
+          </div>
+          <div class="neos-error-details-toggle neos-error-details-toggle--closed">
+            <h4 class="neos-error-details-toggle__header">{neos:backend.translate(id: 'error.exception.technicalInformation', package: 'Neos.Neos')}</h4>
+            <div class="neos-error-details-toggle__body">
+              <h5>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.title', package: 'Neos.Neos')}</h5>
+              <p>#{exception.code}: {exception.message}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    $('.neos-error-details-toggle').click(function() {
+      $(this).toggleClass('neos-error-details-toggle--closed');
+    });
+  </script>
+  </body>
+</f:section>

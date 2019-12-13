@@ -3,7 +3,7 @@
 Flow Validator Reference
 ========================
 
-This reference was automatically generated from code on 2018-08-10
+This reference was automatically generated from code on 2019-03-05
 
 
 .. _`Flow Validator Reference: AggregateBoundaryValidator`:
@@ -17,7 +17,9 @@ other Aggregate Roots eager loaded.
 
 Note that this validator is not part of the public API and you should not use it manually.
 
-Checks if the given value is valid according to the property validators.
+Checks if the given value is valid according to the validator, and returns
+the Error Messages object which occurred. Will skip validation if value is
+an uninitialized lazy loading proxy.
 
 .. note:: A value of NULL or an empty string ('') is considered valid
 

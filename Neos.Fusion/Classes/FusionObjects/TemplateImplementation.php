@@ -11,7 +11,6 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;

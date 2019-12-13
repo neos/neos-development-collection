@@ -67,7 +67,9 @@ class ContextOperation extends AbstractOperation
      *
      * @param FlowQuery $flowQuery The FlowQuery object
      * @param array $arguments The arguments for this operation
+     * @todo reimplement using TraversableNodeInterface / new NodeInterface once subgraphs are available
      * @return void
+     * @throws FlowQueryException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -75,8 +77,9 @@ class ContextOperation extends AbstractOperation
             throw new FlowQueryException('context() requires an array argument of context properties', 1398030427);
         }
 
-        $output = array();
+        $output = [];
         foreach ($flowQuery->getContext() as $contextNode) {
+            /** @var NodeInterface $contextNode */
             $contextProperties = $contextNode->getContext()->getProperties();
             $modifiedContext = $this->contextFactory->create(array_merge($contextProperties, $arguments[0]));
 

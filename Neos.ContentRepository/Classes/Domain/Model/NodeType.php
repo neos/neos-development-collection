@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -157,14 +158,14 @@ class NodeType
      */
     protected function buildFullConfiguration()
     {
-        $mergedConfiguration = array();
+        $mergedConfiguration = [];
         $applicableSuperTypes = static::getFlattenedSuperTypes($this);
         foreach ($applicableSuperTypes as $key => $superType) {
             $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
         }
         $this->fullConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
 
-        if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== array()) {
+        if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== []) {
             $sorter = new PositionalArraySorter($this->fullConfiguration['childNodes']);
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
@@ -212,7 +213,7 @@ class NodeType
             if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
                 throw new InvalidNodeTypePostprocessorException(sprintf('Expected NodeTypePostprocessorInterface but got "%s"', get_class($postprocessor)), 1364759955);
             }
-            $postprocessorOptions = array();
+            $postprocessorOptions = [];
             if (isset($postprocessorConfiguration['postprocessorOptions'])) {
                 $postprocessorOptions = $postprocessorConfiguration['postprocessorOptions'];
             }
@@ -290,17 +291,6 @@ class NodeType
      * If this node type or any of the direct or indirect super types
      * has the given name.
      *
-     * Note: A supertype that is set to false after having been assigned, is still
-     * returning true here. Fixing that potentially breaks sites in non-obvious ways,
-     * so we did not fix that. See these links for details:
-     *
-     * - https://github.com/neos/neos-development-collection/issues/1983
-     * - https://github.com/neos/neos-development-collection/pull/2139
-     * - https://github.com/neos/neos-development-collection/pull/2145
-     * - https://github.com/neos/neos-development-collection/pull/2217
-     * - https://github.com/neos/neos-development-collection/pull/2265
-     * - https://discuss.neos.io/t/breaking-bugfixes/3882
-     *
      * @param string $nodeType
      * @return boolean true if this node type is of the given kind, otherwise false
      * @api
@@ -309,6 +299,9 @@ class NodeType
     {
         if ($nodeType === $this->name) {
             return true;
+        }
+        if (array_key_exists($nodeType, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeType] === null) {
+            return false;
         }
         foreach ($this->declaredSuperTypes as $superType) {
             if ($superType !== null && $superType->isOfType($nodeType) === true) {
@@ -389,7 +382,7 @@ class NodeType
     public function getOptions()
     {
         $this->initialize();
-        return (isset($this->fullConfiguration['options']) ? $this->fullConfiguration['options'] : array());
+        return (isset($this->fullConfiguration['options']) ? $this->fullConfiguration['options'] : []);
     }
 
     /**
@@ -428,7 +421,7 @@ class NodeType
     public function getProperties()
     {
         $this->initialize();
-        return (isset($this->fullConfiguration['properties']) ? $this->fullConfiguration['properties'] : array());
+        return (isset($this->fullConfiguration['properties']) ? $this->fullConfiguration['properties'] : []);
     }
 
     /**
@@ -457,10 +450,10 @@ class NodeType
     {
         $this->initialize();
         if (!isset($this->fullConfiguration['properties'])) {
-            return array();
+            return [];
         }
 
-        $defaultValues = array();
+        $defaultValues = [];
         foreach ($this->fullConfiguration['properties'] as $propertyName => $propertyConfiguration) {
             if (isset($propertyConfiguration['defaultValue'])) {
                 $type = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : '';
@@ -480,17 +473,17 @@ class NodeType
     /**
      * Return an array with child nodes which should be automatically created
      *
-     * @return array the key of this array is the name of the child, and the value its NodeType.
+     * @return self[] the key of this array is the name of the child, and the value its NodeType.
      * @api
      */
     public function getAutoCreatedChildNodes()
     {
         $this->initialize();
         if (!isset($this->fullConfiguration['childNodes'])) {
-            return array();
+            return [];
         }
 
-        $autoCreatedChildNodes = array();
+        $autoCreatedChildNodes = [];
         foreach ($this->fullConfiguration['childNodes'] as $childNodeName => $childNodeConfiguration) {
             if (isset($childNodeConfiguration['type'])) {
                 $autoCreatedChildNodes[Utility::renderValidNodeName($childNodeName)] = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
@@ -499,6 +492,28 @@ class NodeType
 
         return $autoCreatedChildNodes;
     }
+
+    /**
+     * @param NodeName $nodeName
+     * @return bool true if $nodeName is an autocreated child node, false otherwise
+     */
+    public function hasAutoCreatedChildNode(NodeName $nodeName): bool
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]);
+    }
+
+    /**
+     * @param NodeName $nodeName
+     * @return NodeType|null
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            : null;
+    }
+
 
     /**
      * Checks if the given NodeType is acceptable as sub-node with the configured constraints,
@@ -512,7 +527,7 @@ class NodeType
      */
     public function allowsChildNodeType(NodeType $nodeType)
     {
-        $constraints = $this->getConfiguration('constraints.nodeTypes') ?: array();
+        $constraints = $this->getConfiguration('constraints.nodeTypes') ?: [];
         return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
     }
 
@@ -533,13 +548,13 @@ class NodeType
         if (!isset($autoCreatedChildNodes[$childNodeName])) {
             throw new \InvalidArgumentException('The method "allowsGrandchildNodeType" can only be used on auto-created childNodes, given $childNodeName "' . $childNodeName . '" is not auto-created.', 1403858395);
         }
-        $constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: array();
+        $constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: [];
 
         $childNodeConfiguration = [];
         foreach ($this->getConfiguration('childNodes') as $name => $configuration) {
             $childNodeConfiguration[Utility::renderValidNodeName($name)] = $configuration;
         }
-        $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath($childNodeConfiguration, $childNodeName . '.constraints.nodeTypes') ?: array();
+        $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath($childNodeConfiguration, $childNodeName . '.constraints.nodeTypes') ?: [];
 
         $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
 
@@ -587,7 +602,7 @@ class NodeType
      */
     protected function isNodeTypeAllowedByDirectConstraints(NodeType $nodeType, array $constraints)
     {
-        if ($constraints === array()) {
+        if ($constraints === []) {
             return true;
         }
 

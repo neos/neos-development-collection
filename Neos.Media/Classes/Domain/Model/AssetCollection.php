@@ -120,7 +120,7 @@ class AssetCollection
      */
     public function removeAsset(Asset $asset): bool
     {
-        if ($asset->getAssetCollections()->contains($this) === false) {
+        if ($asset->getAssetCollections()->contains($this) === true) {
             $this->assets->removeElement($asset);
             return true;
         }

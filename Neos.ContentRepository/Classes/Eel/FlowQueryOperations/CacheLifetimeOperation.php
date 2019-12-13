@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
@@ -68,7 +69,7 @@ class CacheLifetimeOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -82,13 +83,15 @@ class CacheLifetimeOperation extends AbstractOperation
     {
         $minimumDateTime = null;
         foreach ($flowQuery->getContext() as $contextNode) {
-            $hiddenBeforeDateTime = $contextNode->getHiddenBeforeDateTime();
-            if ($hiddenBeforeDateTime !== null && $hiddenBeforeDateTime > $this->now && ($minimumDateTime === null || $hiddenBeforeDateTime < $minimumDateTime)) {
-                $minimumDateTime = $hiddenBeforeDateTime;
-            }
-            $hiddenAfterDateTime = $contextNode->getHiddenAfterDateTime();
-            if ($hiddenAfterDateTime !== null && $hiddenAfterDateTime > $this->now && ($minimumDateTime === null || $hiddenAfterDateTime < $minimumDateTime)) {
-                $minimumDateTime = $hiddenAfterDateTime;
+            if ($contextNode instanceof NodeInterface) {
+                $hiddenBeforeDateTime = $contextNode->getHiddenBeforeDateTime();
+                if ($hiddenBeforeDateTime !== null && $hiddenBeforeDateTime > $this->now && ($minimumDateTime === null || $hiddenBeforeDateTime < $minimumDateTime)) {
+                    $minimumDateTime = $hiddenBeforeDateTime;
+                }
+                $hiddenAfterDateTime = $contextNode->getHiddenAfterDateTime();
+                if ($hiddenAfterDateTime !== null && $hiddenAfterDateTime > $this->now && ($minimumDateTime === null || $hiddenAfterDateTime < $minimumDateTime)) {
+                    $minimumDateTime = $hiddenAfterDateTime;
+                }
             }
         }
 

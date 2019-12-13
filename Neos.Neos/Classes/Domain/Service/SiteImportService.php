@@ -102,21 +102,21 @@ class SiteImportService
      *
      * @var array<string>
      */
-    protected $imageVariantClassNames = array();
+    protected $imageVariantClassNames = [];
 
     /**
      * An array that contains all fully qualified class names that implement AssetInterface
      *
      * @var array<string>
      */
-    protected $assetClassNames = array();
+    protected $assetClassNames = [];
 
     /**
      * An array that contains all fully qualified class names that extend \DateTime including \DateTime itself
      *
      * @var array<string>
      */
-    protected $dateTimeClassNames = array();
+    protected $dateTimeClassNames = [];
 
     /**
      * @return void
@@ -203,6 +203,7 @@ class SiteImportService
             // so the workspace and site node are persisted before we import any nodes to it.
             $rootNode->getContext()->getWorkspace();
             $this->persistenceManager->persistAll();
+
             $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
             if ($sitesNode === null) {
                 $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));

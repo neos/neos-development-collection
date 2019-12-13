@@ -11,7 +11,6 @@ namespace Neos\Neos\Utility;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A collection of helper methods for the Neos backend assets

@@ -31,7 +31,7 @@ class DimensionValues implements FilterInterface
      *
      * @var array
      */
-    protected $dimensionValues = array();
+    protected $dimensionValues = [];
 
     /**
      * Overrides the given dimensionValues with dimension defaults.
@@ -67,7 +67,7 @@ class DimensionValues implements FilterInterface
         if ($this->filterForDefaultDimensionValues === true) {
             $configuredDimensions = $this->contentDimensionRepository->findAll();
             foreach ($configuredDimensions as $dimension) {
-                $this->dimensionValues[$dimension->getIdentifier()] = array($dimension->getDefault());
+                $this->dimensionValues[$dimension->getIdentifier()] = [$dimension->getDefault()];
             }
         }
 

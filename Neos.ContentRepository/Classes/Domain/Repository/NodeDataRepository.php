@@ -11,13 +11,13 @@ namespace Neos\ContentRepository\Domain\Repository;
  * source code.
  */
 
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Utility\Arrays;
@@ -84,7 +84,7 @@ class NodeDataRepository extends Repository
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -730,7 +730,7 @@ class NodeDataRepository extends Repository
      */
     protected function openIndexSpace($parentPath, $referenceIndex)
     {
-        $this->systemLogger->log(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LOG_INFO);
+        $this->systemLogger->info(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LogEnvironment::fromMethodName(__METHOD__));
 
         /** @var Query $query */
         $query = $this->entityManager->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
@@ -929,7 +929,7 @@ class NodeDataRepository extends Repository
      * @param string $parentPath Absolute path of the parent node
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Context $context The containing context
-     * @return NodeData The node found or NULL
+     * @return NodeInterface The node found or NULL
      */
     public function findFirstByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context)
     {
@@ -1418,7 +1418,7 @@ class NodeDataRepository extends Repository
                 ->from(NodeData::class, 'n')
                 ->where('n.pathHash = :pathHash')
                 ->setParameter('pathHash', md5($nodePath));
-            $result = (count($queryBuilder->getQuery()->getResult()) > 0 ? true : false);
+            $result = count($queryBuilder->getQuery()->getResult()) > 0;
         });
 
         return $result;
@@ -1530,13 +1530,17 @@ class NodeDataRepository extends Repository
      */
     protected function createQueryBuilder(array $workspaces)
     {
+        $workspacesNames = array_map(static function (Workspace $workspace) {
+            return $workspace->getName();
+        }, $workspaces);
+
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
             ->where('n.workspace IN (:workspaces)')
-            ->setParameter('workspaces', $workspaces, Connection::PARAM_STR_ARRAY);
+            ->setParameter('workspaces', $workspacesNames);
 
         return $queryBuilder;
     }

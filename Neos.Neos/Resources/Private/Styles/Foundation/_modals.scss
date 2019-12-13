@@ -62,6 +62,7 @@
 		}
 
 		.neos-close {
+			@extend .fas;
 			margin: 0;
 			color: #fff;
 			font-size: 18px;
@@ -73,7 +74,6 @@
 			border-left: none;
 			@include text-shadow(none);
 			@include opacity(1);
-			@include fa-icon();
 			@include box-sizing(border-box);
 
 			&:before {

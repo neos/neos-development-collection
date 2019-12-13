@@ -35,7 +35,7 @@
 		@include box-sizing(border-box);
 
 		&::before {
-			@include fa-icon();
+			@extend .fas;
 			content: fa-content($fa-var-caret-down);
 			font-size: 14px;
 			position: absolute;

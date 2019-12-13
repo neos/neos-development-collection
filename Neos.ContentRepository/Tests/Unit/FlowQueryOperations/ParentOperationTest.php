@@ -11,16 +11,17 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ParentOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery ParentsOperation
  */
-class ParentOperationTest extends UnitTestCase
+class ParentOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var Context
@@ -28,34 +29,35 @@ class ParentOperationTest extends UnitTestCase
     protected $mockContext;
 
     /**
-     * @var NodeInterface
+     * @var TraversableNodeInterface
      */
     protected $siteNode;
 
     /**
-     * @var NodeInterface
+     * @var TraversableNodeInterface
      */
     protected $firstLevelNode;
 
     /**
-     * @var NodeInterface
+     * @var TraversableNodeInterface
      */
     protected $secondLevelNode;
 
     public function setUp()
     {
-        $this->siteNode = $this->createMock(NodeInterface::class);
-        $this->firstLevelNode = $this->createMock(NodeInterface::class);
-        $this->secondLevelNode = $this->createMock(NodeInterface::class);
+        $this->siteNode = $this->mockNode('site-identifier-uuid');
+        $this->firstLevelNode = $this->mockNode('node1');
+        $this->secondLevelNode = $this->mockNode('node2');
 
-        $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
-        $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array($this->firstLevelNode)));
+        $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site')));
+        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue([$this->firstLevelNode]));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->firstLevelNode->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->firstLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
-        $this->secondLevelNode->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->secondLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first/second'));
+        $this->siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
+        $this->firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/first')));
+        $this->secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->secondLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/first/second')));
     }
 
     /**
@@ -63,14 +65,14 @@ class ParentOperationTest extends UnitTestCase
      */
     public function parentWillReturnEmptyResultForTheSiteNode()
     {
-        $context = array($this->siteNode);
+        $context = [$this->siteNode];
         $q = new FlowQuery($context);
 
         $operation = new ParentOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array(), $output);
+        $this->assertEquals([], $output);
     }
 
     /**
@@ -78,13 +80,13 @@ class ParentOperationTest extends UnitTestCase
      */
     public function parentWillReturnFirstLevelNodeForSecondLevelNode()
     {
-        $context = array($this->secondLevelNode);
+        $context = [$this->secondLevelNode];
         $q = new FlowQuery($context);
 
         $operation = new ParentOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->firstLevelNode), $output);
+        $this->assertEquals([$this->firstLevelNode], $output);
     }
 }

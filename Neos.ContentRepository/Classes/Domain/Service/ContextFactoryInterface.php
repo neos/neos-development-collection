@@ -10,7 +10,6 @@ namespace Neos\ContentRepository\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Domain\Service\Context;
 
 /**
  * ContextFactory Interface
@@ -38,7 +37,7 @@ interface ContextFactoryInterface
      * @return Context
      * @api
      */
-    public function create(array $contextConfiguration = array());
+    public function create(array $contextConfiguration = []);
 
     /**
      * Clears the instances cache clearing all contexts.

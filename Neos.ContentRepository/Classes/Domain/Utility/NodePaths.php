@@ -44,12 +44,12 @@ abstract class NodePaths
      * @param array $dimensionValues
      * @return string
      */
-    public static function generateContextPath($path, $workspaceName, array $dimensionValues = array())
+    public static function generateContextPath($path, $workspaceName, array $dimensionValues = [])
     {
         $contextPath = $path;
         $contextPath .= '@' . $workspaceName;
 
-        if ($dimensionValues !== array()) {
+        if ($dimensionValues !== []) {
             $contextPath .= ';';
             foreach ($dimensionValues as $dimensionName => $innerDimensionValues) {
                 $contextPath .= $dimensionName . '=' . implode(',', $innerDimensionValues) . '&';
@@ -77,13 +77,13 @@ abstract class NodePaths
 
         $nodePath = $matches['NodePath'];
         $workspaceName = (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '' ? $matches['WorkspaceName'] : 'live');
-        $dimensions = isset($matches['Dimensions']) ? static::parseDimensionValueStringToArray($matches['Dimensions']) : array();
+        $dimensions = isset($matches['Dimensions']) ? static::parseDimensionValueStringToArray($matches['Dimensions']) : [];
 
-        return array(
+        return [
             'nodePath' => $nodePath,
             'workspaceName' => $workspaceName,
             'dimensions' => $dimensions
-        );
+        ];
     }
 
     /**

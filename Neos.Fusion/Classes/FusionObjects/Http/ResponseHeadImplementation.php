@@ -57,7 +57,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
     {
         $headers = $this->fusionValue('headers');
         if (!is_array($headers)) {
-            $headers = array();
+            $headers = [];
         }
         return $headers;
     }
@@ -69,6 +69,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
+        // TODO: Adjust for Neos 5.0 (PSR-7)
         $httpResponse = new Response();
         $httpResponse->setVersion($this->getHttpVersion());
         $httpResponse->setStatus($this->getStatusCode());
