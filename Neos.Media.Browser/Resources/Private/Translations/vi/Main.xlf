@@ -304,7 +304,7 @@
 			<target state="translated">Không thể tải lên tập tin</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target state="needs-translation">No file selected</target></trans-unit>
+			<target state="translated">Chưa chọn tập tin nào</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="translated">Kích thước tập tin của {0} vượt quá giới hạn cho phép của {1}</target></trans-unit>
