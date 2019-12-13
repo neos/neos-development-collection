@@ -237,9 +237,12 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setRatioMode(string $ratioMode): void
     {
+        if ($ratioMode === '') {
+            $ratioMode = ImageInterface::RATIOMODE_INSET;
+        }
         $supportedModes = [ImageInterface::RATIOMODE_INSET, ImageInterface::RATIOMODE_OUTBOUND];
         if (!in_array($ratioMode, $supportedModes, true)) {
-            throw new \InvalidArgumentException(sprintf('Invalid mode "%s" specified, supported modes are: "%" (but use the ImageInterface::RATIOMODE_* constants)', $ratioMode, implode('", "', $supportedModes)), 1574686876);
+            throw new \InvalidArgumentException(sprintf('Invalid mode "%s" specified, supported modes are: "%s" (but use the ImageInterface::RATIOMODE_* constants)', $ratioMode, implode('", "', $supportedModes)), 1574686876);
         }
 
         $this->ratioMode = $ratioMode;
