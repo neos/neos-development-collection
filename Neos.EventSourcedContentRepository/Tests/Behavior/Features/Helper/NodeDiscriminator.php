@@ -13,10 +13,10 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
  */
 
 use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
 /**
  * The node discriminator value object
@@ -41,14 +41,14 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
     protected $nodeAggregateIdentifier;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     protected $originDimensionSpacePoint;
 
     private function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -60,7 +60,7 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
         return new NodeDiscriminator(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['originDimensionSpacePoint'])
+            new OriginDimensionSpacePoint($array['originDimensionSpacePoint'])
         );
     }
 
@@ -83,7 +83,7 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
         return $this->nodeAggregateIdentifier;
     }
 
-    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
     }
@@ -91,6 +91,13 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
     public function getCacheEntryIdentifier(): string
     {
         return sha1(json_encode($this));
+    }
+
+    public function equals(NodeDiscriminator $other): bool
+    {
+        return $this->contentStreamIdentifier->equals($other->getContentStreamIdentifier())
+            && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier())
+            && $this->getOriginDimensionSpacePoint()->equals($other->getOriginDimensionSpacePoint());
     }
 
     public function jsonSerialize(): array

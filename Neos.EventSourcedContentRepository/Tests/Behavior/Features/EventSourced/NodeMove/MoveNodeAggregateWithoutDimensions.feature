@@ -148,12 +148,10 @@ Feature: Move a node without content dimensions
 
     Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasMoved" with payload:
-      | Key                                  | Expected                                                                                                                   |
-      | contentStreamIdentifier              | "cs-identifier"                                                                                                            |
-      | nodeAggregateIdentifier              | "sir-david-nodenborough"                                                                                                   |
-      | newParentNodeAggregateIdentifier     | "sir-nodeward-nodington-iii"                                                                                               |
-      | newSucceedingNodeAggregateIdentifier | null                                                                                                                       |
-      | nodeMoveMappings                     | [{"movedNodeOrigin":[], "newParentNodeOrigin":[], "newSucceedingSiblingOrigin":null, "relationDimensionSpacePoints":[[]]}] |
+      | Key                     | Expected                                                                                                                                                                                                          |
+      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                                                                   |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                                                                                          |
+      | nodeMoveMappings        | [{"movedNodeOrigin":[],"newParentAssignments":{"d751713988987e9331980363e24189ce":{"nodeAggregateIdentifier":"sir-nodeward-nodington-iii","originDimensionSpacePoint":[]}},"newSucceedingSiblingAssignments":[]}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 5 nodes
@@ -193,12 +191,10 @@ Feature: Move a node without content dimensions
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
     Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 5 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasMoved" with payload:
-      | Key                                         | Expected                                                                                                                 |
-      | contentStreamIdentifier                     | "cs-identifier"                                                                                                          |
-      | nodeAggregateIdentifier                     | "nody-mc-nodeface"                                                                                                       |
-      | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"                                                                                                 |
-      | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii"                                                                                             |
-      | nodeMoveMappings                            | [{"movedNodeOrigin":[], "newParentNodeOrigin":[], "newSucceedingSiblingOrigin":[], "relationDimensionSpacePoints":[[]]}] |
+      | Key                     | Expected                                                                                                                                                                                                                                                                                                                                |
+      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                                                                                                                                                                                         |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"                                                                                                                                                                                                                                                                                                                      |
+      | nodeMoveMappings        | [{"movedNodeOrigin":[],"newParentAssignments":{"d751713988987e9331980363e24189ce":{"nodeAggregateIdentifier":"lady-eleonode-rootford","originDimensionSpacePoint":[]}},"newSucceedingSiblingAssignments":{"d751713988987e9331980363e24189ce":{"nodeAggregateIdentifier":"sir-nodeward-nodington-iii","originDimensionSpacePoint":[]}}}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes

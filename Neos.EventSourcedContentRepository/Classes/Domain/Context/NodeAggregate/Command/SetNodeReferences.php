@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
@@ -27,7 +27,7 @@ final class SetNodeReferences implements \JsonSerializable, CopyableAcrossConten
     private $sourceNodeAggregateIdentifier;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $sourceOriginDimensionSpacePoint;
 
@@ -44,14 +44,14 @@ final class SetNodeReferences implements \JsonSerializable, CopyableAcrossConten
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $sourceNodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceOriginDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint
      * @param NodeAggregateIdentifier[] $destinationNodeAggregateIdentifiers
      * @param PropertyName $referenceName
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
-        DimensionSpacePoint $sourceOriginDimensionSpacePoint,
+        OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         array $destinationNodeAggregateIdentifiers,
         PropertyName $referenceName
     ) {
@@ -67,7 +67,7 @@ final class SetNodeReferences implements \JsonSerializable, CopyableAcrossConten
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['sourceOriginDimensionSpacePoint']),
+            new OriginDimensionSpacePoint($array['sourceOriginDimensionSpacePoint']),
             array_map(function ($identifier) {
                 return NodeAggregateIdentifier::fromString($identifier);
             }, $array['destinationNodeAggregateIdentifiers']),
@@ -92,9 +92,9 @@ final class SetNodeReferences implements \JsonSerializable, CopyableAcrossConten
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getSourceOriginDimensionSpacePoint(): DimensionSpacePoint
+    public function getSourceOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->sourceOriginDimensionSpacePoint;
     }
@@ -140,9 +140,9 @@ final class SetNodeReferences implements \JsonSerializable, CopyableAcrossConten
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-                && (string)$this->getSourceOriginDimensionSpacePoint() === (string)$nodeAddress->getDimensionSpacePoint()
-                && (string)$this->getSourceNodeAggregateIdentifier() === (string)$nodeAddress->getNodeAggregateIdentifier()
+            $this->getContentStreamIdentifier()->equals($nodeAddress->getContentStreamIdentifier())
+                && $this->getSourceOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
+                && $this->getSourceNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }
 }

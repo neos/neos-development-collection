@@ -48,7 +48,7 @@ interface ReadableNodeAggregateInterface
 
     public function getNodeName(): ?NodeName;
 
-    public function getOccupiedDimensionSpacePoints(): DimensionSpacePointSet;
+    public function getOccupiedDimensionSpacePoints(): OriginDimensionSpacePointSet;
 
     /**
      * A node aggregate occupies a dimension space point if any node originates in it.
@@ -58,14 +58,14 @@ interface ReadableNodeAggregateInterface
      */
     public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
 
-    public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): DimensionSpacePoint;
+    public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): OriginDimensionSpacePoint;
 
     /**
      * @return array|NodeInterface[]
      */
     public function getNodesByOccupiedDimensionSpacePoint(): array;
 
-    public function getNodeByOccupiedDimensionSpacePoint(DimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface;
+    public function getNodeByOccupiedDimensionSpacePoint(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface;
 
     public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet;
 

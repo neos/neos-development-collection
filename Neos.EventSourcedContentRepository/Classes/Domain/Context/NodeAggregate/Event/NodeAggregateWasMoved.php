@@ -28,16 +28,6 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
     private $nodeAggregateIdentifier;
 
     /**
-     * @var NodeAggregateIdentifier|null
-     */
-    private $newParentNodeAggregateIdentifier;
-
-    /**
-     * @var NodeAggregateIdentifier|null
-     */
-    private $newSucceedingSiblingNodeAggregateIdentifier;
-
-    /**
      * @var NodeMoveMappings|null
      */
     private $nodeMoveMappings;
@@ -45,22 +35,18 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
     /**
      * @var DimensionSpacePointSet
      */
-    private $affectedDimensionSpacePoints;
+    private $repositionNodesWithoutAssignments;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
         ?NodeMoveMappings $nodeMoveMappings,
-        DimensionSpacePointSet $affectedDimensionSpacePoints
+        DimensionSpacePointSet $repositionNodesWithoutAssignments
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->newParentNodeAggregateIdentifier = $newParentNodeAggregateIdentifier;
-        $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
         $this->nodeMoveMappings = $nodeMoveMappings;
-        $this->affectedDimensionSpacePoints = $affectedDimensionSpacePoints;
+        $this->repositionNodesWithoutAssignments = $repositionNodesWithoutAssignments;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -73,24 +59,14 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
         return $this->nodeAggregateIdentifier;
     }
 
-    public function getNewParentNodeAggregateIdentifier(): ?NodeAggregateIdentifier
-    {
-        return $this->newParentNodeAggregateIdentifier;
-    }
-
-    public function getNewSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
-    {
-        return $this->newSucceedingSiblingNodeAggregateIdentifier;
-    }
-
     public function getNodeMoveMappings(): ?NodeMoveMappings
     {
         return $this->nodeMoveMappings;
     }
 
-    public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
+    public function getRepositionNodesWithoutAssignments(): DimensionSpacePointSet
     {
-        return $this->affectedDimensionSpacePoints;
+        return $this->repositionNodesWithoutAssignments;
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeAggregateWasMoved
@@ -98,10 +74,8 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
         return new NodeAggregateWasMoved(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
-            $this->newParentNodeAggregateIdentifier,
-            $this->newSucceedingSiblingNodeAggregateIdentifier,
             $this->nodeMoveMappings,
-            $this->affectedDimensionSpacePoints
+            $this->repositionNodesWithoutAssignments
         );
     }
 }

@@ -13,9 +13,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
  */
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
 /**
  * Change Read Model
@@ -33,7 +33,7 @@ class Change
     public $nodeAggregateIdentifier;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     public $originDimensionSpacePoint;
 
@@ -52,8 +52,14 @@ class Change
      */
     public $deleted;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, bool $changed, bool $moved, bool $deleted)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        bool $changed,
+        bool $moved,
+        bool $deleted
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
@@ -103,7 +109,7 @@ class Change
         return new static(
             ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($databaseRow['nodeAggregateIdentifier']),
-            new DimensionSpacePoint(json_decode($databaseRow['originDimensionSpacePoint'], true)),
+            new OriginDimensionSpacePoint(json_decode($databaseRow['originDimensionSpacePoint'], true)),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],
             (bool)$databaseRow['deleted']

@@ -10,7 +10,6 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 
 class EmulatedLegacyBaseWorkspace
 {
-
     /**
      * @Flow\Inject
      * @var LegacyLoggerInterface

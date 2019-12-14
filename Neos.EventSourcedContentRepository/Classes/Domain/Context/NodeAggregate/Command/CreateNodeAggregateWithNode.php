@@ -11,8 +11,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -27,9 +27,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 /**
  * CreateNodeAggregateWithNode command
  *
- * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
+ * Creates a new node aggregate with a new node in the given `contentStreamIdentifier`
+ * with the given `nodeAggregateIdentifier` and `originDimensionSpacePoint`.
  * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
- * `dimensionSpacePoint`.
+ * `originDimensionSpacePoint`.
  *
  * @Flow\Proxy(false)
  */
@@ -61,7 +62,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
      * Will also be used to calculate a set of dimension points where the new node will cover
      * from the configured specializations.
      *
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $originDimensionSpacePoint;
 
@@ -120,7 +121,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        DimensionSpacePoint $originDimensionSpacePoint,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         UserIdentifier $initiatingUserIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
@@ -146,7 +147,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['nodeTypeName']),
-            new DimensionSpacePoint($array['originDimensionSpacePoint']),
+            new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             NodeAggregateIdentifier::fromString($array['parentNodeAggregateIdentifier']),
             isset($array['succeedingSiblingNodeAggregateIdentifier'])
@@ -179,7 +180,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
         return $this->nodeTypeName;
     }
 
-    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
     }
@@ -220,6 +221,8 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
      *
      * Is needed to make this command fully deterministic before storing it at the events
      * - we need this
+     * @param NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
+     * @return CreateNodeAggregateWithNode
      */
     public function withTetheredDescendantNodeAggregateIdentifiers(NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers): self
     {
@@ -274,7 +277,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
         return (
             (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
                 && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
-                && $this->originDimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint())
+                && $this->originDimensionSpacePoint->equals(OriginDimensionSpacePoint::fromDimensionSpacePoint($nodeAddress->getDimensionSpacePoint()))
         );
     }
 }

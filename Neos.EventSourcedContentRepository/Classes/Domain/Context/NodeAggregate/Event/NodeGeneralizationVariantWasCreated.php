@@ -12,11 +12,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -38,12 +38,12 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
     private $nodeAggregateIdentifier;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $sourceOrigin;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $generalizationOrigin;
 
@@ -55,8 +55,8 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $sourceOrigin,
-        DimensionSpacePoint $generalizationOrigin,
+        OriginDimensionSpacePoint $sourceOrigin,
+        OriginDimensionSpacePoint $generalizationOrigin,
         DimensionSpacePointSet $generalizationCoverage
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -84,17 +84,17 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getSourceOrigin(): DimensionSpacePoint
+    public function getSourceOrigin(): OriginDimensionSpacePoint
     {
         return $this->sourceOrigin;
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getGeneralizationOrigin(): DimensionSpacePoint
+    public function getGeneralizationOrigin(): OriginDimensionSpacePoint
     {
         return $this->generalizationOrigin;
     }

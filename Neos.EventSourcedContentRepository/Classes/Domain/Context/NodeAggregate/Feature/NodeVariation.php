@@ -122,7 +122,7 @@ trait NodeVariation
     {
         $specializations = $this->getInterDimensionalVariationGraph()->getIndexedSpecializations($command->getSourceOrigin());
         $excludedSet = new DimensionSpacePointSet([]);
-        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()) as $occupiedSpecialization) {
+        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()) as $occupiedSpecialization) {
             $excludedSet = $excludedSet->getUnion($this->getInterDimensionalVariationGraph()->getSpecializationSet($occupiedSpecialization));
         }
         $specializationVisibility = $this->getInterDimensionalVariationGraph()->getSpecializationSet(
@@ -173,7 +173,7 @@ trait NodeVariation
     {
         $specializations = $this->getInterDimensionalVariationGraph()->getIndexedSpecializations($command->getTargetOrigin());
         $excludedSet = new DimensionSpacePointSet([]);
-        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()) as $occupiedSpecialization) {
+        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()) as $occupiedSpecialization) {
             $excludedSet = $excludedSet->getUnion($this->getInterDimensionalVariationGraph()->getSpecializationSet($occupiedSpecialization));
         }
         $generalizationVisibility = $this->getInterDimensionalVariationGraph()->getSpecializationSet(
@@ -223,7 +223,7 @@ trait NodeVariation
     {
         $specializations = $this->getInterDimensionalVariationGraph()->getIndexedSpecializations($command->getTargetOrigin());
         $excludedSet = new DimensionSpacePointSet([]);
-        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()) as $occupiedSpecialization) {
+        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()) as $occupiedSpecialization) {
             $excludedSet = $excludedSet->getUnion($this->getInterDimensionalVariationGraph()->getSpecializationSet($occupiedSpecialization));
         }
         $peerVisibility = $this->getInterDimensionalVariationGraph()->getSpecializationSet(

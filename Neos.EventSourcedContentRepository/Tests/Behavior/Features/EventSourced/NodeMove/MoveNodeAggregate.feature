@@ -64,6 +64,16 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                |
       | nodeName                      | "tethered"                                                                                                                              |
       | nodeAggregateClassification   | "tethered"                                                                                                                              |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                                                                                   |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
+      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                                                                                                |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                          |
+      | originDimensionSpacePoint     | {"market":"DE", "language":"de"}                                                                                                        |
+      | coveredDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                |
+      | nodeName                      | "esquire"                                                                                                                              |
+      | nodeAggregateClassification   | "regular"                                                                                                                               |
     And the graph projection is fully up to date
 
   Scenario: Try to move a node in a non-existing content stream:
@@ -202,6 +212,16 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
       | nodeAggregateIdentifier                     | "sir-david-nodenborough"           |
       | newSucceedingSiblingNodeAggregateIdentifier | "i-do-not-exist"                   |
+      | relationDistributionStrategy                | "scatter"                          |
+    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
+
+  Scenario: Try to move existing node to a non-existing preceding sibling
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                                         | Value                              |
+      | contentStreamIdentifier                     | "cs-identifier"                    |
+      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier                     | "sir-david-nodenborough"           |
+      | newPrecedingSiblingNodeAggregateIdentifier  | "i-do-not-exist"                   |
       | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 

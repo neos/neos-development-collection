@@ -43,6 +43,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
@@ -391,6 +393,20 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the event NodeAggregateWasMoved was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theEventNodeAggregateWasMovedWasPublishedWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
+
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWasMoved', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+    /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
      * @param $eventType
      * @param $streamName
@@ -457,6 +473,16 @@ trait EventSourcedTrait
         }
 
         return new DimensionSpacePointSet($dimensionSpacePoints);
+    }
+
+    protected function unserializeOriginDimensionSpacePointSet(string $serializedDimensionSpacePoints): OriginDimensionSpacePointSet
+    {
+        $dimensionSpacePoints = [];
+        foreach (json_decode($serializedDimensionSpacePoints, true) as $coordinates) {
+            $dimensionSpacePoints[] = new OriginDimensionSpacePoint($coordinates);
+        }
+
+        return new OriginDimensionSpacePointSet($dimensionSpacePoints);
     }
 
     /**
@@ -1175,7 +1201,7 @@ trait EventSourcedTrait
     public function iExpectThisNodeAggregateToOccupyDimensionSpacePoints(string $rawDimensionSpacePoints): void
     {
         Assert::assertEquals(
-            $this->unserializeDimensionSpacePointSet($rawDimensionSpacePoints),
+            $this->unserializeOriginDimensionSpacePointSet($rawDimensionSpacePoints),
             $this->currentNodeAggregate->getOccupiedDimensionSpacePoints()
         );
     }
@@ -1267,13 +1293,14 @@ trait EventSourcedTrait
      */
     public function iExpectNodeAggregateIdentifierToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodeIdentifier): void
     {
-        $expectedNodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
+        $expectedDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
         $this->currentNode = $nodeByAggregateIdentifier;
         Assert::assertInstanceOf(NodeInterface::class, $nodeByAggregateIdentifier, 'No node could be found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-        Assert::assertEquals($expectedNodeIdentifier, NodeDiscriminator::fromNode($nodeByAggregateIdentifier), 'Node discriminators did not match');
+        $actualDiscriminator = NodeDiscriminator::fromNode($nodeByAggregateIdentifier);
+        Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
     }
 
     /**
@@ -1296,14 +1323,15 @@ trait EventSourcedTrait
      */
     public function iExpectNodeAggregateIdentifierAndPathToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath, string $serializedNodeIdentifier): void
     {
-        $expectedNodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
+        $expectedDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $this->iExpectNodeAggregateIdentifierToLeadToNode($serializedNodeAggregateIdentifier, $serializedNodeIdentifier);
 
         $nodeByPath = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
         Assert::assertInstanceOf(NodeInterface::class, $nodeByPath, 'No node could be found by path "' . $serializedNodePath . '"" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-        Assert::assertEquals($expectedNodeIdentifier, NodeDiscriminator::fromNode($nodeByPath), 'Node discriminators did not match');
+        $actualDiscriminator = NodeDiscriminator::fromNode($nodeByPath);
+        Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ', given was ' . json_encode($actualDiscriminator));
     }
 
     /**
@@ -1327,15 +1355,18 @@ trait EventSourcedTrait
      */
     public function iExpectThisNodeToBeTheChildOfNode(string $serializedNodeDiscriminator): void
     {
-        $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeDiscriminator, true));
+        $expectedParentDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeDiscriminator, true));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $parent = $subgraph->findParentNode($this->currentNode->getNodeAggregateIdentifier());
         Assert::assertInstanceOf(NodeInterface::class, $parent, 'Parent not found.');
-        Assert::assertEquals($expectedNodeDiscriminator, NodeDiscriminator::fromNode($parent), 'Parent discriminator does not match.');
+        $actualParentDiscriminator = NodeDiscriminator::fromNode($parent);
+        Assert::assertTrue($expectedParentDiscriminator->equals($actualParentDiscriminator), 'Parent discriminator does not match. Expected was ' . json_encode($expectedParentDiscriminator) . ', given was ' . json_encode($actualParentDiscriminator));
 
+        $expectedChildDiscriminator = NodeDiscriminator::fromNode($this->currentNode);
         $child = $subgraph->findChildNodeConnectedThroughEdgeName($parent->getNodeAggregateIdentifier(), $this->currentNode->getNodeName());
-        Assert::assertEquals($this->currentNode, $child, 'Child discriminator does not match.');
+        $actualChildDiscriminator = NodeDiscriminator::fromNode($child);
+        Assert::assertTrue($expectedChildDiscriminator->equals($actualChildDiscriminator), 'Child discriminator does not match. Expected was ' . json_encode($expectedChildDiscriminator) . ', given was ' . json_encode($actualChildDiscriminator));
     }
 
     /**
@@ -1437,7 +1468,7 @@ trait EventSourcedTrait
             Assert::assertEquals($expectedNodeName, $actualNodeName, 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName . '" Actual: "' . $actualNodeName . '"');
             $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($row['NodeDiscriminator'], true));
             $actualNodeDiscriminator = NodeDiscriminator::fromNode($nodes[$index]);
-            Assert::assertEquals($expectedNodeDiscriminator, $actualNodeDiscriminator, 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
+            Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
         }
     }
 
@@ -1581,12 +1612,13 @@ trait EventSourcedTrait
         if (!$this->getRootNodeAggregateIdentifier()) {
             throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
-        $expectedIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
+        $expectedDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
         Assert::assertNotNull($this->currentNode, 'Did not find node at path "' . $serializedNodePath . '"');
-        Assert::assertEquals($expectedIdentifier, NodeDiscriminator::fromNode($this->currentNode), 'Node discriminators do not match.');
+        $actualDiscriminator = NodeDiscriminator::fromNode($this->currentNode);
+        Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
     }
 
     /**

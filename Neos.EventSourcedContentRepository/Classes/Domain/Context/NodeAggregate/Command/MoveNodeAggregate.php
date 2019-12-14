@@ -28,12 +28,15 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * and `dimensionSpacePoint`,
  * move node aggregate `nodeAggregateIdentifier`
  * into `newParentNodeAggregateIdentifier` (or keep the current parent)
- * before `newSucceedingSiblingNodeAggregateIdentifier` (or as last of all siblings)
+ * between `newPrecedingSiblingNodeAggregateIdentifier`
+ * and `newSucceedingSiblingNodeAggregateIdentifier` (or as last of all siblings)
  * using `relationDistributionStrategy`
  */
 final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
+     * The content stream in which the move operation is to be performed
+     *
      * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
@@ -47,21 +50,42 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
     private $dimensionSpacePoint;
 
     /**
+     * The node aggregate to be moved
+     *
      * @var NodeAggregateIdentifier
      */
     private $nodeAggregateIdentifier;
 
     /**
+     * This is the identifier of the new parent node aggregate.
+     * If given, it enforces that all nodes in the given aggregate are moved into nodes of the parent aggregate,
+     * even if the given siblings belong to other parents. In latter case, those siblings are ignored.
+     *
      * @var NodeAggregateIdentifier
      */
     private $newParentNodeAggregateIdentifier;
 
     /**
-     * @var NodeAggregateIdentifier
+     * This is the identifier of the new preceding sibling node aggregate.
+     * If given and no successor found, it is attempted to insert the moved nodes right after nodes of this aggregate.
+     * In dimension space points this aggregate does not cover, other siblings, in order of proximity, are tried to be used instead.
+     *
+     * @var NodeAggregateIdentifier|null
+     */
+    private $newPrecedingSiblingNodeAggregateIdentifier;
+
+    /**
+     * This is the identifier of the new succeeding sibling node aggregate.
+     * If given, it is attempted to insert the moved nodes right before nodes of this aggregate.
+     * In dimension space points this aggregate does not cover, the preceding sibling is tried to be used instead.
+     *
+     * @var NodeAggregateIdentifier|null
      */
     private $newSucceedingSiblingNodeAggregateIdentifier;
 
     /**
+     * The relation distribution strategy to be used
+     *
      * @var RelationDistributionStrategy
      */
     private $relationDistributionStrategy;
@@ -71,6 +95,7 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $newPrecedingSiblingNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
         RelationDistributionStrategy $relationDistributionStrategy
     ) {
@@ -78,6 +103,7 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newParentNodeAggregateIdentifier = $newParentNodeAggregateIdentifier;
+        $this->newPrecedingSiblingNodeAggregateIdentifier = $newPrecedingSiblingNodeAggregateIdentifier;
         $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
         $this->relationDistributionStrategy = $relationDistributionStrategy;
     }
@@ -94,6 +120,7 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
             new DimensionSpacePoint($array['dimensionSpacePoint']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             isset($array['newParentNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newParentNodeAggregateIdentifier']) : null,
+            isset($array['newPrecedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newPrecedingSiblingNodeAggregateIdentifier']) : null,
             isset($array['newSucceedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newSucceedingSiblingNodeAggregateIdentifier']) : null,
             RelationDistributionStrategy::fromString($array['relationDistributionStrategy'])
         );
@@ -119,6 +146,11 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
         return $this->newParentNodeAggregateIdentifier;
     }
 
+    public function getNewPrecedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
+    {
+        return $this->newPrecedingSiblingNodeAggregateIdentifier;
+    }
+
     public function getNewSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
     {
         return $this->newSucceedingSiblingNodeAggregateIdentifier;
@@ -136,6 +168,7 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
             'dimensionSpacePoint' => $this->dimensionSpacePoint,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'newParentNodeAggregateIdentifier' => $this->newParentNodeAggregateIdentifier,
+            'newPrecedingSiblingNodeAggregateIdentifier' => $this->newPrecedingSiblingNodeAggregateIdentifier,
             'newSucceedingSiblingNodeAggregateIdentifier' => $this->newSucceedingSiblingNodeAggregateIdentifier,
             'relationDistributionStrategy' => $this->relationDistributionStrategy,
         ];
@@ -148,6 +181,7 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
             $this->dimensionSpacePoint,
             $this->nodeAggregateIdentifier,
             $this->newParentNodeAggregateIdentifier,
+            $this->newPrecedingSiblingNodeAggregateIdentifier,
             $this->newSucceedingSiblingNodeAggregateIdentifier,
             $this->relationDistributionStrategy
         );

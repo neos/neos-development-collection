@@ -101,7 +101,7 @@ final class AffectedOccupiedDimensionSpacePointSet
         InterDimensionalVariationGraph $variationGraph
     ): DimensionSpacePointSet {
         return $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
-            ->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints());
+            ->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet());
     }
 
     /**
@@ -113,6 +113,6 @@ final class AffectedOccupiedDimensionSpacePointSet
      */
     public static function allVariants(ReadableNodeAggregateInterface $nodeAggregate): DimensionSpacePointSet
     {
-        return $nodeAggregate->getOccupiedDimensionSpacePoints();
+        return $nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet();
     }
 }

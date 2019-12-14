@@ -31,6 +31,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsDescendant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsTethered;
@@ -41,6 +42,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
@@ -242,6 +244,24 @@ trait ConstraintChecks
 
     /**
      * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet
+     */
+    protected function requireNodeAggregateToCoverDimensionSpacePoints(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePointSet $dimensionSpacePointSet
+    ): void {
+        if (!$nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes() === $dimensionSpacePointSet->getPointHashes()) {
+            throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
+                $nodeAggregate->getIdentifier(),
+                $dimensionSpacePointSet,
+                $nodeAggregate->getCoveredDimensionSpacePoints()
+            );
+        }
+    }
+
+    /**
+     * @param ReadableNodeAggregateInterface $nodeAggregate
      * @throws NodeAggregateIsRoot
      */
     protected function requireNodeAggregateToNotBeRoot(ReadableNodeAggregateInterface $nodeAggregate): void
@@ -285,7 +305,7 @@ trait ConstraintChecks
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeName $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param DimensionSpacePoint $parentOriginDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $parentOriginDimensionSpacePoint
      * @param DimensionSpacePointSet $dimensionSpacePoints
      * @throws NodeNameIsAlreadyOccupied
      */
@@ -293,7 +313,7 @@ trait ConstraintChecks
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        DimensionSpacePoint $parentOriginDimensionSpacePoint,
+        OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePoints
     ): void {
         $dimensionSpacePointsOccupiedByChildNodeName = $this->getContentGraph()->getDimensionSpacePointsOccupiedByChildNodeName(
