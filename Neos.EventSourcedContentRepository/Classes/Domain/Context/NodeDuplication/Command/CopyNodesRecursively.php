@@ -14,8 +14,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Comm
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -52,7 +52,7 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
     /**
      * the dimension space point which is the target of the copy
      *
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $targetDimensionSpacePoint;
 
@@ -97,14 +97,14 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
      * CopyNodesRecursively constructor.
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeSubtreeSnapshot $nodeToInsert
-     * @param DimensionSpacePoint $targetDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $targetDimensionSpacePoint
      * @param UserIdentifier $initiatingUserIdentifier
      * @param NodeAggregateIdentifier $targetParentNodeAggregateIdentifier
      * @param NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier
      * @param NodeName $targetNodeName
      * @param NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
      */
-    private function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeSubtreeSnapshot $nodeToInsert, DimensionSpacePoint $targetDimensionSpacePoint, UserIdentifier $initiatingUserIdentifier, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier, ?NodeName $targetNodeName, NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping)
+    private function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeSubtreeSnapshot $nodeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, UserIdentifier $initiatingUserIdentifier, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier, ?NodeName $targetNodeName, NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeToInsert = $nodeToInsert;
@@ -116,7 +116,7 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         $this->nodeAggregateIdentifierMapping = $nodeAggregateIdentifierMapping;
     }
 
-    public static function create(TraversableNodeInterface $sourceNode, DimensionSpacePoint $dimensionSpacePoint, UserIdentifier $initiatingUserIdentifier, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier, ?NodeName $targetNodeName)
+    public static function create(TraversableNodeInterface $sourceNode, OriginDimensionSpacePoint $dimensionSpacePoint, UserIdentifier $initiatingUserIdentifier, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier, ?NodeName $targetNodeName)
     {
         $nodeSubtreeSnapshot = NodeSubtreeSnapshot::fromTraversableNode($sourceNode);
 
@@ -138,7 +138,7 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeSubtreeSnapshot::fromArray($array['nodeToInsert']),
-            new DimensionSpacePoint($array['targetDimensionSpacePoint']),
+            new OriginDimensionSpacePoint($array['targetDimensionSpacePoint']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             NodeAggregateIdentifier::fromString($array['targetParentNodeAggregateIdentifier']),
             isset($array['targetSucceedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['targetSucceedingSiblingNodeAggregateIdentifier']) : null,
@@ -165,9 +165,9 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getTargetDimensionSpacePoint(): DimensionSpacePoint
+    public function getTargetDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->targetDimensionSpacePoint;
     }
