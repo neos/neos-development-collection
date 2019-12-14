@@ -63,7 +63,7 @@ class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, Pro
 
     public static function fromArray(array $data): self
     {
-        return new self($data);
+        return new static($data);
     }
 
     /**
