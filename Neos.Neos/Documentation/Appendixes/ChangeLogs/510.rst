@@ -1,0 +1,339 @@
+`5.1.0 (2019-12-14) <https://github.com/neos/neos-development-collection/releases/tag/5.1.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Improve CreationDialogPostprocessor <https://github.com/neos/neos-development-collection/pull/2832>`_
+--------------------------------------------------------------------------------------------------------------
+
+Improves the `CreationDialogPostprocessor` so that it...
+
+* does not access the `NodeType::getConfiguration()` but acts
+  solely on the passed in `$configuration` array
+* works for properties without `ui.inspector` configuration (for
+  example inline editable properties)
+
+Related: #2173
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Don't show empty Creation Dialog <https://github.com/neos/neos-development-collection/pull/2830>`_
+-----------------------------------------------------------------------------------------------------------
+
+Fixes the `CreationDialogPostprocessor` so that it doesn't create
+an empty `ui.creationDialog.elements` configuration if no node
+properties are flagged with `showInCreationDialog`
+
+Related: #2173
+
+* Packages: ``Neos``
+
+`FEATURE: Add new wallaper for Neos 5.1 <https://github.com/neos/neos-development-collection/pull/2827>`_
+---------------------------------------------------------------------------------------------------------
+
+Resolves #2824 
+
+* Packages: ``Neos``
+
+`Make adjustments to the latest ES CR version <https://github.com/neos/neos-development-collection/pull/2828>`_
+---------------------------------------------------------------------------------------------------------------
+
+This adds support for explicit OriginDimensionSpacePoints as well as utility methods
+
+* Packages: ``ContentRepository``
+
+`TASK: Require concrete versions of fusion afx and forms for the 5.1 branch <https://github.com/neos/neos-development-collection/pull/2826>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Until the both packages will become part of the dev dist we have to set the version constraints for each branch manually as master requires „*“
+
+* Packages: ``Fusion`` ``Neos``
+
+`TASK: Render headerComment from Settings instead of fluid-template <https://github.com/neos/neos-development-collection/pull/2810>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+This avoids needlessly instantiating the fluid template engine just to render single comment.
+Additionally this allows to configure the licenseHeader via setting Neos.Neos.headerComment.
+
+Resolves: #2812
+
+* Packages: ``Neos``
+
+`FEATURE: Refactor login rendering to Fusion <https://github.com/neos/neos-development-collection/pull/2808>`_
+--------------------------------------------------------------------------------------------------------------
+
+This will also get rid of the following assets in the login screen
+
+* The Google font api inclusion.
+* Fontawesome icons
+* jQuery and Bootstrap JS
+* Packages: ``Neos``
+
+`TASK: Fusion performance optimization (get configuration) <https://github.com/neos/neos-development-collection/pull/2734>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+* Refactored the configuration processing in `Runtime` to a separate `RuntimeConfiguration` class for easier testing and separation of concerns
+* Optimized getting the configuration for a Fusion path, since this is a very "hot" part of the code that is used for every evaluation
+
+**How I did it**
+
+* Measured and verified performance boost with a large production Neos project
+* Performance boost might only be measurable if a lot of Fusion is evaluated (against the total overhead)
+
+**How to verify it**
+
+* See new unit test
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+Resolves: #2796
+
+* Packages: ``Fusion``
+
+`FEATURE: Batch rendering of asset variants <https://github.com/neos/neos-development-collection/pull/2751>`_
+-------------------------------------------------------------------------------------------------------------
+
+This provides the following functionality:
+
+- (re-)render variants based on presets
+- re-render variants when replacing an asset resource
+
+## Configuration
+
+The feature comes with no configurable settings itself. But you will need to configure asset
+variant presets. Here is an example for a square preset:
+
+```yaml
+Neos:
+  Media:
+    variantPresets:
+      'AcmeCom:Square':
+        label: 'AcmeCom Square Preset'
+        mediaTypePatterns: ['~image/.*~']
+        variants:
+          'square':
+            label: 'Square'
+            adjustments:
+              'crop':
+                type: 'Neos\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'
+                options:
+                  aspectRatio: '1:1'
+```
+
+See the variant presets documentation at https://neos-media.readthedocs.io/en/stable/VariantPresets.html for details.
+
+## Usage
+
+Simply run the command: `./flow media:rendervariants` to generate all missing variants for
+configured presets. The option `--recreate` will also render existing variants again based
+on their presets. Using `--limit` you can only generate an sepcified amount of variants.
+
+Resolves: #2798
+
+`FEATURE: add index to column path on nodedata table <https://github.com/neos/neos-development-collection/pull/2685>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This allows for faster results in case of prefixed path queries on the nodedata table. The
+index speeds up queries like in `findNodesByPathPrefixAndRelatedEntities()` (used to
+determine the asset usage.)
+
+Resolves: #2684
+
+* Packages: ``ContentRepository``
+
+`FEATURE: \`DataStructure\` assumes nesting for subkeys without specified type <https://github.com/neos/neos-development-collection/pull/2729>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+When a `DataStructure` is rendered for nested keys that have no specified type the fusion  type `DataStructure` is assumed. This makes it much easier to describe larger data structure in fusion for instance to create json ld structures or define complex mappings.
+
+* Packages: ``Fusion``
+
+`FEATURE: Custom Route for node preview <https://github.com/neos/neos-development-collection/pull/2654>`_
+---------------------------------------------------------------------------------------------------------
+
+Introduces a new Route `/neos/preview` that will be used for previewing/editing purposes in the content iFrame and to preview content that is not live or visible (yet).
+
+## Advantages
+
+### Greatly reduced amount of routing cache entries
+
+Previously, URLs for nodes in the backend had the format `<the/node/url/path>@<workspace-name>;<dimensions>`
+Thus leading to two routing cache entries (match & resolve) for each user, node & dimension combination.
+With this change, there is only *one route* for those cases usinq query parameters to specify the node & context: `/neos/preview?node=<the/node/url/path>@<workspace-name>;<dimensions>`
+
+### Explicit preview action
+
+With a custom action just for the preview scenario, we can remove a lot of special magic (like displaying hidden nodes, shortcut handling, ...) from the regular frontend rendering path
+
+### Faster backend navigation
+
+Previously all links in the Backend triggered a `redirect` route, effectively resulting in two requests.
+
+### Basis for further improvements and simplifications
+
+With a different route (and action) we could greatly simplify the code of the `FrontendRoutePartHandler` and make way for new features like partial matching (#780), multi-format-support (#870) dedicated workspace previews, ...
+
+*Note:* This requires https://github.com/neos/neos-ui/pull/2604 to work as expected
+
+Resolves: #2653
+
+`FEATURE: Replace configuration tree <https://github.com/neos/neos-development-collection/pull/2789>`_
+------------------------------------------------------------------------------------------------------
+
+**What I did**
+The configuration module used dynatree and some other javascript stuff.
+This PR adjusts the CSS and removes the old related Javascript.
+
+As replacement we use vanilla JS to rebuild the tree feature.
+AS we save states in the local storage I also refactored the handling in the menu and extracted the 
+storage handling to an own service.
+
+So the menu need also to be tested again.
+
+**How to verify it**
+Just use the configuration module.
+
+Resolves: #2797
+
+* Packages: ``BaseMixins`` ``Neos``
+
+`FEATURE: Allow Node properties to appear in the Creation Dialog <https://github.com/neos/neos-development-collection/pull/2785>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Introduces a new Node Type setting `properties.<propertyName>.ui.showInCreationDialog`
+that, if `true` will add the corresponding property to the Node Creation Dialog.
+
+Example:
+
+    'Some.Package:SomeNodeType':
+      # ...
+      properties:
+        'someProperty':
+          ui:
+            showInCreationDialog: true
+
+In that case the configuration of the corresponding `ui.inspector.editor` is copied
+to the corresponding Creation Dialog element and can be overridden using the already
+existing `creationDialog` configuration::
+
+    'Some.Package:SomeNodeType':
+      creationDialog:
+        elements:
+          'someProperty':
+            ui:
+              label: 'Overridden label'
+      properties:
+        'someProperty':
+          ui:
+            showInCreationDialog: true
+
+*Note:* This requires https://github.com/neos/neos-ui/pull/2596 to be merged first!
+
+Related: #2173
+
+* Packages: ``Neos``
+
+`FEATURE: Increasing the contrast in module tables <https://github.com/neos/neos-development-collection/pull/2784>`_
+--------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Adjusted the SCSS of the backend module table to the suggested values of @creative-resort 
+to higher the contrast and make it better readable.
+
+**How to verify it**
+Just open the package management in the backend.
+
+Thanks to @creative-resort for the suggestion!
+
+Resolves: #2782
+
+* Packages: ``Neos``
+
+`BUGFIX: Replace $this->systemLogger by $this->logger in LoginController <https://github.com/neos/neos-development-collection/pull/2769>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Replaced the old systemLogger by logger in LoginController in Neos.Neos.
+**How I did it**
+See code changes.
+**How to verify it**
+Run tests.
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``AssetList`` ``BaseMixins`` ``ColumnLayouts`` ``ContentReferences`` ``Form`` ``Html`` ``Neos`` ``NodeTypes``
+
+`TASK: Fusion performance optimizations (less calls) <https://github.com/neos/neos-development-collection/pull/2737>`_
+----------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+* Fusion performance optimizations for less function calls and faster code paths for expression and value evaluation
+
+**How I did it**
+
+* Inlined some functions
+* Removed usage of `end()` to get last item in array (needs a micro benchmark)
+* Introduced fast checks around apply, if and processors
+* Implemented fast path for expressions and values
+
+**How to verify it**
+
+* Less function calls, smaller call stack
+* Needs a benchmark to measure micro optimizations
+
+* Packages: ``Fusion``
+
+`TASK: Use RuntimeFactory to create FusionRuntime <https://github.com/neos/neos-development-collection/pull/2721>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This allows to use `FusionView` without manually creating a `ControllerContext`, because `RuntimeFactory` will take an effort to create one itself, if none is provided.
+
+* Packages: ``Fusion``
+
+`TASK: Code cleanup in Neos.Media repositories <https://github.com/neos/neos-development-collection/pull/2723>`_
+----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Browser`` ``Media`` ``Neos``
+
+`TASK: Mention the basic development setup steps in the readme <https://github.com/neos/neos-development-collection/pull/2726>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This should help people onboard for contribution, as it is not obvious that one has to install the development-distribution and the information for that is not that easy to find and then very elaborate. This is the perfect place to have it in a TL;DR style
+
+`FEATURE: Add \`Neos.Fusion:Fragment\` prototype <https://github.com/neos/neos-development-collection/pull/2728>`_
+------------------------------------------------------------------------------------------------------------------
+
+A `Fragment` is a `Component` that renders the given `content` without additional markup.
+That way conditions can be defined for bigger chunks of afx instead of single tags.
+
+```
+renderer = afx`
+    <Neos.Fusion:Fragment @if.isEnabled={props.enable}>
+        <h1>Example</h1>
+        <h2>Content</h2>
+    </Neos.Fusion:Fragment>
+`
+```
+
+* Packages: ``Fusion`` ``Neos``
+
+`BUGFIX: PaginateViewHelper in CR calls method on string <https://github.com/neos/neos-development-collection/pull/2706>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Fixes #2705
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.0.5...5.1.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
