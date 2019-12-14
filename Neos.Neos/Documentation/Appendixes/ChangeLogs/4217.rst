@@ -1,0 +1,119 @@
+`4.2.17 (2019-12-14) <https://github.com/neos/neos-development-collection/releases/tag/4.2.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add leave statements for apply early returns <https://github.com/neos/neos-development-collection/pull/2813>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Small bugfix to have an even count of enter and leave calls, even if
+apply values cause an early return.
+
+This should be refactored anyway to a more efficient solution (see
+#2737) where no cache context is prepared unless an object is
+evaluated - but it doesn't hurt and helps the Flowpack.Fusion.Tracing
+package to produce correct traces.
+
+Replaces #2739
+
+* Packages: ``Fusion`` ``Neos``
+
+`BUGFIX: Allow content cache flush for asset references in other use workspaces <https://github.com/neos/neos-development-collection/pull/2582>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+Asset change leads to exception if unpublished changes in others users workspaces exists, which are referenced to affected asset. Neos tries to access the others user workspace to get the node with the reference to flush there caches. By privilege `Neos.Neos:Backend.OtherUsersPersonalWorkspaceAccess` this is not allowed.
+
+```
+Access denied for method
+Method: Neos\\ContentRepository\\Domain\\Service\\Context::validateWorkspace()
+
+Evaluated following 1 privilege target(s):
+"Neos.Neos:Backend.OtherUsersPersonalWorkspaceAccess": ABSTAIN
+(0 granted, 0 denied, 1 abstained)
+
+Authenticated roles: Neos.Flow:Everybody, Neos.Flow:AuthenticatedUser, Neos.Neos:Editor, Neos.Neos:AbstractEditor, Neos.ContentRepository:Administrator, Neos.ContentRepository:InternalWorkspaceAccess, Neos.Neos:LivePublisher, Neos.Neos:Administrator
+```
+
+This fixes that behaviour by allowing access to the content repository without authorization
+checks during retrieval of affected nodes.
+
+* Packages: ``Neos``
+
+`BUGFIX: Allow HtmlAugmenter operate on script tags <https://github.com/neos/neos-development-collection/pull/2764>`_
+---------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Regarding #2763 the HtmlAugmenter does not find script tags as root elements. Ths DomDocument->loadHTML() puts them automatically into `html/head` instead of `html/body` as it does with other tags.
+
+**How I did it**
+Extend XPath query to search in head AND body for root elements.
+
+**How to verify it**
+For script-tag:
+```
+$html = '<script>console.log("fooo");</script>';
+$domDocument = new \\DOMDocument('1.0', 'UTF-8');
+$domDocument->loadHTML((substr($html, 0, 5) === '<?xml') ? $html : '<?xml encoding="UTF-8"?>' . $html);
+var_dump($domDocument->saveHTML());
+``` 
+it returns:
+``` 
+string(195) "<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<?xml encoding="UTF-8"?><html><head><script>console.log("fooo");</script></head></html>
+"
+```
+
+For other tags:
+```
+$html = '<a>console.log("fooo");</a>';
+$domDocument = new \\DOMDocument('1.0', 'UTF-8');
+$domDocument->loadHTML((substr($html, 0, 5) === '<?xml') ? $html : '<?xml encoding="UTF-8"?>' . $html);
+var_dump($domDocument->saveHTML());
+```
+it returns:
+```
+string(185) "<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<?xml encoding="UTF-8"?><html><body><a>console.log("fooo");</a></body></html>
+"
+```
+
+* Packages: ``Fusion``
+
+`TASK: Remove showInvisible query parameter handling again <https://github.com/neos/neos-development-collection/pull/2790>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The correct preview of a hidden document is not showing it, after all…
+
+Related to https://github.com/neos/neos-ui/issues/2500
+
+* Packages: ``AssetList`` ``BaseMixins`` ``ColumnLayouts`` ``ContentReferences`` ``Form`` ``Html`` ``Neos`` ``NodeTypes``
+
+`BUGFIX: Add missing translation in pagination <https://github.com/neos/neos-development-collection/pull/2727>`_
+----------------------------------------------------------------------------------------------------------------
+
+The labels were only partially translated in https://github.com/neos/neos-development-collection/commit/`8d1c98a9999fac1830b78f17c08f87c0f67a6065 <https://github.com/neos/neos-development-collection/commit/8d1c98a9999fac1830b78f17c08f87c0f67a6065>`_#diff-86d35dae35fd27aa00b7d0723d538960
+
+* Packages: ``Browser`` ``ContentRepository``
+
+`BUGFIX: MariaDB 10.4 compatibility for events migration <https://github.com/neos/neos-development-collection/pull/2735>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+See https://jira.mariadb.org/browse/MDEV-19598
+
+This will first rename the existing index before adding
+a new primary key as MariaDB 10.4 would complain about
+the existing unique key „uid“ and not allow adding
+the primary key with the same name.
+
+As the behavior for MariaDB 10.2 and 10.4 is different
+we also need to check for the existence of the indices
+before changing them or it will cause trouble with 10.2.
+
+Replaces: #2665 
+Resolves neos/flow-development-collection#1704
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.16...4.2.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
