@@ -181,5 +181,4 @@ class ContentStreamProjector implements ProjectorInterface, AfterInvokeInterface
         }
         return true;
     }
-
 }
