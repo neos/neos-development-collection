@@ -663,7 +663,7 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target state="translated">Добро пожаловать в Неос</target></trans-unit>
+			<target state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
 			<target state="final">Перейти к установке</target></trans-unit>
