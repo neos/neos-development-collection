@@ -304,14 +304,13 @@
 			<target state="final">Предпросмотр</target><alt-trans><target>Просмотр</target></alt-trans><alt-trans><target>Предв. Просмотр</target></alt-trans></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="translated">Взлом
-</target></trans-unit>
+			<target state="needs-translation">Download</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="translated">Далее</target></trans-unit>
+			<target state="needs-translation">Next</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="translated">Сюда</target></trans-unit>
+			<target state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="final">Не удается загрузить файл</target></trans-unit>
