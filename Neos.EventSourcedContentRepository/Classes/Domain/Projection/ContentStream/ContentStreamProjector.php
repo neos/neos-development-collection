@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\ContentStream;
  */
 
 use Doctrine\ORM\EntityManagerInterface;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasRemoved;
@@ -20,6 +21,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorksp
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceRebaseFailed;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
+use Neos\EventSourcing\Event\DecoratedEvent;
+use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventSourcing\EventListener\AfterInvokeInterface;
+use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 
@@ -27,7 +32,7 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
  * Workspace Projector
  * @Flow\Scope("singleton")
  */
-class ContentStreamProjector implements ProjectorInterface
+class ContentStreamProjector implements ProjectorInterface, AfterInvokeInterface
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_contentstream_v1';
 
@@ -36,9 +41,28 @@ class ContentStreamProjector implements ProjectorInterface
      */
     private $dbal;
 
+    /**
+     * @Flow\Inject
+     * @var VariableFrontend
+     */
+    protected $processedEventsCache;
+
+    /**
+     * @var bool
+     */
+    protected $assumeProjectorRunsSynchronously = false;
+
     public function injectEntityManager(EntityManagerInterface $entityManager): void
     {
         $this->dbal = $entityManager->getConnection();
+    }
+
+    /**
+     * @internal
+     */
+    public function assumeProjectorRunsSynchronously()
+    {
+        $this->assumeProjectorRunsSynchronously = true;
     }
 
     public function isEmpty(): bool
@@ -125,4 +149,37 @@ class ContentStreamProjector implements ProjectorInterface
             $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME);
         });
     }
+
+    /**
+     * Called after a listener method is invoked
+     *
+     * @param EventEnvelope $eventEnvelope
+     * @return void
+     */
+    public function afterInvoke(EventEnvelope $eventEnvelope): void
+    {
+        if ($this->assumeProjectorRunsSynchronously === true) {
+            // if we run synchronously during an import, we don't need the processed events cache
+            return;
+        }
+        $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);
+    }
+
+    public function hasProcessed(DomainEvents $events): bool
+    {
+        if ($this->assumeProjectorRunsSynchronously === true) {
+            // if we run synchronously during an import, we *know* that events have been processed already.
+            return true;
+        }
+        foreach ($events as $event) {
+            if (!$event instanceof DecoratedEvent) {
+                throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that is no DecoratedEvent', get_class($event)), 1550314769);
+            }
+            if (!$this->processedEventsCache->has(md5($event->getIdentifier()))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

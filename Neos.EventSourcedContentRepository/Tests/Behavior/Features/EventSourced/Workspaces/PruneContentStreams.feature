@@ -30,6 +30,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | workspaceName           | "user-test"          |
       | baseWorkspaceName       | "live"               |
       | contentStreamIdentifier | "user-cs-identifier" |
+    And the graph projection is fully up to date
 
     Then the content stream "user-cs-identifier" has state "IN_USE_BY_WORKSPACE"
 
@@ -61,8 +62,10 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | Key           | Value       |
       | workspaceName | "user-test" |
     And the graph projection is fully up to date
+    # now, we have one unused content stream (the old content stream of the user-test workspace)
 
     When I prune unused content streams
+    And the graph projection is fully up to date
 
     When I am in content stream "user-cs-identifier" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "root-node" not to exist in the subgraph
@@ -70,3 +73,53 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "root-node" to exist in the subgraph
 
+  Scenario: NO_LONGER_IN_USE content streams can be cleaned up completely (simple case)
+
+    When the command CreateWorkspace is executed with payload:
+      | Key                     | Value                |
+      | workspaceName           | "user-test"          |
+      | baseWorkspaceName       | "live"               |
+      | contentStreamIdentifier | "user-cs-identifier" |
+    And the graph projection is fully up to date
+    When the command "RebaseWorkspace" is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "user-test" |
+    And the graph projection is fully up to date
+    # now, we have one unused content stream (the old content stream of the user-test workspace)
+
+    When I prune unused content streams
+    And the graph projection is fully up to date
+    And I prune removed content streams from the event stream
+
+    Then I expect exactly 0 events to be published on stream "Neos.ContentRepository:ContentStream:user-cs-identifier"
+
+
+  Scenario: NO_LONGER_IN_USE content streams are only cleaned up if no other content stream which is still in use depends on it
+    # we build a "review" workspace, and then a "user-test" workspace depending on the review workspace.
+    When the command CreateWorkspace is executed with payload:
+      | Key                     | Value                  |
+      | workspaceName           | "review"               |
+      | baseWorkspaceName       | "live"                 |
+      | contentStreamIdentifier | "review-cs-identifier" |
+    And the graph projection is fully up to date
+    And the command CreateWorkspace is executed with payload:
+      | Key                     | Value                |
+      | workspaceName           | "user-test"          |
+      | baseWorkspaceName       | "review"             |
+      | contentStreamIdentifier | "user-cs-identifier" |
+    And the graph projection is fully up to date
+
+    # now, we rebase the "review" workspace, effectively marking the "review-cs-identifier" content stream as NO_LONGER_IN_USE.
+    # however, we are not allowed to drop the content stream from the event store yet, because the "user-cs-identifier" is based
+    # on the (no-longer-in-direct-use) review-cs-identifier.
+    When the command "RebaseWorkspace" is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "review" |
+    And the graph projection is fully up to date
+
+    When I prune unused content streams
+    And the graph projection is fully up to date
+    And I prune removed content streams from the event stream
+
+    # the events should still exist
+    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:review-cs-identifier"

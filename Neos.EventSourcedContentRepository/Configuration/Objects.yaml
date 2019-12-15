@@ -36,6 +36,16 @@ Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjecto
           1:
             value: Neos_EventSourcedContentRepository_ProcessedWorkspaceEvents
 
+Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector:
+  properties:
+    'processedEventsCache':
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_EventSourcedContentRepository_ProcessedContentStreamEvents
+
 Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler:
   arguments:
     2:

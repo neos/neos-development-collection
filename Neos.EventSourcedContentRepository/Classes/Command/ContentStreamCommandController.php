@@ -1,10 +1,8 @@
 <?php
 namespace Neos\EventSourcedContentRepository\Command;
 
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\RemoveContentStream;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
+use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcing\Projection\ProjectionManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -46,15 +44,10 @@ class ContentStreamCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var ContentStreamFinder
+     * @var ContentStreamPruner
      */
-    protected $contentStreamFinder;
+    protected $contentStreamPruner;
 
-    /**
-     * @Flow\Inject
-     * @var ContentStreamCommandHandler
-     */
-    protected $contentStreamCommandHandler;
 
     public function __construct(EventStore $contentRepositoryEventStore)
     {
@@ -162,28 +155,36 @@ class ContentStreamCommandController extends CommandController
         $this->outputLine('Your events and projections are probably out of sync now, <error>make sure you replay all projections via "./flow projection:replayall"</error>.');
     }
 
+    /**
+     * Remove all content streams which are not needed anymore from the projections.
+     *
+     * NOTE: This still **keeps** the event stream as is; so it would be possible to re-construct the content stream
+     *       at a later point in time (though we currently do not provide any API for it).
+     *
+     *       To remove the deleted Content Streams, use `./flow contentStream:pruneRemovedFromEventStream` after running
+     *       `./flow contentStream:prune`.
+     */
     public function pruneCommand()
     {
-        $unusedContentStreams = $this->contentStreamFinder->findUnusedContentStreams();
+        $unusedContentStreams = $this->contentStreamPruner->prune();
 
         if (!count($unusedContentStreams)) {
             $this->outputLine('There are no unused content streams.');
-            return;
-        }
-        foreach ($unusedContentStreams as $contentStream) {
-            $this->outputFormatted('Removing %s', [$contentStream]);
-            $this->contentStreamCommandHandler->handleRemoveContentStream(new RemoveContentStream($contentStream));
+        } else {
+            foreach ($unusedContentStreams as $contentStream) {
+                $this->outputFormatted('Removed %s', [$contentStream]);
+            }
         }
     }
 
-    public function pruneFromEventStreamCommand()
-    {
-        // TODO throw away events
 
-        // This is not so easy for nested workspaces / content streams:
-        //   - As long as content streams are used as basis for others which are IN_USE_BY_WORKSPACE,
-        //     these dependent Content Streams are not allowed to be removed in the event store.
-        //
-        //   - Otherwise, we cannot replay the other content streams correctly (if the base content streams are missing).
+    /**
+     * Remove unused and deleted content streams from the event stream; effectively REMOVING information completely
+     */
+    public function pruneRemovedFromEventStreamCommand()
+    {
+        $unusedContentStreams = $this->contentStreamPruner->pruneRemovedFromEventStream();
+
+        // TODO throw away events
     }
 }

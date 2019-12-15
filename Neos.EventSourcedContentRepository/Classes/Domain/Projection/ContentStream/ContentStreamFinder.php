@@ -39,9 +39,9 @@ final class ContentStreamFinder
     /**
      *
      * @param WorkspaceName $name
-     * @return Workspace|null
+     * @return ContentStreamIdentifier[]
      */
-    public function findUnusedContentStreams(): array
+    public function findUnusedContentStreams(): iterable
     {
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
@@ -81,6 +81,7 @@ final class ContentStreamFinder
             '
             SELECT state FROM neos_contentrepository_projection_contentstream_v1
                 WHERE contentStreamIdentifier = :contentStreamIdentifier
+                AND removed = FALSE
             ',
             [
                 'contentStreamIdentifier' => $contentStreamIdentifier->jsonSerialize()
@@ -93,4 +94,69 @@ final class ContentStreamFinder
 
         return $state;
     }
+
+    /**
+     * @return ContentStreamIdentifier[]
+     */
+    public function findUnusedAndRemovedContentStreams(): iterable
+    {
+        $connection = $this->client->getConnection();
+        $databaseRows = $connection->executeQuery(
+            '
+            WITH RECURSIVE transitiveUsedContentStreams (contentStreamIdentifier) AS (
+                    -- initial case: find all content streams currently in direct use by a workspace
+                    SELECT contentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1
+                    WHERE
+                        state = :inUseState
+                        AND removed = false
+                UNION
+                    -- now, when a content stream is in use by a workspace, its source content stream is
+                    -- also "transitively" in use.
+                    SELECT sourceContentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1
+                    JOIN transitiveUsedContentStreams ON neos_contentrepository_projection_contentstream_v1.contentStreamIdentifier = transitiveUsedContentStreams.contentStreamIdentifier
+                    WHERE
+                        neos_contentrepository_projection_contentstream_v1.sourceContentStreamIdentifier IS NOT NULL
+            )
+
+            -- now, we check for removed content streams which we do not need anymore transitively
+            SELECT contentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1 AS cs
+                WHERE removed = true
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM transitiveUsedContentStreams
+                    WHERE
+                        cs.contentStreamIdentifier = transitiveUsedContentStreams.contentStreamIdentifier
+                )
+            ',
+            [
+                'inUseState' => self::STATE_IN_USE_BY_WORKSPACE
+            ]
+        )->fetchAll();
+
+        $contentStreams = [];
+        foreach ($databaseRows as $databaseRow) {
+            $contentStreams[] = ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']);
+        }
+
+        return $contentStreams;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

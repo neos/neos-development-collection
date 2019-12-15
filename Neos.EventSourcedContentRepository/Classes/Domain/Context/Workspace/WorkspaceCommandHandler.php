@@ -468,13 +468,7 @@ final class WorkspaceCommandHandler
      */
     private function extractCommandsFromContentStreamMetadata(ContentStreamEventStreamName $workspaceContentStreamName): array
     {
-        // NOTE: we need to use the ContentStream Event Stream as CATEGORY STREAM,
-        // meaning we will search for all streams which have a PREFIX of the ContentStream;
-        // so that we also find nested streams like the nested NodeAggregate streams, e.g.
-        // "Neos.ContentRepository:ContentStream:b8f6042e-36c6-4bca-8c8e-2268e56a928e:NodeAggregate:new2-agg"
-        $streamName = StreamName::forCategory((string)$workspaceContentStreamName->getEventStreamName());
-
-        $workspaceContentStream = $this->eventStore->load($streamName);
+        $workspaceContentStream = $this->eventStore->load($workspaceContentStreamName->getEventStreamName());
 
         $commands = [];
         foreach ($workspaceContentStream as $eventAndRawEvent) {

@@ -76,6 +76,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -1867,25 +1868,11 @@ trait EventSourcedTrait
      */
     public function theContentStreamHasState(string $contentStreamIdentifier, string $expectedState)
     {
-        // NOTE: this code here is kinda messy; triggering the event listeners and then doing a retry until we find what we want...
-        // No clue how to write this in a nicer way; as it has nothing to do with the specific testcase.
-
-        $this->getObjectManager()->get(EventListenerTrigger::class)->invoke();
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
         /** @var ContentStreamFinder $contentStreamFinder */
         $contentStreamFinder = $this->getObjectManager()->get(ContentStreamFinder::class);
 
-        for ($i = 0; $i < 10; $i++) {
-            $actual = $contentStreamFinder->findStateForContentStream($contentStreamIdentifier);
-            if ($actual !== null) {
-                // we found the result
-                break;
-            }
-
-            // we might need to retry, because the projection is not yet up to date.
-            usleep(100000);
-        }
-
+        $actual = $contentStreamFinder->findStateForContentStream($contentStreamIdentifier);
         Assert::assertEquals($expectedState, $actual);
     }
 
@@ -1902,9 +1889,19 @@ trait EventSourcedTrait
      */
     public function iPruneUnusedContentStreams()
     {
-        /** @var ConfigurationManager $configurationManager */
-        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
-        $flowSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-        Scripts::executeCommand('neos.eventsourcedcontentrepository:contentstream:prune', $flowSettings, false);
+        /** @var ContentStreamPruner $contentStreamPruner */
+        $contentStreamPruner = $this->getObjectManager()->get(ContentStreamPruner::class);
+        $contentStreamPruner->prune();
+        $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
+    }
+
+    /**
+     * @When I prune removed content streams from the event stream
+     */
+    public function iPruneRemovedContentStreamsFromTheEventStream()
+    {
+        /** @var ContentStreamPruner $contentStreamPruner */
+        $contentStreamPruner = $this->getObjectManager()->get(ContentStreamPruner::class);
+        $contentStreamPruner->pruneRemovedFromEventStream();
     }
 }
