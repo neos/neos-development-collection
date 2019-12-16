@@ -98,6 +98,12 @@ class AssetService
 
     /**
      * @Flow\Inject
+     * @var ImageService
+     */
+    protected $imageService;
+
+    /**
+     * @Flow\Inject
      * @var AssetVariantGenerator
      */
     protected $assetVariantGenerator;
@@ -284,28 +290,30 @@ class AssetService
             /** @var AssetVariantInterface $variant */
             foreach ($variants as $variant) {
                 $originalVariantResource = $variant->getResource();
-                try {
-                    $presetIdentifier = $variant->getPresetIdentifier();
-                    $variantName = $variant->getPresetVariantName();
-                    $variant = $this->assetVariantGenerator->recreateVariant($asset, $presetIdentifier, $variantName);
-                    if ($variant === null) {
-                        $this->logger->debug(
-                            sprintf('No variant returned when recreating asset variant %s::%s for %s', $presetIdentifier, $variantName, $asset->getTitle()),
+                $presetIdentifier = $variant->getPresetIdentifier();
+                $variantName = $variant->getPresetVariantName();
+                if (isset($presetIdentifier, $variantName)) {
+                    try {
+                        $variant = $this->assetVariantGenerator->recreateVariant($asset, $presetIdentifier, $variantName);
+                        if ($variant === null) {
+                            $this->logger->debug(
+                                sprintf('No variant returned when recreating asset variant %s::%s for %s', $presetIdentifier, $variantName, $asset->getTitle()),
+                                LogEnvironment::fromMethodName(__METHOD__)
+                            );
+                            continue;
+                        }
+
+                        if ($redirectHandlerEnabled) {
+                            $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
+                            $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
+                            $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
+                        }
+                    } catch (AssetVariantGeneratorException $exception) {
+                        $this->logger->error(
+                            sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
                             LogEnvironment::fromMethodName(__METHOD__)
                         );
-                        continue;
                     }
-
-                    if ($redirectHandlerEnabled) {
-                        $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
-                        $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
-                        $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
-                    }
-                } catch (AssetVariantGeneratorException $exception) {
-                    $this->logger->error(
-                        sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
-                        LogEnvironment::fromMethodName(__METHOD__)
-                    );
                 }
             }
         }
