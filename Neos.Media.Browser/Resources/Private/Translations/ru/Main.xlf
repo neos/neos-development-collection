@@ -70,10 +70,10 @@
 			<target state="final">Перетащите на тег или коллекцию</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target state="translated">Вид</target></trans-unit>
+			<target state="translated">Показать</target><alt-trans><target>Вид</target></alt-trans></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="translated">Показать актив</target><alt-trans><target>View asset</target></alt-trans></trans-unit>
+			<target state="translated">View asset</target><alt-trans><target>Показать актив</target></alt-trans></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target state="final">Редактировать медиа-ресурс</target><alt-trans><target>Редактировать ресурс</target></alt-trans><alt-trans><target>Править медиа-ресурс</target></alt-trans></trans-unit>
@@ -184,13 +184,13 @@
 			<target state="final">Отображать в виде миниатюр</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target state="translated">Ошибка соединения</target><alt-trans><target>Connection error</target></alt-trans></trans-unit>
+			<target state="translated">Ошибка соединения</target><alt-trans><target>176.59.40.229</target></alt-trans><alt-trans><target>Connection error</target></alt-trans></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
 			<target state="translated">Медиа источник</target><alt-trans><target>Media source</target></alt-trans></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="translated">Медиа источник</target><alt-trans><target>Media sources</target></alt-trans></trans-unit>
+			<target state="translated">Медиа источник</target><alt-trans><target>Источники медиа</target></alt-trans><alt-trans><target>Media sources</target></alt-trans></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target state="final">Коллекции</target></trans-unit>
