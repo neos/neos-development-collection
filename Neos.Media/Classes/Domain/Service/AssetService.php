@@ -315,6 +315,7 @@ class AssetService
                         );
                     }
                 } else {
+                    $variant->refresh();
                     foreach ($variant->getAdjustments() as $adjustment) {
                         if (method_exists($adjustment, 'refit') && $this->imageService->getImageSize($originalAssetResource) !== $this->imageService->getImageSize($resource)) {
                             $adjustment->refit($asset);
