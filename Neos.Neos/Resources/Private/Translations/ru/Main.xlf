@@ -684,10 +684,10 @@
 			<target state="final">Ошибка базы данных</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="translated">Пока нет соединения с базой данных или схема базы данных Neos не была создана.</target></trans-unit>
+			<target state="translated">There is no database connection yet or the Neos database schema has not been created.</target><alt-trans><target>Пока нет соединения с базой данных или схема базы данных Neos не была создана.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target state="translated">Запустите установку для конфигурации базы данных.</target><alt-trans><target>Запустите установку для настройки базы данных.</target></alt-trans></trans-unit>
+			<target state="translated">Запустите настройку базы данных. Р</target><alt-trans><target>Запустите настройку базы данных.</target></alt-trans><alt-trans><target>Запустите установку для конфигурации базы данных.</target></alt-trans><alt-trans><target>Запустите установку для настройки базы данных.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target state="final">Страница не найдена</target></trans-unit>
