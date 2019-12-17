@@ -1,0 +1,23 @@
+`5.1.1 (2019-12-17) <https://github.com/neos/neos-development-collection/releases/tag/5.1.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Avoid null as argument to recreateVariant() <https://github.com/neos/neos-development-collection/pull/2838>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Fixes #2837
+
+* Packages: ``Media``
+
+`BUGFIX: Add FlowAnnotationDriver import to AssetRepository <https://github.com/neos/neos-development-collection/pull/2840>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This fixes `array_map() expects parameter 1 to be a valid callback,
+class ‘Neos\\Media\\Domain\\Repository\\FlowAnnotationDriver’ not found`
+
+* Packages: ``Browser`` ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.1.0...5.1.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
