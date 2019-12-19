@@ -9,7 +9,6 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 
 interface ProcessedEventsAwareProjectorInterface extends ProjectorInterface, AfterInvokeInterface, AppliedEventsStorageInterface
 {
-
     public function assumeProjectorRunsSynchronously(): void;
 
     public function hasProcessed(DomainEvents $events): bool;
