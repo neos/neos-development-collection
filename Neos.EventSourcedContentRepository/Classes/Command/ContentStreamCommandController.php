@@ -2,6 +2,7 @@
 namespace Neos\EventSourcedContentRepository\Command;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
+use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcing\Projection\ProjectionManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -40,6 +41,13 @@ class ContentStreamCommandController extends CommandController
      * @var WorkspaceCommandHandler
      */
     protected $workspaceCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var ContentStreamPruner
+     */
+    protected $contentStreamPruner;
+
 
     public function __construct(EventStore $contentRepositoryEventStore)
     {
@@ -145,5 +153,38 @@ class ContentStreamCommandController extends CommandController
         $this->outputLine('');
         $this->outputLine('Finished importing events.');
         $this->outputLine('Your events and projections are probably out of sync now, <error>make sure you replay all projections via "./flow projection:replayall"</error>.');
+    }
+
+    /**
+     * Remove all content streams which are not needed anymore from the projections.
+     *
+     * NOTE: This still **keeps** the event stream as is; so it would be possible to re-construct the content stream
+     *       at a later point in time (though we currently do not provide any API for it).
+     *
+     *       To remove the deleted Content Streams, use `./flow contentStream:pruneRemovedFromEventStream` after running
+     *       `./flow contentStream:prune`.
+     */
+    public function pruneCommand()
+    {
+        $unusedContentStreams = $this->contentStreamPruner->prune();
+
+        if (!count($unusedContentStreams)) {
+            $this->outputLine('There are no unused content streams.');
+        } else {
+            foreach ($unusedContentStreams as $contentStream) {
+                $this->outputFormatted('Removed %s', [$contentStream]);
+            }
+        }
+    }
+
+
+    /**
+     * Remove unused and deleted content streams from the event stream; effectively REMOVING information completely
+     */
+    public function pruneRemovedFromEventStreamCommand()
+    {
+        $unusedContentStreams = $this->contentStreamPruner->pruneRemovedFromEventStream();
+
+        // TODO throw away events
     }
 }

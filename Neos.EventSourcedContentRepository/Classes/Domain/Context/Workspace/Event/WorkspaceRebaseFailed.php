@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-class WorkspaceWasRebased implements DomainEventInterface
+class WorkspaceRebaseFailed implements DomainEventInterface
 {
     /**
      * @var WorkspaceName
@@ -28,31 +28,30 @@ class WorkspaceWasRebased implements DomainEventInterface
     private $workspaceName;
 
     /**
-     * The new content stream identifier (after the rebase was successful)
+     * The content stream on which we could not apply the source content stream's commands -- i.e. the "failed" state.
      *
      * @var ContentStreamIdentifier
      */
-    private $currentContentStreamIdentifier;
+    private $targetContentStreamIdentifier;
 
     /**
-     * The old content stream identifier (which is not active anymore now)
+     * The content stream which we tried to rebase
      *
      * @var ContentStreamIdentifier
      */
-    private $previousContentStreamIdentifier;
-
+    private $sourceContentStreamIdentifier;
 
     /**
-     * WorkspaceWasRebased constructor.
+     * WorkspaceRebaseFailed constructor.
      * @param WorkspaceName $workspaceName
-     * @param ContentStreamIdentifier $currentContentStreamIdentifier
-     * @param ContentStreamIdentifier $previousContentStreamIdentifier
+     * @param ContentStreamIdentifier $targetContentStreamIdentifier
+     * @param ContentStreamIdentifier $sourceContentStreamIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $currentContentStreamIdentifier, ContentStreamIdentifier $previousContentStreamIdentifier)
+    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $targetContentStreamIdentifier, ContentStreamIdentifier $sourceContentStreamIdentifier)
     {
         $this->workspaceName = $workspaceName;
-        $this->currentContentStreamIdentifier = $currentContentStreamIdentifier;
-        $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
+        $this->targetContentStreamIdentifier = $targetContentStreamIdentifier;
+        $this->sourceContentStreamIdentifier = $sourceContentStreamIdentifier;
     }
 
     /**
@@ -66,16 +65,16 @@ class WorkspaceWasRebased implements DomainEventInterface
     /**
      * @return ContentStreamIdentifier
      */
-    public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
+    public function getTargetContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->currentContentStreamIdentifier;
+        return $this->targetContentStreamIdentifier;
     }
 
     /**
      * @return ContentStreamIdentifier
      */
-    public function getPreviousContentStreamIdentifier(): ContentStreamIdentifier
+    public function getSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->previousContentStreamIdentifier;
+        return $this->sourceContentStreamIdentifier;
     }
 }

@@ -16,6 +16,7 @@ Feature: Single Node operations on live workspace
       | Key                     | Value           |
       | workspaceName           | "live"          |
       | contentStreamIdentifier | "cs-identifier" |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
       | contentStreamIdentifier     | "cs-identifier"               |

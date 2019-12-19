@@ -62,6 +62,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
+use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
@@ -75,6 +76,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -1855,5 +1857,48 @@ trait EventSourcedTrait
         }
 
         return null;
+    }
+
+
+    /**
+     * @Then the content stream :contentStreamIdentifier has state :expectedState
+     */
+    public function theContentStreamHasState(string $contentStreamIdentifier, string $expectedState)
+    {
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
+        /** @var ContentStreamFinder $contentStreamFinder */
+        $contentStreamFinder = $this->getObjectManager()->get(ContentStreamFinder::class);
+
+        $actual = $contentStreamFinder->findStateForContentStream($contentStreamIdentifier);
+        Assert::assertEquals($expectedState, $actual);
+    }
+
+    /**
+     * @Then the current content stream has state :expectedState
+     */
+    public function theCurrentContentStreamHasState(string $expectedState)
+    {
+        $this->theContentStreamHasState($this->contentStreamIdentifier->jsonSerialize(), $expectedState);
+    }
+
+    /**
+     * @When I prune unused content streams
+     */
+    public function iPruneUnusedContentStreams()
+    {
+        /** @var ContentStreamPruner $contentStreamPruner */
+        $contentStreamPruner = $this->getObjectManager()->get(ContentStreamPruner::class);
+        $contentStreamPruner->prune();
+        $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
+    }
+
+    /**
+     * @When I prune removed content streams from the event stream
+     */
+    public function iPruneRemovedContentStreamsFromTheEventStream()
+    {
+        /** @var ContentStreamPruner $contentStreamPruner */
+        $contentStreamPruner = $this->getObjectManager()->get(ContentStreamPruner::class);
+        $contentStreamPruner->pruneRemovedFromEventStream();
     }
 }

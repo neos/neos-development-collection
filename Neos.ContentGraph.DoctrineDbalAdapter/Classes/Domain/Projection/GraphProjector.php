@@ -14,35 +14,29 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  */
 
 use Doctrine\DBAL\Connection;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\RestrictionRelations;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
-use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain as ContentRepository;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventListener\AfterInvokeInterface;
-use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcing\Projection\ProjectorInterface;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -50,7 +44,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class GraphProjector implements ProjectorInterface, AfterInvokeInterface
+class GraphProjector extends AbstractProcessedEventsAwareProjector
 {
     use RestrictionRelations;
     use NodeRemoval;
@@ -65,76 +59,17 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     protected $projectionContentGraph;
 
     /**
-     * @Flow\Inject
-     * @var DbalClient
-     */
-    protected $client;
-
-    /**
-     * @Flow\Inject
-     * @var VariableFrontend
-     */
-    protected $processedEventsCache;
-
-    /**
-     * @var bool
-     */
-    protected $assumeProjectorRunsSynchronously = false;
-
-    /**
-     * @internal
-     */
-    public function assumeProjectorRunsSynchronously()
-    {
-        $this->assumeProjectorRunsSynchronously = true;
-    }
-
-
-    public function hasProcessed(DomainEvents $events): bool
-    {
-        if ($this->assumeProjectorRunsSynchronously === true) {
-            // if we run synchronously during an import, we *know* that events have been processed already.
-            return true;
-        }
-        foreach ($events as $event) {
-            if (!$event instanceof DecoratedEvent) {
-                throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that is no DecoratedEvent', get_class($event)), 1550314769);
-            }
-            if (!$this->processedEventsCache->has(md5($event->getIdentifier()))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @Flow\Signal
-     */
-    public function emitProjectionUpdated()
-    {
-    }
-
-    /**
      * @throws \Throwable
      */
     public function reset(): void
     {
+        parent::reset();
         $this->getDatabaseConnection()->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
         });
-        $this->processedEventsCache->flush();
-    }
-
-    /**
-     * @return bool
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function isEmpty(): bool
-    {
-        return $this->projectionContentGraph->isEmpty();
     }
 
     /**
@@ -250,7 +185,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                   "' . $newlyCreatedNodeAggregateIdentifier . '" as affectednodeaggregateidentifier
                 FROM
                     neos_contentgraph_restrictionrelation r
-                    WHERE 
+                    WHERE
                         r.contentstreamidentifier = :sourceContentStreamIdentifier
                         and r.dimensionspacepointhash IN (:visibleDimensionSpacePoints)
                         and r.affectednodeaggregateidentifier = :parentNodeAggregateIdentifier
@@ -481,11 +416,11 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 )
                 SELECT
                   h.parentnodeanchor,
-                  h.childnodeanchor, 
+                  h.childnodeanchor,
                   h.name,
                   h.position,
                   h.dimensionspacepoint,
-                  h.dimensionspacepointhash, 
+                  h.dimensionspacepointhash,
                   "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
                 FROM
                     neos_contentgraph_hierarchyrelation h
@@ -508,12 +443,56 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                   "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
                   r.dimensionspacepointhash,
                   r.originnodeaggregateidentifier,
-                  r.affectednodeaggregateidentifier 
+                  r.affectednodeaggregateidentifier
                 FROM
                     neos_contentgraph_restrictionrelation r
                     WHERE r.contentstreamidentifier = :sourceContentStreamIdentifier
             ', [
                 'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
+            ]);
+        });
+    }
+
+    public function whenContentStreamWasRemoved(ContentRepository\Context\ContentStream\Event\ContentStreamWasRemoved $event)
+    {
+        $this->transactional(function () use ($event) {
+
+            // Drop hierarchy relations
+            $this->getDatabaseConnection()->executeUpdate('
+                DELETE FROM neos_contentgraph_hierarchyrelation
+                WHERE
+                    contentstreamidentifier = :contentStreamIdentifier
+            ', [
+                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+            ]);
+
+            // Drop non-referenced nodes (which do not have a hierarchy relation anymore)
+            $this->getDatabaseConnection()->executeUpdate('
+                DELETE FROM neos_contentgraph_node
+                WHERE NOT EXISTS
+                    (
+                        SELECT 1 FROM neos_contentgraph_hierarchyrelation
+                        WHERE neos_contentgraph_hierarchyrelation.childnodeanchor = neos_contentgraph_node.relationanchorpoint
+                    )
+            ');
+
+            // Drop non-referenced reference relations (i.e. because the referenced nodes are gone by now)
+            $this->getDatabaseConnection()->executeUpdate('
+                DELETE FROM neos_contentgraph_referencerelation
+                WHERE NOT EXISTS
+                    (
+                        SELECT 1 FROM neos_contentgraph_node
+                        WHERE neos_contentgraph_node.relationanchorpoint = neos_contentgraph_referencerelation.nodeanchorpoint
+                    )
+            ');
+
+            // Drop restriction relations
+            $this->getDatabaseConnection()->executeUpdate('
+                DELETE FROM neos_contentgraph_restrictionrelation
+                WHERE
+                    contentstreamidentifier = :contentStreamIdentifier
+            ', [
+                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
             ]);
         });
     }
@@ -930,17 +909,6 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param callable $operations
-     * @throws \Exception
-     * @throws \Throwable
-     */
-    protected function transactional(callable $operations): void
-    {
-        $this->getDatabaseConnection()->transactional($operations);
-        $this->emitProjectionUpdated();
-    }
-
-    /**
      * @param CopyableAcrossContentStreamsInterface $event
      * @param callable $operations
      * @return mixed
@@ -983,10 +951,10 @@ insert ignore into neos_contentgraph_restrictionrelation
             // BOTH the incoming and outgoing edges.
             $this->getDatabaseConnection()->executeUpdate('
                 UPDATE neos_contentgraph_hierarchyrelation h
-                    SET 
+                    SET
                         -- if our (copied) node is the child, we update h.childNodeAnchor
                         h.childnodeanchor = IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor),
-                        
+
                         -- if our (copied) node is the parent, we update h.parentNodeAnchor
                         h.parentnodeanchor = IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor)
                     WHERE
@@ -1011,26 +979,5 @@ insert ignore into neos_contentgraph_restrictionrelation
             $node->updateToDatabase($this->getDatabaseConnection());
         }
         return $result;
-    }
-
-    /**
-     * @return Connection
-     */
-    protected function getDatabaseConnection(): Connection
-    {
-        return $this->client->getConnection();
-    }
-
-    /**
-     * @param EventEnvelope $eventEnvelope
-     * @throws \Neos\Cache\Exception
-     */
-    public function afterInvoke(EventEnvelope $eventEnvelope): void
-    {
-        if ($this->assumeProjectorRunsSynchronously === true) {
-            // if we run synchronously during an import, we don't need the processed events cache
-            return;
-        }
-        $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);
     }
 }

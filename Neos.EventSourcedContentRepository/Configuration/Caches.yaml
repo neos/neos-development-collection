@@ -3,3 +3,10 @@ Neos_EventSourcedContentRepository_ProcessedWorkspaceEvents:
   backend: Neos\Cache\Backend\FileBackend
   backendOptions:
     defaultLifetime: 400
+
+
+Neos_EventSourcedContentRepository_ProcessedContentStreamEvents:
+  frontend: Neos\Cache\Frontend\VariableFrontend
+  backend: Neos\Cache\Backend\FileBackend
+  backendOptions:
+    defaultLifetime: 400
