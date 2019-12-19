@@ -24,6 +24,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceW
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\AfterInvokeInterface;
+use Neos\EventSourcing\EventListener\AppliedEventsStorage\AppliedEventsStorageInterface;
+use Neos\EventSourcing\EventListener\AppliedEventsStorage\DoctrineAppliedEventsStorage;
+use Neos\EventSourcing\EventListener\Exception\HighestAppliedSequenceNumberCantBeReservedException;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcing\Projection\ProjectorInterface;
@@ -32,7 +35,7 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
  * Workspace Projector
  * @Flow\Scope("singleton")
  */
-class ContentStreamProjector implements ProjectorInterface, AfterInvokeInterface
+class ContentStreamProjector implements ProjectorInterface, AfterInvokeInterface, AppliedEventsStorageInterface
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_contentstream_v1';
 
@@ -55,6 +58,7 @@ class ContentStreamProjector implements ProjectorInterface, AfterInvokeInterface
     public function injectEntityManager(EntityManagerInterface $entityManager): void
     {
         $this->dbal = $entityManager->getConnection();
+        $this->doctrineAppliedEventsStorage = new DoctrineAppliedEventsStorage($this->dbal, ContentStreamProjector::class);
     }
 
     /**
@@ -162,7 +166,7 @@ class ContentStreamProjector implements ProjectorInterface, AfterInvokeInterface
             // if we run synchronously during an import, we don't need the processed events cache
             return;
         }
-        $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);
+        $this->processedEventIdentifiers[] = $eventEnvelope->getRawEvent()->getIdentifier();
     }
 
     public function hasProcessed(DomainEvents $events): bool
@@ -180,5 +184,41 @@ class ContentStreamProjector implements ProjectorInterface, AfterInvokeInterface
             }
         }
         return true;
+    }
+
+    /**
+     * @var string[]
+     */
+    private $processedEventIdentifiers = [];
+    /**
+     * @var DoctrineAppliedEventsStorage
+     */
+    private $doctrineAppliedEventsStorage;
+
+
+    /**
+     * @inheritDoc
+     */
+    public function reserveHighestAppliedEventSequenceNumber(): int
+    {
+        return $this->doctrineAppliedEventsStorage->reserveHighestAppliedEventSequenceNumber();
+    }
+    /**
+     * @inheritDoc
+     */
+    public function releaseHighestAppliedSequenceNumber(): void
+    {
+        $this->doctrineAppliedEventsStorage->releaseHighestAppliedSequenceNumber();
+        foreach ($this->processedEventIdentifiers as $eventIdentifier) {
+            $this->processedEventsCache->set(md5($eventIdentifier), true);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function saveHighestAppliedSequenceNumber(int $sequenceNumber): void
+    {
+        $this->doctrineAppliedEventsStorage->saveHighestAppliedSequenceNumber($sequenceNumber);
     }
 }

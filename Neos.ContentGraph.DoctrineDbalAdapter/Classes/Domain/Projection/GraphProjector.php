@@ -41,6 +41,8 @@ use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\AfterInvokeInterface;
+use Neos\EventSourcing\EventListener\AppliedEventsStorage\AppliedEventsStorageInterface;
+use Neos\EventSourcing\EventListener\AppliedEventsStorage\DoctrineAppliedEventsStorage;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
@@ -50,7 +52,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class GraphProjector implements ProjectorInterface, AfterInvokeInterface
+class GraphProjector implements ProjectorInterface, AfterInvokeInterface, AppliedEventsStorageInterface
 {
     use RestrictionRelations;
     use NodeRemoval;
@@ -1075,6 +1077,46 @@ insert ignore into neos_contentgraph_restrictionrelation
             // if we run synchronously during an import, we don't need the processed events cache
             return;
         }
-        $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);
+        $this->processedEventIdentifiers[] = $eventEnvelope->getRawEvent()->getIdentifier();
+    }
+
+    /**
+     * @var string[]
+     */
+    private $processedEventIdentifiers = [];
+    /**
+     * @var DoctrineAppliedEventsStorage
+     */
+    private $doctrineAppliedEventsStorage;
+
+
+    public function initializeObject(): void
+    {
+        $this->doctrineAppliedEventsStorage = new DoctrineAppliedEventsStorage($this->client->getConnection(), get_class($this));
+    }
+    /**
+     * @inheritDoc
+     */
+    public function reserveHighestAppliedEventSequenceNumber(): int
+    {
+        return $this->doctrineAppliedEventsStorage->reserveHighestAppliedEventSequenceNumber();
+    }
+    /**
+     * @inheritDoc
+     */
+    public function releaseHighestAppliedSequenceNumber(): void
+    {
+        $this->doctrineAppliedEventsStorage->releaseHighestAppliedSequenceNumber();
+        foreach ($this->processedEventIdentifiers as $eventIdentifier) {
+            $this->processedEventsCache->set(md5($eventIdentifier), true);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function saveHighestAppliedSequenceNumber(int $sequenceNumber): void
+    {
+        $this->doctrineAppliedEventsStorage->saveHighestAppliedSequenceNumber($sequenceNumber);
     }
 }
