@@ -37,6 +37,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -52,7 +53,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class GraphProjector implements ProjectorInterface, AfterInvokeInterface, AppliedEventsStorageInterface
+class GraphProjector extends AbstractProcessedEventsAwareProjector
 {
     use RestrictionRelations;
     use NodeRemoval;
@@ -67,76 +68,17 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface, Applie
     protected $projectionContentGraph;
 
     /**
-     * @Flow\Inject
-     * @var DbalClient
-     */
-    protected $client;
-
-    /**
-     * @Flow\Inject
-     * @var VariableFrontend
-     */
-    protected $processedEventsCache;
-
-    /**
-     * @var bool
-     */
-    protected $assumeProjectorRunsSynchronously = false;
-
-    /**
-     * @internal
-     */
-    public function assumeProjectorRunsSynchronously()
-    {
-        $this->assumeProjectorRunsSynchronously = true;
-    }
-
-
-    public function hasProcessed(DomainEvents $events): bool
-    {
-        if ($this->assumeProjectorRunsSynchronously === true) {
-            // if we run synchronously during an import, we *know* that events have been processed already.
-            return true;
-        }
-        foreach ($events as $event) {
-            if (!$event instanceof DecoratedEvent) {
-                throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that is no DecoratedEvent', get_class($event)), 1550314769);
-            }
-            if (!$this->processedEventsCache->has(md5($event->getIdentifier()))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @Flow\Signal
-     */
-    public function emitProjectionUpdated()
-    {
-    }
-
-    /**
      * @throws \Throwable
      */
     public function reset(): void
     {
+        parent::reset();
         $this->getDatabaseConnection()->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
         });
-        $this->processedEventsCache->flush();
-    }
-
-    /**
-     * @return bool
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function isEmpty(): bool
-    {
-        return $this->projectionContentGraph->isEmpty();
     }
 
     /**
@@ -252,7 +194,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface, Applie
                   "' . $newlyCreatedNodeAggregateIdentifier . '" as affectednodeaggregateidentifier
                 FROM
                     neos_contentgraph_restrictionrelation r
-                    WHERE 
+                    WHERE
                         r.contentstreamidentifier = :sourceContentStreamIdentifier
                         and r.dimensionspacepointhash IN (:visibleDimensionSpacePoints)
                         and r.affectednodeaggregateidentifier = :parentNodeAggregateIdentifier
@@ -483,11 +425,11 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface, Applie
                 )
                 SELECT
                   h.parentnodeanchor,
-                  h.childnodeanchor, 
+                  h.childnodeanchor,
                   h.name,
                   h.position,
                   h.dimensionspacepoint,
-                  h.dimensionspacepointhash, 
+                  h.dimensionspacepointhash,
                   "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
                 FROM
                     neos_contentgraph_hierarchyrelation h
@@ -510,7 +452,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface, Applie
                   "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
                   r.dimensionspacepointhash,
                   r.originnodeaggregateidentifier,
-                  r.affectednodeaggregateidentifier 
+                  r.affectednodeaggregateidentifier
                 FROM
                     neos_contentgraph_restrictionrelation r
                     WHERE r.contentstreamidentifier = :sourceContentStreamIdentifier
@@ -976,17 +918,6 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param callable $operations
-     * @throws \Exception
-     * @throws \Throwable
-     */
-    protected function transactional(callable $operations): void
-    {
-        $this->getDatabaseConnection()->transactional($operations);
-        $this->emitProjectionUpdated();
-    }
-
-    /**
      * @param CopyableAcrossContentStreamsInterface $event
      * @param callable $operations
      * @return mixed
@@ -1029,10 +960,10 @@ insert ignore into neos_contentgraph_restrictionrelation
             // BOTH the incoming and outgoing edges.
             $this->getDatabaseConnection()->executeUpdate('
                 UPDATE neos_contentgraph_hierarchyrelation h
-                    SET 
+                    SET
                         -- if our (copied) node is the child, we update h.childNodeAnchor
                         h.childnodeanchor = IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor),
-                        
+
                         -- if our (copied) node is the parent, we update h.parentNodeAnchor
                         h.parentnodeanchor = IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor)
                     WHERE
@@ -1057,66 +988,5 @@ insert ignore into neos_contentgraph_restrictionrelation
             $node->updateToDatabase($this->getDatabaseConnection());
         }
         return $result;
-    }
-
-    /**
-     * @return Connection
-     */
-    protected function getDatabaseConnection(): Connection
-    {
-        return $this->client->getConnection();
-    }
-
-    /**
-     * @param EventEnvelope $eventEnvelope
-     * @throws \Neos\Cache\Exception
-     */
-    public function afterInvoke(EventEnvelope $eventEnvelope): void
-    {
-        if ($this->assumeProjectorRunsSynchronously === true) {
-            // if we run synchronously during an import, we don't need the processed events cache
-            return;
-        }
-        $this->processedEventIdentifiers[] = $eventEnvelope->getRawEvent()->getIdentifier();
-    }
-
-    /**
-     * @var string[]
-     */
-    private $processedEventIdentifiers = [];
-    /**
-     * @var DoctrineAppliedEventsStorage
-     */
-    private $doctrineAppliedEventsStorage;
-
-
-    public function initializeObject(): void
-    {
-        $this->doctrineAppliedEventsStorage = new DoctrineAppliedEventsStorage($this->client->getConnection(), get_class($this));
-    }
-    /**
-     * @inheritDoc
-     */
-    public function reserveHighestAppliedEventSequenceNumber(): int
-    {
-        return $this->doctrineAppliedEventsStorage->reserveHighestAppliedEventSequenceNumber();
-    }
-    /**
-     * @inheritDoc
-     */
-    public function releaseHighestAppliedSequenceNumber(): void
-    {
-        $this->doctrineAppliedEventsStorage->releaseHighestAppliedSequenceNumber();
-        foreach ($this->processedEventIdentifiers as $eventIdentifier) {
-            $this->processedEventsCache->set(md5($eventIdentifier), true);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function saveHighestAppliedSequenceNumber(int $sequenceNumber): void
-    {
-        $this->doctrineAppliedEventsStorage->saveHighestAppliedSequenceNumber($sequenceNumber);
     }
 }

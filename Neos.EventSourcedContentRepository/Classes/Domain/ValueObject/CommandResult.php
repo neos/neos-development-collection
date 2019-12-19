@@ -16,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\ProcessedEventsAwareProjectorInterface;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -97,7 +98,7 @@ final class CommandResult
         self::blockProjector($publishedEventsForContentStreamProjector, $this->contentStreamProjector);
     }
 
-    protected static function blockProjector(DomainEvents $events, $projector)
+    protected static function blockProjector(DomainEvents $events, ProcessedEventsAwareProjectorInterface $projector): void
     {
         $attempts = 0;
         while (!$projector->hasProcessed($events)) {
