@@ -34,19 +34,19 @@ final class CommandResult
     protected $publishedEvents;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var GraphProjector
      */
     protected $graphProjector;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var WorkspaceProjector
      */
     protected $workspaceProjector;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var ContentStreamProjector
      */
     protected $contentStreamProjector;
