@@ -22,6 +22,7 @@ Feature: Publishing hide/show scenario of nodes
       | Key                     | Value           |
       | workspaceName           | "live"          |
       | contentStreamIdentifier | "cs-identifier" |
+    And the graph projection is fully up to date
     And I have the following NodeTypes configuration:
     """
     Neos.ContentRepository:Root: {}

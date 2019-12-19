@@ -28,6 +28,7 @@ Feature: Node References with Dimensions
       | workspaceDescription     | "The live workspace"                   |
       | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
       | contentStreamIdentifier  | "cs-identifier"                        |
+    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
       | contentStreamIdentifier  | "cs-identifier"                        |

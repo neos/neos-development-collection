@@ -12,6 +12,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | Key                     | Value           |
       | workspaceName           | "live"          |
       | contentStreamIdentifier | "cs-identifier" |
+    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
       | contentStreamIdentifier  | "cs-identifier"                        |
