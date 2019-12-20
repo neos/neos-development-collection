@@ -34,6 +34,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -157,10 +158,10 @@ class ContentRepositoryExportService
     {
         $this->dbal->executeQuery('
             SET foreign_key_checks = 0;
-            
+
             TRUNCATE neos_eventsourcing_eventstore_events;
             TRUNCATE neos_eventsourcing_eventlistener_appliedeventslog;
-            
+
             TRUNCATE neos_contentgraph_hierarchyrelation;
             TRUNCATE neos_contentgraph_node;
             TRUNCATE neos_contentgraph_referencerelation;
@@ -170,7 +171,7 @@ class ContentRepositoryExportService
             TRUNCATE neos_contentrepository_projection_workspace_v1;
             TRUNCATE neos_neos_projection_domain_v1;
             TRUNCATE neos_neos_projection_site_v1;
-            
+
             SET foreign_key_checks = 1;');
     }
 
@@ -248,9 +249,9 @@ class ContentRepositoryExportService
     {
         $nodePath = NodePath::fromString(strtolower($nodeData->getPath()));
 
-        $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($nodeData->getDimensionValues());
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromLegacyDimensionArray($nodeData->getDimensionValues());
 
-        $parentNodeAggregateIdentifierAndNodeType = $this->findParentNodeAggregateIdentifierAndNodeType($nodeData->getParentPath(), $dimensionSpacePoint);
+        $parentNodeAggregateIdentifierAndNodeType = $this->findParentNodeAggregateIdentifierAndNodeType($nodeData->getParentPath(), $originDimensionSpacePoint);
         if (!$parentNodeAggregateIdentifierAndNodeType) {
             // if parent node identifier not found, TRY LATER
             $nodeDatasToExportAtNextIteration[] = $nodeData;
@@ -263,7 +264,7 @@ class ContentRepositoryExportService
         $this->exportNodeOrNodeAggregate(
             $nodeAggregateIdentifier,
             NodeTypeName::fromString($nodeData->getNodeType()->getName()),
-            $dimensionSpacePoint,
+            $originDimensionSpacePoint,
             $parentNodeAggregateIdentifierAndNodeType,
             NodeName::fromString($nodeData->getName()),
             $this->processPropertyValues($nodeData),
@@ -276,7 +277,7 @@ class ContentRepositoryExportService
     protected function exportNodeOrNodeAggregate(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        DimensionSpacePoint $originDimensionSpacePoint,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeAggregateIdentifierAndNodeTypeForLegacyImport $parentNodeAggregateIdentifierAndNodeType,
         NodeName $nodeName,
         array $propertyValues,
