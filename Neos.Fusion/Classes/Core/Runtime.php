@@ -426,8 +426,10 @@ class Runtime
         $currentProperties = $this->getCurrentApplyValues();
         if (is_array($currentProperties) && array_key_exists($fusionPath, $currentProperties)) {
             if ($this->evaluateIfCondition($fusionConfiguration, $fusionPath, $contextObject) === false) {
+                $this->finalizePathEvaluation($cacheContext);
                 return null;
             }
+            $this->finalizePathEvaluation($cacheContext);
             return $this->evaluateProcessors($currentProperties[$fusionPath]['value'], $fusionConfiguration, $fusionPath, $contextObject);
         }
 

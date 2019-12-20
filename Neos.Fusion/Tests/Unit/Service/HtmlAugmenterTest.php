@@ -122,6 +122,13 @@ class HtmlAugmenterTest extends UnitTestCase
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<fallback-tag class="some-class"><p class="some-class">Simple HTML without</p><p> unique root element</p></fallback-tag>',
             ],
+            [
+                'html' => '<script>console.log("Script tag with unique root element");</script>',
+                'attributes' => ['type' => 'new-type'],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'expectedResult' => '<script type="new-type">console.log("Script tag with unique root element");</script>',
+            ],
 
             // attribute handling
             [

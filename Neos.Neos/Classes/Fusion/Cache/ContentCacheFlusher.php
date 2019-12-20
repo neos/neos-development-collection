@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
@@ -100,6 +101,12 @@ class ContentCacheFlusher
      * @var ContentContext[]
      */
     protected $contexts = [];
+
+    /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
 
     /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via ContentRepository's Node
@@ -275,7 +282,9 @@ class ContentCacheFlusher
             }
 
             $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
-            $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            $this->securityContext->withoutAuthorizationChecks(function () use ($reference, &$node) {
+                $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            });
 
             if (!$node instanceof NodeInterface) {
                 $this->systemLogger->warning(sprintf('Found a node reference from node with identifier %s in workspace %s to asset %s, but the node could not be fetched.', $reference->getNodeIdentifier(), $reference->getWorkspaceName(), $this->persistenceManager->getIdentifierByObject($asset)), LogEnvironment::fromMethodName(__METHOD__));
