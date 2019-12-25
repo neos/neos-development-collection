@@ -30,6 +30,10 @@ class WorkspaceRebaseFailed implements DomainEventInterface
     /**
      * The content stream on which we could not apply the source content stream's commands -- i.e. the "failed" state.
      *
+     * TODO: rename to "candidateContentStreamIdentifier"
+     *
+     * TODO: NAMING IS NOT NICE YET HERE!
+     *
      * @var ContentStreamIdentifier
      */
     private $targetContentStreamIdentifier;

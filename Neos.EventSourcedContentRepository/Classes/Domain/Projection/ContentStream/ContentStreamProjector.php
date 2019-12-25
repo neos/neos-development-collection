@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\ContentStream;
 
 /*
@@ -12,12 +13,17 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\ContentStream;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceRebaseFailed;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasDiscarded;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyPublished;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPublished;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 
@@ -64,35 +70,58 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         $this->getDatabaseConnection()->insert(self::TABLE_NAME, [
             'contentStreamIdentifier' => $event->getContentStreamIdentifier(),
             'sourceContentStreamIdentifier' => $event->getSourceContentStreamIdentifier(),
-            'state' => ContentStreamFinder::STATE_REBASING,
+            'state' => ContentStreamFinder::STATE_REBASING, // TODO: FORKED?
         ]);
     }
 
+    public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event)
+    {
+        // the new content stream is in use now
+        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
+
+        // the previous content stream is no longer in use
+        $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
+    }
+
+    public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event)
+    {
+        // the new content stream is in use now
+        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
+
+        // the previous content stream is no longer in use
+        $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
+    }
+
+    public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event)
+    {
+        // the new content stream is in use now
+        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
+
+        // the previous content stream is no longer in use
+        $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
+    }
+
+    public function whenWorkspaceWasPublished(WorkspaceWasPublished $event)
+    {
+        // the new content stream is in use now
+        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
+
+        // the previous content stream is no longer in use
+        $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
+    }
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
     {
         // the new content stream is in use now
-        $this->getDatabaseConnection()->update(self::TABLE_NAME, [
-            'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
-        ], [
-            'contentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
-        ]);
+        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
 
         // the previous content stream is no longer in use
-        $this->getDatabaseConnection()->update(self::TABLE_NAME, [
-            'state' => ContentStreamFinder::STATE_NO_LONGER_IN_USE,
-        ], [
-            'contentStreamIdentifier' => $event->getPreviousContentStreamIdentifier()
-        ]);
+        $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
     }
 
     public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event)
     {
-        $this->getDatabaseConnection()->update(self::TABLE_NAME, [
-            'state' => ContentStreamFinder::STATE_REBASE_ERROR,
-        ], [
-            'contentStreamIdentifier' => $event->getTargetContentStreamIdentifier()
-        ]);
+        $this->updateStateForContentStream($event->getTargetContentStreamIdentifier(), ContentStreamFinder::STATE_REBASE_ERROR);
     }
 
     public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event)
@@ -101,6 +130,16 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
             'removed' => true
         ], [
             'contentStreamIdentifier' => $event->getContentStreamIdentifier()
+        ]);
+    }
+
+
+    private function updateStateForContentStream(ContentStreamIdentifier $contentStreamIdentifier, string $state)
+    {
+        $this->getDatabaseConnection()->update(self::TABLE_NAME, [
+            'state' => $state,
+        ], [
+            'contentStreamIdentifier' => $contentStreamIdentifier
         ]);
     }
 }

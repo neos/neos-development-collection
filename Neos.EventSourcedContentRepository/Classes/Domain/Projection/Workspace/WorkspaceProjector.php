@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 
 /*
@@ -12,9 +13,15 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasDiscarded;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyPublished;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPublished;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 
 class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
@@ -32,7 +39,8 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
             'workspaceTitle' => $event->getWorkspaceTitle(),
             'workspaceDescription' => $event->getWorkspaceDescription(),
             'workspaceOwner' => $event->getWorkspaceOwner(),
-            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
+            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier(),
+            'status' => Workspace::STATUS_UP_TO_DATE
         ]);
     }
 
@@ -45,16 +53,47 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
             'workspaceName' => $event->getWorkspaceName(),
             'workspaceTitle' => $event->getWorkspaceTitle(),
             'workspaceDescription' => $event->getWorkspaceDescription(),
-            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
+            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier(),
+            'status' => Workspace::STATUS_UP_TO_DATE
         ]);
+    }
+
+    public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event)
+    {
+        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getWorkspaceName());
+        // TODO: mark dependent workspaces as OUTDATED.
+    }
+
+    public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event)
+    {
+        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getWorkspaceName());
+        // TODO: mark dependent workspaces as OUTDATED.
+    }
+
+    public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event)
+    {
+        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getSourceWorkspaceName());
+        // TODO: mark dependent workspaces as OUTDATED.
+    }
+
+    public function whenWorkspaceWasPublished(WorkspaceWasPublished $event)
+    {
+        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getSourceWorkspaceName());
+        // TODO: mark dependent workspaces as OUTDATED.
     }
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
     {
+        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getWorkspaceName());
+        // TODO: mark dependent workspaces as OUTDATED.
+    }
+
+    private function updateContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier, WorkspaceName $workspaceName)
+    {
         $this->getDatabaseConnection()->update(self::TABLE_NAME, [
-            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
+            'currentContentStreamIdentifier' => $contentStreamIdentifier
         ], [
-            'workspaceName' => $event->getWorkspaceName()
+            'workspaceName' => $workspaceName
         ]);
     }
 

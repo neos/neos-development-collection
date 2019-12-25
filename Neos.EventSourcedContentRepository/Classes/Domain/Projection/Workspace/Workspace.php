@@ -52,6 +52,64 @@ class Workspace
      */
     public $currentContentStreamIdentifier;
 
+
+    /**
+     * one of the STATUS_* constants
+     *
+     * @var string
+     */
+    public $status;
+
+    /**
+     * UP TO DATE Example:
+     *
+     * Workspace Review <-- Workspace User-Foo
+     *     |                    |
+     *   Content Stream A <-- Content Stream B
+     *
+     * This is the case if the contentStream of the base workspace IS EQUAL TO the sourceContentStream of this workspace's content stream.
+     *
+     * By definition, a base workspace (like "live") is ALWAYS UP_TO_DATE.
+     *
+     * NOTE: In status UP_TO_DATE, it can still happen that the base content stream (e.g. "Content Stream A" in the example)
+     *       has events applied to it *AFTER* the fork-point (when "Content Stream B" is created); at least for a small
+     *       period of time.
+     *
+     * TODO: BASE CONTENT STREAM NEW EVENTS -> OUTDATED
+     */
+    const STATUS_UP_TO_DATE = 'UP_TO_DATE';
+
+    /**
+     * OUTDATED Example:
+     *
+     * Workspace Review <------------ Workspace User-Foo
+     *  .   |                                 |
+     *  .   Content Stream A2 (current)       |
+     *  Content Stream A1 (previous) <-- Content Stream B
+     *
+     * This is the case if the contentStream of the base workspace IS NEWER THAN the sourceContentStream of this workspace's content stream.
+     *
+     * In the example, Content Stream B would need to be rebased to Content stream A2.
+     *
+     * !!! NEW EVENTS IN BASE WS -> ALSO USE CASE
+     */
+    const STATUS_OUTDATED = 'OUTDATED';
+
+    /**
+     * CONFLICT Example:
+     *
+     * Conflict is == Outdated, but then an error happens during the rebasing.
+     *
+     * Workspace Review <----------------------------------- Workspace User-Foo
+     *  .   |                                                .             |
+     *  .   Content Stream A2 (current)  <-- Content Stream B2 (rebasing)  |
+     *  Content Stream A1 (previous) <----------------------- Content Stream B1
+     *
+     * This is the case if the contentStream of the base workspace IS NEWER THAN the sourceContentStream of this workspace's content stream;
+     * and during the rebase, a conflict occurred.
+     */
+    const STATUS_CONFLICT = 'CONFLICT';
+
     /**
      * Checks if this workspace is shared across all editors
      *
@@ -126,6 +184,7 @@ class Workspace
         $workspace->workspaceDescription = $row['workspacedescription'];
         $workspace->workspaceOwner = $row['workspaceowner'];
         $workspace->currentContentStreamIdentifier = $row['currentcontentstreamidentifier'];
+        $workspace->status = $row['status'];
         return $workspace;
     }
 }

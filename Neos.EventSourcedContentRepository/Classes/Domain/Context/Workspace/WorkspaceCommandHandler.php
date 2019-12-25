@@ -40,6 +40,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasDiscarded;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyPublished;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPublished;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceRebaseFailed;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
@@ -259,12 +263,11 @@ final class WorkspaceCommandHandler
         $commandResult->blockUntilProjectionsAreUpToDate();
 
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
-        // TODO: "Workspace was rebased" is probably the wrong name. We can rebase a content stream,
-        // but not really a workspace. We can just change the ContentStream for a workspace.
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
-                new WorkspaceWasRebased(
+                new WorkspaceWasPublished(
                     $command->getWorkspaceName(),
+                    $workspace->getBaseWorkspaceName(),
                     $newContentStream,
                     $workspace->getCurrentContentStreamIdentifier()
                 ),
@@ -320,7 +323,6 @@ final class WorkspaceCommandHandler
             }
         }
 
-        // TODO: maybe we should also emit a "WorkspaceWasPublished" event? But on which content stream?
         $contentStreamWasForked = self::extractSingleForkedContentStreamEvent($workspaceContentStream);
         try {
             $this->eventStore->commit($baseWorkspaceContentStreamName->getEventStreamName(), $events, $contentStreamWasForked->getVersionOfSourceContentStream());
@@ -473,6 +475,7 @@ final class WorkspaceCommandHandler
         $commands = [];
         foreach ($workspaceContentStream as $eventAndRawEvent) {
             $metadata = $eventAndRawEvent->getRawEvent()->getMetadata();
+            // TODO: Add this logic to the NodeAggregateCommandHandler; so that we can be sure these can be parsed again.
             if (isset($metadata['commandClass'])) {
                 $commandToRebaseClass = $metadata['commandClass'];
                 $commandToRebasePayload = $metadata['commandPayload'];
@@ -500,6 +503,7 @@ final class WorkspaceCommandHandler
      */
     private function applyCommand($command): CommandResult
     {
+        // TODO: Add this logic to the NodeAggregateCommandHandler; so that we the command can be applied.
         switch (get_class($command)) {
             case ChangeNodeAggregateName::class:
                 return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
@@ -617,8 +621,9 @@ final class WorkspaceCommandHandler
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
-                new WorkspaceWasRebased(
+                new WorkspaceWasPartiallyPublished(
                     $command->getWorkspaceName(),
+                    $workspace->getBaseWorkspaceName(),
                     $remainingContentStream,
                     $workspace->getCurrentContentStreamIdentifier()
                 ),
@@ -671,7 +676,6 @@ final class WorkspaceCommandHandler
         $commandsToKeep = [];
 
         foreach ($originalCommands as $originalCommand) {
-            // TODO: the Node Address Bounded Context MUST be moved to the CR core. This is the smoking gun why we need this ;)
             if (!$this->commandMatchesNodeAddresses($originalCommand, $command->getNodeAddresses())) {
                 $commandsToKeep[] = $originalCommand;
             }
@@ -695,7 +699,7 @@ final class WorkspaceCommandHandler
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
-                new WorkspaceWasRebased(
+                new WorkspaceWasPartiallyDiscarded(
                     $command->getWorkspaceName(),
                     $newContentStream,
                     $workspace->getCurrentContentStreamIdentifier()
@@ -749,11 +753,11 @@ final class WorkspaceCommandHandler
             )
         )->blockUntilProjectionsAreUpToDate();
 
-        // TODO: "Rebased" is not the correct wording here!
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
-                new WorkspaceWasRebased(
+                // TODO: PROJECTION: WorkspaceWasRebased -> WorkspaceWasDiscarded
+                new WorkspaceWasDiscarded(
                     $command->getWorkspaceName(),
                     $newContentStream,
                     $workspace->getCurrentContentStreamIdentifier()
