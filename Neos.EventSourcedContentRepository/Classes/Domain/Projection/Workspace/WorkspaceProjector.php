@@ -74,7 +74,12 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
     {
         // TODO: How do we test this method? It's hard to design a BDD testcase failing if this method is commented out...
         $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getSourceWorkspaceName());
+
         $this->markDependentWorkspacesAsOutdated($event->getTargetWorkspaceName());
+
+        // NASTY: we need to set the source workspace name as non-outdated; as it has been made up-to-date again.
+        $this->markWorkspaceAsUpToDate($event->getSourceWorkspaceName());
+
         $this->markDependentWorkspacesAsOutdated($event->getSourceWorkspaceName());
     }
 
@@ -82,7 +87,12 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
     {
         // TODO: How do we test this method? It's hard to design a BDD testcase failing if this method is commented out...
         $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getSourceWorkspaceName());
+
         $this->markDependentWorkspacesAsOutdated($event->getTargetWorkspaceName());
+
+        // NASTY: we need to set the source workspace name as non-outdated; as it has been made up-to-date again.
+        $this->markWorkspaceAsUpToDate($event->getSourceWorkspaceName());
+
         $this->markDependentWorkspacesAsOutdated($event->getSourceWorkspaceName());
     }
 
@@ -92,15 +102,7 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         $this->markDependentWorkspacesAsOutdated($event->getWorkspaceName());
 
         // When the rebase is successful, we can set the status of the workspace back to UP_TO_DATE.
-        $this->getDatabaseConnection()->executeUpdate('
-            UPDATE neos_contentrepository_projection_workspace_v1
-            SET status = :upToDate
-            WHERE
-                workspacename = :workspaceName
-        ', [
-            'upToDate' => Workspace::STATUS_UP_TO_DATE,
-            'workspaceName' => $event->getWorkspaceName()->jsonSerialize()
-        ]);
+        $this->markWorkspaceAsUpToDate($event->getWorkspaceName());
     }
 
     private function updateContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier, WorkspaceName $workspaceName): void
@@ -109,6 +111,19 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
             'currentContentStreamIdentifier' => $contentStreamIdentifier
         ], [
             'workspaceName' => $workspaceName
+        ]);
+    }
+
+    private function markWorkspaceAsUpToDate(WorkspaceName $workspaceName): void
+    {
+        $this->getDatabaseConnection()->executeUpdate('
+            UPDATE neos_contentrepository_projection_workspace_v1
+            SET status = :upToDate
+            WHERE
+                workspacename = :workspaceName
+        ', [
+            'upToDate' => Workspace::STATUS_UP_TO_DATE,
+            'workspaceName' => $workspaceName->jsonSerialize()
         ]);
     }
 
