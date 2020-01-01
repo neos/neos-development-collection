@@ -613,7 +613,7 @@
 			<target state="translated">&lt;em&gt;Neos Kickstarter&lt;/em&gt; paket är inste installerat. Installera det för att snabbstarta nya sidor.</target></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
-			<target state="needs-translation">New site</target></trans-unit>
+			<target state="translated">Ny sajt</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="translated">Är du säker på att du vill radera "{0}"? Denna åtegärd går inte att ångra.</target></trans-unit>
