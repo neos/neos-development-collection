@@ -35,7 +35,7 @@
                     <div class="neos-modal-content">
                         <div class="neos-modal-header">
                             <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-                            <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteAsset', arguments: {0: tag.label}, package: 'Neos.Media.Browser')}</div>
+                            <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteAsset', arguments: '{0: tag.label}', package: 'Neos.Media.Browser')}</div>
                             <div>
                                 <div class="neos-subheader">
                                     <p>
@@ -47,7 +47,7 @@
                         </div>
                         <div class="neos-modal-footer">
                             <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
-                            <button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteTag', arguments: {tag: tag})}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'message.confirmDeleteTag', package: 'Neos.Media.Browser')}</button>
+                            <button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteTag', arguments: '{tag: tag}')}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'message.confirmDeleteTag', package: 'Neos.Media.Browser')}</button>
                         </div>
                     </div>
                 </div>

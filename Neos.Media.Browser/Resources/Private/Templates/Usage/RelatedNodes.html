@@ -6,8 +6,8 @@
 
 <f:section name="Content">
     <div class="neos-media-options">
-        <legend>{neos:backend.translate(id: 'relatedNodes.referencesTo', package: 'Neos.Media.Browser', arguments: {asset: asset.label})}
-            ({neos:backend.translate(id: 'relatedNodes', quantity: '{asset.usageCount}', arguments: {0:asset.usageCount}, package: 'Neos.Media.Browser')})
+        <legend>{neos:backend.translate(id: 'relatedNodes.referencesTo', package: 'Neos.Media.Browser', arguments: '{asset: asset.label}')}
+            ({neos:backend.translate(id: 'relatedNodes', quantity: '{asset.usageCount}', arguments: '{0:asset.usageCount}', package: 'Neos.Media.Browser')})
         </legend>
     </div>
 
@@ -96,8 +96,8 @@
                             <f:if condition="{nodeInformation.documentNode}">
                                 <f:then>
                                     <neos:link.node node="{nodeInformation.documentNode}" target="_blank"
-                                                    title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: nodeInformation.documentNode.workspace.title})}">
-                                <span title="{f:render(partial: 'Module/Shared/DocumentBreadcrumb', arguments: {node: nodeInformation.documentNode})}" data-neos-toggle="tooltip">{nodeInformation.documentNode.label}</span>
+                                                    title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: '{0: nodeInformation.documentNode.workspace.title}')}">
+                                <span title="{f:render(partial: 'Module/Shared/DocumentBreadcrumb', arguments: '{node: nodeInformation.documentNode}')}" data-neos-toggle="tooltip">{nodeInformation.documentNode.label}</span>
                                         <i class="fas fa-external-link-alt"></i>
                                     </neos:link.node>
                                 </f:then>

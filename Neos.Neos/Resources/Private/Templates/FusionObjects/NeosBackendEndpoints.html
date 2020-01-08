@@ -4,19 +4,19 @@
 <meta name="neos-workspace" content="{node.context.workspace.name}" />
 <meta name="neos-csrf-token" content="{f:security.csrfToken()}" />
 
-<link rel="neos-site" href="{f:uri.action(action: 'show', controller: 'Frontend\Node', package: 'Neos.Neos', format: 'html', arguments: {node: node.context.currentSiteNode}, absolute: true)}" data-node-name="{node.context.currentSiteNode.name}" />
+<link rel="neos-site" href="{f:uri.action(action: 'show', controller: 'Frontend\Node', package: 'Neos.Neos', format: 'html', arguments: '{node: node.context.currentSiteNode}', absolute: true)}" data-node-name="{node.context.currentSiteNode.name}" />
 <link rel="neos-service-nodes" type="application/vnd.neos.neos.nodes" data-current-workspace="{node.context.workspace.name}" href="{f:uri.action(action: 'index', controller: 'Service\Nodes', package: 'Neos.Neos', absolute: true)}" />
 <link rel="neos-service-assets" type="application/vnd.neos.neos.assets" href="{f:uri.action(action: 'index', controller: 'Service\Assets', package: 'Neos.Neos', absolute: true)}" />
 
 <f:alias map="{configurationCacheIdentifier: '{neos:backend.configurationCacheVersion()}'}">
-	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
-	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
-	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'Neos.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
-	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'Neos.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
+	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: '{version: configurationCacheIdentifier}')}" />
+	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: '{version: configurationCacheIdentifier}')}" />
+	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'Neos.Neos', absolute: true, arguments: '{version: configurationCacheIdentifier}')}" />
+	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'Neos.Neos', absolute: true, arguments: '{version: configurationCacheIdentifier}')}" />
 	<link rel="neos-service-contentdimensions" type="application/vnd.neos.neos.contentdimensions" href="{f:uri.action(action: 'index', controller: 'Service\ContentDimensions', package: 'Neos.Neos', absolute: true)}" />
 	<link rel="neos-service-workspaces" type="application/vnd.neos.neos.workspaces" href="{f:uri.action(action: 'index', controller: 'Service\Workspaces', package: 'Neos.Neos', absolute: true)}" />
 </f:alias>
-<link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'Neos.Neos', absolute: true) -> f:format.raw()}" />
+<link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: '{locale: \'{neos:backend.interfaceLanguage()}\'', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'Neos.Neos', absolute: true) -> f:format.raw()}" />
 
 <!-- Temporary URL endpoints, will be removed / grouped when a REST interface is fully implemented -->
 <link rel="neos-service-workspace-publishNode" href="{f:uri.action(action: 'publishNode', controller: 'Workspace', package: 'Neos.Neos', subpackage: 'Service', absolute: true, format: 'json')}" />
@@ -53,6 +53,6 @@
 <link rel="neos-public-resources" href="{f:uri.resource(path: '', package: 'Neos.Neos')}" />
 <link rel="neos-module-workspacesmanagement" href="{neos:uri.module(path: 'management/workspaces')}" />
 <link rel="neos-module-workspacesmanagement-show" href="{neos:uri.module(path: 'management/workspaces', action: 'show')}" />
-<link rel="neos-media-browser" href="{f:uri.action(action: 'index', controller: 'Asset', package: 'Neos.Media.Browser', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
-<link rel="neos-image-browser" href="{f:uri.action(action: 'index', controller: 'Image', package: 'Neos.Media.Browser', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
+<link rel="neos-media-browser" href="{f:uri.action(action: 'index', controller: 'Asset', package: 'Neos.Media.Browser', absolute: true, arguments: '{assetCollection: node.context.currentSite.assetCollection}')}" />
+<link rel="neos-image-browser" href="{f:uri.action(action: 'index', controller: 'Image', package: 'Neos.Media.Browser', absolute: true, arguments: '{assetCollection: node.context.currentSite.assetCollection}')}" />
 <link rel="neos-image-browser-edit" href="{f:uri.action(action: 'edit', controller: 'Image', package: 'Neos.Media.Browser', absolute: true)}" />

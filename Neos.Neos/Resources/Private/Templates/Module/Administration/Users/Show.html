@@ -113,7 +113,7 @@
 				<div class="neos-modal-content">
 					<div class="neos-modal-header">
 					<button type="button" class="neos-close" data-dismiss="modal"></button>
-					<div class="neos-header">{neos:backend.translate(id: 'users.show.buttonDelete', value: 'Do you really want to delete the user "{user.name}"?', arguments: {0: user.name}, source: 'Modules', package: 'Neos.Neos')}</div>
+					<div class="neos-header">{neos:backend.translate(id: 'users.show.buttonDelete', value: 'Do you really want to delete the user "{user.name}"?', arguments: '{0: user.name}', source: 'Modules', package: 'Neos.Neos')}</div>
 					<div>
 						<div class="neos-subheader">
 							{neos:backend.translate(id: 'users.show.deleteDialogWarning', value: 'This will delete the user, the related accounts and his personal workspace, including all unpublished content.', source: 'Modules', package: 'Neos.Neos')}

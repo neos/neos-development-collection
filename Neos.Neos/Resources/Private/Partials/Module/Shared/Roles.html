@@ -1,6 +1,6 @@
 {namespace neos=Neos\Neos\ViewHelpers}
 <f:for each="{roles}" as="role" iteration="iteration">
-	<span class="neos-label" title="{f:render(section: 'tooltip', arguments: {role: role})}" data-neos-toggle="tooltip" data-placement="right" data-html="true">
+	<span class="neos-label" title="{f:render(section: 'tooltip', arguments: '{role: role}')}" data-neos-toggle="tooltip" data-placement="right" data-html="true">
 		{role.name}
 	</span>
 </f:for>

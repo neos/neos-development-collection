@@ -6,8 +6,8 @@
 <f:section name="Options">
     <div class="neos-file-options">
         <span class="count">
-            {neos:backend.translate(id: 'search.itemCount', arguments: {0: searchResultCount}, package: 'Neos.Media.Browser')}
-            <f:if condition="{searchTerm}"> {neos:backend.translate(id: 'search.foundMatches', arguments: {0: searchTerm}, package: 'Neos.Media.Browser')}</f:if>
+            {neos:backend.translate(id: 'search.itemCount', arguments: '{0: searchResultCount}', package: 'Neos.Media.Browser')}
+            <f:if condition="{searchTerm}"> {neos:backend.translate(id: 'search.foundMatches', arguments: '{0: searchTerm}', package: 'Neos.Media.Browser')}</f:if>
         </span>
         <f:if condition="!{activeAssetSource.readOnly}">
         <f:link.action action="new"><i class="fas fa-upload"></i> {neos:backend.translate(id: 'upload', package: 'Neos.Media.Browser')}</f:link.action>
@@ -257,7 +257,7 @@
 <f:section name="Content">
     <f:if condition="!{activeAssetSource.readOnly}">
     <div id="dropzone" class="neos-upload-area">
-        <div title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'dropFiles', package: 'Neos.Media.Browser')}<i class="fas fa-arrow-down"></i><span> {neos:backend.translate(id: 'clickToUpload', package: 'Neos.Media.Browser')}</span></div>
+        <div title="{neos:backend.translate(id: 'maxUploadSize', arguments: '{0: humanReadableMaximumFileUploadSize}', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'dropFiles', package: 'Neos.Media.Browser')}<i class="fas fa-arrow-down"></i><span> {neos:backend.translate(id: 'clickToUpload', package: 'Neos.Media.Browser')}</span></div>
         <f:form method="post" action="create" object="{asset}" objectName="asset" enctype="multipart/form-data">
             <f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}" />
         </f:form>
