@@ -113,7 +113,7 @@ class LoginController extends AbstractAuthenticationController
     public function indexAction($username = null, $unauthorized = false)
     {
         if ($this->securityContext->getInterceptedRequest() || $unauthorized) {
-            $this->response->setStatus(401);
+            $this->response->setHeader('X-Authentication-Required', true);
         }
         if ($this->authenticationManager->isAuthenticated()) {
             $this->redirect('index', 'Backend\Backend');
