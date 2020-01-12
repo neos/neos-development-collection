@@ -335,19 +335,19 @@
 			<target state="final">Описание</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target state="translated">Переключить дерево контента</target></trans-unit>
+			<target state="translated">Toggle content tree</target><alt-trans><target>Переключить дерево контента</target></alt-trans></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target state="translated">Показать параметры публикации</target></trans-unit>
+			<target state="translated">Show publish options</target><alt-trans><target>Показать параметры публикации</target></alt-trans></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="translated">Включить полноэкранный режим редактирования</target><alt-trans><target>Активировать полноэкранный режим редактирования</target></alt-trans></trans-unit>
+			<target state="translated">Activate Fullscreen edit mode</target><alt-trans><target>Включить полноэкранный режим редактирования</target></alt-trans><alt-trans><target>Активировать полноэкранный режим редактирования</target></alt-trans></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target state="translated">Отключить полноэкранный режим редактирования</target></trans-unit>
-      <trans-unit id="showPreview" xml:space="preserve">
+			<target state="translated">Deactivate Fullscreen edit mode</target><alt-trans><target>Отключить полноэкранный режим редактирования</target></alt-trans></trans-unit>
+      <trans-unit id="showPreview" xml:space="preserve" approved="yes">
 				<source>Show preview</source>
-			<target state="translated">Предварительный просмотр</target></trans-unit>
+			<target state="final">Предварительный просмотр</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -399,7 +399,7 @@
 			<target state="final">Вы уверены, что хотите отменить все изменения в этой рабочей области?</target><alt-trans><target>Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></alt-trans></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="final">Вы уверены, что хотите отменить правки в количестве {numberOfChanges} шт. в этой рабочей области?</target></trans-unit>
+			<target state="final">Вы уверены, что хотите отменить правки в количестве {numberOfChanges} шт. в этой рабочей области?</target><alt-trans><target>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target></alt-trans></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
 			<target state="final">Опубликовать все</target></trans-unit>
@@ -687,7 +687,7 @@
 			<target state="translated">There is no database connection yet or the Neos database schema has not been created.</target><alt-trans><target>Пока нет соединения с базой данных или схема базы данных Neos не была создана.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target state="translated">Запустите настройку базы данных. Р</target><alt-trans><target>Запустите настройку базы данных.</target></alt-trans><alt-trans><target>Запустите установку для конфигурации базы данных.</target></alt-trans><alt-trans><target>Запустите установку для настройки базы данных.</target></alt-trans></trans-unit>
+			<target state="translated">Run the setup to configure your database.</target><alt-trans><target>Запустите настройку базы данных. Р</target></alt-trans><alt-trans><target>Запустите настройку базы данных.</target></alt-trans><alt-trans><target>Запустите установку для конфигурации базы данных.</target></alt-trans><alt-trans><target>Запустите установку для настройки базы данных.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target state="final">Страница не найдена</target></trans-unit>
