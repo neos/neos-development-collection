@@ -1289,17 +1289,19 @@ class NodeDataRepository extends Repository
         $reducedNodes = [];
 
         $minimalDimensionPositionsByIdentifier = [];
+
+        $workspaceNames = array_map(
+            function (Workspace $workspace) {
+                return $workspace->getName();
+            },
+            $workspaces
+        );
+
         foreach ($nodes as $node) {
             /** @var NodeData $node */
             $nodeDimensions = $node->getDimensionValues();
 
             // Find the position of the workspace, a smaller value means more priority
-            $workspaceNames = array_map(
-                function (Workspace $workspace) {
-                    return $workspace->getName();
-                },
-                $workspaces
-            );
             $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
             if ($workspacePosition === false) {
                 throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
@@ -1318,6 +1320,9 @@ class NodeDataRepository extends Repository
                 if (isset($nodeDimensions[$dimensionName])) {
                     foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
                         $position = array_search($nodeDimensionValue, $dimensionValues);
+                        if ($position === false) {
+                            $position = PHP_INT_MAX;
+                        }
                         $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
                             $position) : $position;
                     }
