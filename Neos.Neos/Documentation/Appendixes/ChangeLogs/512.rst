@@ -1,0 +1,80 @@
+`5.1.2 (2020-01-14) <https://github.com/neos/neos-development-collection/releases/tag/5.1.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix login behind basic auth <https://github.com/neos/neos-development-collection/pull/2857>`_
+------------------------------------------------------------------------------------------------------
+
+In the latest version of Chrome (79.0.3945.88) the login page will
+remain white if it's protected by Basic Authentication.
+
+Until now a 401 status code was returned whenever the login page was
+opened, causing a faulty behavior in Chrome and resulting in a white
+page in almost all cases.
+
+We now use a custom header instead to identify if Authentication is
+necessary to view the content.
+
+resolves: https://github.com/neos/neos-development-collection/issues/2845
+
+* Packages: ``Neos``
+
+`BUGFIX: Hide inaccessible backend modules <https://github.com/neos/neos-development-collection/pull/2855>`_
+------------------------------------------------------------------------------------------------------------
+
+Adds a ViewHelper `ifModuleAccessible` that allows to evaluate whether a
+given (sub) module is accessible to the currently authenticated user and
+uses that ViewHelper in the SubmoduleOverview partial in order to hide
+inaccessible modules from the module overview.
+
+Background:
+
+With #964 the `module.<submodule>.privilegeTarget` configuration became
+deprecated in favor of `ModulePrivilege`s but the partial only checked
+the "privilegeTarget" configuration.
+
+Note: This is just a quick fix for the bug. In the long run we should
+rewrite the whole backend module logic in order to move such crucial
+conditions from the view to the domain layer.
+
+Fixes: #2854
+
+* Packages: ``Neos``
+
+`BUGFIX: Call getPersonalWorkspaceName just once <https://github.com/neos/neos-development-collection/pull/2852>`_
+------------------------------------------------------------------------------------------------------------------
+
+Use result of first call of getPersonalWorkspaceName() instead of calling it twice.
+
+* Packages: ``Neos``
+
+`BUGFIX: Avoid isRemoved() call on null <https://github.com/neos/neos-development-collection/pull/2843>`_
+---------------------------------------------------------------------------------------------------------
+
+The array returned by getNodes() may have null entries, e.g. if a
+node was filtered in createFromNodeData().
+
+* Packages: ``Neos``
+
+`BUGFIX: Adjust PluginViewImplementation to PSR-7 <https://github.com/neos/neos-development-collection/pull/2844>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This applies a fix that has been applied to PluginImplementation in
+https://github.com/neos/neos-development-collection/pull/2777 to the
+PluginViewImplementation. This makes plugin views work again as
+expected, instead of replacing the full response content by the plugin
+content.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: #2664 set position to PHP_INT_MAX if nodeDimensionValue is no… <https://github.com/neos/neos-development-collection/pull/2736>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Fix returning invalid nodes in reduceNodeVariantsByWorkspacesAndDimensions. See #2664 for further details.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.1.1...5.1.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
