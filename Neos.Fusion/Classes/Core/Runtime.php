@@ -821,7 +821,7 @@ class Runtime
     {
         foreach ($fusionConfiguration as $key => $value) {
             // skip keys which start with __, as they are purely internal.
-            if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
+            if (is_string($key) && $key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
                 continue;
             }
 

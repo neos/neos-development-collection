@@ -265,7 +265,7 @@ class NodeConverter extends AbstractTypeConverter
                 }
             }
 
-            if (is_string($nodePropertyValue) && $this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
+            if (is_string($nodePropertyValue) && is_string($innerType) && $this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
                 $nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, true), $nodePropertyType, $configuration);
             }
             $nodeLike->setProperty($nodePropertyName, $nodePropertyValue);
