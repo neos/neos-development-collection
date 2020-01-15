@@ -26,6 +26,14 @@ use Neos\Media\Domain\ValueObject\Configuration\AspectRatio;
  */
 class CropImageAdjustmentTest extends UnitTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        if (!extension_loaded('gd')) {
+            self::markTestSkipped('ext-gd is not available, skipping test');
+        }
+    }
+
     /**
      * @test
      */
