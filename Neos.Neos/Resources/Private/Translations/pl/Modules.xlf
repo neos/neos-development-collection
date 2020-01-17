@@ -177,21 +177,21 @@
         <target state="final">Twój osobisty obszar roboczy zawiera zmiany, musisz je najpierw opublikować lub odrzucić.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target state="final">Nie usunięto obszaru roboczego "{0}" ponieważ zawiera on obecnie {1} węzeł.</target>
+          <target state="translated">Nie usunięto obszaru roboczego "{0}" ponieważ zawiera on obecnie {1} węzeł.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="final">Nie usunięto obszaru roboczego "{0}" ponieważ zawiera on obecnie {1} węzłów.</target>
+          <target state="translated">Nie usunięto obszaru roboczego "{0}" ponieważ zawiera on obecnie {1} węzłów.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[2]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
           <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[3]" approved="yes">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[3]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="final">Nie usunięto obszaru roboczego "{0}" ponieważ zawiera on obecnie {1} węzły.</target>
+          <target state="translated">Nie usunięto obszaru roboczego "{0}" ponieważ zawiera on obecnie {1} węzły.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
