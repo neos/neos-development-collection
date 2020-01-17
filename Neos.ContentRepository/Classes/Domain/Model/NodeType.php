@@ -208,7 +208,8 @@ class NodeType
         if (!isset($this->fullConfiguration['postprocessors'])) {
             return;
         }
-        foreach ($this->fullConfiguration['postprocessors'] as $postprocessorConfiguration) {
+        $sortedPostProcessors = (new PositionalArraySorter($this->fullConfiguration['postprocessors']))->toArray();
+        foreach ($sortedPostProcessors as $postprocessorConfiguration) {
             $postprocessor = new $postprocessorConfiguration['postprocessor']();
             if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
                 throw new InvalidNodeTypePostprocessorException(sprintf('Expected NodeTypePostprocessorInterface but got "%s"', get_class($postprocessor)), 1364759955);
