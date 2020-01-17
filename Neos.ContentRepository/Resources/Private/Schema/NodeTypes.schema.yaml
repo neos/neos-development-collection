@@ -107,5 +107,6 @@ additionalProperties:
         additionalProperties: false
         properties:
           'postprocessor': { type: string, format: class-name, required: true }
+          'position': { type: ['string', 'number', 'null'] }
           'postprocessorOptions':
             type: dictionary
