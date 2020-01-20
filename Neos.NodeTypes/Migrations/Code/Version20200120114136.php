@@ -28,8 +28,8 @@ class Version20200120114136 extends AbstractMigration
     public function up()
     {
         $nodetypeUpgradeMap = [
-            'Neos.NodeTypes:MultiColumn' => 'Neos.NodeTypes.ColumnLayouts:MultiColumn',
             'Neos.NodeTypes:MultiColumnItem' => 'Neos.NodeTypes.ColumnLayouts:MultiColumnItem',
+            'Neos.NodeTypes:MultiColumn' => 'Neos.NodeTypes.ColumnLayouts:MultiColumn',
         ];
 
         foreach ($nodetypeUpgradeMap as $search => $replace) {
