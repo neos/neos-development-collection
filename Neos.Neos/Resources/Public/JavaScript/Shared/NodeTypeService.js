@@ -16,9 +16,11 @@ define(
 
 			init: function() {
 				var that = this;
-				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function(nodeTypeSchema) {
-					that.set('_schema', nodeTypeSchema);
-				});
+				if (Configuration.get('NodeTypeSchemaUri')) {
+					ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function(nodeTypeSchema) {
+						that.set('_schema', nodeTypeSchema);
+					});
+				}
 			},
 
 			isOfType: function(node, nodeType) {
