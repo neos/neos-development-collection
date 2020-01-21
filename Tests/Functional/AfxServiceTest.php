@@ -215,6 +215,24 @@ EOF;
     /**
      * @test
      */
+    public function zeroAndSpaceInAttributesInHtmlTagsAreConvertedToTagAttributes(): void
+    {
+        $afxCode = '<h1 content="0" class=" " />';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    selfClosingTag = true
+    attributes.content = '0'
+    attributes.class = ' '
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+
+    /**
+     * @test
+     */
     public function sindgleQuotesAreEscapedInAttributesAndChildren(): void
     {
         $afxCode = '<h1 class="foo\'bar" >foo\'bar</h1>';
@@ -297,6 +315,36 @@ EOF;
 Neos.Fusion:Tag {
     tagName = 'h1'
     content = 'Fooo'
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function zeroInContentOfHtmlTagsIsRenderedAsFusionContent(): void
+    {
+        $afxCode = '<h1>0</h1>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = '0'
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function spaceInContentOfHtmlTagsIsRenderedAsFusionContent(): void
+    {
+        $afxCode = '<h1> </h1>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = ' '
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
