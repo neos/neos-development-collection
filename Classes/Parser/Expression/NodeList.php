@@ -34,7 +34,7 @@ class NodeList
         while (!$lexer->isEnd()) {
             if ($lexer->isOpeningBracket()) {
                 $lexer->consume();
-                if ($currentText) {
+                if ($currentText !== '') {
                     $contents[] = [
                         'type' => 'text',
                         'payload' => $currentText
