@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Media\Browser\Controller;
 
@@ -842,7 +843,7 @@ class AssetController extends ActionController
      */
     private function getMaximumFileUploadSize(): int
     {
-        return min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
+        return (int)min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
     }
 
     /**

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Browser\Domain\Dto;
 
 use Neos\Flow\Annotations as Flow;
@@ -34,9 +36,9 @@ final class BrowserConstraints implements \JsonSerializable
 
     /**
      * @param string $json
-     * @return BrowserConstraints
+     * @return self
      */
-    public static function fromJson(string $json): BrowserConstraints
+    public static function fromJson(string $json): self
     {
         $array = json_decode($json, true);
 
@@ -45,16 +47,16 @@ final class BrowserConstraints implements \JsonSerializable
 
     /**
      * @param array $array Keys: "allowedAssetSourceIdentifiers", "typeFilter"
-     * @return BrowserConstraints
+     * @return self
      */
-    public static function fromArray(array $array): BrowserConstraints
+    public static function fromArray(array $array): self
     {
         $arguments[0] = [];
         if (isset($array['allowedAssetSourceIdentifiers']) && is_array($array['allowedAssetSourceIdentifiers'])) {
             $arguments[0] = $array['allowedAssetSourceIdentifiers'];
         }
 
-        $arguments[1] = new AssetTypeFilter('All');
+        $arguments[1] = new AssetTypeFilter(AssetTypeFilter::TYPE_ALL);
         if (isset($array['typeFilter'])) {
             $arguments[1] = new AssetTypeFilter((string)$array['typeFilter']);
         }
@@ -64,9 +66,9 @@ final class BrowserConstraints implements \JsonSerializable
 
     /**
      * @param array $allowedAssetSourceIdentifiers
-     * @return BrowserConstraints
+     * @return self
      */
-    public function withAssetSourceConstraint(array $allowedAssetSourceIdentifiers): BrowserConstraints
+    public function withAssetSourceConstraint(array $allowedAssetSourceIdentifiers): self
     {
         $newInstance = clone $this;
         $newInstance->allowedAssetSourceIdentifiers = $allowedAssetSourceIdentifiers;
@@ -75,9 +77,9 @@ final class BrowserConstraints implements \JsonSerializable
     }
 
     /**
-     * @return BrowserConstraints
+     * @return self
      */
-    public function withoutAssetSourceConstraint(): BrowserConstraints
+    public function withoutAssetSourceConstraint(): self
     {
         $newInstance = clone $this;
         $newInstance->allowedAssetSourceIdentifiers = [];
@@ -111,10 +113,14 @@ final class BrowserConstraints implements \JsonSerializable
 
     /**
      * @param AssetTypeFilter $typeFilter
+     * @return BrowserConstraints
      */
-    public function withTypeFilter(AssetTypeFilter $typeFilter)
+    public function withTypeFilter(AssetTypeFilter $typeFilter): self
     {
-        $this->typeFilter = $typeFilter;
+        $newInstance = clone $this;
+        $newInstance->typeFilter = $typeFilter;
+
+        return $newInstance;
     }
 
     /**
