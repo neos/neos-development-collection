@@ -777,7 +777,7 @@ class AssetController extends ActionController
     {
         foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
             foreach ($errors as $error) {
-                $this->flashMessageContainer->addMessage($error);
+                $this->controllerContext->getFlashMessageContainer()->addMessage($error);
             }
         }
 
