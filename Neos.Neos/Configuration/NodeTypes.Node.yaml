@@ -6,9 +6,6 @@
     'Neos.Neos:ApplyEditorDefaults':
       postprocessor: 'Neos\Neos\NodeTypePostprocessor\ApplyEditorDefaultsPostprocessor'
       position: start
-    'Neos.Neos:TranslateLabels':
-      postprocessor: 'Neos\Neos\NodeTypePostprocessor\TranslateLabelsPostprocessor'
-      position: end
     'Neos.Neos:MapIconNames':
       postprocessor: 'Neos\Neos\NodeTypePostprocessor\MapIconNamesPostprocessor'
       position: end
