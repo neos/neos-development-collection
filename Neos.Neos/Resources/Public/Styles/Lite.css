@@ -44,14 +44,10 @@
 .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search,
 .neos.neos-module .neos-select:after,
 .neos.neos-module .neos-checkbox input + span::before,
 .neos.neos-module .neos-radio input + span::before,
 .neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button,
-.neos .neos-position-selector::after,
 .far,
 .fal,
 .fad,
@@ -147,14 +143,10 @@
 .neos ul.neos-tree-container .neos-tree-node .fa-pull-left.neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-left::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-left::before,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div.fa-pull-left:after,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr.fa-pull-left::after,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .fa-pull-left.chosen-search,
 .neos.neos-module .fa-pull-left.neos-select:after,
 .neos.neos-module .neos-checkbox input + span.fa-pull-left::before,
 .neos.neos-module .neos-radio input + span.fa-pull-left::before,
 .neos #neos-notification-container.neos-notification-top > .neos-notification i.fa-pull-left.neos-close-button,
-.neos .fa-pull-left.neos-position-selector::after,
 .far.fa-pull-left,
 .fal.fa-pull-left,
 .fab.fa-pull-left {
@@ -173,14 +165,10 @@
 .neos ul.neos-tree-container .neos-tree-node .fa-pull-right.neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-right::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-right::before,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div.fa-pull-right:after,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr.fa-pull-right::after,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .fa-pull-right.chosen-search,
 .neos.neos-module .fa-pull-right.neos-select:after,
 .neos.neos-module .neos-checkbox input + span.fa-pull-right::before,
 .neos.neos-module .neos-radio input + span.fa-pull-right::before,
 .neos #neos-notification-container.neos-notification-top > .neos-notification i.fa-pull-right.neos-close-button,
-.neos .fa-pull-right.neos-position-selector::after,
 .far.fa-pull-right,
 .fal.fa-pull-right,
 .fab.fa-pull-right {
@@ -4553,14 +4541,10 @@ readers do not read off random characters that represent icons */
 .neos ul.neos-tree-container .neos-tree-node .neos-tree-expander,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after,
-.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search,
 .neos.neos-module .neos-select:after,
 .neos.neos-module .neos-checkbox input + span::before,
 .neos.neos-module .neos-radio input + span::before,
-.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button,
-.neos .neos-position-selector::after {
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button {
   font-family: 'Font Awesome 5 Free';
   font-weight: 900; }
 
@@ -4586,6 +4570,285 @@ readers do not read off random characters that represent icons */
       top: 8px;
       left: 7px; }
 
+:root {
+  --base-font-size: 100%;
+  /* Color palette */
+  --grayDarker: #141414;
+  --grayDark: #222;
+  --grayMedium: #323232;
+  --grayLight: #3f3f3f;
+  --grayLighter: #eee;
+  --textOnWhite: #252525;
+  --textContrast: #2d2d2d;
+  --textOnGray: #fff;
+  --textSubtle: #5b5b5b;
+  --textSubtleLight: #adadad;
+  --blue: #00b5ff;
+  --blueLight: #39c6ff;
+  --blueDark: #007fb2;
+  --green: #00a338;
+  --warning: #ff460d;
+  --orange: #ff8700;
+  /* Sizes & margins */
+  --unit: 40px;
+  --defaultMargin: 16px;
+  --relatedMargin: 8px;
+  --tightMargin: 4px;
+  --wideMargin: 32px;
+  /* Components */
+  --inspectorWidth: 320px;
+  --navigatePanelWidth: 320px;
+  --menuWidth: 320px;
+  --editPreviewPanelHeight: 110px;
+  --menuButtonWidth: 54px;
+  --generalFontSize: 14px;
+  --zindexTooltip: 999999;
+  --errorText: #ff460d;
+  --successText: #00a338;
+  --warningText: #ff8700;
+  --infoText: #00b5ff;
+  --spacing-GoldenUnit: 40px;
+  --spacing-Full: 16px;
+  --spacing-Half: 8px;
+  --spacing-Quarter: 4px;
+  --size-SidebarWidth: 320px;
+  --transition-Fast: .1s;
+  --transition-Default: .25s;
+  --transition-Slow: .5s;
+  --zIndex-SecondaryToolbar-LinkIconButtonFlyout: 1;
+  --zIndex-FlashMessageContainer: 6;
+  --zIndex-LoadingIndicatorContainer: 5;
+  --zIndex-SecondaryInspector-Context: 1;
+  --zIndex-SecondaryInspector-Iframe: 2;
+  --zIndex-SecondaryInspector-Close: 3;
+  --zIndex-SecondaryInspectorElevated-Context: 1;
+  --zIndex-SecondaryInspectorElevated-DropdownContents: 2;
+  --zIndex-Dialog-Context: 1;
+  --zIndex-FullScreenClose-Context: 1;
+  --zIndex-Drawer-Context: 1;
+  --zIndex-Bar-Context: 1;
+  --zIndex-PrimaryToolbar: 4;
+  --zIndex-CheckboxInput-Context: 1;
+  --zIndex-DropdownContents-Context: 1;
+  --zIndex-SelectBoxContents: 3;
+  --zIndex-NotInlineEditableOverlay-Context: 1;
+  --zIndex-CalendarFakeInputMirror-Context: 1;
+  --zIndex-RdtPicker-Context: 1;
+  --zIndex-SideBar-DropTargetBefore: 1;
+  --zIndex-SideBar-DropTargetAfter: 2;
+  --zIndex-WrapperDropdown-Context: 1;
+  --zIndex-UnappliedChangesOverlay-Context: 1;
+  --zIndex-NodeToolBar: 2147483646;
+  --fontSize-Base: 14px;
+  --fontSize-Small: 12px;
+  --fontsHeadings-Family: Noto Sans;
+  --fontsHeadings-Style: Regular;
+  --fontsHeadings-CssWeight: 400;
+  --fontsCopy-Family: Noto Sans;
+  --fontsCopy-Style: Regular;
+  --fontsCopy-CssWeight: 400;
+  --colors-PrimaryViolet: #26224C;
+  --colors-PrimaryVioletHover: #342f5f;
+  --colors-PrimaryBlue: #00ADEE;
+  --colors-PrimaryBlueHover: #35c3f8;
+  --colors-ContrastDarkest: #141414;
+  --colors-ContrastDarker: #222;
+  --colors-ContrastDark: #3f3f3f;
+  --colors-ContrastNeutral: #323232;
+  --colors-ContrastBright: #999;
+  --colors-ContrastBrighter: #adadad;
+  --colors-ContrastBrightest: #fff;
+  --colors-Success: #00a338;
+  --colors-SuccessHover: #0bb344;
+  --colors-Warn: #ff8700;
+  --colors-WarnHover: #fda23d;
+  --colors-Error: #ff460d;
+  --colors-ErrorHover: #ff6a3c;
+  --colors-UncheckedCheckboxTick: #5B5B5B; }
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section {
+  display: block; }
+
+audio,
+canvas,
+video {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1; }
+
+audio:not([controls]) {
+  display: none; }
+
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%; }
+
+a:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px; }
+
+a:hover,
+a:active {
+  outline: 0; }
+
+sub,
+sup {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline; }
+
+sup {
+  top: -0.5em; }
+
+sub {
+  bottom: -0.25em; }
+
+img {
+  /* Responsive images (ensure images don't scale beyond their parents) */
+  max-width: 100%;
+  /* Part 1: Set a maxium relative to the parent */
+  width: auto\9;
+  /* IE7-8 need help adjusting responsive images */
+  height: auto;
+  /* Part 2: Scale the height according to the width, otherwise you get stretching */
+  vertical-align: middle;
+  border: 0;
+  -ms-interpolation-mode: bicubic; }
+
+#map_canvas img,
+.neos-google-maps img {
+  max-width: none; }
+
+button,
+input,
+select,
+textarea {
+  margin: 0;
+  font-size: 100%;
+  vertical-align: middle; }
+
+button,
+input {
+  *overflow: visible;
+  line-height: normal; }
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  padding: 0;
+  border: 0; }
+
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer; }
+
+label[for],
+select,
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+input[type="radio"],
+input[type="checkbox"] {
+  cursor: pointer; }
+
+input[type="search"] {
+  box-sizing: content-box;
+  -webkit-appearance: textfield; }
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none; }
+
+textarea {
+  overflow: auto;
+  vertical-align: top; }
+
+@media print {
+  * {
+    text-shadow: none !important;
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important; }
+  a,
+  a:visited {
+    text-decoration: underline; }
+  a[href]:after {
+    content: " (" attr(href) ")"; }
+  abbr[title]:after {
+    content: " (" attr(title) ")"; }
+  .neos-ir a:after,
+  a[href^="javascript:"]:after,
+  a[href^="#"]:after {
+    content: ""; }
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid; }
+  thead {
+    display: table-header-group; }
+  tr,
+  img {
+    page-break-inside: avoid; }
+  img {
+    max-width: 100% !important; }
+  @page {
+    margin: 0.5cm; }
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3; }
+  h2,
+  h3 {
+    page-break-after: avoid; } }
+
+div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td {
+  margin: 0;
+  padding: 0; }
+
+img {
+  border: 0; }
+
+address, caption, cite, code, dfn, em, strong, th, var {
+  font-style: normal;
+  font-weight: normal; }
+
+ol, ul, ol li, ul li {
+  list-style: none; }
+
+caption, th {
+  text-align: left; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: 14px; }
+
+q:before,
+q:after {
+  content: ''; }
+
+*, *:before, *:after {
+  box-sizing: content-box; }
+
+@media only screen {
+  button, .button {
+    transition: none;
+    box-shadow: none; } }
+
 .neos {
   /* Allow for input prepend/append in search forms */
   font-size: 14px;
@@ -4593,140 +4856,7 @@ readers do not read off random characters that represent icons */
   text-align: left;
   color: #fff;
   font-family: 'Noto Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  /* Modal Dialog Content area */ }
-  .neos article,
-  .neos aside,
-  .neos details,
-  .neos figcaption,
-  .neos figure,
-  .neos footer,
-  .neos header,
-  .neos hgroup,
-  .neos nav,
-  .neos section {
-    display: block; }
-  .neos audio,
-  .neos canvas,
-  .neos video {
-    display: inline-block;
-    *display: inline;
-    *zoom: 1; }
-  .neos audio:not([controls]) {
-    display: none; }
-  .neos html {
-    font-size: 100%;
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%; }
-  .neos a:focus {
-    outline: thin dotted #333;
-    outline: 5px auto -webkit-focus-ring-color;
-    outline-offset: -2px; }
-  .neos a:hover,
-  .neos a:active {
-    outline: 0; }
-  .neos sub,
-  .neos sup {
-    position: relative;
-    font-size: 75%;
-    line-height: 0;
-    vertical-align: baseline; }
-  .neos sup {
-    top: -0.5em; }
-  .neos sub {
-    bottom: -0.25em; }
-  .neos img {
-    /* Responsive images (ensure images don't scale beyond their parents) */
-    max-width: 100%;
-    /* Part 1: Set a maxium relative to the parent */
-    width: auto\9;
-    /* IE7-8 need help adjusting responsive images */
-    height: auto;
-    /* Part 2: Scale the height according to the width, otherwise you get stretching */
-    vertical-align: middle;
-    border: 0;
-    -ms-interpolation-mode: bicubic; }
-  .neos #map_canvas img,
-  .neos .neos-google-maps img {
-    max-width: none; }
-  .neos button,
-  .neos input,
-  .neos select,
-  .neos textarea {
-    margin: 0;
-    font-size: 100%;
-    vertical-align: middle; }
-  .neos button,
-  .neos input {
-    *overflow: visible;
-    line-height: normal; }
-  .neos button::-moz-focus-inner,
-  .neos input::-moz-focus-inner {
-    padding: 0;
-    border: 0; }
-  .neos button,
-  .neos html input[type="button"],
-  .neos input[type="reset"],
-  .neos input[type="submit"] {
-    -webkit-appearance: button;
-    cursor: pointer; }
-  .neos label[for],
-  .neos select,
-  .neos button,
-  .neos input[type="button"],
-  .neos input[type="reset"],
-  .neos input[type="submit"],
-  .neos input[type="radio"],
-  .neos input[type="checkbox"] {
-    cursor: pointer; }
-  .neos input[type="search"] {
-    box-sizing: content-box;
-    -webkit-appearance: textfield; }
-  .neos input[type="search"]::-webkit-search-decoration,
-  .neos input[type="search"]::-webkit-search-cancel-button {
-    -webkit-appearance: none; }
-  .neos textarea {
-    overflow: auto;
-    vertical-align: top; }
-  @media print {
-    .neos * {
-      text-shadow: none !important;
-      color: #000 !important;
-      background: transparent !important;
-      box-shadow: none !important; }
-    .neos a,
-    .neos a:visited {
-      text-decoration: underline; }
-    .neos a[href]:after {
-      content: " (" attr(href) ")"; }
-    .neos abbr[title]:after {
-      content: " (" attr(title) ")"; }
-    .neos .neos-ir a:after,
-    .neos a[href^="javascript:"]:after,
-    .neos a[href^="#"]:after {
-      content: ""; }
-    .neos pre,
-    .neos blockquote {
-      border: 1px solid #999;
-      page-break-inside: avoid; }
-    .neos thead {
-      display: table-header-group; }
-    .neos tr,
-    .neos img {
-      page-break-inside: avoid; }
-    .neos img {
-      max-width: 100% !important; }
-    @page {
-      .neos {
-        margin: 0.5cm; } }
-    .neos p,
-    .neos h2,
-    .neos h3 {
-      orphans: 3;
-      widows: 3; }
-    .neos h2,
-    .neos h3 {
-      page-break-after: avoid; } }
+  -webkit-font-smoothing: antialiased; }
   .neos .neos-row {
     margin-left: -20px; }
     .neos .neos-row:after {
@@ -7240,29 +7370,6 @@ readers do not read off random characters that represent icons */
     .neos .neos-modal-header .neos-close {
       padding: 10px;
       margin: -10px; } }
-  .neos div, .neos dl, .neos dt, .neos dd, .neos ul, .neos ol, .neos li, .neos h1, .neos h2, .neos h3, .neos h4, .neos h5, .neos h6, .neos pre, .neos form, .neos fieldset, .neos input, .neos p, .neos blockquote, .neos th, .neos td {
-    margin: 0;
-    padding: 0; }
-  .neos img {
-    border: 0; }
-  .neos address, .neos caption, .neos cite, .neos code, .neos dfn, .neos em, .neos strong, .neos th, .neos var {
-    font-style: normal;
-    font-weight: normal; }
-  .neos ol, .neos ul, .neos ol li, .neos ul li {
-    list-style: none; }
-  .neos caption, .neos th {
-    text-align: left; }
-  .neos h1, .neos h2, .neos h3, .neos h4, .neos h5, .neos h6 {
-    font-size: 14px; }
-  .neos q:before,
-  .neos q:after {
-    content: ''; }
-  .neos *, .neos *:before, .neos *:after {
-    box-sizing: content-box; }
-  @media only screen {
-    .neos button, .neos .button {
-      transition: none;
-      box-shadow: none; } }
   .neos ul.neos-tree-container {
     padding: 0;
     margin: 0;
@@ -7515,88 +7622,6 @@ readers do not read off random characters that represent icons */
     margin-top: 20px; }
   .neos iframe {
     border: 0; }
-
-@keyframes dot {
-  0% {
-    text-indent: -20px; }
-  25% {
-    text-indent: -15px; }
-  50% {
-    text-indent: -7px; }
-  75% {
-    text-indent: 0px; }
-  100% {
-    text-indent: -20px; } }
-  .neos .neos-ellipsis::after {
-    display: inline-block;
-    width: 12px;
-    content: '...';
-    overflow: hidden;
-    vertical-align: top;
-    animation: dot 1.3s infinite;
-    animation-timing-function: step-start; }
-  .neos ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px; }
-  .neos ::-webkit-scrollbar-track {
-    background-color: #3f3f3f; }
-  .neos ::-webkit-scrollbar-thumb {
-    background-color: #222;
-    border: 1px solid #3f3f3f; }
-  .neos ::-webkit-scrollbar-corner {
-    background-color: #3f3f3f; }
-  .neos button.fa-trash:before {
-    padding-right: 3px; }
-  .neos .neos-popover {
-    display: none; }
-    .neos .neos-popover.neos-active {
-      display: block; }
-  .neos .scrollbar {
-    position: absolute;
-    content: '';
-    display: block;
-    border-radius: 100px;
-    opacity: 0;
-    z-index: 100; }
-  .neos .vertical {
-    width: 7px;
-    right: 2px;
-    top: 2px; }
-  .neos .horizontal {
-    height: 7px;
-    bottom: 2px;
-    left: 2px; }
-  .neos .scrollbar_bg {
-    position: absolute;
-    content: '';
-    display: block;
-    border-radius: 100px;
-    opacity: 0;
-    z-index: 99; }
-  .neos .scrollbar_bg.horizontal {
-    width: 100%; }
-  .neos .scrollbar_bg.vertical {
-    height: 100%; }
-  .neos .scrollbar.light {
-    background: rgba(255, 255, 255, 0.5); }
-  .neos .scrollbar_bg.light {
-    background: rgba(255, 255, 255, 0.1); }
-  .neos .scrollbar.dark {
-    background: rgba(0, 0, 0, 0.3); }
-  .neos .scrollbar_bg.dark {
-    background: rgba(0, 0, 0, 0.1); }
-  .neos .nWrap {
-    overflow: auto;
-    display: inline-block; }
-  .neos .ui-tabs .ui-tabs-nav li a:focus {
-    outline: none; }
-  .neos .neos-link-inputfield.ui-autocomplete-loading {
-    background-image: url(data:image/gif;base64,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);
-    background-repeat: no-repeat;
-    background-position: 198px; }
-  .neos img {
-    display: inline-block;
-    margin: 0; }
   .neos #neos-top-bar {
     position: fixed;
     display: none;
@@ -7901,348 +7926,6 @@ readers do not read off random characters that represent icons */
         padding-left: 54px;
         position: relative;
         font-weight: normal; }
-  .neos #neos-navigate-button {
-    position: relative;
-    background-color: #222;
-    border-right: 1px solid #3f3f3f; }
-    .neos #neos-navigate-button:hover, .neos #neos-navigate-button.neos-pressed {
-      color: #00b5ff; }
-    .neos-menu-panel-open:not(.neos-menu-panel-sticky) .neos #neos-navigate-button.neos-pressed:after {
-      display: none; }
-    .neos #neos-navigate-button.neos-pressed:after {
-      display: block;
-      content: "";
-      width: 100%;
-      height: 1px;
-      left: 0;
-      bottom: -1px;
-      position: absolute;
-      background-color: #222; }
-  .neos #neos-navigate-panel {
-    background-color: #222;
-    width: 321px;
-    margin: 0;
-    padding: 0;
-    position: fixed;
-    overflow: hidden;
-    left: -321px;
-    top: 40px;
-    bottom: 0;
-    z-index: 10020;
-    padding-top: 82px;
-    padding-bottom: 41px;
-    border-top: 1px solid #3f3f3f;
-    border-right: 1px solid #3f3f3f;
-    box-sizing: border-box;
-    transition-property: left, margin-top;
-    transition-duration: .2s;
-    font-family: 'Noto Sans', sans-serif;
-    -webkit-font-smoothing: antialiased; }
-    .neos-navigate-panel-open .neos #neos-navigate-panel {
-      left: 0; }
-    .neos-navigate-panel-open.neos-menu-panel-open.neos-menu-panel-sticky .neos #neos-navigate-panel {
-      left: 54px; }
-    .neos #neos-navigate-panel #neos-node-tree {
-      position: relative; }
-      .neos #neos-navigate-panel #neos-node-tree.neos-node-tree-filtering .neos-dynatree-node span + span,
-      .neos #neos-navigate-panel #neos-node-tree.neos-node-tree-filtering .neos-dynatree-node a {
-        color: #5b5b5b; }
-      .neos #neos-navigate-panel #neos-node-tree.neos-node-tree-filtering .neos-dynatree-node.neos-matched span + span,
-      .neos #neos-navigate-panel #neos-node-tree.neos-node-tree-filtering .neos-dynatree-node.neos-matched a {
-        color: #fff; }
-      .neos #neos-navigate-panel #neos-node-tree.neos-node-tree-filtering .neos-dynatree-node.neos-matched.neos-dynatree-selected span + span,
-      .neos #neos-navigate-panel #neos-node-tree.neos-node-tree-filtering .neos-dynatree-node.neos-matched.neos-dynatree-selected a {
-        color: #00b5ff; }
-      .neos #neos-navigate-panel #neos-node-tree #neos-node-tree-container {
-        position: relative;
-        white-space: nowrap;
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        padding: 8px 0;
-        box-sizing: border-box; }
-        .neos #neos-navigate-panel #neos-node-tree #neos-node-tree-container input {
-          padding: 0px 3px;
-          margin: 0 -3px;
-          width: 100%;
-          height: 24px;
-          vertical-align: top;
-          outline: none;
-          border: none;
-          background-color: #fff;
-          color: #141414;
-          font-family: 'Noto Sans', sans-serif;
-          -webkit-font-smoothing: antialiased; }
-    .neos #neos-navigate-panel .neos-node-tree-toolbar {
-      width: 100%;
-      position: absolute;
-      top: -82px;
-      box-sizing: border-box; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container {
-        color: #fff;
-        line-height: 40px;
-        font-size: 14px; }
-        .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single {
-          height: 40px;
-          border: none;
-          background-color: #323232;
-          background-image: none;
-          padding-left: 16px;
-          border-radius: 0;
-          box-shadow: none;
-          color: inherit;
-          line-height: inherit;
-          text-decoration: none; }
-          .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single.chosen-default {
-            color: #adadad; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single.chosen-default div {
-              color: #fff; }
-          .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single.chosen-single-with-deselect span {
-            margin-right: 75px; }
-          .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single span {
-            margin-right: 57px; }
-          .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div {
-            width: 40px; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:before {
-              display: block;
-              content: '';
-              position: absolute;
-              width: 1px;
-              height: 24px;
-              top: 8px;
-              left: 0;
-              background-color: #fff;
-              opacity: .15; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after {
-              content: "\f0d7";
-              display: block;
-              position: absolute;
-              width: 40px;
-              text-align: center;
-              line-height: 40px; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div b {
-              display: none;
-              background-image: none !important; }
-          .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr {
-            top: 12px;
-            right: 52px;
-            color: #fff;
-            font-size: 16px;
-            line-height: 1; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr:hover {
-              color: #00b5ff; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after {
-              content: "\f057"; }
-        .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop {
-          border: none;
-          background-color: #323232;
-          background-image: none;
-          border-radius: 0;
-          box-shadow: 1px 2px 5px #222;
-          color: inherit;
-          margin-top: 0; }
-          .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search {
-            padding: 0;
-            color: #000;
-            font-size: 0; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search input {
-              min-width: 0px;
-              width: 100%;
-              height: 40px;
-              border: none;
-              color: #fff;
-              font-family: 'Noto Sans', sans-serif;
-              -webkit-font-smoothing: antialiased;
-              font-size: 14px;
-              margin: 0;
-              padding: 0 16px;
-              box-sizing: border-box;
-              box-shadow: none;
-              background: none;
-              background-image: none !important;
-              background-color: #fff; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search:after {
-              position: absolute;
-              top: 14px;
-              right: 12px;
-              width: 16px;
-              height: 16px;
-              text-decoration: inherit;
-              display: inline-block;
-              speak: none;
-              content: "\f002";
-              line-height: 100%;
-              font-size: 12px; }
-          .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results {
-            margin: 0;
-            padding: 0;
-            max-height: 247px; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li {
-              width: 100%;
-              border-bottom: 1px solid #222;
-              line-height: 24px;
-              padding: 8px 16px;
-              box-sizing: border-box; }
-              .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li:first-child {
-                border-top: 1px solid #222; }
-              .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li.highlighted {
-                background-color: #00b5ff;
-                background-image: none; }
-              .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li.no-results {
-                background-color: #323232; }
-              .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li.disabled-result {
-                color: #5b5b5b; }
-              .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li em {
-                background: none;
-                font-weight: bold;
-                line-height: 38px; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single {
-        background-color: #222; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop {
-        margin-top: 1px; }
-        .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li:first-child {
-          border-top: none; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar .neos-node-tree-toolbar-top,
-      .neos #neos-navigate-panel .neos-node-tree-toolbar .neos-node-tree-toolbar-bottom {
-        height: 40px;
-        border-bottom: 1px solid #3f3f3f; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-chooser {
-        float: left;
-        font-size: 14px;
-        line-height: 40px;
-        padding-left: 16px; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar .neos-button {
-        float: right;
-        width: 40px;
-        color: #fff;
-        background-color: transparent;
-        text-align: center; }
-        .neos #neos-navigate-panel .neos-node-tree-toolbar .neos-button i {
-          margin-left: -3px; }
-        .neos #neos-navigate-panel .neos-node-tree-toolbar .neos-button[disabled], .neos #neos-navigate-panel .neos-node-tree-toolbar .neos-button[disabled]:hover {
-          color: #5b5b5b; }
-        .neos #neos-navigate-panel .neos-node-tree-toolbar .neos-button.neos-pressed, .neos #neos-navigate-panel .neos-node-tree-toolbar .neos-button:hover {
-          color: #00b5ff; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search {
-        overflow: hidden;
-        position: relative; }
-        .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search input {
-          width: 100%;
-          height: 40px;
-          float: left;
-          background-color: #222;
-          color: #fff;
-          font-family: 'Noto Sans', sans-serif;
-          -webkit-font-smoothing: antialiased;
-          font-size: 14px;
-          padding-left: 14px;
-          padding-right: 30px;
-          padding-top: 0;
-          padding-bottom: 0;
-          margin: 0;
-          border: none;
-          box-sizing: border-box;
-          box-shadow: none;
-          transition: none; }
-          .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search input:focus {
-            background-color: #fff;
-            color: #252525;
-            box-shadow: none; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search input:focus + span {
-              color: #252525; }
-        .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span {
-          position: absolute;
-          top: 0;
-          right: 9px;
-          width: 16px;
-          height: 16px;
-          display: block;
-          font-size: 14px;
-          line-height: 40px; }
-          .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.fa-remove-sign {
-            cursor: pointer;
-            font-size: 16px; }
-            .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.fa-remove-sign:hover {
-              color: #00b5ff; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-sorting {
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
-        border-left: 1px solid #323232;
-        float: right;
-        text-align: center;
-        display: none; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-filter {
-        width: 50%;
-        float: right;
-        border-left: 1px solid #323232; }
-        .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-filter select {
-          width: 100%;
-          padding: 0; }
-    .neos #neos-navigate-panel #neos-context-structure {
-      position: relative; }
-    .neos #neos-navigate-panel .neos-node-tree-toolbar.neos-context-structure-toolbar {
-      position: relative;
-      height: 40px;
-      top: 0;
-      font-size: 14px;
-      line-height: 40px;
-      border-top: 1px solid #3f3f3f;
-      margin-top: -1px;
-      text-indent: 16px; }
-      .neos #neos-navigate-panel .neos-node-tree-toolbar.neos-context-structure-toolbar i {
-        text-indent: 0; }
-    .neos #neos-navigate-panel #neos-context-structure-tree-container {
-      position: relative;
-      white-space: nowrap;
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      padding: 8px 0;
-      box-sizing: border-box; }
-      .neos #neos-navigate-panel #neos-context-structure-tree-container ul.neos-dynatree-container {
-        padding-top: 0;
-        padding-bottom: 0; }
-    .neos #neos-navigate-panel .neos-context-structure-collapse {
-      float: right;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      text-indent: 0; }
-      .neos #neos-navigate-panel .neos-context-structure-collapse:hover {
-        background-color: #00b5ff;
-        color: #fff; }
-      .neos #neos-navigate-panel .neos-context-structure-collapse::before {
-        content: "›";
-        font-size: 26px;
-        font-weight: normal;
-        display: inline-block;
-        position: relative;
-        top: 0;
-        line-height: 40px; }
-      .neos #neos-navigate-panel .neos-context-structure-collapse.collapsed::before {
-        rotate: -90deg;
-        left: 13px; }
-      .neos #neos-navigate-panel .neos-context-structure-collapse.open::before {
-        rotate: 90deg;
-        left: 19px; }
-    .neos #neos-navigate-panel #neos-node-tree {
-      height: 50%;
-      transition-property: height;
-      transition-duration: .2s; }
-    .neos #neos-navigate-panel #neos-context-structure {
-      height: 50%; }
-    .neos #neos-navigate-panel.neos-navigate-panel-context-structure-open #neos-node-tree {
-      height: 100%;
-      box-sizing: border-box; }
-    .neos #neos-navigate-panel.neos-navigate-panel-context-structure-open #neos-context-structure {
-      height: 41px; }
-      .neos #neos-navigate-panel.neos-navigate-panel-context-structure-open #neos-context-structure #neos-context-structure-toolbar {
-        border-bottom: none; }
-      .neos #neos-navigate-panel.neos-navigate-panel-context-structure-open #neos-context-structure #neos-context-structure-tree-container {
-        display: none; }
   .neos.neos-module {
     font-family: 'Noto Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -9148,10 +8831,6 @@ readers do not read off random characters that represent icons */
       margin-left: 5px; }
     .neos .widget .widget-footer .neos-button-group .neos-button + .neos-button {
       margin-left: -1px; }
-  .neos .neos-button-group.neos-open .neos-dropdown-toggle {
-    box-shadow: 0px 0px 0px transparent; }
-  .neos .neos-button-group + .neos-button-group {
-    margin-left: 8px; }
   .neos #neos-notification-container.neos-notification-top {
     position: fixed;
     z-index: 999999;
@@ -9252,201 +8931,6 @@ readers do not read off random characters that represent icons */
         color: white;
         font-weight: 400;
         font-size: 14px; }
-  .neos .neos-login-dialog .neos-modal, .neos .neos-login-dialog .neos-modal-content {
-    width: 400px;
-    top: 240px;
-    margin: 0px 0px 0px -160px; }
-  .neos .neos-login-dialog input[type="text"],
-  .neos .neos-login-dialog input[type="password"] {
-    width: 100%;
-    min-width: 288px;
-    height: 40px;
-    border: 2px solid #323232;
-    background-color: #323232;
-    color: #fff;
-    font-size: 14px;
-    padding: 0 14px;
-    margin: 0 0 15px 0;
-    border-radius: 0;
-    box-sizing: border-box;
-    box-shadow: none;
-    transition: none;
-    font-family: 'Noto Sans', sans-serif;
-    -webkit-font-smoothing: antialiased; }
-    .neos .neos-login-dialog input[type="text"]:focus,
-    .neos .neos-login-dialog input[type="password"]:focus {
-      background-color: #fff;
-      border: 2px solid #fff;
-      color: #252525;
-      box-shadow: none; }
-    .neos .neos-login-dialog input[type="text"]:-webkit-autofill,
-    .neos .neos-login-dialog input[type="password"]:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0 50px #323232 inset;
-      -webkit-text-fill-color: #fff; }
-      .neos .neos-login-dialog input[type="text"]:-webkit-autofill:focus,
-      .neos .neos-login-dialog input[type="password"]:-webkit-autofill:focus {
-        -webkit-box-shadow: 0 0 0 50px #fff inset;
-        -webkit-text-fill-color: #252525; }
-  .neos .neos-login-dialog .neos-modal-body {
-    padding: 16px; }
-  .neos .neos-login-dialog .neos-button {
-    width: 100%; }
-  .neos .neos-login-dialog .neos-tooltip {
-    left: -4px;
-    top: 0;
-    width: 100%;
-    position: relative;
-    clear: both;
-    float: none; }
-    .neos .neos-login-dialog .neos-tooltip.neos-bottom {
-      padding: 8px 0 0 0;
-      margin-left: 4px;
-      margin-top: -1px; }
-    .neos .neos-login-dialog .neos-tooltip.neos-in {
-      opacity: 1; }
-    .neos .neos-login-dialog .neos-tooltip .neos-tooltip-arrow {
-      margin-left: -8px;
-      border-width: 0 8px 8px 8px;
-      border-bottom-color: #ff460d; }
-    .neos .neos-login-dialog .neos-tooltip .neos-tooltip-inner {
-      max-width: 100%;
-      background-color: #ff460d;
-      font-size: 13px;
-      color: #fff;
-      border-radius: 0;
-      box-sizing: border-box; }
-  .neos .neos-position-selector {
-    position: relative;
-    text-indent: 0;
-    user-select: none; }
-    .neos .neos-position-selector.neos-disabled {
-      cursor: not-allowed;
-      color: #5b5b5b !important;
-      opacity: 1; }
-      .neos .neos-position-selector.neos-disabled:hover, .neos .neos-position-selector.neos-disabled::after {
-        color: #5b5b5b !important; }
-      .neos .neos-position-selector.neos-disabled .neos-arrow {
-        border-bottom-color: #5b5b5b; }
-    .neos .neos-position-selector::before {
-      font-size: 14px; }
-    .neos .neos-position-selector::after {
-      position: absolute;
-      font-size: 14px;
-      color: #00b5ff; }
-    .neos .neos-position-selector.neos-position-selector-node-into::after {
-      content: "\f30b";
-      font-weight: 900;
-      left: 18px;
-      bottom: 4px; }
-    .neos .neos-position-selector.neos-position-selector-node-before::after {
-      content: "\f3bf";
-      font-weight: 900;
-      left: 24px;
-      bottom: 7px; }
-    .neos .neos-position-selector.neos-position-selector-node-after::after {
-      content: "\f3be";
-      font-weight: 900;
-      left: 24px;
-      bottom: 6px; }
-    .neos .neos-position-selector.neos-expanded .neos-position-selector-position {
-      display: block; }
-    .neos .neos-position-selector.neos-expanded .neos-arrow {
-      display: none; }
-    .neos .neos-position-selector .neos-arrow {
-      position: absolute;
-      bottom: 4px;
-      right: 4px;
-      border-left: 4px solid transparent;
-      border-bottom: 4px solid #00b5ff;
-      transform: rotate(45deg); }
-  .neos .neos-position-selector-position {
-    display: none;
-    position: absolute;
-    top: 40px;
-    left: -1px;
-    z-index: 1;
-    background-color: #222;
-    border: 1px solid #3f3f3f;
-    border-top: none;
-    box-shadow: 1px 2px 5px #222; }
-    .neos .neos-position-selector-position .neos-button {
-      width: 38px;
-      height: 40px;
-      color: #fff;
-      border: none; }
-      .neos .neos-position-selector-position .neos-button.neos-active {
-        color: #00b5ff;
-        background-color: inherit; }
-      .neos .neos-position-selector-position .neos-button.neos-disabled {
-        color: #5b5b5b !important;
-        opacity: 1; }
-      .neos .neos-position-selector-position .neos-button:hover:not(.neos-disabled) {
-        color: #00b5ff;
-        background-color: inherit; }
-  .neos .neos-help-message-button:active, .neos .neos-help-message-button:focus {
-    outline: none; }
-  .neos .neos-help-message-icon {
-    color: #fff;
-    vertical-align: baseline;
-    position: relative;
-    cursor: pointer;
-    text-decoration: none; }
-  .neos .page-navigation ul {
-    border-top: 1px solid #3f3f3f;
-    text-align: center;
-    font-size: 0; }
-    .neos .page-navigation ul li {
-      display: inline-block;
-      font-size: 14px;
-      width: 40px; }
-      .neos .page-navigation ul li.previous, .neos .page-navigation ul li.next {
-        position: relative;
-        border: 1px solid #3f3f3f;
-        border-top: 0;
-        overflow: hidden; }
-        .neos .page-navigation ul li.previous a, .neos .page-navigation ul li.next a {
-          text-indent: -9999px; }
-          .neos .page-navigation ul li.previous a:before, .neos .page-navigation ul li.next a:before {
-            position: relative;
-            top: 5px;
-            display: block;
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            font-size: 26px;
-            line-height: 26px;
-            font-weight: normal;
-            font-style: normal;
-            text-decoration: inherit;
-            -webkit-font-smoothing: antialiased;
-            text-indent: 0;
-            color: #fff; }
-      .neos .page-navigation ul li.previous {
-        float: left; }
-        .neos .page-navigation ul li.previous a:before {
-          content: "‹"; }
-      .neos .page-navigation ul li.next {
-        float: right; }
-        .neos .page-navigation ul li.next a:before {
-          content: "›"; }
-      .neos .page-navigation ul li.current {
-        border: 1px solid #3f3f3f;
-        border-top: 0;
-        height: 40px;
-        width: 40px;
-        line-height: 40px;
-        color: #00b5ff; }
-      .neos .page-navigation ul li a {
-        display: block;
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
-        text-align: center;
-        color: #fff; }
-        .neos .page-navigation ul li a:hover {
-          color: #fff;
-          background-color: #00b5ff;
-          text-decoration: none; }
 
 body.neos-backend {
   transition-property: margin;
