@@ -304,34 +304,43 @@ Neos:
 
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://Neos.Neos/Private/Templates/Module/Widget.html'
+      # This stylesheet can be overriden in the configuration of a submodule to reference a reduced stylesheet.
+      # Use `Main` for backwards compatibility
+      # Use `Lite` for a reduced variant with a less aggressive reset and other non essential styles removed.
+      mainStylesheet: 'Main'
     modules:
       management:
         label: 'Neos.Neos:Modules:management.label'
         controller: 'Neos\Neos\Controller\Module\ManagementController'
         description: 'Neos.Neos:Modules:management.description'
         icon: fas fa-briefcase
+        mainStylesheet: 'Lite'
         submodules:
           workspaces:
             label: 'Neos.Neos:Modules:workspaces.label'
             controller: 'Neos\Neos\Controller\Module\Management\WorkspacesController'
             description: 'Neos.Neos:Modules:workspaces.description'
             icon: fas fa-th-large
+            mainStylesheet: 'Lite'
           history:
             label: 'Neos.Neos:Modules:history.label'
             controller: 'Neos\Neos\Controller\Module\Management\HistoryController'
             description: 'Neos.Neos:Modules:history.description'
             icon: fas fa-calendar-alt
+            mainStylesheet: 'Lite'
       administration:
         label: 'Neos.Neos:Modules:administration.label'
         controller: 'Neos\Neos\Controller\Module\AdministrationController'
         description: 'Neos.Neos:Modules:administration.description'
         icon: fas fa-cogs
+        mainStylesheet: 'Lite'
         submodules:
           users:
             label: 'Neos.Neos:Modules:users.label'
             controller: 'Neos\Neos\Controller\Module\Administration\UsersController'
             description: 'Neos.Neos:Modules:users.description'
             icon: fas fa-users
+            mainStylesheet: 'Lite'
             actions:
               new:
                 label: 'Neos.Neos:Modules:users.actions.new.label'
@@ -341,11 +350,13 @@ Neos:
             controller: 'Neos\Neos\Controller\Module\Administration\PackagesController'
             description: 'Neos.Neos:Modules:packages.description'
             icon: fas fa-archive
+            mainStylesheet: 'Lite'
           sites:
             label: 'Neos.Neos:Modules:sites.label'
             controller: 'Neos\Neos\Controller\Module\Administration\SitesController'
             description: 'Neos.Neos:Modules:sites.description'
             icon: fas fa-globe
+            mainStylesheet: 'Lite'
             actions:
               newSite:
                 label: 'Neos.Neos:Modules:sites.actions.newSite.label'
@@ -355,21 +366,25 @@ Neos:
             controller: 'Neos\Neos\Controller\Module\Administration\ConfigurationController'
             description: 'Neos.Neos:Modules:configuration.description'
             icon: fas fa-list-alt
+            mainStylesheet: 'Lite'
           dimensions:
             label: 'Neos.Neos:Modules:dimensions.label'
             controller: 'Neos\Neos\Controller\Module\Administration\DimensionController'
             description: 'Neos.Neos:Modules:dimensions.description'
             icon: fas fa-code-branch
+            mainStylesheet: 'Lite'
       user:
         label: 'Neos.Neos:Modules:user.label'
         controller: \Neos\Neos\Controller\Module\UserController
         hideInMenu: true
+        mainStylesheet: 'Lite'
         submodules:
           usersettings:
             label: 'Neos.Neos:Modules:userSettings.label'
             controller: \Neos\Neos\Controller\Module\User\UserSettingsController
             description: 'Neos.Neos:Modules:userSettings.description'
             icon: fas fa-user
+            mainStylesheet: 'Lite'
 
      # Settings for the Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
     eventLog:
