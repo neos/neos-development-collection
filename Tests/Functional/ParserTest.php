@@ -65,6 +65,62 @@ class ParserTest extends TestCase
     /**
      * @test
      */
+    public function shouldParseSingleTagWithContent(): void
+    {
+        $parser = new Parser('<div>test</div>');
+
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [],
+                        'children' => [
+                            0 => [
+                                'type' => 'text',
+                                'payload' => 'test'
+                            ]
+                        ],
+                        'selfClosing' => false
+                    ]
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldParseSingleTagWithZeroAsContent(): void
+    {
+        $parser = new Parser('<div>0</div>');
+
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [],
+                        'children' => [
+                            0 => [
+                                'type' => 'text',
+                                'payload' => '0'
+                            ]
+                        ],
+                        'selfClosing' => false
+                    ]
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
     public function shouldParseSingleSelfClosingTag(): void
     {
         $parser = new Parser('<div/>');
