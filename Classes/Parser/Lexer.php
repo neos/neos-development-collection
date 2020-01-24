@@ -49,7 +49,7 @@ class Lexer
     public function __construct($string)
     {
         $this->string = $string;
-        $this->currentCharacter = ($string !== '') ? $string{0} : null;
+        $this->currentCharacter = ($string !== '') ? $string[0] : null;
         $this->characterPosition = 0;
     }
 
@@ -250,7 +250,7 @@ class Lexer
      */
     public function rewind(): void
     {
-        $this->currentCharacter = $this->string{--$this->characterPosition};
+        $this->currentCharacter = $this->string[--$this->characterPosition];
     }
 
     /**
@@ -277,7 +277,7 @@ class Lexer
     {
         $c = $this->currentCharacter;
         if ($this->characterPosition < strlen($this->string) - 1) {
-            $this->currentCharacter = $this->string{++$this->characterPosition};
+            $this->currentCharacter = $this->string[++$this->characterPosition];
         } else {
             $this->currentCharacter = null;
         }
