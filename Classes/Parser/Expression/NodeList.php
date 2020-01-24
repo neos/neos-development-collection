@@ -82,7 +82,7 @@ class NodeList
             $currentText .= $lexer->consume();
         }
 
-        if ($lexer->isEnd() && $currentText) {
+        if ($lexer->isEnd() && $currentText !== '') {
             $contents[] = [
                 'type' => 'text',
                 'payload' => $currentText
