@@ -216,7 +216,7 @@ class AfxService
             // seperate between attributes (before the first spread), meta attributes
             // spreads and attributes lists between and after spreads
             foreach ($attributes as $attribute) {
-                if ($attribute['type'] === 'prop' && $attribute['payload']['identifier']{0} === '@') {
+                if ($attribute['type'] === 'prop' && $attribute['payload']['identifier'][0] === '@') {
                     $metaAttributes[] = $attribute;
                 } elseif ($attribute['type'] === 'prop' && $spreadIsPresent === false) {
                     $fusionAttributes[] = $attribute;
