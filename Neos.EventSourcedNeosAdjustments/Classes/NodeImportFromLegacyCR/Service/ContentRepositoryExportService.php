@@ -61,9 +61,6 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\TypeHandling;
 use Ramsey\Uuid\Uuid;
 
-/**
- * @Flow\Scope("singleton")
- */
 class ContentRepositoryExportService
 {
     /**
@@ -115,10 +112,9 @@ class ContentRepositoryExportService
     protected $nodeAggregateCommandHandler;
 
     /**
-     * @Flow\Inject
      * @var EventStore
      */
-    protected $eventStore;
+    private $eventStore;
 
     /**
      * @Flow\Inject
@@ -147,6 +143,10 @@ class ContentRepositoryExportService
      */
     private $commandResult;
 
+    public function __construct(EventStore $eventStore)
+    {
+        $this->eventStore = $eventStore;
+    }
 
     public function injectEntityManager(EntityManagerInterface $entityManager): void
     {
