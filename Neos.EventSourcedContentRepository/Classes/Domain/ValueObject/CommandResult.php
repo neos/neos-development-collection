@@ -111,7 +111,7 @@ final class CommandResult
     private function filterPublishedEventsByListener(string $listenerClassName): DomainEvents
     {
         $eventStoreId = $this->eventToListenerMappingProvider->getEventStoreIdentifierForListenerClassName($listenerClassName);
-        $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)->filter(static function(EventToListenerMapping $mapping) use ($listenerClassName) {
+        $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)->filter(static function (EventToListenerMapping $mapping) use ($listenerClassName) {
             return $mapping->getListenerClassName() === $listenerClassName;
         });
         $eventClassNames = [];

@@ -28,7 +28,6 @@ final class ClosureEventPublisher implements EventPublisherInterface
         $this->callback = $callback;
     }
 
-
     public function publish(DomainEvents $events): void
     {
         if ($this->callback !== null) {
