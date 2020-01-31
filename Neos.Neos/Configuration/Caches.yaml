@@ -10,6 +10,10 @@ Neos_Neos_XliffToJsonTranslations:
   frontend: Neos\Cache\Frontend\VariableFrontend
   backend: Neos\Cache\Backend\FileBackend
 
+Neos_Neos_NodeType_Schema:
+  frontend: Neos\Cache\Frontend\VariableFrontend
+  backend: Neos\Cache\Backend\FileBackend
+
 Neos_Neos_LoginTokenCache:
   frontend: Neos\Cache\Frontend\StringFrontend
   backend: Neos\Cache\Backend\SimpleFileBackend
