@@ -308,6 +308,8 @@ class AssetService
                             $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
                             $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
                         }
+
+                        $this->getRepository($variant)->update($variant);
                     } catch (AssetVariantGeneratorException $exception) {
                         $this->logger->error(
                             sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
@@ -321,6 +323,14 @@ class AssetService
                             $adjustment->refit($asset);
                         }
                     }
+
+                    if ($redirectHandlerEnabled) {
+                        $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
+                        $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
+                        $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
+                    }
+
+                    $this->getRepository($variant)->update($variant);
                 }
             }
         }
