@@ -309,7 +309,7 @@ class AssetService
                             $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
                         }
 
-                        $this->getRepository($variant)->update($variant);
+                        $this->getRepository($variant)->add($variant);
                     } catch (AssetVariantGeneratorException $exception) {
                         $this->logger->error(
                             sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
