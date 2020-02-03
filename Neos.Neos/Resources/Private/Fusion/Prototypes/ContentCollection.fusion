@@ -33,25 +33,30 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
 
 	attributes = Neos.Fusion:DataStructure
 
-	# The following is used to automatically append class attribute with "neos-contentcollection" needed for editing.
-	# You can disable the following line with:
-	# prototype(Neos.Neos:ContentCollection) {
-	#   attributes.class.@process.collectionClass >
-	# }
-	# in your site's Fusion if you don't need that behavior.
-	attributes.class.@process.collectionClass = Neos.Fusion:Case {
-		@context.collectionClass = 'neos-contentcollection'
+  # The following is used to automatically append class and data attribute needed for editing.
+  # You can disable the following line with:
+  # prototype(Neos.Neos:ContentCollection) {
+  #   attributes.class.@process.collectionClass >
+  # }
+  # in your site's Fusion if you don't need that behavior.
+  attributes {
+    class.@process.collectionClass = Neos.Fusion:Case {
+      @context.collectionClass = 'neos-contentcollection'
 
-		classIsString {
-			condition = ${Type.isString(value)}
-			renderer = ${String.trim(value + ' ' + collectionClass)}
-		}
+      classIsString {
+        condition = ${Type.isString(value)}
+        renderer = ${String.trim(value + ' ' + collectionClass)}
+      }
 
-		classIsArray {
-			condition = ${Type.isArray(value)}
-			renderer = ${Array.push(value, collectionClass)}
-		}
-	}
+      classIsArray {
+        condition = ${Type.isArray(value)}
+        renderer = ${Array.push(value, collectionClass)}
+      }
+    }
+
+    data-__neos-insertion-anchor = true
+    data-__neos-insertion-anchor.@if.onlyRenderInBackend = ${node.context.inBackend && node.context.currentRenderingMode.edit}
+  }
 
 	nodePath = 'to-be-set-by-user'
 
