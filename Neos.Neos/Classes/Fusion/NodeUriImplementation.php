@@ -93,7 +93,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getAdditionalParams()
     {
-        return $this->fusionValue('additionalParams');
+        return array_merge($this->fusionValue('additionalParams'), $this->fusionValue('arguments'));
     }
 
     /**
