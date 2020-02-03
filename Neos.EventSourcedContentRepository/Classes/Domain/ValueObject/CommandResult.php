@@ -22,6 +22,7 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvider;
 use Neos\EventSourcing\EventListener\Mapping\EventToListenerMapping;
+use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -57,6 +58,12 @@ final class CommandResult
      */
     protected $eventToListenerMappingProvider;
 
+    /**
+     * @Flow\Inject
+     * @var DeferEventPublisher
+     */
+    protected $eventPublisher;
+
     protected function __construct(DomainEvents $publishedEvents)
     {
         $this->publishedEvents = $publishedEvents;
@@ -80,7 +87,7 @@ final class CommandResult
 
     public function blockUntilProjectionsAreUpToDate(): void
     {
-        //$this->eventListenerTrigger->invoke();
+        $this->eventPublisher->invoke();
 
         $publishedEventsForGraphProjector = $this->filterPublishedEventsByListener(GraphProjector::class);
         self::blockProjector($publishedEventsForGraphProjector, $this->graphProjector);
