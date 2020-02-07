@@ -151,9 +151,7 @@ final class WorkspaceCommandHandler
             throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $command->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513890708);
         }
 
-        // TODO: CONCEPT OF EDITING SESSION IS TOTALLY MISSING SO FAR!!!!
         // When the workspace is created, we first have to fork the content stream
-
         $commandResult = CommandResult::createEmpty();
         $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
@@ -297,11 +295,7 @@ final class WorkspaceCommandHandler
         // - ensure that no other changes have been done in the meantime in the base content stream
 
 
-        // NOTE: we need to use the ContentStream Event Stream as CATEGORY STREAM,
-        // meaning we will search for all streams which have a PREFIX of the ContentStream;
-        // so that we also find nested streams like the nested NodeAggregate streams, e.g.
-        // "Neos.ContentRepository:ContentStream:b8f6042e-36c6-4bca-8c8e-2268e56a928e:NodeAggregate:new2-agg"
-        $streamName = StreamName::forCategory((string)$contentStreamName->getEventStreamName());
+        $streamName = StreamName::fromString((string)$contentStreamName->getEventStreamName());
 
         /* @var $workspaceContentStream EventEnvelope[] */
         $workspaceContentStream = iterator_to_array($this->eventStore->load($streamName));
@@ -745,9 +739,10 @@ final class WorkspaceCommandHandler
      */
     public function handleDiscardWorkspace(Command\DiscardWorkspace $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
-
 
         $newContentStream = ContentStreamIdentifier::create();
         $this->contentStreamCommandHandler->handleForkContentStream(
@@ -760,7 +755,6 @@ final class WorkspaceCommandHandler
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
-                // TODO: PROJECTION: WorkspaceWasRebased -> WorkspaceWasDiscarded
                 new WorkspaceWasDiscarded(
                     $command->getWorkspaceName(),
                     $newContentStream,

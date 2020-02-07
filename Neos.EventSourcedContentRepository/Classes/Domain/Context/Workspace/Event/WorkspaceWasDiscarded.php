@@ -38,7 +38,7 @@ class WorkspaceWasDiscarded implements DomainEventInterface
     private $currentContentStreamIdentifier;
 
     /**
-     * The old content stream (which contained the discarded data)
+     * The old content stream (which contains the discarded data)
      *
      * @var ContentStreamIdentifier
      */
