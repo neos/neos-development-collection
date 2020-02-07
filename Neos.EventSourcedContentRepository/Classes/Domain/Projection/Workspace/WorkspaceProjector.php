@@ -23,7 +23,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceW
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
+use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Scope("singleton")
+ */
 class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';

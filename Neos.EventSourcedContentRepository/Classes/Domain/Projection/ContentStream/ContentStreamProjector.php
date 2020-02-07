@@ -26,7 +26,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceW
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPublished;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
+use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Scope("singleton")
+ */
 class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_contentstream_v1';

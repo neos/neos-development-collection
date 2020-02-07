@@ -29,12 +29,3 @@ Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ContentRepositor
         arguments:
           1:
             value: 'ContentRepository'
-
-Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ImportProjectionPerformanceService:
-  properties:
-    eventStore:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-        arguments:
-          1:
-            value: 'ContentRepository'
