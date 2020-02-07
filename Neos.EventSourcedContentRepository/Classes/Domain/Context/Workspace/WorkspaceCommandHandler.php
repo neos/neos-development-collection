@@ -503,6 +503,10 @@ final class WorkspaceCommandHandler
      */
     private function applyCommand($command): CommandResult
     {
+
+        // TODO: try catch logic around applyCommand -> blockUntilProjectionsAreUpToDate.
+        // TODO: then put it into special error stream; and be sure to ABORT the outer logic correctly!
+
         // TODO: Add this logic to the NodeAggregateCommandHandler; so that we the command can be applied.
         switch (get_class($command)) {
             case ChangeNodeAggregateName::class:
