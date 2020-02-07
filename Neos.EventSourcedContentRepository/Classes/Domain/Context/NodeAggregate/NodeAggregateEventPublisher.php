@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\PublishableToOtherContentStreamsInterface;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -23,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Ensure all invariants are held for Node-based events:
  *
- * - all node events need to implement CopyableAcrossContentStreamsInterface; otherwise
+ * - all node events need to implement PublishableToOtherContentStreamsInterface; otherwise
  *   they could not be published to the live workspace.
  * - the first event gets a metadata "commandClass" and "commandPayload"; so it can be rebased.
  *
@@ -114,8 +115,8 @@ final class NodeAggregateEventPublisher
         foreach ($events as $event) {
             if ($event instanceof DecoratedEvent) {
                 $undecoratedEvent = $event->getWrappedEvent();
-                if (!$undecoratedEvent instanceof CopyableAcrossContentStreamsInterface) {
-                    throw new \RuntimeException(sprintf('TODO: Event %s has to implement CopyableAcrossContentStreamsInterface', get_class($event)));
+                if (!$undecoratedEvent instanceof PublishableToOtherContentStreamsInterface) {
+                    throw new \RuntimeException(sprintf('TODO: Event %s has to implement PublishableToOtherContentStreamsInterface', get_class($event)));
                 }
             } else {
                 throw new \RuntimeException(sprintf('TODO: You need to use DecoratedEvent, given: %s', get_class($event)));

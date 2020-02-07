@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Comm
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RebasableToOtherContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
@@ -33,7 +33,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  *
  * @Flow\Proxy(false)
  */
-final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNodeAddressInterface, CopyableAcrossContentStreamsInterface
+final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNodeAddressInterface, RebasableToOtherContentStreamsInterface
 {
     /**
      * The identifier of the content stream this command is to be handled in

@@ -40,6 +40,8 @@ class WorkspaceWasPartiallyPublished implements DomainEventInterface
     private $targetWorkspaceName;
 
     /**
+     * TODO: this is on the TARGET WS; not the SOURCE WS!!
+     *
      * The new content stream for the $sourceWorkspaceName
      *
      * @var ContentStreamIdentifier

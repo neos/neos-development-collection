@@ -8,14 +8,12 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
-
 /**
  * A node aggregate was moved in a content stream as defined in the node move mappings
  *
  * @Flow\Proxy(false)
  */
-final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWasMoved implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier

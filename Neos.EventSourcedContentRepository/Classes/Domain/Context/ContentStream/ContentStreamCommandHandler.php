@@ -24,6 +24,8 @@ use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
 /**
+ * INTERNALS. Only to be used from WorkspaceCommandHandler!!!
+ *
  * @Flow\Scope("singleton")
  * ContentStreamCommandHandler
  */

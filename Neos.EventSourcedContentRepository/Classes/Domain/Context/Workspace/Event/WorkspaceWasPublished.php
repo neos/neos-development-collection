@@ -43,6 +43,8 @@ class WorkspaceWasPublished implements DomainEventInterface
     private $targetWorkspaceName;
 
     /**
+     * TODO: FOR SOURCE AND FOR TARGET!?!?
+     *
      * The new, empty content stream identifier of $sourceWorkspaceName, (after the publish was successful)
      *
      * @var ContentStreamIdentifier

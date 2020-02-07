@@ -17,12 +17,10 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
-
 /**
  * @Flow\Proxy(false)
  */
-final class NodeAggregateWasRemoved implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWasRemoved implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier

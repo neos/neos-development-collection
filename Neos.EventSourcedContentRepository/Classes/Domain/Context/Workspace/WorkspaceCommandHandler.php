@@ -24,11 +24,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\Co
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RebasableToOtherContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\PublishableToOtherContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
@@ -290,7 +291,7 @@ final class WorkspaceCommandHandler
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($baseContentStreamIdentifier);
 
         // TODO: please check the code below in-depth. it does:
-        // - copy all events from the "user" content stream which implement "CopyableAcrossContentStreamsInterface"
+        // - copy all events from the "user" content stream which implement "PublishableToOtherContentStreamsInterface"
         // - extract the initial ContentStreamWasForked event, to read the version of the source content stream when the fork occurred
         // - ensure that no other changes have been done in the meantime in the base content stream
 
@@ -303,7 +304,7 @@ final class WorkspaceCommandHandler
         $events = DomainEvents::createEmpty();
         foreach ($workspaceContentStream as $eventEnvelope) {
             $event = $eventEnvelope->getDomainEvent();
-            if ($event instanceof CopyableAcrossContentStreamsInterface) {
+            if ($event instanceof PublishableToOtherContentStreamsInterface) {
                 $events = $events->appendEvent(
                 // We need to add the event metadata here for rebasing in nested workspace situations (and for exporting)
                     DecoratedEvent::addIdentifier(
@@ -388,8 +389,8 @@ final class WorkspaceCommandHandler
 
             $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
             foreach ($originalCommands as $i => $originalCommand) {
-                if (!($originalCommand instanceof CopyableAcrossContentStreamsInterface)) {
-                    throw new \RuntimeException('ERROR: The command ' . get_class($originalCommand) . ' does not implement CopyableAcrossContentStreamsInterface; but it should!');
+                if (!($originalCommand instanceof RebasableToOtherContentStreamsInterface)) {
+                    throw new \RuntimeException('ERROR: The command ' . get_class($originalCommand) . ' does not implement RebasableToOtherContentStreamsInterface; but it should!');
                 }
 
                 // try to apply the command on the rebased content stream
@@ -565,9 +566,9 @@ final class WorkspaceCommandHandler
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
-        /** @var CopyableAcrossContentStreamsInterface[] $matchingCommands */
+        /** @var RebasableToOtherContentStreamsInterface[] $matchingCommands */
         $matchingCommands = [];
-        /** @var CopyableAcrossContentStreamsInterface[] $remainingCommands */
+        /** @var RebasableToOtherContentStreamsInterface[] $remainingCommands */
         $remainingCommands = [];
 
         foreach ($originalCommands as $originalCommand) {
@@ -589,8 +590,8 @@ final class WorkspaceCommandHandler
         )->blockUntilProjectionsAreUpToDate();
 
         foreach ($matchingCommands as $matchingCommand) {
-            if (!($matchingCommand instanceof CopyableAcrossContentStreamsInterface)) {
-                throw new \RuntimeException('ERROR: The command ' . get_class($matchingCommand) . ' does not implement CopyableAcrossContentStreamsInterface; but it should!');
+            if (!($matchingCommand instanceof RebasableToOtherContentStreamsInterface)) {
+                throw new \RuntimeException('ERROR: The command ' . get_class($matchingCommand) . ' does not implement RebasableToOtherContentStreamsInterface; but it should!');
             }
 
             $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream))->blockUntilProjectionsAreUpToDate();
@@ -670,7 +671,7 @@ final class WorkspaceCommandHandler
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
-        /** @var CopyableAcrossContentStreamsInterface[] $commandsToKeep */
+        /** @var RebasableToOtherContentStreamsInterface[] $commandsToKeep */
         $commandsToKeep = [];
 
         foreach ($originalCommands as $originalCommand) {

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -15,9 +15,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 
 /**
- * This interface is implemented by commands and events which allow to be copied to a different content stream.
+ * This interface is implemented by commands which can be rebased to other Content Streams. This is basically all
+ * node-based commands.
  */
-interface CopyableAcrossContentStreamsInterface
+interface RebasableToOtherContentStreamsInterface
 {
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier);
 }

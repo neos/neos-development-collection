@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
@@ -29,7 +28,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
     /**
      * The content stream identifier the node aggregate and its node were created in
