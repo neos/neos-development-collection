@@ -5,7 +5,8 @@ Neos:
         ignoredClasses:
           'Neos\\ContentGraph\\DoctrineDbalAdapter.*': true
   EventSourcing:
-    EventListener:
-      listeners:
-        'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector':
-          eventStore: 'ContentRepository'
+    EventStore:
+      stores:
+        'ContentRepository':
+          listeners:
+            'Neos\ContentGraph\.*': true

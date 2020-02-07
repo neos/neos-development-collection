@@ -118,7 +118,7 @@ final class NodeAggregateEventPublisher
                     throw new \RuntimeException(sprintf('TODO: Event %s has to implement CopyableAcrossContentStreamsInterface', get_class($event)));
                 }
             } else {
-                throw new \RuntimeException(sprintf('TODO: You need to use DecoratedEvent', get_class($event)));
+                throw new \RuntimeException(sprintf('TODO: You need to use DecoratedEvent, given: %s', get_class($event)));
             }
 
 

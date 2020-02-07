@@ -92,3 +92,12 @@ Neos\EventSourcedContentRepository\Command\ContentStreamCommandController:
         arguments:
           1:
             value: 'ContentRepository'
+
+Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult:
+  properties:
+    'eventPublisher':
+      object:
+        factoryObjectName: Neos\EventSourcing\EventPublisher\DefaultEventPublisherFactory
+        arguments:
+          1:
+            value: 'ContentRepository'

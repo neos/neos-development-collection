@@ -20,8 +20,9 @@ use Neos\EventSourcedContentRepository\Infrastructure\Projection\ProcessedEvents
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventListener\EventListenerLocator;
-use Neos\EventSourcing\EventStore\EventListenerTrigger\EventListenerTrigger;
+use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvider;
+use Neos\EventSourcing\EventListener\Mapping\EventToListenerMapping;
+use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -53,15 +54,15 @@ final class CommandResult
 
     /**
      * @Flow\Inject
-     * @var EventListenerLocator
+     * @var DefaultEventToListenerMappingProvider
      */
-    protected $eventListenerLocator;
+    protected $eventToListenerMappingProvider;
 
     /**
      * @Flow\Inject
-     * @var EventListenerTrigger
+     * @var DeferEventPublisher
      */
-    protected $eventListenerTrigger;
+    protected $eventPublisher;
 
     protected function __construct(DomainEvents $publishedEvents)
     {
@@ -86,7 +87,7 @@ final class CommandResult
 
     public function blockUntilProjectionsAreUpToDate(): void
     {
-        $this->eventListenerTrigger->invoke();
+        $this->eventPublisher->invoke();
 
         $publishedEventsForGraphProjector = $this->filterPublishedEventsByListener(GraphProjector::class);
         self::blockProjector($publishedEventsForGraphProjector, $this->graphProjector);
@@ -109,20 +110,27 @@ final class CommandResult
                     $ids .= '   ' . $p->getIdentifier();
                 }
 
-                throw new \RuntimeException('TIMEOUT while waiting for events: ' . $ids, 1550232279);
+                throw new \RuntimeException(sprintf('TIMEOUT while waiting for event(s) %s for projector "%s"', $ids, get_class($projector)), 1550232279);
             }
         }
     }
 
     private function filterPublishedEventsByListener(string $listenerClassName): DomainEvents
     {
-        $eventClassNames = $this->eventListenerLocator->getEventClassNamesByListenerClassName($listenerClassName);
+        $eventStoreId = $this->eventToListenerMappingProvider->getEventStoreIdentifierForListenerClassName($listenerClassName);
+        $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)->filter(static function (EventToListenerMapping $mapping) use ($listenerClassName) {
+            return $mapping->getListenerClassName() === $listenerClassName;
+        });
+        $eventClassNames = [];
+        foreach ($listenerMappings as $mapping) {
+            $eventClassNames[$mapping->getEventClassName()] = true;
+        }
 
-        return $this->publishedEvents->filter(function (DomainEventInterface $event) use ($eventClassNames) {
+        return $this->publishedEvents->filter(static function (DomainEventInterface $event) use ($eventClassNames) {
             if ($event instanceof DecoratedEvent) {
                 $event = $event->getWrappedEvent();
             }
-            return in_array(get_class($event), $eventClassNames);
+            return array_key_exists(get_class($event), $eventClassNames);
         });
     }
 }
