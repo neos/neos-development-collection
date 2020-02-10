@@ -16,7 +16,6 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Media\Domain\Model\Tag;
-use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * This converter transforms Neos.Media Tag instances to arrays.
