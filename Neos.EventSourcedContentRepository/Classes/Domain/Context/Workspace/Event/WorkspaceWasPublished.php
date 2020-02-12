@@ -98,6 +98,4 @@ class WorkspaceWasPublished implements DomainEventInterface
     {
         return $this->previousSourceContentStreamIdentifier;
     }
-
-
 }

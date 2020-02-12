@@ -455,7 +455,6 @@ final class WorkspaceCommandHandler
 
             return CommandResult::fromPublishedEvents($event);
         }
-
     }
 
     /**
