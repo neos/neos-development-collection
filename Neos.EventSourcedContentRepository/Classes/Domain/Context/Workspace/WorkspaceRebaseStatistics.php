@@ -18,7 +18,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace;
  */
 final class WorkspaceRebaseStatistics
 {
-
     protected $totalNumberOfAppliedCommands = 0;
 
     /**

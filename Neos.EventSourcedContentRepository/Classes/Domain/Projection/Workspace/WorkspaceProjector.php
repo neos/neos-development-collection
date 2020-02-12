@@ -113,7 +113,6 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
     public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event)
     {
         $this->markWorkspaceAsOutdatedConflict($event->getWorkspaceName());
-
     }
 
     private function updateContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier, WorkspaceName $workspaceName): void
@@ -171,5 +170,4 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         parent::reset();
         $this->getDatabaseConnection()->exec('TRUNCATE ' . self::TABLE_NAME);
     }
-
 }
