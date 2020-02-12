@@ -9,9 +9,9 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     'Neos.ContentRepository:Root': {}
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                     | Value           |
-      | workspaceName           | "live"          |
-      | contentStreamIdentifier | "cs-identifier" |
+      | Key                        | Value           |
+      | workspaceName              | "live"          |
+      | newContentStreamIdentifier | "cs-identifier" |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
@@ -30,17 +30,17 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | Key                     | Value                |
       | workspaceName           | "user-test"          |
       | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
     Then the content stream "user-cs-identifier" has state "IN_USE_BY_WORKSPACE"
 
   Scenario: when rebasing a nested workspace, the new content stream will be marked as IN_USE_BY_WORKSPACE; and the old content stream is NO_LONGER_IN_USE.
     When the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
@@ -54,10 +54,10 @@ Feature: If content streams are not in use anymore by the workspace, they can be
 
   Scenario: when pruning content streams, NO_LONGER_IN_USE content streams will be properly cleaned from the graph projection.
     When the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
@@ -77,10 +77,10 @@ Feature: If content streams are not in use anymore by the workspace, they can be
   Scenario: NO_LONGER_IN_USE content streams can be cleaned up completely (simple case)
 
     When the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
@@ -98,16 +98,16 @@ Feature: If content streams are not in use anymore by the workspace, they can be
   Scenario: NO_LONGER_IN_USE content streams are only cleaned up if no other content stream which is still in use depends on it
     # we build a "review" workspace, and then a "user-test" workspace depending on the review workspace.
     When the command CreateWorkspace is executed with payload:
-      | Key                     | Value                  |
-      | workspaceName           | "review"               |
-      | baseWorkspaceName       | "live"                 |
-      | contentStreamIdentifier | "review-cs-identifier" |
+      | Key                        | Value                  |
+      | workspaceName              | "review"               |
+      | baseWorkspaceName          | "live"                 |
+      | newContentStreamIdentifier | "review-cs-identifier" |
     And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "review"             |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "review"             |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
     # now, we rebase the "review" workspace, effectively marking the "review-cs-identifier" content stream as NO_LONGER_IN_USE.

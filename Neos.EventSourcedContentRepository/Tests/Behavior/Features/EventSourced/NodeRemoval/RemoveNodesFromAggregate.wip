@@ -29,7 +29,7 @@ Feature: Remove Nodes from Aggregate
       | workspaceTitle           | "Live"                                 |
       | workspaceDescription     | "The live workspace"                   |
       | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
-      | contentStreamIdentifier  | "live-cs-identifier"                   |
+      | newContentStreamIdentifier  | "live-cs-identifier"                   |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |

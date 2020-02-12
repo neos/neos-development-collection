@@ -17,9 +17,9 @@ Feature: ForkContentStream Without Dimensions
           type: string
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                     | Value           |
-      | workspaceName           | "live"          |
-      | contentStreamIdentifier | "cs-identifier" |
+      | Key                        | Value           |
+      | workspaceName              | "live"          |
+      | newContentStreamIdentifier | "cs-identifier" |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |

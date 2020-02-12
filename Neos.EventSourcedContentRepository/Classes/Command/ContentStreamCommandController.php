@@ -185,6 +185,12 @@ class ContentStreamCommandController extends CommandController
     {
         $unusedContentStreams = $this->contentStreamPruner->pruneRemovedFromEventStream();
 
-        // TODO throw away events
+        if (!count($unusedContentStreams)) {
+            $this->outputLine('There are no unused content streams.');
+        } else {
+            foreach ($unusedContentStreams as $contentStream) {
+                $this->outputFormatted('Removed events for %s', [$contentStream]);
+            }
+        }
     }
 }

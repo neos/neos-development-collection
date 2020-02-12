@@ -199,4 +199,30 @@ final class WorkspaceFinder
 
         return $result;
     }
+
+    /**
+     * @return Workspace[]
+     */
+    public function findOutdated(): array
+    {
+        $result = [];
+
+        $connection = $this->client->getConnection();
+        $workspaceRows = $connection->executeQuery(
+            '
+                SELECT * FROM neos_contentrepository_projection_workspace_v1 WHERE status = :outdated
+            ',
+            [
+                'outdated' => Workspace::STATUS_OUTDATED
+            ]
+        )->fetchAll();
+
+        foreach ($workspaceRows as $workspaceRow) {
+            $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
+            /** @var Workspace $similarlyNamedWorkspace */
+            $result[(string)$similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+        }
+
+        return $result;
+    }
 }

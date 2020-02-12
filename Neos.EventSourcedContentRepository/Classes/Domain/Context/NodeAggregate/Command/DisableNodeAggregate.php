@@ -15,7 +15,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -23,7 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 /**
  * Disable the given node aggregate in the given content stream in a dimension space point using a given strategy
  */
-final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
+final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier

@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -20,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-class WorkspaceWasRebased implements DomainEventInterface
+class WorkspaceWasPartiallyDiscarded implements DomainEventInterface
 {
     /**
      * @var WorkspaceName
@@ -28,22 +29,28 @@ class WorkspaceWasRebased implements DomainEventInterface
     private $workspaceName;
 
     /**
-     * The new content stream identifier (after the rebase was successful)
+     * The new content stream; containing the data which we want to keep
      *
      * @var ContentStreamIdentifier
      */
     private $newContentStreamIdentifier;
 
     /**
-     * The old content stream identifier (which is not active anymore now)
+     * The old content stream, which contains ALL the data (discarded and non-discarded)
      *
      * @var ContentStreamIdentifier
      */
     private $previousContentStreamIdentifier;
 
+    /**
+     * TODO build
+     *
+     * @var NodeAddress[]
+     */
+    private $discardedNodeAddresses;
 
     /**
-     * WorkspaceWasRebased constructor.
+     * WorkspaceWasDiscarded constructor.
      * @param WorkspaceName $workspaceName
      * @param ContentStreamIdentifier $newContentStreamIdentifier
      * @param ContentStreamIdentifier $previousContentStreamIdentifier

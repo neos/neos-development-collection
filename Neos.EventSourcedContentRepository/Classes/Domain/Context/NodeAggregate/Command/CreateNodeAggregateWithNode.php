@@ -17,7 +17,6 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
@@ -34,7 +33,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  *
  * @Flow\Proxy(false)
  */
-final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
+final class CreateNodeAggregateWithNode implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * The identifier of the content stream this command is to be handled in

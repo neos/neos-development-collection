@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-class WorkspaceWasRebased implements DomainEventInterface
+class WorkspaceWasDiscarded implements DomainEventInterface
 {
     /**
      * @var WorkspaceName
@@ -28,22 +28,21 @@ class WorkspaceWasRebased implements DomainEventInterface
     private $workspaceName;
 
     /**
-     * The new content stream identifier (after the rebase was successful)
+     * The new, empty, content stream
      *
      * @var ContentStreamIdentifier
      */
     private $newContentStreamIdentifier;
 
     /**
-     * The old content stream identifier (which is not active anymore now)
+     * The old content stream (which contains the discarded data)
      *
      * @var ContentStreamIdentifier
      */
     private $previousContentStreamIdentifier;
 
-
     /**
-     * WorkspaceWasRebased constructor.
+     * WorkspaceWasDiscarded constructor.
      * @param WorkspaceName $workspaceName
      * @param ContentStreamIdentifier $newContentStreamIdentifier
      * @param ContentStreamIdentifier $previousContentStreamIdentifier

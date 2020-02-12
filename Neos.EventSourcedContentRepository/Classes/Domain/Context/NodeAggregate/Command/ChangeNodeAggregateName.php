@@ -15,11 +15,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
-final class ChangeNodeAggregateName implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
+final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier

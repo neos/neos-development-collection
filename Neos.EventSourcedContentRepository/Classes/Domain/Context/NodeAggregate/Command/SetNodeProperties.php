@@ -14,13 +14,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
-final class SetNodeProperties implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
+final class SetNodeProperties implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier

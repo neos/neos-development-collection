@@ -25,7 +25,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
@@ -909,13 +908,13 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param CopyableAcrossContentStreamsInterface $event
+     * @param $event
      * @param callable $operations
      * @return mixed
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    protected function updateNodeWithCopyOnWrite(CopyableAcrossContentStreamsInterface $event, callable $operations)
+    protected function updateNodeWithCopyOnWrite($event, callable $operations)
     {
         switch (get_class($event)) {
             case NodeReferencesWereSet::class:

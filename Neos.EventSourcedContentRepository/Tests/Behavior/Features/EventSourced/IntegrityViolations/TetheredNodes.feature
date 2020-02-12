@@ -26,7 +26,7 @@ Feature: Tethered Nodes integrity violations
       | workspaceName                  | "live"               |
       | workspaceTitle                 | "Live"               |
       | workspaceDescription           | "The live workspace" |
-      | currentContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamIdentifier     | "cs-identifier"      |
       | initiatingUserIdentifier       | "system-user"        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                                                                                                                                                     |

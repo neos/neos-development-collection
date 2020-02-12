@@ -120,6 +120,8 @@ class PublishingService
         $command = new RebaseWorkspace(
             $workspaceName
         );
+
+        // TODO: only rebase if necessary!
         $this->workspaceCommandHandler->handleRebaseWorkspace($command)->blockUntilProjectionsAreUpToDate();
 
         $command = new PublishWorkspace(

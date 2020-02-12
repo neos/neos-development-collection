@@ -17,14 +17,13 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 
 /**
  * A node aggregate was disabled
  *
  * @Flow\Proxy(false)
  */
-final class NodeAggregateWasDisabled implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWasDisabled implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
     /**
      * The identifier of the content stream the node aggregate was disabled in

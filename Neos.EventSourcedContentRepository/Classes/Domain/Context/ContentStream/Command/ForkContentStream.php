@@ -20,6 +20,8 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 final class ForkContentStream
 {
     /**
+     * TODO: TargetContentStreamIdentifier??
+     *
      * Content stream identifier for the new content stream
      *
      * @var ContentStreamIdentifier

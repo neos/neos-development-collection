@@ -18,12 +18,12 @@ Feature: Publishing moved nodes without dimensions
     'Neos.ContentRepository.Testing:Document': []
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                     | Value           |
-      | workspaceName           | "live"          |
-      | contentStreamIdentifier | "cs-identifier" |
+      | Key                        | Value           |
+      | workspaceName              | "live"          |
+      | newContentStreamIdentifier | "cs-identifier" |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                  |
+      | Key                        | Value                                  |
       | contentStreamIdentifier     | "cs-identifier"                        |
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
@@ -63,10 +63,10 @@ Feature: Publishing moved nodes without dimensions
     And the graph projection is fully up to date
 
     And the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user"               |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user"               |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
   Scenario: Publish the move of a node to the end of its siblings
