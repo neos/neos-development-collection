@@ -23,11 +23,11 @@ Feature: Node References with Dimensions
     """
     And the command CreateRootWorkspace is executed with payload:
       | Key                      | Value                                  |
-      | workspaceName            | "live"                                 |
-      | workspaceTitle           | "Live"                                 |
-      | workspaceDescription     | "The live workspace"                   |
-      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
-      | contentStreamIdentifier  | "cs-identifier"                        |
+      | workspaceName              | "live"                                 |
+      | workspaceTitle             | "Live"                                 |
+      | workspaceDescription       | "The live workspace"                   |
+      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamIdentifier | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |

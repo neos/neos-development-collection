@@ -30,13 +30,9 @@ class WorkspaceRebaseFailed implements DomainEventInterface
     /**
      * The content stream on which we could not apply the source content stream's commands -- i.e. the "failed" state.
      *
-     * TODO: rename to "candidateContentStreamIdentifier"
-     *
-     * TODO: NAMING IS NOT NICE YET HERE!
-     *
      * @var ContentStreamIdentifier
      */
-    private $targetContentStreamIdentifier;
+    private $candidateContentStreamIdentifier;
 
     /**
      * The content stream which we tried to rebase
@@ -46,16 +42,23 @@ class WorkspaceRebaseFailed implements DomainEventInterface
     private $sourceContentStreamIdentifier;
 
     /**
+     * @var array
+     */
+    private $errors;
+
+    /**
      * WorkspaceRebaseFailed constructor.
      * @param WorkspaceName $workspaceName
-     * @param ContentStreamIdentifier $targetContentStreamIdentifier
+     * @param ContentStreamIdentifier $candidateContentStreamIdentifier
      * @param ContentStreamIdentifier $sourceContentStreamIdentifier
+     * @param array $errors
      */
-    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $targetContentStreamIdentifier, ContentStreamIdentifier $sourceContentStreamIdentifier)
+    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $candidateContentStreamIdentifier, ContentStreamIdentifier $sourceContentStreamIdentifier, array $errors)
     {
         $this->workspaceName = $workspaceName;
-        $this->targetContentStreamIdentifier = $targetContentStreamIdentifier;
+        $this->candidateContentStreamIdentifier = $candidateContentStreamIdentifier;
         $this->sourceContentStreamIdentifier = $sourceContentStreamIdentifier;
+        $this->errors = $errors;
     }
 
     /**
@@ -69,9 +72,9 @@ class WorkspaceRebaseFailed implements DomainEventInterface
     /**
      * @return ContentStreamIdentifier
      */
-    public function getTargetContentStreamIdentifier(): ContentStreamIdentifier
+    public function getCandidateContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->targetContentStreamIdentifier;
+        return $this->candidateContentStreamIdentifier;
     }
 
     /**
@@ -80,5 +83,13 @@ class WorkspaceRebaseFailed implements DomainEventInterface
     public function getSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->sourceContentStreamIdentifier;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 }

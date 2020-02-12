@@ -55,7 +55,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         $this->getDatabaseConnection()->update(self::TABLE_NAME, [
             'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
         ], [
-            'contentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
+            'contentStreamIdentifier' => $event->getNewContentStreamIdentifier()
         ]);
     }
 
@@ -65,7 +65,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         $this->getDatabaseConnection()->update(self::TABLE_NAME, [
             'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
         ], [
-            'contentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
+            'contentStreamIdentifier' => $event->getNewContentStreamIdentifier()
         ]);
     }
 
@@ -81,7 +81,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
     public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event)
     {
         // the new content stream is in use now
-        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
+        $this->updateStateForContentStream($event->getNewContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
@@ -90,7 +90,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
     public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event)
     {
         // the new content stream is in use now
-        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
+        $this->updateStateForContentStream($event->getNewContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
@@ -99,25 +99,25 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
     public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event)
     {
         // the new content stream is in use now
-        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
+        $this->updateStateForContentStream($event->getNewSourceContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
 
         // the previous content stream is no longer in use
-        $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
+        $this->updateStateForContentStream($event->getPreviousSourceContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
     }
 
     public function whenWorkspaceWasPublished(WorkspaceWasPublished $event)
     {
         // the new content stream is in use now
-        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
+        $this->updateStateForContentStream($event->getNewSourceContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
 
         // the previous content stream is no longer in use
-        $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
+        $this->updateStateForContentStream($event->getPreviousSourceContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
     }
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
     {
         // the new content stream is in use now
-        $this->updateStateForContentStream($event->getCurrentContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
+        $this->updateStateForContentStream($event->getNewContentStreamIdentifier(), ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE);
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
@@ -125,7 +125,7 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
 
     public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event)
     {
-        $this->updateStateForContentStream($event->getTargetContentStreamIdentifier(), ContentStreamFinder::STATE_REBASE_ERROR);
+        $this->updateStateForContentStream($event->getCandidateContentStreamIdentifier(), ContentStreamFinder::STATE_REBASE_ERROR);
     }
 
     public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event)

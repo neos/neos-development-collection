@@ -13,10 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -35,7 +33,7 @@ class WorkspaceWasPartiallyDiscarded implements DomainEventInterface
      *
      * @var ContentStreamIdentifier
      */
-    private $currentContentStreamIdentifier;
+    private $newContentStreamIdentifier;
 
     /**
      * The old content stream, which contains ALL the data (discarded and non-discarded)
@@ -45,15 +43,22 @@ class WorkspaceWasPartiallyDiscarded implements DomainEventInterface
     private $previousContentStreamIdentifier;
 
     /**
+     * TODO build
+     *
+     * @var NodeAddress[]
+     */
+    private $discardedNodeAddresses;
+
+    /**
      * WorkspaceWasDiscarded constructor.
      * @param WorkspaceName $workspaceName
-     * @param ContentStreamIdentifier $currentContentStreamIdentifier
+     * @param ContentStreamIdentifier $newContentStreamIdentifier
      * @param ContentStreamIdentifier $previousContentStreamIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $currentContentStreamIdentifier, ContentStreamIdentifier $previousContentStreamIdentifier)
+    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $newContentStreamIdentifier, ContentStreamIdentifier $previousContentStreamIdentifier)
     {
         $this->workspaceName = $workspaceName;
-        $this->currentContentStreamIdentifier = $currentContentStreamIdentifier;
+        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
         $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
     }
 
@@ -68,9 +73,9 @@ class WorkspaceWasPartiallyDiscarded implements DomainEventInterface
     /**
      * @return ContentStreamIdentifier
      */
-    public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
+    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->currentContentStreamIdentifier;
+        return $this->newContentStreamIdentifier;
     }
 
     /**

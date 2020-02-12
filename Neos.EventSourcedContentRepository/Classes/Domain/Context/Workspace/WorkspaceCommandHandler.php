@@ -156,7 +156,7 @@ final class WorkspaceCommandHandler
         $commandResult = CommandResult::createEmpty();
         $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
-                $command->getContentStreamIdentifier(),
+                $command->getNewContentStreamIdentifier(),
                 $baseWorkspace->getCurrentContentStreamIdentifier()
             )
         ));
@@ -170,7 +170,7 @@ final class WorkspaceCommandHandler
                     $command->getWorkspaceTitle(),
                     $command->getWorkspaceDescription(),
                     $command->getInitiatingUserIdentifier(),
-                    $command->getContentStreamIdentifier(),
+                    $command->getNewContentStreamIdentifier(),
                     $command->getWorkspaceOwner()
                 ),
                 Uuid::uuid4()->toString()
@@ -198,7 +198,7 @@ final class WorkspaceCommandHandler
         }
 
         $commandResult = CommandResult::createEmpty();
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+        $contentStreamIdentifier = $command->getNewContentStreamIdentifier();
         $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleCreateContentStream(
             new CreateContentStream(
                 $contentStreamIdentifier,
@@ -384,46 +384,47 @@ final class WorkspaceCommandHandler
             )
         )->blockUntilProjectionsAreUpToDate();
 
-        try {
-            $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
 
-            $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
-            foreach ($originalCommands as $i => $originalCommand) {
-                if (!($originalCommand instanceof RebasableToOtherContentStreamsInterface)) {
-                    throw new \RuntimeException('ERROR: The command ' . get_class($originalCommand) . ' does not implement RebasableToOtherContentStreamsInterface; but it should!');
-                }
-
-                // try to apply the command on the rebased content stream
-                $commandToRebase = $originalCommand->createCopyForContentStream($rebasedContentStream);
-                try {
-                    $this->applyCommand($commandToRebase)->blockUntilProjectionsAreUpToDate();
-                } catch (\Exception $e) {
-                    $fullCommandListSoFar = '';
-                    for ($a = 0; $a <= $i; $a++) {
-                        $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
-
-                        if ($originalCommands[$a] instanceof \JsonSerializable) {
-                            $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
-                        }
-                    }
-                    throw new WorkspaceCannotBeRebased(
-                        sprintf(
-                            "The content stream %s cannot be rebased. Error with command %d (%s) - see nested exception for details.\n\n The base workspace %s is at content stream %s.\n The full list of commands applied so far is: %s",
-                            $workspaceContentStreamName,
-                            $i,
-                            get_class($commandToRebase),
-                            $baseWorkspace->getWorkspaceName(),
-                            $baseWorkspace->getCurrentContentStreamIdentifier(),
-                            $fullCommandListSoFar
-                        ),
-                        1568827894,
-                        $e
-                    );
-                }
+        $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
+        $rebaseStatistics = new WorkspaceRebaseStatistics();
+        foreach ($originalCommands as $i => $originalCommand) {
+            if (!($originalCommand instanceof RebasableToOtherContentStreamsInterface)) {
+                throw new \RuntimeException('ERROR: The command ' . get_class($originalCommand) . ' does not implement RebasableToOtherContentStreamsInterface; but it should!');
             }
 
-            // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-            $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+            // try to apply the command on the rebased content stream
+            $commandToRebase = $originalCommand->createCopyForContentStream($rebasedContentStream);
+            try {
+                $this->applyCommand($commandToRebase)->blockUntilProjectionsAreUpToDate();
+                // if we came this far, we know the command was applied successfully.
+                $rebaseStatistics->commandRebaseSuccess();
+            } catch (\Exception $e) {
+                $fullCommandListSoFar = '';
+                for ($a = 0; $a <= $i; $a++) {
+                    $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
+
+                    if ($originalCommands[$a] instanceof \JsonSerializable) {
+                        $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
+                    }
+                }
+
+                $rebaseStatistics->commandRebaseError(sprintf(
+                    "The content stream %s cannot be rebased. Error with command %d (%s) - see nested exception for details.\n\n The base workspace %s is at content stream %s.\n The full list of commands applied so far is: %s",
+                    $workspaceContentStreamName,
+                    $i,
+                    get_class($commandToRebase),
+                    $baseWorkspace->getWorkspaceName(),
+                    $baseWorkspace->getCurrentContentStreamIdentifier(),
+                    $fullCommandListSoFar
+                ), $e);
+            }
+        }
+
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+
+        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
+        if (!$rebaseStatistics->hasErrors()) {
             $event = DomainEvents::withSingleEvent(
                 DecoratedEvent::addIdentifier(
                     new WorkspaceWasRebased(
@@ -434,29 +435,28 @@ final class WorkspaceCommandHandler
                     Uuid::uuid4()->toString()
                 )
             );
-            // if we got so far without an Exception, we can switch the Workspace's active Content stream.
             $this->eventStore->commit($streamName, $event);
 
             return CommandResult::fromPublishedEvents($event);
-        } catch (\Exception $e) {
+        } else {
             // an error occured during the rebase; so we need to record this using a "WorkspaceRebaseFailed" event.
 
-            $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
             $event = DomainEvents::withSingleEvent(
                 DecoratedEvent::addIdentifier(
                     new WorkspaceRebaseFailed(
                         $command->getWorkspaceName(),
                         $rebasedContentStream,
-                        $workspace->getCurrentContentStreamIdentifier()
+                        $workspace->getCurrentContentStreamIdentifier(),
+                        $rebaseStatistics->getErrors()
                     ),
                     Uuid::uuid4()->toString()
                 )
             );
             $this->eventStore->commit($streamName, $event);
 
-            // Now, let's rethrow the exception.
-            throw $e;
+            return CommandResult::fromPublishedEvents($event);
         }
+
     }
 
     /**

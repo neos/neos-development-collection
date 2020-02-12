@@ -222,8 +222,8 @@ trait EventSourcedTrait
     public function theEventRootWorkspaceWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['currentContentStreamIdentifier']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
+        $newContentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['newContentStreamIdentifier']);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($newContentStreamIdentifier);
         $this->publishEvent('Neos.EventSourcedContentRepository:RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 

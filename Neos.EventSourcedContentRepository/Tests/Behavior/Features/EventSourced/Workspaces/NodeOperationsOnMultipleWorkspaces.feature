@@ -12,9 +12,9 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
           type: string
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                     | Value           |
-      | workspaceName           | "live"          |
-      | contentStreamIdentifier | "cs-identifier" |
+      | Key                        | Value           |
+      | workspaceName              | "live"          |
+      | newContentStreamIdentifier | "cs-identifier" |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -53,10 +53,10 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | propertyValues            | {"text": {"value":"Original","type":"string"}} |
     And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
   Scenario: Set property of a node

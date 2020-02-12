@@ -106,7 +106,7 @@ class Workspace
      *      Content Stream A2 (current)  <-- Content Stream B2 (rebasing)  |
      *                                                        Content Stream B1
      */
-    const STATUS_CONFLICT = 'CONFLICT';
+    const STATUS_OUTDATED_CONFLICT = 'OUTDATED_CONFLICT';
 
     /**
      * Checks if this workspace is shared across all editors

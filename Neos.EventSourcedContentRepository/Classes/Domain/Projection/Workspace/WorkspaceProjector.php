@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceRebaseFailed;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasDiscarded;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasPartiallyDiscarded;
@@ -43,7 +44,7 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
             'workspaceTitle' => $event->getWorkspaceTitle(),
             'workspaceDescription' => $event->getWorkspaceDescription(),
             'workspaceOwner' => $event->getWorkspaceOwner(),
-            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier(),
+            'currentContentStreamIdentifier' => $event->getNewContentStreamIdentifier(),
             'status' => Workspace::STATUS_UP_TO_DATE
         ]);
     }
@@ -57,27 +58,27 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
             'workspaceName' => $event->getWorkspaceName(),
             'workspaceTitle' => $event->getWorkspaceTitle(),
             'workspaceDescription' => $event->getWorkspaceDescription(),
-            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier(),
+            'currentContentStreamIdentifier' => $event->getNewContentStreamIdentifier(),
             'status' => Workspace::STATUS_UP_TO_DATE
         ]);
     }
 
     public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event)
     {
-        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getWorkspaceName());
+        $this->updateContentStreamIdentifier($event->getNewContentStreamIdentifier(), $event->getWorkspaceName());
         $this->markDependentWorkspacesAsOutdated($event->getWorkspaceName());
     }
 
     public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event)
     {
-        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getWorkspaceName());
+        $this->updateContentStreamIdentifier($event->getNewContentStreamIdentifier(), $event->getWorkspaceName());
         $this->markDependentWorkspacesAsOutdated($event->getWorkspaceName());
     }
 
     public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event)
     {
         // TODO: How do we test this method? It's hard to design a BDD testcase failing if this method is commented out...
-        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getSourceWorkspaceName());
+        $this->updateContentStreamIdentifier($event->getNewSourceContentStreamIdentifier(), $event->getSourceWorkspaceName());
 
         $this->markDependentWorkspacesAsOutdated($event->getTargetWorkspaceName());
 
@@ -90,7 +91,7 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
     public function whenWorkspaceWasPublished(WorkspaceWasPublished $event)
     {
         // TODO: How do we test this method? It's hard to design a BDD testcase failing if this method is commented out...
-        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getSourceWorkspaceName());
+        $this->updateContentStreamIdentifier($event->getNewSourceContentStreamIdentifier(), $event->getSourceWorkspaceName());
 
         $this->markDependentWorkspacesAsOutdated($event->getTargetWorkspaceName());
 
@@ -102,11 +103,17 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
     {
-        $this->updateContentStreamIdentifier($event->getCurrentContentStreamIdentifier(), $event->getWorkspaceName());
+        $this->updateContentStreamIdentifier($event->getNewContentStreamIdentifier(), $event->getWorkspaceName());
         $this->markDependentWorkspacesAsOutdated($event->getWorkspaceName());
 
         // When the rebase is successful, we can set the status of the workspace back to UP_TO_DATE.
         $this->markWorkspaceAsUpToDate($event->getWorkspaceName());
+    }
+
+    public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event)
+    {
+        $this->markWorkspaceAsOutdatedConflict($event->getWorkspaceName());
+
     }
 
     private function updateContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier, WorkspaceName $workspaceName): void
@@ -141,6 +148,21 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         ', [
             'outdated' => Workspace::STATUS_OUTDATED,
             'baseWorkspaceName' => $baseWorkspaceName->jsonSerialize()
+        ]);
+    }
+
+    private function markWorkspaceAsOutdatedConflict(WorkspaceName $workspaceName): void
+    {
+        $this->getDatabaseConnection()->executeUpdate('
+            UPDATE neos_contentrepository_projection_workspace_v1
+            SET
+                status = :outdatedConflict,
+                foo = bar
+            WHERE
+                workspacename = :workspaceName
+        ', [
+            'outdatedConflict' => Workspace::STATUS_OUTDATED_CONFLICT,
+            'workspaceName' => $workspaceName->jsonSerialize()
         ]);
     }
 

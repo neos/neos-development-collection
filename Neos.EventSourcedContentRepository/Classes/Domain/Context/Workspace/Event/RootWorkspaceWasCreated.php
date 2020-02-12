@@ -48,7 +48,7 @@ class RootWorkspaceWasCreated implements DomainEventInterface
     /**
      * @var ContentStreamIdentifier
      */
-    private $currentContentStreamIdentifier;
+    private $newContentStreamIdentifier;
 
     /**
      * RootWorkspaceWasCreated constructor.
@@ -57,15 +57,15 @@ class RootWorkspaceWasCreated implements DomainEventInterface
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
-     * @param ContentStreamIdentifier $currentContentStreamIdentifier
+     * @param ContentStreamIdentifier $newContentStreamIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $currentContentStreamIdentifier)
+    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier)
     {
         $this->workspaceName = $workspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->currentContentStreamIdentifier = $currentContentStreamIdentifier;
+        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
     }
 
     /**
@@ -103,8 +103,8 @@ class RootWorkspaceWasCreated implements DomainEventInterface
     /**
      * @return ContentStreamIdentifier
      */
-    public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
+    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->currentContentStreamIdentifier;
+        return $this->newContentStreamIdentifier;
     }
 }

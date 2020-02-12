@@ -52,7 +52,7 @@ final class CreateWorkspace
      * the content stream identifier for the content stream which is created together with the to-be-created workspace
      * @var ContentStreamIdentifier
      */
-    private $contentStreamIdentifier;
+    private $newContentStreamIdentifier;
 
     /**
      * @var UserIdentifier
@@ -67,17 +67,17 @@ final class CreateWorkspace
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamIdentifier $newContentStreamIdentifier
      * @param UserIdentifier $workspaceOwner
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifier = null, UserIdentifier $workspaceOwner = null)
+    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier = null, UserIdentifier $workspaceOwner = null)
     {
         $this->workspaceName = $workspaceName;
         $this->baseWorkspaceName = $baseWorkspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->contentStreamIdentifier = $contentStreamIdentifier ?: ContentStreamIdentifier::create();
+        $this->newContentStreamIdentifier = $newContentStreamIdentifier ?: ContentStreamIdentifier::create();
         $this->workspaceOwner = $workspaceOwner;
     }
 
@@ -89,7 +89,7 @@ final class CreateWorkspace
             new WorkspaceTitle($array['workspaceTitle']),
             new WorkspaceDescription($array['workspaceDescription']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
-            isset($array['contentStreamIdentifier']) ? ContentStreamIdentifier::fromString($array['contentStreamIdentifier']) : null,
+            isset($array['newContentStreamIdentifier']) ? ContentStreamIdentifier::fromString($array['newContentStreamIdentifier']) : null,
             isset($array['workspaceOwner']) ? UserIdentifier::fromString($array['workspaceOwner']) : null
         );
     }
@@ -138,9 +138,9 @@ final class CreateWorkspace
     /**
      * @return ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->contentStreamIdentifier;
+        return $this->newContentStreamIdentifier;
     }
 
     /**

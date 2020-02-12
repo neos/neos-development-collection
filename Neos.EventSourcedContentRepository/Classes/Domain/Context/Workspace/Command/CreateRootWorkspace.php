@@ -46,27 +46,27 @@ final class CreateRootWorkspace
     /**
      * @var ContentStreamIdentifier
      */
-    private $contentStreamIdentifier;
+    private $newContentStreamIdentifier;
 
     /**
      * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamIdentifier $newContentStreamIdentifier
      */
     public function __construct(
         WorkspaceName $workspaceName,
         WorkspaceTitle $workspaceTitle,
         WorkspaceDescription $workspaceDescription,
         UserIdentifier $initiatingUserIdentifier,
-        ContentStreamIdentifier $contentStreamIdentifier
+        ContentStreamIdentifier $newContentStreamIdentifier
     ) {
         $this->workspaceName = $workspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
     }
 
     public static function fromArray(array $array): self
@@ -76,7 +76,7 @@ final class CreateRootWorkspace
             new WorkspaceTitle($array['workspaceTitle']),
             new WorkspaceDescription($array['workspaceDescription']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier'])
+            ContentStreamIdentifier::fromString($array['newContentStreamIdentifier'])
         );
     }
 
@@ -115,8 +115,8 @@ final class CreateRootWorkspace
     /**
      * @return ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->contentStreamIdentifier;
+        return $this->newContentStreamIdentifier;
     }
 }

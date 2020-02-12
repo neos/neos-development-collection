@@ -14,7 +14,7 @@ Feature: Copy nodes (without dimensions)
       | workspaceTitle                 | "Live"                                 |
       | workspaceDescription           | "The live workspace"                   |
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
-      | currentContentStreamIdentifier | "cs-identifier"                        |
+      | newContentStreamIdentifier     | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                  |
       | contentStreamIdentifier     | "cs-identifier"                        |

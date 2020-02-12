@@ -43,34 +43,32 @@ class WorkspaceWasPublished implements DomainEventInterface
     private $targetWorkspaceName;
 
     /**
-     * TODO: FOR SOURCE AND FOR TARGET!?!?
-     *
      * The new, empty content stream identifier of $sourceWorkspaceName, (after the publish was successful)
      *
      * @var ContentStreamIdentifier
      */
-    private $currentContentStreamIdentifier;
+    private $newSourceContentStreamIdentifier;
 
     /**
      * The old content stream identifier of $sourceWorkspaceName (which is not active anymore now)
      *
      * @var ContentStreamIdentifier
      */
-    private $previousContentStreamIdentifier;
+    private $previousSourceContentStreamIdentifier;
 
     /**
      * WorkspaceWasPublished constructor.
      * @param WorkspaceName $sourceWorkspaceName
      * @param WorkspaceName $targetWorkspaceName
-     * @param ContentStreamIdentifier $currentContentStreamIdentifier
-     * @param ContentStreamIdentifier $previousContentStreamIdentifier
+     * @param ContentStreamIdentifier $newSourceContentStreamIdentifier
+     * @param ContentStreamIdentifier $previousSourceContentStreamIdentifier
      */
-    public function __construct(WorkspaceName $sourceWorkspaceName, WorkspaceName $targetWorkspaceName, ContentStreamIdentifier $currentContentStreamIdentifier, ContentStreamIdentifier $previousContentStreamIdentifier)
+    public function __construct(WorkspaceName $sourceWorkspaceName, WorkspaceName $targetWorkspaceName, ContentStreamIdentifier $newSourceContentStreamIdentifier, ContentStreamIdentifier $previousSourceContentStreamIdentifier)
     {
         $this->sourceWorkspaceName = $sourceWorkspaceName;
         $this->targetWorkspaceName = $targetWorkspaceName;
-        $this->currentContentStreamIdentifier = $currentContentStreamIdentifier;
-        $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
+        $this->newSourceContentStreamIdentifier = $newSourceContentStreamIdentifier;
+        $this->previousSourceContentStreamIdentifier = $previousSourceContentStreamIdentifier;
     }
 
 
@@ -93,17 +91,17 @@ class WorkspaceWasPublished implements DomainEventInterface
     /**
      * @return ContentStreamIdentifier
      */
-    public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
+    public function getNewSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->currentContentStreamIdentifier;
+        return $this->newSourceContentStreamIdentifier;
     }
 
     /**
      * @return ContentStreamIdentifier
      */
-    public function getPreviousContentStreamIdentifier(): ContentStreamIdentifier
+    public function getPreviousSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->previousContentStreamIdentifier;
+        return $this->previousSourceContentStreamIdentifier;
     }
 
 

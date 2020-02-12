@@ -12,9 +12,9 @@ Feature: Publishing and discard individual nodes (basics)
   Background:
     Given I have no content dimensions
     And the command CreateRootWorkspace is executed with payload:
-      | Key                     | Value           |
-      | workspaceName           | "live"          |
-      | contentStreamIdentifier | "cs-identifier" |
+      | Key                        | Value           |
+      | workspaceName              | "live"          |
+      | newContentStreamIdentifier | "cs-identifier" |
     And the graph projection is fully up to date
     And I have the following NodeTypes configuration:
     """
@@ -70,10 +70,10 @@ Feature: Publishing and discard individual nodes (basics)
 
     # Create user workspace
     And the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
     # modify nodes in user WS
     And the command "SetNodeProperties" is executed with payload:

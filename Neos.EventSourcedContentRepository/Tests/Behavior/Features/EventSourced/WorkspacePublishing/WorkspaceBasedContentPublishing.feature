@@ -18,9 +18,9 @@ Feature: Workspace based content publishing
           type: string
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                     | Value           |
-      | workspaceName           | "live"          |
-      | contentStreamIdentifier | "cs-identifier" |
+      | Key                        | Value           |
+      | workspaceName              | "live"          |
+      | newContentStreamIdentifier | "cs-identifier" |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -51,10 +51,10 @@ Feature: Workspace based content publishing
       | originDimensionSpacePoint | {}                                             |
       | propertyValues            | {"text": {"value":"Original","type":"string"}} |
     And the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
   Scenario: Basic events are emitted
@@ -73,7 +73,7 @@ Feature: Workspace based content publishing
       | workspaceTitle                 | "Live"                       |
       | workspaceDescription           | "The workspace \"live\""     |
       | initiatingUserIdentifier       | "initiating-user-identifier" |
-      | currentContentStreamIdentifier | "cs-identifier"              |
+      | newContentStreamIdentifier     | "cs-identifier"              |
 
     # USER workspace
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:user-cs-identifier"
@@ -90,7 +90,7 @@ Feature: Workspace based content publishing
       | workspaceTitle                 | "User-test"                   |
       | workspaceDescription           | "The workspace \"user-test\"" |
       | initiatingUserIdentifier       | "initiating-user-identifier"  |
-      | currentContentStreamIdentifier | "user-cs-identifier"          |
+      | newContentStreamIdentifier     | "user-cs-identifier"          |
       | workspaceOwner                 | "owner-identifier"            |
 
   Scenario: modify the property in the nested workspace and publish afterwards works

@@ -15,8 +15,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 
 /**
- * This interface is implemented by commands which can be rebased to other Content Streams. This is basically all
+ * This interface is implemented by **commands** which can be rebased to other Content Streams. This is basically all
  * node-based commands.
+ *
+ * Reminder: a rebase can fail, because the target content stream might contain conflicting changes.
  */
 interface RebasableToOtherContentStreamsInterface
 {

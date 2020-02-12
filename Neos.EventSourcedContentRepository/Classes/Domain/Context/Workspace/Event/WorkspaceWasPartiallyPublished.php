@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -40,34 +41,39 @@ class WorkspaceWasPartiallyPublished implements DomainEventInterface
     private $targetWorkspaceName;
 
     /**
-     * TODO: this is on the TARGET WS; not the SOURCE WS!!
-     *
      * The new content stream for the $sourceWorkspaceName
      *
      * @var ContentStreamIdentifier
      */
-    private $currentContentStreamIdentifier;
+    private $newSourceContentStreamIdentifier;
 
     /**
      * The old content stream, which contains ALL the data (discarded and non-discarded)
      *
      * @var ContentStreamIdentifier
      */
-    private $previousContentStreamIdentifier;
+    private $previousSourceContentStreamIdentifier;
+
+    /**
+     * TODO build
+     *
+     * @var NodeAddress[]
+     */
+    private $publishedNodeAddresses;
 
     /**
      * WorkspaceWasPartiallyPublished constructor.
      * @param WorkspaceName $sourceWorkspaceName
      * @param WorkspaceName $targetWorkspaceName
-     * @param ContentStreamIdentifier $currentContentStreamIdentifier
-     * @param ContentStreamIdentifier $previousContentStreamIdentifier
+     * @param ContentStreamIdentifier $newSourceContentStreamIdentifier
+     * @param ContentStreamIdentifier $previousSourceContentStreamIdentifier
      */
-    public function __construct(WorkspaceName $sourceWorkspaceName, WorkspaceName $targetWorkspaceName, ContentStreamIdentifier $currentContentStreamIdentifier, ContentStreamIdentifier $previousContentStreamIdentifier)
+    public function __construct(WorkspaceName $sourceWorkspaceName, WorkspaceName $targetWorkspaceName, ContentStreamIdentifier $newSourceContentStreamIdentifier, ContentStreamIdentifier $previousSourceContentStreamIdentifier)
     {
         $this->sourceWorkspaceName = $sourceWorkspaceName;
         $this->targetWorkspaceName = $targetWorkspaceName;
-        $this->currentContentStreamIdentifier = $currentContentStreamIdentifier;
-        $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
+        $this->newSourceContentStreamIdentifier = $newSourceContentStreamIdentifier;
+        $this->previousSourceContentStreamIdentifier = $previousSourceContentStreamIdentifier;
     }
 
     /**
@@ -89,16 +95,16 @@ class WorkspaceWasPartiallyPublished implements DomainEventInterface
     /**
      * @return ContentStreamIdentifier
      */
-    public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
+    public function getNewSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->currentContentStreamIdentifier;
+        return $this->newSourceContentStreamIdentifier;
     }
 
     /**
      * @return ContentStreamIdentifier
      */
-    public function getPreviousContentStreamIdentifier(): ContentStreamIdentifier
+    public function getPreviousSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->previousContentStreamIdentifier;
+        return $this->previousSourceContentStreamIdentifier;
     }
 }

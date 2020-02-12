@@ -53,7 +53,7 @@ class WorkspaceWasCreated implements DomainEventInterface
     /**
      * @var ContentStreamIdentifier
      */
-    private $currentContentStreamIdentifier;
+    private $newContentStreamIdentifier;
 
     /**
      * @var UserIdentifier
@@ -67,17 +67,17 @@ class WorkspaceWasCreated implements DomainEventInterface
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
-     * @param ContentStreamIdentifier $currentContentStreamIdentifier
+     * @param ContentStreamIdentifier $newContentStreamIdentifier
      * @param UserIdentifier $workspaceOwner
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $currentContentStreamIdentifier, UserIdentifier $workspaceOwner = null)
+    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier, UserIdentifier $workspaceOwner = null)
     {
         $this->workspaceName = $workspaceName;
         $this->baseWorkspaceName = $baseWorkspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->currentContentStreamIdentifier = $currentContentStreamIdentifier;
+        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
         $this->workspaceOwner = $workspaceOwner;
     }
 
@@ -124,9 +124,9 @@ class WorkspaceWasCreated implements DomainEventInterface
     /**
      * @return ContentStreamIdentifier
      */
-    public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
+    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->currentContentStreamIdentifier;
+        return $this->newContentStreamIdentifier;
     }
 
     /**

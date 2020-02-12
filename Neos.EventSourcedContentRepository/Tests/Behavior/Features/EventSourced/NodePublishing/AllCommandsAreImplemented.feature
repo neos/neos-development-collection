@@ -19,9 +19,9 @@ Feature: Publishing hide/show scenario of nodes
   Background:
     Given I have no content dimensions
     And the command CreateRootWorkspace is executed with payload:
-      | Key                     | Value           |
-      | workspaceName           | "live"          |
-      | contentStreamIdentifier | "cs-identifier" |
+      | Key                        | Value           |
+      | workspaceName              | "live"          |
+      | newContentStreamIdentifier | "cs-identifier" |
     And the graph projection is fully up to date
     And I have the following NodeTypes configuration:
     """
@@ -77,10 +77,10 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (DisableNode) It is possible to publish hiding of a node.
     Given the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
     # SETUP: hide two nodes in USER workspace
@@ -130,10 +130,10 @@ Feature: Publishing hide/show scenario of nodes
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
     Given the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
     # SETUP: show two nodes in USER workspace
@@ -172,10 +172,10 @@ Feature: Publishing hide/show scenario of nodes
 
   #Scenario: (ChangeNodeAggregateName) It is possible to publish changing the node name.
   #  Given the command CreateWorkspace is executed with payload:
-  #    | Key                     | Value                |
-   ##   | workspaceName           | "user-test"          |
-   #   | baseWorkspaceName       | "live"               |
-   #   | contentStreamIdentifier | "user-cs-identifier" |
+  #    | Key                        | Value                |
+   ##   | workspaceName              | "user-test"          |
+   #   | baseWorkspaceName          | "live"               |
+   #   | newContentStreamIdentifier | "user-cs-identifier" |
    # And the graph projection is fully up to date
 
     # SETUP: change two node names in USER workspace
@@ -212,10 +212,10 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
     Given the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
@@ -253,10 +253,10 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
     Given the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
@@ -293,10 +293,10 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (SetNodeReferences) It is possible to publish setting node references
     Given the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
     # SETUP: set two node references in USER workspace
@@ -349,10 +349,10 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
     Given the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
-      | contentStreamIdentifier | "user-cs-identifier" |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
+      | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
     # SETUP: set two new nodes in USER workspace
