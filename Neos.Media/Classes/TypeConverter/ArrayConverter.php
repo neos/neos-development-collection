@@ -14,13 +14,13 @@ namespace Neos\Media\TypeConverter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ImageVariant;
-use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * This converter transforms Neos.Media AssetInterface instances to arrays.
@@ -61,7 +61,6 @@ class ArrayConverter extends AbstractTypeConverter
         return ($source instanceof AssetInterface);
     }
 
-
     /**
      * Return a list of sub-properties inside the source object.
      * The "key" is the sub-property name, and the "value" is the value of the sub-property.
@@ -80,6 +79,10 @@ class ArrayConverter extends AbstractTypeConverter
         }
         if ($source instanceof ImageVariant) {
             $sourceChildPropertiesToBeConverted['adjustments'] = $source->getAdjustments();
+        }
+        if ($source instanceof AssetInterface) {
+            $sourceChildPropertiesToBeConverted['tags'] = $source->getTags();
+            $sourceChildPropertiesToBeConverted['assetCollections'] = $source->getAssetCollections();
         }
 
         return $sourceChildPropertiesToBeConverted;
@@ -128,6 +131,12 @@ class ArrayConverter extends AbstractTypeConverter
                 if (!isset($convertedChildProperties['resource']) || !is_array($convertedChildProperties['resource'])) {
                     return null;
                 }
+                if (!isset($convertedChildProperties['tags']) || !is_array($convertedChildProperties['tags'])) {
+                    return null;
+                }
+                if (!isset($convertedChildProperties['assetCollections']) || !is_array($convertedChildProperties['assetCollections'])) {
+                    return null;
+                }
 
                 $convertedChildProperties['resource']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getResource());
 
@@ -137,7 +146,9 @@ class ArrayConverter extends AbstractTypeConverter
                     'title' => $source->getTitle(),
                     'copyrightNotice' => $source->getCopyrightNotice(),
                     'caption' => $source->getCaption(),
-                    'resource' => $convertedChildProperties['resource']
+                    'resource' => $convertedChildProperties['resource'],
+                    'tags' => $convertedChildProperties['tags'],
+                    'assetCollections' => $convertedChildProperties['assetCollections']
                 ];
         }
     }
