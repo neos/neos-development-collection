@@ -153,7 +153,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($searchTerm->getTerm()), JSON_UNESCAPED_UNICODE), '"') . '%';
 
             $query
-                ->addToQuery($concatenation . ' LOWER(CAST(' . ($tableReference ? $tableReference . '.' : '') . 'properties AS LONGTEXT)) LIKE :term', $markerToReplaceInQuery)
+                ->addToQuery($concatenation . ' LOWER(' . ($tableReference ? $tableReference . '.' : '') . 'properties) LIKE :term', $markerToReplaceInQuery)
                 ->parameter('term', $likeParameter);
         } else {
             $query->addToQuery('', $markerToReplaceInQuery);
@@ -953,7 +953,7 @@ order by level asc, position asc;')
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###', '');
-        self::addSearchTermConstraintsToQuery($query, $searchTerm, '###SEACH_TERM_CONSTRAINTS###', '');
+        self::addSearchTermConstraintsToQuery($query, $searchTerm, '###SEARCH_TERM_CONSTRAINTS###', '');
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
 
