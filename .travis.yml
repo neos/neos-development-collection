@@ -1,9 +1,10 @@
 language: php
+os: linux
 dist: bionic
 branches:
   only:
   - /(master|\d+\.\d+)/
-matrix:
+jobs:
   fast_finish: true
   include:
     - php: 7.1
@@ -32,12 +33,10 @@ matrix:
         mariadb: '10.2'
     - php: 7.4
       env: DB=pgsql
-      sudo: required
       addons:
         postgresql: "9.5"
     - php: 7.4
       env: DB=pgsql BEHAT=true
-      sudo: required
       addons:
         postgresql: "9.5"
     - php: 7.4
@@ -96,5 +95,4 @@ notifications:
       secure: SQCIQBP9+y1naRD+L6yHKBeB8V5jULF8jnwSKv2XcolMBIPu1UGTJYQPnQ33K0EB7MucE2FegKslJDjk0tsYQ85cKLOoyCGUGWm+L/gkiMuMF5g0hgQx6M1EFfxoCitsu4VjGJ9O9NFQ8qQVhR5q8LU164M6sIjqKMd4nAY8lT9jfClVpMzz5zqvEZ4akRJjeZsJiUUXwmZCqp7ksXX5+MTu+MW9FiKLt7LyHtZU4ork1czAr2kkYd98uknwHgXX7fVQcUTOwdbNDkRgRMu4fmaS2jkOkV2Hu+lYAFF0m84aT2EhR3QSd4doVU8KEXDYFt6A8NeQi/7/i20vJuwZzFkV89HOFEHIxJWb74P3sbDbmqNDe8AIIPYA9d9u2Zp+H+Nvmj//iZHqXKcpEUtN+mZKK8338x5NwBPH+ppG424qI3Y9+9OVL0U+YEYjMrYbim0lmkqt9NM0aC2MSOwHl7OQYfNXQha5DToPpx+XdVCPlD8EDCn0gzAv1M6KCi18fUIA17HyiLjT3fYZYUME6v6jadKtlQsP6LvHPa56T4wqk48ras6TGbzAg2RRd2Sr810d9jCqAqE5O6WOM06LSnOozl9zQvXlBw1mzJAPve/XtvzTqibw7Ik00LIuiIZ05PvWtVEUWBFHzM5tpp9X+hviHMRwAGp1wC69jx99dhA=
     on_success: change
     on_failure: change
-    on_start: never
     on_pull_requests: false
