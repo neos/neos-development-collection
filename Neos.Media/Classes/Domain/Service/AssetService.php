@@ -303,18 +303,13 @@ class AssetService
                             continue;
                         }
 
-                        if ($redirectHandlerEnabled) {
-                            $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
-                            $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
-                            $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
-                        }
-
                         $this->getRepository($variant)->add($variant);
                     } catch (AssetVariantGeneratorException $exception) {
                         $this->logger->error(
                             sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
                             LogEnvironment::fromMethodName(__METHOD__)
                         );
+                        continue;
                     }
                 } else {
                     $variant->refresh();
@@ -323,14 +318,13 @@ class AssetService
                             $adjustment->refit($asset);
                         }
                     }
-
-                    if ($redirectHandlerEnabled) {
-                        $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
-                        $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
-                        $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
-                    }
-
                     $this->getRepository($variant)->update($variant);
+                }
+
+                if ($redirectHandlerEnabled) {
+                    $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
+                    $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
+                    $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
                 }
             }
         }
