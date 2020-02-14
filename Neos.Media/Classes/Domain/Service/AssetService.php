@@ -302,8 +302,6 @@ class AssetService
                             );
                             continue;
                         }
-
-                        $this->getRepository($variant)->add($variant);
                     } catch (AssetVariantGeneratorException $exception) {
                         $this->logger->error(
                             sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
@@ -318,7 +316,6 @@ class AssetService
                             $adjustment->refit($asset);
                         }
                     }
-                    $this->getRepository($variant)->update($variant);
                 }
 
                 if ($redirectHandlerEnabled) {
