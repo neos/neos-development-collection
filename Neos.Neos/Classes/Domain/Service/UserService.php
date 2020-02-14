@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\Service;
 
 /*
@@ -556,7 +557,7 @@ class UserService
     /**
      * Reactivates the given user
      *
-     * @param User $user The user to deactivate
+     * @param User $user The user to activate
      * @return void
      * @api
      */
@@ -593,7 +594,9 @@ class UserService
     {
         /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
-            $account->setExpirationDate($this->now);
+            $account->setExpirationDate(
+                \DateTime::createFromFormat(\DateTimeInterface::ATOM, $this->now->format(\DateTimeInterface::ATOM))
+            );
             $this->accountRepository->update($account);
         }
         $this->emitUserDeactivated($user);
