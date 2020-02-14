@@ -75,7 +75,7 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
         if (!isset($configuration['properties'])) {
             return;
         }
-        $creationDialogElements = [];
+        $creationDialogElements = $configuration['ui']['creationDialog']['elements'] ?? [];
         foreach ($configuration['properties'] as $propertyName => $propertyConfiguration) {
             if (!isset($propertyConfiguration['ui']['showInCreationDialog']) || $propertyConfiguration['ui']['showInCreationDialog'] !== true) {
                 continue;
