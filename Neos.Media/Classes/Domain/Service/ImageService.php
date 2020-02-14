@@ -263,7 +263,7 @@ class ImageService
                 $sizeBox = $imagineImage->getSize();
                 $imageSize = ['width' => $sizeBox->getWidth(), 'height' => $sizeBox->getHeight()];
             } catch (\Exception $e) {
-                throw new ImageFileException(sprintf('The given resource was not an image file your choosen driver can open. The original error was: %s', $e->getMessage()), 1336662898);
+                throw new ImageFileException(sprintf('The given resource was not an image file your chosen driver can open. The original error was: %s', $e->getMessage()), 1336662898, $e);
             }
         }
 

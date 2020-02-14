@@ -191,5 +191,5 @@ prototype(Neos.Fusion:Fragment) < prototype(Neos.Fusion:Component) {
 #
 prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:RawArray) {
 	format = ${request.format}
-	baseUri = ${String.toString(request.httpRequest.baseUri)}
+	baseUri = ${String.toString(BaseUri.getConfiguredBaseUriOrFallbackToCurrentRequest(request.httpRequest))}
 }
