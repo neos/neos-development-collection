@@ -316,6 +316,7 @@ class AssetService
                             $adjustment->refit($asset);
                         }
                     }
+                    $this->getRepository($variant)->update($variant);
                 }
 
                 if ($redirectHandlerEnabled) {
