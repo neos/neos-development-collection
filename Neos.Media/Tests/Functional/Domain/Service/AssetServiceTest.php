@@ -26,7 +26,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 use Neos\Media\Tests\Functional\AbstractTest;
 
-class AsetServiceTest extends AbstractTest
+class AssetServiceTest extends AbstractTest
 {
     /**
      * @var boolean
