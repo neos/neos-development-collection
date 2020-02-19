@@ -60,7 +60,8 @@ class SchemaController extends ActionController
         $vieSchema = $this->nodeTypeSchemaCache->get($cacheIdentifier);
         if (!$vieSchema) {
             $vieSchema = json_encode($this->vieSchemaBuilder->generateVieSchema());
-            $this->nodeTypeSchemaCache->set($cacheIdentifier, $vieSchema);
+            $this->nodeTypeSchemaCache->flushByTag('vie');
+            $this->nodeTypeSchemaCache->set($cacheIdentifier, $vieSchema, ['vie']);
         }
         return $vieSchema;
     }
@@ -81,7 +82,8 @@ class SchemaController extends ActionController
         $nodeTypeSchema = $this->nodeTypeSchemaCache->get($cacheIdentifier);
         if (!$nodeTypeSchema) {
             $nodeTypeSchema = json_encode($this->nodeTypeSchemaBuilder->generateNodeTypeSchema());
-            $this->nodeTypeSchemaCache->set($cacheIdentifier, $nodeTypeSchema);
+            $this->nodeTypeSchemaCache->flushByTag('nodeType');
+            $this->nodeTypeSchemaCache->set($cacheIdentifier, $nodeTypeSchema, ['nodeType']);
         }
         return $nodeTypeSchema;
     }
