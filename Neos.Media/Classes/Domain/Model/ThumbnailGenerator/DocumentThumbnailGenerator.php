@@ -85,9 +85,6 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
             $resource = $this->resourceManager->importResourceFromContent($im->getImageBlob(), $filenameWithoutExtension . '.png');
             $im->destroy();
 
-            $resource = $this->resourceManager->importResourceFromContent($im->getImageBlob(), $filenameWithoutExtension . '.png');
-            $im->destroy();
-
             $thumbnail->setResource($resource);
             $thumbnail->setWidth($width);
             $thumbnail->setHeight($height);
