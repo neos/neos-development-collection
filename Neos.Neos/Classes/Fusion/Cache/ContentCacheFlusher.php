@@ -18,6 +18,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -270,6 +271,14 @@ class ContentCacheFlusher
      */
     public function registerAssetChange(AssetInterface $asset)
     {
+        // In Nodes only assets are referenced, never asset variants directly. When an asset
+        // variant is updated, it is passed as $asset, but since it is never "used" by any node
+        // no flushing of corresponding entries happens. Thus we instead us the original asset
+        // of the variant.
+        if ($asset instanceof AssetVariantInterface) {
+            $asset = $asset->getOriginalAsset();
+        }
+
         if (!$asset->isInUse()) {
             return;
         }
