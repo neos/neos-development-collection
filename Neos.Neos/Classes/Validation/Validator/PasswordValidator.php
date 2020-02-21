@@ -74,7 +74,7 @@ class PasswordValidator extends AbstractValidator
 
         if ($stringLengthValidatorResult->hasErrors() === true) {
             foreach ($stringLengthValidatorResult->getErrors() as $error) {
-                $this->result->addError($error);
+                $this->addError($error, $error->getCode());
             }
         }
     }
