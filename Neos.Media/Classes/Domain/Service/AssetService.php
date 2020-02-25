@@ -343,6 +343,9 @@ class AssetService
     /**
      * Signals that a resource on an asset has been replaced
      *
+     * Note: when an asset resource is replaced, the assetUpdated signal is sent anyway
+     * and can be used instead.
+     *
      * @param AssetInterface $asset
      * @return void
      * @Flow\Signal
