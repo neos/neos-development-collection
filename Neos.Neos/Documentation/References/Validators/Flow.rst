@@ -3,7 +3,7 @@
 Flow Validator Reference
 ========================
 
-This reference was automatically generated from code on 2019-11-06
+This reference was automatically generated from code on 2020-02-25
 
 
 .. _`Flow Validator Reference: AggregateBoundaryValidator`:
@@ -424,6 +424,8 @@ Arguments
 * ``minimum`` (integer, *optional*): Minimum length for a valid string
 
 * ``maximum`` (integer, *optional*): Maximum length for a valid string
+
+* ``ignoreHtml`` (boolean, *optional*): If true, HTML tags will be stripped before counting the characters
 
 
 
