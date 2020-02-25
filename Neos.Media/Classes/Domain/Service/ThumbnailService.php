@@ -95,7 +95,7 @@ class ThumbnailService
      * @return ImageInterface
      * @throws \Exception
      */
-    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration): ImageInterface
+    public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration): ?ImageInterface
     {
         // Enforce format conversions if needed. This replaces the actual
         // thumbnail-configuration with one that also enforces the target format

@@ -302,17 +302,12 @@ class AssetService
                             );
                             continue;
                         }
-
-                        if ($redirectHandlerEnabled) {
-                            $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
-                            $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
-                            $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
-                        }
                     } catch (AssetVariantGeneratorException $exception) {
                         $this->logger->error(
                             sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
                             LogEnvironment::fromMethodName(__METHOD__)
                         );
+                        continue;
                     }
                 } else {
                     $variant->refresh();
@@ -321,6 +316,13 @@ class AssetService
                             $adjustment->refit($asset);
                         }
                     }
+                    $this->getRepository($variant)->update($variant);
+                }
+
+                if ($redirectHandlerEnabled) {
+                    $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
+                    $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
+                    $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
                 }
             }
         }
@@ -375,6 +377,9 @@ class AssetService
 
     /**
      * Signals that a resource on an asset has been replaced
+     *
+     * Note: when an asset resource is replaced, the assetUpdated signal is sent anyway
+     * and can be used instead.
      *
      * @param AssetInterface $asset
      * @return void
