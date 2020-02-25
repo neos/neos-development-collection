@@ -1,0 +1,205 @@
+`5.1.5 (2020-02-25) <https://github.com/neos/neos-development-collection/releases/tag/5.1.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Flush content cache on image variant change <https://github.com/neos/neos-development-collection/pull/2910>`_
+----------------------------------------------------------------------------------------------------------------------
+
+If you access an image property in a node and render an ImageVariant
+from it via Fusion using an image variant preset, the cache is now
+flushed if the image variant is changed afterwards, e.g. when changing
+the crop in the media management module.
+
+Fixes #2897
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Access tags of asset in media list view <https://github.com/neos/neos-development-collection/pull/2917>`_
+------------------------------------------------------------------------------------------------------------------
+
+This uses `assetProxy.asset.tags` instead of just `assetProxy.tags`
+as a simple way to fix the display of assigned tags in the media
+browser list view.
+
+Fixes neos/neos-development-collection#2350
+
+* Packages: ``Browser``
+
+`BUGFIX: Add \`Form\` key to configuration schema of Fusion package <https://github.com/neos/neos-development-collection/pull/2885>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+When the package Neos.Fusion.Form is installed which it is by default since Neos 5.1 the key `Form` is
+automatically created in the `Neos.Fusion` setting namespace. Since the schema for this namespace only allows predefined key this yields an error message in the Configuration module.
+
+In addition the schema file is renamed and shortened to only validate inside Neos.Fusion. That ensures that the file is picked up by the command ./flow configuration:validate --type Settings. This will avoid things like this slipping trough in future.
+
+* Packages: ``Fusion``
+
+`BUGFIX: Don't use AbstractValidator::$result in PasswordValidator <https://github.com/neos/neos-development-collection/pull/2909>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+PasswordValidator was using the property $result of AbstractValidaor. That caused an Error 500 since Flow 6, because AbstractValidator::$result is private now.
+
+
+**What I did**
+Changed to AbstractValidator::addError() method
+
+**How to verify it**
+Use The PasswordValidator with a minimumLength and try to produce a validation-error.
+
+* Packages: ``Neos``
+
+`TASK: Remove unused template <https://github.com/neos/neos-development-collection/pull/2912>`_
+-----------------------------------------------------------------------------------------------
+
+This code should have been removed when the `UsageController` was
+introduced in `ea7587374012b35d45d1c7402c43410353613f6d <https://github.com/neos/neos-development-collection/commit/ea7587374012b35d45d1c7402c43410353613f6d>`_.
+
+* Packages: ``Browser``
+
+`TASK: Remove unused code <https://github.com/neos/neos-development-collection/pull/2911>`_
+-------------------------------------------------------------------------------------------
+
+This code should have been removed when the `ImageVariantController`
+was introduced in `0aa2eed015e02a468f9b2e8e1d08f8275349edde <https://github.com/neos/neos-development-collection/commit/0aa2eed015e02a468f9b2e8e1d08f8275349edde>`_. Which
+means it should have never been there. ;)
+
+* Packages: ``Browser``
+
+`BUGFIX: Prevent double dash formatting in docs for node:repair command <https://github.com/neos/neos-development-collection/pull/2908>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+The readthedocs command reference formats double dashes
+as one long dash. Copying the command into the CLI will therefore
+not work properly as f.e. the node-type filter will not apply
+and all nodes are repaired.
+
+* Packages: ``Neos``
+
+`BUGFIX: re-add lost variants update functionality <https://github.com/neos/neos-development-collection/pull/2892>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Re-add lost variants update functionality to fix issue #2884 
+
+**What I did**
+I compared the changes of  PR #2751 with the code befor the changes of this PR and saw, that the line `$this->getRepository($variant)->update($variant);` was missing after the changes of the PR. I added the missing line where I think it is necessary. Additionally i added the  generation of the redirect to the else part in the replacement function, which was also missing. I think this fixes issue #2884.
+
+**How to verify it**
+Find an asset, for which the resource can not be replaced, for example on the demo site. Then  checkout my changes and try replacing the resource of the found asset. The replcement should be possible again.
+
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Correct code blocks in documentation <https://github.com/neos/neos-development-collection/pull/2904>`_
+---------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Fix validation warnings/errors on .travis.yml <https://github.com/neos/neos-development-collection/pull/2901>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Fixes build config validation complaints:
+
+- W jobs.include: deprecated key sudo (The key `sudo` has no effect anymore.)
+- W notifications.slack: unknown key on_start (never)
+- I root: missing os, using the default linux
+- I root: key matrix is an alias for jobs, using jobs
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Make getThumbnail() return type nullable <https://github.com/neos/neos-development-collection/pull/2903>`_
+-------------------------------------------------------------------------------------------------------------------
+
+If the thumbnail strategy failed to generate a valid thumbnail, null
+is returned. This needs to be allowed.
+
+* Packages: ``Fusion`` ``Media``
+
+`BUGFIX: Replace baseUri in cache identifiers <https://github.com/neos/neos-development-collection/pull/2898>`_
+---------------------------------------------------------------------------------------------------------------
+
+Since Flow 6.0 the httpRequest.baseUri is gone and we
+need to replace it in the cache identifiers to avoid wrong
+cache behavior.
+
+* Packages: ``Fusion``
+
+`BUGFIX: Add code migration for MultiColumn* nodetypes <https://github.com/neos/neos-development-collection/pull/2872>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Add missing code migration for nodetypes Neos.NodeTypes:MultiColumn and Neos.NodeTypes:MultiColumnItem for seamless upgrade process.
+
+* Packages: ``Browser`` ``Neos`` ``NodeTypes``
+
+`BUGFIX: Convert DateTimeImmutable "Now" into DateTime for account deactivation <https://github.com/neos/neos-development-collection/pull/2859>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+Convert "Now" based on DateTimeImmutable to DateTime, as Account::setExpirationDate expects it.
+
+Fixes #2131 
+
+* Packages: ``Neos``
+
+`TASK: Pass on previous exception in getImageSize() <https://github.com/neos/neos-development-collection/pull/2877>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Browser`` ``Media`` ``Neos``
+
+`BUGFIX: Respect arguments value as defined in Neos.Neos:NodeUri <https://github.com/neos/neos-development-collection/pull/2893>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+The prototype Neos.Neos:NodeUri defines `arguments = Neos.Fusion:RawArray`
+but this value is never processed in the PHP implementation.
+Instead, the additionalParams is processed and passed to
+the parameter `arguments` of the NodeLiking service.
+
+Now both parameters are used. `additionalParams` should be deprecated.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Keep configured creationDialog elements <https://github.com/neos/neos-development-collection/pull/2883>`_
+------------------------------------------------------------------------------------------------------------------
+
+Keep configured creationDialog elements to keep dialog fields for NodeTemplates.
+
+Fixes: #2882
+
+* Packages: ``Browser`` ``Neos``
+
+`Bugfix: Use controller context to get FlashMessageContainer <https://github.com/neos/neos-development-collection/pull/2876>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Remove left over of rewrite FlashMessages.
+See: https://github.com/neos/flow-development-collection/pull/1061
+
+* Packages: ``Neos``
+
+`BUGFIX: xhr request in backend modules <https://github.com/neos/neos-development-collection/pull/2841>`_
+---------------------------------------------------------------------------------------------------------
+
+With Neos 5.0 the nodetypeschema endpoint was removed from the backend modules
+template but the request was still sent.
+Without the uri the current url of the module was instead requested.
+This caused other errors when using the backbutton of the browser when sometimes instead of the whole module only the json response was shown.
+
+This resolves: #2791 
+
+**What I did**
+
+Prevent the duplicate request
+
+**How I did it**
+
+Check if the endpoint uri exists before calling it.
+
+**How to verify it**
+
+Go to any module and check whether a xhr request is sent to the current url.
+
+
+* Packages: ``Browser`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.1.4...5.1.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
