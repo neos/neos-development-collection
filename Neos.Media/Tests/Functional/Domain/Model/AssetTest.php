@@ -124,6 +124,16 @@ class AssetTest extends AbstractTest
     /**
      * @test
      */
+    public function getAssetProxyReturnsAssetProxyForLocalAssets()
+    {
+        $asset = $this->buildAssetObject();
+        $asset->setAssetSourceIdentifier('neos');
+        $this->assertNotNull($asset->getAssetProxy());
+    }
+
+    /**
+     * @test
+     */
     public function getAssetProxyReturnsNullIfAssetSourceIdentifierPointsToNonExistingAssetSource()
     {
         $asset = $this->buildAssetObject();
