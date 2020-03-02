@@ -44,7 +44,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
     protected $nodeAddressService;
 
     /**
-     * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions")
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="routing.supportEmptySegmentForDimensions")
      * @var boolean
      */
     protected $supportEmptySegmentForDimensions;
