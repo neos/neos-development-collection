@@ -65,14 +65,16 @@ class ChangeProjector implements ProjectorInterface
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)
     {
         foreach ($event->getAffectedDimensionSpacePoints()->getPoints() as $dimensionSpacePoint) {
-            $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $dimensionSpacePoint);
+            // TODO: the following line does not work, because $dimensionSpacePoint is of type DimensionSpacePoint, but the markAsChanged accepts only an OriginDimensionSpacePoint
+            //$this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $dimensionSpacePoint);
         }
     }
 
     public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
     {
         foreach ($event->getAffectedDimensionSpacePoints()->getPoints() as $dimensionSpacePoint) {
-            $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $dimensionSpacePoint);
+            // TODO: the following line does not work, because $dimensionSpacePoint is of type DimensionSpacePoint, but the markAsChanged accepts only an OriginDimensionSpacePoint
+            //$this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $dimensionSpacePoint);
         }
     }
 
