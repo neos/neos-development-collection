@@ -104,6 +104,13 @@ class EmulatedLegacyContext
         return $this->nodeAddressFactory->createFromTraversableNode($this->traversableNode);
     }
 
+    public function getCurrentSite(): EmulatedLegacySite
+    {
+        $this->legacyLogger->info('context.currentSite called', LogEnvironment::fromMethodName(__METHOD__));
+
+        return new EmulatedLegacySite($this->traversableNode);
+    }
+
     private function hasAccessToBackend(): bool
     {
         try {
