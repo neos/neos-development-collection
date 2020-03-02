@@ -106,7 +106,6 @@ class ContentRepositoryExportService
     protected $nodeTypeManager;
 
     /**
-     * @Flow\Inject
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
@@ -143,9 +142,10 @@ class ContentRepositoryExportService
      */
     private $commandResult;
 
-    public function __construct(EventStore $eventStore)
+    public function __construct(EventStore $eventStore, NodeAggregateCommandHandler $nodeAggregateCommandHandler)
     {
         $this->eventStore = $eventStore;
+        $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
     }
 
     public function injectEntityManager(EntityManagerInterface $entityManager): void
