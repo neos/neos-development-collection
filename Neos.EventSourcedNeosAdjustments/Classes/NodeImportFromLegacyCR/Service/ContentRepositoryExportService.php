@@ -156,23 +156,22 @@ class ContentRepositoryExportService
 
     public function reset()
     {
-        $this->dbal->executeQuery('
-            SET foreign_key_checks = 0;
-
-            TRUNCATE neos_eventsourcing_eventstore_events;
-            TRUNCATE neos_eventsourcing_eventlistener_appliedeventslog;
-
-            TRUNCATE neos_contentgraph_hierarchyrelation;
-            TRUNCATE neos_contentgraph_node;
-            TRUNCATE neos_contentgraph_referencerelation;
-            TRUNCATE neos_contentgraph_restrictionedge;
-            TRUNCATE neos_contentrepository_projection_change;
-            TRUNCATE neos_contentrepository_projection_nodehiddenstate;
-            TRUNCATE neos_contentrepository_projection_workspace_v1;
-            TRUNCATE neos_neos_projection_domain_v1;
-            TRUNCATE neos_neos_projection_site_v1;
-
-            SET foreign_key_checks = 1;');
+        try {
+            $this->dbal->executeUpdate('SET foreign_key_checks = 0');
+            $this->dbal->executeUpdate('TRUNCATE neos_contentrepository_projection_workspace_v1');
+            $this->dbal->executeUpdate('TRUNCATE neos_contentrepository_events');
+            $this->dbal->executeUpdate('UPDATE neos_eventsourcing_eventlistener_appliedeventslog SET highestappliedsequencenumber=-1');
+            $this->dbal->executeUpdate('TRUNCATE neos_contentgraph_hierarchyrelation');
+            $this->dbal->executeUpdate('TRUNCATE neos_contentgraph_node');
+            $this->dbal->executeUpdate('TRUNCATE neos_contentgraph_referencerelation');
+            $this->dbal->executeUpdate('TRUNCATE neos_contentgraph_restrictionrelation');
+            $this->dbal->executeUpdate('TRUNCATE neos_contentrepository_projection_change');
+            $this->dbal->executeUpdate('TRUNCATE neos_contentrepository_projection_nodehiddenstate');
+            $this->dbal->executeUpdate('TRUNCATE neos_neos_projection_domain_v1');
+            $this->dbal->executeUpdate('TRUNCATE neos_neos_projection_site_v1');
+        } finally {
+            $this->dbal->executeUpdate('SET foreign_key_checks = 1');
+        }
     }
 
     public function migrate()
@@ -284,7 +283,8 @@ class ContentRepositoryExportService
         array $propertyReferences,
         NodePath $nodePath,
         bool $isHidden
-    ) {
+    )
+    {
         echo $nodePath . "\n";
 
         try {
