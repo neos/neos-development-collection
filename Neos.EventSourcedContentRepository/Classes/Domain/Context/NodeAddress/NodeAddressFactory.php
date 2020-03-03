@@ -125,4 +125,21 @@ class NodeAddressFactory
             $baseNodeAddress->getWorkspaceName()
         );
     }
+
+    public function adjustWithWorkspaceName(NodeAddress $baseNodeAddress, WorkspaceName $workspaceName): NodeAddress
+    {
+        if ($workspaceName->jsonSerialize() === $baseNodeAddress->getWorkspaceName()->jsonSerialize()) {
+            // optimization if WorkspaceName does not need adjusting
+            return $baseNodeAddress;
+        }
+
+        $contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)->getCurrentContentStreamIdentifier();
+
+        return new NodeAddress(
+            $contentStreamIdentifier,
+            $baseNodeAddress->getDimensionSpacePoint(),
+            $baseNodeAddress->getNodeAggregateIdentifier(),
+            $workspaceName
+        );
+    }
 }
