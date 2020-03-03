@@ -399,7 +399,7 @@
 			<target state="translated">Är du säker på att du vill ignorera alla ändringar i den här arbetsytan?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="needs-translation">Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target></trans-unit>
+			<target state="translated">Är du säker på att du vill ignorera {numberOfChanges} ändring(ar) i denna arbetsyta?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target state="translated">Publicera alla</target></trans-unit>
