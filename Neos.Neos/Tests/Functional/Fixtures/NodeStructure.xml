@@ -570,7 +570,7 @@
         <someSpecialProperty __type="string">xx</someSpecialProperty>
        </properties>
       </variant>
-      <node identifier="7b443d48-56f1-85a4-8f82-8d4f7342331f" nodeName="dummy42">
+      <node identifier="7b443d48-56f1-85a4-8f82-8d4f7342331f" nodeName="dummy46">
        <variant sortingIndex="200" workspace="live" nodeType="Acme.Demo:Text" version="2" removed="" hidden="" hiddenInIndex="">
         <dimensions>
          <language>en_US</language>
@@ -581,7 +581,7 @@
         </properties>
        </variant>
       </node>
-      <node identifier="9fa376af-a1b8-83ac-bedc-9ad83c8598bc" nodeName="dummy42a">
+      <node identifier="9fa376af-a1b8-83ac-bedc-9ad83c8598bc" nodeName="dummy46a">
        <variant sortingIndex="100" workspace="live" nodeType="Acme.Demo:Headline" version="2" removed="" hidden="" hiddenInIndex="">
         <dimensions>
          <language>en_US</language>
