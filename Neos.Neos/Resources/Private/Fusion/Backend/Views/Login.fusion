@@ -97,7 +97,7 @@ prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
   }
 
   renderer = afx`
-    <Neos.Fusion.Form:Form form.target.action="authenticate">
+    <Neos.Fusion.Form:Form form.target.action="authenticate" attributes.name="login">
         <Neos.Fusion.Form:Hidden field.name="lastVisitedNode" />
         <fieldset>
             <div class="neos-controls">
