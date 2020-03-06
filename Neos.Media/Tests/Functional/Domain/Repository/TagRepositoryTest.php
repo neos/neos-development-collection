@@ -10,6 +10,8 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\TagRepository;
@@ -38,7 +40,7 @@ class TagRepositoryTest extends AbstractTest
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
 
         $this->tagRepository = $this->objectManager->get(TagRepository::class);
@@ -47,7 +49,7 @@ class TagRepositoryTest extends AbstractTest
     /**
      * @test
      */
-    public function tagsCanBePersisted()
+    public function tagsCanBePersisted(): void
     {
         $tag = new Tag('foobar');
 
@@ -61,7 +63,7 @@ class TagRepositoryTest extends AbstractTest
     /**
      * @test
      */
-    public function findBySearchTermReturnsFilteredResult()
+    public function findBySearchTermReturnsFilteredResult(): void
     {
         $tag1 = new Tag('foobar');
         $tag2 = new Tag('foo bar');
@@ -77,5 +79,32 @@ class TagRepositoryTest extends AbstractTest
         self::assertCount(3, $this->tagRepository->findBySearchTerm('foo'));
         self::assertCount(2, $this->tagRepository->findBySearchTerm('foo bar'));
         self::assertCount(1, $this->tagRepository->findBySearchTerm(' foo '));
+    }
+
+    /**
+     * @test
+     */
+    public function parentRemoveRemovesCompleteHierarchy(): void {
+        $grandchild = new Tag('grandChild');
+        $child = new Tag('child');
+        $parent = new Tag('parent');
+        $child->setParent($parent);
+        $grandchild->setParent($child);
+
+        $this->tagRepository->add($parent);
+        $this->tagRepository->add($child);
+        $this->tagRepository->add($grandchild);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        $persistedParent = $this->tagRepository->findOneByLabel('parent');
+        $this->tagRepository->remove($persistedParent);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        static::assertNull($this->tagRepository->findOneByLabel('child'));
+        static::assertNull($this->tagRepository->findOneByLabel('grandChild'));
+        static::assertNull($this->tagRepository->findOneByLabel('parent'));
     }
 }
