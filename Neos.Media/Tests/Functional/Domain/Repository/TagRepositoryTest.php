@@ -11,7 +11,6 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
  * source code.
  */
 
-use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\TagRepository;
@@ -84,7 +83,8 @@ class TagRepositoryTest extends AbstractTest
     /**
      * @test
      */
-    public function parentRemoveRemovesCompleteHierarchy(): void {
+    public function parentRemoveRemovesCompleteHierarchy(): void
+    {
         $grandchild = new Tag('grandChild');
         $child = new Tag('child');
         $parent = new Tag('parent');
