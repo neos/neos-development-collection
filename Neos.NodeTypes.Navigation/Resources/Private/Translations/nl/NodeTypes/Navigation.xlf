@@ -49,13 +49,13 @@
 			<target state="final">Selectie</target></trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve">
 				<source>Starting Point</source>
-			<target state="needs-translation">Starting Point</target></trans-unit>
+			<target state="translated">Begin punt</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve" approved="yes">
 				<source>Maximum Levels</source>
 			<target state="final">Maximum niveau's</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve">
 				<source>Empty Menu</source>
-			<target state="needs-translation">Empty Menu</target></trans-unit>
+			<target state="translated">Leeg menu</target></trans-unit>
     </body>
   </file>
 </xliff>

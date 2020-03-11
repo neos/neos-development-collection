@@ -13,7 +13,7 @@
 			<target state="final">Bestanden</target><alt-trans><target>Assets</target></alt-trans></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve">
 				<source>Empty asset list</source>
-			<target state="needs-translation">Empty asset list</target></trans-unit>
+			<target state="translated">Lege assetlijst</target></trans-unit>
     </body>
   </file>
 </xliff>
