@@ -231,28 +231,28 @@
 			<target state="final">Er zijn nog geen gebeurtenissen die kunnen worden weergegeven in deze geschiedenis.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} heeft de {1} "{2} " gemaakt.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} verwijderde de {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target state="translated">{0} heeft de variant {1} van de {2} "{3} " gemaakt.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} wijzigde de {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} verplaatste de {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} kopieerde de {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target state="translated">{0} heeft de naam {1} "{2}" gewijzigd naar "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} heeft de inhoud van de {1} "{2} " gewijzigd.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve" approved="yes">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target state="final">{0} heeft een nieuwe gebruiker "{1}" gemaakt voor {2}.</target></trans-unit>
@@ -541,7 +541,7 @@
 			<target state="final">De Sites Management module biedt u met een overzicht van alle sites. U kunt informatie over uw sites bewerken, toevoegen en verwijderen, zoals bijvoorbeeld het toevoegen van een nieuwe domeinnaam.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target state="needs-translation">Add new site</target></trans-unit>
+			<target state="translated">Nieuwe site toevoegen</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
 			<target state="final">Site aan maken</target></trans-unit>
@@ -550,7 +550,7 @@
 			<target state="final">Een nieuwe site aan maken</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
-			<target state="needs-translation">Root node name</target></trans-unit>
+			<target state="translated">Root node naam</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
 			<target state="translated">Domeinen</target></trans-unit>
@@ -562,82 +562,82 @@
 			<target state="final">Naam</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
 				<source>Default asset collection</source>
-			<target state="needs-translation">Default asset collection</target></trans-unit>
+			<target state="translated">Standaard asset collectie</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve">
 				<source>Site package</source>
-			<target state="needs-translation">Site package</target></trans-unit>
+			<target state="translated">Site pakket</target></trans-unit>
       <trans-unit id="sites.delete" xml:space="preserve">
 				<source>Delete this site</source>
-			<target state="needs-translation">Delete this site</target></trans-unit>
+			<target state="translated">Verwijder deze site</target></trans-unit>
       <trans-unit id="sites.deactivate" xml:space="preserve">
 				<source>Deactivate site</source>
-			<target state="needs-translation">Deactivate site</target></trans-unit>
+			<target state="translated">Site deactiveren</target></trans-unit>
       <trans-unit id="sites.activate" xml:space="preserve">
 				<source>Activate site</source>
-			<target state="needs-translation">Activate site</target></trans-unit>
+			<target state="translated">Site activeren</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target state="translated">Weet u zeker dat u "{0}" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target state="needs-translation">Yes, delete the site</target></trans-unit>
+			<target state="translated">Ja, verwijder de site</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
-			<target state="needs-translation">Import a site</target></trans-unit>
+			<target state="translated">Importeer een site</target></trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
 				<source>Select a site package</source>
-			<target state="needs-translation">Select a site package</target></trans-unit>
+			<target state="translated">Selecteer een site pakket</target></trans-unit>
       <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+			<target state="translated">Er zijn geen sitepakketten beschikbaar. Zorg ervoor dat je een actief sitepakket hebt.</target></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve">
 				<source>Create a blank site</source>
-			<target state="needs-translation">Create a blank site</target></trans-unit>
+			<target state="translated">Maak een lege site aan</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
-			<target state="needs-translation">Select a document nodeType</target></trans-unit>
+			<target state="translated">Selecteer een document nodeType</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
-			<target state="needs-translation">Site name</target></trans-unit>
+			<target state="translated">Naam site</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve">
 				<source>Create empty site</source>
-			<target state="needs-translation">Create empty site</target></trans-unit>
+			<target state="translated">Maak een lege site</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
-			<target state="needs-translation">Create a new site package</target></trans-unit>
+			<target state="translated">Maak een nieuw site pakket aan</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
-			<target state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+			<target state="translated">VendorName.MyPackageKey</target></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			<target state="needs-translation">No sites available</target></trans-unit>
+			<target state="translated">Geen sites beschikbaar</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+			<target state="translated">Het &lt;em&gt;Neos Kickstarter&lt;/em&gt; pakket is niet geïnstalleerd, installeer het om nieuwe sites te starten.</target></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
-			<target state="needs-translation">New site</target></trans-unit>
+			<target state="translated">Nieuwe site</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target state="translated">Weet u zeker dat u "{0}" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</target></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve">
 				<source>New domain</source>
-			<target state="needs-translation">New domain</target></trans-unit>
+			<target state="translated">Nieuw domein</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
-			<target state="needs-translation">Edit domain</target></trans-unit>
+			<target state="translated">Domein bewerken</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">Domein gegevens</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
-			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
+			<target state="translated">e.g. www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
-			<target state="needs-translation">State</target></trans-unit>
+			<target state="translated">Status</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
-			<target state="needs-translation">Create</target></trans-unit>
+			<target state="translated">Aanmaken</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target state="final">Configuratie</target></trans-unit>

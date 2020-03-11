@@ -399,7 +399,7 @@
 			<target state="final">Weet u zeker dat u wilt verwijderen van alle wijzigingen in deze workspace?</target><alt-trans><target>Weet u zeker dat u alle wijzigingen ongedaan wilt maken in deze workspace?</target></alt-trans></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="needs-translation">Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target></trans-unit>
+			<target state="translated">Weet u zeker dat u {numberOfChanges} verandering(en) in deze werkruimte wilt verwijderen?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
 			<target state="final">Alles publiceren</target></trans-unit>
@@ -739,28 +739,28 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target state="needs-translation">Copy {source} to {target}</target></trans-unit>
+			<target state="translated">{source} naar {target} kopiëren</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
-			<target state="needs-translation">Move {source} to {target}</target></trans-unit>
+			<target state="translated">{source} naar {target} verplaatsen</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target></trans-unit>
+			<target state="translated">Selecteer de positie waarin u wilt dat {source} relatief aan {target} ingevoegd is.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
 			<target state="translated">Invoegen</target></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
 				<source>Insert mode</source>
-			<target state="needs-translation">Insert mode</target></trans-unit>
+			<target state="translated">Insert mode</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
+			<target state="translated">Kies een beeldverhouding</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
 			<target state="translated">Dikgedrukt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
-			<target state="needs-translation">Italic</target></trans-unit>
+			<target state="translated">Cursief</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
 			<target state="translated">Onderstreept</target></trans-unit>
@@ -769,10 +769,10 @@
 			<target state="translated">Inschrijven</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
-			<target state="needs-translation">Superscript</target></trans-unit>
+			<target state="translated">Superscript</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target state="needs-translation">Strikethrough</target></trans-unit>
+			<target state="translated">Doorhalen</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve" approved="yes">
 				<source>Link</source>
 			<target state="final">Link</target></trans-unit>
@@ -802,10 +802,10 @@
 			<target state="translated">Opmaak Verwijderen</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target state="needs-translation">Outdent</target></trans-unit>
+			<target state="translated">Terugspringen</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target state="needs-translation">Indent</target></trans-unit>
+			<target state="translated">Inspringen</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve" approved="yes">
 				<source>Create new</source>
 			<target state="final">Maak nieuw</target></trans-unit>
@@ -814,7 +814,7 @@
 			<target state="translated">Geen overeenkomsten gevonden</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>
+			<target state="translated">Voer ###CHARACTERS### meer karakter in</target></trans-unit>
     </body>
   </file>
 </xliff>
