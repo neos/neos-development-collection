@@ -356,28 +356,28 @@
 			<target state="translated">Vervang "{filename}"</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-			<target state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+			<target state="translated">Je kunt dit bestand vervangen door een nieuw bestand te uploaden. Eenmaal vervangen, zal het nieuwe bestand worden gebruikt op alle plaatsen waar de asset op uw website wordt gebruikt.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
 				<source>Note</source>
-			<target state="needs-translation">Note</target></trans-unit>
+			<target state="translated">Notitie</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-			<target state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+			<target state="translated">Deze operatie vervangt de asset in alle gepubliceerde of ongepubliceerde werkruimten, inclusief de live website.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
 				<source>Choose a new file</source>
-			<target state="needs-translation">Choose a new file</target></trans-unit>
+			<target state="translated">Kies een nieuw bestand</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
 				<source>Currently the asset is used {usageCount} times.</source>
-			<target state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+			<target state="translated">Momenteel wordt de asset {usageCount} keer gebruikt.</target></trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve">
 				<source>Show all usages</source>
-			<target state="needs-translation">Show all usages</target></trans-unit>
+			<target state="translated">Toon alle toepassingen</target></trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
 				<source>Currently the asset is not in used anywhere on the website.</source>
-			<target state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+			<target state="translated">Momenteel wordt de asset nergens op de website gebruikt.</target></trans-unit>
       <trans-unit id="replace.previewFile" xml:space="preserve">
 				<source>Preview current file</source>
-			<target state="needs-translation">Preview current file</target></trans-unit>
+			<target state="translated">Voorbeeld huidige bestand</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve" approved="yes">
 				<source>Could not replace asset</source>
 			<target state="final">Kon het bestand niet vervangen</target></trans-unit>
@@ -422,13 +422,13 @@
 			<target state="translated">Genereer een redirect van de originele locatie van het bestand naar de nieuwe locatie</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target state="translated">'Bronnen van type "{0}' kunnen alleen worden vervangen door een vergelijkbare bron. Kreeg type "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target state="translated">Geen toegang tot werkplaats "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="needs-translation">No document node found for this node</target></trans-unit>
+			<target state="translated">Geen documentnode gevonden voor deze node</target></trans-unit>
     </body>
   </file>
 </xliff>
