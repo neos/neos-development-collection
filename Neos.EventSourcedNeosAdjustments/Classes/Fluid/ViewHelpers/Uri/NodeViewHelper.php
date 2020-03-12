@@ -115,31 +115,34 @@ class NodeViewHelper extends AbstractViewHelper
     protected $nodeSiteResolvingService;
 
     /**
+     * Initialize arguments
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('subgraph', 'mixed', 'The subgraph');
+
+        $this->registerArgument('node', 'mixed', 'A node object, a string node path (absolute or relative), a string node://-uri or NULL');
+        $this->registerArgument('format', 'string', 'Format to use for the URL, for example "html" or "json"');
+        $this->registerArgument('absolute', 'boolean', 'If set, an absolute URI is rendered', false, false);
+        $this->registerArgument('arguments', 'array', 'Additional arguments to be passed to the UriBuilder (for example pagination parameters)', false, []);
+        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
+        $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
+        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
+        $this->registerArgument('baseNodeName', 'string', 'The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths', false, 'documentNode');
+        $this->registerArgument('nodeVariableName', 'string', 'The variable the node will be assigned to for the rendered child content', false, 'linkedNode');
+        $this->registerArgument('resolveShortcuts', 'boolean', 'INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself', false, true);
+    }
+
+    /**
      * Renders the URI.
      *
-     * @param mixed $node A node object, a string node path (absolute or relative), a string node://-uri or NULL
-     * @param string $format Format to use for the URL, for example "html" or "json"
-     * @param boolean $absolute If set, an absolute URI is rendered
-     * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
-     * @param string $section
-     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
-     * @param ContentSubgraphInterface|null $subgraph The explicit override of the subgraph retrieved from the fusion context, e.g. for dimension menus
-     * @return string The rendered URI or NULL if no URI could be resolved for the given node
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
-    public function render(
-        $node = null,
-        $format = null,
-        $absolute = false,
-        array $arguments = [],
-        $section = '',
-        $addQueryString = false,
-        array $argumentsToBeExcludedFromQueryString = [],
-        $resolveShortcuts = true,
-        ContentSubgraphInterface $subgraph = null
-    ) {
+    public function render() {
+        $node = $this->arguments['node'];
         $uri = null;
         $nodeAddress = null;
 
@@ -172,18 +175,18 @@ class NodeViewHelper extends AbstractViewHelper
         }
 
         if (!$uri) {
-            if ($subgraph) {
-                $nodeAddress = $this->nodeAddressFactory->adjustWithDimensionSpacePoint($nodeAddress, $subgraph->getDimensionSpacePoint());
+            if ($this->arguments['subgraph']) {
+                $nodeAddress = $this->nodeAddressFactory->adjustWithDimensionSpacePoint($nodeAddress, $this->arguments['subgraph']->getDimensionSpacePoint());
             }
 
             $uriBuilder = new UriBuilder();
             $uriBuilder->setRequest($this->controllerContext->getRequest());
-            $uriBuilder->setFormat($format)
-                ->setCreateAbsoluteUri($absolute)
-                ->setArguments($arguments)
-                ->setSection($section)
-                ->setAddQueryString($addQueryString)
-                ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString);
+            $uriBuilder->setFormat($this->arguments['format'])
+                ->setCreateAbsoluteUri($this->arguments['absolute'])
+                ->setArguments($this->arguments['arguments'])
+                ->setSection($this->arguments['section'])
+                ->setAddQueryString($this->arguments['addQueryString'])
+                ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
 
             $uri = $uriBuilder->uriFor(
                 'show',

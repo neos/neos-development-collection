@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Node;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -21,13 +22,27 @@ use Neos\Eel\FlowQuery\FlowQuery;
  */
 class ClosestDocumentViewHelper extends AbstractViewHelper
 {
+
     /**
-     * @param TraversableNodeInterface $node
-     * @return TraversableNodeInterface
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(TraversableNodeInterface $node)
+    public function initializeArguments()
     {
-        $flowQuery = new FlowQuery([$node]);
+        parent::initializeArguments();
+        $this->registerArgument('node', TraversableNodeInterface::class, 'Node', true);
+    }
+
+
+    /**
+     * @return NodeInterface
+     * @throws \Neos\Eel\Exception
+     */
+    public function render()
+    {
+        $flowQuery = new FlowQuery([$this->arguments['node']]);
         return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
     }
 }
