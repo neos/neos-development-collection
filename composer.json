@@ -8,18 +8,20 @@
     "require": {
         "doctrine/dbal": "*",
         "doctrine/migrations": "*",
+        "neos/neos": "*",
+        "neos/neos-ui": "*",
         "neos/event-sourcing": "*",
         "neos/content-repository": "*",
-        "neos/content-repository-dimensionspace": "*",
-        "neos/neos": "*",
-        "neos/neos-ui": "*"
+        "neos/content-repository-dimensionspace": "*"
     },
     "replace": {
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
+        "neos/eventsourcedcontentrepository-security": "self.version",
         "neos/event-sourced-content-repository": "self.version",
         "neos/event-sourced-neos-adjustments": "self.version"
     },
+    "suggest": [],
     "autoload": {
         "psr-4": {
             "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
@@ -27,6 +29,9 @@
             ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Classes"
+            ],
+            "Neos\\EventSourcedContentRepository\\Security\\": [
+                "Neos.EventSourcedContentRepository.Security/Classes"
             ],
             "Neos\\EventSourcedContentRepository\\": [
                 "Neos.EventSourcedContentRepository/Classes"
