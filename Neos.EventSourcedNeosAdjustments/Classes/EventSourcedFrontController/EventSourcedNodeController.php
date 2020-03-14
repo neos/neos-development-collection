@@ -136,20 +136,20 @@ class EventSourcedNodeController extends ActionController
         $nodeAddress = $node;
 
         $inBackend = !$nodeAddress->isInLiveWorkspace();
+        $visibilityConstraints = $this->createVisibilityConstraints($inBackend);
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $nodeAddress->getContentStreamIdentifier(),
             $nodeAddress->getDimensionSpacePoint(),
-            $inBackend ? VisibilityConstraints::withoutRestrictions() : VisibilityConstraints::frontend()
+            $visibilityConstraints
         );
 
-        $visibilityConstraints = $this->createVisibilityConstraints($inBackend);
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
         if (!$site) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($subgraph, $nodeAddress, $visibilityConstraints);
+        $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (is_null($node)) {
