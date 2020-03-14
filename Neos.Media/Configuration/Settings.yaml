@@ -28,8 +28,11 @@ Neos:
       'neos':
         assetSource: 'Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetSource'
         assetSourceOptions:
+          icon: 'resource://Neos.Media/Public/Icons/NeosWhite.svg'
+          description: 'Assets in the local asset storage'
           # asyncThumbnails: defaults to the value of Neos:Media:asyncThumbnails
           asyncThumbnails: ~
+
 
     asset:
       modelMappingStrategy:
