@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -86,8 +87,20 @@ class PropertyOperation extends AbstractOperation
             } elseif ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
-                /* @var NodeInterface $element */
-                return $element->getProperty($propertyPath);
+                if ($element->getNodeType()->getPropertyType($propertyPath) === 'reference') {
+                    $references = $element->findNamedReferencedNodes(PropertyName::fromString($propertyPath));
+                    if ($references->isEmpty()) {
+                        return null;
+                    } else {
+                        $arr = $references->toArray();
+                        $res = reset($arr);
+                        return $res;
+                    }
+                } elseif ($element->getNodeType()->getPropertyType($propertyPath) === 'reference') {
+                    return $element->findNamedReferencedNodes(PropertyName::fromString($propertyPath));
+                } else {
+                    return $element->getProperty($propertyPath);
+                }
             }
         }
     }
