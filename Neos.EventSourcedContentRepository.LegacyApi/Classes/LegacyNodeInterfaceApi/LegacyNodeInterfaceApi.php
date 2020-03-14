@@ -5,4 +5,6 @@ namespace Neos\EventSourcedContentRepository\LegacyApi\LegacyNodeInterfaceApi;
 interface LegacyNodeInterfaceApi
 {
     public function getIdentifier();
+
+    public function getDepth();
 }

@@ -32,4 +32,16 @@ class ImplementLegacyApiInTraversableNodeInterfaceAspect
         $traversableNode = $joinPoint->getProxy();
         return $traversableNode->getNodeAggregateIdentifier()->jsonSerialize();
     }
+
+    /**
+     * @Flow\Around("method(Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode->getDepth())")
+     */
+    public function getDepth(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
+    {
+        $this->legacyLogger->info('NodeInterface.getDepth() called', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getDepth'));
+
+        /* @var TraversableNode $traversableNode */
+        $traversableNode = $joinPoint->getProxy();
+        return $traversableNode->findNodePath()->getDepth();
+    }
 }
