@@ -286,6 +286,6 @@ class EventSourcedNodeController extends ActionController
         }
 
         // TODO Explain why this is safe (Content can not contain other documents)
-        $allChildNodesByNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $allChildNodes);
+        $allChildNodesByNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), null, $allChildNodes);
     }
 }
