@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\Model\AssetSource\Neos;
 
 /*
@@ -15,9 +17,11 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
+use Neos\Media\Domain\Model\AssetSource\DescriptiveAssetSourceInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Flow\Annotations as Flow;
@@ -28,7 +32,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * Asset source for Neos native assets
  */
-final class NeosAssetSource implements AssetSourceInterface
+final class NeosAssetSource implements AssetSourceInterface, DescriptiveAssetSourceInterface
 {
     /**
      * @var string
@@ -65,6 +69,22 @@ final class NeosAssetSource implements AssetSourceInterface
     protected $asyncThumbnails;
 
     /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
+
+    /**
+     * @var string
+     */
+    protected $iconPath;
+
+    /**
+     * @var string
+     */
+    protected $description = '';
+
+    /**
      * @param string $assetSourceIdentifier
      * @param array $assetSourceOptions
      */
@@ -85,7 +105,13 @@ final class NeosAssetSource implements AssetSourceInterface
                         }
                         $this->asyncThumbnails = $optionValue;
                     }
-                break;
+                    break;
+                case 'icon':
+                    $this->iconPath = $optionValue;
+                    break;
+                case 'description':
+                    $this->description = $optionValue;
+                    break;
                 default:
                     throw new \InvalidArgumentException(sprintf('Unknown asset source option "%s" specified for Neos asset source "%s". Please check your settings.', $optionName, $assetSourceIdentifier), 1513327774);
             }
@@ -119,6 +145,26 @@ final class NeosAssetSource implements AssetSourceInterface
     }
 
     /**
+     * Returns the resource path to Assetsources icon
+     *
+     * @return string
+     */
+    public function getIconUri(): string
+    {
+        return $this->resourceManager->getPublicPackageResourceUriByPath($this->iconPath);
+    }
+
+    /**
+     * !! Will be added to the interface with Neos 6.0
+     *
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
      * @return AssetProxyRepositoryInterface
      */
     public function getAssetProxyRepository(): AssetProxyRepositoryInterface
@@ -143,8 +189,10 @@ final class NeosAssetSource implements AssetSourceInterface
      *
      * @param AssetInterface $asset
      * @return Uri|null
-     * @throws ThumbnailServiceException
      * @throws AssetServiceException
+     * @throws ThumbnailServiceException
+     * @throws \Neos\Flow\Http\Exception
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function getThumbnailUriForAsset(AssetInterface $asset): ?UriInterface
     {
@@ -159,8 +207,10 @@ final class NeosAssetSource implements AssetSourceInterface
      *
      * @param AssetInterface $asset
      * @return Uri|null
-     * @throws ThumbnailServiceException
      * @throws AssetServiceException
+     * @throws ThumbnailServiceException
+     * @throws \Neos\Flow\Http\Exception
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function getPreviewUriForAsset(AssetInterface $asset): ?UriInterface
     {

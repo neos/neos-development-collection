@@ -104,8 +104,9 @@
         <ul class="neos-media-aside-list">
             <f:for each="{assetSources}" key="assetSourceIdentifier" as="assetSource">
                 <li>
-                    <f:link.action action="index" title="{assetSource.label}" class="{f:if(condition: '{assetSourceIdentifier} === {activeAssetSource.identifier}', then: ' neos-active')}" arguments="{assetSourceIdentifier: assetSourceIdentifier}">
-                        {assetSource.label}
+                    <f:link.action action="index" title="{f:if(condition:assetSource.description, then: assetSource.description, else: assetSource.label)}" class="{f:if(condition: '{assetSourceIdentifier} === {activeAssetSource.identifier}', then: ' neos-active')}" arguments="{assetSourceIdentifier: assetSourceIdentifier}">
+                      <f:if condition="{assetSource.iconUri}"><img class="neos-media-assetsource-icon" src="{assetSource.iconUri}" /></f:if>
+											{assetSource.label}
                     </f:link.action>
                 </li>
             </f:for>
