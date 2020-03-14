@@ -37,6 +37,22 @@ interface AssetSourceInterface
     public function getLabel(): string;
 
     /**
+     * Returns the resource path to the icon of the asset source
+     * !! Will be added to the interface with Neos 6.0
+     *
+     * @return string
+     */
+    // public function getIcon(): string;
+
+    /**
+     * Returns the description of the asset source
+     * !! Will be added to the interface with Neos 6.0
+     *
+     * @return string
+     */
+    // public function getDescription(): string;
+
+    /**
      * @return AssetProxyRepositoryInterface
      */
     public function getAssetProxyRepository(): AssetProxyRepositoryInterface;

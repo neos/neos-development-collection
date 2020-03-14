@@ -21,7 +21,6 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
-use Neos\Media\Domain\Model\AssetSource\DescriptiveAssetSourceInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Flow\Annotations as Flow;
@@ -32,7 +31,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * Asset source for Neos native assets
  */
-final class NeosAssetSource implements AssetSourceInterface, DescriptiveAssetSourceInterface
+final class NeosAssetSource implements AssetSourceInterface
 {
     /**
      * @var string
