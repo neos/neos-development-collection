@@ -1599,6 +1599,8 @@ class NodeDataRepository extends Repository
      */
     protected function addIdentifierConstraintToQueryBuilder(QueryBuilder $queryBuilder, $identifier)
     {
+        // TODO: We should add type hints in next major because this query becomes really SLOW if you use an integer here.
+        $identifier = (string)$identifier;
         $queryBuilder->andWhere('n.identifier = :identifier')
             ->setParameter('identifier', $identifier);
     }
