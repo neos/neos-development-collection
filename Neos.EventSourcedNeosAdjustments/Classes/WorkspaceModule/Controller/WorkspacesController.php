@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedNeosAdjustments\WorkspaceModule;
+namespace Neos\EventSourcedNeosAdjustments\WorkspaceModule\Controller;
 
 /*
  * This file is part of the Neos.Neos package.
