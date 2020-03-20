@@ -465,7 +465,6 @@ class UserService
 
         /** @var Role $role */
         foreach ($currentRoles as $role) {
-
             $roleIdentifier = $this->normalizeRoleIdentifier((string) $role);
             if (!in_array($roleIdentifier, $newRoleIdentifiers)) {
                 $this->removeRoleFromAccount($account, $roleIdentifier);
@@ -473,7 +472,6 @@ class UserService
         }
 
         foreach ($newRoleIdentifiers as $roleIdentifier) {
-
             if (!$currentRoles->has(new Role($roleIdentifier))) {
                 $this->addRoleToAccount($account, $roleIdentifier);
             }
