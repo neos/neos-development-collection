@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 
 /**
  * Workspace Read Model
@@ -161,6 +162,21 @@ class Workspace
     {
         return new WorkspaceName($this->workspaceName);
     }
+
+    public function getWorkspaceTitle(): WorkspaceTitle
+    {
+        return new WorkspaceTitle($this->workspaceTitle);
+    }
+
+    /**
+     * @return string
+     */
+    public function getWorkspaceOwner(): ?string
+    {
+        return $this->workspaceOwner;
+    }
+
+
 
     /**
      * Checks if this workspace is a user's personal workspace

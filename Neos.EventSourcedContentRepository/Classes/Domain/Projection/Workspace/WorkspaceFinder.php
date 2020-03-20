@@ -157,6 +157,35 @@ final class WorkspaceFinder
         return $result;
     }
 
+    /**
+     * @param WorkspaceName $baseWorkspace
+     * @return array|Workspace[]
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function findByBaseWorkspace(WorkspaceName $baseWorkspace): array
+    {
+        $result = [];
+
+        $connection = $this->client->getConnection();
+        $workspaceRows = $connection->executeQuery(
+            '
+                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                WHERE baseWorkspaceName = :workspaceName
+            ',
+            [
+                ':workspaceName' => (string)$baseWorkspace
+            ]
+        )->fetchAll();
+
+        foreach ($workspaceRows as $workspaceRow) {
+            $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
+            /** @var Workspace $similarlyNamedWorkspace */
+            $result[(string)$similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+        }
+
+        return $result;
+    }
+
     public function findOneByWorkspaceOwner(string $owner): ?Workspace
     {
         $connection = $this->client->getConnection();

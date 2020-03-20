@@ -1,0 +1,9 @@
+<f:validation.results for="{fieldname}">
+	<f:if condition="{validationResults.flattenedErrors}">
+		<ul class="errors">
+			<f:for each="{validationResults.errors}" as="error">
+				<li><span class="neos-help-block">{error}</span></li>
+			</f:for>
+		</ul>
+	</f:if>
+</f:validation.results>

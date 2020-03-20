@@ -19,6 +19,7 @@ use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
@@ -27,8 +28,12 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
+use Neos\EventSourcedNeosAdjustments\WorkspaceModule\WorkspaceUserService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\Translator;
@@ -93,6 +98,12 @@ class WorkspacesController extends AbstractModuleController
      * @var UserService
      */
     protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceUserService
+     */
+    protected $workspaceUserService;
 
     /**
      * @Flow\Inject
@@ -173,9 +184,9 @@ class WorkspacesController extends AbstractModuleController
                 $workspaceName = (string)$workspace->getWorkspaceName();
                 $workspacesAndCounts[$workspaceName]['workspace'] = $workspace;
                 $workspacesAndCounts[$workspaceName]['changesCounts'] = $this->computeChangesCount($workspace);
-                $workspacesAndCounts[$workspaceName]['canPublish'] = $this->userService->currentUserCanPublishToWorkspace($workspace);
-                $workspacesAndCounts[$workspaceName]['canManage'] = $this->userService->currentUserCanManageWorkspace($workspace);
-                $workspacesAndCounts[$workspaceName]['dependentWorkspacesCount'] = count($this->workspaceFinder->findByBaseWorkspace($workspace));
+                $workspacesAndCounts[$workspaceName]['canPublish'] = $this->workspaceUserService->currentUserCanPublishToWorkspace($workspace);
+                $workspacesAndCounts[$workspaceName]['canManage'] = $this->workspaceUserService->currentUserCanManageWorkspace($workspace);
+                $workspacesAndCounts[$workspaceName]['dependentWorkspacesCount'] = count($this->workspaceFinder->findByBaseWorkspace($workspace->getWorkspaceName()));
             }
         }
 
@@ -210,51 +221,60 @@ class WorkspacesController extends AbstractModuleController
      * Create a workspace
      *
      * @Flow\Validate(argumentName="title", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
-     * @param string $title Human friendly title of the workspace, for example "Christmas Campaign"
-     * @param Workspace $baseWorkspace Workspace the new workspace should be based on
+     * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
+     * @param WorkspaceName $baseWorkspace Workspace the new workspace should be based on
      * @param string $visibility Visibility of the new workspace, must be either "internal" or "shared"
-     * @param string $description A description explaining the purpose of the new workspace
+     * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
      * @return void
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
-    public function createAction($title, Workspace $baseWorkspace, $visibility, $description = '')
+    public function createAction(WorkspaceTitle $title, WorkspaceName $baseWorkspace, $visibility, WorkspaceDescription $description = null)
     {
-        $workspace = $this->workspaceFinder->findOneByTitle($title);
-        if ($workspace instanceof Workspace) {
-            $this->addFlashMessage($this->translator->translateById('workspaces.workspaceWithThisTitleAlreadyExists', [], null, null, 'Modules', 'Neos.Neos'), '', Message::SEVERITY_WARNING);
-            $this->redirect('new');
-        }
+        // TODO
+        //$workspace = $this->workspaceFinder->findOneByWorkspaceTitle($title);
+        //if ($workspace instanceof Workspace) {
+        //    $this->addFlashMessage($this->translator->translateById('workspaces.workspaceWithThisTitleAlreadyExists', [], null, null, 'Modules', 'Neos.Neos'), '', Message::SEVERITY_WARNING);
+        //    $this->redirect('new');
+        //}
 
-        $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5);
+        $workspaceName = new WorkspaceName(Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5));
         while ($this->workspaceFinder->findOneByName($workspaceName) instanceof Workspace) {
             $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5);
         }
 
         if ($visibility === 'private') {
-            $owner = $this->userService->getCurrentUser();
+            $owner = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser()));
         } else {
             $owner = null;
         }
 
-        $workspace = new Workspace($workspaceName, $baseWorkspace, $owner);
-        $workspace->setTitle($title);
-        $workspace->setDescription($description);
+        $command = new CreateWorkspace(
+            $workspaceName,
+            $baseWorkspace,
+            $title,
+            $description,
+            UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser())),
+            ContentStreamIdentifier::create(),
+            $owner
+        );
+        $this->workspaceCommandHandler->handleCreateWorkspace($command)->blockUntilProjectionsAreUpToDate();
 
-        $this->workspaceFinder->add($workspace);
         $this->redirect('index');
     }
 
     /**
      * Edit a workspace
      *
-     * @param Workspace $workspace
+     * @param WorkspaceName $workspace
      * @return void
      */
-    public function editAction(Workspace $workspace)
+    public function editAction(WorkspaceName $workspace)
     {
+        $workspace = $this->workspaceFinder->findOneByName($workspace);
         $this->view->assign('workspace', $workspace);
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($workspace));
-        $this->view->assign('disableBaseWorkspaceSelector', $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
-        $this->view->assign('showOwnerSelector', $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace));
+        // TODO: $this->view->assign('disableBaseWorkspaceSelector', $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
+        $this->view->assign('showOwnerSelector', $this->workspaceUserService->currentUserCanTransferOwnershipOfWorkspace($workspace));
         $this->view->assign('ownerOptions', $this->prepareOwnerOptions());
     }
 
@@ -753,7 +773,7 @@ class WorkspacesController extends AbstractModuleController
         foreach ($this->workspaceFinder->findAll() as $workspace) {
             /** @var Workspace $workspace */
             if (!$workspace->isPersonalWorkspace() && $workspace !== $excludedWorkspace && ($workspace->isPublicWorkspace() || $workspace->isInternalWorkspace() || $this->userService->currentUserCanManageWorkspace($workspace))) {
-                $baseWorkspaceOptions[$workspace->getName()] = $workspace->getTitle();
+                $baseWorkspaceOptions[(string)$workspace->getWorkspaceName()] = (string)$workspace->getWorkspaceTitle();
             }
         }
 
