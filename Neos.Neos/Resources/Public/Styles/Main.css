@@ -27,7 +27,7 @@
   src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url(../Fonts/NotoSans-BoldItalic.ttf) format("truetype"); }
 
 /*!
- * Font Awesome Free 5.12.0 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 .fa,
@@ -1270,6 +1270,9 @@ readers do not read off random characters that represent icons */
 .fa-d-and-d-beyond:before {
   content: "\f6ca"; }
 
+.fa-dailymotion:before {
+  content: "\f952"; }
+
 .fa-dashcube:before {
   content: "\f210"; }
 
@@ -2311,6 +2314,9 @@ readers do not read off random characters that represent icons */
 .fa-instagram:before {
   content: "\f16d"; }
 
+.fa-instagram-square:before {
+  content: "\f955"; }
+
 .fa-intercom:before {
   content: "\f7af"; }
 
@@ -2709,6 +2715,9 @@ readers do not read off random characters that represent icons */
 
 .fa-mixcloud:before {
   content: "\f289"; }
+
+.fa-mixer:before {
+  content: "\f956"; }
 
 .fa-mizuni:before {
   content: "\f3cc"; }
@@ -3414,6 +3423,9 @@ readers do not read off random characters that represent icons */
 
 .fa-shoe-prints:before {
   content: "\f54b"; }
+
+.fa-shopify:before {
+  content: "\f957"; }
 
 .fa-shopping-bag:before {
   content: "\f290"; }
@@ -4484,22 +4496,23 @@ readers do not read off random characters that represent icons */
   width: auto; }
 
 /*!
- * Font Awesome Free 5.12.0 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
   font-family: 'Font Awesome 5 Brands';
   font-style: normal;
-  font-weight: normal;
+  font-weight: 400;
   font-display: auto;
   src: url(../Fonts/fa-brands-400.eot);
   src: url(../Fonts/fa-brands-400.eot?#iefix) format("embedded-opentype"), url(../Fonts/fa-brands-400.woff2) format("woff2"), url(../Fonts/fa-brands-400.woff) format("woff"), url(../Fonts/fa-brands-400.ttf) format("truetype"), url(../Fonts/fa-brands-400.svg#fontawesome) format("svg"); }
 
 .fab {
-  font-family: 'Font Awesome 5 Brands'; }
+  font-family: 'Font Awesome 5 Brands';
+  font-weight: 400; }
 
 /*!
- * Font Awesome Free 5.12.0 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
@@ -4515,7 +4528,7 @@ readers do not read off random characters that represent icons */
   font-weight: 400; }
 
 /*!
- * Font Awesome Free 5.12.0 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
@@ -7442,7 +7455,7 @@ readers do not read off random characters that represent icons */
       text-decoration: underline; }
   .neos [class^="fa-"],
   .neos [class*=" fa-"] {
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
     display: inline-block;
     width: 14px;
     height: 14px;
@@ -7461,7 +7474,7 @@ readers do not read off random characters that represent icons */
     .neos [class^="fa-"]:before, .neos [class^="fa-"]:after, .neos [class*=" fa-"]:before, .neos [class*=" fa-"]:after {
       font-family: inherit; }
     .neos [class^="fa-"].fab, .neos [class*=" fa-"].fab {
-      font-family: "FontAwesome Brand";
+      font-family: "Font Awesome 5 Brands";
       display: inline-block;
       width: 14px;
       height: 14px;
