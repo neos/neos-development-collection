@@ -385,7 +385,7 @@ class UserCommandController extends CommandController
         $accountIdentifiers = [];
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
-            $authenticationProviderName = $account->getAuthenticationProviderName();
+            $authenticationProviderName = (string) $account->getAuthenticationProviderName();
             if ($authenticationProviderName !== $this->userService->getDefaultAuthenticationProviderName()) {
                 $authenticationProviderLabel = ' (' . (isset($this->authenticationProviderSettings[$authenticationProviderName]['label']) ? $this->authenticationProviderSettings[$authenticationProviderName]['label'] : $authenticationProviderName) . ')';
             } else {
