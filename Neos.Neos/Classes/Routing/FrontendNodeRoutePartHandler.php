@@ -64,7 +64,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected $siteRepository;
 
     /**
-     * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions")
+     * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions", package="Neos.Neos")
      * @var boolean
      */
     protected $supportEmptySegmentForDimensions;
