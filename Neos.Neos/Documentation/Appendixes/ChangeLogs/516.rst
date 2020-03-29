@@ -1,0 +1,88 @@
+`5.1.6 (2020-03-29) <https://github.com/neos/neos-development-collection/releases/tag/5.1.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/2951>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/bQZjRl).
+
+* Packages: ``Browser`` ``Media``
+
+`BUGFIX: Use Neos config when overriding FrontendRoutePartHandler <https://github.com/neos/neos-development-collection/pull/2949>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+When overriding the FrontendRouterPartHandler with a custom implementation but inheriting from it the configuration was not read from Neos.Neos but from the package that did the override.
+This causes the setting to always be false and makes the routing not work properly when
+having empty segments for dimensions. This is then quite difficult to debug.
+
+Custom implementations can still decide to override the config and read it from somewhere else if required.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: fix isDescendantNodeOf permission with UUIDs if specified node is hidden <https://github.com/neos/neos-development-collection/pull/2866>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Resolves: #2865
+
+* Packages: ``AssetList`` ``Browser`` ``ContentReferences`` ``ContentRepository`` ``Form`` ``Navigation`` ``Neos``
+
+`BUGFIX: redirect-to-last-visited-page broken with Fusion LoginForm rewrite <https://github.com/neos/neos-development-collection/pull/2926>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+When rewriting the Login form to Neos.Fusion.Form, the `name` attribute of the form has been lost.
+This broke the JS code which sets the `lastVisitedNode`.
+
+**How to verify it**
+
+- open some nested page in the frontend
+- open the login form to the backend
+- log in
+- EXPECTED with this change: you get the exact same page in the backend
+- WITHOUT this change: you get the homepage
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Neos``
+
+`BUGFIX: Don’t use technical workspace name in the UI <https://github.com/neos/neos-development-collection/pull/2920>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The technical name as title can be confusing as it doesn’t 
+change when the workspace title is changed.
+
+* Packages: ``Neos``
+
+`BUGFIX: Have NeosAssetProxy return resource on getImportStream <https://github.com/neos/neos-development-collection/pull/2922>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The `AssetProxyInterface` declares `getImportStream()` must return
+`resource`. The `NeosAssetProxy` returns `?UriInterface` there, which
+breaks the contract.
+
+In some places `getImportStream()` is used to access the original URI
+(see #2190), but for other proxies, the resulting link target is
+`Resource id #x` since the resource is cast to string and used as is.
+
+This fixes the issue by making `getImportStream()` in `NeosAssetProxy`
+return `resource` as expected and add (back) `getOriginalUri()` to the
+proxy. The URI can be used for a download.
+
+An additional `ProvidesOriginalUriInterface` is added, which can be
+implemented by asset sources at will.
+
+Fixes #2918
+
+* Packages: ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.1.5...5.1.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
