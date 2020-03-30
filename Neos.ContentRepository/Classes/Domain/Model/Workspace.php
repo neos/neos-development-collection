@@ -245,7 +245,7 @@ class Workspace
      * @param UserInterface|string|null $user The new user, or user's UUID
      * @api
      */
-    public function setOwner($user): void
+    public function setOwner(?UserInterface $user): void
     {
         // Note: We need to do a bit of uuid juggling here, because we can't bind the workspaces Owner to a specific
         // implementation, and creating entity relations via interfaces is not supported by Flow. Since the property
