@@ -5,7 +5,7 @@
 <f:section name="Title">Replace view of AssetController</f:section>
 
 <f:section name="Content">
-    <f:form method="post" arguments="{asset: asset}" action="updateAssetResource" enctype="multipart/form-data">
+    <f:form method="post" arguments="{asset: asset, browserConstraints: '{browserConstraints -> f:format.json()}'}" action="updateAssetResource" enctype="multipart/form-data">
         <div class="neos-row-fluid">
             <div class="neos-span8">
                 <fieldset>
@@ -40,7 +40,7 @@
                     <f:if condition="{asset.inUse}">
                         <f:then>
                             <p class="neos-buffer-below"><i class="fas fa-exclamation-sign"></i> {neos:backend.translate(id: 'replace.usageCount', arguments: {usageCount: asset.usageCount}, package: 'Neos.Media.Browser')}</p>
-                            <f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">
+                            <f:link.action action="relatedNodes" arguments="{asset:asset, browserConstraints: '{browserConstraints -> f:format.json()}'}" class="neos-button">
                                 {neos:backend.translate(id: 'replace.allUsages', package: 'Neos.Media.Browser')}
                             </f:link.action>
                         </f:then>

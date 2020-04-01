@@ -3,9 +3,11 @@
   uriPattern: 'neos/media/browser/images(/{@action}).{@format}'
   defaults:
     '@package': 'Neos.Media.Browser'
-    '@controller': 'Image'
+    '@controller': 'Asset'
     '@format': 'html'
     '@action': 'index'
+    'browserConstraints':
+      'typeFilter': 'Image'
   appendExceedingArguments: true
 
 -

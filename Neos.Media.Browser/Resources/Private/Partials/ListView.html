@@ -13,13 +13,13 @@
                             <f:then>
                                 <f:if condition="{sortDirection} === 'ASC'">
                                     <f:then>
-                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
+                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC', browserConstraints: '{browserConstraints -> f:format.json()}'}" addQueryString="TRUE">
                                             {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
                                         </f:link.action>
                                         <i class="fas fa-caret-up"></i>
                                     </f:then>
                                     <f:else>
-                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
+                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC', browserConstraints: '{browserConstraints -> f:format.json()}'}" addQueryString="TRUE">
                                             {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
                                         </f:link.action>
                                         <i class="fas fa-caret-down"></i>
@@ -27,7 +27,7 @@
                                 </f:if>
                             </f:then>
                             <f:else>
-                                <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Name'}" addQueryString="TRUE">
+                                <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Name', browserConstraints: '{browserConstraints -> f:format.json()}'}" addQueryString="TRUE">
                                     {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
                                 </f:link.action>
                             </f:else>
@@ -38,13 +38,13 @@
                             <f:then>
                                 <f:if condition="{sortDirection} === 'ASC'">
                                     <f:then>
-                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
+                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC', browserConstraints: '{browserConstraints -> f:format.json()}'}" addQueryString="TRUE">
                                             {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
                                         </f:link.action>
                                         <i class="fas fa-caret-up"></i>
                                     </f:then>
                                     <f:else>
-                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
+                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC', browserConstraints: '{browserConstraints -> f:format.json()}'}" addQueryString="TRUE">
                                             {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
                                         </f:link.action>
                                         <i class="fas fa-caret-down"></i>
@@ -52,7 +52,7 @@
                                 </f:if>
                             </f:then>
                             <f:else>
-                                <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Modified'}" addQueryString="TRUE">
+                                <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Modified', browserConstraints: '{browserConstraints -> f:format.json()}'}" addQueryString="TRUE">
                                     {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
                                 </f:link.action>
                             </f:else>
@@ -123,13 +123,13 @@
                                     <f:if condition="!{activeAssetSource.readOnly}">
                                         <f:then>
                                             <li>
-                                                <f:link.action action="edit" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+                                                <f:link.action action="edit" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier, browserConstraints: '{browserConstraints -> f:format.json()}'}" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
                                                     <i class="fas fa-edit icon-white"></i> {editLabel}
                                                 </f:link.action>
                                             </li>
                                             <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
                                                 <li>
-                                                    <f:link.action action="replaceAssetResource" arguments="{assetSourceIdentifier: activeAssetSource.identifier, asset: assetProxy.asset}" data="{asset-identifier: '{assetProxy.identifier}'}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+                                                    <f:link.action action="replaceAssetResource" arguments="{assetSourceIdentifier: activeAssetSource.identifier, asset: assetProxy.asset, browserConstraints: '{browserConstraints -> f:format.json()}'}" data="{asset-identifier: '{assetProxy.identifier}'}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
                                                         <i class="fas fa-random icon-white"></i> {replaceAssetResourceLabel}
                                                     </f:link.action>
                                                 </li>
@@ -142,7 +142,7 @@
                                         </f:then>
                                         <f:else>
                                             <li>
-                                                <f:link.action action="show" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" title="{viewAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+                                                <f:link.action action="show" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier, browserConstraints: '{browserConstraints -> f:format.json()}'}" title="{viewAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
                                                     <i class="fas fa-eye icon-white"></i> {viewLabel}
                                                 </f:link.action>
                                             </li>

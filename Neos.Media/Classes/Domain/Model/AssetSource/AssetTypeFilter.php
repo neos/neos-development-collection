@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\Model\AssetSource;
 
 /*
@@ -13,10 +15,16 @@ namespace Neos\Media\Domain\Model\AssetSource;
 
 final class AssetTypeFilter implements \JsonSerializable
 {
+    const TYPE_ALL = 'All';
+    const TYPE_IMAGE = 'Image';
+    const TYPE_DOCUMENT = 'Document';
+    const TYPE_VIDEO = 'Video';
+    const TYPE_AUDIO = 'Audio';
+
     /**
      * @var string
      */
-    private $assetType = 'All';
+    private $assetType;
 
     /**
      * AssetType constructor.
@@ -25,7 +33,7 @@ final class AssetTypeFilter implements \JsonSerializable
      */
     public function __construct(string $assetType)
     {
-        if (!in_array($assetType, ['All', 'Image', 'Document', 'Video', 'Audio'])) {
+        if (!in_array($assetType, [static::TYPE_ALL, static::TYPE_IMAGE, static::TYPE_DOCUMENT, static::TYPE_VIDEO, static::TYPE_AUDIO])) {
             throw new \InvalidArgumentException(sprintf('Invalid asset type "%s".', $assetType), 1524130064);
         }
         $this->assetType = $assetType;
@@ -37,6 +45,14 @@ final class AssetTypeFilter implements \JsonSerializable
     public function getAssetType(): string
     {
         return $this->assetType;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasAllAllowed(): bool
+    {
+        return $this->assetType === static::TYPE_ALL;
     }
 
     /**

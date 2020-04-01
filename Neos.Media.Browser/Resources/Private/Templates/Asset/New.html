@@ -4,7 +4,7 @@
 <f:section name="Title">Upload view</f:section>
 
 <f:section name="Content">
-    <f:form method="post" action="create" object="{asset}" objectName="asset" enctype="multipart/form-data">
+    <f:form method="post" action="create" object="{asset}" arguments="{browserConstraints: '{browserConstraints -> f:format.json()}'}" objectName="asset" enctype="multipart/form-data">
         <fieldset>
             <div class="neos-span6 neos-image-inputs">
                 <span class="neos-file-input">
@@ -40,7 +40,7 @@
             </div>
         </fieldset>
         <div class="neos-footer">
-            <f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</f:link.action>
+            <f:link.action action="index" arguments="{browserConstraints: '{browserConstraints -> f:format.json()}'}" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</f:link.action>
             <f:form.submit id="import" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'upload', package: 'Neos.Media.Browser')}"/>
         </div>
     </f:form>
