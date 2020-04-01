@@ -335,16 +335,16 @@
 			<target state="final">Descripción</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target state="needs-translation">Toggle content tree</target></trans-unit>
+			<target state="translated">Contenido libre de seguridad</target><alt-trans><target>Contenido libre de cajón</target></alt-trans></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target state="needs-translation">Show publish options</target></trans-unit>
+			<target state="translated">Mostrar publicaciones opcionales</target><alt-trans><target>Mostrar opciones de publicación</target></alt-trans><alt-trans><target>Mostrar opciones publicadas</target></alt-trans></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Activar modo de edición a pantalla completa</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Desactivar modo de edición en pantalla completa</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
 			<target state="translated">Mostrar vista previa</target></trans-unit>
@@ -663,13 +663,13 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target state="needs-translation">Welcome to Neos</target></trans-unit>
+			<target state="translated">Bienvenido a Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target state="translated">Ir a la configuración</target><alt-trans><target>Ir a configuración</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
-			<target state="needs-translation">Technical Information</target></trans-unit>
+			<target state="translated">Información técnica</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target state="translated">Falta la página de inicio</target></trans-unit>
