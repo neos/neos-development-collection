@@ -35,6 +35,16 @@ Neos:
     # which is displayed if no domain pattern matches the current request
     defaultSiteNodeName: null
 
+    # The license header that is rendered in every neos page and the login form
+    headerComment: |
+
+      <!--
+      This website is powered by Neos, the Open Source Content Application Platform licensed under the GNU/GPL.
+      Neos is based on Flow, a powerful PHP application framework licensed under the MIT license.
+
+      More information and contribution opportunities at https://www.neos.io
+      -->
+
     routing:
       # Setting this to true allows to use an empty uriSegment for default dimensions.
       # The only limitation is that all segments must be unique across all dimenions.
@@ -71,7 +81,7 @@ Neos:
 
       # The number of seconds to wait before giving up on loading a script.
       # The default in requireJs is 7 seconds but on slow clients with slow internetconnections
-      # in combination with big Document Nodes it can happen that the Inspector Editors and Aloha
+      # in combination with big Document Nodes it can happen that the inspector and inline Editors
       # can not be loaded. http://requirejs.org/docs/api.html#config-waitSeconds
       requireJsWaitSeconds: 30
 
@@ -530,31 +540,6 @@ Neos:
       Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
       Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
-
-  Setup:
-    stepOrder:
-      - neosRequirements
-      - database
-      - administrator
-      - siteimport
-      - final
-    steps:
-      neosRequirements:
-        className: Neos\Neos\Setup\Step\NeosSpecificRequirementsStep
-      administrator:
-        className: Neos\Neos\Setup\Step\AdministratorStep
-        requiredConditions:
-          -
-            className: Neos\Setup\Condition\DatabaseConnectionCondition
-      siteimport:
-        className: Neos\Neos\Setup\Step\SiteImportStep
-        requiredConditions:
-          -
-            className: Neos\Setup\Condition\DatabaseConnectionCondition
-      final:
-        className: Neos\Neos\Setup\Step\FinalStep
-    view:
-      title: 'Neos Setup'
 
   # DocTools is a tool used by Neos Developers to help with a variety of documentation tasks.
   # These settings are only used in generating Documentation.

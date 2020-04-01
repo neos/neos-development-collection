@@ -28,7 +28,7 @@
 			<target state="translated">Legenda</target></trans-unit>
       <trans-unit id="field.copyrightnotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target state="needs-translation">Copyright Notice</target></trans-unit>
+			<target state="translated">Aviso de Direitos Autorais</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			<target state="translated">Último alterado</target></trans-unit>
@@ -70,10 +70,10 @@
 			<target state="translated">Arrastar e soltar na tag ou coleção</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target state="needs-translation">View</target></trans-unit>
+			<target state="translated">Ver</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="needs-translation">View asset</target></trans-unit>
+			<target state="translated">Ver Pacote</target><alt-trans><target>Ver o ativo</target></alt-trans></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target state="translated">Editar item</target></trans-unit>
@@ -184,13 +184,13 @@
 			<target state="translated">Exibição de miniaturas</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target state="needs-translation">Connection error</target></trans-unit>
+			<target state="translated">Erro de conexão</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="needs-translation">Media source</target></trans-unit>
+			<target state="translated">Fonte de mídia</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="needs-translation">Media sources</target></trans-unit>
+			<target state="translated">Fontes de Mídia</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			<target state="translated">Coleções</target></trans-unit>
@@ -298,19 +298,19 @@
 			<target state="translated">Legenda</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target state="needs-translation">Copyright Notice</target></trans-unit>
+			<target state="translated">Aviso de Direitos Autorais</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target state="translated">Visualizar</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">Download</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">Próximo</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">Anterior</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target state="translated">Não foi possível carregar o arquivo</target></trans-unit>
@@ -380,46 +380,46 @@
 			<target state="translated">Pré-visualizar o arquivo atual</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target state="needs-translation">Could not replace asset</target></trans-unit>
+			<target state="translated">Não foi possível substituir o ativo</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>
+			<target state="translated">Mídia "{0}" foi substituída.</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target state="needs-translation">Asset "{0}" has been updated.</target></trans-unit>
+			<target state="translated">A mídia "{0}" foi atualizada.</target><alt-trans><target>Ativo "{0}" foi atualizado.</target></alt-trans></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
-			<target state="needs-translation">Asset "{0}" has been added.</target></trans-unit>
+			<target state="translated">A mídia "{0}" foi adicionada.</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
-			<target state="needs-translation">Asset "{0}" has been deleted.</target></trans-unit>
+			<target state="translated">A mídia "{0}" foi apagada.</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			<target state="needs-translation">Asset could not be deleted.</target></trans-unit>
+			<target state="translated">A mídia não pode ser excluída.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target state="needs-translation">Tag "{0}" already exists and was added to collection.</target></trans-unit>
+			<target state="translated">Tag "{0}" já existe e foi adicionado à coleção.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
-			<target state="needs-translation">Tag "{0}" has been created.</target></trans-unit>
+			<target state="translated">Tag "{0}" foi criada.</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
-			<target state="needs-translation">Tag "{0}" has been updated.</target></trans-unit>
+			<target state="translated">Tag "{0}" foi atualizada.</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
-			<target state="needs-translation">Tag "{0}" has been deleted.</target></trans-unit>
+			<target state="translated">Tag "{0}" foi excluída.</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target state="needs-translation">Collection "{0}" has been created.</target></trans-unit>
+			<target state="translated">Coleção "{0}" foi criada.</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
-			<target state="needs-translation">Collection "{0}" has been updated.</target></trans-unit>
+			<target state="translated">Coleção "{0}" foi atualizada.</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
-			<target state="needs-translation">Collection "{0}" has been deleted.</target></trans-unit>
+			<target state="translated">Coleção "{0}" foi excluída.</target></trans-unit>
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
+			<target state="translated">Gerar redirecionamentos da url do arquivo original para a nova url</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
 			<target state="translated">'Recursos do tipo "{0}" só podem ser substituídos por um recurso semelhante. Tem tipo "{1}"'</target></trans-unit>

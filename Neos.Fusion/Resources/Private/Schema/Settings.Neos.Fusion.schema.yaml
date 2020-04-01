@@ -1,0 +1,36 @@
+type: dictionary
+additionalProperties: false
+properties:
+  rendering:
+    type: dictionary
+    additionalProperties: false
+    properties:
+      exceptionHandler:
+        type: string
+        format: class-name
+      innerExceptionHandler:
+        type: string
+        format: class-name
+  debugMode:
+    type: boolean
+  enableObjectTreeCache:
+    type: boolean
+  enableContentCache:
+    type: boolean
+  defaultContext:
+    type: dictionary
+    additionalProperties:
+      type:
+        - type: string
+          format: class-name
+        - type: string
+          pattern: '/^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff\\]*::[a-zA-Z_\x7f-\xff]*$/u'
+  dsl:
+    type: dictionary
+    additionalProperties:
+      type: string
+      format: class-name
+  Afx:
+    type: dictionary
+  Form:
+    type: dictionary

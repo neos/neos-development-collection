@@ -23,7 +23,7 @@
 			<target state="translated">Kanselahin</target></trans-unit>
       <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target state="translated">Ibalik</target></trans-unit>
+			<target state="final">Ibalik</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target state="translated">Pumili</target></trans-unit>

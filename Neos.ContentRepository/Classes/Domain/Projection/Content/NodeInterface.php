@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\Cache\CacheAwareInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
 /**
  * This is a NEW interface, introduced in Neos 4.3.
@@ -82,9 +83,9 @@ interface NodeInterface extends CacheAwareInterface
      * returns the DimensionSpacePoint the node is at home in. Usually needed to address a Node in a NodeAggregate
      * in order to update it.
      *
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getOriginDimensionSpacePoint(): DimensionSpacePoint;
+    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint;
 
     /**
      * Returns all properties of this node. References are NOT part of this API; there you need to check getReference() and getReferences()

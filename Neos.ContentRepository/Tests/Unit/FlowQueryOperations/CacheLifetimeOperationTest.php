@@ -64,7 +64,7 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         $mockNode = $this->mockNode('node');
 
         $result = $this->operation->canEvaluate([$mockNode]);
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
     public function nodePropertiesAndLifetime()
@@ -134,9 +134,9 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         $lifetime = $this->operation->evaluate($mockFlowQuery, []);
 
         if ($expectedLifetime === null) {
-            $this->assertNull($lifetime);
+            self::assertNull($lifetime);
         } else {
-            $this->assertEqualsWithDelta($expectedLifetime, $lifetime, 1, 'Lifetime did not match expected value +/- 1');
+            self::assertEqualsWithDelta($expectedLifetime, $lifetime, 1, 'Lifetime did not match expected value +/- 1');
         }
     }
 
@@ -149,14 +149,14 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         $contextValues = [];
         foreach ($nodes as $nodeProperties) {
             $mockNode = $this->createMock(NodeInterface::class);
-            $mockNode->expects($this->any())->method('getHiddenBeforeDateTime')->will($this->returnValue($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null));
-            $mockNode->expects($this->any())->method('getHiddenAfterDateTime')->will($this->returnValue($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null));
+            $mockNode->expects(self::any())->method('getHiddenBeforeDateTime')->will(self::returnValue($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null));
+            $mockNode->expects(self::any())->method('getHiddenAfterDateTime')->will(self::returnValue($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null));
 
             $contextValues[] = $mockNode;
         }
 
         $mockFlowQuery = $this->getMockBuilder(FlowQuery::class)->disableOriginalConstructor()->getMock();
-        $mockFlowQuery->expects($this->any())->method('getContext')->will($this->returnValue($contextValues));
+        $mockFlowQuery->expects(self::any())->method('getContext')->will(self::returnValue($contextValues));
         return $mockFlowQuery;
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes.ColumnLayouts" source-language="en" datatype="plaintext" target-language="hy-AM">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Three column content</source>
+			<target state="needs-translation">Three column content</target></trans-unit>
+    </body>
+  </file>
+</xliff>

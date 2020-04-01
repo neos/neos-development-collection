@@ -21,7 +21,12 @@
 		padding: ($unit * 2) $menuButtonWidth $unit $menuButtonWidth;
 	}
 
-	h1, h2, h3, h4, h5, h6 {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
 		text-rendering: optimizelegibility;
 	}
 
@@ -98,7 +103,7 @@
 	}
 
 	.neos-breadcrumb {
-		@include border-radius(0);
+		border-radius: 0;
 		background-color: transparent;
 		padding: 0;
 		border-bottom: 1px solid $grayLight;
@@ -106,7 +111,7 @@
 		a {
 			color: #fff;
 			line-height: $unit;
-			@include text-shadow(none);
+			text-shadow: none;
 
 			&.active {
 				color: $blue;
@@ -139,8 +144,8 @@
 		&.neos-well {
 			background-color: #777;
 			border-color: #666;
-			@include box-shadow(0 0 5px rgba(#000, 0.2) inset);
-			@include border-radius(0);
+			box-shadow: 0 0 5px rgba(#000, 0.2) inset;
+			border-radius: 0;
 			padding: 0px;
 
 			h1 {
@@ -153,7 +158,7 @@
 		}
 
 		.widget {
-			@include border-radius(0);
+			border-radius: 0;
 		}
 	}
 
@@ -195,17 +200,17 @@
 		font-size: 14px;
 		padding: 0 ($defaultMargin - 2px);
 		margin: 0;
-		@include box-sizing(border-box);
-		@include box-shadow(none);
-		@include transition(none);
-		@include border-radius(0px);
+		box-sizing: border-box;
+		box-shadow: none;
+		transition: none;
+		border-radius: 0px;
 
 		&:focus {
 			background-color: #fff;
 			border: 2px solid #fff;
 			color: $textOnWhite;
 			outline: none;
-			@include box-shadow(none);
+			box-shadow: none;
 		}
 
 		// Highlight changed elements in the Property Panel
@@ -222,17 +227,17 @@
 		font-size: 14px;
 		padding: 0 ($defaultMargin - 2px);
 		margin: 0;
-		@include box-sizing(border-box);
-		@include box-shadow(none);
-		@include transition(none);
-		@include border-radius(0px);
+		box-sizing: border-box;
+		box-shadow: none;
+		transition: none;
+		border-radius: 0px;
 
 		&:focus {
 			background-color: #fff;
 			border: 2px solid #fff;
 			color: $textOnWhite;
 			outline: none;
-			@include box-shadow(none);
+			box-shadow: none;
 		}
 
 		// Highlight changed elements in the Property Panel
@@ -255,14 +260,14 @@
 
 		&:before {
 			display: block;
-			content: '';
+			content: "";
 			position: absolute;
 			width: 1px;
 			height: $relatedMargin * 3;
 			top: $relatedMargin;
 			right: $unit + 1;
 			background-color: #fff;
-			opacity: .15;
+			opacity: 0.15;
 		}
 
 		&:after {
@@ -278,7 +283,7 @@
 		}
 
 		select {
-			@include appearance(none);
+			appearance: none;
 			-webkit-border-radius: 0px;
 			-o-appearance: window;
 			-moz-appearance: window;
@@ -297,7 +302,7 @@
 		}
 
 		option {
-			@include appearance(none);
+			appearance: none;
 			-webkit-border-radius: 0px;
 			background-color: $grayLight;
 		}
@@ -314,8 +319,8 @@
 		bottom: 0;
 		z-index: 100;
 		overflow: hidden;
-		@include box-sizing(border-box);
-		@include clearfix;
+		box-sizing: border-box;
+		@include clearfix();
 
 		&.fixedsticky-on {
 			width: 100%;
@@ -366,7 +371,7 @@
 	// Tables within Modules
 	table {
 		&.table-bordered {
-			@include border-radius(0);
+			border-radius: 0;
 			border-left: none;
 			border-right: none;
 			border-top: 1px solid $grayLight;
@@ -374,7 +379,7 @@
 
 			tr,
 			th {
-				@include border-radius(0);
+				border-radius: 0;
 			}
 
 			th,
@@ -407,7 +412,7 @@
 				padding-right: 0 !important;
 				border-top: 1px solid $grayMedium;
 
-				i[class*='icon'] {
+				i[class*="icon"] {
 					height: $unit;
 					line-height: $unit;
 					padding: 0 $defaultMargin;
@@ -429,7 +434,11 @@
 			}
 
 			.neos-label {
-				background-color: $textSubtle;
+				background-color: $grayLight;
+				box-shadow: $textContrast 0 0 ($unit/4) ($unit/8);
+				font-weight: normal;
+				letter-spacing: 0.05em;
+				padding: 2px 0.5em;
 			}
 		}
 
@@ -463,7 +472,7 @@
 					span {
 						font-weight: normal;
 						color: $grayLighter;
-						font-size: .9em;
+						font-size: 0.9em;
 					}
 				}
 				tr:first-child {
@@ -475,13 +484,12 @@
 			}
 		}
 
-
 		td {
 			border-top: 1px solid $grayDark;
 		}
 
 		th {
-			@include text-shadow(none);
+			text-shadow: none;
 		}
 
 		td,
@@ -489,7 +497,7 @@
 			height: $unit;
 			padding: 0 $defaultMargin;
 			line-height: $unit;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 
 			&:first-child {
 				padding-left: $wideMargin !important;

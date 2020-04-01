@@ -70,12 +70,12 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
 
             $typeEscaped = htmlspecialchars(gettype($value));
             if ($typeEscaped === 'array') {
-                $this->output .= sprintf('<li class="folder" title="%s">', $pathEscaped);
+                $this->output .= sprintf('<li class="neos-tree-folder neos-tree-node" title="%s">', $pathEscaped);
                 $this->output .= sprintf('%s&nbsp;(%s)', $keyEscaped, count($value));
                 $this->renderSingleLevel($value, $path);
                 $this->output .= '</li>';
             } else {
-                $this->output .= '<li>';
+                $this->output .= '<li class="neos-tree-node">';
                 $this->output .= sprintf('<div class="key" title="%s">%s:</div> ', $pathEscaped, $keyEscaped);
                 $this->output .= sprintf('<div class="value" title="%s">', $typeEscaped);
                 switch ($typeEscaped) {

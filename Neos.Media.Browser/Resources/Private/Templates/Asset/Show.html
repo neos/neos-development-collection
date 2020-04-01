@@ -21,7 +21,7 @@
                 <fieldset>
                     <legend>{neos:backend.translate(id: 'basics', package: 'Neos.Media.Browser')}</legend>
                     <label for="title">{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}</label>
-                    <input id="title" readonly="readonly" value="{assetProxy.iptcProperties.Title}"/>
+                    <input type="text" id="title" readonly="readonly" value="{assetProxy.iptcProperties.Title}"/>
                     <label for="caption">{neos:backend.translate(id: 'field.caption', package: 'Neos.Media.Browser')}</label>
                     <textarea id="caption" rows="2" readonly="readonly">{assetProxy.iptcProperties.CaptionAbstract}</textarea>
                     <label for="copyrightnotice">{neos:backend.translate(id: 'field.copyrightnotice', package: 'Neos.Media.Browser')}</label>
@@ -39,7 +39,7 @@
                             </f:if>
                             <tr>
                                 <th>{neos:backend.translate(id: 'metadata.filename', package: 'Neos.Media.Browser')}</th>
-                                <td><a href="{assetProxy.importStream}" target="_blank">{assetProxy.filename}</a></td>
+                                <td><a href="{assetProxy.originalUri}" target="_blank">{assetProxy.filename}</a></td>
                             </tr>
                             <tr>
                                 <th>{neos:backend.translate(id: 'metadata.lastModified', package: 'Neos.Media.Browser')}</th>
@@ -85,7 +85,7 @@
 <f:section name="ContentImage">
     <label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
     <div class="neos-preview-image">
-        <a href="{assetProxy.importStream}" target="_blank">
+        <a href="{assetProxy.originalUri}" target="_blank">
             <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
         </a>
     </div>

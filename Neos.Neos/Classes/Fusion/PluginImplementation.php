@@ -11,11 +11,13 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\Mvc\Exception\InvalidActionNameException;
+use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
@@ -91,46 +93,67 @@ class PluginImplementation extends AbstractArrayFusionObject
      * Build the pluginRequest object
      *
      * @return ActionRequest
+     * @throws InvalidActionNameException
+     * @throws InvalidControllerNameException
+     * @throws NodeException
+     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentNameException
+     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentTypeException
      */
-    protected function buildPluginRequest()
+    protected function buildPluginRequest(): ActionRequest
     {
         /** @var $parentRequest ActionRequest */
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
-        $pluginRequest = new ActionRequest($parentRequest);
+        $pluginRequest = $parentRequest->createSubRequest();
         $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
         $this->passArgumentsToPluginRequest($pluginRequest);
 
-        if ($this->node instanceof NodeInterface) {
-            $pluginRequest->setArgument('__node', $this->node);
-            if ($pluginRequest->getControllerPackageKey() === null) {
-                $pluginRequest->setControllerPackageKey($this->node->getProperty('package') ?: $this->getPackage());
-            }
-            if ($pluginRequest->getControllerSubpackageKey() === null) {
-                $pluginRequest->setControllerSubpackageKey($this->node->getProperty('subpackage') ?: $this->getSubpackage());
-            }
-            if ($pluginRequest->getControllerName() === null) {
-                $pluginRequest->setControllerName($this->node->getProperty('controller') ?: $this->getController());
-            }
-            if ($pluginRequest->getControllerActionName() === null) {
-                $actionName = $this->node->getProperty('action');
-                if ($actionName === null || $actionName === '') {
-                    $actionName = $this->getAction() !== null ? $this->getAction() : 'index';
-                }
-                $pluginRequest->setControllerActionName($actionName);
-            }
-
-            $pluginRequest->setArgument('__node', $this->node);
-            $pluginRequest->setArgument('__documentNode', $this->documentNode);
-        } else {
-            $pluginRequest->setControllerPackageKey($this->getPackage());
-            $pluginRequest->setControllerSubpackageKey($this->getSubpackage());
-            $pluginRequest->setControllerName($this->getController());
-            $pluginRequest->setControllerActionName($this->getAction());
-        }
+        $pluginRequest = $this->resolveDispatchArgumentsForPluginRequest($pluginRequest, $this->node);
 
         foreach ($this->properties as $key => $value) {
             $pluginRequest->setArgument('__' . $key, $this->fusionValue($key));
         }
+
+        return $pluginRequest;
+    }
+
+    /**
+     * @param ActionRequest $pluginRequest
+     * @param NodeInterface|null $node
+     * @return ActionRequest
+     * @throws NodeException
+     * @throws InvalidActionNameException
+     * @throws InvalidControllerNameException
+     */
+    protected function resolveDispatchArgumentsForPluginRequest(ActionRequest $pluginRequest, NodeInterface $node = null): ActionRequest
+    {
+        $packageKey = $this->getPackage();
+        $subpackageKey = $this->getSubpackage();
+        $controller = $this->getController();
+        $action = $this->getAction() ?: 'index';
+
+        if ($node !== null) {
+            $packageKey = $node->getProperty('package') ?: $packageKey;
+            $subpackageKey = $node->getProperty('subpackage') ?: $subpackageKey;
+            $controller = $node->getProperty('controller') ?: $controller;
+            $action = $node->getProperty('action') ?: $action;
+        }
+
+        if (empty($pluginRequest->getControllerPackageKey())) {
+            $pluginRequest->setControllerPackageKey($packageKey);
+        }
+
+        if (empty($pluginRequest->getControllerSubpackageKey())) {
+            $pluginRequest->setControllerSubpackageKey($subpackageKey);
+        }
+
+        if (empty($pluginRequest->getControllerName())) {
+            $pluginRequest->setControllerName($controller);
+        }
+
+        if (empty($pluginRequest->getControllerActionName())) {
+            $pluginRequest->setControllerActionName($action);
+        }
+
         return $pluginRequest;
     }
 
@@ -138,23 +161,35 @@ class PluginImplementation extends AbstractArrayFusionObject
      * Returns the rendered content of this plugin
      *
      * @return string The rendered content as a string
+     * @throws InvalidActionNameException
+     * @throws InvalidControllerNameException
+     * @throws NodeException
+     * @throws \Neos\Flow\Configuration\Exception\NoSuchOptionException
+     * @throws \Neos\Flow\Mvc\Controller\Exception\InvalidControllerException
+     * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException
+     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentNameException
+     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentTypeException
+     * @throws \Neos\Flow\Security\Exception\AccessDeniedException
+     * @throws \Neos\Flow\Security\Exception\AuthenticationRequiredException
+     * @throws \Neos\Flow\Security\Exception\MissingConfigurationException
      */
-    public function evaluate()
+    public function evaluate(): string
     {
         $currentContext = $this->runtime->getCurrentContext();
         $this->node = $currentContext['node'];
         $this->documentNode = $currentContext['documentNode'];
-        /** @var $parentResponse Response */
+        /** @var $parentResponse ActionResponse */
         $parentResponse = $this->runtime->getControllerContext()->getResponse();
-        $pluginResponse = new ActionResponse($parentResponse);
-
+        $pluginResponse = new ActionResponse();
         $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
-        foreach ($pluginResponse->getHeaders()->getAll() as $key => $value) {
-            $parentResponse->getHeaders()->set($key, $value, true);
-        }
+        // We need to make sure to not merge content up into the parent ActionResponse because that would break the Fusion HttpResponse.
+        $content = $pluginResponse->getContent();
+        $pluginResponse->setContent('');
 
-        return $pluginResponse->getContent();
+        $pluginResponse->mergeIntoParentResponse($parentResponse);
+
+        return $content;
     }
 
     /**
@@ -162,8 +197,9 @@ class PluginImplementation extends AbstractArrayFusionObject
      * By default this is <plugin_class_name>
      *
      * @return string
+     * @throws NodeException
      */
-    protected function getPluginNamespace()
+    protected function getPluginNamespace(): string
     {
         if ($this->getArgumentNamespace() !== null) {
             return $this->getArgumentNamespace();
@@ -193,6 +229,11 @@ class PluginImplementation extends AbstractArrayFusionObject
      *
      * @param ActionRequest $pluginRequest The plugin request
      * @return void
+     * @throws InvalidActionNameException
+     * @throws InvalidControllerNameException
+     * @throws NodeException
+     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentNameException
+     * @throws \Neos\Flow\Mvc\Exception\InvalidArgumentTypeException
      */
     protected function passArgumentsToPluginRequest(ActionRequest $pluginRequest)
     {

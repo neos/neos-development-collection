@@ -14,8 +14,11 @@ namespace Neos\Neos\Fusion\Cache;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -99,6 +102,12 @@ class ContentCacheFlusher
      * @var ContentContext[]
      */
     protected $contexts = [];
+
+    /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
 
     /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via ContentRepository's Node
@@ -245,9 +254,18 @@ class ContentCacheFlusher
      *
      * @param AssetInterface $asset
      * @return void
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function registerAssetChange(AssetInterface $asset)
     {
+        // In Nodes only assets are referenced, never asset variants directly. When an asset
+        // variant is updated, it is passed as $asset, but since it is never "used" by any node
+        // no flushing of corresponding entries happens. Thus we instead us the original asset
+        // of the variant.
+        if ($asset instanceof AssetVariantInterface) {
+            $asset = $asset->getOriginalAsset();
+        }
+
         if (!$asset->isInUse()) {
             return;
         }
@@ -260,7 +278,15 @@ class ContentCacheFlusher
             }
 
             $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
-            $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            $this->securityContext->withoutAuthorizationChecks(function () use ($reference, &$node) {
+                $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            });
+
+            if (!$node instanceof NodeInterface) {
+                $this->systemLogger->warning(sprintf('Found a node reference from node with identifier %s in workspace %s to asset %s, but the node could not be fetched.', $reference->getNodeIdentifier(), $reference->getWorkspaceName(), $this->persistenceManager->getIdentifierByObject($asset)), LogEnvironment::fromMethodName(__METHOD__));
+                continue;
+            }
+
             $this->registerNodeChange($node);
 
             $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);

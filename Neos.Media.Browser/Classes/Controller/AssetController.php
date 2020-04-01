@@ -17,7 +17,6 @@ use Doctrine\ORM\EntityNotFoundException;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
@@ -32,7 +31,6 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Browser\Domain\ImageMapper;
 use Neos\Media\Browser\Domain\Session\BrowserState;
-use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -46,7 +44,6 @@ use Neos\Media\Domain\Model\AssetSource\SupportsCollectionsInterface;
 use Neos\Media\Domain\Model\AssetSource\SupportsSortingInterface;
 use Neos\Media\Domain\Model\AssetSource\SupportsTaggingInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
-use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Model\VariantSupportInterface;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
@@ -72,6 +69,7 @@ class AssetController extends ActionController
 {
     use CreateContentContextTrait;
     use BackendUserTranslationTrait;
+    use AddFlashMessageTrait;
 
     protected const TAG_GIVEN = 0;
     protected const TAG_ALL = 1;
@@ -135,12 +133,6 @@ class AssetController extends ActionController
      * @var AssetService
      */
     protected $assetService;
-
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
 
     /**
      * @Flow\Inject
@@ -354,9 +346,7 @@ class AssetController extends ActionController
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll()
             ]);
-        } catch (AssetNotFoundExceptionInterface $e) {
-            $this->throwStatus(404, 'Asset not found');
-        } catch (AssetSourceConnectionExceptionInterface $e) {
+        } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
     }
@@ -409,9 +399,7 @@ class AssetController extends ActionController
                 'assetSource' => $assetSource,
                 'canShowVariants' => ($assetProxy instanceof NeosAssetProxy) && ($assetProxy->getAsset() instanceof VariantSupportInterface)
             ]);
-        } catch (AssetNotFoundExceptionInterface $e) {
-            $this->throwStatus(404, 'Asset not found');
-        } catch (AssetSourceConnectionExceptionInterface $e) {
+        } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
     }
@@ -454,9 +442,7 @@ class AssetController extends ActionController
                 'originalInformation' => (new ImageMapper($asset))->getMappingResult(),
                 'variantsInformation' => $variantInformation
             ]);
-        } catch (AssetNotFoundExceptionInterface $e) {
-            $this->throwStatus(404, 'Original asset not found');
-        } catch (AssetSourceConnectionExceptionInterface $e) {
+        } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
     }
@@ -556,7 +542,7 @@ class AssetController extends ActionController
         }
 
         $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
-        $this->response->setStatus(201);
+        $this->response->setStatusCode(201);
         return '';
     }
 
@@ -757,30 +743,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * Prepare property mapping for updateImageVariantAction
-     *
-     * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
-     */
-    public function initializeUpdateImageVariantAction()
-    {
-        $mappingConfiguration = $this->arguments->getArgument('imageVariant')->getPropertyMappingConfiguration();
-        $mappingConfiguration->allowAllProperties();
-        $mappingConfiguration->getConfigurationFor('adjustments')->allowAllProperties();
-        $mappingConfiguration->getConfigurationFor('adjustments')->getConfigurationFor('*')->allowAllProperties();
-        $mappingConfiguration->getConfigurationFor('adjustments')->getConfigurationFor(CropImageAdjustment::class)->allowAllProperties();
-        $mappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
-    }
-
-    /**
-     * @param ImageVariant $imageVariant
-     */
-    public function updateImageVariantAction(ImageVariant $imageVariant)
-    {
-        $this->assetRepository->update($imageVariant);
-        $this->redirect('variants');
-    }
-
-    /**
      * This custom errorAction adds FlashMessages for validation results to give more information in the
      *
      * @return string
@@ -789,7 +751,7 @@ class AssetController extends ActionController
     {
         foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
             foreach ($errors as $error) {
-                $this->flashMessageContainer->addMessage($error);
+                $this->controllerContext->getFlashMessageContainer()->addMessage($error);
             }
         }
 
@@ -812,26 +774,6 @@ class AssetController extends ActionController
         }
 
         return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
-    }
-
-    /**
-     * Add a translated flashMessage.
-     *
-     * @param string $messageBody The translation id for the message body.
-     * @param string $messageTitle The translation id for the message title.
-     * @param string $severity
-     * @param array $messageArguments
-     * @param integer $messageCode
-     * @return void
-     */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null): void
-    {
-        if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'Neos.Media.Browser') ?: $messageBody;
-        }
-
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'Neos.Media.Browser');
-        parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 
     /**

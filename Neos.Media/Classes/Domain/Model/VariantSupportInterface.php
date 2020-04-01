@@ -22,5 +22,14 @@ interface VariantSupportInterface
      * @return AssetVariantInterface[]
      * @api
      */
-    public function getVariants();
+    public function getVariants(): array;
+
+    /**
+     * Returns the variant identified by $presetIdentifier and $presetVariantName (if existing)
+     *
+     * @param string $presetIdentifier
+     * @param string $presetVariantName
+     * @return AssetVariantInterface
+     */
+    public function getVariant(string $presetIdentifier, string $presetVariantName): ?AssetVariantInterface;
 }

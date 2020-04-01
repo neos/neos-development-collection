@@ -24,7 +24,7 @@ class TagTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/plainAttributes');
-        $this->assertSame('<link rel="stylesheet" type="text/css" />', $view->render());
+        self::assertSame('<link rel="stylesheet" type="text/css" />', $view->render());
     }
 
     /**
@@ -34,7 +34,7 @@ class TagTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/objectAttributes');
-        $this->assertSame('<test sum="4" />', $view->render());
+        self::assertSame('<test sum="4" />', $view->render());
     }
 
     /**
@@ -44,7 +44,57 @@ class TagTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/arrayAttributes');
-        $this->assertSame('<div class="a b"></div>', $view->render());
+        self::assertSame('<div class="a b"></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function tagWithFusionAttributesWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/fusionAttributes');
+        self::assertSame('<div key="value" list="foo bar"></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function tagWithAttributesFromDataStructureWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/dataStructureAttributes');
+        self::assertSame('<div key="value" list="foo bar"></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function tagWithBooleanAttributesWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/booleanAttributes');
+        self::assertSame('<div foo></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function tagWithBooleanAttributesAndForbiddenEmptyAttributesWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/booleanAttributesAndForbiddenEmptyAttributes');
+        self::assertSame('<div foo=""></div>', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function tagWithBooleanAndAllowEmptyAttributesAttributesWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('tag/booleanAttributesAndAllowEmptyAttributes');
+        self::assertSame('<div foo></div>', $view->render());
     }
 
     /**
@@ -54,7 +104,7 @@ class TagTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/plainContent');
-        $this->assertSame('<span>test</span>', $view->render());
+        self::assertSame('<span>test</span>', $view->render());
     }
 
     /**
@@ -64,7 +114,7 @@ class TagTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/objectContent');
-        $this->assertSame('<span>4</span>', $view->render());
+        self::assertSame('<span>4</span>', $view->render());
     }
 
     /**
@@ -74,7 +124,7 @@ class TagTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/registeredSelfClosingTag');
-        $this->assertSame('<br />', $view->render());
+        self::assertSame('<br />', $view->render());
     }
 
     /**
@@ -84,7 +134,7 @@ class TagTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/omitClosingTag');
-        $this->assertSame('<test>', $view->render());
+        self::assertSame('<test>', $view->render());
     }
 
     /**
@@ -94,7 +144,7 @@ class TagTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/withThis');
-        $this->assertSame('<title databar="baz" datafoo="baz_baz">foo</title>', $view->render());
+        self::assertSame('<title databar="baz" datafoo="baz_baz">foo</title>', $view->render());
     }
 
     /**
@@ -104,6 +154,6 @@ class TagTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/withIgnorePropertiesInAttributes');
-        $this->assertSame('<title datafoo="baz_baz">foo</title>', $view->render());
+        self::assertSame('<title datafoo="baz_baz">foo</title>', $view->render());
     }
 }

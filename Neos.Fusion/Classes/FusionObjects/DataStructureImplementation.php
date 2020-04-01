@@ -11,6 +11,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 use Neos\Utility\Exception\InvalidPositionException;
 use Neos\Utility\PositionalArraySorter;
@@ -36,8 +37,12 @@ class DataStructureImplementation extends AbstractArrayFusionObject
 
         $result = [];
         foreach ($sortedChildFusionKeys as $key) {
+            $propertyPath = $key;
+            if ($this->isUntypedProperty($this->properties[$key])) {
+                $propertyPath .= '<Neos.Fusion:DataStructure>';
+            }
             try {
-                $value = $this->fusionValue($key);
+                $value = $this->fusionValue($propertyPath);
             } catch (\Exception $e) {
                 $value = $this->runtime->handleRenderingException($this->path . '/' . $key, $e);
             }
@@ -78,5 +83,19 @@ class DataStructureImplementation extends AbstractArrayFusionObject
             }
         }
         return $sortedFusionKeys;
+    }
+
+    /**
+     * Returns TRUE if the given property has no object type assigned
+     *
+     * @param mixed $property
+     * @return bool
+     */
+    private function isUntypedProperty($property): bool
+    {
+        if (!is_array($property)) {
+            return false;
+        }
+        return array_intersect_key(array_flip(Parser::$reservedParseTreeKeys), $property) === [];
     }
 }

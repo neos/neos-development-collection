@@ -27,6 +27,6 @@ class IntraDimensionalFallbackGraphTest extends UnitTestCase
         $graph = new IntraDimension\IntraDimensionalFallbackGraph();
         $dimension = $graph->createDimension('test');
 
-        $this->assertSame($dimension, $graph->getDimension('test'));
+        self::assertSame($dimension, $graph->getDimension('test'));
     }
 }

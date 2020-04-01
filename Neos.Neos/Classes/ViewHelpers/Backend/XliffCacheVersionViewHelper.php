@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
@@ -10,7 +12,6 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Service\XliffService;
@@ -21,17 +22,15 @@ use Neos\Neos\Service\XliffService;
  */
 class XliffCacheVersionViewHelper extends AbstractViewHelper
 {
-
     /**
      * @Flow\Inject
      * @var XliffService
      */
     protected $xliffService;
-
     /**
      * @return string The current cache version identifier
      */
-    public function render()
+    public function render(): string
     {
         return $this->xliffService->getCacheVersion();
     }

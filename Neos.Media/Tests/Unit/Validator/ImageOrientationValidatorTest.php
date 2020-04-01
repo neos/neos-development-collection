@@ -30,7 +30,7 @@ class ImageOrientationValidatorTest extends UnitTestCase
         $validator = new ImageOrientationValidator(['allowedOrientations' => [ImageInterface::ORIENTATION_LANDSCAPE]]);
 
         $value = new \stdClass();
-        $this->assertTrue($validator->validate($value)->hasErrors());
+        self::assertTrue($validator->validate($value)->hasErrors());
     }
 
     /**
@@ -85,13 +85,13 @@ class ImageOrientationValidatorTest extends UnitTestCase
     {
         $validator = new ImageOrientationValidator($options);
         $image = $this->createMock(ImageInterface::class);
-        $image->expects($this->any())->method('getOrientation')->will($this->returnValue($imageOrientation));
+        $image->expects(self::any())->method('getOrientation')->will(self::returnValue($imageOrientation));
 
         $validationResult = $validator->validate($image);
         if ($isValid) {
-            $this->assertFalse($validationResult->hasErrors());
+            self::assertFalse($validationResult->hasErrors());
         } else {
-            $this->assertTrue($validationResult->hasErrors());
+            self::assertTrue($validationResult->hasErrors());
         }
     }
 }

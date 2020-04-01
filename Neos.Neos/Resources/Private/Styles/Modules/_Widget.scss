@@ -65,7 +65,7 @@
 		bottom: 0px;
 		left: 0px;
 		width: 100%;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 	}
 
 	.widget-footer:before,

@@ -168,7 +168,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
     /**
      * @param array $methods
      * @param array $variantPresetsConfiguration
-     * @return AssetVariantGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @return AssetVariantGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private function mockAssetVariantGenerator(array $methods, array $variantPresetsConfiguration = [])
     {
@@ -205,14 +205,14 @@ class AssetVariantGeneratorTest extends UnitTestCase
             ];
         }
 
-        $methods[] = 'createImageVariant';
+        $methods[] = 'createAssetVariant';
 
         $mock = $this->createPartialMock(AssetVariantGenerator::class, $methods);
         $that = $this;
 
         $this->inject($mock, 'variantPresetsConfiguration', $variantPresetsConfiguration);
 
-        $mock->method('createImageVariant')->willReturnCallback(
+        $mock->method('createAssetVariant')->willReturnCallback(
             function (Image $imageAsset) use ($that) {
                 return $that->getMockBuilder(ImageVariant::class)
                     ->setConstructorArgs([$imageAsset])
@@ -225,7 +225,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @return Image|\PHPUnit_Framework_MockObject_MockObject
+     * @return Image|\PHPUnit\Framework\MockObject\MockObject
      */
     private function mockImage()
     {

@@ -4,26 +4,32 @@
 <f:section name="head">
 	<title><neos:backend.translate id="{title}" /></title>
 
-	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
-		<f:then>
-			<link rel="stylesheet" type="text/css"
-				  href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'Neos.Neos')}?bust={neos:backend.cssBuiltVersion()}"/>
-		</f:then>
-		<f:else>
-			<link rel="stylesheet" type="text/css"
-				  href="{f:uri.resource(path: 'Styles/Includes.css', package: 'Neos.Neos')}"/>
-		</f:else>
-	</f:if>
+	<link
+		rel="stylesheet"
+		type="text/css"
+		href="{f:uri.resource(path: 'Styles/Main.css', package: 'Neos.Neos')}?bust={neos:backend.cssBuiltVersion()}"
+	/>
 
 	<f:if condition="{moduleConfiguration.additionalResources.styleSheets}">
-		<f:for each="{moduleConfiguration.additionalResources.styleSheets}" as="additionalResource">
-			<link rel="stylesheet" href="{f:uri.resource(path: additionalResource)}" />
+		<f:for
+			each="{moduleConfiguration.additionalResources.styleSheets}"
+			as="additionalResource"
+		>
+			<link
+				rel="stylesheet"
+				href="{f:uri.resource(path: additionalResource)}"
+			/>
 		</f:for>
 	</f:if>
 
-	<script src="{f:uri.resource(path: 'Library/jquery/jquery-2.0.3.js')}"></script>
+	<script
+		src="{f:uri.resource(path: 'Library/jquery/jquery-2.0.3.js')}"
+	></script>
 	<f:if condition="{moduleConfiguration.additionalResources.javaScripts}">
-		<f:for each="{moduleConfiguration.additionalResources.javaScripts}" as="additionalResource">
+		<f:for
+			each="{moduleConfiguration.additionalResources.javaScripts}"
+			as="additionalResource"
+		>
 			<script src="{f:uri.resource(path: additionalResource)}"></script>
 		</f:for>
 	</f:if>
@@ -33,24 +39,42 @@
 		{neos:backend.javascriptConfiguration()}
 	</script>
 
-	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<!-- TODO: Make sure the schema information and edit / preview panel data isn't necessary in backend modules -->
-	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'Neos.Neos', absolute: true) -> f:format.raw()}" />
+	<link
+		rel="neos-vieschema"
+		href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}"
+	/>
+	<link
+		rel="neos-xliff"
+		href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'Neos.Neos', absolute: true) -> f:format.raw()}"
+	/>
 </f:section>
 
 <f:section name="body">
 	<body class="neos neos-module neos-controls neos-module-{moduleClass}">
 		<div class="neos-module-wrap">
 			<ul class="neos-breadcrumb">
-				<f:for each="{moduleBreadcrumb}" key="path" as="configuration" iteration="iterator">
+				<f:for
+					each="{moduleBreadcrumb}"
+					key="path"
+					as="configuration"
+					iteration="iterator"
+				>
 					<f:if condition="{configuration.hideInMenu}">
 						<f:else>
 							<li>
-								<neos:link.module path="{path}" class="{f:if(condition: iterator.isLast, then: 'active')}" title="{f:if(condition: configuration.description, then: '{neos:backend.translate(id: configuration.description)}')}" additionalAttributes="{data-neos-toggle: 'tooltip', data-placement: 'bottom'}"><i class="{configuration.icon}"></i> <neos:backend.translate source="Modules" id="{configuration.label}" /></neos:link.module>
-								<f:if condition="{iterator.isLast}"><f:else><span class="neos-divider">/</span></f:else></f:if>
+								<neos:link.module
+									path="{path}"
+									class="{f:if(condition: iterator.isLast, then: 'active')}"
+									title="{f:if(condition: configuration.description, then: '{neos:backend.translate(id: configuration.description)}')}"
+									additionalAttributes="{data-neos-toggle: 'tooltip', data-placement: 'bottom'}"
+									><i class="{configuration.icon}"></i>
+									<neos:backend.translate
+										source="Modules"
+										id="{configuration.label}"
+								/></neos:link.module>
+								<f:if condition="{iterator.isLast}"
+									><f:else><span class="neos-divider">/</span></f:else></f:if
+								>
 							</li>
 						</f:else>
 					</f:if>
@@ -61,54 +85,33 @@
 			</f:if>
 			<div id="neos-application" class="neos">
 				<div id="neos-top-bar">
-					<div id="neos-top-bar-right">
+					<div class="neos-top-bar-left">
+						<f:render partial="Backend/Menu" arguments="{_all}" />
+						<f:render partial="Backend/Branding" />
+					</div>
+					<div class="neos-top-bar-right">
 						<div id="neos-user-actions">
 							<f:render partial="Backend/UserMenu" arguments="{_all}" />
 						</div>
 					</div>
 				</div>
-				<f:render partial="Backend/Menu" arguments="{sites: sites, modules: modules, modulePath: moduleConfiguration.path}" />
+				<f:render
+					partial="Backend/Menu"
+					arguments="{sites: sites, modules: modules, modulePath: moduleConfiguration.path}"
+				/>
 			</div>
 		</div>
-		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Neos.Twitter.Bootstrap')}"></script>
-		<script src="{f:uri.resource(path: 'Library/fixedsticky/fixedsticky.js', package: 'Neos.Neos')}"></script>
-
-		<script type="text/javascript">
-			(function($) {
-				$(function() {
-					$('.neos-footer').fixedsticky();
-				});
-			})(jQuery);
-		</script>
-
-		<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'Neos.Neos')}"></script>
-		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
-			<f:then>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'Neos.Neos')}?bust={neos:backend.javascriptBuiltVersion()}"></script>
-			</f:then>
-			<f:else>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'Neos.Neos')}"></script>
-			</f:else>
-		</f:if>
-
-		<script><![CDATA[
-			$(function() {
-				require(
-					{
-						baseUrl: 'resource://Neos.Neos/Public/JavaScript',
-						paths: requirePaths,
-						context: 'neos',
-						locale: 'en'
-					},
-					[
-						'Library/jquery-with-dependencies'
-					],
-					function($) {
-						$('[data-neos-toggle="popover"]').popover();
-						$('[data-neos-toggle="tooltip"]').tooltip();
-					}
-				)
-			});
-        ]]></script>
+		<script
+			src="{f:uri.resource(path: 'Library/requirejs/src/require.js', package: 'Neos.Neos')}"
+		></script>
+		<script
+			src="{f:uri.resource(path: 'JavaScript/Main.min.js', package: 'Neos.Neos')}"
+		></script>
+		<script
+			src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Neos.Twitter.Bootstrap')}"
+		></script>
+		<script
+			src="{f:uri.resource(path: 'JavaScript/LegacyUiBootstrap-built.js', package: 'Neos.Neos')}"
+		></script>
 	</body>
 </f:section>

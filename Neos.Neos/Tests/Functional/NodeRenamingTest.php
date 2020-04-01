@@ -54,12 +54,12 @@ class NodeRenamingTest extends AbstractNodeTest
         $teaserTestWorkspace = $this->nodeInTestWorkspace->getNode('teaser');
         $teaserTestWorkspace->setName('teaser-new');
 
-        $this->assertNull($this->nodeInTestWorkspace->getNode('teaser/dummy42a'), 'renaming was not successful in user workspace');
-        $this->assertNotNull($this->nodeInTestWorkspace->getNode('teaser-new/dummy42a'), 'renaming was not successful in user workspace (2)');
+        self::assertNull($this->nodeInTestWorkspace->getNode('teaser/dummy46a'), 'renaming was not successful in user workspace');
+        self::assertNotNull($this->nodeInTestWorkspace->getNode('teaser-new/dummy46a'), 'renaming was not successful in user workspace (2)');
 
-        $this->assertNotNull($this->node->getNode('teaser'), 'the renamed teaser should not shine through in the live workspace for subelements (1) ');
-        $this->assertNotNull($this->node->getNode('teaser/dummy42a'), 'the renamed teaser should not shine through in the live workspace for subelements (2)');
-        $this->assertNull($this->node->getNode('teaser-new/dummy42a'));
+        self::assertNotNull($this->node->getNode('teaser'), 'the renamed teaser should not shine through in the live workspace for subelements (1) ');
+        self::assertNotNull($this->node->getNode('teaser/dummy46a'), 'the renamed teaser should not shine through in the live workspace for subelements (2)');
+        self::assertNull($this->node->getNode('teaser-new/dummy46a'));
     }
 
     /**
@@ -67,16 +67,16 @@ class NodeRenamingTest extends AbstractNodeTest
      */
     public function movedIntoInPersonalWorkspaceDoesNotAffectLiveWorkspace()
     {
-        // move "teaser" into "main"
-        $teaserTestWorkspace = $this->nodeInTestWorkspace->getNode('teaser');
+        // move headline of "teaser" into "main"
+        $teaserTestWorkspace = $this->nodeInTestWorkspace->getNode('teaser/dummy46a');
         $teaserTestWorkspace->moveInto($this->nodeInTestWorkspace->getNode('main'));
 
-        $this->assertNull($this->nodeInTestWorkspace->getNode('teaser/dummy42a'), 'moving not successful (1)');
-        $this->assertNotNull($this->nodeInTestWorkspace->getNode('main/teaser/dummy42a'), 'moving not successful (2)');
+        self::assertNull($this->nodeInTestWorkspace->getNode('teaser/dummy46a'), 'moving not successful (1)');
+        self::assertNotNull($this->nodeInTestWorkspace->getNode('main/dummy46a'), 'moving not successful (2)');
 
-        $this->assertNotNull($this->node->getNode('teaser'), 'moving shined through into live workspace (1)');
-        $this->assertNotNull($this->node->getNode('teaser/dummy42a'), 'moving shined through into live workspace (2)');
-        $this->assertNull($this->node->getNode('main/teaser/dummy42a'), 'moving shined through into live workspace (3)');
+        self::assertNotNull($this->node->getNode('teaser'), 'moving shined through into live workspace (1)');
+        self::assertNotNull($this->node->getNode('teaser/dummy46a'), 'moving shined through into live workspace (2)');
+        self::assertNull($this->node->getNode('main/dummy46a'), 'moving shined through into live workspace (3)');
     }
 
     /**
@@ -84,16 +84,16 @@ class NodeRenamingTest extends AbstractNodeTest
      */
     public function moveBeforeInPersonalWorkspaceDoesNotAffectLiveWorkspace()
     {
-        // move "teaser" before "main/dummy42"
-        $teaserTestWorkspace = $this->nodeInTestWorkspace->getNode('teaser');
+        // move headline of "teaser" before "main/dummy42"
+        $teaserTestWorkspace = $this->nodeInTestWorkspace->getNode('teaser/dummy46a');
         $teaserTestWorkspace->moveBefore($this->nodeInTestWorkspace->getNode('main/dummy42'));
 
-        $this->assertNull($this->nodeInTestWorkspace->getNode('teaser/dummy42a'), 'moving not successful (1)');
-        $this->assertNotNull($this->nodeInTestWorkspace->getNode('main/teaser/dummy42a'), 'moving not successful (2)');
+        self::assertNull($this->nodeInTestWorkspace->getNode('teaser/dummy46a'), 'moving not successful (1)');
+        self::assertNotNull($this->nodeInTestWorkspace->getNode('main/dummy46a'), 'moving not successful (2)');
 
-        $this->assertNotNull($this->node->getNode('teaser'), 'moving shined through into live workspace (1)');
-        $this->assertNotNull($this->node->getNode('teaser/dummy42a'), 'moving shined through into live workspace (2)');
-        $this->assertNull($this->node->getNode('main/teaser/dummy42a'), 'moving shined through into live workspace (3)');
+        self::assertNotNull($this->node->getNode('teaser'), 'moving shined through into live workspace (1)');
+        self::assertNotNull($this->node->getNode('teaser/dummy46a'), 'moving shined through into live workspace (2)');
+        self::assertNull($this->node->getNode('main/dummy46a'), 'moving shined through into live workspace (3)');
     }
 
     /**
@@ -101,15 +101,15 @@ class NodeRenamingTest extends AbstractNodeTest
      */
     public function moveAfterInPersonalWorkspaceDoesNotAffectLiveWorkspace()
     {
-        // move "teaser" after "main/dummy42"
-        $teaserTestWorkspace = $this->nodeInTestWorkspace->getNode('teaser');
+        // move headline of "teaser" after "main/dummy42"
+        $teaserTestWorkspace = $this->nodeInTestWorkspace->getNode('teaser/dummy46a');
         $teaserTestWorkspace->moveAfter($this->nodeInTestWorkspace->getNode('main/dummy42'));
 
-        $this->assertNull($this->nodeInTestWorkspace->getNode('teaser/dummy42a'), 'moving not successful (1)');
-        $this->assertNotNull($this->nodeInTestWorkspace->getNode('main/teaser/dummy42a'), 'moving not successful (2)');
+        self::assertNull($this->nodeInTestWorkspace->getNode('teaser/dummy46a'), 'moving not successful (1)');
+        self::assertNotNull($this->nodeInTestWorkspace->getNode('main/dummy46a'), 'moving not successful (2)');
 
-        $this->assertNotNull($this->node->getNode('teaser'), 'moving shined through into live workspace (1)');
-        $this->assertNotNull($this->node->getNode('teaser/dummy42a'), 'moving shined through into live workspace (2)');
-        $this->assertNull($this->node->getNode('main/teaser/dummy42a'), 'moving shined through into live workspace (3)');
+        self::assertNotNull($this->node->getNode('teaser'), 'moving shined through into live workspace (1)');
+        self::assertNotNull($this->node->getNode('teaser/dummy46a'), 'moving shined through into live workspace (2)');
+        self::assertNull($this->node->getNode('main/dummy46a'), 'moving shined through into live workspace (3)');
     }
 }

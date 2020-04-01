@@ -92,7 +92,7 @@ class PluginUriAspect
         $possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
 
         $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
-        return ($controllerObjectName !== false) ? $controllerObjectName : '';
+        return $controllerObjectName ?: '';
     }
 
     /**

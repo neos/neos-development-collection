@@ -338,16 +338,16 @@
 			<target state="needs-translation">Toggle content tree</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target state="needs-translation">Show publish options</target></trans-unit>
+			<target state="translated">Tampilkan opsi publikasi</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Aktifkan mode ubah Layar Penuh</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Nonaktifkan mode ubah Layar Penuh</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target state="needs-translation">Show preview</target></trans-unit>
+			<target state="translated">Tampilkan pratinjau</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -684,10 +684,10 @@
 			<target state="translated">Database Error</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target state="translated">Belum ada koneksi basis data atau skema basis data Neos belum dibuat.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target state="translated">Jalankan pengaturan untuk mengkonfigurasi basis data Anda.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Halaman Tidak Ditemukan</target></trans-unit>
@@ -775,7 +775,7 @@
 			<target state="translated">Coret</target><alt-trans><target>Dicoret</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve" approved="yes">
 				<source>Link</source>
-			<target state="translated">Link / tautan</target><alt-trans><target>Tautan</target></alt-trans></trans-unit>
+			<target state="final">Link / tautan</target><alt-trans><target>Tautan</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
 			<target state="translated">Daftar Setelah Diurutkan</target><alt-trans><target>Daftar pesanan</target></alt-trans></trans-unit>

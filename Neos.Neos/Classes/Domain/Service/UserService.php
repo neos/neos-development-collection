@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\Service;
 
 /*
@@ -220,7 +221,7 @@ class UserService
         $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
-            if ($account->getAuthenticationProviderName() === $authenticationProviderName) {
+            if ((string) $account->getAuthenticationProviderName() === $authenticationProviderName) {
                 return $account->getAccountIdentifier();
             }
         }
@@ -377,7 +378,7 @@ class UserService
 
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
-            $authenticationProviderName = $account->getAuthenticationProviderName();
+            $authenticationProviderName = (string) $account->getAuthenticationProviderName();
             if (isset($indexedTokens[$authenticationProviderName]) && $indexedTokens[$authenticationProviderName] instanceof UsernamePassword) {
                 $account->setCredentialsSource($this->hashService->hashPassword($password));
                 $this->accountRepository->update($account);
@@ -465,15 +466,16 @@ class UserService
     {
         $currentRoles = $account->getRoles();
 
-        foreach ($currentRoles as $roleIdentifier => $role) {
-            $roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
+        /** @var Role $role */
+        foreach ($currentRoles as $role) {
+            $roleIdentifier = $this->normalizeRoleIdentifier((string) $role);
             if (!in_array($roleIdentifier, $newRoleIdentifiers)) {
                 $this->removeRoleFromAccount($account, $roleIdentifier);
             }
         }
 
         foreach ($newRoleIdentifiers as $roleIdentifier) {
-            if (!in_array($roleIdentifier, array_keys($currentRoles))) {
+            if (!$currentRoles->has(new Role($roleIdentifier))) {
                 $this->addRoleToAccount($account, $roleIdentifier);
             }
         }
@@ -492,7 +494,6 @@ class UserService
     {
         $roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
         $role = $this->policyService->getRole($roleIdentifier);
-
         if (!$account->hasRole($role)) {
             $account->addRole($role);
             $this->accountRepository->update($account);
@@ -559,7 +560,7 @@ class UserService
     /**
      * Reactivates the given user
      *
-     * @param User $user The user to deactivate
+     * @param User $user The user to activate
      * @return void
      * @api
      */
@@ -596,7 +597,9 @@ class UserService
     {
         /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
-            $account->setExpirationDate($this->now);
+            $account->setExpirationDate(
+                \DateTime::createFromFormat(\DateTimeInterface::ATOM, $this->now->format(\DateTimeInterface::ATOM))
+            );
             $this->accountRepository->update($account);
         }
         $this->emitUserDeactivated($user);

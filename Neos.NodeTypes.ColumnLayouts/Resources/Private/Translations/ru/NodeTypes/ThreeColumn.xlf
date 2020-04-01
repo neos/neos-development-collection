@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Three column content</source>
-			<target state="translated">Контент в три колонками</target><alt-trans><target>Содержание с тремя колонками</target></alt-trans><alt-trans><target>Контент с тремя колонками</target></alt-trans><alt-trans><target>Содержимое в три колонки</target></alt-trans></trans-unit>
+			<target state="final">Контент в три колонками</target><alt-trans><target>Содержание с тремя колонками</target></alt-trans><alt-trans><target>Контент с тремя колонками</target></alt-trans><alt-trans><target>Содержимое в три колонки</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

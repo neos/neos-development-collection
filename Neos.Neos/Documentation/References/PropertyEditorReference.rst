@@ -101,11 +101,58 @@ Options Reference:
 
 ** and all options from Text Field Editor -- see above**
 
+Property Type: string ``RichTextEditor`` -- Full-Screen Rich Text Editor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In case a large block of text has to be edited with support for rich text editing, a ``RichTextEditor`` can be used.
+
+It takes all the same configuration options as the inline rich text editor under ``editorOptions``::
+
+    'source':
+        type: 'string'
+        ui:
+          label: 'Toggle the editor'
+          inspector:
+            editor: 'Neos.Neos/Inspector/Editors/RichTextEditor'
+            editorOptions:
+              placeholder: '<p>placeholder</p>'
+              autoparagraph: true
+              linking:
+                anchor: true
+                title: true
+                relNofollow: true
+                targetBlank: true
+              formatting:
+                strong: true
+                em: true
+                u: true
+                sub: true
+                sup: true
+                del: true
+                p: true
+                h1: true
+                h2: true
+                h3: true
+                h4: true
+                h5: true
+                h6: true
+                pre: true
+                underline: true
+                strikethrough: true
+                removeFormat: true
+                left: true
+                right: true
+                center: true
+                justify: true
+                table: true
+                ol: true
+                ul: true
+                a: true
 
 Property Type: string ``CodeEditor`` -- Full-Screen Code Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In case a lot of space is needed for the text (f.e. for HTML source code), a ``CodeEditor`` can be used::
+In case HTML source code or any other plain text has to be edited, a ``CodeEditor`` can be used::
 
     'source':
         type: 'string'
@@ -704,7 +751,7 @@ Property Validation
 -------------------
 
 The validators that can be assigned to properties in the node type configuration are used on properties
-that are edited via the inspector and are applied on the client-side only. The available validators can
+that are edited via the inspector or inline. They are applied on the client-side only. The available validators can
 be found in the Neos package in ``Resources/Public/JavaScript/Shared/Validation``:
 
 * AlphanumericValidator

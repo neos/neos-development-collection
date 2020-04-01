@@ -3,7 +3,7 @@
 Content Repository ViewHelper Reference
 =======================================
 
-This reference was automatically generated from code on 2019-05-06
+This reference was automatically generated from code on 2020-03-29
 
 
 .. _`Content Repository ViewHelper Reference: PaginateViewHelper`:
@@ -21,6 +21,8 @@ This ViewHelper renders a Pagination of nodes.
 Arguments
 *********
 
+* ``widgetId`` (string, *optional*): Unique identifier of the widget instance
+
 * ``as`` (string): Variable name for the result set
 
 * ``parentNode`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The parent node of the child nodes to show (instead of specifying the specific node set)
@@ -29,9 +31,7 @@ Arguments
 
 * ``nodeTypeFilter`` (string, *optional*): A node type (or more complex filter) to filter for in the results
 
-* ``configuration`` (array, *optional*): Additional configuration
-
-* ``widgetId`` (string, *optional*): Unique identifier of the widget instance
+* ``configuration`` (array, *optional*): Widget configuration
 
 
 

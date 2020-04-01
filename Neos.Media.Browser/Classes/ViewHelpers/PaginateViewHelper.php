@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Media\Browser\ViewHelpers;
 
@@ -61,7 +62,6 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
      */
     public function render(): string
     {
-        $response = $this->initiateSubRequest();
-        return $response->getContent();
+        return $this->initiateSubRequest();
     }
 }

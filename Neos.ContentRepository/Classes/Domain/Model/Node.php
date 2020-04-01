@@ -24,6 +24,7 @@ use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Exception\NodeMethodIsUnsupported;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
@@ -303,10 +304,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Create a node for the given NodeData, given that it is a variant of the current node
      *
      * @param NodeData $nodeData
-     * @return NodeInterface
+     * @return NodeInterface|null
      * @throws NodeConfigurationException
      */
-    protected function createNodeForVariant(NodeData $nodeData): NodeInterface
+    protected function createNodeForVariant(NodeData $nodeData): ?NodeInterface
     {
         $contextProperties = $this->context->getProperties();
         $contextProperties['dimensions'] = $nodeData->getDimensionValues();
@@ -1960,10 +1961,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      * @throws NodeMethodIsUnsupported
      */
-    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         throw new NodeMethodIsUnsupported('getOriginDimensionSpacePoint is unsupported in the legacy Node API.', 1542893562);
     }

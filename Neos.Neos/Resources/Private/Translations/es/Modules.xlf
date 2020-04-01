@@ -4,62 +4,62 @@
     <body>
       <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target state="translated">Atrás</target></trans-unit>
+			<target state="final">Atrás</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target state="translated">Cancelar</target></trans-unit>
+			<target state="final">Cancelar</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
-			<target state="translated">Administración</target></trans-unit>
+			<target state="final">Administración</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to management of content</source>
-			<target state="translated">Contiene varios módulos relacionados con la gestión de contenidos</target></trans-unit>
+			<target state="final">Contiene varios módulos relacionados con la gestión de contenidos</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target state="translated">Espacios de Trabajo</target></trans-unit>
+			<target state="final">Espacios de Trabajo</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
 				<source>Details for "{0}"</source>
-			<target state="translated">Detalles de "{0}"</target></trans-unit>
+			<target state="final">Detalles de "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
 				<source>Create new workspace</source>
-			<target state="translated">Crear un nuevo espacio de trabajo</target></trans-unit>
+			<target state="final">Crear un nuevo espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve" approved="yes">
 				<source>Create workspace</source>
-			<target state="translated">Crear espacio de trabajo</target></trans-unit>
+			<target state="final">Crear espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Delete workspace</source>
-			<target state="translated">Eliminar espacio de trabajo</target></trans-unit>
+			<target state="final">Eliminar espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace</source>
-			<target state="translated">Editar espacio de trabajo</target></trans-unit>
+			<target state="final">Editar espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Yes, delete the workspace</source>
-			<target state="translated">Sí, elimínalo</target></trans-unit>
+			<target state="final">Sí, elimínalo</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace "{0}"</source>
-			<target state="translated">Editar espacio de trabajo</target></trans-unit>
+			<target state="final">Editar espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
 				<source>Personal workspace</source>
-			<target state="translated">Espacio de trabajo personal</target></trans-unit>
+			<target state="final">Espacio de trabajo personal</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
 				<source>Private workspace</source>
-			<target state="translated">Espacio de trabajo privado</target></trans-unit>
+			<target state="final">Espacio de trabajo privado</target></trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
 				<source>Internal workspace</source>
-			<target state="translated">Espacio de trabajo interno</target></trans-unit>
+			<target state="final">Espacio de trabajo interno</target></trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
 				<source>Read-only workspace</source>
-			<target state="translated">Espacio de trabajo de solo lectura</target></trans-unit>
+			<target state="final">Espacio de trabajo de solo lectura</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target state="translated">Título</target></trans-unit>
+			<target state="final">Título</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve" approved="yes">
 				<source>Description</source>
-			<target state="translated">Descripción</target></trans-unit>
+			<target state="final">Descripción</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve" approved="yes">
 				<source>Base workspace</source>
-			<target state="translated">Espacio de trabajo base</target></trans-unit>
+			<target state="final">Espacio de trabajo base</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
 			<target state="translated">Dueño</target></trans-unit>
@@ -71,25 +71,25 @@
 			<target state="translated">Privado</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target state="translated">Solo los revisores y administradores pueden acceder y modificar este espacio de trabajo</target></trans-unit>
+			<target state="final">Solo los revisores y administradores pueden acceder y modificar este espacio de trabajo</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
 			<target state="translated">Interno</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target state="translated">Cualquiera que inicie sesión en el editor puede ver y modificar este espacio de trabajo.</target></trans-unit>
+			<target state="final">Cualquiera que inicie sesión en el editor puede ver y modificar este espacio de trabajo.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
 			<target state="translated">Cambios</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
 				<source>Open page in "{0}" workspace</source>
-			<target state="translated">Abrir la página en el espacio de trabajo "{0}"</target></trans-unit>
+			<target state="final">Abrir la página en el espacio de trabajo "{0}"</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target state="translated">Este es tu espacio de trabajo personal que no se puede eliminar.</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target state="translated">El espacio de trabajo contiene cambios. Para eliminarlos, descarta los cambios primero.</target></trans-unit>
+			<target state="final">El espacio de trabajo contiene cambios. Para eliminarlos, descarta los cambios primero.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
 			<target state="translated">El espacio de trabajo no puede ser reajustado en un espacio de trabajo distinto ya que contiene cambios.</target></trans-unit>
@@ -101,72 +101,72 @@
 			<target state="translated">No tienes los permisos para eliminar esta área de trabajo.</target></trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the workspace "{0}"?</source>
-			<target state="translated">¿Realmente deseas eliminar el espacio de trabajo "{0}"?</target></trans-unit>
+			<target state="final">¿Realmente deseas eliminar el espacio de trabajo "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
 			<target state="translated">Esto eliminará el espacio de trabajo incluyendo contenido todo inédito. Esta operación no se puede deshacer.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target state="translated">Este módulo contiene el resumen de todos los elementos dentro del espacio de trabajo actual y permite seguir el flujo de trabajo de revisión y publicación para ellos.</target></trans-unit>
+			<target state="final">Este módulo contiene el resumen de todos los elementos dentro del espacio de trabajo actual y permite seguir el flujo de trabajo de revisión y publicación para ellos.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes in workspace "{0}"</source>
 			<target state="translated">Cambios no publicados</target></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
-			<target state="translated">añadidos: {new}, cambios: {changed}, removidos: {removed}</target></trans-unit>
+			<target state="final">añadidos: {new}, cambios: {changed}, removidos: {removed}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve">
 				<source>Review</source>
 			<target state="translated">Revisar 	</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Discard selected changes</source>
-			<target state="translated">Descartar los cambios seleccionados</target></trans-unit>
+			<target state="final">Descartar los cambios seleccionados</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
 				<source>Publish selected changes</source>
 			<target state="translated">Publicar cambios seleccionados</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target state="translated">Descartar todos los cambios</target></trans-unit>
+			<target state="final">Descartar todos los cambios</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target state="translated">Publicar todos los cambios</target></trans-unit>
+			<target state="final">Publicar todos los cambios</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target state="translated">Publicar todos los cambios en {0}</target></trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
 				<source>Changed Content</source>
-			<target state="translated">Contenido cambiado</target></trans-unit>
+			<target state="final">Contenido cambiado</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
-			<target state="translated">eliminado</target></trans-unit>
+			<target state="final">eliminado</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
 				<source>created</source>
-			<target state="translated">creado</target></trans-unit>
+			<target state="final">creado</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
 				<source>moved</source>
-			<target state="translated">movido</target></trans-unit>
+			<target state="final">movido</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
 			<target state="translated">oculto</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>edited</source>
-			<target state="translated">editado</target></trans-unit>
+			<target state="final">editado</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target state="translated">No hay cambios sin publicar en este espacio de trabajo.</target></trans-unit>
+			<target state="final">No hay cambios sin publicar en este espacio de trabajo.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
 			<target state="translated">¿Desea descartar todos los cambios en el espacio de trabajo "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
         <source>A workspace with this title already exists.</source>
-        <target state="translated">Un espacio de trabajo con este título ya existe.</target>
+        <target state="final">Un espacio de trabajo con este título ya existe.</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceHasBeenUpdated" approved="yes">
         <source>The workspace "{0}" has been updated.</source>
-        <target state="translated">Se ha actualizado el espacio de trabajo "{0}".</target>
+        <target state="final">Se ha actualizado el espacio de trabajo "{0}".</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies" approved="yes">
         <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
-        <target state="translated">Espacio de trabajo "{0}" no se puede eliminar porque las siguientes áreas de trabajo se basan en él: {1}</target>
+        <target state="final">Espacio de trabajo "{0}" no se puede eliminar porque las siguientes áreas de trabajo se basan en él: {1}</target>
       </trans-unit>
       <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes">
         <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
@@ -192,11 +192,11 @@
       </trans-unit>
       <trans-unit id="workspaces.selectedChangeHasBeenPublished" approved="yes">
         <source>The selected change has been published.</source>
-        <target state="translated">El cambio seleccionado ha sido publicado.</target>
+        <target state="final">El cambio seleccionado ha sido publicado.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangeHasBeenDiscarded" approved="yes">
         <source>The selected change has been discarded.</source>
-        <target state="translated">El cambio seleccionado ha sido descartado.</target>
+        <target state="final">El cambio seleccionado ha sido descartado.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
         <source>The selected changes have been published.</source>
@@ -216,40 +216,40 @@
       </trans-unit>
       <trans-unit id="history.label" xml:space="preserve" approved="yes">
 				<source>History</source>
-			<target state="translated">Historial</target></trans-unit>
+			<target state="final">Historial</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target state="translated">Este módulo proporciona una visión general de todos los eventos relevantes que afectan a esta instalación de Neos.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos</source>
-			<target state="translated">Esto es lo que sucedió recientemente en Neos:</target></trans-unit>
+			<target state="final">Esto es lo que sucedió recientemente en Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target state="translated">Aún no se ha registrado ningún evento que podamos mostrar en esta historia.</target></trans-unit>
+			<target state="final">Aún no se ha registrado ningún evento que podamos mostrar en esta historia.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
 				<source>{0} created the {1} "{2}".</source>
-			<target state="translated">{0} Creado el {1} "{2}".</target></trans-unit>
+			<target state="final">{0} Creado el {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve" approved="yes">
 				<source>{0} removed the {1} "{2}".</source>
-			<target state="translated">{0} eliminó el {1}"{2}".</target></trans-unit>
+			<target state="final">{0} eliminó el {1}"{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve" approved="yes">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target state="translated">{0} creó la variante {1} del {2} "{3}".</target></trans-unit>
+			<target state="final">{0} creó la variante {1} del {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve" approved="yes">
 				<source>{0} modified the {1} "{2}".</source>
-			<target state="translated">{0} modificado el {1} "{2}".</target></trans-unit>
+			<target state="final">{0} modificado el {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve" approved="yes">
 				<source>{0} moved the {1} "{2}".</source>
-			<target state="translated">{0} movió el {1} "{2}".</target></trans-unit>
+			<target state="final">{0} movió el {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve" approved="yes">
 				<source>{0} copied the {1} "{2}".</source>
-			<target state="translated">{0} ha copiado el {1} "{2}".</target></trans-unit>
+			<target state="final">{0} ha copiado el {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve" approved="yes">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target state="translated">{0} renombró el {1} "{2}" a "{3}".</target></trans-unit>
+			<target state="final">{0} renombró el {1} "{2}" a "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve" approved="yes">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target state="translated">{0} modificó contenido el {1} "{2}".</target></trans-unit>
+			<target state="final">{0} modificó contenido el {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target state="translated">{0} creó un nuevo usuario "{1}" para {2}.</target></trans-unit>
@@ -261,7 +261,7 @@
 			<target state="translated">Cargar más</target></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
 				<source>This node has been removed in the meantime</source>
-			<target state="needs-translation">This node has been removed in the meantime</target></trans-unit>
+			<target state="translated">Por los momentos, este nodo ha sido removido.</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
@@ -349,7 +349,7 @@
 			<target state="translated">Datos de carácter personal</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target state="translated">Título</target></trans-unit>
+			<target state="final">Título</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target state="translated">Nombre</target><alt-trans><target>Nombre de pila</target></alt-trans></trans-unit>
@@ -538,7 +538,7 @@
 			<target state="translated">El módulo de administración de sitios web le proporciona una visión general de todos los sitios. Puede editar, agregar y eliminar información sobre sus sitios, por ejemplo, agregar un nuevo dominio.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve" approved="yes">
 				<source>Add new site</source>
-			<target state="translated">Agregar nuevo sitio</target></trans-unit>
+			<target state="final">Agregar nuevo sitio</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target state="translated">Crear sitio</target></trans-unit>
@@ -547,10 +547,10 @@
 			<target state="translated">Crear un nuevo sitio</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve" approved="yes">
 				<source>Root node name</source>
-			<target state="translated">Nombre del nodo raíz</target></trans-unit>
+			<target state="final">Nombre del nodo raíz</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve" approved="yes">
 				<source>Domains</source>
-			<target state="translated">Dominios</target></trans-unit>
+			<target state="final">Dominios</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve">
 				<source>Site</source>
 			<target state="translated">Sitio web</target></trans-unit>
@@ -559,82 +559,82 @@
 			<target state="translated">Nombre</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve" approved="yes">
 				<source>Default asset collection</source>
-			<target state="translated">Colección de activos predeterminada</target><alt-trans><target>Colección de activos por defecto</target></alt-trans></trans-unit>
+			<target state="final">Colección de activos predeterminada</target><alt-trans><target>Colección de activos por defecto</target></alt-trans></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve" approved="yes">
 				<source>Site package</source>
-			<target state="translated">Sitio de paquete</target><alt-trans><target>Sitio del paquete</target></alt-trans></trans-unit>
+			<target state="final">Sitio de paquete</target><alt-trans><target>Sitio del paquete</target></alt-trans></trans-unit>
       <trans-unit id="sites.delete" xml:space="preserve" approved="yes">
 				<source>Delete this site</source>
-			<target state="translated">Eliminar este sitio</target><alt-trans><target>Borrar este sitio</target></alt-trans></trans-unit>
+			<target state="final">Eliminar este sitio</target><alt-trans><target>Borrar este sitio</target></alt-trans></trans-unit>
       <trans-unit id="sites.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate site</source>
-			<target state="translated">Desactivar este sitio</target></trans-unit>
+			<target state="final">Desactivar este sitio</target></trans-unit>
       <trans-unit id="sites.activate" xml:space="preserve" approved="yes">
 				<source>Activate site</source>
-			<target state="translated">Activar sitio</target></trans-unit>
+			<target state="final">Activar sitio</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target state="translated">¿Seguro que quieres eliminar "{0}"? Esta acción no se puede deshacer.</target><alt-trans><target>¿Seguro que quieres eliminar "{0}"? Esta acción no se podrá deshacer.</target></alt-trans></trans-unit>
+			<target state="final">¿Seguro que quieres eliminar "{0}"? Esta acción no se puede deshacer.</target><alt-trans><target>¿Seguro que quieres eliminar "{0}"? Esta acción no se podrá deshacer.</target></alt-trans></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the site</source>
-			<target state="translated">Si, elimine este sitio</target><alt-trans><target>Si, borra este sitio</target></alt-trans></trans-unit>
+			<target state="final">Si, elimine este sitio</target><alt-trans><target>Si, borra este sitio</target></alt-trans></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve" approved="yes">
 				<source>Import a site</source>
-			<target state="translated">Importar un sitio</target></trans-unit>
+			<target state="final">Importar un sitio</target></trans-unit>
       <trans-unit id="sites.select" xml:space="preserve" approved="yes">
 				<source>Select a site package</source>
-			<target state="translated">Seleccionar sitio del paquete</target></trans-unit>
+			<target state="final">Seleccionar sitio del paquete</target></trans-unit>
       <trans-unit id="sites.noPackackeInfo" xml:space="preserve" approved="yes">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target state="translated">No hay sitios de paquetes disponibles. Asegúrese de que usted tiene un sitio de paquete activo.</target><alt-trans><target>No hay espacio disponible para los paquetes. Asegúrese de que usted tiene un paquete de sitio activo.</target></alt-trans></trans-unit>
+			<target state="final">No hay sitios de paquetes disponibles. Asegúrese de que usted tiene un sitio de paquete activo.</target><alt-trans><target>No hay espacio disponible para los paquetes. Asegúrese de que usted tiene un paquete de sitio activo.</target></alt-trans></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve" approved="yes">
 				<source>Create a blank site</source>
-			<target state="translated">Crear un sitio en blanco</target></trans-unit>
+			<target state="final">Crear un sitio en blanco</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve" approved="yes">
 				<source>Select a document nodeType</source>
-			<target state="translated">Selecciona el tipo de documento nodoTipo</target><alt-trans><target>Selecciona el tipo de documento</target></alt-trans></trans-unit>
+			<target state="final">Selecciona el tipo de documento nodoTipo</target><alt-trans><target>Selecciona el tipo de documento</target></alt-trans></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve" approved="yes">
 				<source>Site name</source>
-			<target state="translated">Nombre del sitio</target></trans-unit>
+			<target state="final">Nombre del sitio</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve" approved="yes">
 				<source>Create empty site</source>
-			<target state="translated">Crear un sitio vacío</target><alt-trans><target>Crear un archivo nuevo</target></alt-trans></trans-unit>
+			<target state="final">Crear un sitio vacío</target><alt-trans><target>Crear un archivo nuevo</target></alt-trans></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve" approved="yes">
 				<source>Create a new site package</source>
-			<target state="translated">Crear un nuevo sitio de paquete</target><alt-trans><target>Crear un nuevo paquete</target></alt-trans></trans-unit>
+			<target state="final">Crear un nuevo sitio de paquete</target><alt-trans><target>Crear un nuevo paquete</target></alt-trans></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve" approved="yes">
 				<source>VendorName.MyPackageKey</source>
-			<target state="translated">VendorName.MyPackageKey</target><alt-trans><target>ProveerNombre.MiPaqueteClave</target></alt-trans></trans-unit>
+			<target state="final">VendorName.MyPackageKey</target><alt-trans><target>ProveerNombre.MiPaqueteClave</target></alt-trans></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			<target state="needs-translation">No sites available</target></trans-unit>
+			<target state="translated">No hay sitios disponibles</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target state="translated">El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no está instalado, instálelo para iniciar los nuevos sitios.</target><alt-trans><target>El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no se ha instalado, ponlo en los nuevos sitios de kickstart.</target></alt-trans></trans-unit>
+			<target state="final">El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no está instalado, instálelo para iniciar los nuevos sitios.</target><alt-trans><target>El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no se ha instalado, ponlo en los nuevos sitios de kickstart.</target></alt-trans></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
-			<target state="needs-translation">New site</target></trans-unit>
+			<target state="translated">Nuevo sitio</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target state="translated">¿Seguro que quieres eliminar "{0}"? Esta acción no se puede deshacer.</target><alt-trans><target>¿Seguro que quieres eliminar "{0}"? Esta acción no se podrá deshacer.</target></alt-trans></trans-unit>
+			<target state="final">¿Seguro que quieres eliminar "{0}"? Esta acción no se puede deshacer.</target><alt-trans><target>¿Seguro que quieres eliminar "{0}"? Esta acción no se podrá deshacer.</target></alt-trans></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve" approved="yes">
 				<source>New domain</source>
-			<target state="translated">Nuevo dominio</target></trans-unit>
+			<target state="final">Nuevo dominio</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve" approved="yes">
 				<source>Edit domain</source>
-			<target state="translated">Editar dominio</target></trans-unit>
+			<target state="final">Editar dominio</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">Datos del dominio</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
-			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
+			<target state="translated">Por ejemplo, www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
-			<target state="needs-translation">State</target></trans-unit>
+			<target state="translated">Estado</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
-			<target state="needs-translation">Create</target></trans-unit>
+			<target state="translated">Crear</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target state="translated">Configuración</target></trans-unit>
@@ -646,28 +646,28 @@
 			<target state="translated">Dimensiones</target></trans-unit>
       <trans-unit id="dimensions.description" xml:space="preserve" approved="yes">
 				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
-			<target state="translated">Concede un resumen gráfico sobre los respaldos configurados dentro de cada dimensión de contenido y en las dimensiones contenidas.</target></trans-unit>
+			<target state="final">Concede un resumen gráfico sobre los respaldos configurados dentro de cada dimensión de contenido y en las dimensiones contenidas.</target></trans-unit>
       <trans-unit id="dimensions.interDimension.legend" xml:space="preserve" approved="yes">
 				<source>Inter dimensional fallback graph</source>
-			<target state="translated">Gráfico suplente inter dimensional</target></trans-unit>
+			<target state="final">Gráfico suplente inter dimensional</target></trans-unit>
       <trans-unit id="dimensions.interDimension.short" xml:space="preserve" approved="yes">
 				<source>Inter dimensional</source>
-			<target state="translated">Interdimensional</target></trans-unit>
+			<target state="final">Interdimensional</target></trans-unit>
       <trans-unit id="dimensions.interDimension.description" xml:space="preserve" approved="yes">
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
-			<target state="translated">El gráfico intra dimensional de respaldo muestra todas las posibles suplencias (mostradas como bordes) entre los subgráficos (la dimensión de contenido valora combinaciones, mostradas como nodos).
+			<target state="final">El gráfico intra dimensional de respaldo muestra todas las posibles suplencias (mostradas como bordes) entre los subgráficos (la dimensión de contenido valora combinaciones, mostradas como nodos).
 Las suplencias primarias son están marcadas en azul y son siempre visibles, mientras que las suplencias de menor prioridad son mostradas si el ratón les pasa por encima. Mientras más alta la prioridad más alta la opacidad. Haga clic en uno de los nodos para solamente ver sus suplencias y variantes. Haga clic de nuevo para remover el filtro.</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve" approved="yes">
 				<source>Intra dimensional fallback graph</source>
-			<target state="translated">Gráfico Intradimensional de respaldo</target></trans-unit>
+			<target state="final">Gráfico Intradimensional de respaldo</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.short" xml:space="preserve" approved="yes">
 				<source>Intra dimensional</source>
-			<target state="translated">Intra dimensional</target></trans-unit>
+			<target state="final">Intra dimensional</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.description" xml:space="preserve" approved="yes">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
-			<target state="translated">El gráfico intradimensional de respaldo muestra suplencias dentro de cada dimensión de contenido.</target></trans-unit>
+			<target state="final">El gráfico intradimensional de respaldo muestra suplencias dentro de cada dimensión de contenido.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>

@@ -93,17 +93,6 @@
   routeParts:
     module:
       handler: 'Neos\Neos\Routing\BackendModuleRoutePartHandler'
-
--
-  name: 'Modules & arguments'
-  uriPattern: '{module}/{moduleArguments}'
-  defaults:
-    '@controller': 'Backend\Module'
-  routeParts:
-    module:
-      handler: 'Neos\Neos\Routing\BackendModuleRoutePartHandler'
-    moduleArguments:
-      handler: 'Neos\Neos\Routing\BackendModuleArgumentsRoutePartHandler'
   toLowerCase: false
   appendExceedingArguments: true
 

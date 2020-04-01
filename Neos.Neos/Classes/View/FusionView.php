@@ -11,9 +11,9 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+use function GuzzleHttp\Psr7\parse_response;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\View\AbstractView;
@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Flow\Security\Context;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * A Fusion view for Neos
@@ -71,7 +72,7 @@ class FusionView extends AbstractView
     /**
      * Renders the view
      *
-     * @return string The rendered view
+     * @return string|ResponseInterface The rendered view
      * @throws \Exception if no node is given
      * @api
      */
@@ -85,7 +86,8 @@ class FusionView extends AbstractView
         if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
             $currentLocale = new Locale($dimensions['language'][0]);
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
+            array_shift($dimensions['language']);
+            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => true, 'order' => $dimensions['language']]);
         }
 
         $fusionRuntime->pushContextArray([
@@ -96,7 +98,7 @@ class FusionView extends AbstractView
         ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
-            $output = $this->mergeHttpResponseFromOutput($output, $fusionRuntime);
+            $output = $this->parsePotentialRawHttpResponse($output);
         } catch (RuntimeException $exception) {
             throw $exception->getPrevious();
         }
@@ -107,32 +109,30 @@ class FusionView extends AbstractView
 
     /**
      * @param string $output
-     * @param Runtime $fusionRuntime
-     * @return string The message body without the message head
+     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface otherwise the original output.
      */
-    protected function mergeHttpResponseFromOutput($output, Runtime $fusionRuntime)
+    protected function parsePotentialRawHttpResponse($output)
     {
-        if (substr($output, 0, 5) === 'HTTP/') {
-            $endOfHeader = strpos($output, "\r\n\r\n");
-            if ($endOfHeader !== false) {
-                $header = substr($output, 0, $endOfHeader + 4);
-                try {
-                    $renderedResponse = Response::createFromRaw($header);
-
-                    /** @var Response $response */
-                    $response = $fusionRuntime->getControllerContext()->getResponse();
-                    $response->setStatus($renderedResponse->getStatusCode());
-                    foreach ($renderedResponse->getHeaders()->getAll() as $headerName => $headerValues) {
-                        $response->setHeader($headerName, $headerValues);
-                    }
-
-                    $output = substr($output, strlen($header));
-                } catch (\InvalidArgumentException $exception) {
-                }
-            }
+        if ($this->isRawHttpResponse($output)) {
+            return parse_response($output);
         }
 
         return $output;
+    }
+
+    /**
+     * Checks if the mixed input looks like a raw HTTTP response.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isRawHttpResponse($value): bool
+    {
+        if (is_string($value) && strpos($value, 'HTTP/') === 0) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

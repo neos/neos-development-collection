@@ -1,28 +1,27 @@
 &.neos-module-administration-configuration {
 	#configuration {
 		> ul {
-			display: none;
 
-			&.neos-dynatree-container {
+			&.neos-tree-container {
 				display: block;
 
 				> li > span {
 					display: none;
 				}
 
-				.neos-dynatree-node {
+				.neos-tree-node {
 					cursor: pointer;
 					height: auto;
 
-					&.neos-dynatree-folder .neos-dynatree-title {
-						@include user-select(none);
+					&.neos-tree-folder .neos-tree-title {
+						user-select: none;
 					}
 
-					.neos-dynatree-icon {
+					.neos-tree-icon {
 						display: none;
 					}
 
-					.neos-dynatree-title {
+					.neos-tree-title {
 						width: calc(100% - 24px);
 						height: auto;
 						white-space: normal;

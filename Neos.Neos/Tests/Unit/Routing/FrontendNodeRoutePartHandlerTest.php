@@ -26,6 +26,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -87,7 +88,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         // The mockContextFactory is configured to return the last mock context which has been built with buildMockContext():
         $mockContextFactory = $this->getMockBuilder(ContextFactory::class)->setMethods(['create'])->getMock();
         $mockContextFactory->mockContext = null;
-        $mockContextFactory->expects($this->any())->method('create')->will($this->returnCallback(function ($contextProperties) use ($mockContextFactory) {
+        $mockContextFactory->expects(self::any())->method('create')->will(self::returnCallback(function ($contextProperties) use ($mockContextFactory) {
             if (isset($contextProperties['currentSite'])) {
                 $mockContextFactory->mockContext->mockSite = $contextProperties['currentSite'];
             }
@@ -114,7 +115,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->inject($this->routePartHandler, 'domainRepository', $this->mockDomainRepository);
 
         $this->mockSiteRepository = $this->getMockBuilder(SiteRepository::class)->disableOriginalConstructor()->getMock();
-        $this->mockSiteRepository->expects($this->any())->method('findFirstOnline')->will($this->returnValue(null));
+        $this->mockSiteRepository->expects(self::any())->method('findFirstOnline')->will(self::returnValue(null));
         $this->inject($this->routePartHandler, 'siteRepository', $this->mockSiteRepository);
 
         $this->contentDimensionPresetSource = new ConfigurationContentDimensionPresetSource();
@@ -156,11 +157,11 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
-        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
+        $mockSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue($expectedContextPath));
 
         $routePath = 'home';
-        $this->assertTrue($this->routePartHandler->match($routePath));
-        $this->assertSame($expectedContextPath, $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->match($routePath));
+        self::assertSame($expectedContextPath, $this->routePartHandler->getValue());
     }
 
     /**
@@ -184,7 +185,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
         $routePath = 'home';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -200,7 +201,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $routePath = 'home/about-us';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -221,7 +222,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockWorkspace = null;
 
         $routePath = 'home';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -237,11 +238,11 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
-        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/features@user-robert'));
+        $mockSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/examplecom/features@user-robert'));
 
         $routePath = 'features';
-        $this->assertTrue($this->routePartHandler->match($routePath));
-        $this->assertEquals('/sites/examplecom/features@user-robert', $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->match($routePath));
+        self::assertEquals('/sites/examplecom/features@user-robert', $this->routePartHandler->getValue());
     }
 
     /**
@@ -263,16 +264,16 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
         $routePath = 'features';
-        $this->assertTrue($this->routePartHandler->match($routePath));
+        self::assertTrue($this->routePartHandler->match($routePath));
         $routePath = '';
-        $this->assertTrue($this->routePartHandler->match($routePath));
+        self::assertTrue($this->routePartHandler->match($routePath));
 
         $this->routePartHandler->setOptions(['onlyMatchSiteNodes' => true]);
 
         $routePath = 'features';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
         $routePath = '';
-        $this->assertTrue($this->routePartHandler->match($routePath));
+        self::assertTrue($this->routePartHandler->match($routePath));
     }
 
 
@@ -289,7 +290,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $that = $this;
-        $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
+        $this->mockContextFactory->expects(self::once())->method('create')->will(self::returnCallback(function ($contextProperties) use ($that, $mockContext) {
             $that->assertSame('live', $contextProperties['workspaceName']);
             return $mockContext;
         }));
@@ -311,7 +312,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $that = $this;
-        $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
+        $this->mockContextFactory->expects(self::once())->method('create')->will(self::returnCallback(function ($contextProperties) use ($that, $mockContext) {
             $that->assertSame('user-john', $contextProperties['workspaceName']);
             return $mockContext;
         }));
@@ -374,7 +375,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
         $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
-        $this->assertTrue($this->routePartHandler->match($requestPath));
+        self::assertTrue($this->routePartHandler->match($requestPath));
         $value = $this->routePartHandler->getValue();
     }
 
@@ -393,7 +394,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $routePath = 'home@user-robert.html';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -411,7 +412,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->routePartHandler->setOptions(['splitString' => '.']);
 
         $routePath = 'home@user-robert.html';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -425,15 +426,15 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
-        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/home@user-robert'));
+        $mockSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/examplecom/home@user-robert'));
 
         $mockSubSubNode = $this->buildSubNode($mockSubNode, 'ae178bc9184');
         $mockSubSubNode->mockProperties['uriPathSegment'] = 'coffee-brands';
-        $mockSubSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/home/ae178bc9184@user-robert'));
+        $mockSubSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/examplecom/home/ae178bc9184@user-robert'));
 
         $routeValues = ['node' => $mockSubSubNode];
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-        $this->assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
     }
 
     /**
@@ -447,15 +448,15 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockSubNode = $this->buildSubNode($this->buildSiteNode($mockContext, '/sites/otherdotcom'), 'home');
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
-        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/otherdotcom/home@user-robert'));
+        $mockSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/otherdotcom/home@user-robert'));
 
         $mockSubSubNode = $this->buildSubNode($mockSubNode, 'ae178bc9184');
         $mockSubSubNode->mockProperties['uriPathSegment'] = 'coffee-brands';
-        $mockSubSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/otherdotcom/home/ae178bc9184@user-robert'));
+        $mockSubSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/otherdotcom/home/ae178bc9184@user-robert'));
 
         $routeValues = ['node' => $mockSubSubNode];
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-        $this->assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
     }
 
     /**
@@ -471,10 +472,10 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $routeValues = ['node' => null];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
 
         $routeValues = ['node' => 42];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -490,19 +491,19 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         // resolveValue() will use $contentContext to retrieve the resolved node:
-        $mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function ($nodePath) use ($mockSubNode) {
+        $mockContext->expects(self::any())->method('getNode')->will(self::returnCallback(function ($nodePath) use ($mockSubNode) {
             return ($nodePath === '/sites/examplecom/home') ? $mockSubNode : null;
         }));
 
         $that = $this;
-        $this->mockContextFactory->expects($this->atLeastOnce())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
+        $this->mockContextFactory->expects(self::atLeastOnce())->method('create')->will(self::returnCallback(function ($contextProperties) use ($that, $mockContext) {
             // The important assertion:
             $that->assertSame('live', $contextProperties['workspaceName']);
             return $mockContext;
         }));
 
         $routeValues = ['node' => '/sites/examplecom/home'];
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -518,19 +519,19 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         // resolveValue() will use $contentContext to retrieve the resolved node:
-        $mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function ($nodePath) use ($mockSubNode) {
+        $mockContext->expects(self::any())->method('getNode')->will(self::returnCallback(function ($nodePath) use ($mockSubNode) {
             return ($nodePath === '/sites/examplecom/home') ? $mockSubNode : null;
         }));
 
         $that = $this;
-        $this->mockContextFactory->expects($this->atLeastOnce())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
+        $this->mockContextFactory->expects(self::atLeastOnce())->method('create')->will(self::returnCallback(function ($contextProperties) use ($that, $mockContext) {
             // The important assertion:
             $that->assertSame('user-johndoe', $contextProperties['workspaceName']);
             return $mockContext;
         }));
 
         $routeValues = ['node' => '/sites/examplecom/home@user-johndoe'];
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -543,7 +544,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
         $mockContext->mockSiteNode = $mockSiteNode;
 
-        $mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function ($nodePath) use ($mockSiteNode) {
+        $mockContext->expects(self::any())->method('getNode')->will(self::returnCallback(function ($nodePath) use ($mockSiteNode) {
             return ($nodePath === '/sites/examplecom') ? $mockSiteNode : null;
         }));
 
@@ -551,7 +552,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockWorkspace = null;
 
         $routeValues = ['node' => '/sites/examplecom@user-johndoe'];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -565,7 +566,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSiteNode = $mockSiteNode;
 
         $routeValues = ['node' => '/sites/examplecom/not-found'];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -581,12 +582,12 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'some-content', 'Neos.Neos:Content');
         $mockSubNode->mockProperties['uriPathSegment'] = 'some-content';
 
-        $mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function ($nodePath) use ($mockSubNode) {
+        $mockContext->expects(self::any())->method('getNode')->will(self::returnCallback(function ($nodePath) use ($mockSubNode) {
             return ($nodePath === '/sites/examplecom/some-content') ? $mockSubNode : null;
         }));
 
         $routeValues = ['node' => '/sites/examplecom/some-content'];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -603,12 +604,12 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
-        $mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function ($nodePath) use ($mockSubNode) {
+        $mockContext->expects(self::any())->method('getNode')->will(self::returnCallback(function ($nodePath) use ($mockSubNode) {
             return ($nodePath === '/sites/examplecom/features') ? $mockSubNode : null;
         }));
 
         $routeValues = ['node' => '/sites/examplecom/features'];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -661,14 +662,14 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
         $mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
-        $mockSiteNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom'));
+        $mockSiteNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/examplecom'));
         $mockContext->mockSiteNode = $mockSiteNode;
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
-        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/features'));
+        $mockSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/examplecom/features'));
 
-        $mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function ($nodePath) use ($mockSubNode, $mockSiteNode) {
+        $mockContext->expects(self::any())->method('getNode')->will(self::returnCallback(function ($nodePath) use ($mockSubNode, $mockSiteNode) {
             switch ($nodePath) {
                 case '/sites/examplecom/features':
                     return $mockSubNode;
@@ -681,8 +682,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $routeValues = ['node' => $contextPath];
         $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-        $this->assertSame($expectedUriPath, $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertSame($expectedUriPath, $this->routePartHandler->getValue());
     }
 
     /**
@@ -750,8 +751,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function dimensionRequestPathRegex($requestPath, $doesMatch, $expected)
     {
         $matches = [];
-        $this->assertSame($doesMatch, (boolean)preg_match(FrontendNodeRoutePartHandler::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches));
-        $this->assertSame($expected, $matches);
+        self::assertSame($doesMatch, (boolean)preg_match(FrontendNodeRoutePartHandler::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches));
+        self::assertSame($expected, $matches);
     }
 
     /********************************************************************************************************************
@@ -772,6 +773,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @param array $contextProperties The context properties, "workspaceName" is mandatory
      * @return ContentContext
+     * @throws \Exception
      */
     protected function buildMockContext(array $contextProperties)
     {
@@ -780,46 +782,46 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }
 
         $mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue($contextProperties['workspaceName']));
+        $mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue($contextProperties['workspaceName']));
 
         $mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockWorkspace = $mockWorkspace;
-        $mockContext->expects($this->any())->method('getWorkspace')->will($this->returnCallback(function () use ($mockContext) {
+        $mockContext->expects(self::any())->method('getWorkspace')->will(self::returnCallback(function () use ($mockContext) {
             return $mockContext->mockWorkspace;
         }));
 
-        $mockContext->expects($this->any())->method('getWorkspaceName')->will($this->returnCallback(function () use ($mockContext) {
+        $mockContext->expects(self::any())->method('getWorkspaceName')->will(self::returnCallback(function () use ($mockContext) {
             return $mockContext->mockWorkspace->getName();
         }));
 
         $mockContext->mockDomain = null;
-        $mockContext->expects($this->any())->method('getCurrentDomain')->will($this->returnCallback(function () use ($mockContext) {
+        $mockContext->expects(self::any())->method('getCurrentDomain')->will(self::returnCallback(function () use ($mockContext) {
             return $mockContext->mockDomain;
         }));
 
         $mockContext->mockSite = null;
-        $mockContext->expects($this->any())->method('getCurrentSite')->will($this->returnCallback(function () use ($mockContext) {
+        $mockContext->expects(self::any())->method('getCurrentSite')->will(self::returnCallback(function () use ($mockContext) {
             return $mockContext->mockSite;
         }));
 
         $mockContext->mockDimensions = [];
-        $mockContext->expects($this->any())->method('getDimensions')->will($this->returnCallback(function () use ($mockContext) {
+        $mockContext->expects(self::any())->method('getDimensions')->will(self::returnCallback(function () use ($mockContext) {
             return $mockContext->mockDimensions;
         }));
 
         $mockContext->mockTargetDimensions = [];
-        $mockContext->expects($this->any())->method('getTargetDimensions')->will($this->returnCallback(function () use ($mockContext) {
+        $mockContext->expects(self::any())->method('getTargetDimensions')->will(self::returnCallback(function () use ($mockContext) {
             return $mockContext->mockTargetDimensions;
         }));
 
-        $mockContext->expects($this->any())->method('getNodeByIdentifier')->will($this->returnCallback(function ($identifier) use ($mockContext) {
+        $mockContext->expects(self::any())->method('getNodeByIdentifier')->will(self::returnCallback(function ($identifier) use ($mockContext) {
             if (array_key_exists($identifier, $mockContext->mockNodesByIdentifier)) {
                 return $mockContext->mockNodesByIdentifier[$identifier];
             }
             return null;
         }));
 
-        $mockContext->expects($this->any())->method('getProperties')->will($this->returnCallback(function () use ($mockContext, $contextProperties) {
+        $mockContext->expects(self::any())->method('getProperties')->will(self::returnCallback(function () use ($mockContext, $contextProperties) {
             return [
                 'workspaceName' => $contextProperties['workspaceName'],
                 'currentDateTime' => $contextProperties['currentDateTime'],
@@ -845,37 +847,38 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @param ContentContext $mockContext
      * @param string $nodeName
      * @param string $nodeTypeName
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     protected function buildNode(ContentContext $mockContext, $nodeName, $nodeTypeName = 'Neos.Neos:Document')
     {
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $mockNodeType->expects($this->any())->method('isOfType')->will($this->returnCallback(function ($expectedNodeTypeName) use ($nodeTypeName) {
+        $mockNodeType->expects(self::any())->method('isOfType')->will(self::returnCallback(function ($expectedNodeTypeName) use ($nodeTypeName) {
             return $expectedNodeTypeName === $nodeTypeName;
         }));
 
         $mockNode = $this->createMock(NodeInterface::class);
-        $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
-        $mockNode->expects($this->any())->method('getName')->will($this->returnValue($nodeName));
-        $mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
-        $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockContext->getWorkspace()));
+        $mockNode->expects(self::any())->method('getContext')->will(self::returnValue($mockContext));
+        $mockNode->expects(self::any())->method('getName')->will(self::returnValue($nodeName));
+        $mockNode->expects(self::any())->method('getNodeType')->will(self::returnValue($mockNodeType));
+        $mockNode->expects(self::any())->method('getWorkspace')->will(self::returnValue($mockContext->getWorkspace()));
 
         $mockNodeIdentifier = Algorithms::generateUUID();
-        $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($mockNodeIdentifier));
+        $mockNode->expects(self::any())->method('getIdentifier')->will(self::returnValue($mockNodeIdentifier));
         $mockContext->mockNodesByIdentifier[$mockNodeIdentifier] = $mockNode;
 
         // Parent node is set by buildSubNode()
         $mockNode->mockParentNode = null;
-        $mockNode->expects($this->any())->method('getParent')->will($this->returnCallback(function () use ($mockNode) {
+        $mockNode->expects(self::any())->method('getParent')->will(self::returnCallback(function () use ($mockNode) {
             return $mockNode->mockParentNode;
         }));
 
         $mockNode->mockChildNodes = [];
-        $mockNode->expects($this->any())->method('getChildNodes')->will($this->returnCallback(function ($nodeTypeFilter) use ($mockNode) {
+        $mockNode->expects(self::any())->method('getChildNodes')->will(self::returnCallback(function ($nodeTypeFilter) use ($mockNode) {
             return $mockNode->mockChildNodes;
         }));
 
-        $mockNode->expects($this->any())->method('getNode')->will($this->returnCallback(function ($relativeNodePath) use ($mockNode) {
+        $mockNode->expects(self::any())->method('getNode')->will(self::returnCallback(function ($relativeNodePath) use ($mockNode) {
             $foundNode = null;
             foreach ($mockNode->mockChildNodes as $nodeName => $mockChildNode) {
                 if ($nodeName === $relativeNodePath) {
@@ -886,15 +889,15 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $mockNode->mockProperties = [];
-        $mockNode->expects($this->any())->method('getProperties')->will($this->returnCallback(function () use ($mockNode) {
+        $mockNode->expects(self::any())->method('getProperties')->will(self::returnCallback(function () use ($mockNode) {
             return $mockNode->mockProperties;
         }));
 
         $mockNode->mockProperties = [];
-        $mockNode->expects($this->any())->method('getProperty')->will($this->returnCallback(function ($propertyName) use ($mockNode) {
+        $mockNode->expects(self::any())->method('getProperty')->will(self::returnCallback(function ($propertyName) use ($mockNode) {
             return isset($mockNode->mockProperties[$propertyName]) ? $mockNode->mockProperties[$propertyName] : null;
         }));
-        $mockNode->expects($this->any())->method('hasProperty')->will($this->returnCallback(function ($propertyName) use ($mockNode) {
+        $mockNode->expects(self::any())->method('hasProperty')->will(self::returnCallback(function ($propertyName) use ($mockNode) {
             return array_key_exists($propertyName, $mockNode->mockProperties);
         }));
 
@@ -907,15 +910,16 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @param ContentContext $mockContext
      * @param string $nodePath
      * @return NodeInterface
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     protected function buildSiteNode(ContentContext $mockContext, $nodePath)
     {
         $nodeName = substr($nodePath, strrpos($nodePath, '/') + 1);
         $parentNodePath = substr($nodePath, 0, strrpos($nodePath, '/'));
         $mockSiteNode = $this->buildNode($mockContext, $nodeName);
-        $mockSiteNode->expects($this->any())->method('getPath')->will($this->returnValue($nodePath));
-        $mockSiteNode->expects($this->any())->method('getParentPath')->will($this->returnValue($parentNodePath));
-        $mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
+        $mockSiteNode->expects(self::any())->method('getPath')->will(self::returnValue($nodePath));
+        $mockSiteNode->expects(self::any())->method('getParentPath')->will(self::returnValue($parentNodePath));
+        $mockContext->expects(self::any())->method('getCurrentSiteNode')->will(self::returnValue($mockSiteNode));
         return $mockSiteNode;
     }
 
@@ -925,7 +929,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @param NodeInterface $mockParentNode
      * @param string $nodeName
      * @param string $nodeTypeName
-     * @return NodeInterface
+     * @return NodeInterface|MockObject
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     protected function buildSubNode($mockParentNode, $nodeName, $nodeTypeName = 'Neos.Neos:Document')
     {
@@ -933,7 +938,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockNode->mockParentNode = $mockParentNode;
 
         $mockParentNode->mockChildNodes[$nodeName] = $mockNode;
-        $mockNode->expects($this->any())->method('getChildNodes')->will($this->returnCallback(function ($nodeTypeFilter) use ($mockNode) {
+        $mockNode->expects(self::any())->method('getChildNodes')->will(self::returnCallback(function ($nodeTypeFilter) use ($mockNode) {
             return $mockNode->mockChildNodes;
         }));
         return $mockNode;

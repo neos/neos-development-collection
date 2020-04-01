@@ -12,13 +12,18 @@ namespace Neos\Neos\Controller\Frontend;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\Exception as NeosException;
+use Neos\Neos\TypeConverter\NodeConverter;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -71,16 +76,66 @@ class NodeController extends ActionController
     protected $propertyMapper;
 
     /**
+     * Allow invisible nodes to be redirected to
+     *
+     * @return void
+     */
+    protected function initializeShowAction(): void
+    {
+        if ($this->arguments->hasArgument('node')
+            && $this->request->hasArgument('showInvisible')
+            && (bool)$this->request->getArgument('showInvisible')
+            && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+        ) {
+            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN, true);
+        }
+    }
+
+    /**
      * Shows the specified node and takes visibility and access restrictions into
      * account.
      *
      * @param NodeInterface $node
      * @return string View output for the specified node
+     * @throws NodeNotFoundException | UnresolvableShortcutException | NeosException
      * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      * @Flow\IgnoreValidation("node")
-     * @throws NodeNotFoundException
      */
     public function showAction(NodeInterface $node = null)
+    {
+        if ($node === null || !$node->getContext()->isLive()) {
+            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
+        }
+
+        if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
+            $this->handleShortcutNode($node);
+        }
+
+        $this->view->assign('value', $node);
+    }
+
+    /**
+     * Allow invisible nodes to be previewed
+     *
+     * @return void
+     * @throws NoSuchArgumentException
+     */
+    protected function initializePreviewAction(): void
+    {
+        if ($this->arguments->hasArgument('node') && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN, true);
+        }
+    }
+
+    /**
+     * Previews a node that is not live (i.e. for the Backend Preview & Edit Mode)
+     *
+     * @param NodeInterface $node
+     * @return string View output for the specified node
+     * @throws NeosException | NodeNotFoundException | SessionNotStartedException | UnresolvableShortcutException
+     * @Flow\IgnoreValidation("node")
+     */
+    public function previewAction(NodeInterface $node = null)
     {
         if ($node === null) {
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
@@ -96,14 +151,13 @@ class NodeController extends ActionController
 
         if ($inBackend) {
             $this->overrideViewVariablesFromInternalArguments();
-            $this->response->setHeader('Cache-Control', 'no-cache');
+            $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'no-cache');
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setFusionPath('rawContent');
             }
-        }
-
-        if ($this->session->isStarted() && $inBackend) {
-            $this->session->putData('lastVisitedNode', $node->getContextPath());
+            if ($this->session->isStarted()) {
+                $this->session->putData('lastVisitedNode', $node->getContextPath());
+            }
         }
     }
 
@@ -127,7 +181,7 @@ class NodeController extends ActionController
         }
 
         if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {
-            $this->response->setHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
+            $this->response->setComponentParameter(SetHeaderComponent::class, 'X-Neos-AffectedNodePath', $affectedNodeContextPath);
         }
 
         if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {

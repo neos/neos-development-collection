@@ -14,10 +14,10 @@ namespace Neos\Fusion\View;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Utility\Files;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
 
 /**
@@ -28,7 +28,7 @@ use Neos\Fusion\Exception\RuntimeException;
  *
  * If the controller class name is Foo\Bar\Baz\Controller\BlahController and the action is "index",
  * it checks for the Fusion path Foo.Bar.Baz.BlahController.index.
- * If this path is found, then it is used for rendering. Otherwise, the $fallbackView is used.
+ * If this path is found, then it is used for rendering.
  */
 class FusionView extends AbstractView
 {
@@ -38,7 +38,7 @@ class FusionView extends AbstractView
      * @var array
      */
     protected $supportedOptions = [
-        'fusionPathPatterns' => [['resource://@package/Private/Fusion'], 'Fusion files will be recursively loaded from this paths.', 'array'],
+        'fusionPathPatterns' => [['resource://@package/Private/Fusion'], 'Fusion files that will be loaded if directories are given the Root.fusion is used.', 'array'],
         'fusionPath' => [null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'],
         'packageKey' => [null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'],
         'debugMode' => [false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'],
@@ -50,12 +50,6 @@ class FusionView extends AbstractView
      * @var Parser
      */
     protected $fusionParser;
-
-    /**
-     * @Flow\Inject
-     * @var ViewInterface
-     */
-    protected $fallbackView;
 
     /**
      * The parsed Fusion array in its internal representation
@@ -73,11 +67,10 @@ class FusionView extends AbstractView
     protected $fusionPath = null;
 
     /**
-     * if false, the fallback view will never be used.
-     *
-     * @var boolean
+     * @Flow\Inject
+     * @var RuntimeFactory
      */
-    protected $fallbackViewEnabled = true;
+    protected $runtimeFactory;
 
     /**
      * The Fusion Runtime
@@ -142,41 +135,15 @@ class FusionView extends AbstractView
     }
 
     /**
-     * Disable the use of the Fallback View
-     *
-     * @return void
-     */
-    public function disableFallbackView()
-    {
-        $this->fallbackViewEnabled = false;
-    }
-
-    /**
-     * Re-Enable the use of the Fallback View. By default, it is enabled,
-     * so calling this method only makes sense if disableFallbackView() has
-     * been called before.
-     *
-     * @return void
-     */
-    public function enableFallbackView()
-    {
-        $this->fallbackViewEnabled = true;
-    }
-
-    /**
      * Render the view
      *
-     * @return string The rendered view
+     * @return mixed The rendered view
      * @api
      */
     public function render()
     {
         $this->initializeFusionRuntime();
-        if ($this->fusionRuntime->canRender($this->getFusionPathForCurrentRequest()) || $this->fallbackViewEnabled === false) {
-            return $this->renderFusion();
-        } else {
-            return $this->renderFallbackView();
-        }
+        return $this->renderFusion();
     }
 
     /**
@@ -190,7 +157,7 @@ class FusionView extends AbstractView
     {
         if ($this->fusionRuntime === null) {
             $this->loadFusion();
-            $this->fusionRuntime = new Runtime($this->parsedFusion, $this->controllerContext);
+            $this->fusionRuntime = $this->runtimeFactory->create($this->parsedFusion, $this->controllerContext);
         }
         if (isset($this->options['debugMode'])) {
             $this->fusionRuntime->setDebugMode($this->options['debugMode']);
@@ -207,18 +174,28 @@ class FusionView extends AbstractView
      */
     protected function loadFusion()
     {
-        $mergedFusionCode = '';
+        $this->parsedFusion = $this->getMergedFusionObjectTree();
+    }
+
+    /**
+     * Parse all the fusion files the are in the current fusionPathPatterns
+     *
+     * @return array
+     */
+    protected function getMergedFusionObjectTree(): array
+    {
+        $parsedFusion = [];
         $fusionPathPatterns = $this->getOption('fusionPathPatterns');
-        ksort($fusionPathPatterns);
         foreach ($fusionPathPatterns as $fusionPathPattern) {
             $fusionPathPattern = str_replace('@package', $this->getPackageKey(), $fusionPathPattern);
-            $filePaths = array_merge(Files::readDirectoryRecursively($fusionPathPattern, '.fusion'), Files::readDirectoryRecursively($fusionPathPattern, '.ts2'));
-            sort($filePaths);
-            foreach ($filePaths as $filePath) {
-                $mergedFusionCode .= PHP_EOL . file_get_contents($filePath) . PHP_EOL;
+            if (is_dir($fusionPathPattern)) {
+                $fusionPathPattern .= '/Root.fusion';
+            }
+            if (file_exists($fusionPathPattern)) {
+                $parsedFusion = $this->fusionParser->parse(file_get_contents($fusionPathPattern), $fusionPathPattern, $parsedFusion);
             }
         }
-        $this->parsedFusion = $this->fusionParser->parse($mergedFusionCode);
+        return $parsedFusion;
     }
 
     /**
@@ -268,7 +245,7 @@ class FusionView extends AbstractView
 
     /**
      * Render the given Fusion and return the rendered page
-     * @return string
+     * @return mixed
      * @throws \Exception
      */
     protected function renderFusion()
@@ -281,17 +258,5 @@ class FusionView extends AbstractView
         }
         $this->fusionRuntime->popContext();
         return $output;
-    }
-
-    /**
-     * Initialize and render the fallback view
-     *
-     * @return string
-     */
-    public function renderFallbackView()
-    {
-        $this->fallbackView->setControllerContext($this->controllerContext);
-        $this->fallbackView->assignMultiple($this->variables);
-        return $this->fallbackView->render();
     }
 }
