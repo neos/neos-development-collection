@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
+use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService as UserDomainService;
@@ -64,6 +65,11 @@ class UserServiceTest extends UnitTestCase
     protected $mockPartyRepository;
 
     /**
+     * @var Context | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockSecurityContext;
+
+    /**
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
@@ -83,6 +89,9 @@ class UserServiceTest extends UnitTestCase
 
         $this->mockWorkspaceRepository = $this->getMockBuilder(WorkspaceRepository::class)->disableOriginalConstructor()->setMethods(['findOneByName'])->getMock();
         $this->inject($this->userService, 'workspaceRepository', $this->mockWorkspaceRepository);
+
+        $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();
+        $this->inject($this->userService, 'securityContext', $this->mockSecurityContext);
 
         $this->mockAccountRepository = $this->getMockBuilder(AccountRepository::class)->getMock();
         $this->inject($this->userDomainService, 'accountRepository', $this->mockAccountRepository);
@@ -124,7 +133,9 @@ class UserServiceTest extends UnitTestCase
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $mockUserWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
+        $mockAccount = $this->getMockBuilder(Account::class)->disableOriginalConstructor()->getMock();
 
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($mockAccount));
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue($mockUser));
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getUserName')->with($mockUser)->will($this->returnValue('TheUserName'));
         $this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('user-TheUserName')->will($this->returnValue($mockUserWorkspace));
@@ -146,7 +157,9 @@ class UserServiceTest extends UnitTestCase
     public function getPersonalWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn()
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
+        $mockAccount = $this->getMockBuilder(Account::class)->disableOriginalConstructor()->getMock();
 
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($mockAccount));
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue($mockUser));
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getUserName')->with($mockUser)->will($this->returnValue('TheUserName'));
         $this->assertSame('user-TheUserName', $this->userService->getPersonalWorkspaceName());
