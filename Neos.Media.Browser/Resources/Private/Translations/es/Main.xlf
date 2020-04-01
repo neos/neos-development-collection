@@ -73,7 +73,7 @@
 			<target state="translated">Ver</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="needs-translation">View asset</target></trans-unit>
+			<target state="translated">Ver bienes</target><alt-trans><target>Ver activo</target></alt-trans></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target state="translated">Editar activos</target></trans-unit>
@@ -304,13 +304,13 @@
 			<target state="final">Vista previa</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">Descarga</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">Adelante</target><alt-trans><target>Próximo</target></alt-trans></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">Atrás</target><alt-trans><target>Pasado</target></alt-trans><alt-trans><target>Anterior</target></alt-trans></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="final">No se puede cargar el archivo</target></trans-unit>
@@ -350,7 +350,7 @@
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
-			<target state="needs-translation">References to "{asset}"</target></trans-unit>
+			<target state="translated">Referencias a "{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
 			<target state="translated">Reemplazar "{filename}"</target></trans-unit>
@@ -374,7 +374,7 @@
 			<target state="final">Mostrar todos los usos</target></trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
 				<source>Currently the asset is not in used anywhere on the website.</source>
-			<target state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+			<target state="translated">Actualmente los bienes no se utilizan en ninguna parte del sitio web.</target><alt-trans><target>Actualmente los bienes no se encuentran en ninguna parte usada dentro del sitio web.</target></alt-trans><alt-trans><target>Actualmente el activo no se encuentra en ninguna parte usada en el sitio web.</target></alt-trans><alt-trans><target>Actualmente, el activo no se utiliza en ninguna parte del sitio web.</target></alt-trans></trans-unit>
       <trans-unit id="replace.previewFile" xml:space="preserve" approved="yes">
 				<source>Preview current file</source>
 			<target state="final">Vista previa del archivo actual</target></trans-unit>
