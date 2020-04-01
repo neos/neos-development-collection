@@ -17,7 +17,7 @@
 
 .neos-modal-backdrop,
 .neos-modal-backdrop.neos-fade.neos-in {
-	@include opacity(.35);
+	opacity: .35;
 }
 
 // Base modal
@@ -32,7 +32,7 @@
 	border: 1px solid $grayLight;
 	padding: 0px;
 	width: 35%;
-	@include border-radius(0);
+	border-radius: 0;
 	@include font();
 	// Remove focus outline from opened modal
 	outline: none;
@@ -43,7 +43,7 @@
 	}
 
 	&.neos-fade {
-		@include transition(opacity .3s linear, top .3s ease-out);
+		transition: opacity .3s linear, top .3s ease-out;
 		top: -25%;
 	}
 
@@ -72,9 +72,9 @@
 			margin-left: $defaultMargin;
 			margin-top: -$defaultMargin;
 			border-left: none;
-			@include text-shadow(none);
-			@include opacity(1);
-			@include box-sizing(border-box);
+			text-shadow: none;
+			opacity: 1;
+			box-sizing: border-box;
 
 			&:before {
 				content: fa-content($fa-var-times);
@@ -91,7 +91,7 @@
 			line-height: 100%;
 			margin: $defaultMargin;
 			line-height: $unit / 2;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 		}
 	}
 
@@ -107,8 +107,8 @@
 	// Footer area
 	.neos-modal-footer {
 		background: transparent;
-		@include box-shadow(0px 0px 0px transparent);
-		@include border-radius(0px);
+		box-shadow: 0px 0px 0px transparent;
+		border-radius: 0px;
 		border: 0px;
 		padding: $defaultMargin;
 		text-align: right;
@@ -149,7 +149,7 @@
 	}
 
 	&.neos-fade {
-		@include transition(opacity .3s linear, top .3s ease-out);
+		transition: opacity .3s linear, top .3s ease-out;
 		top: -25%;
 	}
 

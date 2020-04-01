@@ -1,11 +1,10 @@
 // Core variables and mixins
-@import "compass";
 @import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
 @import "Foundation/mixins";
 @import "Constants";
 @import "Mixins";
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic');
-@import "../../Public/Library/fontawesome/scss/fontawesome.scss";
+@import "FontAwesome/fontawesome.scss";
 
 $errorBoxWidth: $unit * 18;
 $errorBoxHeight: $unit * 3;
@@ -28,15 +27,15 @@ body {
 		padding: $defaultMargin;
 		border: 1px solid $grayLight;
 		position: absolute;
-		@include transform(translateY(-50%));
+		transform: translateY(-50%);
 		top: 50%;
 		left: 50%;
 		width: $errorBoxWidth;
 		margin-left: -($errorBoxWidth / 2);
 		color: #fff;
 		font-size: 16px;
-		@include box-shadow(none);
-		@include border-radius(none);
+		box-shadow: none;
+		border-radius: none;
 
 		.neos-message-icon {
 			color: $warning;
@@ -135,7 +134,7 @@ body {
 			padding-right: $unit;
 			width: 100%;
 			height: auto;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 
 			.neos-message-icon {
 				font-size: 2em;

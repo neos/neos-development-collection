@@ -13,7 +13,6 @@ namespace Neos\Neos\Fusion;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
@@ -42,11 +41,11 @@ class PluginViewImplementation extends PluginImplementation
      *
      * @return ActionRequest
      */
-    protected function buildPluginRequest()
+    protected function buildPluginRequest(): ActionRequest
     {
         /** @var $parentRequest ActionRequest */
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
-        $pluginRequest = new ActionRequest($parentRequest);
+        $pluginRequest = $parentRequest->createSubRequest();
 
         if (!$this->pluginViewNode instanceof NodeInterface) {
             $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
@@ -106,13 +105,13 @@ class PluginViewImplementation extends PluginImplementation
      * @return string The rendered content as a string
      * @throws StopActionException
      */
-    public function evaluate()
+    public function evaluate(): string
     {
         $currentContext = $this->runtime->getCurrentContext();
         $this->pluginViewNode = $currentContext['node'];
-        /** @var $parentResponse Response */
+        /** @var $parentResponse ActionResponse */
         $parentResponse = $this->runtime->getControllerContext()->getResponse();
-        $pluginResponse = new ActionResponse($parentResponse);
+        $pluginResponse = new ActionResponse();
 
         $pluginRequest = $this->buildPluginRequest();
         if ($pluginRequest->getControllerObjectName() === '') {
@@ -126,6 +125,13 @@ class PluginViewImplementation extends PluginImplementation
             return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment() ? '<p>' . $message . '</p>' : '<!-- ' . $message . '-->';
         }
         $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
-        return $pluginResponse->getContent();
+
+        // We need to make sure to not merge content up into the parent ActionResponse because that would break the Fusion HttpResponse.
+        $content = $pluginResponse->getContent();
+        $pluginResponse->setContent('');
+
+        $pluginResponse->mergeIntoParentResponse($parentResponse);
+
+        return $content;
     }
 }

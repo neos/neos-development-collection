@@ -30,6 +30,6 @@ class ParentsOperationTest extends AbstractNodeTest
         $actual = iterator_to_array($q->parents('[someSpecialProperty]')->first());
         $expected = [$this->node->getNode('teaser')];
 
-        $this->assertTrue($expected === $actual);
+        self::assertTrue($expected === $actual);
     }
 }

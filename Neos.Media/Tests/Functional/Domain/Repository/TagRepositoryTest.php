@@ -54,8 +54,8 @@ class TagRepositoryTest extends AbstractTest
         $this->tagRepository->add($tag);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
-        $this->assertCount(1, $this->tagRepository->findAll());
-        $this->assertInstanceOf(Tag::class, $this->tagRepository->findAll()->getFirst());
+        self::assertCount(1, $this->tagRepository->findAll());
+        self::assertInstanceOf(Tag::class, $this->tagRepository->findAll()->getFirst());
     }
 
     /**
@@ -74,8 +74,8 @@ class TagRepositoryTest extends AbstractTest
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $this->assertCount(3, $this->tagRepository->findBySearchTerm('foo'));
-        $this->assertCount(2, $this->tagRepository->findBySearchTerm('foo bar'));
-        $this->assertCount(1, $this->tagRepository->findBySearchTerm(' foo '));
+        self::assertCount(3, $this->tagRepository->findBySearchTerm('foo'));
+        self::assertCount(2, $this->tagRepository->findBySearchTerm('foo bar'));
+        self::assertCount(1, $this->tagRepository->findBySearchTerm(' foo '));
     }
 }

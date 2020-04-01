@@ -33,7 +33,7 @@ class MenuController extends ActionController
      */
     public function indexAction()
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
 
         $contentModuleUri = $this->getControllerContext()->getUriBuilder()
             ->reset()

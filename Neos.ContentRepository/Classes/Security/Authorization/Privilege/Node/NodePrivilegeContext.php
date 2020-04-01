@@ -224,7 +224,10 @@ class NodePrivilegeContext
      */
     protected function getNodeByIdentifier($nodeIdentifier)
     {
-        $context = $this->contextFactory->create();
+        $context = $this->contextFactory->create([
+            // as we are often in backend, we should take invisible nodes into account properly when resolving Node Identifiers to paths.
+            'invisibleContentShown' => true
+        ]);
         $node = null;
         $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
             $node = $context->getNodeByIdentifier($nodeIdentifier);

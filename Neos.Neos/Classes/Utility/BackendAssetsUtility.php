@@ -40,20 +40,8 @@ class BackendAssetsUtility
     {
         if (isset($this->settings['userInterface']['loadMinifiedJavaScript'])) {
             return $this->settings['userInterface']['loadMinifiedJavaScript'];
-        } elseif (isset($this->settings['userInterface']['loadMinifiedJavascript'])) {
-            return $this->settings['userInterface']['loadMinifiedJavascript'];
         }
         return true;
-    }
-
-    /**
-     * Returns a shortened md5 of the built JavaScript file
-     *
-     * @return string
-     */
-    public function getJavascriptBuiltVersion()
-    {
-        return substr(md5_file('resource://Neos.Neos/Public/JavaScript/ContentModule-built.js'), 0, 12);
     }
 
     /**

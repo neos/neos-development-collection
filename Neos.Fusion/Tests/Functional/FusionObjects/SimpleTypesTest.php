@@ -43,9 +43,9 @@ class SimpleTypesTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('simpleTypes/booleanFalse');
-        $this->assertSame(false, $view->render());
+        self::assertSame(false, $view->render());
         $view->setFusionPath('simpleTypes/booleanTrue');
-        $this->assertTrue($view->render());
+        self::assertTrue($view->render());
     }
 
     /**
@@ -55,7 +55,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('simpleTypes/null');
-        $this->assertNull($view->render());
+        self::assertNull($view->render());
     }
 
     /**
@@ -65,7 +65,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('simpleTypes/wrappedString');
-        $this->assertSame('Hello, Foo', $view->render());
+        self::assertSame('Hello, Foo', $view->render());
     }
 
     /**

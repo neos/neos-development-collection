@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\Model\Adjustment;
 
 /*
@@ -11,11 +13,11 @@ namespace Neos\Media\Domain\Model\Adjustment;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\Box;
-use Imagine\Image\Point;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
+use Imagine\Image\Point;
+use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\ValueObject\Configuration\AspectRatio;
 
@@ -42,6 +44,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @ORM\Column(nullable = true)
      */
     protected $y;
+
     /**
      * @var integer
      * @ORM\Column(nullable = true)
@@ -275,11 +278,13 @@ class CropImageAdjustment extends AbstractImageAdjustment
 
         $ratio = $this->getWidth() / $image->getWidth();
         $this->setWidth($image->getWidth());
-        $this->setHeight($this->getHeight() / $ratio);
+        $roundedHeight = (int)round($this->getHeight() / $ratio, 0);
+        $this->setHeight($roundedHeight);
 
         if ($this->getHeight() > $image->getHeight()) {
             $ratio = $this->getHeight() / $image->getHeight();
-            $this->setWidth($this->getWidth() / $ratio);
+            $roundedWidth = (int)round($this->getWidth() / $ratio, 0);
+            $this->setWidth($roundedWidth);
             $this->setHeight($image->getHeight());
         }
     }

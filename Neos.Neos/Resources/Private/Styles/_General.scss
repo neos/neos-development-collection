@@ -51,7 +51,7 @@ a {
 	width: 100%;
 	height: 100%;
 	background-color: #fff;
-	@include opacity(0);
+	opacity: 0;
 	z-index: 10001;
 
 	.neos-pageloader {
@@ -60,8 +60,8 @@ a {
 		left: 50% !important;
 		margin-top: ($unit * 2 + 2) / 2;
 		margin-left: -30 - $inspectorWidth / 2;
-		@include transition-property(margin);
-		@include transition-duration(0.2s);
+		transition-property: margin;
+		transition-duration: 0.2s;
 	}
 }
 

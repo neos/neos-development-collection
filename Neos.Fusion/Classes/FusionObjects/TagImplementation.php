@@ -63,6 +63,43 @@ class TagImplementation extends AbstractFusionObject
         return in_array($tagName, self::$SELF_CLOSING_TAGS, true) || (boolean)$this->fusionValue('selfClosingTag');
     }
 
+
+    /**
+     * The tag content
+     *
+     * @return string
+     */
+    protected function getContent()
+    {
+        return $this->fusionValue('content');
+    }
+
+    /**
+     * The tag attributes dataStructure
+     * If anything but an iterable is returned the value is casted to string
+     *
+     * @return iterable|string
+     */
+    protected function getAttributes()
+    {
+        return $this->fusionValue('attributes');
+    }
+
+    /**
+     * Whether empty attributes (HTML5 syntax) should be allowed
+     *
+     * @return boolean
+     */
+    protected function getAllowEmptyAttributes()
+    {
+        $allowEmpty = $this->fusionValue('allowEmptyAttributes');
+        if ($allowEmpty === null) {
+            return true;
+        } else {
+            return (boolean)$allowEmpty;
+        }
+    }
+
     /**
      * Return a tag
      *
@@ -75,8 +112,49 @@ class TagImplementation extends AbstractFusionObject
         $selfClosingTag = $this->isSelfClosingTag($tagName);
         $content = '';
         if (!$omitClosingTag && !$selfClosingTag) {
-            $content = $this->fusionValue('content');
+            $content = $this->getContent();
         }
-        return '<' . $tagName . $this->fusionValue('attributes') . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
+        $attributes = $this->getAttributes();
+        $allowEmptyAttributes = $this->getAllowEmptyAttributes();
+        if (is_iterable($attributes)) {
+            $renderedAttributes = self::renderAttributes($attributes, $allowEmptyAttributes);
+        } else {
+            $renderedAttributes = (string)$attributes;
+        }
+        return '<' . $tagName . $renderedAttributes . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
+    }
+
+    /**
+     * Render the tag attributes for the given key->values as atring,
+     * if an value is an iterable it will be concatenated with spaces as seperator
+     *
+     * @param iterable $attributes
+     * @param bool $allowEmpty
+     */
+    protected function renderAttributes(iterable $attributes, $allowEmpty = true): string
+    {
+        $renderedAttributes = '';
+        foreach ($attributes as $attributeName => $attributeValue) {
+            if ($attributeValue === null || $attributeValue === false) {
+                continue;
+            }
+            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
+            if ($attributeValue === true || $attributeValue === '') {
+                $renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
+            } else {
+                if (is_array($attributeValue)) {
+                    $joinedAttributeValue = '';
+                    foreach ($attributeValue as $attributeValuePart) {
+                        if ((string)$attributeValuePart !== '') {
+                            $joinedAttributeValue .= ' ' . trim($attributeValuePart);
+                        }
+                    }
+                    $attributeValue = trim($joinedAttributeValue);
+                }
+                $encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', false);
+                $renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
+            }
+        }
+        return $renderedAttributes;
     }
 }

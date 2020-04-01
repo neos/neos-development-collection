@@ -27,6 +27,6 @@ class UserTest extends UnitTestCase
     public function constructorInitializesPreferences()
     {
         $user = new User();
-        $this->assertInstanceOf(UserPreferences::class, $user->getPreferences());
+        self::assertInstanceOf(UserPreferences::class, $user->getPreferences());
     }
 }

@@ -11,14 +11,14 @@ namespace Neos\Neos\Tests\Functional\Fusion;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\FlashMessageContainer;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Tests\Functional\AbstractNodeTest;
@@ -34,7 +34,7 @@ class RenderingTest extends AbstractNodeTest
     /**
      * @test
      */
-    public function basicRenderingWorks()
+    public function basicRenderingWorks(): void
     {
         $output = $this->simulateRendering();
 
@@ -46,10 +46,10 @@ class RenderingTest extends AbstractNodeTest
     /**
      * @test
      */
-    public function debugModeSettingWorks()
+    public function debugModeSettingWorks(): void
     {
         $output = $this->simulateRendering(null, true);
-        $this->assertStringContainsString('<!-- Beginning to render TS path', $output);
+        self::assertStringContainsString('<!-- Beginning to render TS path', $output);
 
         $output = $this->simulateRendering();
         $this->assertStringNotContainsString('<!-- Beginning to render TS path', $output);
@@ -58,95 +58,95 @@ class RenderingTest extends AbstractNodeTest
     /**
      * @test
      */
-    public function overriddenValueInPrototype()
+    public function overriddenValueInPrototype(): void
     {
         $output = $this->simulateRendering('Test_OverriddenValueInPrototype.fusion');
 
         $this->assertTeaserConformsToBasicRendering($output);
         $this->assertMainContentConformsToBasicRendering($output);
 
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div', 'Static Headline', true, $output);
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
-        $this->assertSelectEquals('.sidebar', '[COMMIT WIDGET]', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div', 'Static Headline', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
+        self::assertSelectEquals('.sidebar', '[COMMIT WIDGET]', true, $output);
     }
 
     /**
      * @test
      */
-    public function additionalProcessorInPrototype()
+    public function additionalProcessorInPrototype(): void
     {
         $output = $this->simulateRendering('Test_AdditionalProcessorInPrototype.fusion');
 
         $this->assertTeaserConformsToBasicRendering($output);
         $this->assertMainContentConformsToBasicRendering($output);
 
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > .processor-wrap', 'BEFOREStatic HeadlineAFTER', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > .processor-wrap', 'BEFOREStatic HeadlineAFTER', true, $output);
     }
 
     /**
      * @test
      */
-    public function additionalProcessorInPrototype2()
+    public function additionalProcessorInPrototype2(): void
     {
         $output = $this->simulateRendering('Test_AdditionalProcessorInPrototype2.fusion');
 
-        $this->assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-headline > div > header > h1', 'Welcome to this example', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > header > h1', 'Documentation', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-headline > div > header > h1', 'Development Process', true, $output);
+        self::assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-headline > div > header > h1', 'Welcome to this example', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > header > h1', 'Documentation', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-headline > div > header > h1', 'Development Process', true, $output);
 
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > header > .processor-wrap', 'BEFOREStatic HeadlineAFTER', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > header > .processor-wrap', 'BEFOREStatic HeadlineAFTER', true, $output);
     }
 
     /**
      * @test
      */
-    public function replaceElementRenderingCompletelyInSidebar()
+    public function replaceElementRenderingCompletelyInSidebar(): void
     {
         $output = $this->simulateRendering('Test_ReplaceElementRenderingCompletelyInSidebar.fusion');
         $this->assertTeaserConformsToBasicRendering($output);
         $this->assertMainContentConformsToBasicRendering($output);
 
         // header is now wrapped in h3
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > header > h3', 'Last Commits', true, $output);
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > header > h3', 'Last Commits', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
     }
 
     /**
      * @test
      */
-    public function prototypeInheritance()
+    public function prototypeInheritance(): void
     {
         $output = $this->simulateRendering('Test_PrototypeInheritance.fusion');
-        $this->assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-headline > div > h1', 'Static Headline', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-headline > div > h1', 'Static Headline', true, $output);
+        self::assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-headline > div > h1', 'Static Headline', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-headline > div > h1', 'Static Headline', true, $output);
 
         // header is now wrapped in h3 (as set in the concrete template), AND is set to a static headline (as set in the abstract template)
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > h1', 'Static Headline', true, $output);
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > h1', 'Static Headline', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
     }
 
     /**
      * @test
      */
-    public function replaceElementRenderingCompletelyBasedOnAdvancedCondition()
+    public function replaceElementRenderingCompletelyBasedOnAdvancedCondition(): void
     {
         $output = $this->simulateRendering('Test_ReplaceElementRenderingCompletelyBasedOnAdvancedCondition.fusion');
         $this->assertTeaserConformsToBasicRendering($output);
         $this->assertSidebarConformsToBasicRendering($output);
 
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > header', 'DOCS: Documentation', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > header', 'DOCS: Documentation', true, $output);
     }
 
     /**
      * @test
      */
-    public function overriddenValueInNestedPrototype()
+    public function overriddenValueInNestedPrototype(): void
     {
         $output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype.fusion');
         $this->assertTeaserConformsToBasicRendering($output);
 
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > header', 'Static Headline', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-headline > div > header', 'Static Headline', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > header', 'Static Headline', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-headline > div > header', 'Static Headline', true, $output);
 
         $this->assertSidebarConformsToBasicRendering($output);
     }
@@ -154,13 +154,13 @@ class RenderingTest extends AbstractNodeTest
     /**
      * @test
      */
-    public function overriddenValueInNestedPrototype2()
+    public function overriddenValueInNestedPrototype2(): void
     {
         $output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype2.fusion');
         $this->assertTeaserConformsToBasicRendering($output);
 
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > header', 'Static Headline', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-headline > div > h1', 'Development Process', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > header', 'Static Headline', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-headline > div > h1', 'Development Process', true, $output);
 
         $this->assertSidebarConformsToBasicRendering($output);
     }
@@ -168,82 +168,82 @@ class RenderingTest extends AbstractNodeTest
     /**
      * @test
      */
-    public function contentCollectionsAndWrappedContentElementsCanBeRenderedWithCustomTagsAndAttributes()
+    public function contentCollectionsAndWrappedContentElementsCanBeRenderedWithCustomTagsAndAttributes(): void
     {
         $output = $this->simulateRendering();
 
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-list > ul.my-list > li.my-list-item > p', 'First', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-list > ul.my-list > li.my-list-item > p', 'First', true, $output);
     }
 
     /**
      * @test
      */
-    public function menuIsRenderedAsExpected()
+    public function menuIsRenderedAsExpected(): void
     {
         $output = $this->simulateRendering();
-        $this->assertSelectEquals('.navigation > ul > li.normal > a', 'Frameworks', true, $output);
+        self::assertSelectEquals('.navigation > ul > li.normal > a', 'Frameworks', true, $output);
     }
 
     /**
      * @test
      */
-    public function classesAreAppendedAsExpected()
+    public function classesAreAppendedAsExpected(): void
     {
         $output = $this->simulateRendering('Test_AppendingClassesToContent.fusion');
-        $this->assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-headline.test h1', 'Welcome to this example', true, $output);
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline.test h1', 'Last Commits', true, $output);
+        self::assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-headline.test h1', 'Welcome to this example', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline.test h1', 'Last Commits', true, $output);
     }
 
     /**
      * @test
      */
-    public function menuWithNegativeEntryLevelIsRenderedAsExpected()
+    public function menuWithNegativeEntryLevelIsRenderedAsExpected(): void
     {
         $output = $this->simulateRendering('Test_MenuNegativeEntryLevel.fusion');
-        $this->assertSelectEquals('.navigation > ul > li.normal > a', 'About Us', true, $output);
-        $this->assertSelectEquals('.navigation > ul > li.active > a', 'Products', true, $output);
+        self::assertSelectEquals('.navigation > ul > li.normal > a', 'About Us', true, $output);
+        self::assertSelectEquals('.navigation > ul > li.active > a', 'Products', true, $output);
     }
 
     /**
      * Helper function for setting assertions
      * @param string $output
      */
-    protected function assertTeaserConformsToBasicRendering($output)
+    protected function assertTeaserConformsToBasicRendering($output): void
     {
-        $this->assertStringContainsString('This website is powered by Neos, the Open Source Content Application Platform licensed under the GNU/GPL.', $output);
-        $this->assertSelectEquals('h1', 'Home', true, $output);
+        self::assertStringContainsString('This website is powered by Neos, the Open Source Content Application Platform licensed under the GNU/GPL.', $output);
+        self::assertSelectEquals('h1', 'Home', true, $output);
 
-        $this->assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-headline > div > h1', 'Welcome to this example', true, $output);
-        $this->assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-text > div', 'This is our exemplary rendering test.', true, $output);
+        self::assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-headline > div > h1', 'Welcome to this example', true, $output);
+        self::assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-text > div', 'This is our exemplary rendering test.', true, $output);
     }
 
     /**
      * Helper function for setting assertions
      * @param string $output
      */
-    protected function assertMainContentConformsToBasicRendering($output)
+    protected function assertMainContentConformsToBasicRendering($output): void
     {
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-headline > div > h1', 'Do you love Flow?', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-text > div', 'If you do, make sure to post your opinion about it on Twitter!', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-headline > div > h1', 'Do you love Flow?', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-text > div', 'If you do, make sure to post your opinion about it on Twitter!', true, $output);
 
-        $this->assertSelectEquals('.main', '[TWITTER WIDGET]', true, $output);
+        self::assertSelectEquals('.main', '[TWITTER WIDGET]', true, $output);
 
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > h1', 'Documentation', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-text > div', 'We\'re still improving our docs, but check them out nevertheless!', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left', '[SLIDESHARE]', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-headline > div > h1', 'Development Process', true, $output);
-        $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-text > div', 'We\'re spending lots of thought into our infrastructure, you can profit from that, too!', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-headline > div > h1', 'Documentation', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .acme-demo-text > div', 'We\'re still improving our docs, but check them out nevertheless!', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left', '[SLIDESHARE]', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-headline > div > h1', 'Development Process', true, $output);
+        self::assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .acme-demo-text > div', 'We\'re spending lots of thought into our infrastructure, you can profit from that, too!', true, $output);
     }
 
     /**
      * Helper function for setting assertions
      * @param string $output
      */
-    protected function assertSidebarConformsToBasicRendering($output)
+    protected function assertSidebarConformsToBasicRendering($output): void
     {
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > h1', 'Last Commits', true, $output);
-        $this->assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
-        $this->assertSelectEquals('.sidebar', '[COMMIT WIDGET]', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-headline > div > h1', 'Last Commits', true, $output);
+        self::assertSelectEquals('.sidebar > .neos-contentcollection > .acme-demo-text > div', 'Below, you\'ll see the most recent activity', true, $output);
+        self::assertSelectEquals('.sidebar', '[COMMIT WIDGET]', true, $output);
     }
 
     /**
@@ -256,7 +256,7 @@ class RenderingTest extends AbstractNodeTest
      * @param string $message
      * @param boolean $isHtml
      */
-    public static function assertSelectEquals($selector, $content, $count, $actual, $message = '', $isHtml = true)
+    public static function assertSelectEquals($selector, $content, $count, $actual, $message = '', $isHtml = true): void
     {
         if ($message === '') {
             $message = $selector . ' did not match: ' . $actual;
@@ -280,7 +280,7 @@ class RenderingTest extends AbstractNodeTest
                 if (preg_match('/^regexp\s*:\s*(.*)/i', $content, $matches)) {
                     return (bool) preg_match($matches[1], $node->text());
                 }
-                return strstr($node->text(), $content) !== false;
+                return strpos($node->text(), $content) !== false;
             });
         }
 
@@ -318,13 +318,16 @@ class RenderingTest extends AbstractNodeTest
      * @param string $additionalFusionFile
      * @param boolean $debugMode
      * @return string
+     * @throws \Neos\Flow\Security\Exception
+     * @throws \Neos\Fusion\Exception
+     * @throws \Neos\Neos\Domain\Exception
      */
-    protected function simulateRendering($additionalFusionFile = null, $debugMode = false)
+    protected function simulateRendering($additionalFusionFile = null, $debugMode = false): string
     {
         $fusionRuntime = $this->createRuntimeWithFixtures($additionalFusionFile);
         $fusionRuntime->setEnableContentCache(false);
         if ($debugMode) {
-            $fusionRuntime->injectSettings(['debugMode' => true, 'rendering' => ['exceptionHandler' => \Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler::class]]);
+            $fusionRuntime->injectSettings(['debugMode' => true, 'rendering' => ['exceptionHandler' => ThrowingHandler::class]]);
         }
         $contentContext = $this->node->getContext();
         if (!$contentContext instanceof ContentContext) {
@@ -347,8 +350,10 @@ class RenderingTest extends AbstractNodeTest
      *
      * @param string $additionalFusionFile
      * @return \Neos\Fusion\Core\Runtime
+     * @throws \Neos\Fusion\Exception
+     * @throws \Neos\Neos\Domain\Exception
      */
-    protected function createRuntimeWithFixtures($additionalFusionFile = null)
+    protected function createRuntimeWithFixtures($additionalFusionFile = null): \Neos\Fusion\Core\Runtime
     {
         $fusionService = new FusionService();
         $fusionService->setSiteRootFusionPattern(__DIR__ . '/Fixtures/Base.fusion');
@@ -367,11 +372,11 @@ class RenderingTest extends AbstractNodeTest
     /**
      * @return ControllerContext
      */
-    protected function buildMockControllerContext()
+    protected function buildMockControllerContext(): ControllerContext
     {
-        $httpRequest = Request::create(new Uri('http://foo.bar/bazfoo'));
-        $request = new ActionRequest($httpRequest);
-        $response = new Response();
+        $httpRequest = new ServerRequest('GET', new Uri('http://foo.bar/bazfoo'));
+        $request = ActionRequest::fromHttpRequest($httpRequest);
+        $response = new ActionResponse();
         /** @var Arguments $mockArguments */
         $mockArguments = $this->getMockBuilder(Arguments::class)->disableOriginalConstructor()->getMock();
         $uriBuilder = new UriBuilder();
@@ -380,8 +385,7 @@ class RenderingTest extends AbstractNodeTest
             $request,
             $response,
             $mockArguments,
-            $uriBuilder,
-            $this->createMock(FlashMessageContainer::class)
+            $uriBuilder
         );
         return $controllerContext;
     }

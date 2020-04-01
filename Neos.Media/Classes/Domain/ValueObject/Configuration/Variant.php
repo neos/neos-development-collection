@@ -74,7 +74,7 @@ final class Variant
      */
     private function setIdentifier(string $identifier): void
     {
-        if (preg_match('/^[a-zA-Z]+$/', $identifier) !== 1) {
+        if (preg_match('/^[a-zA-Z0-9-]+$/', $identifier) !== 1) {
             throw new \InvalidArgumentException(sprintf('Invalid variant identifier "%s".', $identifier), 1546958006);
         }
         $this->identifier = $identifier;

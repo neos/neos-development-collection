@@ -16,6 +16,8 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -28,6 +30,7 @@ use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Media\Domain\Service\ThumbnailService;
+use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
@@ -105,6 +108,7 @@ class ContentController extends ActionController
 
     /**
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
+     * @throws NoSuchArgumentException
      */
     public function initializeUploadAssetAction()
     {
@@ -129,13 +133,15 @@ class ContentController extends ActionController
      * @param NodeInterface $node The node the new asset should be assigned to
      * @param string $propertyName The node property name the new asset should be assigned to
      * @return string
+     * @throws IllegalObjectTypeException
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws ThumbnailServiceException
      */
     public function uploadAssetAction(Asset $asset, string $metadata, NodeInterface $node, string $propertyName)
     {
-        $this->response->setHeader('Content-Type', 'application/json');
-
+        $this->response->setContentType('application/json');
         if ($metadata !== 'Asset' && $metadata !== 'Image') {
-            $this->response->setStatus(400);
+            $this->response->setStatusCode(400);
             $result = ['error' => 'Invalid "metadata" type: ' . $metadata];
         } else {
             if ($asset instanceof ImageInterface && $metadata === 'Image') {
@@ -155,6 +161,8 @@ class ContentController extends ActionController
      * Configure property mapping for adding a new image variant.
      *
      * @return void
+     * @throws NoSuchArgumentException
+     * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
     public function initializeCreateImageVariantAction()
     {
@@ -169,6 +177,8 @@ class ContentController extends ActionController
      *
      * @param ImageVariant $asset
      * @return string
+     * @throws IllegalObjectTypeException
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function createImageVariantAction(ImageVariant $asset)
     {
@@ -187,10 +197,11 @@ class ContentController extends ActionController
      * @param ImageInterface $image
      *
      * @return string JSON encoded response
+     * @throws ThumbnailServiceException
      */
     public function imageWithMetadataAction(ImageInterface $image)
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
         $imageProperties = $this->getImageInterfacePreviewData($image);
 
         return json_encode($imageProperties);
@@ -209,6 +220,7 @@ class ContentController extends ActionController
      *
      * @param ImageInterface $image The image to retrieve meta data for
      * @return array
+     * @throws ThumbnailServiceException
      */
     protected function getImageInterfacePreviewData(ImageInterface $image)
     {
@@ -226,6 +238,7 @@ class ContentController extends ActionController
     /**
      * @param Image $image
      * @return array
+     * @throws ThumbnailServiceException
      */
     protected function getImagePreviewData(Image $image)
     {
@@ -252,6 +265,7 @@ class ContentController extends ActionController
     /**
      * @param ImageVariant $imageVariant
      * @return array
+     * @throws ThumbnailServiceException
      */
     protected function getImageVariantPreviewData(ImageVariant $imageVariant)
     {
@@ -262,6 +276,7 @@ class ContentController extends ActionController
 
     /**
      * @return void
+     * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
     protected function initializeAssetsWithMetadataAction()
     {
@@ -274,12 +289,13 @@ class ContentController extends ActionController
     /**
      * Fetch the metadata for multiple assets
      *
-     * @param array<Neos\Media\Domain\Model\AssetInterface> $assets
+     * @param array<\Neos\Media\Domain\Model\AssetInterface> $assets
      * @return string JSON encoded response
+     * @throws ThumbnailServiceException
      */
     public function assetsWithMetadataAction(array $assets)
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
 
         $result = [];
         foreach ($assets as $asset) {
@@ -291,6 +307,7 @@ class ContentController extends ActionController
     /**
      * @param Asset $asset
      * @return array
+     * @throws ThumbnailServiceException
      */
     protected function getAssetProperties(Asset $asset)
     {
@@ -314,10 +331,12 @@ class ContentController extends ActionController
      * @param string $workspaceName Name of the workspace to use for querying the node
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
      * @return string
+     * @throws \Neos\Eel\Exception
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
 
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
         /** @var $node NodeInterface */
@@ -360,10 +379,11 @@ class ContentController extends ActionController
      * @param string $workspaceName Name of the workspace to use for querying the node
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
      * @return string JSON encoded array of node path => label
+     * @throws \Neos\Eel\Exception
      */
     public function masterPluginsAction($workspaceName = 'live', array $dimensions = [])
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
 
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
         $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($contentContext);

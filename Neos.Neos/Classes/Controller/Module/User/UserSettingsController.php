@@ -115,7 +115,7 @@ class UserSettingsController extends AbstractModuleController
     {
         $this->view->assignMultiple([
             'account' => $account,
-            'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName())
+            'user' => $this->userService->getUser($account->getAccountIdentifier(), (string) $account->getAuthenticationProviderName())
         ]);
     }
 

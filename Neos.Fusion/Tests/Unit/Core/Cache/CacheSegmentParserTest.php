@@ -183,7 +183,7 @@ class CacheSegmentParserTest extends UnitTestCase
 
         $output = $parser->getOutput();
 
-        $this->assertEquals($this->expectedOutput, $output);
+        self::assertEquals($this->expectedOutput, $output);
     }
 
     /**
@@ -194,7 +194,7 @@ class CacheSegmentParserTest extends UnitTestCase
         $parser = new CacheSegmentParser($this->content);
         $outerContent = $parser->getOuterSegmentContent();
 
-        $this->assertEquals($this->expectedOuterContent, $outerContent);
+        self::assertEquals($this->expectedOuterContent, $outerContent);
     }
 
     /**
@@ -205,7 +205,7 @@ class CacheSegmentParserTest extends UnitTestCase
         $parser = new CacheSegmentParser($this->content);
         $entries = $parser->getCacheSegments();
 
-        $this->assertEquals($this->expectedEntries, $entries);
+        self::assertEquals($this->expectedEntries, $entries);
     }
 
     /**
@@ -246,7 +246,7 @@ class CacheSegmentParserTest extends UnitTestCase
         $parser = new CacheSegmentParser($this->contentWithUncachedSegments);
         $outerContent = $parser->getOuterSegmentContent();
 
-        $this->assertEquals($this->expectedOuterContentWithUncachedSegments, $outerContent);
+        self::assertEquals($this->expectedOuterContentWithUncachedSegments, $outerContent);
     }
 
     /**
@@ -257,7 +257,7 @@ class CacheSegmentParserTest extends UnitTestCase
         $parser = new CacheSegmentParser($this->contentWithUncachedSegments);
         $output = $parser->getOutput();
 
-        $this->assertEquals($this->expectedOutputWithUncachedSegments, $output);
+        self::assertEquals($this->expectedOutputWithUncachedSegments, $output);
     }
 
     /**
@@ -268,6 +268,6 @@ class CacheSegmentParserTest extends UnitTestCase
         $parser = new CacheSegmentParser($this->contentWithUncachedSegments);
         $entries = $parser->getCacheSegments();
 
-        $this->assertEquals($this->expectedEntriesWithUncachedSegments, $entries);
+        self::assertEquals($this->expectedEntriesWithUncachedSegments, $entries);
     }
 }

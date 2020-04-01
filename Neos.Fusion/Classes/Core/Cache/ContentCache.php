@@ -109,7 +109,7 @@ class ContentCache
      * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
      * @param string $content The (partial) content which should potentially be cached later on
-     * @param string $fusionPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
+     * @param string $fusionPath The Fusion path that rendered the content, for example "page<Acme.Com:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
      * @param array $cacheIdentifierValues The values (simple type or implementing CacheAwareInterface) that should be used to create a cache identifier, will be sorted by keys for consistent ordering
      * @param array $tags Tags to add to the cache entry
      * @param integer $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
@@ -132,7 +132,7 @@ class ContentCache
      * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
      * @param string $content The content rendered by the Fusion Runtime
-     * @param string $fusionPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
+     * @param string $fusionPath The Fusion path that rendered the content, for example "page<Acme.Com:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
      * @param array $contextVariables Fusion context variables which are needed to correctly render the specified Fusion object
      * @return string The original content, but with additional markers added
      */
@@ -149,7 +149,7 @@ class ContentCache
      * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
      * @param string $content The content rendered by the Fusion Runtime
-     * @param string $fusionPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
+     * @param string $fusionPath The Fusion path that rendered the content, for example "page<Acme.Com:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
      * @param array $contextVariables Fusion context variables which are needed to correctly render the specified Fusion object
      * @param array $cacheIdentifierValues
      * @param array $tags Tags to add to the cache entry
@@ -395,8 +395,8 @@ class ContentCache
     /**
      * Sanitizes the given tag for use with the cache framework
      *
-     * @param string $tag A tag which possibly contains non-allowed characters, for example "NodeType_Neos.NodeTypes:Page"
-     * @return string A cleaned up tag, for example "NodeType_Neos_Neos-Page"
+     * @param string $tag A tag which possibly contains non-allowed characters, for example "NodeType_Acme.Com:Page"
+     * @return string A cleaned up tag, for example "NodeType_Acme_Com-Page"
      */
     protected function sanitizeTag($tag)
     {

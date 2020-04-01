@@ -248,7 +248,7 @@ class SitesController extends AbstractModuleController
         $generatorService = $this->objectManager->get(GeneratorService::class);
         $generatorService->generateSitePackage($packageKey, $siteName);
 
-        $this->flashMessageContainer->addMessage(new Message(sprintf('Site Packages "%s" was created.', htmlspecialchars($packageKey))));
+        $this->controllerContext->getFlashMessageContainer()->addMessage(new Message(sprintf('Site Packages "%s" was created.', htmlspecialchars($packageKey))));
         $this->forward('importSite', null, null, ['packageKey' => $packageKey]);
     }
 
@@ -482,7 +482,7 @@ class SitesController extends AbstractModuleController
      * @param string $format The format to use for the redirect URI
      * @return void
      */
-    protected function unsetLastVisitedNodeAndRedirect($actionName, $controllerName = null, $packageKey = null, array $arguments = null, $delay = 0, $statusCode = 303, $format = null)
+    protected function unsetLastVisitedNodeAndRedirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null)
     {
         $this->session->putData('lastVisitedNode', null);
         parent::redirect($actionName, $controllerName, $packageKey, $arguments, $delay, $statusCode, $format);

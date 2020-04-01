@@ -118,7 +118,7 @@ class Asset implements AssetInterface
 
     /**
      * @var Collection<\Neos\Media\Domain\Model\Tag>
-     * @ORM\ManyToMany
+     * @ORM\ManyToMany(cascade={"persist"})
      * @ORM\OrderBy({"label"="ASC"})
      * @Flow\Lazy
      */

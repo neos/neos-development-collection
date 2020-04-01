@@ -22,7 +22,7 @@ $popoverArrowOuterColor: $grayLight;
 	-moz-background-clip: padding;
 	background-clip: padding-box;
 	border: 1px solid $popoverBorderColor;
-	@include box-shadow(#{0 5px 10px rgba(0, 0, 0, .2)});
+	box-shadow: #{0 5px 10px rgba(0, 0, 0, .2)};
 
 	// Offset the popover to account for the popover arrow
 	&.neos-top     { margin-bottom: 10px; }

@@ -11,15 +11,18 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Fusion\PluginImplementation;
 use Neos\Fusion\Core\Runtime;
+use Neos\Neos\Fusion\PluginImplementation;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
 
 /**
  * Testcase for the ConvertNodeUris Fusion implementation
@@ -41,25 +44,44 @@ class PluginImplementationTest extends UnitTestCase
      */
     protected $mockControllerContext;
 
+    /**
+     * @var MockObject|Uri
+     */
+    protected $mockHttpUri;
+
+    /**
+     * @var MockObject|HttpRequestInterface
+     */
+    protected $mockHttpRequest;
+
+    /**
+     * @var MockObject|RequestInterface
+     */
+    protected $mockActionRequest;
+
+    /**
+     * @var MockObject|Dispatcher
+     */
+    protected $mockDispatcher;
 
     public function setUp(): void
     {
         $this->pluginImplementation = $this->getAccessibleMock(PluginImplementation::class, ['buildPluginRequest'], [], '', false);
 
         $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpUri->expects($this->any())->method('getHost')->will($this->returnValue('localhost'));
+        $this->mockHttpUri->method('getHost')->willReturn('localhost');
 
-        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockHttpUri));
+        $this->mockHttpRequest = $this->getMockBuilder(HttpRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest->method('getUri')->willReturn($this->mockHttpUri);
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+        $this->mockActionRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockActionRequest));
+        $this->mockControllerContext->method('getRequest')->willReturn($this->mockActionRequest);
 
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $this->mockRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
+        $this->mockRuntime->method('getControllerContext')->willReturn($this->mockControllerContext);
         $this->pluginImplementation->_set('runtime', $this->mockRuntime);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->getMock();
@@ -69,7 +91,7 @@ class PluginImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function responseHeadersDataprovider()
+    public function responseHeadersDataProvider(): array
     {
         return [
             [
@@ -90,42 +112,46 @@ class PluginImplementationTest extends UnitTestCase
         ];
     }
 
-
     /**
      * Test if the response headers of the plugin - set within the plugin action / dispatch - were set into the parent response.
      *
-     * @dataProvider responseHeadersDataprovider
+     * @dataProvider responseHeadersDataProvider
      * @test
      */
-    public function evaluateSetHeaderIntoParent($message, $input, $expected)
+    public function evaluateSetHeaderIntoParent(string $message, array $input, array $expected): void
     {
-        $this->pluginImplementation->expects($this->any())->method('buildPluginRequest')->will($this->returnValue($this->mockActionRequest));
+        $this->pluginImplementation->method('buildPluginRequest')->willReturn($this->mockActionRequest);
 
-        $parentResponse = new Response();
+        $parentResponse = new ActionResponse();
         $this->_setHeadersIntoResponse($parentResponse, $input['parent']);
-        $this->mockControllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($parentResponse));
+        $this->mockControllerContext->method('getResponse')->willReturn($parentResponse);
 
-        $this->mockDispatcher->expects($this->any())->method('dispatch')->will($this->returnCallback(function ($request, $response) use ($input) {
+        $this->mockDispatcher->method('dispatch')->willReturnCallback(function (ActionRequest $request, ActionResponse $response) use ($input) {
             $this->_setHeadersIntoResponse($response, $input['plugin']);
-        }));
+        });
+
+        $this->mockRuntime->expects($this->any())->method('getCurrentContext')->willReturn(['node' => null, 'documentNode' => null]);
 
         $this->pluginImplementation->evaluate();
 
         foreach ($expected as $expectedKey => $expectedValue) {
-            $this->assertEquals($expectedValue, (string)$parentResponse->getHeaders()->get($expectedKey), $message);
+            self::assertEquals($expectedValue, (string)$parentResponse->getComponentParameters()[SetHeaderComponent::class][$expectedKey], $message);
         }
     }
 
     /**
      *  Sets the array based headers into the Response
      *
-     * @param Response $response
-     * @param $headers
+     * @param ActionResponse $response
+     * @param array $headers
+     * @return ActionResponse
      */
-    private function _setHeadersIntoResponse(Response $response, $headers)
+    private function _setHeadersIntoResponse(ActionResponse $response, array $headers): ActionResponse
     {
         foreach ($headers as $key => $value) {
-            $response->getHeaders()->set($key, $value);
+            $response->setComponentParameter(SetHeaderComponent::class, $key, $value);
         }
+
+        return $response;
     }
 }

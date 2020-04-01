@@ -24,7 +24,7 @@ class ComponentTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('component/basicRenderer');
-        $this->assertEquals('Hello World', $view->render());
+        self::assertEquals('Hello World', $view->render());
     }
 
     /**
@@ -34,7 +34,7 @@ class ComponentTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('component/nestedRenderer');
-        $this->assertEquals('Hello World', $view->render());
+        self::assertEquals('Hello World', $view->render());
     }
 
     /**
@@ -44,7 +44,7 @@ class ComponentTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('component/staticRenderer');
-        $this->assertEquals('Hello World', $view->render());
+        self::assertEquals('Hello World', $view->render());
     }
 
     /**
@@ -54,6 +54,6 @@ class ComponentTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('component/sandboxRenderer');
-        $this->assertEquals('Hello ', $view->render());
+        self::assertEquals('Hello ', $view->render());
     }
 }

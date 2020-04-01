@@ -39,85 +39,9 @@ additionalProperties:
 
                   'inlineEditable': { type: ['null', 'boolean'], description: "Is this property inline editable, i.e. edited directly on the page?" }
 
-                  'inline':
-                    type: ['null', 'dictionary']
+                  'inline': { type: ['null', 'dictionary'] }
 
-                  'aloha':
-                    type:
-                      -
-                        type: 'null'
-                      -
-                        type: dictionary
-                        additionalProperties: false
-                        properties:
-
-                          'format':
-                            type: dictionary
-                            additionalProperties: false
-                            properties:
-                              'strong': { type: boolean }
-                              'b': { type: boolean }
-                              'em': { type: boolean }
-                              'i': { type: boolean }
-                              'u': { type: boolean }
-                              'del': { type: boolean }
-                              'sub': { type: boolean }
-                              'sup': { type: boolean }
-                              'p': { type: boolean }
-                              'h1': { type: boolean }
-                              'h2': { type: boolean }
-                              'h3': { type: boolean }
-                              'h4': { type: boolean }
-                              'h5': { type: boolean }
-                              'h6': { type: boolean }
-                              'pre': { type: boolean }
-                              'code': { type: boolean }
-                              'removeFormat': { type: boolean }
-
-                          'table':
-                            type: dictionary
-                            additionalProperties: false
-                            properties:
-                              'table': { type: boolean }
-
-                          'link':
-                            type: dictionary
-                            additionalProperties: false
-                            properties:
-                              'a': { type: boolean }
-
-                          'list':
-                            type: dictionary
-                            additionalProperties: false
-                            properties:
-                              'ol': { type: boolean }
-                              'ul': { type: boolean }
-
-                          'alignment':
-                            type: dictionary
-                            additionalProperties: FALSE
-                            properties:
-                              'right': { type: boolean }
-                              'left': { type: boolean }
-                              'center': { type: boolean }
-                              'justify': { type: boolean }
-                              'top': { type: boolean }
-                              'middle': { type: boolean }
-                              'bottom': { type: boolean }
-
-                          'formatlesspaste':
-                            type: dictionary
-                            additionalProperties: false
-                            properties:
-                              'button': { type: boolean }
-                              'formatlessPasteOption': { type: boolean }
-                              'strippedElements':
-                                type: array
-                                items: { type: string, description: "List of HTML tags. If not set the default setting is used." }
-
-                          'autoparagraph': { type: boolean, description: "Automatically wrap non-wrapped text blocks in paragraph blocks." }
-
-                          'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
+                  'showInCreationDialog': { type: ['null', 'boolean'], description: 'If this property should occur on the CreationDialog of the corresponding node. Inspector configuration is applied from "ui.inspector" configuration in that case' }
 
                   'inspector':
                     type:

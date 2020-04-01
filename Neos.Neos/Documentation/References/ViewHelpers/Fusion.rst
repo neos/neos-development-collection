@@ -3,7 +3,7 @@
 Fusion ViewHelper Reference
 ===========================
 
-This reference was automatically generated from code on 2019-05-06
+This reference was automatically generated from code on 2020-03-29
 
 
 .. _`Fusion ViewHelper Reference: fusion:render`:
@@ -24,9 +24,9 @@ Arguments
 
 * ``path`` (string): Relative Fusion path to be rendered
 
-* ``context`` (array, *optional*): Additional context variables to be set.
+* ``context`` (array, *optional*): ReAdditional context variables to be set
 
-* ``fusionPackageKey`` (string, *optional*): The key of the package to load Fusion from, if not from the current context.
+* ``fusionPackageKey`` (string, *optional*): The key of the package to load Fusion from, if not from the current context
 
 * ``fusionFilePathPattern`` (string, *optional*): Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/
 

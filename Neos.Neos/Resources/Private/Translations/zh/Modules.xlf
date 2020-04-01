@@ -459,7 +459,7 @@
 			<target state="needs-translation">Home</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
 				<source>Work</source>
-			<target state="needs-translation">Work</target></trans-unit>
+			<target state="translated">工作</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target state="translated">包管理</target></trans-unit>

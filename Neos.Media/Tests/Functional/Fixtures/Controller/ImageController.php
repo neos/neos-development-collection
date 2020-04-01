@@ -12,8 +12,10 @@ namespace Neos\Media\Tests\Functional\Fixtures\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Domain\Model\Image;
@@ -42,6 +44,7 @@ class ImageController extends ActionController
     /**
      * @param ViewInterface $view
      * @return void
+     * @throws \Neos\Flow\Mvc\Exception
      */
     protected function initializeView(ViewInterface $view)
     {
@@ -55,6 +58,9 @@ class ImageController extends ActionController
      *
      * @param string $importUri
      * @return string
+     * @throws IllegalObjectTypeException
+     * @throws \Neos\Flow\ResourceManagement\Exception
+     * @throws \Exception
      */
     public function importAction($importUri)
     {
@@ -66,8 +72,7 @@ class ImageController extends ActionController
         $this->assetRepository->add($image);
         $this->assetRepository->add($imageVariant);
 
-        $this->response->setHeader('X-ImageVariantUuid', $this->persistenceManager->getIdentifierByObject($imageVariant));
-
+        $this->response->setComponentParameter(SetHeaderComponent::class, 'X-ImageVariantUuid', $this->persistenceManager->getIdentifierByObject($imageVariant));
         return 'ok';
     }
 
@@ -77,6 +82,7 @@ class ImageController extends ActionController
      *
      * @param Image $image
      * @return string
+     * @throws IllegalObjectTypeException
      */
     public function uploadAction(Image $image)
     {
@@ -86,7 +92,7 @@ class ImageController extends ActionController
 
         $thumbnail = $image->getThumbnail(100, 100);
 
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
         return json_encode(
             [
                 '__identity' => $this->persistenceManager->getIdentifierByObject($image),
