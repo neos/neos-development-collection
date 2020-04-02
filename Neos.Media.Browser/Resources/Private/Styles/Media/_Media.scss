@@ -388,6 +388,11 @@
 						font-size: $generalFontSize;
 						line-height: 1.5;
 
+						> img {
+							height: 16px;
+							width: auto;
+						}
+
 						&.neos-active {
 							color: $blue;
 
