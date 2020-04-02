@@ -5843,7 +5843,7 @@ readers do not read off random characters that represent icons */
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
-  font-family: 'FontAwesome Brand';
+  font-family: 'Font Awesome 5 Brands';
   font-style: normal;
   font-weight: normal;
   font-display: auto;
@@ -5851,7 +5851,7 @@ readers do not read off random characters that represent icons */
   src: url("../Library/fontawesome/webfonts/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("../Library/fontawesome/webfonts/fa-brands-400.woff2") format("woff2"), url("../Library/fontawesome/webfonts/fa-brands-400.woff") format("woff"), url("../Library/fontawesome/webfonts/fa-brands-400.ttf") format("truetype"), url("../Library/fontawesome/webfonts/fa-brands-400.svg#fontawesome") format("svg");
 }
 .fab {
-  font-family: 'FontAwesome Brand';
+  font-family: 'Font Awesome 5 Brands';
 }
 
 /*!
@@ -5859,7 +5859,7 @@ readers do not read off random characters that represent icons */
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
-  font-family: 'FontAwesome';
+  font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 400;
   font-display: auto;
@@ -5867,7 +5867,7 @@ readers do not read off random characters that represent icons */
   src: url("../Library/fontawesome/webfonts/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../Library/fontawesome/webfonts/fa-regular-400.woff2") format("woff2"), url("../Library/fontawesome/webfonts/fa-regular-400.woff") format("woff"), url("../Library/fontawesome/webfonts/fa-regular-400.ttf") format("truetype"), url("../Library/fontawesome/webfonts/fa-regular-400.svg#fontawesome") format("svg");
 }
 .far {
-  font-family: 'FontAwesome';
+  font-family: 'Font Awesome 5 Regular';
   font-weight: 400;
 }
 
@@ -5876,7 +5876,7 @@ readers do not read off random characters that represent icons */
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
-  font-family: 'FontAwesome';
+  font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 900;
   font-display: auto;
@@ -5928,7 +5928,7 @@ readers do not read off random characters that represent icons */
 .neos-select2-container .neos-select2-choice > .neos-select2-arrow:after,
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-field:after,
 .neos-select2-with-searchbox .neos-select2-search:after {
-  font-family: 'FontAwesome';
+  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
 }
 
