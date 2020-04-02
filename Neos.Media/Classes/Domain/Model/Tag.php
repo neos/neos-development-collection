@@ -118,7 +118,7 @@ class Tag
     }
 
     /**
-     * @return Tag
+     * @return Tag|null
      */
     public function getParent(): ?Tag
     {
