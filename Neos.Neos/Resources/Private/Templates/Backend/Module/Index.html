@@ -7,7 +7,7 @@
 	<link
 		rel="stylesheet"
 		type="text/css"
-		href="{f:uri.resource(path: 'Styles/Main.css', package: 'Neos.Neos')}?bust={neos:backend.cssBuiltVersion()}"
+		href="{f:uri.resource(package: 'Neos.Neos', path: '/Styles/{f:if(condition: moduleConfiguration.mainStylesheet, then: moduleConfiguration.mainStylesheet, else: settings.moduleConfiguration.mainStylesheet)}')}.css?bust={neos:backend.cssBuiltVersion()}"
 	/>
 
 	<f:if condition="{moduleConfiguration.additionalResources.styleSheets}">

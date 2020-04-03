@@ -47,6 +47,12 @@ const stylesConfig = {
         Main: [
           './Resources/Private/Styles/Neos.scss',
         ],
+        Lite: [
+          './Resources/Private/Styles/Lite.scss',
+        ],
+        Minimal: [
+          './Resources/Private/Styles/Minimal.scss',
+        ],
         Login: [
             './Resources/Private/Styles/Login.scss',
         ],
