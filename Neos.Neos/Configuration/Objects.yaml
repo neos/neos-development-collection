@@ -58,6 +58,16 @@ Neos\Neos\Service\XliffService:
           1:
             value: Neos_Neos_XliffToJsonTranslations
 
+Neos\Neos\Controller\Backend\SchemaController:
+  properties:
+    nodeTypeSchemaCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Neos_NodeType_Schema
+
 Neos\Neos\Controller\Backend\BackendController:
   properties:
     loginTokenCache:
