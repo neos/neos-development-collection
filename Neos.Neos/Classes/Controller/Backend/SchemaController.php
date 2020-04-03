@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Controller\Backend;
 
 /*
@@ -11,7 +13,9 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;
 use Neos\Neos\Service\VieSchemaBuilder;
@@ -34,15 +38,32 @@ class SchemaController extends ActionController
     protected $nodeTypeSchemaBuilder;
 
     /**
+     * @Flow\Inject
+     * @var VariableFrontend
+     */
+    protected $nodeTypeSchemaCache;
+
+    /**
      * Generate and renders the JSON schema for the node types for VIE.
      * Schema format example: http://schema.rdfs.org/all.json
      *
      * @return string
      */
-    public function vieSchemaAction()
+    public function vieSchemaAction(): string
     {
+        $version = $this->request->hasArgument('version') ? $this->request->getArgument('version') : '';
+        $cacheIdentifier = 'vieSchema_' . $version;
+
         $this->response->setContentType('application/json');
-        return json_encode($this->vieSchemaBuilder->generateVieSchema());
+        $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'max-age=' . (3600 * 24 * 7));
+
+        $vieSchema = $this->nodeTypeSchemaCache->get($cacheIdentifier);
+        if (!$vieSchema) {
+            $vieSchema = json_encode($this->vieSchemaBuilder->generateVieSchema());
+            $this->nodeTypeSchemaCache->flushByTag('vie');
+            $this->nodeTypeSchemaCache->set($cacheIdentifier, $vieSchema, ['vie']);
+        }
+        return $vieSchema;
     }
 
     /**
@@ -50,9 +71,20 @@ class SchemaController extends ActionController
      *
      * @return string
      */
-    public function nodeTypeSchemaAction()
+    public function nodeTypeSchemaAction(): string
     {
+        $version = $this->request->hasArgument('version') ? $this->request->getArgument('version') : '';
+        $cacheIdentifier = 'nodeTypeSchema_' . $version;
+
         $this->response->setContentType('application/json');
-        return json_encode($this->nodeTypeSchemaBuilder->generateNodeTypeSchema());
+        $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'max-age=' . (3600 * 24 * 7));
+
+        $nodeTypeSchema = $this->nodeTypeSchemaCache->get($cacheIdentifier);
+        if (!$nodeTypeSchema) {
+            $nodeTypeSchema = json_encode($this->nodeTypeSchemaBuilder->generateNodeTypeSchema());
+            $this->nodeTypeSchemaCache->flushByTag('nodeType');
+            $this->nodeTypeSchemaCache->set($cacheIdentifier, $nodeTypeSchema, ['nodeType']);
+        }
+        return $nodeTypeSchema;
     }
 }
