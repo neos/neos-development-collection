@@ -12,14 +12,19 @@ namespace Neos\Media\Domain\Repository;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Media\Domain\Model\Tag;
 
 /**
  * A repository for Tags
+ *
+ * @method Tag findOneByLabel(string $label)
+ * @method QueryResult findByParent(Tag $tag)
  *
  * @Flow\Scope("singleton")
  */
