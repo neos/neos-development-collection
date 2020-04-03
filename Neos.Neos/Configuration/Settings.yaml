@@ -307,6 +307,7 @@ Neos:
       # This stylesheet can be overriden in the configuration of a submodule to reference a reduced stylesheet.
       # Use `Main` for backwards compatibility
       # Use `Lite` for a reduced variant with a less aggressive reset and other non essential styles removed.
+      # Use `Minimal` when your module provides its own styles and Neos only needs to show the top and bottom bar.
       mainStylesheet: 'Main'
     modules:
       management:
