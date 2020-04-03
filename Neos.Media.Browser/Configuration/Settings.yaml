@@ -47,6 +47,7 @@ Neos:
             label: 'Neos.Media.Browser:Main:module.label'
             description: 'Neos.Media.Browser:Main:module.description'
             icon: 'fas fa-camera'
+            mainStylesheet: 'Lite'
             privilegeTarget: 'Neos.Media.Browser:ManageAssets'
             additionalResources:
               styleSheets:
