@@ -435,7 +435,7 @@
 
 			.neos-label {
 				background-color: $grayLight;
-				box-shadow: $textContrast 0 0 ($unit/4) ($unit/8);
+				box-shadow: 0 0 3px 2px rgba(0, 0, 0, .1);
 				font-weight: normal;
 				letter-spacing: 0.05em;
 				padding: 2px 0.5em;
