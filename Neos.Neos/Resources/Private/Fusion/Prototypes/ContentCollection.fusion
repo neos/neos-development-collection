@@ -8,7 +8,7 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Loop) {
 	# To ensure backwards compatibility override items if collection is set
 	items.@processor.collectionLegacy {
 		expression = ${this.collection}
-		@if.1 = ${this.collection != null && Array.length(this.collection) > 0}
+		@if.hasCollectionProp = ${this.collection != null && Array.length(this.collection) > 0}
 	}
 	# Render every item by its own Fusion object
 	itemRenderer = Neos.Neos:ContentCase
