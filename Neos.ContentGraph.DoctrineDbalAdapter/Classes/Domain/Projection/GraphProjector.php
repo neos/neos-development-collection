@@ -236,15 +236,6 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
 
         // reconnect parent relations
         $missingParentRelations = $visibleInDimensionSpacePoints->getPoints();
-        $existingParentRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier,
-            $visibleInDimensionSpacePoints
-        );
-        foreach ($existingParentRelations as $existingParentRelation) {
-            $existingParentRelation->assignNewChildNode($nodeRelationAnchorPoint, $this->getDatabaseConnection());
-            unset($missingParentRelations[$existingParentRelation->dimensionSpacePointHash]);
-        }
 
         if (!empty($missingParentRelations)) {
             // add yet missing parent relations
@@ -275,16 +266,6 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
                     );
                 }
             }
-        }
-
-        // reconnect child relations
-        $existingChildRelations = $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier,
-            $visibleInDimensionSpacePoints
-        );
-        foreach ($existingChildRelations as $existingChildRelation) {
-            $existingChildRelation->assignNewParentNode($nodeRelationAnchorPoint, null, $this->getDatabaseConnection());
         }
 
         $node->addToDatabase($this->getDatabaseConnection());
