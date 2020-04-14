@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve" approved="yes">
 				<source>Hide before</source>
-			<target state="final">Verstecken bis</target><alt-trans><target>Ausblenden bis</target></alt-trans></trans-unit>
+			<target state="final">Verstecken bis</target></trans-unit>
       <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve" approved="yes">
 				<source>Hide after</source>
-			<target state="final">Verstecken nach</target><alt-trans><target>Ausblenden ab</target></alt-trans></trans-unit>
+			<target state="final">Verstecken nach</target></trans-unit>
     </body>
   </file>
 </xliff>

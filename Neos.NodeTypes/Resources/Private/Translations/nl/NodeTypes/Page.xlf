@@ -16,13 +16,13 @@
 			<target state="final">Lay-out voor enkel deze pagina</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target state="final">Overnemen van bovenliggende pagina</target><alt-trans><target>Overnemen van bovenliggende</target></alt-trans></trans-unit>
+			<target state="final">Overnemen van bovenliggende pagina</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
 			<target state="final">Lay-out voor subpagina's van deze pagina</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target state="final">Overnemen van bovenliggende pagina</target><alt-trans><target>Overnemen van bovenliggende</target></alt-trans></trans-unit>
+			<target state="final">Overnemen van bovenliggende pagina</target></trans-unit>
     </body>
   </file>
 </xliff>

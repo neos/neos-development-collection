@@ -14,7 +14,7 @@
 			<target state="needs-translation">Review changes</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Použít</target><alt-trans><target>Použít změny</target></alt-trans></trans-unit>
+			<target state="translated">Použít</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
 			<target state="translated">Použít změny</target></trans-unit>
@@ -65,7 +65,7 @@
 			<target state="translated">Odstranit prvek</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target state="translated">Zahodit</target><alt-trans><target>Zrušit</target></alt-trans></trans-unit>
+			<target state="translated">Zahodit</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
 			<target state="translated">Zahodit změny</target></trans-unit>
@@ -444,7 +444,7 @@
 			<target state="translated">Zahodit</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Použít</target><alt-trans><target>Použít změny</target></alt-trans></trans-unit>
+			<target state="translated">Použít</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target state="needs-translation">Select a Plugin</target></trans-unit>
@@ -778,7 +778,7 @@
 			<target state="needs-translation">Link</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target state="translated">Uspořádáný seznam</target><alt-trans><target>Řazený seznam</target></alt-trans></trans-unit>
+			<target state="translated">Uspořádáný seznam</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
 			<target state="translated">Neuspořádaný seznam</target></trans-unit>

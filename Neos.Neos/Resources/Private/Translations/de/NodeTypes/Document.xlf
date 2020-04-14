@@ -10,7 +10,7 @@
 			<target state="final">Titel</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve" approved="yes">
 				<source>URL path segment</source>
-			<target state="final">URL Pfadsegment</target><alt-trans><target>URL Teilpfad</target></alt-trans></trans-unit>
+			<target state="final">URL Pfadsegment</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve" approved="yes">
 				<source>Hide in menus</source>
 			<target state="final">In Menüs verbergen</target></trans-unit>

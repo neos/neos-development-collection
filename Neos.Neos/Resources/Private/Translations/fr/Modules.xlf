@@ -155,7 +155,7 @@
 			<target state="final">Il n'y a aucun changement non publié dans cet espace de travail.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target state="final">Souhaitez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target><alt-trans><target>Voulez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target></alt-trans></trans-unit>
+			<target state="final">Souhaitez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
         <source>A workspace with this title already exists.</source>
         <target state="final">Un espace de travail avec ce titre existe déjà.</target>
@@ -255,7 +255,7 @@
 			<target state="final">{0} a créé un nouvel utilisateur "{1}" pour {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve" approved="yes">
 				<source>{0} deleted the account "{1}" of {2}.</source>
-			<target state="final">{0} a supprimé un utilisateur "{1}" de {2}.</target><alt-trans><target>{0} a supprimé le compte "{1}" de {2}.</target></alt-trans></trans-unit>
+			<target state="final">{0} a supprimé un utilisateur "{1}" de {2}.</target></trans-unit>
       <trans-unit id="history.loadMore.label" xml:space="preserve" approved="yes">
 				<source>Load More</source>
 			<target state="final">Plus de résultats</target></trans-unit>
@@ -277,7 +277,7 @@
 			<target state="final">Le module de gestion des utilisateurs vous donne un aperçu de tous les utilisateurs backend. Vous pouvez les regrouper par leurs propriétés, afin de pouvoir avoir une vue d'ensemble sur leurs autorisations, points de montage de fichiers, appartenance aux groupes etc... Ce module est un outil indispensable afin de s'assurer que les utilisateurs sont correctement configurés.</target></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve" approved="yes">
 				<source>Overview</source>
-			<target state="final">Apercu</target><alt-trans><target>Aperçu</target></alt-trans></trans-unit>
+			<target state="final">Apercu</target></trans-unit>
       <trans-unit id="users.action.show" xml:space="preserve" approved="yes">
 				<source>Show</source>
 			<target state="final">Afficher</target></trans-unit>
@@ -289,7 +289,7 @@
 			<target state="final">Edition</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="final">Edité le profile</target><alt-trans><target>Éditer le compte</target></alt-trans><alt-trans><target>Editer le profil</target></alt-trans></trans-unit>
+			<target state="final">Edité le profile</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
 			<target state="final">Nouvelle adresse électronique</target></trans-unit>
@@ -385,7 +385,7 @@
 			<target state="final">Supprimer l'utilisateur</target></trans-unit>
       <trans-unit id="users.show.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
-			<target state="final">Editer l'utilisateur</target><alt-trans><target>Éditer l'utilisateur</target></alt-trans></trans-unit>
+			<target state="final">Editer l'utilisateur</target></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
 			<target state="final">Vous êtes connecté en tant que cet utilisateur et vous ne pouvez pas supprimer vous-même.</target></trans-unit>
@@ -394,7 +394,7 @@
 			<target state="final">Cliquez ici pour supprimer cet utilisateur</target></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target state="final">Voulez-vous réellement supprimer le Job "{0}"?</target><alt-trans><target>Voulez-vous réellement supprimer l'utilisateur "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Voulez-vous réellement supprimer le Job "{0}"?</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
 			<target state="final">Oui, supprimer l'utilisateur</target></trans-unit>
@@ -403,10 +403,10 @@
 			<target state="final">Ceci supprimera l'utilisateur, les comptes connexes et son espace de travail personnel, y compris les contenus non publiés.</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
-			<target state="final">Cette opération ne peut ptre annulée</target><alt-trans><target>Cette opération ne peut pas être annulée</target></alt-trans></trans-unit>
+			<target state="final">Cette opération ne peut ptre annulée</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve" approved="yes">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target state="final">Modifier le compte «{accountIdentifier} »</target><alt-trans><target>Éditer le compte "{accountIdentifier}"</target></alt-trans></trans-unit>
+			<target state="final">Modifier le compte «{accountIdentifier} »</target></trans-unit>
       <trans-unit id="users.account" xml:space="preserve" approved="yes">
 				<source>Account</source>
 			<target state="final">Compte</target></trans-unit>
@@ -445,7 +445,7 @@
 			<target state="final">Vous êtes connecté en tant que cet utilisateur et vous ne pouvez pas supprimer vous-même.</target></trans-unit>
       <trans-unit id="users.message.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target state="final">Voulez-vous réellement supprimer le Job "{0}"?</target><alt-trans><target>Voulez-vous réellement supprimer l'utilisateur "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Voulez-vous réellement supprimer le Job "{0}"?</target></trans-unit>
       <trans-unit id="users.message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
 			<target state="final">Ceci supprimera l'utilisateur, les comptes connexes et son espace de travail personnel, y compris les contenus non publiés.</target></trans-unit>
@@ -466,7 +466,7 @@
 			<target state="final">Gestion des paquets</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve" approved="yes">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target state="final">Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets, ....</target><alt-trans><target>Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets dans le contexte du développement.</target></alt-trans></trans-unit>
+			<target state="final">Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets, ....</target></trans-unit>
       <trans-unit id="packages.index.legend" xml:space="preserve" approved="yes">
 				<source>Available packages</source>
 			<target state="final">Packages disponibles</target></trans-unit>
@@ -598,7 +598,7 @@
 			<target state="translated">Nom du site</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve">
 				<source>Create empty site</source>
-			<target state="translated">Créer un site vide</target><alt-trans><target>Creer un site vide</target></alt-trans></trans-unit>
+			<target state="translated">Créer un site vide</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
 			<target state="translated">Créer un package pour le site</target></trans-unit>
@@ -662,10 +662,10 @@ Primary fallbacks are marked blue and always visible, while lower priority fallb
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
 				<source>Intra dimensional fallback graph</source>
-			<target state="translated">Graphique de repli interdimensionnel</target><alt-trans><target>Graphique de repli intradimensionnel</target></alt-trans></trans-unit>
+			<target state="translated">Graphique de repli interdimensionnel</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
 				<source>Intra dimensional</source>
-			<target state="translated">Interdimensionnel</target><alt-trans><target>Intradimensionnel</target></alt-trans></trans-unit>
+			<target state="translated">Interdimensionnel</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
 			<target state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
@@ -690,7 +690,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="final">Nouvelle adresse électronique</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="final">Edité le profile</target><alt-trans><target>Éditer le compte</target></alt-trans><alt-trans><target>Editer le profil</target></alt-trans></trans-unit>
+			<target state="final">Edité le profile</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target state="final">Données personnelles</target></trans-unit>
@@ -726,7 +726,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="final">Adresses électroniques</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target state="final">Confirmez-vous la suppression</target><alt-trans><target>Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
+			<target state="final">Confirmez-vous la suppression</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve" approved="yes">
 				<source>Yes, delete electronic address</source>
 			<target state="final">Oui, supprimer l'adresse électronique</target></trans-unit>
@@ -741,7 +741,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="final">Sauvegarder l'utilisateur</target></trans-unit>
       <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
-			<target state="final">Editer l'utilisateur</target><alt-trans><target>Éditer l'utilisateur</target></alt-trans></trans-unit>
+			<target state="final">Editer l'utilisateur</target></trans-unit>
     </body>
   </file>
 </xliff>

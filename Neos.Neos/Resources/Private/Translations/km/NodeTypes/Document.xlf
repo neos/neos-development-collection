@@ -10,7 +10,7 @@
 			<target state="final">ចំណងជើង</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve" approved="yes">
 				<source>URL path segment</source>
-			<target state="final">បំណែកផ្លូវនៃតំណ</target><alt-trans><target>បណែកផ្លូវនៃតណ</target></alt-trans></trans-unit>
+			<target state="final">បំណែកផ្លូវនៃតំណ</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve" approved="yes">
 				<source>Hide in menus</source>
 			<target state="final">មិនបង្ហាុញក្នុងមីនុយ</target></trans-unit>

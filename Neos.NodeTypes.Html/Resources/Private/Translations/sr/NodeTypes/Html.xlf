@@ -10,7 +10,7 @@
 			<target state="translated">HTML</target></trans-unit>
       <trans-unit id="properties.source" xml:space="preserve">
 				<source>HTML Content</source>
-			<target state="translated">HTML садржај</target><alt-trans><target>„HTML” садржај</target></alt-trans></trans-unit>
+			<target state="translated">HTML садржај</target></trans-unit>
       <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
 				<source>Edit HTML source</source>
 			<target state="translated">Измени HTML изворни код</target></trans-unit>

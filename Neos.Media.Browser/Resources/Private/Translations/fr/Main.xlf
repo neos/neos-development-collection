@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target state="translated">Glissez et déposez une ressource sur une collection / étiquette pour l'ajouter à celle-ci.</target><alt-trans><target>Glissez et déposez une ressource sur une collection / tag pour l'ajouter à celle-ci.</target></alt-trans></trans-unit>
+			<target state="translated">Glissez et déposez une ressource sur une collection / étiquette pour l'ajouter à celle-ci.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target state="translated">Garder le nom du fichier « {0} »</target><alt-trans><target>Garder le nom de fichier « {0} »</target></alt-trans></trans-unit>
+			<target state="translated">Garder le nom du fichier « {0} »</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target state="final">Média</target></trans-unit>
@@ -40,7 +40,7 @@
 			<target state="final">Type</target></trans-unit>
       <trans-unit id="field.tags" xml:space="preserve" approved="yes">
 				<source>Tags</source>
-			<target state="final">Étiquettes</target><alt-trans><target>Tags</target></alt-trans></trans-unit>
+			<target state="final">Étiquettes</target></trans-unit>
       <trans-unit id="sortByName" xml:space="preserve" approved="yes">
 				<source>Sort by name</source>
 			<target state="final">Trier par nom</target></trans-unit>
@@ -76,13 +76,13 @@
 			<target state="translated">Afficher la ressource</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
-			<target state="final">Editer la ressource numérique</target><alt-trans><target>Éditer la ressource numérique</target></alt-trans><alt-trans><target>Editer la ressource multimédia</target></alt-trans></trans-unit>
+			<target state="final">Editer la ressource numérique</target></trans-unit>
       <trans-unit id="deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
-			<target state="final">Effacer la ressource numérique</target><alt-trans><target>Effacer la ressource multimédia</target></alt-trans></trans-unit>
+			<target state="final">Effacer la ressource numérique</target></trans-unit>
       <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target state="final">Souhaitez-vous vraiment supprimer la ressource numérique "{0}"?</target><alt-trans><target>Voulez-vous vraiment supprimer la ressource numérique "{0}"?</target></alt-trans><alt-trans><target>Souhaitez-vous vraiment supprimer la ressource multimédia "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Souhaitez-vous vraiment supprimer la ressource numérique "{0}"?</target></trans-unit>
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete collection "{0}"?</source>
 			<target state="final">Voulez-vous vraiment supprimer la collection «{0} » ?</target></trans-unit>
@@ -91,13 +91,13 @@
 			<target state="final">Voulez-vous vraiment supprimer l'étiquette «{0} » ?</target></trans-unit>
       <trans-unit id="message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the asset.</source>
-			<target state="final">Cette action supprimera la ressource numérique.</target><alt-trans><target>Cette action supprimera la ressource multimédia.</target></alt-trans></trans-unit>
+			<target state="final">Cette action supprimera la ressource numérique.</target></trans-unit>
       <trans-unit id="message.willDeleteCollection" xml:space="preserve" approved="yes">
 				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target state="final">Cette action supprimera la collection mais pas les ressources numériques quelle contient.</target><alt-trans><target>Cette action supprimera la collection mais pas les ressources multimédias quelle contient.</target></alt-trans></trans-unit>
+			<target state="final">Cette action supprimera la collection mais pas les ressources numériques quelle contient.</target></trans-unit>
       <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="yes">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target state="final">Cette action supprimera l'étiquette mais pas les ressources numériques qui ont été étiquetées avec.</target><alt-trans><target>Cette action supprimera l'étiquette mais pas les ressources multimédias qui ont été étiquetées avec.</target></alt-trans></trans-unit>
+			<target state="final">Cette action supprimera l'étiquette mais pas les ressources numériques qui ont été étiquetées avec.</target></trans-unit>
       <trans-unit id="message.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target state="final">Cette opération ne peut pas être annulée.</target></trans-unit>
@@ -115,7 +115,7 @@
 			<target state="final">Enregistrer</target></trans-unit>
       <trans-unit id="message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the asset</source>
-			<target state="final">Oui, supprimer la ressource numérique</target><alt-trans><target>Oui, supprimer la ressource multimédia</target></alt-trans></trans-unit>
+			<target state="final">Oui, supprimer la ressource numérique</target></trans-unit>
       <trans-unit id="message.confirmDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Yes, delete the collection</source>
 			<target state="final">Oui, supprimer la collection</target></trans-unit>
@@ -124,10 +124,10 @@
 			<target state="final">Oui, supprimer l'étiquette</target></trans-unit>
       <trans-unit id="thumbnail.editTitle" xml:space="preserve" approved="yes">
 				<source>Edit {0}</source>
-			<target state="final">Modifier {0}</target><alt-trans><target>Éditer {0}</target></alt-trans></trans-unit>
+			<target state="final">Modifier {0}</target></trans-unit>
       <trans-unit id="search.title" xml:space="preserve" approved="yes">
 				<source>Search in assets</source>
-			<target state="final">Rechercher dans les ressources numériques</target><alt-trans><target>Rechercher dans les ressources multimédias</target></alt-trans></trans-unit>
+			<target state="final">Rechercher dans les ressources numériques</target></trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve" approved="yes">
 				<source>Search</source>
 			<target state="final">Chercher</target></trans-unit>
@@ -136,7 +136,7 @@
 			<target state="final">{0} éléments</target></trans-unit>
       <trans-unit id="search.foundMatches" xml:space="preserve" approved="yes">
 				<source>found matching "{0}"</source>
-			<target state="final">trouve "{0}" correspondance(s)</target><alt-trans><target>trouve des correspondants «{0} »</target></alt-trans></trans-unit>
+			<target state="final">trouve "{0}" correspondance(s)</target></trans-unit>
       <trans-unit id="upload" xml:space="preserve" approved="yes">
 				<source>Upload</source>
 			<target state="final">Charger</target></trans-unit>
@@ -178,7 +178,7 @@
 			<target state="final">Options de tri</target></trans-unit>
       <trans-unit id="tooltip.listView" xml:space="preserve" approved="yes">
 				<source>List view</source>
-			<target state="final">Vue Liste</target><alt-trans><target>Vue liste</target></alt-trans></trans-unit>
+			<target state="final">Vue Liste</target></trans-unit>
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target state="final">Vue miniature</target></trans-unit>
@@ -190,16 +190,16 @@
 			<target state="translated">Source du média</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="translated">Sources du média</target><alt-trans><target>Sources du media</target></alt-trans></trans-unit>
+			<target state="translated">Sources du média</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target state="final">Collections</target></trans-unit>
       <trans-unit id="editCollections" xml:space="preserve" approved="yes">
 				<source>Edit collections</source>
-			<target state="final">Editer des collections</target><alt-trans><target>Éditer des collections</target></alt-trans></trans-unit>
+			<target state="final">Editer des collections</target></trans-unit>
       <trans-unit id="editCollection" xml:space="preserve" approved="yes">
 				<source>Edit collection</source>
-			<target state="final">Editer cette collection</target><alt-trans><target>Éditer cette collection</target></alt-trans><alt-trans><target>Editer des collections</target></alt-trans></trans-unit>
+			<target state="final">Editer cette collection</target></trans-unit>
       <trans-unit id="deleteCollection" xml:space="preserve" approved="yes">
 				<source>Delete collection</source>
 			<target state="final">Supprimer cette collection</target></trans-unit>
@@ -208,25 +208,25 @@
 			<target state="final">Créer une collection</target></trans-unit>
       <trans-unit id="newCollection.placeholder" xml:space="preserve" approved="yes">
 				<source>Enter collection title</source>
-			<target state="final">Entrez le titre de la collection</target><alt-trans><target>Entrer le titre de la collection</target></alt-trans></trans-unit>
+			<target state="final">Entrez le titre de la collection</target></trans-unit>
       <trans-unit id="allCollections" xml:space="preserve" approved="yes">
 				<source>All collections</source>
 			<target state="final">Toutes les collections</target></trans-unit>
       <trans-unit id="tags" xml:space="preserve" approved="yes">
 				<source>Tags</source>
-			<target state="final">Étiquettes</target><alt-trans><target>Tags</target></alt-trans></trans-unit>
+			<target state="final">Étiquettes</target></trans-unit>
       <trans-unit id="editTags" xml:space="preserve" approved="yes">
 				<source>Edit tags</source>
 			<target state="final">Éditer les tags</target></trans-unit>
       <trans-unit id="editTag" xml:space="preserve" approved="yes">
 				<source>Edit tag</source>
-			<target state="final">Editer l’étiquette</target><alt-trans><target>Éditer l’étiquette</target></alt-trans></trans-unit>
+			<target state="final">Editer l’étiquette</target></trans-unit>
       <trans-unit id="deleteTag" xml:space="preserve" approved="yes">
 				<source>Delete tag</source>
 			<target state="final">Supprimer l’étiquette</target></trans-unit>
       <trans-unit id="placeholder.createTag" xml:space="preserve" approved="yes">
 				<source>Enter tag label</source>
-			<target state="final">Entrez le label du tag</target><alt-trans><target>Entrez le nom du tag</target></alt-trans></trans-unit>
+			<target state="final">Entrez le label du tag</target></trans-unit>
       <trans-unit id="createTag" xml:space="preserve" approved="yes">
 				<source>Create tag</source>
 			<target state="final">Créer une étiquette</target></trans-unit>
@@ -244,7 +244,7 @@
 			<target state="final">Sans étiquette</target></trans-unit>
       <trans-unit id="maxUploadSize" xml:space="preserve" approved="yes">
 				<source>Max. upload size {0} per file</source>
-			<target state="final">Taille maximum par fichier {0}</target><alt-trans><target>Poids maximum par fichier {0}</target></alt-trans></trans-unit>
+			<target state="final">Taille maximum par fichier {0}</target></trans-unit>
       <trans-unit id="dropFiles" xml:space="preserve" approved="yes">
 				<source>Drop files here</source>
 			<target state="final">Déposez des fichiers ici</target></trans-unit>
@@ -301,7 +301,7 @@
 			<target state="translated">Droit d'auteur</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target state="final">Prévisualisation</target><alt-trans><target>Aperçu</target></alt-trans></trans-unit>
+			<target state="final">Prévisualisation</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
 			<target state="needs-translation">Download</target></trans-unit>
@@ -325,13 +325,13 @@
 			<target state="final">pour le fichier</target></trans-unit>
       <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target state="final">Uniquement certains des fichiers ont été correctement chargés. Rafraîchissez la page pour voir lesquels.</target><alt-trans><target>Uniquement certains des fichiers ont été correctement uploadés. Rafraîchissez la page pour voir lesquels.</target></alt-trans></trans-unit>
+			<target state="final">Uniquement certains des fichiers ont été correctement chargés. Rafraîchissez la page pour voir lesquels.</target></trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve" approved="yes">
 				<source>Tagging the asset failed.</source>
-			<target state="final">L'étiquetage de la ressource numérique a échoué.</target><alt-trans><target>L'étiquetage de la ressource multimédia a échoué.</target></alt-trans></trans-unit>
+			<target state="final">L'étiquetage de la ressource numérique a échoué.</target></trans-unit>
       <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
 				<source>Adding the asset to the collection failed.</source>
-			<target state="final">L'ajout de la ressource numérique à la collection a échoué.</target><alt-trans><target>L'ajout de la ressource multimédia à la collection a échoué.</target></alt-trans></trans-unit>
+			<target state="final">L'ajout de la ressource numérique à la collection a échoué.</target></trans-unit>
       <trans-unit id="creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
 			<target state="final">Création</target></trans-unit>
@@ -356,7 +356,7 @@
 			<target state="translated">Remplacer « {filename} »</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-			<target state="translated">Vous pouvez remplacer cette ressource en téléchargeant un nouveau fichier. Une fois remplacée, la nouvelle ressource sera utilisée à tous les endroits où elle était utilisée auparavant sur votre site.</target><alt-trans><target>Vous pouvez remplacer cet ressource en téléchargeant un nouveau fichier. Une fois remplacée, la nouvelle ressource sera utilisée à tous les endroits où était utilisée sur votre site.</target></alt-trans></trans-unit>
+			<target state="translated">Vous pouvez remplacer cette ressource en téléchargeant un nouveau fichier. Une fois remplacée, la nouvelle ressource sera utilisée à tous les endroits où elle était utilisée auparavant sur votre site.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
 				<source>Note</source>
 			<target state="translated">Remarque</target></trans-unit>
@@ -371,13 +371,13 @@
 			<target state="translated">La ressource est utilisée {usageCount} fois.</target></trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve">
 				<source>Show all usages</source>
-			<target state="translated">Afficher les utilisations</target><alt-trans><target>Montrer tous les usages</target></alt-trans></trans-unit>
+			<target state="translated">Afficher les utilisations</target></trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
 				<source>Currently the asset is not in used anywhere on the website.</source>
-			<target state="translated">La ressource n'est actuellement pas utilisée sur le site.</target><alt-trans><target>Actuellement la ressource n'est pas utilisée sur le site.</target></alt-trans></trans-unit>
+			<target state="translated">La ressource n'est actuellement pas utilisée sur le site.</target></trans-unit>
       <trans-unit id="replace.previewFile" xml:space="preserve">
 				<source>Preview current file</source>
-			<target state="translated">Prévisualiser ce fichier</target><alt-trans><target>Visualiser le fichier courrant</target></alt-trans></trans-unit>
+			<target state="translated">Prévisualiser ce fichier</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
 			<target state="translated">Remplacement de la ressource impossible</target></trans-unit>
@@ -416,7 +416,7 @@
 			<target state="translated">La collection "{0}" a été mise à jour.</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
-			<target state="translated">La collection "{0}" a été supprimée.</target><alt-trans><target>La collection « {0} » a été supprimée.</target></alt-trans></trans-unit>
+			<target state="translated">La collection "{0}" a été supprimée.</target></trans-unit>
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
 			<target state="translated">Générer des redirections d’url du fichier original vers la nouvelle url</target></trans-unit>

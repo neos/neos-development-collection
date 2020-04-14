@@ -7,7 +7,7 @@
 			<target state="translated">Назад</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="translated">Відмінити</target><alt-trans><target>Скасувати</target></alt-trans></trans-unit>
+			<target state="translated">Відмінити</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -53,7 +53,7 @@
 			<target state="translated">Робоче середовище: тільки для читання</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target><alt-trans><target>Назва</target></alt-trans></trans-unit>
+			<target state="translated">Заголовок</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
 			<target state="translated">Опис</target></trans-unit>
@@ -71,7 +71,7 @@
 			<target state="translated">Приватний</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target state="translated">Робоча область тільки для рецензентів і адміністраторів</target><alt-trans><target>Тільки для рецензентів і адміністраторів</target></alt-trans></trans-unit>
+			<target state="translated">Робоча область тільки для рецензентів і адміністраторів</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
 			<target state="translated">Внутрішній</target></trans-unit>
@@ -98,7 +98,7 @@
 			<target state="translated">Робоче середовище неможливо видалити, тому що інші середовища залежить від нього.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target state="translated">У Вас немає прав для дозволу цього робочого середовища.</target><alt-trans><target>У Вас немає прав для видалення цього робочого середовища.</target></alt-trans></trans-unit>
+			<target state="translated">У Вас немає прав для дозволу цього робочого середовища.</target></trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
 				<source>Do you really want to delete the workspace "{0}"?</source>
 			<target state="translated">Ви дійсно хочете видалити робочу область "{0}"?</target></trans-unit>
@@ -303,7 +303,7 @@
 			<target state="translated">Нова електронна адреса</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
-			<target state="translated">Налаштування за замовчуванням</target><alt-trans><target>Системні налаштування за замовчуванням</target></alt-trans><alt-trans><target>Використовувати системні налаштування за замовчуванням</target></alt-trans></trans-unit>
+			<target state="translated">Налаштування за замовчуванням</target></trans-unit>
       <trans-unit id="users.actions.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target state="translated">Створити користувача</target></trans-unit>
@@ -330,7 +330,7 @@
 			<target state="translated">Провайдер аутентифікації</target></trans-unit>
       <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve">
 				<source>Use system default</source>
-			<target state="translated">Налаштування за замовчуванням</target><alt-trans><target>Системні налаштування за замовчуванням</target></alt-trans><alt-trans><target>Використовувати системні налаштування за замовчуванням</target></alt-trans></trans-unit>
+			<target state="translated">Налаштування за замовчуванням</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target state="translated">Персональні дані</target></trans-unit>
@@ -357,7 +357,7 @@
 			<target state="translated">Персональні дані</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target><alt-trans><target>Назва</target></alt-trans></trans-unit>
+			<target state="translated">Заголовок</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target state="translated">Ім'я</target></trans-unit>
@@ -495,7 +495,7 @@
 			<target state="translated">Цей пакет зараз не діє. Натисніть щоб задіяти.</target></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
 				<source>Freeze the package in order to speed up your website.</source>
-			<target state="translated">Зупинити дію пакету щоб підвищити швидкість вашого веб-сайту.</target><alt-trans><target>Зупинити дію пакету щоб пришвидшити роботу вашого веб-сайту.</target></alt-trans></trans-unit>
+			<target state="translated">Зупинити дію пакету щоб підвищити швидкість вашого веб-сайту.</target></trans-unit>
       <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
 				<source>This package is protected and cannot be deactivated.</source>
 			<target state="translated">Цей пакет захищений і не може бути вимкнений.</target></trans-unit>
@@ -716,7 +716,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="translated">Мова інтерфейсу</target></trans-unit>
       <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
-			<target state="translated">Налаштування за замовчуванням</target><alt-trans><target>Системні налаштування за замовчуванням</target></alt-trans><alt-trans><target>Використовувати системні налаштування за замовчуванням</target></alt-trans></trans-unit>
+			<target state="translated">Налаштування за замовчуванням</target></trans-unit>
       <trans-unit id="userSettings.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target state="translated">Облікові записи</target></trans-unit>

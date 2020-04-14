@@ -101,10 +101,10 @@
 			<target state="translated">جاري التحميل</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target state="translated">جديد بعد</target><alt-trans><target>جديدة بعد</target></alt-trans></trans-unit>
+			<target state="translated">جديد بعد</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target state="translated">جديد قبل</target><alt-trans><target>جديدة قبل</target></alt-trans></trans-unit>
+			<target state="translated">جديد قبل</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
 			<target state="translated">الجديد في</target></trans-unit>
@@ -122,7 +122,7 @@
 			<target state="translated">لصق</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target state="translated">لصق بعد</target><alt-trans><target>ألصق بعد</target></alt-trans></trans-unit>
+			<target state="translated">لصق بعد</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
 			<target state="translated">لصق قبل</target></trans-unit>
@@ -347,7 +347,7 @@
 			<target state="translated">الغ تنشيط وضع التحرير فى ملء الشاشة</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target state="translated">اظهر المعاينة</target><alt-trans><target>اظهر العرض</target></alt-trans></trans-unit>
+			<target state="translated">اظهر المعاينة</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -417,7 +417,7 @@
 			<target state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target state="translated">الرجاء مراجعة تغييراتك ونشرها أو تجاهلها، ثم اختر مساحة عمل مستهدفة جديدة مرة أخرى.</target><alt-trans><target>الرجاء مراجعة تغييراتك ونشرها أو تجاهلها، ثم اختر مساحة عمل عمستهدفة جديدة مرة أخرى.</target></alt-trans></trans-unit>
+			<target state="translated">الرجاء مراجعة تغييراتك ونشرها أو تجاهلها، ثم اختر مساحة عمل مستهدفة جديدة مرة أخرى.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
 			<target state="translated">اوضاع التحرير</target></trans-unit>
