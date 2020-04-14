@@ -61,7 +61,7 @@
 			<target state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="translated">Tipus de direcció en aument</target><alt-trans><target>Tipus de direccions en aument</target></alt-trans></trans-unit>
+			<target state="translated">Tipus de direcció en aument</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
 			<target state="translated">Tipus de direcció en caiguda</target></trans-unit>

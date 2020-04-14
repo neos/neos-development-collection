@@ -143,13 +143,13 @@
 			<target state="final">utworzone</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
 				<source>moved</source>
-			<target state="final">przeniesione</target><alt-trans><target>utworzone</target></alt-trans></trans-unit>
+			<target state="final">przeniesione</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
 				<source>hidden</source>
-			<target state="final">ukryte</target><alt-trans><target>utworzone</target></alt-trans></trans-unit>
+			<target state="final">ukryte</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>edited</source>
-			<target state="final">edytowane</target><alt-trans><target>utworzone</target></alt-trans></trans-unit>
+			<target state="final">edytowane</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target state="final">Brak nieopublikowanych zmian w tym obszarze roboczym.</target></trans-unit>
@@ -179,11 +179,11 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target state="translated">Nie usunięto obszaru roboczego "{0}" ponieważ zawiera on obecnie {1} węzeł.</target>
+          <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="translated">Nie usunięto obszaru roboczego "{0}" ponieważ zawiera on obecnie {1} węzłów.</target>
+          <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[2]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
@@ -191,7 +191,7 @@
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[3]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="translated">Nie usunięto obszaru roboczego "{0}" ponieważ zawiera on obecnie {1} węzły.</target>
+          <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
@@ -230,7 +230,7 @@
 			<target state="final">Ten moduł zawiera przegląd wszystkich istotnych zdarzeń wpływających na działanie tej instalacji Neos.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos</source>
-			<target state="final">Oto co wydarzyło się ostatnio w Neos</target><alt-trans><target>Ostatnie zdarzenia w Neos:</target></alt-trans></trans-unit>
+			<target state="final">Oto co wydarzyło się ostatnio w Neos</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target state="final">Nie zarejestrowano żadnych zdarzeń, które mogłyby być wyświetlone w tej historii.</target></trans-unit>
@@ -242,10 +242,10 @@
 			<target state="final">{0} usunął {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve" approved="yes">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target state="final">{0} utworzył wariant {1} z {2} "{3}".</target><alt-trans><target>{0} stworzył wariant {1} z {2} "{3}".</target></alt-trans></trans-unit>
+			<target state="final">{0} utworzył wariant {1} z {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve" approved="yes">
 				<source>{0} modified the {1} "{2}".</source>
-			<target state="final">{0} zmodyfikował {1} "{2}".</target><alt-trans><target>{0} edytował {1} "{2}".</target></alt-trans></trans-unit>
+			<target state="final">{0} zmodyfikował {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve" approved="yes">
 				<source>{0} moved the {1} "{2}".</source>
 			<target state="final">{0} przeniósł {1} "{2}".</target></trans-unit>
@@ -257,7 +257,7 @@
 			<target state="final">{0} zmienił nazwę {1} "{2}" na "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve" approved="yes">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target state="final">{0} zmodyfikował zawartość na {1} "{2}".</target><alt-trans><target>{0} edytował zawartość {1} "{2}".</target></alt-trans></trans-unit>
+			<target state="final">{0} zmodyfikował zawartość na {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve" approved="yes">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target state="final">{0} utworzył nowego użytkownika "{1}" dla {2}.</target></trans-unit>
@@ -294,16 +294,16 @@
 			<target state="final">Nowy</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Edytuj</target><alt-trans><target>Edycja</target></alt-trans></trans-unit>
+			<target state="final">Edytuj</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
 			<target state="final">Edytuj konto</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target state="final">Nowy adres elektroniczny</target><alt-trans><target>Nowy adres poczty elektronicznej</target></alt-trans></trans-unit>
+			<target state="final">Nowy adres elektroniczny</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
-			<target state="final">Użyj domyślnego w systemie</target><alt-trans><target>Użyj domyślnego</target></alt-trans><alt-trans><target>Domyślna wartość systemu</target></alt-trans></trans-unit>
+			<target state="final">Użyj domyślnego w systemie</target></trans-unit>
       <trans-unit id="users.actions.new.label" xml:space="preserve" approved="yes">
 				<source>Create user</source>
 			<target state="final">Utwórz użytkownika</target></trans-unit>
@@ -330,7 +330,7 @@
 			<target state="final">Dostawca uwierzytelnień</target></trans-unit>
       <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
-			<target state="final">Użyj domyślnego w systemie</target><alt-trans><target>Użyj domyślnego</target></alt-trans><alt-trans><target>Domyślna wartość systemu</target></alt-trans></trans-unit>
+			<target state="final">Użyj domyślnego w systemie</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target state="final">Dane personalne</target></trans-unit>
@@ -441,7 +441,7 @@
 			<target state="final">Konta i role</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve" approved="yes">
 				<source>View user</source>
-			<target state="final">Wyświetl użytkownika</target><alt-trans><target>Zobacz użytkownika</target></alt-trans></trans-unit>
+			<target state="final">Wyświetl użytkownika</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve" approved="yes">
 				<source>Edit user</source>
 			<target state="final">Edytuj użytkownika</target></trans-unit>
@@ -492,7 +492,7 @@
 			<target state="final">Nieaktywny</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve" approved="yes">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target state="final">Ten pakiet jest obecnie zamrożony. Kliknij, aby go odmrozić.</target><alt-trans><target>Ten pakiet jest obecnie zamrożony. Kliknij, aby go odblokować.</target></alt-trans></trans-unit>
+			<target state="final">Ten pakiet jest obecnie zamrożony. Kliknij, aby go odmrozić.</target></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve" approved="yes">
 				<source>Freeze the package in order to speed up your website.</source>
 			<target state="final">Zamroź pakiet, aby przyspieszyć działanie Twojej strony.</target></trans-unit>
@@ -540,10 +540,10 @@
 			<target state="final">Aktywuj wybrane pakiety</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
-			<target state="final">Zarządzanie stronami</target><alt-trans><target>Zarządzanie stroną</target></alt-trans></trans-unit>
+			<target state="final">Zarządzanie stronami</target></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target state="final">Moduł Zarządzania Stronami umożliwia przegląd wszystkich stron. Można edytować, dodawać i usuwać informacje o witrynach, takie jak przypisana domena.</target><alt-trans><target>Moduł zarządzania stronami umożliwia przegląd wszystkich stron. Można edytować, dodawać i usuwać informacje o witrynach, takie jak przypisana domena.</target></alt-trans></trans-unit>
+			<target state="final">Moduł Zarządzania Stronami umożliwia przegląd wszystkich stron. Można edytować, dodawać i usuwać informacje o witrynach, takie jak przypisana domena.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve" approved="yes">
 				<source>Add new site</source>
 			<target state="final">Dodaj nową stronę</target></trans-unit>
@@ -683,19 +683,19 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="final">Użytkownik</target></trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve" approved="yes">
 				<source>User Settings</source>
-			<target state="final">Ustawienia</target><alt-trans><target>Ustawienia użytkownika</target></alt-trans></trans-unit>
+			<target state="final">Ustawienia</target></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve" approved="yes">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target state="final">Moduł ten pozwala na dostosowanie Twojego profilu użytkownika backendu. Możesz tutaj zmienić swój aktywny język systemu, nazwisko i adres e-mail. Możesz również skonfigurować inne ogólne parametry w systemie.</target><alt-trans><target>Moduł ten pozwala na dostosowanie profilu użytkownika administracyjnego. Możesz zmienić swój język, nazwisko i adres e-mail. Możesz zmienić inne parametry.</target></alt-trans></trans-unit>
+			<target state="final">Moduł ten pozwala na dostosowanie Twojego profilu użytkownika backendu. Możesz tutaj zmienić swój aktywny język systemu, nazwisko i adres e-mail. Możesz również skonfigurować inne ogólne parametry w systemie.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Edytuj</target><alt-trans><target>Edycja</target></alt-trans></trans-unit>
+			<target state="final">Edytuj</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Edytuj</target><alt-trans><target>Edycja</target></alt-trans></trans-unit>
+			<target state="final">Edytuj</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target state="final">Nowy adres elektroniczny</target><alt-trans><target>Nowy adres poczty elektronicznej</target></alt-trans></trans-unit>
+			<target state="final">Nowy adres elektroniczny</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
 			<target state="final">Edytuj konto</target></trans-unit>
@@ -716,7 +716,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="final">Język interfejsu</target></trans-unit>
       <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
-			<target state="final">Użyj domyślnego w systemie</target><alt-trans><target>Użyj domyślnego</target></alt-trans><alt-trans><target>Domyślna wartość systemu</target></alt-trans></trans-unit>
+			<target state="final">Użyj domyślnego w systemie</target></trans-unit>
       <trans-unit id="userSettings.accounts" xml:space="preserve" approved="yes">
 				<source>Accounts</source>
 			<target state="final">Konta</target></trans-unit>

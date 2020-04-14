@@ -7,22 +7,22 @@
 			<target state="final">Skrót</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="final">Opcje skrótu</target><alt-trans><target>Opcje</target></alt-trans></trans-unit>
+			<target state="final">Opcje skrótu</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="final">Opcje skrótu</target><alt-trans><target>Opcje</target></alt-trans></trans-unit>
+			<target state="final">Opcje skrótu</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
 			<target state="final">Przekieruj na</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
-			<target state="final">Cel</target><alt-trans><target>Wybierz cel</target></alt-trans></trans-unit>
+			<target state="final">Cel</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
 				<source>First child node</source>
 			<target state="final">Pierwszy węzeł podrzędny</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve" approved="yes">
 				<source>Parent node</source>
-			<target state="final">Węzeł nadrzędny</target><alt-trans><target>Kod nadrzędny</target></alt-trans></trans-unit>
+			<target state="final">Węzeł nadrzędny</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve" approved="yes">
 				<source>Selected target</source>
 			<target state="final">Wybrany cel</target></trans-unit>
