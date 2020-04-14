@@ -7,7 +7,7 @@
 			<target state="translated">Danh sách tài sản</target></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve">
 				<source>Resources</source>
-			<target state="translated">Tài nguyên</target><alt-trans><target>Mã nguồn</target></alt-trans></trans-unit>
+			<target state="translated">Tài nguyên</target></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve">
 				<source>Assets</source>
 			<target state="translated">Tài sản</target></trans-unit>

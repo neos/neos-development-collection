@@ -61,10 +61,10 @@
 			<target state="translated">Descendete</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve" approved="yes">
 				<source>Sort direction Ascending</source>
-			<target state="final">Ordenar dirección ascendentemente</target><alt-trans><target>Filtrar dirección ascendentemente</target></alt-trans></trans-unit>
+			<target state="final">Ordenar dirección ascendentemente</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve" approved="yes">
 				<source>Sort direction Descending</source>
-			<target state="final">Ordenar dirección descendentemente</target><alt-trans><target>Ordenar por la descripción descendentemente</target></alt-trans></trans-unit>
+			<target state="final">Ordenar dirección descendentemente</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="translated">Arrastrar y soltar en la etiqueta o colección</target></trans-unit>
@@ -73,7 +73,7 @@
 			<target state="translated">Ver</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="translated">Ver bienes</target><alt-trans><target>Ver activo</target></alt-trans></trans-unit>
+			<target state="translated">Ver bienes</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target state="translated">Editar activos</target></trans-unit>
@@ -109,7 +109,7 @@
 			<target state="translated">Reemplazar</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve" approved="yes">
 				<source>Replace asset resource</source>
-			<target state="final">Reemplazar recursos activos</target><alt-trans><target>Sustituir recursos activos</target></alt-trans></trans-unit>
+			<target state="final">Reemplazar recursos activos</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target state="final">Guardar</target></trans-unit>
@@ -148,13 +148,13 @@
 			<target state="final">Mostrar todos los tipos de activos</target></trans-unit>
       <trans-unit id="filter.title.images" xml:space="preserve" approved="yes">
 				<source>Only display image assets</source>
-			<target state="final">Mostrar sólo activos de imágenes</target><alt-trans><target>Sólo mostrar activos de imágenes</target></alt-trans></trans-unit>
+			<target state="final">Mostrar sólo activos de imágenes</target></trans-unit>
       <trans-unit id="filter.title.documents" xml:space="preserve" approved="yes">
 				<source>Only display document assets</source>
 			<target state="final">Mostrar sólo activos de documento</target></trans-unit>
       <trans-unit id="filter.title.video" xml:space="preserve" approved="yes">
 				<source>Only display video assets</source>
-			<target state="final">Mostrar sólo videos</target><alt-trans><target>Mostrar sólo activos de video</target></alt-trans></trans-unit>
+			<target state="final">Mostrar sólo videos</target></trans-unit>
       <trans-unit id="filter.title.audio" xml:space="preserve" approved="yes">
 				<source>Only display audio assets</source>
 			<target state="final">Mostrar sólo activos de audio</target></trans-unit>
@@ -253,7 +253,7 @@
 			<target state="final">o haga clic para subir</target></trans-unit>
       <trans-unit id="chooseFile" xml:space="preserve" approved="yes">
 				<source>Choose file</source>
-			<target state="final">Seleccione Archivo</target><alt-trans><target>Seleccione archivo</target></alt-trans></trans-unit>
+			<target state="final">Seleccione Archivo</target></trans-unit>
       <trans-unit id="noAssetsFound" xml:space="preserve" approved="yes">
 				<source>No Assets found.</source>
 			<target state="final">No se han encontrado activos.</target></trans-unit>
@@ -307,16 +307,16 @@
 			<target state="translated">Descarga</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="translated">Adelante</target><alt-trans><target>Próximo</target></alt-trans></trans-unit>
+			<target state="translated">Adelante</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="translated">Atrás</target><alt-trans><target>Pasado</target></alt-trans><alt-trans><target>Anterior</target></alt-trans></trans-unit>
+			<target state="translated">Atrás</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="final">No se puede cargar el archivo</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
-			<target state="final">Ningún fichero seleccionado</target><alt-trans><target>Ningún archivo seleccionado</target></alt-trans></trans-unit>
+			<target state="final">Ningún fichero seleccionado</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="translated">El tamaño del archivo de {0} supera el límite permitido de {1}</target></trans-unit>
@@ -328,10 +328,10 @@
 			<target state="final">Sólo algunos de los archivos fueron subidos con éxito. Actualice la página para ver cuales han sido.</target></trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve" approved="yes">
 				<source>Tagging the asset failed.</source>
-			<target state="final">El etiquetado del activo ha fallado.</target><alt-trans><target>El etiquetado ha fallado.</target></alt-trans></trans-unit>
+			<target state="final">El etiquetado del activo ha fallado.</target></trans-unit>
       <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve">
 				<source>Adding the asset to the collection failed.</source>
-			<target state="translated">El agregar el recurso a la colección ha fallado.</target><alt-trans><target>No pudo agregar el recurso a la colección.</target></alt-trans></trans-unit>
+			<target state="translated">El agregar el recurso a la colección ha fallado.</target></trans-unit>
       <trans-unit id="creating" xml:space="preserve">
 				<source>Creating</source>
 			<target state="translated">Creando</target></trans-unit>
@@ -374,7 +374,7 @@
 			<target state="final">Mostrar todos los usos</target></trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
 				<source>Currently the asset is not in used anywhere on the website.</source>
-			<target state="translated">Actualmente los bienes no se utilizan en ninguna parte del sitio web.</target><alt-trans><target>Actualmente los bienes no se encuentran en ninguna parte usada dentro del sitio web.</target></alt-trans><alt-trans><target>Actualmente el activo no se encuentra en ninguna parte usada en el sitio web.</target></alt-trans><alt-trans><target>Actualmente, el activo no se utiliza en ninguna parte del sitio web.</target></alt-trans></trans-unit>
+			<target state="translated">Actualmente los bienes no se utilizan en ninguna parte del sitio web.</target></trans-unit>
       <trans-unit id="replace.previewFile" xml:space="preserve" approved="yes">
 				<source>Preview current file</source>
 			<target state="final">Vista previa del archivo actual</target></trans-unit>
@@ -401,34 +401,34 @@
 			<target state="final">La etiqueta "{0}" ya existe y fué añadida a la colección.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" has been created.</source>
-			<target state="final">La etiqueta "{0}" ha sido creada.</target><alt-trans><target>Etiqueta {0} ha sido creada.</target></alt-trans></trans-unit>
+			<target state="final">La etiqueta "{0}" ha sido creada.</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" has been updated.</source>
-			<target state="final">La etiqueta "{0}" ha sido actualizada.</target><alt-trans><target>Etiqueta {0} ha sido actualizada.</target></alt-trans></trans-unit>
+			<target state="final">La etiqueta "{0}" ha sido actualizada.</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" has been deleted.</source>
-			<target state="final">La etiqueta "{0}" ha sido eliminada.</target><alt-trans><target>Etiqueta {0} ha sido eliminada.</target></alt-trans></trans-unit>
+			<target state="final">La etiqueta "{0}" ha sido eliminada.</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve" approved="yes">
 				<source>Collection "{0}" has been created.</source>
-			<target state="final">La colección "{0}" ha sido creada.</target><alt-trans><target>Colección {0} ha sido creada.</target></alt-trans></trans-unit>
+			<target state="final">La colección "{0}" ha sido creada.</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve" approved="yes">
 				<source>Collection "{0}" has been updated.</source>
-			<target state="final">La colección "{0}" ha sido actualizada.</target><alt-trans><target>Colección {0} ha sido actualizada.</target></alt-trans></trans-unit>
+			<target state="final">La colección "{0}" ha sido actualizada.</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve" approved="yes">
 				<source>Collection "{0}" has been deleted.</source>
-			<target state="final">La colección "{0}" ha sido eliminada.</target><alt-trans><target>Colección {0} ha sido eliminada.</target></alt-trans></trans-unit>
+			<target state="final">La colección "{0}" ha sido eliminada.</target></trans-unit>
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
 			<target state="translated">Generar redirecciones de la url del archivo original a la nueva url</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve" approved="yes">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="final">' Los recursos de tipo "{0}" sólo pueden ser sustituidos por un recurso similar. El recurso tiene tipo "{1}" '</target><alt-trans><target>' Recursos de tipo "{0}" sólo pueden ser sustituidos por un recurso similar. Tiene tipo "{1}" '</target></alt-trans></trans-unit>
+			<target state="final">' Los recursos de tipo "{0}" sólo pueden ser sustituidos por un recurso similar. El recurso tiene tipo "{1}" '</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve" approved="yes">
 				<source>No access to workspace "{0}"</source>
 			<target state="final">Sin acceso al espacio de trabajo "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve" approved="yes">
 				<source>No document node found for this node</source>
-			<target state="final">No se ha encontrado ningún nodo de documento para este nodo</target><alt-trans><target>No se ha encpntrado ningún nodo del documento para este nodo</target></alt-trans></trans-unit>
+			<target state="final">No se ha encontrado ningún nodo de documento para este nodo</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -7,7 +7,7 @@
 			<target state="final">Wstaw referencje do treści</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve" approved="yes">
 				<source>References</source>
-			<target state="final">Referencje</target><alt-trans><target>Odniesienia</target></alt-trans></trans-unit>
+			<target state="final">Referencje</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve" approved="yes">
 				<source>Select</source>
 			<target state="final">wybierz</target></trans-unit>

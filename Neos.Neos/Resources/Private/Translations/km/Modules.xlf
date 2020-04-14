@@ -138,7 +138,7 @@
 			<target state="final">ផ្លាស់ប្តូរខ្លឹមសារ</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
-			<target state="final">ត្រូវបានលប់</target><alt-trans><target>ការលប់</target></alt-trans><alt-trans><target>លប់</target></alt-trans></trans-unit>
+			<target state="final">ត្រូវបានលប់</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
 				<source>created</source>
 			<target state="final">ត្រូរបានបង្កើត</target></trans-unit>
@@ -286,7 +286,7 @@
 			<target state="final">កែប្រែ</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="final">គណនីកែសម្រួល</target><alt-trans><target>កែរគនណីយ</target></alt-trans></trans-unit>
+			<target state="final">គណនីកែសម្រួល</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
 			<target state="final">បង្កើតអាសយដ្ឋានថ្មី</target></trans-unit>
@@ -325,7 +325,7 @@
 			<target state="final">ទិន្នន័យ​ផ្ទាល់​ខ្លួន</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target state="final">ឈ្មោះ</target><alt-trans><target>គោត្តនាម</target></alt-trans></trans-unit>
+			<target state="final">ឈ្មោះ</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve" approved="yes">
 				<source>Last Name</source>
 			<target state="final">នាមត្រកូល</target></trans-unit>
@@ -349,7 +349,7 @@
 			<target state="final">ចំណងជើង</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target state="final">ឈ្មោះ</target><alt-trans><target>គោត្តនាម</target></alt-trans></trans-unit>
+			<target state="final">ឈ្មោះ</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve" approved="yes">
 				<source>Middle Name</source>
 			<target state="final">េឈ​្មោះហៅក្រៅ</target></trans-unit>
@@ -400,7 +400,7 @@
 			<target state="final">វានឹងលុបអ្នកប្រើគណនីពាក់ព័ន្ធនិងតំបន់ការងារផ្ទាល់ខ្លួនរបស់លោករួមទាំងមាតិកាដែលមិនបានផ្សព្វផ្សាយទាំងអស់។</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
-			<target state="final">ប្រតិបត្តិការនេះមិនអាចមិនធ្វើវិញ</target><alt-trans><target>ប្រតិបត្តិការនេះមិនអាចមិនធ្វើឡើងវិញ</target></alt-trans></trans-unit>
+			<target state="final">ប្រតិបត្តិការនេះមិនអាចមិនធ្វើវិញ</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve" approved="yes">
 				<source>Edit account "{accountIdentifier}"</source>
 			<target state="final">កែប្រែគណនី​ "{accountIdentifier}"</target></trans-unit>
@@ -689,7 +689,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="final">បង្កើតអាសយដ្ឋានថ្មី</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="final">គណនីកែសម្រួល</target><alt-trans><target>កែរគនណីយ</target></alt-trans></trans-unit>
+			<target state="final">គណនីកែសម្រួល</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target state="final">ទិន្នន័យ​ផ្ទាល់​ខ្លួន</target></trans-unit>

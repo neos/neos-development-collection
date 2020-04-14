@@ -13,7 +13,7 @@
 			<target state="final">Ressources numériques</target></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve">
 				<source>Empty asset list</source>
-			<target state="translated">Liste d'actifs vides</target><alt-trans><target>Liste de ressource vide</target></alt-trans></trans-unit>
+			<target state="translated">Liste d'actifs vides</target></trans-unit>
     </body>
   </file>
 </xliff>

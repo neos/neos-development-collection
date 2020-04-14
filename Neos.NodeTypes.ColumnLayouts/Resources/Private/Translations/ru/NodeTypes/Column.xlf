@@ -10,7 +10,7 @@
             <target state="final">Столбцы</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
                 <source>Layout</source>
-            <target state="final">Шаблон</target><alt-trans><target>Макет</target></alt-trans></trans-unit>
+            <target state="final">Шаблон</target></trans-unit>
     </body>
   </file>
 </xliff>

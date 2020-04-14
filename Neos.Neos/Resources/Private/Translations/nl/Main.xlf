@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target state="final">Automatisch publiceren</target><alt-trans><target>Auto-Publiceer</target></alt-trans></trans-unit>
+			<target state="final">Automatisch publiceren</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
 			<target state="final">Automatisch publiceren naar {0}</target></trans-unit>
@@ -41,31 +41,31 @@
 			<target state="final">Content Weergave</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
-			<target state="final">Nieuwe aanmaken na</target><alt-trans><target>Maak na</target></alt-trans></trans-unit>
+			<target state="final">Nieuwe aanmaken na</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve" approved="yes">
 				<source>Create new</source>
 			<target state="final">Maak nieuw</target></trans-unit>
       <trans-unit id="close" xml:space="preserve" approved="yes">
 				<source>Close</source>
-			<target state="final">Sluiten</target><alt-trans><target>Sluit</target></alt-trans></trans-unit>
+			<target state="final">Sluiten</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve" approved="yes">
 				<source>Copy</source>
-			<target state="final">Kopieëren</target><alt-trans><target>Kopieer</target></alt-trans></trans-unit>
+			<target state="final">Kopieëren</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve" approved="yes">
 				<source>Cut</source>
-			<target state="final">Knippen</target><alt-trans><target>Knip</target></alt-trans></trans-unit>
+			<target state="final">Knippen</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
-			<target state="final">Verwijderen</target><alt-trans><target>Verwijder</target></alt-trans></trans-unit>
+			<target state="final">Verwijderen</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve" approved="yes">
 				<source>Yes, delete the element</source>
-			<target state="final">Ja, element verwijderen</target><alt-trans><target>Ja, verwijder het element</target></alt-trans></trans-unit>
+			<target state="final">Ja, element verwijderen</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve" approved="yes">
 				<source>Delete the element</source>
-			<target state="final">Element verwijderen</target><alt-trans><target>Verwijder het element</target></alt-trans></trans-unit>
+			<target state="final">Element verwijderen</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve" approved="yes">
 				<source>Discard</source>
-			<target state="final">Verwerpen</target><alt-trans><target>Annuleren</target></alt-trans></trans-unit>
+			<target state="final">Verwerpen</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
 			<target state="final">Wijzigingen negeren</target></trans-unit>
@@ -83,7 +83,7 @@
 			<target state="final">Verbergen / zichtbaar maken</target></trans-unit>
       <trans-unit id="hide" xml:space="preserve" approved="yes">
 				<source>Hide</source>
-			<target state="final">Verbergen</target><alt-trans><target>Verberg</target></alt-trans></trans-unit>
+			<target state="final">Verbergen</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve" approved="yes">
 				<source>Unhide</source>
 			<target state="final">Zichtbaar maken</target></trans-unit>
@@ -101,13 +101,13 @@
 			<target state="final">Aan het laden</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve" approved="yes">
 				<source>New After</source>
-			<target state="final">Nieuwe aanmaken na</target><alt-trans><target>Nieuwe na</target></alt-trans></trans-unit>
+			<target state="final">Nieuwe aanmaken na</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve" approved="yes">
 				<source>New Before</source>
-			<target state="final">Nieuwe aanmaken vóór</target><alt-trans><target>Nieuwe vóór</target></alt-trans></trans-unit>
+			<target state="final">Nieuwe aanmaken vóór</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve" approved="yes">
 				<source>New Into</source>
-			<target state="final">Nieuwe aanmaken in</target><alt-trans><target>Nieuw in</target></alt-trans></trans-unit>
+			<target state="final">Nieuwe aanmaken in</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve" approved="yes">
 				<source>Navigate</source>
 			<target state="final">Navigeren</target></trans-unit>
@@ -128,7 +128,7 @@
 			<target state="final">Plakken voor</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
 				<source>Paste Into</source>
-			<target state="final">Plakken in</target><alt-trans><target>Plak in</target></alt-trans></trans-unit>
+			<target state="final">Plakken in</target></trans-unit>
       <trans-unit id="password" xml:space="preserve" approved="yes">
 				<source>Password</source>
 			<target state="final">Wachtwoord</target></trans-unit>
@@ -158,7 +158,7 @@
 			<target state="final">Gepubliceerd</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target state="translated">Publiceer menu verbergen / tonen</target><alt-trans><target>In-/uitschakelen van het publiceer menu</target></alt-trans></trans-unit>
+			<target state="translated">Publiceer menu verbergen / tonen</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target state="final">Doel workspace</target></trans-unit>
@@ -167,16 +167,16 @@
 			<target state="translated">Huidige workspace</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve" approved="yes">
 				<source>Remove</source>
-			<target state="final">Verwijderen</target><alt-trans><target>Verwijder</target></alt-trans></trans-unit>
+			<target state="final">Verwijderen</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve" approved="yes">
 				<source>Refresh</source>
-			<target state="final">Vernieuwen</target><alt-trans><target>Vernieuw</target></alt-trans></trans-unit>
+			<target state="final">Vernieuwen</target></trans-unit>
       <trans-unit id="save" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target state="final">Sla op</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target state="translated">Opslaan...</target><alt-trans><target>Opslaan</target></alt-trans></trans-unit>
+			<target state="translated">Opslaan...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve" approved="yes">
 				<source>Saved</source>
 			<target state="final">Opgeslagen</target></trans-unit>
@@ -185,7 +185,7 @@
 			<target state="final">Zoeken</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve" approved="yes">
 				<source>Toggle inspector</source>
-			<target state="final">Inspector verbergen / tonen</target><alt-trans><target>Schakel inspector om</target></alt-trans></trans-unit>
+			<target state="final">Inspector verbergen / tonen</target></trans-unit>
       <trans-unit id="username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target state="final">Gebruikersnaam</target></trans-unit>
@@ -200,7 +200,7 @@
 			<target state="final">Label</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target state="translated">Content type</target><alt-trans><target>Node type</target></alt-trans></trans-unit>
+			<target state="translated">Content type</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target state="final">Pad</target></trans-unit>
@@ -329,7 +329,7 @@
 			<target state="translated">Ja, verwijder het!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
-			<target state="translated">Pakket Sleutel</target><alt-trans><target>Pakket sleutel</target></alt-trans></trans-unit>
+			<target state="translated">Pakket Sleutel</target></trans-unit>
       <trans-unit id="description" xml:space="preserve" approved="yes">
 				<source>Description</source>
 			<target state="final">Omschrijving</target></trans-unit>
@@ -370,7 +370,7 @@
 			<target state="final">Klik hier om door te gaan naar de externe pagina {0}.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
-			<target state="final">(geen doel geselecteerd)</target><alt-trans><target>(geen doel is geselecteerd)</target></alt-trans></trans-unit>
+			<target state="final">(geen doel geselecteerd)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target state="final">Dit is een snelkoppeling naar het eerste onderliggende pagina. &lt; br / &gt; Klik op {0} om door te gaan naar de pagina.</target></trans-unit>
@@ -396,7 +396,7 @@
 			<target state="final">Alle wijzigingen negeren</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target state="final">Weet u zeker dat u wilt verwijderen van alle wijzigingen in deze workspace?</target><alt-trans><target>Weet u zeker dat u alle wijzigingen ongedaan wilt maken in deze workspace?</target></alt-trans></trans-unit>
+			<target state="final">Weet u zeker dat u wilt verwijderen van alle wijzigingen in deze workspace?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
 			<target state="translated">Weet u zeker dat u {numberOfChanges} verandering(en) in deze werkruimte wilt verwijderen?</target></trans-unit>
@@ -414,13 +414,13 @@
 			<target state="final">Openstaande wijzigingen</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target state="final">Je persoonlijke workspace bevat op dit moment ongepubliceerde wijzigingen. Om te switchen naar een andere workspace moet u of, alle wijzigingen publiceren of deze annuleren.</target><alt-trans><target>Je persoonlijke workspace bevat op dit moment ongepubliceerde wijzigingen. Om te switchen naar een andere workspace moet u alle wijzigingen publiceren of deze annuleren.</target></alt-trans></trans-unit>
+			<target state="final">Je persoonlijke workspace bevat op dit moment ongepubliceerde wijzigingen. Om te switchen naar een andere workspace moet u of, alle wijzigingen publiceren of deze annuleren.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
 			<target state="final">Controleer u wijzigingen, publiceer of annuleer deze, kies vervolgens opnieuw een andere workspace.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
-			<target state="final">Bewerk modus</target><alt-trans><target>Bewerk modi</target></alt-trans></trans-unit>
+			<target state="final">Bewerk modus</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
 				<source>Preview Central</source>
 			<target state="final">Voorbeeld overzicht</target></trans-unit>
@@ -429,7 +429,7 @@
 			<target state="final">Hebt u nog veranderingen. Wat wilt u hiermee doen?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
 				<source>Selected element</source>
-			<target state="final">Geselecteerd element</target><alt-trans><target>Geselecteerde element</target></alt-trans></trans-unit>
+			<target state="final">Geselecteerd element</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve" approved="yes">
 				<source>There are fields that are not correctly filled in.</source>
 			<target state="final">Er zijn velden die niet correct zijn ingevuld.</target></trans-unit>
@@ -480,16 +480,16 @@
 			<target state="final">Zichtbaarheid</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
-			<target state="translated">Document opties</target><alt-trans><target>Documentopties</target></alt-trans></trans-unit>
+			<target state="translated">Document opties</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
-			<target state="translated">De lengte van deze tekst moet minimaal {minimum} en maximaal {maximum} karakters bevatten.</target><alt-trans><target>De lengte van deze tekst moet minimaal {{minimum}} en maximaal {{maximum}} karakters bevatten.</target></alt-trans></trans-unit>
+			<target state="translated">De lengte van deze tekst moet minimaal {minimum} en maximaal {maximum} karakters bevatten.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
 				<source>This field must contain at least {minimum} characters.</source>
-			<target state="translated">Dit veld moet op zijn minst {minimum} karakters bevatten.</target><alt-trans><target>Dit veld moet op zijn minst {{minimum}} karakters bevatten.</target></alt-trans></trans-unit>
+			<target state="translated">Dit veld moet op zijn minst {minimum} karakters bevatten.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
 				<source>This text may not exceed {maximum} characters.</source>
-			<target state="translated">Deze tekst mag niet langer zijn dan {maximum} karakters.</target><alt-trans><target>Deze tekst mag niet langer zijn dan {{maximum}} karakters.</target></alt-trans></trans-unit>
+			<target state="translated">Deze tekst mag niet langer zijn dan {maximum} karakters.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target state="final">Alleen de karakters a tot en met z en getallen zijn toegestaan</target></trans-unit>
@@ -498,19 +498,19 @@
 			<target state="final">Het gegeven onderwerp is niet telbaar.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
 				<source>The count must be between {minimum} and {maximum}.</source>
-			<target state="translated">Het resultaat van de optelsom moet minimaal {minimum} zijn en maximaal {maximum}.</target><alt-trans><target>Het resultaat van de optelsom moet minimaal {{minimum}} zijn en maximaal {{maximum}}.</target></alt-trans></trans-unit>
+			<target state="translated">Het resultaat van de optelsom moet minimaal {minimum} zijn en maximaal {maximum}.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
 				<source>The given value was not a valid date.</source>
 			<target state="final">De gegeven waarde is geen geldige datum.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
 				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-			<target state="translated">De opgegeven datum moet zich tussen {formatEarliestDate} en {formatLatestDate} bevinden</target><alt-trans><target>De opgegeven datum moet zich tussen {{formatEarliestDate}} en {{formatLatestDate}} bevinden</target></alt-trans></trans-unit>
+			<target state="translated">De opgegeven datum moet zich tussen {formatEarliestDate} en {formatLatestDate} bevinden</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
 				<source>The given date must be after {formatEarliestDate}</source>
-			<target state="translated">De opgegeven datum moet na {formatEarliestDate} zijn</target><alt-trans><target>De opgegeven datum moet na {{formatEarliestDate}} zijn</target></alt-trans></trans-unit>
+			<target state="translated">De opgegeven datum moet na {formatEarliestDate} zijn</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
 				<source>The given date must be before {formatLatestDate}</source>
-			<target state="translated">De opgegeven datum moet voor {formatLatestDate} zijn</target><alt-trans><target>De opgegeven datum moet voor {{formatLatestDate}} zijn</target></alt-trans></trans-unit>
+			<target state="translated">De opgegeven datum moet voor {formatLatestDate} zijn</target></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address.</source>
 			<target state="final">Vul een geldig e-mailadres in.</target></trans-unit>
@@ -531,10 +531,10 @@
 			<target state="final">Een geldig nummer wordt verwacht.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
 				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target state="translated">Voer een geldig getal tussen {minimum} en {maximum}</target><alt-trans><target>Voer een geldig getal tussen {{minimum}} en {{maximum}}</target></alt-trans></trans-unit>
+			<target state="translated">Voer een geldig getal tussen {minimum} en {maximum}</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target state="translated">Het gegeven onderwerp komt niet overeen met het patroon ({pattern})</target><alt-trans><target>Het gegeven onderwerp komt niet overeen met het patroon ({{pattern}})</target></alt-trans></trans-unit>
+			<target state="translated">Het gegeven onderwerp komt niet overeen met het patroon ({pattern})</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
 			<target state="final">Een geldige tekenreeks (string) wordt verwacht.</target></trans-unit>
@@ -561,7 +561,7 @@
 			<target state="translated">Tevens zijn er {numberOfNodesMissingInRootline} bovenliggende elementen die in de gekozen variant niet bestaan, deze zullen ook gemaakt worden.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target state="translated">Leeg document maken</target><alt-trans><target>Maak een leeg</target></alt-trans></trans-unit>
+			<target state="translated">Leeg document maken</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
 			<target state="translated">Maak en kopieer</target></trans-unit>
@@ -579,7 +579,7 @@
 			<target state="final">Weet je zeker dat je dit wilt verwijderen</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target state="final">Dit zal de pagina verwijderen</target><alt-trans><target>Dit zal het element verwijderen</target></alt-trans></trans-unit>
+			<target state="final">Dit zal de pagina verwijderen</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
 			<target state="final">en zijn subpagina's</target></trans-unit>
@@ -594,7 +594,7 @@
 			<target state="final">Weet je zeker dat je dit wilt verwijderen</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
 				<source>this element</source>
-			<target state="final">dit element</target><alt-trans><target>dit element verwijderen</target></alt-trans></trans-unit>
+			<target state="final">dit element</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
 				<source>This will delete the element.</source>
 			<target state="final">Dit zal het element verwijderen.</target></trans-unit>
@@ -609,10 +609,10 @@
 			<target state="final">Bijsnijden</target></trans-unit>
       <trans-unit id="width" xml:space="preserve" approved="yes">
 				<source>Width</source>
-			<target state="final">Breedte</target><alt-trans><target>breedte</target></alt-trans></trans-unit>
+			<target state="final">Breedte</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
-			<target state="final">Missend verplichte eigenschap: </target><alt-trans><target>Verplicht ontbrekende eigenschap: </target></alt-trans></trans-unit>
+			<target state="final">Missend verplichte eigenschap: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve" approved="yes">
 				<source>Workspace</source>
 			<target state="final">Workspace</target></trans-unit>
@@ -647,7 +647,7 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
-			<target state="final">Inloggen op</target><alt-trans><target>TYPO3 Neos Login</target></alt-trans></trans-unit>
+			<target state="final">Inloggen op</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target state="final">Verificatie</target></trans-unit>
@@ -696,10 +696,10 @@
 			<target state="final">Sorry, de opgevraagde pagina is niet gevonden.</target></trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve" approved="yes">
 				<source>Invalid NodeType</source>
-			<target state="final">Ongeldig NodeType</target><alt-trans><target>Ongeldige NodeType</target></alt-trans></trans-unit>
+			<target state="final">Ongeldig NodeType</target></trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target state="final">De configuratie van het NodeType die getoond moet worden is niet beschikbaar. Waarschijnlijk is het NodeType hernoemd en mist u een migratie of is het simpelweg verkeerd gespeld.</target><alt-trans><target>De configuratie van het NodeType die getoond moet worden is niet beschikbaar. Waarschijnlijk is de NodeType hernoemd en mist u een migratie of is het simpelweg verkeerd gespeld.</target></alt-trans><alt-trans><target>De configuratie van de NodeType die getoond moet worden is niet beschikbaar. Waarschijnlijk is de NodeType hernoemd en mist u een migratie of is het simpelweg verkeerd gespeld.</target></alt-trans></trans-unit>
+			<target state="final">De configuratie van het NodeType die getoond moet worden is niet beschikbaar. Waarschijnlijk is het NodeType hernoemd en mist u een migratie of is het simpelweg verkeerd gespeld.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
 			<target state="translated">Onverwachte fout tijdens het maken van een node</target></trans-unit>
