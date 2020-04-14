@@ -221,7 +221,7 @@ class UserService
         $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
-            if ((string) $account->getAuthenticationProviderName() === $authenticationProviderName) {
+            if ($account->getAuthenticationProviderName() === $authenticationProviderName) {
                 return $account->getAccountIdentifier();
             }
         }
@@ -378,7 +378,7 @@ class UserService
 
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
-            $authenticationProviderName = (string) $account->getAuthenticationProviderName();
+            $authenticationProviderName = $account->getAuthenticationProviderName();
             if (isset($indexedTokens[$authenticationProviderName]) && $indexedTokens[$authenticationProviderName] instanceof UsernamePassword) {
                 $account->setCredentialsSource($this->hashService->hashPassword($password));
                 $this->accountRepository->update($account);
@@ -466,16 +466,15 @@ class UserService
     {
         $currentRoles = $account->getRoles();
 
-        /** @var Role $role */
-        foreach ($currentRoles as $role) {
-            $roleIdentifier = $this->normalizeRoleIdentifier((string) $role);
+        foreach ($currentRoles as $roleIdentifier => $role) {
+            $roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
             if (!in_array($roleIdentifier, $newRoleIdentifiers)) {
                 $this->removeRoleFromAccount($account, $roleIdentifier);
             }
         }
 
         foreach ($newRoleIdentifiers as $roleIdentifier) {
-            if (!$currentRoles->has(new Role($roleIdentifier))) {
+            if (!in_array($roleIdentifier, array_keys($currentRoles))) {
                 $this->addRoleToAccount($account, $roleIdentifier);
             }
         }
@@ -494,6 +493,7 @@ class UserService
     {
         $roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
         $role = $this->policyService->getRole($roleIdentifier);
+
         if (!$account->hasRole($role)) {
             $account->addRole($role);
             $this->accountRepository->update($account);
