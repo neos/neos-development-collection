@@ -10,10 +10,10 @@
 			<target state="final">Verweise</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve" approved="yes">
 				<source>Select</source>
-			<target state="final">Auswählen</target><alt-trans><target>Bitte wählen</target></alt-trans></trans-unit>
+			<target state="final">Auswählen</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve" approved="yes">
 				<source>No references selected</source>
-			<target state="final">Keine ausgewählten Referenzen</target><alt-trans><target>Keine ausgewählten Verweise</target></alt-trans></trans-unit>
+			<target state="final">Keine ausgewählten Referenzen</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -13,10 +13,10 @@
 			<target state="translated">Identificador del formulario</target></trans-unit>
       <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Select the Form identifier</source>
-			<target state="translated">Seleccione el identificador del formulario</target><alt-trans><target>Seleccione el identificador de formulario</target></alt-trans></trans-unit>
+			<target state="translated">Seleccione el identificador del formulario</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target state="translated">Por favor seleccione un identificador válido de formulario en el inspector.</target><alt-trans><target>Por favor seleccione un identificador Form en el inspector.</target></alt-trans></trans-unit>
+			<target state="translated">Por favor seleccione un identificador válido de formulario en el inspector.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -7,25 +7,25 @@
 			<target state="final">Genvej</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="final">Genvejsinstillinger</target><alt-trans><target>Genvejs instillinger</target></alt-trans></trans-unit>
+			<target state="final">Genvejsinstillinger</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="final">Genvejsinstillinger</target><alt-trans><target>Genvejs instillinger</target></alt-trans></trans-unit>
+			<target state="final">Genvejsinstillinger</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
-			<target state="final">Destinationstype</target><alt-trans><target>Siden skal åbne</target></alt-trans></trans-unit>
+			<target state="final">Destinationstype</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
-			<target state="final">Destination</target><alt-trans><target>Mål</target></alt-trans></trans-unit>
+			<target state="final">Destination</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
 				<source>First child node</source>
-			<target state="final">Første underordnede dokument</target><alt-trans><target>Første underordnede node</target></alt-trans></trans-unit>
+			<target state="final">Første underordnede dokument</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve" approved="yes">
 				<source>Parent node</source>
-			<target state="final">Overordnet dokument</target><alt-trans><target>Overordnet node</target></alt-trans></trans-unit>
+			<target state="final">Overordnet dokument</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve" approved="yes">
 				<source>Selected target</source>
-			<target state="final">Udvalgte destination</target><alt-trans><target>Udvalgte mål</target></alt-trans></trans-unit>
+			<target state="final">Udvalgte destination</target></trans-unit>
     </body>
   </file>
 </xliff>

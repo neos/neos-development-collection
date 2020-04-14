@@ -155,7 +155,7 @@
 			<target state="translated">Det finns inga opublicerade ändringar i den här arbetsytan.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target state="translated">Vill du verkligen ignorera alla ändringar i arbetsytan "{0}"?</target><alt-trans><target>Vill du verkligen ta bort alla ändringar i arbetsytan "{0}"?</target></alt-trans></trans-unit>
+			<target state="translated">Vill du verkligen ignorera alla ändringar i arbetsytan "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
         <source>A workspace with this title already exists.</source>
         <target state="translated">Det finns redan en arbetsyta med denna titel.</target>
@@ -361,7 +361,7 @@
 			<target state="translated">Efternamn</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target state="translated">Annat namn</target><alt-trans><target>Andra namn</target></alt-trans></trans-unit>
+			<target state="translated">Annat namn</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target state="translated">Konton</target></trans-unit>

@@ -13,7 +13,7 @@
 			<target state="translated">URL-banesegment</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target state="translated">Skjul i menyer</target><alt-trans><target>Skjule menyer</target></alt-trans></trans-unit>
+			<target state="translated">Skjul i menyer</target></trans-unit>
       <trans-unit id="creationDialog.title" xml:space="preserve">
 				<source>Title</source>
 			<target state="translated">Tittel</target></trans-unit>

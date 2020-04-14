@@ -61,16 +61,16 @@
 			<target state="translated">تنازلي</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="translated">اتجاه الفرز تصاعدي</target><alt-trans><target>ترتيب الاتجاه تصاعدي</target></alt-trans></trans-unit>
+			<target state="translated">اتجاه الفرز تصاعدي</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="translated">اتجاه الفرز تنازلي</target><alt-trans><target>ترتيب الاتجاه تنازليا</target></alt-trans></trans-unit>
+			<target state="translated">اتجاه الفرز تنازلي</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="translated">سحب وإسقاط على العلامة أو المجموعة</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target state="translated">اظهر</target><alt-trans><target>اظهار</target></alt-trans></trans-unit>
+			<target state="translated">اظهر</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
 			<target state="needs-translation">View asset</target></trans-unit>
@@ -109,7 +109,7 @@
 			<target state="translated">تعويض</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="translated">استبدل مورد الأصل</target><alt-trans><target>استبدال مورد الأصول</target></alt-trans><alt-trans><target>استبدال مورد مادة العرض</target></alt-trans></trans-unit>
+			<target state="translated">استبدل مورد الأصل</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target state="translated">حفظ</target></trans-unit>
@@ -341,11 +341,11 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target state="translated">استخدامات {0}</target>
+          <target state="needs-translation">{0} usages</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target state="translated">استعمالات {0}</target>
+          <target state="needs-translation">{0} usages</target>
         </trans-unit>
         <trans-unit id="relatedNodes[2]">
           <source>{0} usages</source>
@@ -438,13 +438,13 @@
 			<target state="translated">إنشاء إعادة توجيه من url الملف الأصلي لعنوان url الجديد</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="translated">'"الموارد من نوع "{0}" لا يمكن استبدالها إلا بمورد مماثل. حصلت على نوع "{1}" '</target><alt-trans><target>'يمكن فقط استبدال موارد نوع"{0}" بمورد مماثل. حصلت على نوع "{1}" '</target></alt-trans><alt-trans><target>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></alt-trans></trans-unit>
+			<target state="translated">'"الموارد من نوع "{0}" لا يمكن استبدالها إلا بمورد مماثل. حصلت على نوع "{1}" '</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
 			<target state="translated">لا تستطيع الوصول إلى فضاء العمل "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="translated">لم يتم العثور على أي مستند عقدي لهذه العقدة</target><alt-trans><target>لا يوجد أي مستند عقدي لهذه العقدة</target></alt-trans></trans-unit>
+			<target state="translated">لم يتم العثور على أي مستند عقدي لهذه العقدة</target></trans-unit>
     </body>
   </file>
 </xliff>

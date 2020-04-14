@@ -16,7 +16,7 @@
 			<target state="final">Formular-ID auswählen</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve" approved="yes">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target state="final">Bitte wählen Sie einen gültigen Form-Identifier im Inspektor.</target><alt-trans><target>Bitte wählen Sie einen gültigen Form Identifier im Inspektor.</target></alt-trans></trans-unit>
+			<target state="final">Bitte wählen Sie einen gültigen Form-Identifier im Inspektor.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -26,7 +26,7 @@
 			<target state="translated">Membuat bidang kerja baru</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
-			<target state="translated">Membuat bidang kerja</target><alt-trans><target>Membuat bidang kerja baru</target></alt-trans></trans-unit>
+			<target state="translated">Membuat bidang kerja</target></trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
 				<source>Delete workspace</source>
 			<target state="translated">Hapus bidang kerja</target></trans-unit>
@@ -41,7 +41,7 @@
 			<target state="translated">Edit bidang kerja</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
-			<target state="translated">Bidang kerja personal</target><alt-trans><target>Bidang kerja pribadi</target></alt-trans></trans-unit>
+			<target state="translated">Bidang kerja personal</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
 				<source>Private workspace</source>
 			<target state="translated">Bidang kerja Privat</target></trans-unit>
@@ -152,7 +152,7 @@
 			<target state="translated">diedit</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target state="translated">Tidak ada perubahan yang tidak dipublikasikan di bidang kerja ini.</target><alt-trans><target>Ada tidak ada perubahan yang tidak dipublikasikan di bidang kerja ini.</target></alt-trans></trans-unit>
+			<target state="translated">Tidak ada perubahan yang tidak dipublikasikan di bidang kerja ini.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
 			<target state="translated">Apakah Anda benar-benar ingin membuang semua perubahan dalam bidang kerja "{0}"?</target></trans-unit>
@@ -197,43 +197,31 @@
       <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
         <source>The selected changes have been published.</source>
         <target state="translated">Perubahan yang dipilih telah dipublikasikan.</target>
-        <alt-trans>
-          <target>Perubahan dipilih telah diterbitkan.</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded">
         <source>The selected changes have been discarded.</source>
         <target state="translated">The selected changes have been discarded.</target>
-        <alt-trans>
-          <target>Perubahan dipilih telah dibuang.</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished">
         <source>All changes from workspace "{0}" have been published to {1}.</source>
         <target state="translated">All changes from workspace "{0}" have been published to {1}.</target>
-        <alt-trans>
-          <target>Semua perubahan dari bidang kerja "{0}" telah diterbitkan ke {1}.</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="translated">Semua perubahan dari ruang kerja " {0} " telah dibuang.</target>
-        <alt-trans>
-          <target>Semua perubahan dari bidang kerja "{0}" telah dibuang.</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
-			<target state="translated">Sejarah</target><alt-trans><target>History</target></alt-trans><alt-trans><target>Riwayat</target></alt-trans></trans-unit>
+			<target state="translated">Sejarah</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target state="translated">Modul ini memberikan gambaran umum tentang semua peristiwa yang relevan yang mempengaruhi pemasangan Neos ini.</target><alt-trans><target>Modul ini memberikan gambaran dari semua peristiwa yang relevan yang mempengaruhi instalasi Neos ini.</target></alt-trans></trans-unit>
+			<target state="translated">Modul ini memberikan gambaran umum tentang semua peristiwa yang relevan yang mempengaruhi pemasangan Neos ini.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos</source>
-			<target state="translated">Inilah yang terjadi baru-baru ini di Neos</target><alt-trans><target>Inilah yang baru hadir di Neos</target></alt-trans></trans-unit>
+			<target state="translated">Inilah yang terjadi baru-baru ini di Neos</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target state="translated">Belum ada rekaman acara yang bisa ditampilkan dalam sejarah ini.</target><alt-trans><target>Ada belum mencatat peristiwa yang bisa ditampilkan di riwayat ini.</target></alt-trans><alt-trans><target>Ada belum mencatat peristiw yang bisa ditampilkan di riwayat ini.</target></alt-trans></trans-unit>
+			<target state="translated">Belum ada rekaman acara yang bisa ditampilkan dalam sejarah ini.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
 			<target state="translated">{0} membuat {1} "{2}".</target></trans-unit>
@@ -248,7 +236,7 @@
 			<target state="translated">{0} mengubah {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target state="translated">{0} memindah {1} "{2}".</target><alt-trans><target>{0} memindahkan {1} "{2}".</target></alt-trans></trans-unit>
+			<target state="translated">{0} memindah {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
 			<target state="translated">{0} menyalin {1} "{2}".</target></trans-unit>
@@ -546,7 +534,7 @@
 			<target state="translated">Modul manajemen situs memberikan Anda gambaran dari semua situs. Anda dapat mengedit, menambah dan menghapus informasi tentang situs Anda, misalnya menambahkan domain baru.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target state="translated">Tambah situs baru</target><alt-trans><target>Tambahkan situs baru</target></alt-trans></trans-unit>
+			<target state="translated">Tambah situs baru</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target state="translated">Membuat situs</target></trans-unit>
@@ -555,7 +543,7 @@
 			<target state="translated">Membuat situs baru</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
-			<target state="translated">Nama simpul akar</target><alt-trans><target>Nama root node</target></alt-trans><alt-trans><target>Nama node root</target></alt-trans></trans-unit>
+			<target state="translated">Nama simpul akar</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
 			<target state="translated">Domain</target></trans-unit>
@@ -567,7 +555,7 @@
 			<target state="translated">Nama</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
 				<source>Default asset collection</source>
-			<target state="translated">Koleksi aset terpasang</target><alt-trans><target>Koleksi aset standar</target></alt-trans></trans-unit>
+			<target state="translated">Koleksi aset terpasang</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve">
 				<source>Site package</source>
 			<target state="translated">Paket situs</target></trans-unit>
@@ -582,10 +570,10 @@
 			<target state="translated">Aktifkan situs</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target state="translated">Apakah Anda benar-benar ingin menghapus "{0}"? ini tidak dapat dipulihkan.</target><alt-trans><target>Apakah Anda benar-benar ingin menghapus "{0}"? Tindakan ini tidak bisa dibatalkan.</target></alt-trans></trans-unit>
+			<target state="translated">Apakah Anda benar-benar ingin menghapus "{0}"? ini tidak dapat dipulihkan.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target state="translated">Ya, hapus situs tersebut</target><alt-trans><target>Ya, hapus situsnya</target></alt-trans></trans-unit>
+			<target state="translated">Ya, hapus situs tersebut</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
 			<target state="translated">Impor situs</target></trans-unit>
@@ -600,7 +588,7 @@
 			<target state="translated">Buat situs kosong</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
-			<target state="translated">Pilih nodeType dokumen</target><alt-trans><target>Pilih dokumen nodeType</target></alt-trans></trans-unit>
+			<target state="translated">Pilih nodeType dokumen</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
 			<target state="translated">Nama situs</target></trans-unit>
@@ -612,25 +600,25 @@
 			<target state="translated">Buat paket situs baru</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
-			<target state="translated">NamaPenyediaLayanan.KodeKunciPaketSaya</target><alt-trans><target>VendorName.MyPackageKey</target></alt-trans><alt-trans><target>VendorNama.MyPackageKey</target></alt-trans></trans-unit>
+			<target state="translated">NamaPenyediaLayanan.KodeKunciPaketSaya</target></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
 			<target state="translated">Tidak ada situs tersedia</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target state="translated">Paket &lt;em&gt;Neos Kickstarter&lt;/em&gt; belum terpasang, silakan memasangnya ke situs baru kickstart.</target><alt-trans><target>Paket&lt;em&gt;Neos Kickstarter&lt;/em&gt;tidak terpasang, instal ke situs baru kickstart.</target></alt-trans></trans-unit>
+			<target state="translated">Paket &lt;em&gt;Neos Kickstarter&lt;/em&gt; belum terpasang, silakan memasangnya ke situs baru kickstart.</target></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
 			<target state="translated">Situs baru</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target state="translated">Apakah Anda benar-benar ingin menghapus "{0}"? ini tidak dapat dipulihkan.</target><alt-trans><target>Apakah Anda benar-benar ingin menghapus "{0}"? Tindakan ini tidak bisa dibatalkan.</target></alt-trans></trans-unit>
+			<target state="translated">Apakah Anda benar-benar ingin menghapus "{0}"? ini tidak dapat dipulihkan.</target></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve">
 				<source>New domain</source>
 			<target state="translated">Domain baru</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
-			<target state="translated">Edit domain</target><alt-trans><target>Sunting Domain</target></alt-trans></trans-unit>
+			<target state="translated">Edit domain</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
 			<target state="translated">Data domain</target></trans-unit>
