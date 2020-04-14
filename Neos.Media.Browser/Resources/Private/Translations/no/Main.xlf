@@ -271,7 +271,7 @@
 			<target state="translated">Lagre</target></trans-unit>
       <trans-unit id="metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target state="translated">Metadata</target><alt-trans><target>Metainformasjon</target></alt-trans></trans-unit>
+			<target state="translated">Metadata</target></trans-unit>
       <trans-unit id="metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target state="translated">Filnavn</target></trans-unit>

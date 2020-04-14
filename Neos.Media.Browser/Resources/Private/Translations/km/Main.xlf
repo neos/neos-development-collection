@@ -320,7 +320,7 @@
 			<target state="final">មិនអាចផ្ទុកនូវឯកសារ</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
-			<target state="final">មិនមាន​ឯកសារដែលបានជ្រើសរើស</target><alt-trans><target>មិនមាន​ឯកសារភ្ជាប់ជាមួយឡើយ</target></alt-trans></trans-unit>
+			<target state="final">មិនមាន​ឯកសារដែលបានជ្រើសរើស</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="final">ទំហំឯកសារ {0} លើសពីដែនកំណត់អនុញ្ញាត {1}</target></trans-unit>
@@ -380,22 +380,22 @@
 			<target state="final">មើលជាមុនឯកសារបច្ចុប្បន្ន</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve" approved="yes">
 				<source>Could not replace asset</source>
-			<target state="final">មិនអាចជំនួសទីកន្លែង asseet</target><alt-trans><target>មិនអាចផ្លាស់ប្តូរ asseet​ បានទេ</target></alt-trans></trans-unit>
+			<target state="final">មិនអាចជំនួសទីកន្លែង asseet</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been replaced.</source>
-			<target state="final">Asset{0} ត្រូវបានជំនួស</target><alt-trans><target>បណ្ដុំAsset{0}ត្រូវបានជំនួសទីកន្លែង</target></alt-trans><alt-trans><target>Asset{0} ត្រូវបានជំនួសទីកន្លែង</target></alt-trans></trans-unit>
+			<target state="final">Asset{0} ត្រូវបានជំនួស</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been updated.</source>
-			<target state="final">បណ្ដុំAsset{0}ត្រូវបានបង្គីេតថ្មីឡេីងវិញ</target><alt-trans><target>Asset{0} ត្រូវបានកែរប្រែ</target></alt-trans><alt-trans><target>Asset{0}ត្រូវបានបង្គីេតថ្មីឡេីងវិញ</target></alt-trans><alt-trans><target>Asset{0} ត្រូវបានបង្គីេតថ្មីឡេីងវិញ</target></alt-trans></trans-unit>
+			<target state="final">បណ្ដុំAsset{0}ត្រូវបានបង្គីេតថ្មីឡេីងវិញ</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been added.</source>
-			<target state="final">បណ្ដុំAsset{0}ត្រូវបានបង្ចូល</target><alt-trans><target>Asset {0} ត្រូវរក្សារទុករួចរាល់</target></alt-trans><alt-trans><target>Asset{0} ត្រូវបានបង្ចូល</target></alt-trans></trans-unit>
+			<target state="final">បណ្ដុំAsset{0}ត្រូវបានបង្ចូល</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been deleted.</source>
-			<target state="final">បណ្ដុំAsset{0}ត្រូវបានលុបចេាល</target><alt-trans><target>Asset{0} ត្រូវបានលុបចេាល</target></alt-trans><alt-trans><target>Asset{0}ត្រូវបានលុបចេាល</target></alt-trans></trans-unit>
+			<target state="final">បណ្ដុំAsset{0}ត្រូវបានលុបចេាល</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve" approved="yes">
 				<source>Asset could not be deleted.</source>
-			<target state="final">បណ្ដុំAsset{0}មិនអាចលុបចេាល</target><alt-trans><target>Asset{0} មិនអាចលុបចេាល</target></alt-trans></trans-unit>
+			<target state="final">បណ្ដុំAsset{0}មិនអាចលុបចេាល</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			<target state="final">ស្លាក{0}មាននិងបានបង្ចូលក្នុងការប្រមូលផ្តុំរួចហីេយ</target></trans-unit>

@@ -10,19 +10,19 @@
 			<target state="final">Название</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve" approved="yes">
 				<source>Layout</source>
-			<target state="final">Шаблон</target><alt-trans><target>Макет</target></alt-trans></trans-unit>
+			<target state="final">Шаблон</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
 				<source>Layout for this page only</source>
-			<target state="final">Шаблон только для этой страницы</target><alt-trans><target>Макет только для этой страницы</target></alt-trans></trans-unit>
+			<target state="final">Шаблон только для этой страницы</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target state="final">Наследовать от родительского элемента</target><alt-trans><target>Наследовать от родительского объекта</target></alt-trans></trans-unit>
+			<target state="final">Наследовать от родительского элемента</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
-			<target state="final">Шаблон дочерних страниц</target><alt-trans><target>Макет для подстраниц данной страницы</target></alt-trans></trans-unit>
+			<target state="final">Шаблон дочерних страниц</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target state="final">Наследовать от родительского элемента</target><alt-trans><target>Наследовать от родительского объекта</target></alt-trans></trans-unit>
+			<target state="final">Наследовать от родительского элемента</target></trans-unit>
     </body>
   </file>
 </xliff>

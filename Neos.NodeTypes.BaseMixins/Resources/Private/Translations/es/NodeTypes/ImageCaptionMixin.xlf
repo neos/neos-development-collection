@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve" approved="yes">
 				<source>Enable caption</source>
-			<target state="final">Habilitar leyenda</target><alt-trans><target>Habilitar subtítulo</target></alt-trans><alt-trans><target>Habilitar pie de foto</target></alt-trans></trans-unit>
+			<target state="final">Habilitar leyenda</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve" approved="yes">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
 			<target state="final"><![CDATA[<p>Ingrese la leyenda aquí</p>]]></target></trans-unit>

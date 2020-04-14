@@ -10,7 +10,7 @@
 			<target state="final">HTML</target></trans-unit>
       <trans-unit id="properties.source" xml:space="preserve" approved="yes">
 				<source>HTML Content</source>
-			<target state="final">Содержимое HTML</target><alt-trans><target>HTML-контент</target></alt-trans></trans-unit>
+			<target state="final">Содержимое HTML</target></trans-unit>
       <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve" approved="yes">
 				<source>Edit HTML source</source>
 			<target state="final">Редактировать исходный код HTML</target></trans-unit>

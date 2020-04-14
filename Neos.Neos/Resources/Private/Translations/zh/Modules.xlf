@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target state="translated">返回</target><alt-trans><target>后退</target></alt-trans></trans-unit>
+			<target state="translated">返回</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target state="translated">取消</target></trans-unit>
@@ -119,13 +119,13 @@
 			<target state="translated">审查</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
-			<target state="translated">放弃所选的更改</target><alt-trans><target>舍弃选择的更改</target></alt-trans></trans-unit>
+			<target state="translated">放弃所选的更改</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
 				<source>Publish selected changes</source>
 			<target state="translated">发布选择的更改</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target state="translated">舍弃所有更改</target><alt-trans><target>放弃所有更改</target></alt-trans></trans-unit>
+			<target state="translated">舍弃所有更改</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target state="translated">发布所有更改</target></trans-unit>
@@ -163,9 +163,6 @@
       <trans-unit id="workspaces.workspaceHasBeenUpdated">
         <source>The workspace "{0}" has been updated.</source>
         <target state="translated">工作区 "{0}" 已更新。</target>
-        <alt-trans>
-          <target>工作区 {0} 已更新。</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies">
         <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
@@ -221,7 +218,7 @@
 			<target state="translated">该模块概述了影响此Neos安装的所有相关事件。</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos</source>
-			<target state="translated">最近发生的事件/操作:</target><alt-trans><target>最近发生的事件:</target></alt-trans></trans-unit>
+			<target state="translated">最近发生的事件/操作:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target state="translated">没有可以显示的记录。</target></trans-unit>
@@ -327,7 +324,7 @@
 			<target state="translated">个人资料</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target state="translated">名</target><alt-trans><target>姓氏</target></alt-trans></trans-unit>
+			<target state="translated">名</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target state="translated">姓氏</target></trans-unit>
@@ -351,7 +348,7 @@
 			<target state="translated">标题</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target state="translated">名</target><alt-trans><target>姓氏</target></alt-trans></trans-unit>
+			<target state="translated">名</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
 			<target state="translated">中间名</target></trans-unit>

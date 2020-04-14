@@ -492,7 +492,7 @@
 			<target state="translated">Denne teksten kan ikke være lenger enn {{maximum}} tegn.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Bare vanlige tegn (a til å, omlyder, m. fl.) og tall er tillatt.</target><alt-trans><target>Bare vanlige tegn (a til å, omlyder, m.fl.) og tallen er tillatt.</target></alt-trans></trans-unit>
+			<target state="translated">Bare vanlige tegn (a til å, omlyder, m. fl.) og tall er tillatt.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target state="translated">Verdien var ikke tellbar.</target></trans-unit>
