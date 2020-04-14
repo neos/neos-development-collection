@@ -70,10 +70,10 @@
 			<target state="final">Przeciągnij i upuść na tag lub kolekcję</target></trans-unit>
       <trans-unit id="view" xml:space="preserve" approved="yes">
 				<source>View</source>
-			<target state="final">Wyświetl</target><alt-trans><target>Widok</target></alt-trans></trans-unit>
+			<target state="final">Wyświetl</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve" approved="yes">
 				<source>View asset</source>
-			<target state="final">Wyświetl zasób</target><alt-trans><target>Widok zasobów</target></alt-trans></trans-unit>
+			<target state="final">Wyświetl zasób</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target state="final">Edytuj zasób</target></trans-unit>
@@ -82,7 +82,7 @@
 			<target state="final">Usuń zasób</target></trans-unit>
       <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target state="final">Czy na pewno chcesz usunąć zasób "{0}"?</target><alt-trans><target>Czy na pewno chcesz usunąć zasób {0}?</target></alt-trans></trans-unit>
+			<target state="final">Czy na pewno chcesz usunąć zasób "{0}"?</target></trans-unit>
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete collection "{0}"?</source>
 			<target state="final">Czy na pewno chcesz usunąć kolekcję "{0}"?</target></trans-unit>
@@ -115,7 +115,7 @@
 			<target state="final">Zapisz</target></trans-unit>
       <trans-unit id="message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the asset</source>
-			<target state="final">Tak, usuń zasób</target><alt-trans><target>Tak, Usuń zasób</target></alt-trans></trans-unit>
+			<target state="final">Tak, usuń zasób</target></trans-unit>
       <trans-unit id="message.confirmDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Yes, delete the collection</source>
 			<target state="final">Tak, usunąć kolekcję</target></trans-unit>
@@ -136,7 +136,7 @@
 			<target state="final">{0} elementów</target></trans-unit>
       <trans-unit id="search.foundMatches" xml:space="preserve" approved="yes">
 				<source>found matching "{0}"</source>
-			<target state="final">znaleziono "{0}" pasujących</target><alt-trans><target>znaleziono pasujących "{0}"</target></alt-trans></trans-unit>
+			<target state="final">znaleziono "{0}" pasujących</target></trans-unit>
       <trans-unit id="upload" xml:space="preserve" approved="yes">
 				<source>Upload</source>
 			<target state="final">Wgraj</target></trans-unit>
@@ -145,19 +145,19 @@
 			<target state="final">Opcje filtrowania</target></trans-unit>
       <trans-unit id="filter.title.all" xml:space="preserve" approved="yes">
 				<source>Display all asset types</source>
-			<target state="final">Wyświetl wszystkie rodzaje zasobów</target><alt-trans><target>Wyświetlić wszystkie rodzaje zasobów</target></alt-trans></trans-unit>
+			<target state="final">Wyświetl wszystkie rodzaje zasobów</target></trans-unit>
       <trans-unit id="filter.title.images" xml:space="preserve" approved="yes">
 				<source>Only display image assets</source>
-			<target state="final">Wyświetl tylko obrazy</target><alt-trans><target>Pokaż tylko obrazy</target></alt-trans></trans-unit>
+			<target state="final">Wyświetl tylko obrazy</target></trans-unit>
       <trans-unit id="filter.title.documents" xml:space="preserve" approved="yes">
 				<source>Only display document assets</source>
-			<target state="final">Wyświetl tylko dokumenty</target><alt-trans><target>Pokaż tylko dokumenty</target></alt-trans></trans-unit>
+			<target state="final">Wyświetl tylko dokumenty</target></trans-unit>
       <trans-unit id="filter.title.video" xml:space="preserve" approved="yes">
 				<source>Only display video assets</source>
-			<target state="final">Wyświetl tylko zasoby wideo</target><alt-trans><target>Pokaż tylko zasoby wideo</target></alt-trans></trans-unit>
+			<target state="final">Wyświetl tylko zasoby wideo</target></trans-unit>
       <trans-unit id="filter.title.audio" xml:space="preserve" approved="yes">
 				<source>Only display audio assets</source>
-			<target state="final">Wyświetl tylko zasoby audio</target><alt-trans><target>Pokaż tylko zasoby audio</target></alt-trans></trans-unit>
+			<target state="final">Wyświetl tylko zasoby audio</target></trans-unit>
       <trans-unit id="filter.all" xml:space="preserve" approved="yes">
 				<source>All</source>
 			<target state="final">Wszystkie</target></trans-unit>
@@ -187,10 +187,10 @@
 			<target state="final">Błąd połączenia</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve" approved="yes">
 				<source>Media source</source>
-			<target state="final">Źródło multimediów</target><alt-trans><target>Źródło danych</target></alt-trans></trans-unit>
+			<target state="final">Źródło multimediów</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve" approved="yes">
 				<source>Media sources</source>
-			<target state="final">Źródła multimediów</target><alt-trans><target>Źródła danych</target></alt-trans></trans-unit>
+			<target state="final">Źródła multimediów</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target state="final">Kolekcje</target></trans-unit>
@@ -238,10 +238,10 @@
 			<target state="final">Wszystkie</target></trans-unit>
       <trans-unit id="untaggedAssets" xml:space="preserve" approved="yes">
 				<source>Untagged assets</source>
-			<target state="final">Nieotagowane zasoby</target><alt-trans><target>Nieoznaczony zasób</target></alt-trans><alt-trans><target>Nieotagowany zasób</target></alt-trans></trans-unit>
+			<target state="final">Nieotagowane zasoby</target></trans-unit>
       <trans-unit id="untagged" xml:space="preserve" approved="yes">
 				<source>Untagged</source>
-			<target state="final">Nieotagowany</target><alt-trans><target>Nieoznaczony</target></alt-trans></trans-unit>
+			<target state="final">Nieotagowany</target></trans-unit>
       <trans-unit id="maxUploadSize" xml:space="preserve" approved="yes">
 				<source>Max. upload size {0} per file</source>
 			<target state="final">Maksymalny rozmiar pliku to {0}</target></trans-unit>
@@ -271,7 +271,7 @@
 			<target state="final">Zapisz</target></trans-unit>
       <trans-unit id="metadata" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="final">Metadane</target><alt-trans><target>Informacje o dokumencie</target></alt-trans></trans-unit>
+			<target state="final">Metadane</target></trans-unit>
       <trans-unit id="metadata.filename" xml:space="preserve" approved="yes">
 				<source>Filename</source>
 			<target state="final">Nazwa pliku</target></trans-unit>
@@ -328,7 +328,7 @@
 			<target state="final">Tylko niektóre pliki zostały pomyślnie załadowane. Odśwież stronę, aby zobaczyć które.</target></trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve" approved="yes">
 				<source>Tagging the asset failed.</source>
-			<target state="final">Tagowanie zasobu nie powiodło się.</target><alt-trans><target>Tagowanie zasobu nie udało się.</target></alt-trans></trans-unit>
+			<target state="final">Tagowanie zasobu nie powiodło się.</target></trans-unit>
       <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
 				<source>Adding the asset to the collection failed.</source>
 			<target state="final">Dodanie zasobu do kolekcji nie powiodło się.</target></trans-unit>
@@ -341,11 +341,11 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target state="translated">{0} użycie</target>
+          <target state="needs-translation">{0} usages</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target state="translated">{0} użyć</target>
+          <target state="needs-translation">{0} usages</target>
         </trans-unit>
         <trans-unit id="relatedNodes[2]">
           <source>{0} usages</source>
@@ -353,7 +353,7 @@
         </trans-unit>
         <trans-unit id="relatedNodes[3]">
           <source>{0} usages</source>
-          <target state="translated">{0} użycia</target>
+          <target state="needs-translation">{0} usages</target>
         </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve" approved="yes">

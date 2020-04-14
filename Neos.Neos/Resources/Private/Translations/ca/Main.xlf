@@ -754,7 +754,7 @@
 			<target state="translated">Inserir mode</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target state="translated">Escollir una proporció</target><alt-trans><target>Escollir una relació d'aspecte</target></alt-trans></trans-unit>
+			<target state="translated">Escollir una proporció</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
 			<target state="translated">Negreta</target></trans-unit>

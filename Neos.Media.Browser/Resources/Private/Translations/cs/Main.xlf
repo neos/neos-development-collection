@@ -64,7 +64,7 @@
 			<target state="translated">Směr řazení vzestupně</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="translated">Směr řazení sestupně</target><alt-trans><target>Způsob řazení sestupně</target></alt-trans></trans-unit>
+			<target state="translated">Směr řazení sestupně</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="needs-translation">Drag and drop on tag or collection</target></trans-unit>

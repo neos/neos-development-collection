@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="next" xml:space="preserve">
 				<source>next</source>
-			<target state="translated">další</target><alt-trans><target>Další</target></alt-trans></trans-unit>
+			<target state="translated">další</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>previous</source>
 			<target state="translated">předchozí</target></trans-unit>

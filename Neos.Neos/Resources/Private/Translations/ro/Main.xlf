@@ -332,7 +332,7 @@
 			<target state="needs-translation">Package Key</target></trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
-			<target state="translated">Descriere (meta description)</target><alt-trans><target>Descriere</target></alt-trans></trans-unit>
+			<target state="translated">Descriere (meta description)</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
 			<target state="needs-translation">Toggle content tree</target></trans-unit>

@@ -7,7 +7,7 @@
 			<target state="translated">Başlığı etkinleştir</target></trans-unit>
       <trans-unit id="properties.caption.ui.inline.editorOptions.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target state="translated"><![CDATA[<p>resim altyazısını buraya girin</p>]]></target><alt-trans><target><![CDATA[<p>Altyazıyı buraya yazın</p>]]></target></alt-trans></trans-unit>
+			<target state="translated"><![CDATA[<p>resim altyazısını buraya girin</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

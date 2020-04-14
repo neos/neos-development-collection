@@ -5,7 +5,7 @@
       <!-- UserDoesNotExistValidator -->
       <trans-unit id="1325156008" xml:space="preserve" approved="yes">
 				<source>The username is already in use.</source>
-			<target state="final">ឈ្មោះ​អ្នកប្រើប្រាស់នេះត្រូវបានប្រើប្រាស់</target><alt-trans><target>គណនីនេះត្រូវបានប្រើប្រាស់</target></alt-trans></trans-unit>
+			<target state="final">ឈ្មោះ​អ្នកប្រើប្រាស់នេះត្រូវបានប្រើប្រាស់</target></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve" approved="yes">
 				<source>The hostname "{0}" was not valid.</source>

@@ -7,10 +7,10 @@
 			<target state="final">Īsceļš</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="final">Īsceļa uzstādījumi</target><alt-trans><target>Īsceļa iespējas</target></alt-trans></trans-unit>
+			<target state="final">Īsceļa uzstādījumi</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="final">Īsceļa uzstādījumi</target><alt-trans><target>Īsceļa iespējas</target></alt-trans></trans-unit>
+			<target state="final">Īsceļa uzstādījumi</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
 			<target state="final">Mērķa režīms</target></trans-unit>

@@ -19,10 +19,10 @@
 			<target state="final">Destination</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
 				<source>First child node</source>
-			<target state="final">Premier nœud enfant</target><alt-trans><target>Premier noeud enfant</target></alt-trans></trans-unit>
+			<target state="final">Premier nœud enfant</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve" approved="yes">
 				<source>Parent node</source>
-			<target state="final">Nœud parent</target><alt-trans><target>Noeud parent</target></alt-trans></trans-unit>
+			<target state="final">Nœud parent</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve" approved="yes">
 				<source>Selected target</source>
 			<target state="final">Cible sélectionnée</target></trans-unit>

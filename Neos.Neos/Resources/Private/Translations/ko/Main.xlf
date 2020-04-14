@@ -80,13 +80,13 @@
 			<target state="translated">편집</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target state="translated">숨기기 / 펼치기</target><alt-trans><target>숨기기 / 숨기기 해제</target></alt-trans></trans-unit>
+			<target state="translated">숨기기 / 펼치기</target></trans-unit>
       <trans-unit id="hide" xml:space="preserve">
 				<source>Hide</source>
 			<target state="needs-translation">Hide</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target state="translated">펼치기</target><alt-trans><target>숨기기 해제</target></alt-trans></trans-unit>
+			<target state="translated">펼치기</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
 			<target state="needs-translation">into</target></trans-unit>
