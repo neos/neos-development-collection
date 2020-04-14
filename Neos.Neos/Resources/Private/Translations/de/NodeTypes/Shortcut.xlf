@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Shortcut</source>
-			<target state="final">Verweis</target><alt-trans><target>Tastenkürzel</target></alt-trans></trans-unit>
+			<target state="final">Verweis</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
 			<target state="final">Verweisoptionen</target></trans-unit>
@@ -13,13 +13,13 @@
 			<target state="final">Verweisoptionen</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
-			<target state="final">Zielmodus</target><alt-trans><target>Ziel des Verweises</target></alt-trans></trans-unit>
+			<target state="final">Zielmodus</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
 			<target state="final">Ziel</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
 				<source>First child node</source>
-			<target state="final">Erster Kindknoten</target><alt-trans><target>Primärkindknoten</target></alt-trans></trans-unit>
+			<target state="final">Erster Kindknoten</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve" approved="yes">
 				<source>Parent node</source>
 			<target state="final">Elternknoten</target></trans-unit>

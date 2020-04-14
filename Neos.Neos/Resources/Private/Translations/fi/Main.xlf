@@ -8,7 +8,7 @@
 			<target state="final">Julkaise automaattisesti</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
-			<target state="final">Julkaise automaattisesti kohteeseen {0}</target><alt-trans><target>Julkaise automaatisesti kohteeseen {0}</target></alt-trans></trans-unit>
+			<target state="final">Julkaise automaattisesti kohteeseen {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
 				<source>Review changes</source>
 			<target state="final">Tarkista muutokset</target></trans-unit>
@@ -143,10 +143,10 @@
 			<target state="final">Julkaise kohteeseen {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
 				<source>Publish all changes for current page</source>
-			<target state="final">Julkaise nykyisen sivun kaikki muutokset</target><alt-trans><target>Julkaista nykyisen sivun kaikki muutokset</target></alt-trans></trans-unit>
+			<target state="final">Julkaise nykyisen sivun kaikki muutokset</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target state="final">Julkaisu ei onnistut koska kohdetyötila on vain luku-tilassa</target><alt-trans><target>Julkaisu ei onnistu koska kohdetyötila on "vain luku"-tilassa</target></alt-trans></trans-unit>
+			<target state="final">Julkaisu ei onnistut koska kohdetyötila on vain luku-tilassa</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve" approved="yes">
 				<source>Select target workspace</source>
 			<target state="final">Valitse kohdetyötila</target></trans-unit>
@@ -200,7 +200,7 @@
 			<target state="final">Nimike</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Content Type</source>
-			<target state="final">Sisältötyyppi</target><alt-trans><target>Solmutyyppi</target></alt-trans></trans-unit>
+			<target state="final">Sisältötyyppi</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target state="final">Polku</target></trans-unit>
@@ -480,13 +480,13 @@
 			<target state="final">Näkyvyys</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve" approved="yes">
 				<source>Document options</source>
-			<target state="final">Dokumentin valinnat</target><alt-trans><target>Asiakirjan valinnat</target></alt-trans></trans-unit>
+			<target state="final">Dokumentin valinnat</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
 			<target state="final">Tekstin pituuden on oltava {{minimum}}-{{maximum}} merkkiä.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve" approved="yes">
 				<source>This field must contain at least {minimum} characters.</source>
-			<target state="final">Kentän vähimmäispituus on {{minimum}} merkkiä.</target><alt-trans><target>Kentässä on oltava vähintään {{minimum}} merkkiä.</target></alt-trans></trans-unit>
+			<target state="final">Kentän vähimmäispituus on {{minimum}} merkkiä.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve" approved="yes">
 				<source>This text may not exceed {maximum} characters.</source>
 			<target state="final">Tekstin enimmäispituus on {{maximum}} merkkiä.</target></trans-unit>
@@ -534,7 +534,7 @@
 			<target state="final">Anna kelvollinen numero väliltä {{minimum}}-{{maximum}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target state="final">Syöte ei vastaa mallia ({pattern})</target><alt-trans><target>Syöte ei vastaa mallia ({{pattern}})</target></alt-trans></trans-unit>
+			<target state="final">Syöte ei vastaa mallia ({pattern})</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
 			<target state="final">Kelvollinen merkkijono vaaditaan.</target></trans-unit>
@@ -546,7 +546,7 @@
 			<target state="final">Syöte ei ole kelvollinen UUID.</target></trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve" approved="yes">
 				<source>Toggle content dimensions selector</source>
-			<target state="final">Sisältöulottuvuusvalitsin</target><alt-trans><target>Vaihda sisältöulottuvuusvalitsimen tila</target></alt-trans></trans-unit>
+			<target state="final">Sisältöulottuvuusvalitsin</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve" approved="yes">
 				<source>Start with an empty or pre-filled document?</source>
 			<target state="final">Käytetäänkö esitäytettyä dokumenttia vai luodaanko tyhjä?</target></trans-unit>
@@ -570,10 +570,10 @@
 			<target state="final">Sisältö</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve" approved="yes">
 				<source>Toggle menu group</source>
-			<target state="final">Valikkoryhmä</target><alt-trans><target>Vaihda valikkoryhmän tila</target></alt-trans></trans-unit>
+			<target state="final">Valikkoryhmä</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve" approved="yes">
 				<source>Toggle sticky menu mode</source>
-			<target state="final">Kiinnitetty valikko</target><alt-trans><target>Vaihda kiinnitettyyn valikkotilaan</target></alt-trans></trans-unit>
+			<target state="final">Kiinnitetty valikko</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target state="final">Haluatko varmasti poistaa</target></trans-unit>

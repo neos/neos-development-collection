@@ -76,10 +76,10 @@
 			<target state="translated">Se fil</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
-			<target state="final">Rediger fil</target><alt-trans><target>Rediger</target></alt-trans></trans-unit>
+			<target state="final">Rediger fil</target></trans-unit>
       <trans-unit id="deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
-			<target state="final">Slet fil</target><alt-trans><target>Slet</target></alt-trans></trans-unit>
+			<target state="final">Slet fil</target></trans-unit>
       <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete asset "{0}"?</source>
 			<target state="final">Vil du slette "{0}"?</target></trans-unit>
@@ -103,7 +103,7 @@
 			<target state="final">Denne handling kan ikke fortrydes.</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target state="final">Annullér</target><alt-trans><target>Anuller</target></alt-trans></trans-unit>
+			<target state="final">Annullér</target></trans-unit>
       <trans-unit id="replace" xml:space="preserve" approved="yes">
 				<source>Replace</source>
 			<target state="final">Erstat</target></trans-unit>
@@ -136,7 +136,7 @@
 			<target state="final">{0} elementer</target></trans-unit>
       <trans-unit id="search.foundMatches" xml:space="preserve" approved="yes">
 				<source>found matching "{0}"</source>
-			<target state="final">matchede "{0}"</target><alt-trans><target>matchede til "{0}"</target></alt-trans><alt-trans><target>passede til "{0}"</target></alt-trans></trans-unit>
+			<target state="final">matchede "{0}"</target></trans-unit>
       <trans-unit id="upload" xml:space="preserve" approved="yes">
 				<source>Upload</source>
 			<target state="final">Upload</target></trans-unit>
@@ -148,13 +148,13 @@
 			<target state="final">Vis alle filtyper</target></trans-unit>
       <trans-unit id="filter.title.images" xml:space="preserve" approved="yes">
 				<source>Only display image assets</source>
-			<target state="final">Vis kun billedefiler</target><alt-trans><target>Vis kun billeder</target></alt-trans></trans-unit>
+			<target state="final">Vis kun billedefiler</target></trans-unit>
       <trans-unit id="filter.title.documents" xml:space="preserve" approved="yes">
 				<source>Only display document assets</source>
 			<target state="final">Vis kun dokumenter</target></trans-unit>
       <trans-unit id="filter.title.video" xml:space="preserve" approved="yes">
 				<source>Only display video assets</source>
-			<target state="final">Vis kun videofiler</target><alt-trans><target>Vis kun videoer</target></alt-trans></trans-unit>
+			<target state="final">Vis kun videofiler</target></trans-unit>
       <trans-unit id="filter.title.audio" xml:space="preserve" approved="yes">
 				<source>Only display audio assets</source>
 			<target state="final">Vis kun lydfiler</target></trans-unit>
@@ -181,7 +181,7 @@
 			<target state="final">Listevisning</target></trans-unit>
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
-			<target state="final">Eksempelvisning</target><alt-trans><target>Eksempel visning</target></alt-trans></trans-unit>
+			<target state="final">Eksempelvisning</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
 			<target state="translated">Netværksfejl</target></trans-unit>
@@ -238,16 +238,16 @@
 			<target state="final">Alle</target></trans-unit>
       <trans-unit id="untaggedAssets" xml:space="preserve" approved="yes">
 				<source>Untagged assets</source>
-			<target state="final">Ikke-taggede filer</target><alt-trans><target>Ikke-tagget filer</target></alt-trans></trans-unit>
+			<target state="final">Ikke-taggede filer</target></trans-unit>
       <trans-unit id="untagged" xml:space="preserve" approved="yes">
 				<source>Untagged</source>
-			<target state="final">Ikke-taggede</target><alt-trans><target>Ikke-tagget</target></alt-trans></trans-unit>
+			<target state="final">Ikke-taggede</target></trans-unit>
       <trans-unit id="maxUploadSize" xml:space="preserve" approved="yes">
 				<source>Max. upload size {0} per file</source>
 			<target state="final">Max. upload størrelse {0} pr. fil</target></trans-unit>
       <trans-unit id="dropFiles" xml:space="preserve" approved="yes">
 				<source>Drop files here</source>
-			<target state="final">Smid filer her</target><alt-trans><target>Slip filer her</target></alt-trans></trans-unit>
+			<target state="final">Smid filer her</target></trans-unit>
       <trans-unit id="clickToUpload" xml:space="preserve" approved="yes">
 				<source>or click to upload</source>
 			<target state="final">eller tryk for at uploade</target></trans-unit>
@@ -289,7 +289,7 @@
 			<target state="final">Type</target></trans-unit>
       <trans-unit id="metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
-			<target state="final">ID</target><alt-trans><target>Identifikator</target></alt-trans></trans-unit>
+			<target state="final">ID</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve" approved="yes">
 				<source>Title</source>
 			<target state="final">Titel</target></trans-unit>
@@ -319,7 +319,7 @@
 			<target state="final">Ingen fil valgt</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target state="final">Filstørrelsen for {0} overstiger den tilladte grænse {1}</target><alt-trans><target>Filstørrelsen for {0} overstiger den tilladte grænse for {1}</target></alt-trans></trans-unit>
+			<target state="final">Filstørrelsen for {0} overstiger den tilladte grænse {1}</target></trans-unit>
       <trans-unit id="forTheFile" xml:space="preserve" approved="yes">
 				<source>for the file</source>
 			<target state="final">for filen</target></trans-unit>
@@ -337,7 +337,7 @@
 			<target state="final">Opretter</target></trans-unit>
       <trans-unit id="deleteRelatedNodes" xml:space="preserve" approved="yes">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target state="final">Filen kunne ikke slettes da der er indhold som bruger den</target><alt-trans><target>Filen kunne ikke slettes da der indhold som bruger den</target></alt-trans></trans-unit>
+			<target state="final">Filen kunne ikke slettes da der er indhold som bruger den</target></trans-unit>
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
@@ -350,7 +350,7 @@
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
-			<target state="final">Henvisninger til "{asset}"</target><alt-trans><target>Referencer til "{asset}"</target></alt-trans></trans-unit>
+			<target state="final">Henvisninger til "{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve" approved="yes">
 				<source>Replace "{filename}"</source>
 			<target state="final">Erstat "{filename}"</target></trans-unit>

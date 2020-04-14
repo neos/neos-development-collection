@@ -14,16 +14,16 @@
 			<target state="translated">审阅更改</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">应用</target><alt-trans><target>发布</target></alt-trans></trans-unit>
+			<target state="translated">应用</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target state="translated">应用更改</target><alt-trans><target>发布更新</target></alt-trans></trans-unit>
+			<target state="translated">应用更改</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target state="translated">取消</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target state="translated">返回</target><alt-trans><target>后退</target></alt-trans></trans-unit>
+			<target state="translated">返回</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target state="translated">选择</target></trans-unit>
@@ -41,7 +41,7 @@
 			<target state="translated">内容视图</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target state="translated">创建（此元素之后）</target><alt-trans><target>创建（位置：此元素之后）</target></alt-trans></trans-unit>
+			<target state="translated">创建（此元素之后）</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target state="translated">新建</target></trans-unit>
@@ -155,7 +155,7 @@
 			<target state="translated">发布中...</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target state="translated">已发布</target><alt-trans><target>已发布的</target></alt-trans></trans-unit>
+			<target state="translated">已发布</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
 			<target state="translated">切换发布菜单</target></trans-unit>
@@ -393,7 +393,7 @@
 			<target state="translated">放弃所有</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target state="translated">舍弃所有更改</target><alt-trans><target>放弃所有更改</target></alt-trans></trans-unit>
+			<target state="translated">舍弃所有更改</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target state="translated">你确定要舍弃此工作区中的所有更改吗?</target></trans-unit>
@@ -444,7 +444,7 @@
 			<target state="translated">丢弃</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">应用</target><alt-trans><target>发布</target></alt-trans></trans-unit>
+			<target state="translated">应用</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target state="translated">请选择插件</target></trans-unit>
@@ -453,7 +453,7 @@
 			<target state="translated">没有配置插件</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target state="translated">该视图会在页面上显示</target><alt-trans><target>在页面上显示该视图</target></alt-trans></trans-unit>
+			<target state="translated">该视图会在页面上显示</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
 			<target state="translated">在当前页上显示该视图</target></trans-unit>
@@ -492,7 +492,7 @@
 			<target state="translated">此文本可能不超过 {{maximum}} 个字符。</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">只允许字母和数字</target><alt-trans><target>只有常规字符 (到 z，元音变音，...) 和允许数字。</target></alt-trans></trans-unit>
+			<target state="translated">只允许字母和数字</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target state="translated">给定的主题不是可数的。</target></trans-unit>
@@ -582,7 +582,7 @@
 			<target state="translated">此操作将会删除元素</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target state="translated">和它的子元素</target><alt-trans><target>和子元素</target></alt-trans></trans-unit>
+			<target state="translated">和它的子元素</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target state="translated">此操作可以在工作区管理界面中撤消。</target></trans-unit>
@@ -650,7 +650,7 @@
 			<target state="translated">登录</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target state="translated">认证中</target><alt-trans><target>认证</target></alt-trans></trans-unit>
+			<target state="translated">认证中</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
 			<target state="translated">退出</target></trans-unit>
@@ -666,7 +666,7 @@
 			<target state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target state="translated">跳转到安装程序</target><alt-trans><target>转到安装程序</target></alt-trans></trans-unit>
+			<target state="translated">跳转到安装程序</target></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
 			<target state="needs-translation">Technical Information</target></trans-unit>

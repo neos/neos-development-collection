@@ -7,7 +7,7 @@
 			<target state="final">បញ្ចូល​មាតិកា​យោង​</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve" approved="yes">
 				<source>References</source>
-			<target state="final">ទិន្នន័យយោង</target><alt-trans><target>យោងទៅតាម</target></alt-trans></trans-unit>
+			<target state="final">ទិន្នន័យយោង</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve" approved="yes">
 				<source>Select</source>
 			<target state="final">ជ្រើសរើស</target></trans-unit>
