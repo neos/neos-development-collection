@@ -46,7 +46,7 @@
 			<target state="final">Kārtot pēc nosaukuma</target></trans-unit>
       <trans-unit id="sortByLastModified" xml:space="preserve" approved="yes">
 				<source>Sort by last modified</source>
-			<target state="final">Kārtot pēc pēdējām izmaiņām</target><alt-trans><target>Kārtot pēc pēdējās modificēšanas</target></alt-trans></trans-unit>
+			<target state="final">Kārtot pēc pēdējām izmaiņām</target></trans-unit>
       <trans-unit id="sortby" xml:space="preserve" approved="yes">
 				<source>Sort by</source>
 			<target state="final">Kārtot pēc</target></trans-unit>
@@ -61,10 +61,10 @@
 			<target state="final">Dilstošā secībā</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="translated">Kārtot augošā secībā</target><alt-trans><target>Kārtošanas virziens augošā secībā</target></alt-trans></trans-unit>
+			<target state="translated">Kārtot augošā secībā</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="translated">Kārtot dilstošā secībā</target><alt-trans><target>Kārtot dilstoša secībā</target></alt-trans></trans-unit>
+			<target state="translated">Kārtot dilstošā secībā</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target state="final">Pārvelciet uz tag vai kolekciju</target></trans-unit>
@@ -109,7 +109,7 @@
 			<target state="translated">Apmainīt</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="translated">Apmainīt aktīvu</target><alt-trans><target>Mainīt aktīvu</target></alt-trans></trans-unit>
+			<target state="translated">Apmainīt aktīvu</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target state="final">Saglabāt</target></trans-unit>
@@ -133,10 +133,10 @@
 			<target state="final">Meklēšana</target></trans-unit>
       <trans-unit id="search.itemCount" xml:space="preserve" approved="yes">
 				<source>{0} items</source>
-			<target state="final">{0} elementi</target><alt-trans><target>{0} elements</target></alt-trans></trans-unit>
+			<target state="final">{0} elementi</target></trans-unit>
       <trans-unit id="search.foundMatches" xml:space="preserve" approved="yes">
 				<source>found matching "{0}"</source>
-			<target state="final">atrasts "{0}"</target><alt-trans><target>atrasts atbilstošs "{0}"</target></alt-trans></trans-unit>
+			<target state="final">atrasts "{0}"</target></trans-unit>
       <trans-unit id="upload" xml:space="preserve" approved="yes">
 				<source>Upload</source>
 			<target state="final">Augšupielādēt</target></trans-unit>
@@ -187,7 +187,7 @@
 			<target state="translated">Savienojuma kļūda</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="translated">Mediju avots</target><alt-trans><target>Medija avots</target></alt-trans></trans-unit>
+			<target state="translated">Mediju avots</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
 			<target state="translated">Mediju resursi</target></trans-unit>
@@ -414,7 +414,7 @@
 			<target state="translated">Tags {0} ir izdzēsts.</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target state="translated">Kolekcija "{0}" ir izveidota.</target><alt-trans><target>Kolekcija {0} ir izveidots.</target></alt-trans><alt-trans><target>Tags {0} ir izveidots.</target></alt-trans></trans-unit>
+			<target state="translated">Kolekcija "{0}" ir izveidota.</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
 			<target state="translated">Kolekcija "{0}" ir atjaunota.</target></trans-unit>
@@ -429,10 +429,10 @@
 			<target state="translated">' "{0}" tipa resursu var aizstāt tikai ar līdzīgu resursu. Iegūt "{1}" tipu'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target state="translated">Nav piekļuves darba virsmai "{0}"</target><alt-trans><target>Nav piekļuves darba virsmā "{0}"</target></alt-trans></trans-unit>
+			<target state="translated">Nav piekļuves darba virsmai "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="translated">Nav atrasts dokumenta mezgls šim mezglam</target><alt-trans><target>Nav atrasta dokumenta mezgls šim mezglam</target></alt-trans></trans-unit>
+			<target state="translated">Nav atrasts dokumenta mezgls šim mezglam</target></trans-unit>
     </body>
   </file>
 </xliff>

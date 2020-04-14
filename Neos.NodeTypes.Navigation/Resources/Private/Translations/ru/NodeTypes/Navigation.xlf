@@ -7,13 +7,13 @@
 			<target state="final">Меню</target></trans-unit>
       <trans-unit id="groups.options" xml:space="preserve" approved="yes">
 				<source>Options</source>
-			<target state="final">Параметры</target><alt-trans><target>Опции</target></alt-trans></trans-unit>
+			<target state="final">Параметры</target></trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve" approved="yes">
 				<source>Starting Level</source>
 			<target state="final">Начальный уровень</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve" approved="yes">
 				<source>Four Levels Above Current Page</source>
-			<target state="final">Четыре уровня выше текущей страницы</target><alt-trans><target>4-е уровня выше текущей позиции</target></alt-trans></trans-unit>
+			<target state="final">Четыре уровня выше текущей страницы</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve" approved="yes">
 				<source>Three Levels Above Current Page</source>
 			<target state="final">Три уровня выше текущей страницы</target></trans-unit>
@@ -22,13 +22,13 @@
 			<target state="final">Два уровня выше текущей страницы</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve" approved="yes">
 				<source>One Level Above Current Page</source>
-			<target state="final">Один уровень выше текущей страницы</target><alt-trans><target>На один уровень выше текущей страницы</target></alt-trans></trans-unit>
+			<target state="final">Один уровень выше текущей страницы</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve" approved="yes">
 				<source>Same Level As Current Page</source>
-			<target state="final">Тот же уровень, что у текущей страницы</target><alt-trans><target>Тот же уровень, что и у текущей страницы</target></alt-trans><alt-trans><target>Тот же уровне, что у текущей страницы</target></alt-trans></trans-unit>
+			<target state="final">Тот же уровень, что у текущей страницы</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve" approved="yes">
 				<source>First Level Of Website</source>
-			<target state="final">Первый уровень веб-сайта</target><alt-trans><target>Первый уровень сайта</target></alt-trans></trans-unit>
+			<target state="final">Первый уровень веб-сайта</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve" approved="yes">
 				<source>Second Level Of Website</source>
 			<target state="final">Второй уровень веб-сайта</target></trans-unit>

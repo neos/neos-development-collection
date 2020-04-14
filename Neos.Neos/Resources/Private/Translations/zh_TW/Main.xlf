@@ -176,7 +176,7 @@
 			<target state="translated">儲存</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target state="translated">儲存中</target><alt-trans><target>除存中</target></alt-trans></trans-unit>
+			<target state="translated">儲存中</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
 			<target state="translated">已儲存</target></trans-unit>

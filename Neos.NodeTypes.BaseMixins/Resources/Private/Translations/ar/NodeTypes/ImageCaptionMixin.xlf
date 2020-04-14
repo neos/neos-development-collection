@@ -7,7 +7,7 @@
 			<target state="translated">تمكين التسمية التوضيحية</target></trans-unit>
       <trans-unit id="properties.caption.ui.inline.editorOptions.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target state="translated"><![CDATA[<p>أدخل التسمية هنا</p>]]></target><alt-trans><target><![CDATA[<p>أدخل العنوان هنا</p>]]></target></alt-trans></trans-unit>
+			<target state="translated"><![CDATA[<p>أدخل التسمية هنا</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

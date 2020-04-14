@@ -137,13 +137,13 @@
 			<target state="translated">Τροποποιημένο Περιεχόμενο</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target state="translated">διαγράφηκε</target><alt-trans><target>διαγράφηκαν</target></alt-trans></trans-unit>
+			<target state="translated">διαγράφηκε</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
-			<target state="translated">δημιουργήθηκε</target><alt-trans><target>δημιουργήθηκαν</target></alt-trans></trans-unit>
+			<target state="translated">δημιουργήθηκε</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
-			<target state="translated">μετακινήθηκε</target><alt-trans><target>μετακινήθηκαν</target></alt-trans></trans-unit>
+			<target state="translated">μετακινήθηκε</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
 			<target state="translated">κρυφό</target></trans-unit>

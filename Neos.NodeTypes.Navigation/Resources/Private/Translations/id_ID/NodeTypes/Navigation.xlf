@@ -28,10 +28,10 @@
 			<target state="translated">Tingkat Sama Dengan Halaman Ini</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve">
 				<source>First Level Of Website</source>
-			<target state="translated">Tingkat Pertama Dari Website</target><alt-trans><target>Tingkat pertama website</target></alt-trans></trans-unit>
+			<target state="translated">Tingkat Pertama Dari Website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve">
 				<source>Second Level Of Website</source>
-			<target state="translated">Tingkat Kedua dari Website</target><alt-trans><target>Tingkat Kedua Website</target></alt-trans></trans-unit>
+			<target state="translated">Tingkat Kedua dari Website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.3" xml:space="preserve">
 				<source>Third Level Of Website</source>
 			<target state="translated">Tingkat Ketiga Website</target></trans-unit>
@@ -40,7 +40,7 @@
 			<target state="translated">Tingkat ke Empat dari Website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.5" xml:space="preserve">
 				<source>Fifth Level Of Website</source>
-			<target state="translated">Tingkat kelima dari Website</target><alt-trans><target>Tingkat Pertama dari Website</target></alt-trans></trans-unit>
+			<target state="translated">Tingkat kelima dari Website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.6" xml:space="preserve">
 				<source>Sixth Level Of Website</source>
 			<target state="translated">Tingkat keenam dari Website</target></trans-unit>

@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target state="final">Publication automatique</target><alt-trans><target>Auto-publication</target></alt-trans></trans-unit>
+			<target state="final">Publication automatique</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
 			<target state="final">Publier auto. vers {0}</target></trans-unit>
@@ -26,10 +26,10 @@
 			<target state="final">Retour</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve" approved="yes">
 				<source>Choose</source>
-			<target state="final">Selectionner</target><alt-trans><target>Sélectionner</target></alt-trans><alt-trans><target>Selectionnez</target></alt-trans></trans-unit>
+			<target state="final">Selectionner</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
 				<source>Type to search</source>
-			<target state="final">Taper pour rechercher</target><alt-trans><target>Tapez pour rechercher</target></alt-trans></trans-unit>
+			<target state="final">Taper pour rechercher</target></trans-unit>
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target state="final">Contenu</target></trans-unit>
@@ -50,7 +50,7 @@
 			<target state="final">Fermer</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve" approved="yes">
 				<source>Copy</source>
-			<target state="final">Copier</target><alt-trans><target>Copie</target></alt-trans></trans-unit>
+			<target state="final">Copier</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve" approved="yes">
 				<source>Cut</source>
 			<target state="final">Couper</target></trans-unit>
@@ -68,10 +68,10 @@
 			<target state="final">Ignorer</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
-			<target state="final">Annuler les modifications</target><alt-trans><target>Annuler</target></alt-trans></trans-unit>
+			<target state="final">Annuler les modifications</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
-			<target state="final">Éditer le titre</target><alt-trans><target>Editer le titre</target></alt-trans></trans-unit>
+			<target state="final">Éditer le titre</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve" approved="yes">
 				<source>Edit / Preview</source>
 			<target state="final">Edition / Aperçu</target></trans-unit>
@@ -80,7 +80,7 @@
 			<target state="final">Edition</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
-			<target state="final">Masquer / afficher</target><alt-trans><target>Masquer / Afficher</target></alt-trans></trans-unit>
+			<target state="final">Masquer / afficher</target></trans-unit>
       <trans-unit id="hide" xml:space="preserve" approved="yes">
 				<source>Hide</source>
 			<target state="final">Cacher</target></trans-unit>
@@ -113,7 +113,7 @@
 			<target state="final">Navigation</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve" approved="yes">
 				<source>OK</source>
-			<target state="final">OK</target><alt-trans><target>Confirmer</target></alt-trans></trans-unit>
+			<target state="final">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve" approved="yes">
 				<source>Page</source>
 			<target state="final">Page</target></trans-unit>
@@ -128,13 +128,13 @@
 			<target state="final">Coller avant</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
 				<source>Paste Into</source>
-			<target state="final">Collez dans</target><alt-trans><target>Coller dans</target></alt-trans></trans-unit>
+			<target state="final">Collez dans</target></trans-unit>
       <trans-unit id="password" xml:space="preserve" approved="yes">
 				<source>Password</source>
 			<target state="final">Mot de passe</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target state="final">Prévisualisation</target><alt-trans><target>Aperçu</target></alt-trans></trans-unit>
+			<target state="final">Prévisualisation</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve" approved="yes">
 				<source>Publish</source>
 			<target state="final">Publier</target></trans-unit>
@@ -158,7 +158,7 @@
 			<target state="final">Publié</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve" approved="yes">
 				<source>Toggle publish menu</source>
-			<target state="final">Basculer le menu de plublication</target><alt-trans><target>Activer/désactiver le menu de plublication</target></alt-trans></trans-unit>
+			<target state="final">Basculer le menu de plublication</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
 			<target state="final">Espace de travail cible</target></trans-unit>
@@ -200,7 +200,7 @@
 			<target state="final">Libellé</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Content Type</source>
-			<target state="final">Type de noeud</target><alt-trans><target>Type de nœud</target></alt-trans></trans-unit>
+			<target state="final">Type de noeud</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target state="final">Chemin</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target state="translated">Inactif</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
-			<target state="final">Cliquez pour éditer</target><alt-trans><target>Cliquez pour modifier</target></alt-trans></trans-unit>
+			<target state="final">Cliquez pour éditer</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
 			<target state="translated">Cliquez pour désactiver</target></trans-unit>
@@ -357,20 +357,20 @@
 			<target state="final">Structure</target></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve" approved="yes">
 				<source>Plugins</source>
-			<target state="final">Modules </target><alt-trans><target>Modules d'extension</target></alt-trans></trans-unit>
+			<target state="final">Modules </target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
 			<target state="final">Cliquez ici pour continuer vers la page {0}.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
-			<target state="final">Cliquez ici pour voir le fichier {0}.</target><alt-trans><target>Cliquez ici pour continuer vers le fichier {0}.</target></alt-trans><alt-trans><target>Cliquez ici pour continuer à le fichier {0}.</target></alt-trans></trans-unit>
+			<target state="final">Cliquez ici pour voir le fichier {0}.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
-			<target state="final">Cliquez ici pour ouvrir le lien {0}.</target><alt-trans><target>Cliquez ici pour continuer vers la page externe {0}.</target></alt-trans></trans-unit>
+			<target state="final">Cliquez ici pour ouvrir le lien {0}.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
-			<target state="final">(aucune cible n'a été sélectionné)</target><alt-trans><target>(aucune cible n'a été sélectionnée)</target></alt-trans></trans-unit>
+			<target state="final">(aucune cible n'a été sélectionné)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target state="final">Il s'agit d'un raccourci vers la première sous-page. &lt;br /&gt; Cliquez sur {0} pour continuer vers la sous-page.</target></trans-unit>
@@ -396,7 +396,7 @@
 			<target state="final">Ignorer toutes les modifications</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target state="final">Êtes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target><alt-trans><target>Etes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target></alt-trans></trans-unit>
+			<target state="final">Êtes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
 			<target state="translated">Êtes-vous sûr de vouloir ignorer {numberOfChanges} modification(s) dans cet espace de travail ?</target></trans-unit>
@@ -408,16 +408,16 @@
 			<target state="final">Publier toutes les modifications</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target state="final">Êtes-vous sûr de vouloir publier toutes les modifications ?</target><alt-trans><target>Etes-vous sûr de vouloir publier toutes les modifications ?</target></alt-trans></trans-unit>
+			<target state="final">Êtes-vous sûr de vouloir publier toutes les modifications ?</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
 				<source>Pending changes</source>
 			<target state="final">Modifications en attente</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target state="final">Votre espace de travail personnel contient actuellement des modifications non publiées. Afin de passer à un espace de travail cible différent, vous devrez avant tout publier ou rejeter  les changements en attente.</target><alt-trans><target>Votre espace de travail personnel contient des modifications non publiées. Pour changer d'espace de travail, vous devez publier ou rejeter les modifications en attente.</target></alt-trans></trans-unit>
+			<target state="final">Votre espace de travail personnel contient actuellement des modifications non publiées. Afin de passer à un espace de travail cible différent, vous devrez avant tout publier ou rejeter  les changements en attente.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target state="final">Veuillez consulter vos modifications, publiez ou rejetez-les et puis choisissez un nouvel espace de travail cible à nouveau.</target><alt-trans><target>Veuillez consulter vos modifications, publiez ou rejetez-les. Puis choisissez un nouvel espace de travail.</target></alt-trans></trans-unit>
+			<target state="final">Veuillez consulter vos modifications, publiez ou rejetez-les et puis choisissez un nouvel espace de travail cible à nouveau.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
 			<target state="final">Modes d'édition</target></trans-unit>
@@ -426,7 +426,7 @@
 			<target state="final">Preview Central</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target state="final">Vous avez encore des modifications. Que voulez-vous faire avec ?</target><alt-trans><target>Vous avez encore des modifications. Que souhaitez-vous faire avec ?</target></alt-trans></trans-unit>
+			<target state="final">Vous avez encore des modifications. Que voulez-vous faire avec ?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
 				<source>Selected element</source>
 			<target state="final">Élément sélectionné</target></trans-unit>
@@ -492,7 +492,7 @@
 			<target state="final">Ce texte ne doit pas dépasser {{maximum}} caractères.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="final">Seuls les caractères a à z et les nombres sont autorisés</target><alt-trans><target>Seuls les caractères de A à Z et les nombres sont autorisés.</target></alt-trans></trans-unit>
+			<target state="final">Seuls les caractères a à z et les nombres sont autorisés</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
 				<source>The given subject was not countable.</source>
 			<target state="final">Le sujet donné n'est pas dénombrable.</target></trans-unit>
@@ -522,7 +522,7 @@
 			<target state="final">Un nombre entier valide est attendu.</target></trans-unit>
       <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target state="final">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attentus.</target><alt-trans><target>Seules les lettres, les nombres, les espaces et certaines ponctuations sont attendues.</target></alt-trans></trans-unit>
+			<target state="final">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attentus.</target></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
 				<source>This property is required.</source>
 			<target state="final">Cette propriété est obligatoire.</target></trans-unit>
@@ -531,7 +531,7 @@
 			<target state="final">Un nombre valide est attendu.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target state="final">Veuillez entrer un nombre valide entre {{minimum}} et {{maximum}}</target><alt-trans><target>Veuillez entrer un numéro valide entre {{minimum}} et {{maximum}}</target></alt-trans></trans-unit>
+			<target state="final">Veuillez entrer un nombre valide entre {{minimum}} et {{maximum}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({pattern})</source>
 			<target state="final">Le sujet donné ne correspond pas au modèle ({{pattern}})</target></trans-unit>
@@ -564,7 +564,7 @@
 			<target state="translated">Créer un vide</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve" approved="yes">
 				<source>Create and copy</source>
-			<target state="final">Créer et copier</target><alt-trans><target>Créer et copie</target></alt-trans></trans-unit>
+			<target state="final">Créer et copier</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
 			<target state="final">Contenu</target></trans-unit>
@@ -576,10 +576,10 @@
 			<target state="final">Basculer le menu "sticky"</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target state="final">Confirmez-vous la suppression</target><alt-trans><target>Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
+			<target state="final">Confirmez-vous la suppression</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target state="final">Cet action supprimera l'élément</target><alt-trans><target>Cette action supprimera l'élément</target></alt-trans></trans-unit>
+			<target state="final">Cet action supprimera l'élément</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
 			<target state="final">et ses sous-éléments</target></trans-unit>
@@ -591,13 +591,13 @@
 			<target state="final">Hauteur</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target state="final">Confirmez-vous la suppression</target><alt-trans><target>Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
+			<target state="final">Confirmez-vous la suppression</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
 				<source>this element</source>
 			<target state="final">cet élément</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
 				<source>This will delete the element.</source>
-			<target state="final">Ceci supprimera l'élément.</target><alt-trans><target>Cet action supprimera l'élément.</target></alt-trans></trans-unit>
+			<target state="final">Ceci supprimera l'élément.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
 			<target state="final">Cette opération peut être annulée dans le module de l'espace de travail.</target></trans-unit>
@@ -609,10 +609,10 @@
 			<target state="final">Recadrer</target></trans-unit>
       <trans-unit id="width" xml:space="preserve" approved="yes">
 				<source>Width</source>
-			<target state="final">Largeur </target><alt-trans><target>Largeur</target></alt-trans></trans-unit>
+			<target state="final">Largeur </target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
 				<source>Missing required property: </source>
-			<target state="final">Propriété requise manquante: </target><alt-trans><target>Propriété requise manquante : </target></alt-trans></trans-unit>
+			<target state="final">Propriété requise manquante: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve" approved="yes">
 				<source>Workspace</source>
 			<target state="final">Espace de travail</target></trans-unit>
@@ -643,7 +643,7 @@
 			<target state="final">Mode de contenu brut</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
-			<target state="final">Ordinateur de bureau</target><alt-trans><target>Affichage ordinateur de bureau</target></alt-trans></trans-unit>
+			<target state="final">Ordinateur de bureau</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
@@ -659,7 +659,7 @@
 			<target state="final">Le nom d'utilisateur ou mot de passe entré est inconnu</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve" approved="yes">
 				<source>Your login has expired. Please log in again.</source>
-			<target state="final">Votre connexion a expiré. S'il vous plaît vous connecter à nouveau.</target><alt-trans><target>Votre session a expiré. Veuillez vous reconnecter.</target></alt-trans></trans-unit>
+			<target state="final">Votre connexion a expiré. S'il vous plaît vous connecter à nouveau.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
@@ -739,7 +739,7 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target state="translated">Copier {source} vers {target}</target><alt-trans><target>Copiez {source} vers {target}</target></alt-trans></trans-unit>
+			<target state="translated">Copier {source} vers {target}</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
 			<target state="translated">Déplacer {source} vers {target}</target></trans-unit>

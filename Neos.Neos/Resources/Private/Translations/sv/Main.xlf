@@ -14,7 +14,7 @@
 			<target state="translated">Granska ändringar</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Tillämpa</target><alt-trans><target>Utför</target></alt-trans></trans-unit>
+			<target state="translated">Tillämpa</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
 			<target state="translated">Tillämpa ändringar</target></trans-unit>
@@ -414,7 +414,7 @@
 			<target state="translated">Väntande ändringar</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target state="translated">Din personliga arbetsyta innehåller för närvarande opublicerade ändringar. För att växla till en annan arbetsyta måste du antingen publicera eller ignorera opublicerade ändringar först.</target><alt-trans><target>Din personliga arbetsyta innehåller för närvarande opublicerade ändringar. För att växla till en annan arbetsyta måste du antingen publicera eller kassera opublicerade ändringar först.</target></alt-trans></trans-unit>
+			<target state="translated">Din personliga arbetsyta innehåller för närvarande opublicerade ändringar. För att växla till en annan arbetsyta måste du antingen publicera eller ignorera opublicerade ändringar först.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
 			<target state="translated">Granska dina ändringar, publicera eller ignorera dem och välj sedan en ny arbetsyta igen.</target></trans-unit>
@@ -444,7 +444,7 @@
 			<target state="translated">Släng</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Tillämpa</target><alt-trans><target>Utför</target></alt-trans></trans-unit>
+			<target state="translated">Tillämpa</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target state="translated">Välj ett plugin</target></trans-unit>
@@ -492,7 +492,7 @@
 			<target state="translated">Denna text får ej överstiga {maximum} tecken.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Endast vanliga tecken (a till ö) och siffror är tillåtna.</target><alt-trans><target>Endast tecknen ifrån a till z och siffror tillåts</target></alt-trans></trans-unit>
+			<target state="translated">Endast vanliga tecken (a till ö) och siffror är tillåtna.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target state="translated">Det angivna ämnet är inte räkenbart.</target></trans-unit>
@@ -702,10 +702,10 @@
 			<target state="translated">Konfigurationen av den nodtyp som är tänkt för att återges här är inte tillgänglig. Förmodligen har du bytt namn på nodtypen och saknar en migrering eller du har helt enkelt felstavat det.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target state="translated">Oväntat fel när nod skapas</target><alt-trans><target>Oväntat fel när du skapar nod</target></alt-trans></trans-unit>
+			<target state="translated">Oväntat fel när nod skapas</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target state="translated">Oväntat fel när nod raderas</target><alt-trans><target>Oväntat fel när du raderar nod</target></alt-trans></trans-unit>
+			<target state="translated">Oväntat fel när nod raderas</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
 			<target state="translated">Oväntat fel när nod uppdateras</target></trans-unit>
