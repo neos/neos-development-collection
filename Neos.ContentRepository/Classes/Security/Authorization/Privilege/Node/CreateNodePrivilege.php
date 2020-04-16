@@ -62,7 +62,7 @@ class CreateNodePrivilege extends AbstractNodePrivilege
             return parent::matchesSubject($nodePrivilegeSubject);
         }
 
-        if ($subject->hasCreationNodeType() && $this->matchesNodeType($subject->getCreationNodeType())) {
+        if (!$subject->hasCreationNodeType() || $this->matchesNodeType($subject->getCreationNodeType())) {
             return parent::matchesSubject($subject);
         }
         return false;
