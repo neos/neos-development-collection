@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -48,24 +49,41 @@ class CreateNodePrivilege extends AbstractNodePrivilege
             if ($this->methodPrivilege->matchesSubject($subject) === false) {
                 return false;
             }
-
             $joinPoint = $subject->getJoinPoint();
-            $allowedCreationNodeTypes = $this->nodeContext->getCreationNodeTypes();
-            $actualNodeType = $joinPoint->getMethodName() === 'createNodeFromTemplate' ? $joinPoint->getMethodArgument('nodeTemplate')->getNodeType()->getName() : $joinPoint->getMethodArgument('nodeType')->getName();
-
-            if ($allowedCreationNodeTypes !== [] && !in_array($actualNodeType, $allowedCreationNodeTypes)) {
+            /** @var NodeType $actualNodeType */
+            $actualNodeType = $joinPoint->getMethodName() === 'createNodeFromTemplate' ? $joinPoint->getMethodArgument('nodeTemplate')->getNodeType() : $joinPoint->getMethodArgument('nodeType');
+            if (!$this->matchesNodeType($actualNodeType)) {
                 return false;
             }
 
             /** @var NodeInterface $node */
             $node = $joinPoint->getProxy();
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
-            $result = parent::matchesSubject($nodePrivilegeSubject);
-            return $result;
+            return parent::matchesSubject($nodePrivilegeSubject);
         }
 
-        if ($this->nodeContext->getCreationNodeTypes() === [] || ($subject->hasCreationNodeType() === false) || in_array($subject->getCreationNodeType()->getName(), $this->nodeContext->getCreationNodeTypes()) === true) {
+        if ($subject->hasCreationNodeType() && $this->matchesNodeType($subject->getCreationNodeType())) {
             return parent::matchesSubject($subject);
+        }
+        return false;
+    }
+
+    /**
+     * Whether this privilege matches the specified node type (including super types)
+     *
+     * @param NodeType $nodeType
+     * @return bool
+     */
+    private function matchesNodeType(NodeType $nodeType): bool
+    {
+        // no "createdNodeIsOfType" constraint => this privilege matches all node types
+        if ($this->nodeContext->getCreationNodeTypes() === []) {
+            return true;
+        }
+        foreach ($this->nodeContext->getCreationNodeTypes() as $nodeTypeName) {
+            if ($nodeType->isOfType($nodeTypeName)) {
+                return true;
+            }
         }
         return false;
     }
