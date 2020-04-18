@@ -5,7 +5,7 @@
       <trans-unit id="properties.hasCaption" xml:space="preserve">
 				<source>Enable caption</source>
 			<target state="translated">Aktivera bildtext</target></trans-unit>
-      <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
+      <trans-unit id="properties.caption.ui.inline.editorOptions.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
 			<target state="translated"><![CDATA[<p>Skriv in rubrik här</p>]]></target></trans-unit>
     </body>
