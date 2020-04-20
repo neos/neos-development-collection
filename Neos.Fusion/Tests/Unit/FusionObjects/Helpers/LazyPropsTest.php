@@ -23,7 +23,7 @@ class LazyPropsTest extends UnitTestCase
     {
         /** @var Runtime $mockRuntime */
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $mockRuntime->expects($this->any())->method('evaluate')->withAnyParameters()->willReturnCallback(function($path) {
+        $mockRuntime->expects($this->any())->method('evaluate')->withAnyParameters()->willReturnCallback(function ($path) {
             return $path;
         });
 
