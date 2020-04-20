@@ -8,7 +8,7 @@ use Neos\Fusion\Core\Runtime;
 /**
  * @Flow\Proxy(false)
  */
-final class LazyProps implements \ArrayAccess, \Iterator
+final class LazyProps implements \ArrayAccess, \Iterator, \JsonSerializable
 {
 
     /**
@@ -112,5 +112,10 @@ final class LazyProps implements \ArrayAccess, \Iterator
     public function rewind()
     {
         reset($this->keys);
+    }
+
+    public function jsonSerialize()
+    {
+        return iterator_to_array($this);
     }
 }
