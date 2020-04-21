@@ -26,7 +26,7 @@
                             <span></span> {neos:backend.translate(id: 'replace.options.keepOriginalFilename', arguments: {0: asset.resource.filename}, package: 'Neos.Media.Browser')}
                         </label>
                     </div>
-                    <f:if condition="{redirectPackageEnabled}">
+                    <f:if condition="{createAssetRedirectsOptionEnabled}">
                         <div>
                             <label class="neos-checkbox neos-inline">
                                 <f:form.checkbox name="options[generateRedirects]" value="1" checked="true"/>
