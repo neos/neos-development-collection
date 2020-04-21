@@ -318,7 +318,7 @@ class AssetController extends ActionController
         $this->view->assignMultiple([
             'asset' => $asset,
             'maximumFileUploadSize' => $maximumFileUploadSize,
-            'redirectPackageEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler'),
+            'createAssetRedirectsOptionEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler') && $this->settings['features']['createAssetRedirectsOption']['enable'],
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
         ]);
     }
