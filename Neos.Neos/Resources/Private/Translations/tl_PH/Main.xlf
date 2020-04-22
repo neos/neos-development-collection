@@ -122,7 +122,7 @@
 			<target state="translated">Idikit</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target state="translated">Idikit Pagkatapos</target><alt-trans><target>Idikit pagkatapos</target></alt-trans></trans-unit>
+			<target state="translated">Idikit Pagkatapos</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
 			<target state="translated">Idikit Bago</target></trans-unit>

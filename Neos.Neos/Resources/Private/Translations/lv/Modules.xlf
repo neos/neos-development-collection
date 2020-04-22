@@ -32,13 +32,13 @@
 			<target state="final">Dzēst darba virsmu</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace</source>
-			<target state="final">Rediģēt darba virsmu</target><alt-trans><target>rediģet darba virsmu</target></alt-trans></trans-unit>
+			<target state="final">Rediģēt darba virsmu</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Yes, delete the workspace</source>
 			<target state="final">Jā, dzēst darba virsmu</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace "{0}"</source>
-			<target state="final">Rediģēt darba virsmu</target><alt-trans><target>rediģet darba virsmu</target></alt-trans></trans-unit>
+			<target state="final">Rediģēt darba virsmu</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
 				<source>Personal workspace</source>
 			<target state="final">Personāla darba virsma</target></trans-unit>
@@ -107,10 +107,10 @@
 			<target state="final">Ar šo tiks izdzēsta darba virsma, ieskaitot visu nepublicētu saturu. Šo darbību nevar atsaukt.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target state="final">Šis modulis ietver visu esošās darbav virsmas elementu pārskatu, dod iespēju tos komentēt un publicēt.</target><alt-trans><target>Šis modulis ietver visu esošās darbavirsmas elementu pārskatu, dod iespēju tos komentēt un publicēt.</target></alt-trans><alt-trans><target>Šis modulis ietver visu darbavirsmas elementu apskatu, dod iespēju tos komentēt un publicēt.</target></alt-trans></trans-unit>
+			<target state="final">Šis modulis ietver visu esošās darbav virsmas elementu pārskatu, dod iespēju tos komentēt un publicēt.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes in workspace "{0}"</source>
-			<target state="final">Nepublicētās izmaiņas darba vietā "{0}"</target><alt-trans><target>Nepublicētās izmaiņas</target></alt-trans></trans-unit>
+			<target state="final">Nepublicētās izmaiņas darba vietā "{0}"</target></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
 			<target state="final">papildinājumi: {new}, izmaiņas: {changed}, noņemšana: {removed}</target></trans-unit>
@@ -125,7 +125,7 @@
 			<target state="final">Publicēt iezīmētās izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target state="final">Atcelt visas izmaiņas</target><alt-trans><target>Atmest visas izmaiņas</target></alt-trans></trans-unit>
+			<target state="final">Atcelt visas izmaiņas</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target state="final">Publicēt visas izmaiņas</target></trans-unit>
@@ -296,7 +296,7 @@
 			<target state="final">Rediģēt kontu</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target state="final">Jaunā elektroniskā adrese</target><alt-trans><target>Jauna elektroniskā adrese</target></alt-trans></trans-unit>
+			<target state="final">Jaunā elektroniskā adrese</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
 			<target state="final">Izmantot sistēmas noklusējumu</target></trans-unit>
@@ -320,7 +320,7 @@
 			<target state="final">Atkārtot paroli</target></trans-unit>
       <trans-unit id="users.new.userData.roles" xml:space="preserve" approved="yes">
 				<source>Role(s)</source>
-			<target state="final">Loma (s)</target><alt-trans><target>Loma(s)</target></alt-trans></trans-unit>
+			<target state="final">Loma (s)</target></trans-unit>
       <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve" approved="yes">
 				<source>Authentication Provider</source>
 			<target state="final">Autentifikācijas sniedzējs</target></trans-unit>
@@ -341,7 +341,7 @@
 			<target state="final">Lietotāja uzstādījumi</target></trans-unit>
       <trans-unit id="users.new.userPreferences.interfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Interface Language</source>
-			<target state="final">Vadības valoda</target><alt-trans><target>Saskarnes valoda</target></alt-trans></trans-unit>
+			<target state="final">Vadības valoda</target></trans-unit>
       <trans-unit id="users.new.createButton" xml:space="preserve" approved="yes">
 				<source>Create user</source>
 			<target state="final">Izveidot lietotāju</target></trans-unit>
@@ -392,10 +392,10 @@
 			<target state="final">Rediģēt lietotāju</target></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target state="final">Ja esiet reģistrējies kā lietotājs, tad savus ievadītos datus jūs nevarat izdzēst.</target><alt-trans><target>Jūs esat ienācis kā šis lietotājs un sevi izdzēst nevar.</target></alt-trans><alt-trans><target>Jūs nevarat izdzēst savus ievadītos datus.</target></alt-trans></trans-unit>
+			<target state="final">Ja esiet reģistrējies kā lietotājs, tad savus ievadītos datus jūs nevarat izdzēst.</target></trans-unit>
       <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve" approved="yes">
 				<source>Click here to delete this user</source>
-			<target state="final">Uzklikšķiniet šeit lai izdzēstu šo lietotāju</target><alt-trans><target>Uzklikšķiniet šeit, lai izdzēstu šo lietotāju</target></alt-trans></trans-unit>
+			<target state="final">Uzklikšķiniet šeit lai izdzēstu šo lietotāju</target></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
 			<target state="final">Vai tiešām vēlaties dzēst lietotāju "{0}"?</target></trans-unit>
@@ -440,13 +440,13 @@
 			<target state="translated">Skatīt lietotāju</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve" approved="yes">
 				<source>Edit user</source>
-			<target state="final">Rediģēt lietotāju</target><alt-trans><target>Labot lietotāju</target></alt-trans></trans-unit>
+			<target state="final">Rediģēt lietotāju</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete user</source>
 			<target state="final">Dzēst lietotāju</target></trans-unit>
       <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target state="final">Ja esiet reģistrējies kā lietotājs, tad savus ievadītos datus jūs nevarat izdzēst.</target><alt-trans><target>Jūs esat ienācis kā šis lietotājs un sevi izdzēst nevar.</target></alt-trans><alt-trans><target>Jūs nevarat izdzēst savus ievadītos datus.</target></alt-trans></trans-unit>
+			<target state="final">Ja esiet reģistrējies kā lietotājs, tad savus ievadītos datus jūs nevarat izdzēst.</target></trans-unit>
       <trans-unit id="users.message.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
 			<target state="final">Vai tiešām vēlaties dzēst lietotāju "{0}"?</target></trans-unit>
@@ -467,7 +467,7 @@
 			<target state="final">Darbs</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
-			<target state="final">Pakotnes pārvaldība</target><alt-trans><target>Moduļu pārvaldība</target></alt-trans><alt-trans><target>Moduļu vadība</target></alt-trans></trans-unit>
+			<target state="final">Pakotnes pārvaldība</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve" approved="yes">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
 			<target state="final">Pakotnes vadības modulis sniedz pārskatu par visām pakotnēm. Ar to jūs varat aktivizēt un deaktivizēt pakotnes, importēt jaunas pakotnes un izdzēst esošās. Tas dod iespēju ieslēgt un izslēgt pakotnes izstrādes kontekstā.</target></trans-unit>
@@ -581,7 +581,7 @@
 			<target state="translated">Vai jūs tiešām vēlaties dzēst "{0}"? Šo darbību nav iespējams atsaukt.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target state="translated">Jā, dzēst vietni</target><alt-trans><target>Jā, dzēst pakotni</target></alt-trans></trans-unit>
+			<target state="translated">Jā, dzēst vietni</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
 			<target state="translated">Importēt vietni</target></trans-unit>
@@ -641,7 +641,7 @@
 			<target state="translated">Izveidot</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
-			<target state="final">Konfigurācija</target><alt-trans><target>Iestatījumi</target></alt-trans></trans-unit>
+			<target state="final">Konfigurācija</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve" approved="yes">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target state="final">Iestatījuma modulis dod pārskatu par visiem iestatījuma veidiem.</target></trans-unit>
@@ -650,13 +650,13 @@
 			<target state="final">Izmēri</target></trans-unit>
       <trans-unit id="dimensions.description" xml:space="preserve">
 				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
-			<target state="translated">Piešķir grafisko pārskatu par konfigurētajiem elementu savienojumiem katrai satura dimensijai.</target><alt-trans><target>Piešķir grafisko pārskatu par konfigurētajiem atkāpēm katrai satura dimensijai.</target></alt-trans></trans-unit>
+			<target state="translated">Piešķir grafisko pārskatu par konfigurētajiem elementu savienojumiem katrai satura dimensijai.</target></trans-unit>
       <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
 				<source>Inter dimensional fallback graph</source>
-			<target state="translated">Elementu savstarpējo savienojumu diagramma</target><alt-trans><target>Interdimensionāla atgriezeniskā diagramma</target></alt-trans></trans-unit>
+			<target state="translated">Elementu savstarpējo savienojumu diagramma</target></trans-unit>
       <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
 				<source>Inter dimensional</source>
-			<target state="translated">Elementu ārējie savienojumi</target><alt-trans><target>Intradimensionāls</target></alt-trans><alt-trans><target>Interdimensionāls</target></alt-trans></trans-unit>
+			<target state="translated">Elementu ārējie savienojumi</target></trans-unit>
       <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
@@ -669,7 +669,7 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
 			<target state="translated">Elementu savstarpējo savienojumu diagramma</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
 				<source>Intra dimensional</source>
-			<target state="translated">Elementu iekšējie savienojumi</target><alt-trans><target>Intradimensionāls</target></alt-trans></trans-unit>
+			<target state="translated">Elementu iekšējie savienojumi</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
 			<target state="translated">Satura dimensijas elementu savstarpējo savienojumu diagramma.</target></trans-unit>
@@ -682,7 +682,7 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
 			<target state="final">Lietotāja iestatījumi</target></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve" approved="yes">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target state="final">Šis modulis ļauj pielāgot redaktora lietotāja profilu. Šeit jūs varat mainīt aktīvo sistēmas valodu, vārdu un e-pasta adresi. Jūs varat konfigurēt arī citas iespējas sistēmā.</target><alt-trans><target>Šis modulis ļauj pielāgot redaktora lietotāja profilu. Šeit jūs varat mainīt aktīvo sistēmas valodu, vārdu un e-pasta adresi. Jūs varat konfigurēt arī citas sistēmas iespējas.</target></alt-trans></trans-unit>
+			<target state="final">Šis modulis ļauj pielāgot redaktora lietotāja profilu. Šeit jūs varat mainīt aktīvo sistēmas valodu, vārdu un e-pasta adresi. Jūs varat konfigurēt arī citas iespējas sistēmā.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve" approved="yes">
 				<source>Edit</source>
 			<target state="final">Labot</target></trans-unit>
@@ -691,7 +691,7 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
 			<target state="final">Labot</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target state="final">Jaunā elektroniskā adrese</target><alt-trans><target>Jauna elektroniskā adrese</target></alt-trans></trans-unit>
+			<target state="final">Jaunā elektroniskā adrese</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
 			<target state="final">Rediģēt kontu</target></trans-unit>
@@ -709,7 +709,7 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
 			<target state="final">Lietotāja uzstādījumi</target></trans-unit>
       <trans-unit id="userSettings.preferences.interfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Interface Language</source>
-			<target state="final">Vadības valoda</target><alt-trans><target>Saskarnes valoda</target></alt-trans></trans-unit>
+			<target state="final">Vadības valoda</target></trans-unit>
       <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
 			<target state="final">Izmantot sistēmas noklusējumu</target></trans-unit>
@@ -739,7 +739,7 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
 			<target state="final">Uzklikšķiniet, lai pievienotu jaunu elektronisko adresi</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
-			<target state="final">Pievienot elektronisko adresi</target><alt-trans><target>Elektroniskās adreses pievienošana</target></alt-trans></trans-unit>
+			<target state="final">Pievienot elektronisko adresi</target></trans-unit>
       <trans-unit id="userSettings.saveUser" xml:space="preserve" approved="yes">
 				<source>Save User</source>
 			<target state="final">Saglabāt lietotāju</target></trans-unit>

@@ -13,7 +13,7 @@
 			<target state="translated">快捷方式选项</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target state="translated">打开方式</target><alt-trans><target>目标模式</target></alt-trans></trans-unit>
+			<target state="translated">打开方式</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve">
 				<source>Target</source>
 			<target state="translated">目标</target></trans-unit>
@@ -25,7 +25,7 @@
 			<target state="translated">父节点</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
-			<target state="translated">已选定的目标</target><alt-trans><target>选定的目标</target></alt-trans></trans-unit>
+			<target state="translated">已选定的目标</target></trans-unit>
     </body>
   </file>
 </xliff>

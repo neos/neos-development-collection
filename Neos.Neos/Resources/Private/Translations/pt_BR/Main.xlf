@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target state="translated">Auto-Publicar</target><alt-trans><target>Publicar automaticamente</target></alt-trans></trans-unit>
+			<target state="translated">Auto-Publicar</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target state="translated">Auto-publicar em {0}</target></trans-unit>
@@ -26,7 +26,7 @@
 			<target state="translated">Voltar</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target state="translated">Escolher</target><alt-trans><target>escolher</target></alt-trans></trans-unit>
+			<target state="translated">Escolher</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
 			<target state="translated">Escreva pra procurar</target></trans-unit>
@@ -98,7 +98,7 @@
 			<target state="translated">depois</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target state="translated">Carregando</target><alt-trans><target>carregando</target></alt-trans></trans-unit>
+			<target state="translated">Carregando</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 			<target state="translated">Novo Depois</target></trans-unit>
@@ -116,7 +116,7 @@
 			<target state="translated">ok</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target state="translated">Página</target><alt-trans><target>página</target></alt-trans></trans-unit>
+			<target state="translated">Página</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
 			<target state="translated">Colar</target></trans-unit>
@@ -146,7 +146,7 @@
 			<target state="translated">Publicar todas as alterações da página atual</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target state="translated">Não foi possível publicar porque o espaço de trabalho de destino tem acesso somente leitura</target><alt-trans><target>Não pode publicar porque o espaço de trabalho de destino é somente leitura</target></alt-trans></trans-unit>
+			<target state="translated">Não foi possível publicar porque o espaço de trabalho de destino tem acesso somente leitura</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
 			<target state="translated">Selecione o espaço de trabalho de destino</target></trans-unit>
@@ -176,7 +176,7 @@
 			<target state="translated">Salvar</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target state="translated">Salvando</target><alt-trans><target>Salvando...</target></alt-trans></trans-unit>
+			<target state="translated">Salvando</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
 			<target state="translated">Salvo</target></trans-unit>
@@ -254,7 +254,7 @@
 			<target state="translated">Selecione um nó</target></trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
-			<target state="translated">O nó raíz não pode ser removido.</target><alt-trans><target>O nó raíz não pode ser apagado.</target></alt-trans></trans-unit>
+			<target state="translated">O nó raíz não pode ser removido.</target></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
 			<target state="translated">Você não pode copiar este nó</target></trans-unit>
@@ -540,7 +540,7 @@
 			<target state="translated">Espera-se caracteres válidos.</target></trans-unit>
       <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
 				<source>Valid text without any XML tags is expected.</source>
-			<target state="translated">Texto válido sem quaisquer tags XML é esperado.</target><alt-trans><target>Texto válido sem quaisquer marcas XML é esperado.</target></alt-trans></trans-unit>
+			<target state="translated">Texto válido sem quaisquer tags XML é esperado.</target></trans-unit>
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
 				<source>The given subject is not a valid UUID.</source>
 			<target state="translated">O determinado assunto não é um válido UUID.</target></trans-unit>
@@ -787,7 +787,7 @@
 			<target state="translated">Alinhar à esquerda</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
 				<source>Align right</source>
-			<target state="translated">Alinhar à direita</target><alt-trans><target>Alinhar a direita</target></alt-trans></trans-unit>
+			<target state="translated">Alinhar à direita</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
 			<target state="translated">Alinhar ao centro</target></trans-unit>
@@ -802,10 +802,10 @@
 			<target state="translated">Remover formatação</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target state="translated">Desindentar</target><alt-trans><target>Desidentar</target></alt-trans></trans-unit>
+			<target state="translated">Desindentar</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target state="translated">Indentar</target><alt-trans><target>Identar</target></alt-trans></trans-unit>
+			<target state="translated">Indentar</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target state="translated">Criar novo</target></trans-unit>

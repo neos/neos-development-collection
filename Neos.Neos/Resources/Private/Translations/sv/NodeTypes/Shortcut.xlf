@@ -7,10 +7,10 @@
 			<target state="translated">Genväg</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target state="translated">Genvägsalternativ</target><alt-trans><target>Genvägen alternativ</target></alt-trans></trans-unit>
+			<target state="translated">Genvägsalternativ</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target state="translated">Genvägsalternativ</target><alt-trans><target>Genvägen alternativ</target></alt-trans></trans-unit>
+			<target state="translated">Genvägsalternativ</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
 			<target state="translated">Målläge</target></trans-unit>

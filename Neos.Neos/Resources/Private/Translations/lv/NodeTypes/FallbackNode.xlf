@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Invalid node</source>
-			<target state="final">Nepareizs mezgls</target><alt-trans><target>Nepareizs savienojums</target></alt-trans></trans-unit>
+			<target state="final">Nepareizs mezgls</target></trans-unit>
     </body>
   </file>
 </xliff>

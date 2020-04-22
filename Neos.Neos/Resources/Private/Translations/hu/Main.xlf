@@ -89,7 +89,7 @@
 			<target state="translated">Felfedés</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target state="translated">ide</target><alt-trans><target>ebbe</target></alt-trans></trans-unit>
+			<target state="translated">ide</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
 			<target state="translated">előtt</target></trans-unit>
@@ -215,7 +215,7 @@
 			<target state="translated">Ez a művelet nem vonható vissza.</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target state="translated">Tartalom</target><alt-trans><target>Eszköz</target></alt-trans></trans-unit>
+			<target state="translated">Tartalom</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
 			<target state="translated">Létrehozva</target></trans-unit>
@@ -390,7 +390,7 @@
 			<target state="translated">Oldal megnyitása a cél munkaterületben</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target state="translated">Összes elvetése</target><alt-trans><target>Összes módosítás eldobása</target></alt-trans></trans-unit>
+			<target state="translated">Összes elvetése</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target state="translated">Összes változtatás elvetése</target></trans-unit>

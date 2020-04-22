@@ -19,7 +19,7 @@
 			<target state="translated">Ім'я</target></trans-unit>
       <trans-unit id="field.title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target><alt-trans><target>Назва</target></alt-trans></trans-unit>
+			<target state="translated">Заголовок</target></trans-unit>
       <trans-unit id="field.label" xml:space="preserve">
 				<source>Label</source>
 			<target state="needs-translation">Label</target></trans-unit>
@@ -103,7 +103,7 @@
 			<target state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="translated">Відмінити</target><alt-trans><target>Скасувати</target></alt-trans></trans-unit>
+			<target state="translated">Відмінити</target></trans-unit>
       <trans-unit id="replace" xml:space="preserve">
 				<source>Replace</source>
 			<target state="translated">Замінити</target></trans-unit>
@@ -292,7 +292,7 @@
 			<target state="needs-translation">Identifier</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target><alt-trans><target>Назва</target></alt-trans></trans-unit>
+			<target state="translated">Заголовок</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve">
 				<source>Caption</source>
 			<target state="translated">Заголовок</target></trans-unit>

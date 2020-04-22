@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target state="translated">Seret dan lepaskan aset di koleksi / tag untuk menambahkannya ke tag.</target><alt-trans><target>Drag dan drop aset pada koleksi / tag untuk menambahkannya.</target></alt-trans></trans-unit>
+			<target state="translated">Seret dan lepaskan aset di koleksi / tag untuk menambahkannya ke tag.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target state="translated">Simpan nama file " {0} "</target><alt-trans><target>Menjaga nama file "{0}"</target></alt-trans></trans-unit>
+			<target state="translated">Simpan nama file " {0} "</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve">
 				<source>Media</source>
 			<target state="translated">Media</target></trans-unit>
       <trans-unit id="module.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target state="translated">This module allows managing of media assets including pictures, videos, audio and documents.</target><alt-trans><target>Modul ini memungkinkan pengelolaan aset media termasuk gambar, video, audio dan dokumen.</target></alt-trans></trans-unit>
+			<target state="translated">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
       <trans-unit id="field.name" xml:space="preserve">
 				<source>Name</source>
 			<target state="translated">Nama</target></trans-unit>
@@ -61,10 +61,10 @@
 			<target state="translated">Menurun</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="translated">Urutkan Menaik</target><alt-trans><target>Urutkan arah Ascending</target></alt-trans></trans-unit>
+			<target state="translated">Urutkan Menaik</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="translated">Urutkan Menurun</target><alt-trans><target>Urutkan arah Descending</target></alt-trans></trans-unit>
+			<target state="translated">Urutkan Menurun</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="translated">Drag dan drop pada tag atau koleksi</target></trans-unit>
@@ -109,7 +109,7 @@
 			<target state="translated">Gantikan</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="translated">Mengganti sumber aset</target><alt-trans><target>Ganti sumber daya aset</target></alt-trans></trans-unit>
+			<target state="translated">Mengganti sumber aset</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target state="translated">Simpan</target></trans-unit>
@@ -238,10 +238,10 @@
 			<target state="translated">Semua</target></trans-unit>
       <trans-unit id="untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
-			<target state="translated">Tidak men-tag aset</target><alt-trans><target>Aset yang tidak ditandai</target></alt-trans></trans-unit>
+			<target state="translated">Tidak men-tag aset</target></trans-unit>
       <trans-unit id="untagged" xml:space="preserve">
 				<source>Untagged</source>
-			<target state="translated">Tidak di tag</target><alt-trans><target>Tidak Menandai</target></alt-trans></trans-unit>
+			<target state="translated">Tidak di tag</target></trans-unit>
       <trans-unit id="maxUploadSize" xml:space="preserve">
 				<source>Max. upload size {0} per file</source>
 			<target state="translated">Max. Ukuran upload {0} setiap file</target></trans-unit>
@@ -349,7 +349,7 @@
 			<target state="translated">Referensi untuk "{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target state="translated">Ganti " {nama} "</target><alt-trans><target>Ganti " {filename} "</target></alt-trans></trans-unit>
+			<target state="translated">Ganti " {nama} "</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
 			<target state="translated">Anda dapat mengganti aset ini dengan mengupload file baru. Setelah diganti, aset baru akan digunakan di semua tempat di mana aset tersebut digunakan di situs web Anda.</target></trans-unit>
@@ -418,13 +418,13 @@
 			<target state="translated">Menghasilkan pengalihan dari url file asli ke url baru</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="translated">'Sumber tipe "{0}" hanya bisa diganti oleh sumber yang sama. Dapatkan tipe "{1}"'</target><alt-trans><target>'Sumber daya tipe " {0} " hanya bisa diganti dengan sumber daya yang serupa. Punya tipe " {1} " '</target></alt-trans></trans-unit>
+			<target state="translated">'Sumber tipe "{0}" hanya bisa diganti oleh sumber yang sama. Dapatkan tipe "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target state="translated">Tidak bisa mengakses bidang kerja " {0} "</target><alt-trans><target>Tidak ada akses ke ruang kerja " {0} "</target></alt-trans></trans-unit>
+			<target state="translated">Tidak bisa mengakses bidang kerja " {0} "</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="translated">Tak ditemukan node dokumen untuk node ini</target><alt-trans><target>Tak ditemukan simpul dokumen untuk simpul ini</target></alt-trans><alt-trans><target>Tidak ada simpul dokumen yang ditemukan untuk node ini</target></alt-trans></trans-unit>
+			<target state="translated">Tak ditemukan node dokumen untuk node ini</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -109,7 +109,7 @@
 			<target state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="translated">Subtituir o recurso do ativo</target><alt-trans><target>Subtituir o recurso do activo</target></alt-trans></trans-unit>
+			<target state="translated">Subtituir o recurso do ativo</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target state="needs-translation">Save</target></trans-unit>
@@ -428,7 +428,7 @@
 			<target state="translated">Sem acesso ao espaço de trabalho "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="translated">Não foi encontrado nenhum documento de nó para este nó</target><alt-trans><target>Não foi encontrado nenhum documento node para este node</target></alt-trans></trans-unit>
+			<target state="translated">Não foi encontrado nenhum documento de nó para este nó</target></trans-unit>
     </body>
   </file>
 </xliff>

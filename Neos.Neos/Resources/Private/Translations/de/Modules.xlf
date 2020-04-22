@@ -23,7 +23,7 @@
 			<target state="final">Details für "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
 				<source>Create new workspace</source>
-			<target state="final">Neuen Arbeitsbereich erstellen</target><alt-trans><target>Erstelle neuen Arbeitsbereich</target></alt-trans></trans-unit>
+			<target state="final">Neuen Arbeitsbereich erstellen</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve" approved="yes">
 				<source>Create workspace</source>
 			<target state="final">Arbeitsbereich erstellen</target></trans-unit>
@@ -62,7 +62,7 @@
 			<target state="final">Basis-Arbeitsbereich</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
 				<source>Owner</source>
-			<target state="final">Besitzer</target><alt-trans><target>Eigentümer</target></alt-trans></trans-unit>
+			<target state="final">Besitzer</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
 			<target state="final">Sichtbarkeit</target></trans-unit>
@@ -71,7 +71,7 @@
 			<target state="final">Privat</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target state="final">Nur Reviewer und Administratoren können auf diesen Arbeitsbereich zugreifen und ihn bearbeiten</target><alt-trans><target>Nur Gutachter und Administratoren können auf diesen Arbeitsbereich zugreifen und ihn bearbeiten</target></alt-trans></trans-unit>
+			<target state="final">Nur Reviewer und Administratoren können auf diesen Arbeitsbereich zugreifen und ihn bearbeiten</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
 				<source>Internal</source>
 			<target state="final">Intern</target></trans-unit>
@@ -83,7 +83,7 @@
 			<target state="final">Änderungen</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
 				<source>Open page in "{0}" workspace</source>
-			<target state="final">Seite in Arbeitsbereich "{0}" öffnen</target><alt-trans><target>Seite in "{0}" Arbeitsbereich öffnen</target></alt-trans></trans-unit>
+			<target state="final">Seite in Arbeitsbereich "{0}" öffnen</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target state="final">Dies ist Ihr persönlicher Arbeitsbereich, welcher nicht gelöscht werden kann.</target></trans-unit>
@@ -92,10 +92,10 @@
 			<target state="final">Der Arbeitsbereich enthält Änderungen. Um ihn zu löschen, müssen die Änderungen zuerst verworfen werden.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target state="final">Der Arbeitsbereich kann nicht auf einen anderen Basis-Arbeitsbereich umgestellt werden, da er noch Änderungen enthält.</target><alt-trans><target>Arbeitsbereich kann nicht auf einen anderen Arbeitsbereich zurückgesetzt werden, da er noch Änderungen enthält.</target></alt-trans></trans-unit>
+			<target state="final">Der Arbeitsbereich kann nicht auf einen anderen Basis-Arbeitsbereich umgestellt werden, da er noch Änderungen enthält.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve" approved="yes">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
-			<target state="final">Der Arbeitsbereich kann nicht gelöscht werden, da andere Arbeitsbereiche auf ihm basieren.</target><alt-trans><target>Der Arbeitsbereich kann nicht gelöscht werden, da andere Arbeitsbereiche von ihm abhängen.</target></alt-trans></trans-unit>
+			<target state="final">Der Arbeitsbereich kann nicht gelöscht werden, da andere Arbeitsbereiche auf ihm basieren.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve" approved="yes">
 				<source>You don't have the permissions for deleting this workspace.</source>
 			<target state="final">Sie haben nicht die Berechtigung diesen Arbeitsbereich zu löschen.</target></trans-unit>
@@ -104,13 +104,13 @@
 			<target state="final">Wollen Sie wirklich den Arbeitsbereich "{0}" löschen?</target></trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve" approved="yes">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
-			<target state="final">Dadurch wird der Arbeitsbereich einschließlich aller unveröffentlichten Inhalte gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.</target><alt-trans><target>Dadurch wird der Arbeitsbereich einschließlich aller unveröffentlichter Inhalte gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.</target></alt-trans></trans-unit>
+			<target state="final">Dadurch wird der Arbeitsbereich einschließlich aller unveröffentlichten Inhalte gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target state="final">Dieses Modul bietet einen Überblick aller geänderter Inhalte des aktuellen Workspaces und ermöglicht deren Kontrolle und Veröffentlichung.</target><alt-trans><target>Dieses Modul bietet einen Überblick aller geänderter Inhalte des aktuellen Arbeitsbereichs und ermöglicht deren Kontrolle und Veröffentlichung.</target></alt-trans><alt-trans><target>Dieses Modul bietet einen Überblick aller geänderten Inhalte des aktuellen Workspaces und ermöglicht deren Kontrolle und Veröffentlichung.</target></alt-trans></trans-unit>
+			<target state="final">Dieses Modul bietet einen Überblick aller geänderter Inhalte des aktuellen Workspaces und ermöglicht deren Kontrolle und Veröffentlichung.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes in workspace "{0}"</source>
-			<target state="final">Unveröffentlichte Änderungen im Arbeitsbereich "{0}"</target><alt-trans><target>Unveröffentlichte Änderungen</target></alt-trans></trans-unit>
+			<target state="final">Unveröffentlichte Änderungen im Arbeitsbereich "{0}"</target></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
 			<target state="final">Ergänzungen: {new}, Änderungen: {changed}, Entfernungen: {removed}</target></trans-unit>
@@ -131,7 +131,7 @@
 			<target state="final">Alle Änderungen veröffentlichen</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve" approved="yes">
 				<source>Publish all changes to {0}</source>
-			<target state="final">Alle Änderungen nach {0} veröffentlichen</target><alt-trans><target>Alle Änderungen in {0} veröffentlichen</target></alt-trans></trans-unit>
+			<target state="final">Alle Änderungen nach {0} veröffentlichen</target></trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
 				<source>Changed Content</source>
 			<target state="final">Geänderter Inhalt</target></trans-unit>
@@ -143,13 +143,13 @@
 			<target state="final">erstellt</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
 				<source>moved</source>
-			<target state="final">erstellt</target><alt-trans><target>verschoben</target></alt-trans></trans-unit>
+			<target state="final">erstellt</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
 				<source>hidden</source>
-			<target state="final">erstellt</target><alt-trans><target>versteckt</target></alt-trans></trans-unit>
+			<target state="final">erstellt</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>edited</source>
-			<target state="final">erstellt</target><alt-trans><target>bearbeitet</target></alt-trans></trans-unit>
+			<target state="final">erstellt</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target state="final">In diesem Arbeitsbereich gibt es keine unveröffentlichten Änderungen.</target></trans-unit>
@@ -171,9 +171,6 @@
       <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes" approved="yes">
         <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
         <target state="final">Fehler beim Abrufen der unveröffentlichten Elemente des Arbeitsbereichs "{0}", es wurde nichts gelöscht.</target>
-        <alt-trans>
-          <target>Fehler beim Abrufen der unveröffentlichten Knoten des Arbeitsbereichs "{0}", es wurde nichts gelöscht.</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges" approved="yes">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
@@ -222,13 +219,13 @@
 			<target state="final">Verlauf</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve" approved="yes">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target state="final">Dieses Modul bietet einen Überblick über alle relevanten Ereignisse die diese Neos-Installation betreffen.</target><alt-trans><target>Dieses Modul bietet einen Überblick über alle relevanten Ereignisse, die diese Neos-Installation betreffen.</target></alt-trans></trans-unit>
+			<target state="final">Dieses Modul bietet einen Überblick über alle relevanten Ereignisse die diese Neos-Installation betreffen.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos</source>
-			<target state="final">Dies ist kürzlich in Neos geschehen:</target><alt-trans><target>Dies ist kürzlich im Neos geschehen</target></alt-trans></trans-unit>
+			<target state="final">Dies ist kürzlich in Neos geschehen:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target state="final">Es wurden noch keine Ereignisse aufgezeichnet die in diesem Verlauf dargestellt werden könnten.</target><alt-trans><target>Es wurden noch keine Ereignisse aufgezeichnet, die in diesem Verlauf dargestellt werden könnten.</target></alt-trans></trans-unit>
+			<target state="final">Es wurden noch keine Ereignisse aufgezeichnet die in diesem Verlauf dargestellt werden könnten.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
 				<source>{0} created the {1} "{2}".</source>
 			<target state="final">{0} hat {1} "{2}" erstellt.</target></trans-unit>
@@ -261,10 +258,10 @@
 			<target state="final">{0} hat den Benutzer "{1}" von {2} gelöscht.</target></trans-unit>
       <trans-unit id="history.loadMore.label" xml:space="preserve" approved="yes">
 				<source>Load More</source>
-			<target state="final">Mehr laden</target><alt-trans><target>Mehr Laden</target></alt-trans></trans-unit>
+			<target state="final">Mehr laden</target></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve" approved="yes">
 				<source>This node has been removed in the meantime</source>
-			<target state="final">Dieser Node wurde in der Zwischenzeit entfernt</target><alt-trans><target>Diese Node wurde in der Zwischenzeit entfernt</target></alt-trans><alt-trans><target>Dieser Knoten wurde in der Zwischenzeit entfernt</target></alt-trans></trans-unit>
+			<target state="final">Dieser Node wurde in der Zwischenzeit entfernt</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
@@ -277,7 +274,7 @@
 			<target state="final">Benutzerverwaltung</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve" approved="yes">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target state="final">Das Benutzerverwaltungs-Modul bietet Ihnen einen Überblick über alle vorhandenen Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeug, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target><alt-trans><target>Das Benutzerverwaltungs-Modul bietet Ihnen einen Überblick über alle vorhandenen Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeug, um sicherzustellen, dass die Benutzer ordnungsgemäß konfiguriert sind.</target></alt-trans></trans-unit>
+			<target state="final">Das Benutzerverwaltungs-Modul bietet Ihnen einen Überblick über alle vorhandenen Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeug, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve" approved="yes">
 				<source>Overview</source>
 			<target state="final">Übersicht</target></trans-unit>
@@ -292,7 +289,7 @@
 			<target state="final">Bearbeiten</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="final">Konto bearbeiten</target><alt-trans><target>Account bearbeiten</target></alt-trans></trans-unit>
+			<target state="final">Konto bearbeiten</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
 			<target state="final">Neue elektronische Adresse</target></trans-unit>
@@ -403,7 +400,7 @@
 			<target state="final">Ja, den Benutzer löschen</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="final">Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte gelöscht.</target><alt-trans><target>Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte, gelöscht.</target></alt-trans></trans-unit>
+			<target state="final">Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte gelöscht.</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
 			<target state="final">Dieser Vorgang kann nicht rückgängig gemacht werden</target></trans-unit>
@@ -412,16 +409,16 @@
 			<target state="final">Benutzer "{accountIdentifier}" bearbeiten</target></trans-unit>
       <trans-unit id="users.account" xml:space="preserve" approved="yes">
 				<source>Account</source>
-			<target state="final">Benutzerkonto</target><alt-trans><target>Benutzer</target></alt-trans></trans-unit>
+			<target state="final">Benutzerkonto</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target state="final">Benutzername</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve" approved="yes">
 				<source>The username can't be changed via the user interface</source>
-			<target state="final">Der Benutzername kann nicht über die Benutzeroberfläche nicht geändert werden</target><alt-trans><target>Der Benutzername kann nicht über die Benutzeroberfläche geändert werden</target></alt-trans></trans-unit>
+			<target state="final">Der Benutzername kann nicht über die Benutzeroberfläche nicht geändert werden</target></trans-unit>
       <trans-unit id="users.saveAccount" xml:space="preserve" approved="yes">
 				<source>Save account</source>
-			<target state="final">Benutzerkonto speichern</target><alt-trans><target>Benutzer speichern</target></alt-trans></trans-unit>
+			<target state="final">Benutzerkonto speichern</target></trans-unit>
       <trans-unit id="users.repeatPassword" xml:space="preserve" approved="yes">
 				<source>Repeat password</source>
 			<target state="final">Passwort wiederholen</target></trans-unit>
@@ -433,7 +430,7 @@
 			<target state="final">Name</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve" approved="yes">
 				<source>Accounts and Roles</source>
-			<target state="final">Benutzerkonten und Rollen</target><alt-trans><target>Konten und Rollen</target></alt-trans><alt-trans><target>Accounts und Rollen</target></alt-trans></trans-unit>
+			<target state="final">Benutzerkonten und Rollen</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve" approved="yes">
 				<source>View user</source>
 			<target state="final">Benutzer anzeigen</target></trans-unit>
@@ -451,7 +448,7 @@
 			<target state="final">Wollen Sie den Benutzer "{0}" wirklich löschen?</target></trans-unit>
       <trans-unit id="users.message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="final">Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte gelöscht.</target><alt-trans><target>Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte, gelöscht.</target></alt-trans></trans-unit>
+			<target state="final">Hiermit wird der Benutzer, die zugehörigen Konten und sein persönlicher Arbeitsbereich, einschließlich aller unveröffentlichten Inhalte gelöscht.</target></trans-unit>
       <trans-unit id="users.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
 			<target state="final">Ja, den Benutzer löschen</target></trans-unit>
@@ -475,19 +472,19 @@
 			<target state="final">Verfügbare Pakete</target></trans-unit>
       <trans-unit id="packages.name" xml:space="preserve" approved="yes">
 				<source>Package Name</source>
-			<target state="final">Paketname</target><alt-trans><target>Name vom Package</target></alt-trans></trans-unit>
+			<target state="final">Paketname</target></trans-unit>
       <trans-unit id="packages.key" xml:space="preserve" approved="yes">
 				<source>Package Key</source>
-			<target state="final">Paket-Schlüssel</target><alt-trans><target>Schlüssel vom Package</target></alt-trans></trans-unit>
+			<target state="final">Paket-Schlüssel</target></trans-unit>
       <trans-unit id="packages.type" xml:space="preserve" approved="yes">
 				<source>Package Type</source>
-			<target state="final">Pakettyp</target><alt-trans><target>Art des Packages</target></alt-trans></trans-unit>
+			<target state="final">Pakettyp</target></trans-unit>
       <trans-unit id="packages.deactivated" xml:space="preserve" approved="yes">
 				<source>Deactivated</source>
 			<target state="final">Deaktiviert</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve" approved="yes">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target state="final">Dieses Paket ist derzeit eingefroren. Hier klicken, um es freizugeben.</target><alt-trans><target>Dieses Paket ist derzeit eingefroren. Klicken Sie hier, um es freizugeben.</target></alt-trans></trans-unit>
+			<target state="final">Dieses Paket ist derzeit eingefroren. Hier klicken, um es freizugeben.</target></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve" approved="yes">
 				<source>Freeze the package in order to speed up your website.</source>
 			<target state="final">Frieren Sie das Paket ein, um Ihre Webseite zu beschleunigen.</target></trans-unit>
@@ -496,25 +493,25 @@
 			<target state="final">Dieses Paket ist geschützt und kann nicht deaktiviert werden.</target></trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate Package</source>
-			<target state="final">Paket deaktivieren</target><alt-trans><target>Package deaktivieren</target></alt-trans></trans-unit>
+			<target state="final">Paket deaktivieren</target></trans-unit>
       <trans-unit id="packages.tooltip.activate" xml:space="preserve" approved="yes">
 				<source>Activate Package</source>
-			<target state="final">Paket aktivieren</target><alt-trans><target>Package aktivieren</target></alt-trans></trans-unit>
+			<target state="final">Paket aktivieren</target></trans-unit>
       <trans-unit id="packages.tooltip.noDelete" xml:space="preserve" approved="yes">
 				<source>This package is protected and cannot be deleted.</source>
-			<target state="final">Dieses Paket ist geschützt und kann nicht entfernt werden.</target><alt-trans><target>Dieses Package ist gesperrt und kann nicht entfernt werden.</target></alt-trans></trans-unit>
+			<target state="final">Dieses Paket ist geschützt und kann nicht entfernt werden.</target></trans-unit>
       <trans-unit id="packages.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete Package</source>
-			<target state="final">Paket löschen</target><alt-trans><target>Package löschen</target></alt-trans></trans-unit>
+			<target state="final">Paket löschen</target></trans-unit>
       <trans-unit id="packages.message.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"?</source>
 			<target state="final">Wollen Sie "{0}" wirklich löschen?</target></trans-unit>
       <trans-unit id="packages.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the package</source>
-			<target state="final">Ja, das Paket löschen</target><alt-trans><target>Ja, das Package löschen</target></alt-trans></trans-unit>
+			<target state="final">Ja, das Paket löschen</target></trans-unit>
       <trans-unit id="packages.message.confirmDeletes" xml:space="preserve" approved="yes">
 				<source>Yes, delete the packages</source>
-			<target state="final">Ja, die Pakete löschen</target><alt-trans><target>Ja, die Packages löschen</target></alt-trans></trans-unit>
+			<target state="final">Ja, die Pakete löschen</target></trans-unit>
       <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the selected packages?</source>
 			<target state="final">Wollen Sie wirklich die ausgewählten Pakete löschen?</target></trans-unit>
@@ -523,7 +520,7 @@
 			<target state="final">Ausgewählte Pakete einfrieren</target></trans-unit>
       <trans-unit id="packages.selected.unfreeze" xml:space="preserve" approved="yes">
 				<source>Unfreeze selected packages</source>
-			<target state="final">Ausgewählte Pakete auftauen</target><alt-trans><target>Ausgewählte Pakete freigeben</target></alt-trans></trans-unit>
+			<target state="final">Ausgewählte Pakete auftauen</target></trans-unit>
       <trans-unit id="packages.selected.delete" xml:space="preserve" approved="yes">
 				<source>Delete selected packages</source>
 			<target state="final">Ausgewählte Pakete löschen</target></trans-unit>
@@ -535,19 +532,19 @@
 			<target state="final">Ausgewählte Pakete aktivieren</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
-			<target state="final">Websites Verwaltung</target><alt-trans><target>Website-Verwaltung</target></alt-trans><alt-trans><target>Websites-Verwaltung</target></alt-trans><alt-trans><target>Seitenverwaltung</target></alt-trans></trans-unit>
+			<target state="final">Websites Verwaltung</target></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target state="final">Das Modul zur Website-Verwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target><alt-trans><target>Das Modul zur Websiteverwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target></alt-trans></trans-unit>
+			<target state="final">Das Modul zur Website-Verwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve" approved="yes">
 				<source>Add new site</source>
 			<target state="final">Neue Seite hinzufügen</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
-			<target state="translated">Website erstellen</target><alt-trans><target>Seite erstellen</target></alt-trans></trans-unit>
+			<target state="translated">Website erstellen</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
-			<target state="final">Neue Website erstellen</target><alt-trans><target>Neue Webseite erstellen</target></alt-trans><alt-trans><target>Eine neue Seite erstellen</target></alt-trans></trans-unit>
+			<target state="final">Neue Website erstellen</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve" approved="yes">
 				<source>Root node name</source>
 			<target state="final">Wurzelknoten Name</target></trans-unit>
@@ -556,13 +553,13 @@
 			<target state="final">Domains</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve" approved="yes">
 				<source>Site</source>
-			<target state="final">Site</target><alt-trans><target>Seite</target></alt-trans></trans-unit>
+			<target state="final">Site</target></trans-unit>
       <trans-unit id="site.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
 			<target state="final">Name</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve" approved="yes">
 				<source>Default asset collection</source>
-			<target state="final">Standard Ressourcen-Sammlung</target><alt-trans><target>Standard-Asset-Sammlung</target></alt-trans></trans-unit>
+			<target state="final">Standard Ressourcen-Sammlung</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve" approved="yes">
 				<source>Site package</source>
 			<target state="final">Seitenpaket</target></trans-unit>
@@ -583,7 +580,7 @@
 			<target state="final">Ja, Seite löschen</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve" approved="yes">
 				<source>Import a site</source>
-			<target state="final">Eine Seite importieren</target><alt-trans><target>Seite importieren</target></alt-trans></trans-unit>
+			<target state="final">Eine Seite importieren</target></trans-unit>
       <trans-unit id="sites.select" xml:space="preserve" approved="yes">
 				<source>Select a site package</source>
 			<target state="final">Wählen Sie ein Seitenpaket</target></trans-unit>
@@ -613,7 +610,7 @@
 			<target state="translated">Keine Seiten verfügbar</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target state="final">Das &lt;em&gt;Neos Kickstarter&lt;/em&gt;-Paket ist nicht installiert, installieren Sie es, um eine neue Seite zu erstellen.</target><alt-trans><target>Das &lt;em&gt;Neos Kickstarter&lt;/em&gt;-Paket ist nicht installiert, installieren Sie es um eine neue Seite zu kickstarten.</target></alt-trans></trans-unit>
+			<target state="final">Das &lt;em&gt;Neos Kickstarter&lt;/em&gt;-Paket ist nicht installiert, installieren Sie es, um eine neue Seite zu erstellen.</target></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
 			<target state="translated">Neue Seite</target></trans-unit>
@@ -649,7 +646,7 @@
 			<target state="final">Dimensionen</target></trans-unit>
       <trans-unit id="dimensions.description" xml:space="preserve" approved="yes">
 				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
-			<target state="final">Zeigt eine grafische Übersicht über konfigurierte Fallbacks innerhalb jeder Inhaltsdimension und über die Inhaltsdimensionen.</target><alt-trans><target>Gewährt eine grafische Übersicht über konfigurierte Fallbacks innerhalb jeder Inhaltsdimension und über die Inhaltsdimensionen.</target></alt-trans></trans-unit>
+			<target state="final">Zeigt eine grafische Übersicht über konfigurierte Fallbacks innerhalb jeder Inhaltsdimension und über die Inhaltsdimensionen.</target></trans-unit>
       <trans-unit id="dimensions.interDimension.legend" xml:space="preserve" approved="yes">
 				<source>Inter dimensional fallback graph</source>
 			<target state="final">Interdimensionales Fallback-Diagramm</target></trans-unit>
@@ -693,7 +690,7 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
 			<target state="final">Neue elektronische Adresse</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="final">Konto bearbeiten</target><alt-trans><target>Account bearbeiten</target></alt-trans></trans-unit>
+			<target state="final">Konto bearbeiten</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target state="final">Persönliche Daten</target></trans-unit>
@@ -735,7 +732,7 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
 			<target state="final">Ja, elektronische Adresse löschen</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Click to add a new Electronic address</source>
-			<target state="final">Klicken, um eine neue elektronische Adresse hinzuzufügen</target><alt-trans><target>Klicken, um neue elektronische Adresse hinzuzufügen</target></alt-trans></trans-unit>
+			<target state="final">Klicken, um eine neue elektronische Adresse hinzuzufügen</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
 			<target state="final">Elektronische Adresse hinzufügen</target></trans-unit>

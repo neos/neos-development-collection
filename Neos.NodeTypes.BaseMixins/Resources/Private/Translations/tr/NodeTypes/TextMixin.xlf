@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.text.ui.inline.editorOptions.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter text here</p>]]></source>
-			<target state="translated"><![CDATA[<p>girilecek metni buraya yazın</p>]]></target><alt-trans><target><![CDATA[<p>Metni buraya Yazın</p>]]></target></alt-trans><alt-trans><target><![CDATA[<p>Metni Buraya Yazın</p>]]></target></alt-trans></trans-unit>
+			<target state="translated"><![CDATA[<p>girilecek metni buraya yazın</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

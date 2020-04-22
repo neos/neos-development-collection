@@ -23,7 +23,7 @@
 			<target state="translated">Detaljer for "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
-			<target state="translated">Opprett nytt arbeidsområde</target><alt-trans><target>Opprette nytt arbeidsområde</target></alt-trans></trans-unit>
+			<target state="translated">Opprett nytt arbeidsområde</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
 			<target state="translated">Opprett arbeidsområde</target></trans-unit>
@@ -59,7 +59,7 @@
 			<target state="translated">Beskrivelse</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
-			<target state="translated">Utgangspunkt for arbeidsområde</target><alt-trans><target>Basisarbeidsområde</target></alt-trans></trans-unit>
+			<target state="translated">Utgangspunkt for arbeidsområde</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
 			<target state="translated">Eier</target></trans-unit>
@@ -116,7 +116,7 @@
 			<target state="translated">nye: {new}, endringer: {changed}, flyttinger: {removed}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve">
 				<source>Review</source>
-			<target state="translated">Korrektur</target><alt-trans><target>Gjennomgang</target></alt-trans></trans-unit>
+			<target state="translated">Korrektur</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			<target state="translated">Forkast merkede endringer</target></trans-unit>

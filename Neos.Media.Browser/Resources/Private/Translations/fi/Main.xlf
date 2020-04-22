@@ -316,7 +316,7 @@
 			<target state="final">Tiedostoa ei voitu ladata</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
-			<target state="final">Ei tiedostoa valittuna</target><alt-trans><target>Ei valittua tiedostoa</target></alt-trans></trans-unit>
+			<target state="final">Ei tiedostoa valittuna</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="final">Tiedoston koko {0} ylitää sallitun rajan {1}</target></trans-unit>

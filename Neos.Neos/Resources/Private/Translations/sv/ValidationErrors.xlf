@@ -5,18 +5,18 @@
       <!-- UserDoesNotExistValidator -->
       <trans-unit id="1325156008" xml:space="preserve">
 				<source>The username is already in use.</source>
-			<target state="translated">Användarnamnet används redan.</target><alt-trans><target>Konto-id:t (användarnamnet) används redan.</target></alt-trans></trans-unit>
+			<target state="translated">Användarnamnet används redan.</target></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
-			<target state="translated">Hostname "{0}" var ej giltigt.</target><alt-trans><target>Hostname "{0}" är inte giltigt.</target></alt-trans></trans-unit>
+			<target state="translated">Hostname "{0}" var ej giltigt.</target></trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve">
 				<source>The given password was empty.</source>
-			<target state="translated">Lösenordet var tomt.</target><alt-trans><target>Lösenordet är tomt.</target></alt-trans></trans-unit>
+			<target state="translated">Lösenordet var tomt.</target></trans-unit>
       <trans-unit id="1324640997" xml:space="preserve">
 				<source>The passwords did not match.</source>
-			<target state="translated">Lösenorden matchade ej.</target><alt-trans><target>Lösenorden matchade inte.</target></alt-trans></trans-unit>
+			<target state="translated">Lösenorden matchade ej.</target></trans-unit>
     </body>
   </file>
 </xliff>

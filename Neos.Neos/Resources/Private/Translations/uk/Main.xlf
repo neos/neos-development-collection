@@ -20,7 +20,7 @@
 			<target state="translated">Застосувати зміни</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="translated">Відмінити</target><alt-trans><target>Скасувати</target></alt-trans></trans-unit>
+			<target state="translated">Відмінити</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target state="translated">Назад</target></trans-unit>
@@ -47,7 +47,7 @@
 			<target state="translated">Створити новий(у)</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target state="translated">Зачинити</target><alt-trans><target>Закрити</target></alt-trans></trans-unit>
+			<target state="translated">Зачинити</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
 			<target state="translated">Копіювати</target></trans-unit>
@@ -113,7 +113,7 @@
 			<target state="translated">Навігація</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target state="translated">OK</target><alt-trans><target>ТАК</target></alt-trans></trans-unit>
+			<target state="translated">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			<target state="translated">Сторінка</target></trans-unit>
@@ -341,7 +341,7 @@
 			<target state="translated">Показати опції публікації</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="translated">Увімкнути повноекранний режим редагування</target><alt-trans><target>Активувати повноекранний режим редагування</target></alt-trans></trans-unit>
+			<target state="translated">Увімкнути повноекранний режим редагування</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
 			<target state="translated">Вимкнути повноекранний режим редагування</target></trans-unit>
@@ -621,7 +621,7 @@
 			<target state="translated">Робочі області</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target state="translated">Сталася помилка під час збереження</target><alt-trans><target>Помилка під час збереження</target></alt-trans></trans-unit>
+			<target state="translated">Сталася помилка під час збереження</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
 			<target state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
@@ -647,7 +647,7 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
-			<target state="translated">Логін в</target><alt-trans><target>Логін</target></alt-trans><alt-trans><target>TYPO3 Neos Логін</target></alt-trans></trans-unit>
+			<target state="translated">Логін в</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target state="translated">Автентифікації</target></trans-unit>

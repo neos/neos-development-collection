@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve" approved="yes">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target state="final">Перетащите медиа-ресурс на коллекцию или тег, чтоб добавить его туда.</target><alt-trans><target>Перетащите ассет на коллекцию или тег, чтоб добавить его туда.</target></alt-trans></trans-unit>
+			<target state="final">Перетащите медиа-ресурс на коллекцию или тег, чтоб добавить его туда.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
 				<source>Keep the filename "{0}"</source>
 			<target state="final">Оставить имя файла "{0}" без изменений</target></trans-unit>
@@ -22,13 +22,13 @@
 			<target state="final">Название</target></trans-unit>
       <trans-unit id="field.label" xml:space="preserve" approved="yes">
 				<source>Label</source>
-			<target state="final">Обозначение</target><alt-trans><target>Этикетка</target></alt-trans><alt-trans><target>Подпись</target></alt-trans><alt-trans><target>Метка</target></alt-trans></trans-unit>
+			<target state="final">Обозначение</target></trans-unit>
       <trans-unit id="field.caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
 			<target state="final">Подпись</target></trans-unit>
       <trans-unit id="field.copyrightnotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target state="translated">Copyright Notice</target><alt-trans><target>Авторские права</target></alt-trans></trans-unit>
+			<target state="translated">Copyright Notice</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified</source>
 			<target state="final">Дата последнего изменения</target></trans-unit>
@@ -61,7 +61,7 @@
 			<target state="final">По убыванию</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve" approved="yes">
 				<source>Sort direction Ascending</source>
-			<target state="final">Сортировка по возрастанию</target><alt-trans><target>Направление сортировки по возрастанию</target></alt-trans></trans-unit>
+			<target state="final">Сортировка по возрастанию</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve" approved="yes">
 				<source>Sort direction Descending</source>
 			<target state="final">Сортировка по убыванию</target></trans-unit>
@@ -70,34 +70,34 @@
 			<target state="final">Перетащите на тег или коллекцию</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target state="translated">Показать</target><alt-trans><target>View</target></alt-trans><alt-trans><target>Вид</target></alt-trans></trans-unit>
+			<target state="translated">Показать</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="translated">View asset</target><alt-trans><target>Показать актив</target></alt-trans></trans-unit>
+			<target state="translated">View asset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
-			<target state="final">Редактировать медиа-ресурс</target><alt-trans><target>Редактировать ресурс</target></alt-trans><alt-trans><target>Править медиа-ресурс</target></alt-trans></trans-unit>
+			<target state="final">Редактировать медиа-ресурс</target></trans-unit>
       <trans-unit id="deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
-			<target state="final">Удалить медиа-ресурс</target><alt-trans><target>Удалить ресурс</target></alt-trans></trans-unit>
+			<target state="final">Удалить медиа-ресурс</target></trans-unit>
       <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target state="final">Вы действительно хотите удалить медиа-ресурс "{0}"?</target><alt-trans><target>Вы действительно хотите удалить ресурс "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Вы действительно хотите удалить медиа-ресурс "{0}"?</target></trans-unit>
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete collection "{0}"?</source>
-			<target state="final">Вы действительно хотите удалить коллекцию "{0}"?</target><alt-trans><target>Вы действительно хотите удалить коллекции "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Вы действительно хотите удалить коллекцию "{0}"?</target></trans-unit>
       <trans-unit id="message.reallyDeleteTag" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete tag "{0}"?</source>
 			<target state="final">Вы действительно хотите удалить тег "{0}"?</target></trans-unit>
       <trans-unit id="message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the asset.</source>
-			<target state="final">Это приведет к удалению медиа-ресурса.</target><alt-trans><target>Это приведет к удалению ресурса.</target></alt-trans><alt-trans><target>Это приведет к удалению ресурсу.</target></alt-trans></trans-unit>
+			<target state="final">Это приведет к удалению медиа-ресурса.</target></trans-unit>
       <trans-unit id="message.willDeleteCollection" xml:space="preserve" approved="yes">
 				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target state="final">Это приведет к удалению коллекции, но не медиа-ресурсов, которые она содержит.</target><alt-trans><target>Это приведет к удалению коллекции, но не ресурсов, которые она содержит.</target></alt-trans></trans-unit>
+			<target state="final">Это приведет к удалению коллекции, но не медиа-ресурсов, которые она содержит.</target></trans-unit>
       <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="yes">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target state="final">Это приведет к удалению тега, но не медиа-ресурсов, которые он содержит.</target><alt-trans><target>Это будет удаление тега, а не ресурсов, которые он содержит.</target></alt-trans></trans-unit>
+			<target state="final">Это приведет к удалению тега, но не медиа-ресурсов, которые он содержит.</target></trans-unit>
       <trans-unit id="message.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target state="final">Эта операция не может быть отменена.</target></trans-unit>
@@ -115,19 +115,19 @@
 			<target state="final">Сохранить</target></trans-unit>
       <trans-unit id="message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the asset</source>
-			<target state="final">Да, удалить медиа-ресурс</target><alt-trans><target>Да, удалить ресурс</target></alt-trans></trans-unit>
+			<target state="final">Да, удалить медиа-ресурс</target></trans-unit>
       <trans-unit id="message.confirmDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Yes, delete the collection</source>
-			<target state="final">Да, удалить коллекцию</target><alt-trans><target>Да, удалить коллекции</target></alt-trans></trans-unit>
+			<target state="final">Да, удалить коллекцию</target></trans-unit>
       <trans-unit id="message.confirmDeleteTag" xml:space="preserve" approved="yes">
 				<source>Yes, delete the tag</source>
 			<target state="final">Да, удалить тег</target></trans-unit>
       <trans-unit id="thumbnail.editTitle" xml:space="preserve" approved="yes">
 				<source>Edit {0}</source>
-			<target state="final">Редактировать {0}</target><alt-trans><target>Править {0}</target></alt-trans></trans-unit>
+			<target state="final">Редактировать {0}</target></trans-unit>
       <trans-unit id="search.title" xml:space="preserve" approved="yes">
 				<source>Search in assets</source>
-			<target state="final">Поиск в медиа-ресурсах</target><alt-trans><target>Поиск в ресурсах</target></alt-trans></trans-unit>
+			<target state="final">Поиск в медиа-ресурсах</target></trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve" approved="yes">
 				<source>Search</source>
 			<target state="final">Поиск</target></trans-unit>
@@ -145,7 +145,7 @@
 			<target state="final">Параметры фильтра</target></trans-unit>
       <trans-unit id="filter.title.all" xml:space="preserve" approved="yes">
 				<source>Display all asset types</source>
-			<target state="final">Отображать все типы ресурсов</target><alt-trans><target>Отобразить все типы ресурсов</target></alt-trans><alt-trans><target>Отображает все типы ресурсов</target></alt-trans></trans-unit>
+			<target state="final">Отображать все типы ресурсов</target></trans-unit>
       <trans-unit id="filter.title.images" xml:space="preserve" approved="yes">
 				<source>Only display image assets</source>
 			<target state="final">Отображать только изображения</target></trans-unit>
@@ -184,22 +184,22 @@
 			<target state="final">Отображать в виде миниатюр</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target state="translated">Connection error</target><alt-trans><target>176.59.40.229</target></alt-trans><alt-trans><target>Ошибка соединения</target></alt-trans></trans-unit>
+			<target state="translated">Connection error</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="translated">Media source</target><alt-trans><target>Медиа источник</target></alt-trans></trans-unit>
+			<target state="translated">Media source</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="translated">Медиа источник</target><alt-trans><target>Источники медиа</target></alt-trans><alt-trans><target>Media sources</target></alt-trans></trans-unit>
+			<target state="translated">Медиа источник</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target state="final">Коллекции</target></trans-unit>
       <trans-unit id="editCollections" xml:space="preserve" approved="yes">
 				<source>Edit collections</source>
-			<target state="final">Редактирование коллекции</target><alt-trans><target>Правка коллекций</target></alt-trans></trans-unit>
+			<target state="final">Редактирование коллекции</target></trans-unit>
       <trans-unit id="editCollection" xml:space="preserve" approved="yes">
 				<source>Edit collection</source>
-			<target state="final">Редактировать коллекцию</target><alt-trans><target>Править коллекцию</target></alt-trans></trans-unit>
+			<target state="final">Редактировать коллекцию</target></trans-unit>
       <trans-unit id="deleteCollection" xml:space="preserve" approved="yes">
 				<source>Delete collection</source>
 			<target state="final">Удалить коллекцию</target></trans-unit>
@@ -217,10 +217,10 @@
 			<target state="final">Теги</target></trans-unit>
       <trans-unit id="editTags" xml:space="preserve" approved="yes">
 				<source>Edit tags</source>
-			<target state="final">Редактирование тегов</target><alt-trans><target>Правка тегов</target></alt-trans></trans-unit>
+			<target state="final">Редактирование тегов</target></trans-unit>
       <trans-unit id="editTag" xml:space="preserve" approved="yes">
 				<source>Edit tag</source>
-			<target state="final">Редактировать тег</target><alt-trans><target>Править тег</target></alt-trans></trans-unit>
+			<target state="final">Редактировать тег</target></trans-unit>
       <trans-unit id="deleteTag" xml:space="preserve" approved="yes">
 				<source>Delete tag</source>
 			<target state="final">Удалить тег</target></trans-unit>
@@ -232,22 +232,22 @@
 			<target state="final">Создать тег</target></trans-unit>
       <trans-unit id="tags.title.all" xml:space="preserve" approved="yes">
 				<source>All assets</source>
-			<target state="final">Все медиа-ассеты</target><alt-trans><target>Все ессеты</target></alt-trans></trans-unit>
+			<target state="final">Все медиа-ассеты</target></trans-unit>
       <trans-unit id="tags.all" xml:space="preserve" approved="yes">
 				<source>All</source>
 			<target state="final">Все</target></trans-unit>
       <trans-unit id="untaggedAssets" xml:space="preserve" approved="yes">
 				<source>Untagged assets</source>
-			<target state="final">Непомеченные медиа-ресурсы</target><alt-trans><target>Непомеченные ресурсы</target></alt-trans><alt-trans><target>Непомеченным ресурсы</target></alt-trans></trans-unit>
+			<target state="final">Непомеченные медиа-ресурсы</target></trans-unit>
       <trans-unit id="untagged" xml:space="preserve" approved="yes">
 				<source>Untagged</source>
-			<target state="final">Без тегов</target><alt-trans><target>Непомеченные тэгами</target></alt-trans></trans-unit>
+			<target state="final">Без тегов</target></trans-unit>
       <trans-unit id="maxUploadSize" xml:space="preserve" approved="yes">
 				<source>Max. upload size {0} per file</source>
-			<target state="final">Максимальный размер каждого файла {0}</target><alt-trans><target>Максимальный размер загрузки: {0} для каждого файла</target></alt-trans><alt-trans><target>Максимальный размер для каждого файла {0}</target></alt-trans></trans-unit>
+			<target state="final">Максимальный размер каждого файла {0}</target></trans-unit>
       <trans-unit id="dropFiles" xml:space="preserve" approved="yes">
 				<source>Drop files here</source>
-			<target state="final">Перетащите файлы сюда</target><alt-trans><target>Перетащите сюда файлы</target></alt-trans></trans-unit>
+			<target state="final">Перетащите файлы сюда</target></trans-unit>
       <trans-unit id="clickToUpload" xml:space="preserve" approved="yes">
 				<source>or click to upload</source>
 			<target state="final">или нажмите кнопку для загрузки</target></trans-unit>
@@ -256,7 +256,7 @@
 			<target state="final">Выберите файл</target></trans-unit>
       <trans-unit id="noAssetsFound" xml:space="preserve" approved="yes">
 				<source>No Assets found.</source>
-			<target state="final">Медиа-ресурсы не найдены.</target><alt-trans><target>Ресурсы не найдены.</target></alt-trans><alt-trans><target>Ассеты не найдены.</target></alt-trans></trans-unit>
+			<target state="final">Медиа-ресурсы не найдены.</target></trans-unit>
       <trans-unit id="basics" xml:space="preserve" approved="yes">
 				<source>Basics</source>
 			<target state="final">Основные</target></trans-unit>
@@ -283,7 +283,7 @@
 			<target state="final">Размер файла</target></trans-unit>
       <trans-unit id="metadata.dimensions" xml:space="preserve" approved="yes">
 				<source>Dimensions</source>
-			<target state="final">Размеры</target><alt-trans><target>Измерения</target></alt-trans></trans-unit>
+			<target state="final">Размеры</target></trans-unit>
       <trans-unit id="metadata.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
 			<target state="final">Тип</target></trans-unit>
@@ -298,10 +298,10 @@
 			<target state="final">Подпись</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target state="translated">Copyright Notice</target><alt-trans><target>Авторские права</target></alt-trans></trans-unit>
+			<target state="translated">Copyright Notice</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target state="final">Предпросмотр</target><alt-trans><target>Просмотр</target></alt-trans><alt-trans><target>Предв. Просмотр</target></alt-trans></trans-unit>
+			<target state="final">Предпросмотр</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
 			<target state="needs-translation">Download</target></trans-unit>
@@ -316,7 +316,7 @@
 			<target state="final">Не удается загрузить файл</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
-			<target state="final">Файл не выбран</target><alt-trans><target>Не выбран файл</target></alt-trans></trans-unit>
+			<target state="final">Файл не выбран</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="final">Размер файла {0} превышает допустимый предел в {1}</target></trans-unit>
@@ -328,13 +328,13 @@
 			<target state="final">Только некоторые файлы были успешно загружены. Обновите страницу, чтобы увидеть то, что удалось загрузить.</target></trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve" approved="yes">
 				<source>Tagging the asset failed.</source>
-			<target state="final">Не удалось присвоить тэг к медиа-ресурсу.</target><alt-trans><target>Не удалось присвоить тэг к ресурсу.</target></alt-trans></trans-unit>
+			<target state="final">Не удалось присвоить тэг к медиа-ресурсу.</target></trans-unit>
       <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
 				<source>Adding the asset to the collection failed.</source>
-			<target state="final">Не удалось добавить медиа-ресурс в коллекцию.</target><alt-trans><target>Не удалось добавить ресурс в коллекцию.</target></alt-trans></trans-unit>
+			<target state="final">Не удалось добавить медиа-ресурс в коллекцию.</target></trans-unit>
       <trans-unit id="creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
-			<target state="final">Создаётся</target><alt-trans><target>Создание</target></alt-trans></trans-unit>
+			<target state="final">Создаётся</target></trans-unit>
       <trans-unit id="deleteRelatedNodes" xml:space="preserve" approved="yes">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target state="final">Ассет не может быть удален, потому что его использует как минимум один элемент</target></trans-unit>
@@ -370,7 +370,7 @@
 			<target state="final">Примечание</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve" approved="yes">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-			<target state="final">Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая публичную версию сайта.</target><alt-trans><target>Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая Live сайт.</target></alt-trans><alt-trans><target>Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая живой сайт.</target></alt-trans></trans-unit>
+			<target state="final">Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая публичную версию сайта.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve" approved="yes">
 				<source>Choose a new file</source>
 			<target state="final">Выбрать новый файл</target></trans-unit>
@@ -388,22 +388,22 @@
 			<target state="final">Предварительный просмотр текущего файла</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve" approved="yes">
 				<source>Could not replace asset</source>
-			<target state="final">Не получилось заменить медиа-ресурс</target><alt-trans><target>Не получилось заменить ассет</target></alt-trans></trans-unit>
+			<target state="final">Не получилось заменить медиа-ресурс</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been replaced.</source>
-			<target state="final">Медиа-ресурс "{0}" заменён.</target><alt-trans><target>Ассет "{0}" заменён.</target></alt-trans></trans-unit>
+			<target state="final">Медиа-ресурс "{0}" заменён.</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been updated.</source>
-			<target state="final">Медиа-ресурс "{0}" обновлён.</target><alt-trans><target>Ассет "{0}" обновлён.</target></alt-trans></trans-unit>
+			<target state="final">Медиа-ресурс "{0}" обновлён.</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been added.</source>
-			<target state="final">Медиа-ресурс "{0}" добавлен.</target><alt-trans><target>Ассет "{0}" добавлен.</target></alt-trans></trans-unit>
+			<target state="final">Медиа-ресурс "{0}" добавлен.</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been deleted.</source>
-			<target state="final">Медиа-ресурс "{0}" удалён.</target><alt-trans><target>Ассет "{0}" удалён.</target></alt-trans></trans-unit>
+			<target state="final">Медиа-ресурс "{0}" удалён.</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve" approved="yes">
 				<source>Asset could not be deleted.</source>
-			<target state="final">Медиа-ресурс не мог быть удалён.</target><alt-trans><target>Ассет не мог быть удалён.</target></alt-trans></trans-unit>
+			<target state="final">Медиа-ресурс не мог быть удалён.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			<target state="final">Тег "{0}" уже существует и был добавлен в коллекцию.</target></trans-unit>
@@ -427,7 +427,7 @@
 			<target state="final">Келлекция "{0}" удалена.</target></trans-unit>
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve" approved="yes">
 				<source>Generate redirects from original file url to the new url</source>
-			<target state="final">Генерировать перенаправления из начального URL-адреса на новый URL-адрес файла</target><alt-trans><target>Генерировать перенаправления из начального Url-адреса на новый Url-адрес файла</target></alt-trans><alt-trans><target>Генерировать перенаправления из исходного файла Url-адреса на новый Url-адрес</target></alt-trans></trans-unit>
+			<target state="final">Генерировать перенаправления из начального URL-адреса на новый URL-адрес файла</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve" approved="yes">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
 			<target state="final">'Медиа-ресурс типа "{0}" может быть заменен только подобным медиа-ресурсом. Распознан тип "{1}"'</target></trans-unit>
@@ -436,7 +436,7 @@
 			<target state="final">Нет доступа к рабочей области "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve" approved="yes">
 				<source>No document node found for this node</source>
-			<target state="final">Узловой элемент не найден для этого элемента</target><alt-trans><target>Узловой элемент не найден</target></alt-trans></trans-unit>
+			<target state="final">Узловой элемент не найден для этого элемента</target></trans-unit>
     </body>
   </file>
 </xliff>

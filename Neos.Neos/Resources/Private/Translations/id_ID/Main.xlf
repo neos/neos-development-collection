@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target state="translated">Auto-Publish</target><alt-trans><target>Publikasi Otomatis</target></alt-trans></trans-unit>
+			<target state="translated">Auto-Publish</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target state="translated">Publikasikan otomatis ke {0}</target></trans-unit>
@@ -158,7 +158,7 @@
 			<target state="translated">Telah terbit</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target state="translated">Toogle menu penerbitan</target><alt-trans><target>Tanda menu penerbitan</target></alt-trans></trans-unit>
+			<target state="translated">Toogle menu penerbitan</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target state="translated">Target bidang kerja</target></trans-unit>
@@ -311,7 +311,7 @@
 			<target state="translated">Klik untuk menghapus</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target state="translated">Klik untuk buat yang baru</target><alt-trans><target>Klik untuk membuat yang baru</target></alt-trans></trans-unit>
+			<target state="translated">Klik untuk buat yang baru</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
 			<target state="translated">Status</target></trans-unit>
@@ -326,7 +326,7 @@
 			<target state="translated">Domain</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target state="translated">Ya, hapus!</target><alt-trans><target>Ya, hapus saja!</target></alt-trans></trans-unit>
+			<target state="translated">Ya, hapus!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target state="translated">Kunci paket</target></trans-unit>
@@ -423,7 +423,7 @@
 			<target state="translated">Mode Pengeditan</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target state="translated">Pusat Tinjauan</target><alt-trans><target>Tinjauan Pusat</target></alt-trans></trans-unit>
+			<target state="translated">Pusat Tinjauan</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
 			<target state="translated">Anda masih memiliki perubahan. Apa yang Anda ingin lakukan dengan perubahan itu?</target></trans-unit>
@@ -492,7 +492,7 @@
 			<target state="translated">Teks ini tidak boleh melebihi {maximum} karakter.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Hanya karakter biasa (A sampai z, umlauts,...) dan angka yang diperbolehkan.</target><alt-trans><target>Hanya biasa karakter (sampai z, umlauts,...) dan angka yang diperbolehkan.</target></alt-trans></trans-unit>
+			<target state="translated">Hanya karakter biasa (A sampai z, umlauts,...) dan angka yang diperbolehkan.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target state="translated">Subjek tertentu itu tidak dihitung.</target></trans-unit>
@@ -504,7 +504,7 @@
 			<target state="translated">Nilai yang diberikan bukanlah tanggal yang valid.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
 				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-			<target state="translated">Tanggal yang diberikan harus antara {formatEarliestDate} dan {formatLatestDate}</target><alt-trans><target>Tanggal tertentu harus antara {formatEarliestDate} dan {formatLatestDate}</target></alt-trans></trans-unit>
+			<target state="translated">Tanggal yang diberikan harus antara {formatEarliestDate} dan {formatLatestDate}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
 				<source>The given date must be after {formatEarliestDate}</source>
 			<target state="translated">Tanggal yang diberikan harus setelah {formatEarliestDate}</target></trans-unit>
@@ -570,7 +570,7 @@
 			<target state="translated">Konten</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target state="translated">Toggle menu grup</target><alt-trans><target>Toggle menu kelompok</target></alt-trans></trans-unit>
+			<target state="translated">Toggle menu grup</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
 			<target state="translated">Toggle mode menu sticky</target></trans-unit>
@@ -702,7 +702,7 @@
 			<target state="translated">Konfigurasi NodeType yang seharusnya diberikan berikut ini tidak tersedia. Mungkin Anda telah mengganti nama dan itu hilang dalam perpindahan atau Anda hanya salah eja.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target state="translated">Kesalahan yang tidak terduga saat membuat node</target><alt-trans><target>Kesalahan yang tidak terduga sekaligus menciptakan node</target></alt-trans></trans-unit>
+			<target state="translated">Kesalahan yang tidak terduga saat membuat node</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
 			<target state="translated">Kesalahan yang tidak terduga saat menghapus node</target></trans-unit>
@@ -742,46 +742,46 @@
 			<target state="translated">Salin {source} ke {target}</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
-			<target state="translated">Pindah {source} ke {target}</target><alt-trans><target>Memindahkan {source} ke {target}</target></alt-trans></trans-unit>
+			<target state="translated">Pindah {source} ke {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target state="translated">Pilihlah pada posisi mana anda ingin {source} dimasukkan, relatif terhadap {target}.</target><alt-trans><target>Harap pilih posisi yang Anda inginkan {source} dimasukkan relatif terhadap {target}.</target></alt-trans></trans-unit>
+			<target state="translated">Pilihlah pada posisi mana anda ingin {source} dimasukkan, relatif terhadap {target}.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
-			<target state="translated">Sisipkan</target><alt-trans><target>Memasukkan</target></alt-trans></trans-unit>
+			<target state="translated">Sisipkan</target></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
 				<source>Insert mode</source>
-			<target state="translated">Sisipkan mode</target><alt-trans><target>Mode Penyisipan</target></alt-trans></trans-unit>
+			<target state="translated">Sisipkan mode</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target state="translated">Tentukan Perbandingan Segi</target><alt-trans><target>Pilih Rasio Aspek</target></alt-trans></trans-unit>
+			<target state="translated">Tentukan Perbandingan Segi</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target state="translated">Tebal</target><alt-trans><target>Berani</target></alt-trans></trans-unit>
+			<target state="translated">Tebal</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
 			<target state="translated">Miring</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target state="translated">Garis Bawah</target><alt-trans><target>Menggarisbawahi</target></alt-trans></trans-unit>
+			<target state="translated">Garis Bawah</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target state="translated">Tulisan di bawah</target><alt-trans><target>Tanda tangansss</target></alt-trans></trans-unit>
+			<target state="translated">Tulisan di bawah</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
 			<target state="translated">Tulisan di atas</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target state="translated">Coret</target><alt-trans><target>Dicoret</target></alt-trans></trans-unit>
+			<target state="translated">Coret</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve" approved="yes">
 				<source>Link</source>
-			<target state="final">Link / tautan</target><alt-trans><target>Tautan</target></alt-trans></trans-unit>
+			<target state="final">Link / tautan</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target state="translated">Daftar Setelah Diurutkan</target><alt-trans><target>Daftar pesanan</target></alt-trans></trans-unit>
+			<target state="translated">Daftar Setelah Diurutkan</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
-			<target state="translated">Daftar Tanpa Diurutkan</target><alt-trans><target>Daftar tak berurutan</target></alt-trans></trans-unit>
+			<target state="translated">Daftar Tanpa Diurutkan</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
 			<target state="translated">Rata kiri</target></trans-unit>
@@ -790,31 +790,31 @@
 			<target state="translated">Rata kanan</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
-			<target state="translated">Rata Tengah</target><alt-trans><target>Pusat sejajar</target></alt-trans></trans-unit>
+			<target state="translated">Rata Tengah</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
-			<target state="translated">Rata Kanan-Kiri</target><alt-trans><target>Align membenarkan</target></alt-trans></trans-unit>
+			<target state="translated">Rata Kanan-Kiri</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
-			<target state="translated">Tabel</target><alt-trans><target>Meja</target></alt-trans></trans-unit>
+			<target state="translated">Tabel</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
 			<target state="translated">Hapus format</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target state="translated">Menjorok Keluar</target><alt-trans><target>Outdent</target></alt-trans></trans-unit>
+			<target state="translated">Menjorok Keluar</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target state="translated">Menjorok Masuk</target><alt-trans><target>Indentasi</target></alt-trans></trans-unit>
+			<target state="translated">Menjorok Masuk</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target state="translated">Buat baru</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target state="translated">Tidak ada temuan yang cocok</target><alt-trans><target>Tidak ditemukan kecocokan</target></alt-trans></trans-unit>
+			<target state="translated">Tidak ada temuan yang cocok</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target state="translated">Masukkan ## #CHARACTERS### karakter lain</target><alt-trans><target>Silakan masukkan ###KARAKTER### lebih banyak karakter</target></alt-trans></trans-unit>
+			<target state="translated">Masukkan ## #CHARACTERS### karakter lain</target></trans-unit>
     </body>
   </file>
 </xliff>

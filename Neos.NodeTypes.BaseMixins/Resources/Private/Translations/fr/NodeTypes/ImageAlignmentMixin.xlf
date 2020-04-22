@@ -10,13 +10,13 @@
 			<target state="final">Par défaut</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve" approved="yes">
 				<source>Center</source>
-			<target state="final">Centré</target><alt-trans><target>Centre</target></alt-trans></trans-unit>
+			<target state="final">Centré</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve" approved="yes">
 				<source>Left</source>
-			<target state="final">À gauche</target><alt-trans><target>Gauche</target></alt-trans></trans-unit>
+			<target state="final">À gauche</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve" approved="yes">
 				<source>Right</source>
-			<target state="final">À droite</target><alt-trans><target>Droite</target></alt-trans></trans-unit>
+			<target state="final">À droite</target></trans-unit>
     </body>
   </file>
 </xliff>

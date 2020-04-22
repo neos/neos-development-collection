@@ -10,22 +10,22 @@
 			<target state="final">Indstillinger</target></trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve" approved="yes">
 				<source>Starting Level</source>
-			<target state="final">Startniveau</target><alt-trans><target>Start niveau</target></alt-trans></trans-unit>
+			<target state="final">Startniveau</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve" approved="yes">
 				<source>Four Levels Above Current Page</source>
-			<target state="final">Fire niveauer over aktuel side</target><alt-trans><target>Fire niveauer over Aktuel side</target></alt-trans></trans-unit>
+			<target state="final">Fire niveauer over aktuel side</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve" approved="yes">
 				<source>Three Levels Above Current Page</source>
-			<target state="final">Tre niveauer over aktuel side</target><alt-trans><target>Tre niveauer over Aktuel side</target></alt-trans></trans-unit>
+			<target state="final">Tre niveauer over aktuel side</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve" approved="yes">
 				<source>Two Levels Above Current Page</source>
-			<target state="final">To niveauer over aktuel side</target><alt-trans><target>To niveauer over Aktuel side</target></alt-trans></trans-unit>
+			<target state="final">To niveauer over aktuel side</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve" approved="yes">
 				<source>One Level Above Current Page</source>
-			<target state="final">Ét niveau over aktuel side</target><alt-trans><target>Ét niveau over Aktuel side</target></alt-trans></trans-unit>
+			<target state="final">Ét niveau over aktuel side</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve" approved="yes">
 				<source>Same Level As Current Page</source>
-			<target state="final">Samme niveau som aktuel side</target><alt-trans><target>Samme niveau som Aktuel side</target></alt-trans></trans-unit>
+			<target state="final">Samme niveau som aktuel side</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve" approved="yes">
 				<source>First Level Of Website</source>
 			<target state="final">Første niveau af hjemmeside</target></trans-unit>
@@ -52,10 +52,10 @@
 			<target state="final">Udgangspunkt</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve" approved="yes">
 				<source>Maximum Levels</source>
-			<target state="final">Maksimumsniveau</target><alt-trans><target>Maksimum niveau</target></alt-trans></trans-unit>
+			<target state="final">Maksimumsniveau</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve" approved="yes">
 				<source>Empty Menu</source>
-			<target state="final">Menuen er tom</target><alt-trans><target>Tom menu</target></alt-trans></trans-unit>
+			<target state="final">Menuen er tom</target></trans-unit>
     </body>
   </file>
 </xliff>

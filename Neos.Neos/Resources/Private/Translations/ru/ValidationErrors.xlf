@@ -5,11 +5,11 @@
       <!-- UserDoesNotExistValidator -->
       <trans-unit id="1325156008" xml:space="preserve" approved="yes">
 				<source>The username is already in use.</source>
-			<target state="final">Такое имя пользователя уже существует.</target><alt-trans><target>Идентификатор учетной записи (имя пользователя) уже используется.</target></alt-trans></trans-unit>
+			<target state="final">Такое имя пользователя уже существует.</target></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve" approved="yes">
 				<source>The hostname "{0}" was not valid.</source>
-			<target state="final">Имя хоста "{0}" не действительно.</target><alt-trans><target>Имя узла "{0}" не действительно.</target></alt-trans></trans-unit>
+			<target state="final">Имя хоста "{0}" не действительно.</target></trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve" approved="yes">
 				<source>The given password was empty.</source>

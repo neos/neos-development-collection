@@ -28,22 +28,22 @@
 			<target state="final">Hetzelfde niveau als de huidige pagina</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve" approved="yes">
 				<source>First Level Of Website</source>
-			<target state="final">Eerste niveau van de website</target><alt-trans><target>Eerste niveau van Website</target></alt-trans></trans-unit>
+			<target state="final">Eerste niveau van de website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve" approved="yes">
 				<source>Second Level Of Website</source>
-			<target state="final">Tweede niveau van de website</target><alt-trans><target>Tweede niveau van Website</target></alt-trans></trans-unit>
+			<target state="final">Tweede niveau van de website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.3" xml:space="preserve" approved="yes">
 				<source>Third Level Of Website</source>
-			<target state="final">Derde niveau van de website</target><alt-trans><target>Derde niveau van Website</target></alt-trans></trans-unit>
+			<target state="final">Derde niveau van de website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.4" xml:space="preserve" approved="yes">
 				<source>Fourth Level Of Website</source>
-			<target state="final">Vierde niveau van de website</target><alt-trans><target>Vierde niveau van Website</target></alt-trans></trans-unit>
+			<target state="final">Vierde niveau van de website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.5" xml:space="preserve" approved="yes">
 				<source>Fifth Level Of Website</source>
-			<target state="final">Vijfde niveau van de website</target><alt-trans><target>Vijfde niveau van Website</target></alt-trans></trans-unit>
+			<target state="final">Vijfde niveau van de website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.6" xml:space="preserve" approved="yes">
 				<source>Sixth Level Of Website</source>
-			<target state="final">Zesde niveau van de website</target><alt-trans><target>Zesde niveau van Website</target></alt-trans></trans-unit>
+			<target state="final">Zesde niveau van de website</target></trans-unit>
       <trans-unit id="properties.selection" xml:space="preserve" approved="yes">
 				<source>Selection</source>
 			<target state="final">Selectie</target></trans-unit>

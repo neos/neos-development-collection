@@ -7,7 +7,7 @@
 			<target state="final">តារាងទ្រព្យ</target></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve" approved="yes">
 				<source>Resources</source>
-			<target state="final">ប្រភព, ធនធាន</target><alt-trans><target>ធនធាន</target></alt-trans><alt-trans><target>ប្រភព</target></alt-trans></trans-unit>
+			<target state="final">ប្រភព, ធនធាន</target></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve" approved="yes">
 				<source>Assets</source>
 			<target state="final">ទ្រព្យសកម្ម</target></trans-unit>
