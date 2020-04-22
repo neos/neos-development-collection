@@ -272,4 +272,14 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('startmiddleModifiedendModified', $view->render()
         );
     }
+
+    /**
+     * @test
+     */
+    public function rendererWithNestedPropsInApply()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('apply/renderWithNestedProps');
+        self::assertEquals('::example::', $view->render());
+    }
 }

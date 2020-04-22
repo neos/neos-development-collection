@@ -40,3 +40,11 @@ component.sandboxRenderer = Neos.Fusion:Component {
     }
   }
 }
+
+component.lazyRenderer = Neos.Fusion:Component {
+  a = 'Hello'
+  // This prop is not evaluated, since it is not used - otherwise the test would fail
+  b = Neos.Fusion:NotImplemented
+
+  renderer = ${props.a}
+}

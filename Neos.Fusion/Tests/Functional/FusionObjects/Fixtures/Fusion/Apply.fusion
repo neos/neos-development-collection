@@ -141,3 +141,31 @@ apply.renderArrayWithPositionAndSpread = Neos.Fusion:Array {
   first.@position = 'start'
   @apply.applyValues = ${{last: 'endModified', middle: 'middleModified'}}
 }
+
+apply.renderWithNestedProps = Neos.Fusion:Component {
+  applyValue = "example"
+  applyError = Neos.Fusion:NotImplemented
+
+  renderer = Neos.Fusion:TestNestedPropsA {
+    applyValue = ${props.applyValue}
+    applyError = ${props.applyError}
+  }
+}
+
+prototype(Neos.Fusion:TestNestedPropsA) < prototype(Neos.Fusion:Component) {
+  applyValue = null
+
+  renderer = Neos.Fusion:TestNestedPropsB {
+    @apply.fromProps = ${props}
+  }
+}
+
+prototype(Neos.Fusion:TestNestedPropsB) < prototype(Neos.Fusion:Component) {
+  applyValue = null
+
+  renderer = Neos.Fusion:Array {
+    item_0 = '::'
+    item_1 = ${props.applyValue}
+    item_2 = '::'
+  }
+}
