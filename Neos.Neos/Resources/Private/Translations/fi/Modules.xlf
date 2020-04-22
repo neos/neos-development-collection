@@ -20,7 +20,7 @@
 			<target state="final">Työtilat</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
 				<source>Details for "{0}"</source>
-			<target state="final">"{0}":n tiedot</target><alt-trans><target>"{0}" tiedot</target></alt-trans></trans-unit>
+			<target state="final">"{0}":n tiedot</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
 				<source>Create new workspace</source>
 			<target state="final">Luo uusi työtila</target></trans-unit>
@@ -222,7 +222,7 @@
 			<target state="final">Tämä moduuli näyttää kaikki tämän Neos-asennuksen tapahtumat.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos</source>
-			<target state="final">Neosin viimeisimmät tapahtumat</target><alt-trans><target>Neosin viimeisimmät tapahtumat:</target></alt-trans></trans-unit>
+			<target state="final">Neosin viimeisimmät tapahtumat</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target state="final">Historiassa ei vielä ole tapahtumia.</target></trans-unit>
@@ -517,7 +517,7 @@
 			<target state="final">Haluatko todella poistaa valitut paketit?</target></trans-unit>
       <trans-unit id="packages.selected.freeze" xml:space="preserve" approved="yes">
 				<source>Freeze selected packages</source>
-			<target state="final">Jäädytä valitut paketit</target><alt-trans><target>Jäädyttää valitut paketit</target></alt-trans></trans-unit>
+			<target state="final">Jäädytä valitut paketit</target></trans-unit>
       <trans-unit id="packages.selected.unfreeze" xml:space="preserve" approved="yes">
 				<source>Unfreeze selected packages</source>
 			<target state="final">Vapauta valitut paketit</target></trans-unit>

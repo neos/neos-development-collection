@@ -183,7 +183,7 @@
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="translated">No puedes borrar el espacio se trabajo "{0}" porque actualmente contiene los nodos "{1}".</target>
+          <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
@@ -328,7 +328,7 @@
 			<target state="translated">Datos de carácter personal</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target state="translated">Nombre</target><alt-trans><target>Nombre de pila</target></alt-trans></trans-unit>
+			<target state="translated">Nombre</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target state="translated">Apellidos</target></trans-unit>
@@ -352,7 +352,7 @@
 			<target state="final">Título</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target state="translated">Nombre</target><alt-trans><target>Nombre de pila</target></alt-trans></trans-unit>
+			<target state="translated">Nombre</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
 			<target state="translated">Segundo nombre</target></trans-unit>
@@ -505,7 +505,7 @@
 			<target state="translated">Eliminar paquete</target></trans-unit>
       <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
 				<source>Do you really want to delete "{0}"?</source>
-			<target state="translated">¿Realmente deseas eliminar "{0}"?</target><alt-trans><target>¿Realmente desas eliminar "{0}"?</target></alt-trans></trans-unit>
+			<target state="translated">¿Realmente deseas eliminar "{0}"?</target></trans-unit>
       <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the package</source>
 			<target state="translated">Sí, eliminar el paquete</target></trans-unit>
@@ -559,13 +559,13 @@
 			<target state="translated">Nombre</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve" approved="yes">
 				<source>Default asset collection</source>
-			<target state="final">Colección de activos predeterminada</target><alt-trans><target>Colección de activos por defecto</target></alt-trans></trans-unit>
+			<target state="final">Colección de activos predeterminada</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve" approved="yes">
 				<source>Site package</source>
-			<target state="final">Sitio de paquete</target><alt-trans><target>Sitio del paquete</target></alt-trans></trans-unit>
+			<target state="final">Sitio de paquete</target></trans-unit>
       <trans-unit id="sites.delete" xml:space="preserve" approved="yes">
 				<source>Delete this site</source>
-			<target state="final">Eliminar este sitio</target><alt-trans><target>Borrar este sitio</target></alt-trans></trans-unit>
+			<target state="final">Eliminar este sitio</target></trans-unit>
       <trans-unit id="sites.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate site</source>
 			<target state="final">Desactivar este sitio</target></trans-unit>
@@ -574,10 +574,10 @@
 			<target state="final">Activar sitio</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target state="final">¿Seguro que quieres eliminar "{0}"? Esta acción no se puede deshacer.</target><alt-trans><target>¿Seguro que quieres eliminar "{0}"? Esta acción no se podrá deshacer.</target></alt-trans></trans-unit>
+			<target state="final">¿Seguro que quieres eliminar "{0}"? Esta acción no se puede deshacer.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the site</source>
-			<target state="final">Si, elimine este sitio</target><alt-trans><target>Si, borra este sitio</target></alt-trans></trans-unit>
+			<target state="final">Si, elimine este sitio</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve" approved="yes">
 				<source>Import a site</source>
 			<target state="final">Importar un sitio</target></trans-unit>
@@ -586,37 +586,37 @@
 			<target state="final">Seleccionar sitio del paquete</target></trans-unit>
       <trans-unit id="sites.noPackackeInfo" xml:space="preserve" approved="yes">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target state="final">No hay sitios de paquetes disponibles. Asegúrese de que usted tiene un sitio de paquete activo.</target><alt-trans><target>No hay espacio disponible para los paquetes. Asegúrese de que usted tiene un paquete de sitio activo.</target></alt-trans></trans-unit>
+			<target state="final">No hay sitios de paquetes disponibles. Asegúrese de que usted tiene un sitio de paquete activo.</target></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve" approved="yes">
 				<source>Create a blank site</source>
 			<target state="final">Crear un sitio en blanco</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve" approved="yes">
 				<source>Select a document nodeType</source>
-			<target state="final">Selecciona el tipo de documento nodoTipo</target><alt-trans><target>Selecciona el tipo de documento</target></alt-trans></trans-unit>
+			<target state="final">Selecciona el tipo de documento nodoTipo</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve" approved="yes">
 				<source>Site name</source>
 			<target state="final">Nombre del sitio</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve" approved="yes">
 				<source>Create empty site</source>
-			<target state="final">Crear un sitio vacío</target><alt-trans><target>Crear un archivo nuevo</target></alt-trans></trans-unit>
+			<target state="final">Crear un sitio vacío</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve" approved="yes">
 				<source>Create a new site package</source>
-			<target state="final">Crear un nuevo sitio de paquete</target><alt-trans><target>Crear un nuevo paquete</target></alt-trans></trans-unit>
+			<target state="final">Crear un nuevo sitio de paquete</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve" approved="yes">
 				<source>VendorName.MyPackageKey</source>
-			<target state="final">VendorName.MyPackageKey</target><alt-trans><target>ProveerNombre.MiPaqueteClave</target></alt-trans></trans-unit>
+			<target state="final">VendorName.MyPackageKey</target></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
 			<target state="translated">No hay sitios disponibles</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target state="final">El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no está instalado, instálelo para iniciar los nuevos sitios.</target><alt-trans><target>El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no se ha instalado, ponlo en los nuevos sitios de kickstart.</target></alt-trans></trans-unit>
+			<target state="final">El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no está instalado, instálelo para iniciar los nuevos sitios.</target></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
 			<target state="translated">Nuevo sitio</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target state="final">¿Seguro que quieres eliminar "{0}"? Esta acción no se puede deshacer.</target><alt-trans><target>¿Seguro que quieres eliminar "{0}"? Esta acción no se podrá deshacer.</target></alt-trans></trans-unit>
+			<target state="final">¿Seguro que quieres eliminar "{0}"? Esta acción no se puede deshacer.</target></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve" approved="yes">
 				<source>New domain</source>
 			<target state="final">Nuevo dominio</target></trans-unit>
@@ -725,7 +725,7 @@ Las suplencias primarias son están marcadas en azul y son siempre visibles, mie
 			<target state="translated">Direcciones electrónicas</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target state="translated">Realmente quiere borrar</target><alt-trans><target>Realmente quieres borrar</target></alt-trans></trans-unit>
+			<target state="translated">Realmente quiere borrar</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
 			<target state="translated">Sí, eliminar correo electrónico</target></trans-unit>

@@ -20,7 +20,7 @@
 			<target state="final">Anvend ændringer</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target state="final">Annullér</target><alt-trans><target>Anuller</target></alt-trans></trans-unit>
+			<target state="final">Annullér</target></trans-unit>
       <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
 			<target state="final">Tilbage</target></trans-unit>
@@ -35,7 +35,7 @@
 			<target state="final">Indhold</target></trans-unit>
       <trans-unit id="node" xml:space="preserve" approved="yes">
 				<source>Node</source>
-			<target state="final">Indholdselement</target><alt-trans><target>Element</target></alt-trans><alt-trans><target>Indhold</target></alt-trans></trans-unit>
+			<target state="final">Indholdselement</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
 			<target state="final">Indholdsvisning</target></trans-unit>
@@ -77,7 +77,7 @@
 			<target state="final">Rediger / Forhåndsvisning</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Redigér</target><alt-trans><target>Rediger</target></alt-trans></trans-unit>
+			<target state="final">Redigér</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
 			<target state="final">Skjul / Vis</target></trans-unit>
@@ -128,7 +128,7 @@
 			<target state="final">Indsæt før</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
 				<source>Paste Into</source>
-			<target state="final">Indsæt indeni</target><alt-trans><target>Indsæt i</target></alt-trans></trans-unit>
+			<target state="final">Indsæt indeni</target></trans-unit>
       <trans-unit id="password" xml:space="preserve" approved="yes">
 				<source>Password</source>
 			<target state="final">Adgangskode</target></trans-unit>
@@ -143,7 +143,7 @@
 			<target state="final">Publicér til {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
 				<source>Publish all changes for current page</source>
-			<target state="final">Publicér alle ændringer for aktuel side</target><alt-trans><target>Publicér alle ændringer for siden</target></alt-trans></trans-unit>
+			<target state="final">Publicér alle ændringer for aktuel side</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target state="final">Kunne ikke publicére da destinationsarbejdsrummet er skrivebeskyttet</target></trans-unit>
@@ -155,13 +155,13 @@
 			<target state="final">Publicering</target></trans-unit>
       <trans-unit id="published" xml:space="preserve" approved="yes">
 				<source>Published</source>
-			<target state="final">Publiceret</target><alt-trans><target>Udgivet</target></alt-trans></trans-unit>
+			<target state="final">Publiceret</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve" approved="yes">
 				<source>Toggle publish menu</source>
-			<target state="final">Vis/skjul publiceringsmenu</target><alt-trans><target>Åbn/luk publiceringsmenu</target></alt-trans></trans-unit>
+			<target state="final">Vis/skjul publiceringsmenu</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
-			<target state="final">Destinationsarbejdsrum</target><alt-trans><target>Destinationsarbejdsområde</target></alt-trans><alt-trans><target>Arbejdsområde</target></alt-trans></trans-unit>
+			<target state="final">Destinationsarbejdsrum</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
 				<source>Current workspace</source>
 			<target state="final">Nuværende arbejdsrum</target></trans-unit>
@@ -191,7 +191,7 @@
 			<target state="final">Brugernavn</target></trans-unit>
       <trans-unit id="you" xml:space="preserve" approved="yes">
 				<source>You</source>
-			<target state="final">Du</target><alt-trans><target>Dig</target></alt-trans></trans-unit>
+			<target state="final">Du</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve" approved="yes">
 				<source>[no title]</source>
 			<target state="final">[uden titel]</target></trans-unit>
@@ -200,7 +200,7 @@
 			<target state="final">Etiket</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Content Type</source>
-			<target state="final">Indholdstype</target><alt-trans><target>Nodetype</target></alt-trans></trans-unit>
+			<target state="final">Indholdstype</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target state="final">Sti</target></trans-unit>
@@ -227,7 +227,7 @@
 			<target state="final">Seneste publicering</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
-			<target state="final">ID</target><alt-trans><target>Identifikator</target></alt-trans></trans-unit>
+			<target state="final">ID</target></trans-unit>
       <trans-unit id="name" xml:space="preserve" approved="yes">
 				<source>Name</source>
 			<target state="final">Navn</target></trans-unit>
@@ -272,10 +272,10 @@
 			<target state="final">Dokument</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve" approved="yes">
 				<source>Reference</source>
-			<target state="final">Henvisning</target><alt-trans><target>Reference</target></alt-trans></trans-unit>
+			<target state="final">Henvisning</target></trans-unit>
       <trans-unit id="host" xml:space="preserve" approved="yes">
 				<source>Host</source>
-			<target state="final">Domæne</target><alt-trans><target>Host</target></alt-trans></trans-unit>
+			<target state="final">Domæne</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve" approved="yes">
 				<source>Scheme</source>
 			<target state="final">Protokol</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target state="translated">Inaktiv</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
-			<target state="final">Klik for at redigere</target><alt-trans><target>Klik for at redigerer</target></alt-trans></trans-unit>
+			<target state="final">Klik for at redigere</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
 			<target state="translated">Klik for at deaktivere</target></trans-unit>
@@ -361,16 +361,16 @@
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
-			<target state="final">Klik {0} for at fortsætte til siden.</target><alt-trans><target>Klik her for at fortsætte til siden {0}.</target></alt-trans></trans-unit>
+			<target state="final">Klik {0} for at fortsætte til siden.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
 			<target state="final">Klik {0} for at se filen.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
-			<target state="final">Klik {0} for at fortsætte til den eksterne side.</target><alt-trans><target>Klik her for at fortsætte til den eksterne side {0}.</target></alt-trans></trans-unit>
+			<target state="final">Klik {0} for at fortsætte til den eksterne side.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
-			<target state="final">(ingen destination valgt)</target><alt-trans><target>(Ingen destination valgt)</target></alt-trans></trans-unit>
+			<target state="final">(ingen destination valgt)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target state="final">Dette er en genvej til den første underside.&lt;br /&gt;Klik {0} for at fortsætte til siden.</target></trans-unit>
@@ -402,7 +402,7 @@
 			<target state="translated">Er du sikker på at du vil slette {numberOfChanges} ændring(er) i dette arbejdsrum?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
-			<target state="final">Publicér alle</target><alt-trans><target>Offentliggøre alle</target></alt-trans></trans-unit>
+			<target state="final">Publicér alle</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
 			<target state="final">Publicér alle ændringer</target></trans-unit>
@@ -414,16 +414,16 @@
 			<target state="final">Ventende ændringer</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target state="final">Din personlige arbejdsrum indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsrum, skal ændringerne enten publiceres eller kasseres.</target><alt-trans><target>Din personlige arbejdsområde indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsområde, skal ændringerne enten publiceres eller kasseres.</target></alt-trans></trans-unit>
+			<target state="final">Din personlige arbejdsrum indeholder ændringer, som ikke er publiceret. For at du kan skifte til et andet arbejdsrum, skal ændringerne enten publiceres eller kasseres.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target state="final">Gennemse dine ændringer, publicér eller kassér dem, og vælg derefter et nyt arbejdsrum igen.</target><alt-trans><target>Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsrum igen.</target></alt-trans><alt-trans><target>Gennemse dine ændringer, publicer eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans><alt-trans><target>Gennemse dine ændringer, offentliggør eller kasser dem, og vælg derefter et nyt arbejdsområde igen.</target></alt-trans></trans-unit>
+			<target state="final">Gennemse dine ændringer, publicér eller kassér dem, og vælg derefter et nyt arbejdsrum igen.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
-			<target state="final">Redigeringmåder</target><alt-trans><target>Redigering</target></alt-trans></trans-unit>
+			<target state="final">Redigeringmåder</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
 				<source>Preview Central</source>
-			<target state="final">Forhåndsvisninger</target><alt-trans><target>Førvisnings Central</target></alt-trans></trans-unit>
+			<target state="final">Forhåndsvisninger</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
 				<source>You still have changes. What do you want to do with them?</source>
 			<target state="final">Du har stadig ændringer. Hvad ønsker du at gøre med dem?</target></trans-unit>
@@ -468,7 +468,7 @@
 			<target state="final">Indsæt et link, eller skriv for at søge</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve" approved="yes">
 				<source>Unable to load sub node types of:</source>
-			<target state="final">Kunne ikke indlæse underliggende indholdstyper af:</target><alt-trans><target>Kunne ikke indlæse underliggende nodetyper af:</target></alt-trans><alt-trans><target>Kunne ikke indlæse underliggende knudetyper af:</target></alt-trans></trans-unit>
+			<target state="final">Kunne ikke indlæse underliggende indholdstyper af:</target></trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
 			<target state="final">Skift type</target></trans-unit>
@@ -492,7 +492,7 @@
 			<target state="final">Denne tekst må ikke overstige {{maximum}} tegn.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="final">Kun almindelige bogstaver (a-z, æøå) og tal er tilladt.</target><alt-trans><target>Kun tegnene a-z og tal er tilladt</target></alt-trans></trans-unit>
+			<target state="final">Kun almindelige bogstaver (a-z, æøå) og tal er tilladt.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
 				<source>The given subject was not countable.</source>
 			<target state="final">Givet emne var ikke tællelig.</target></trans-unit>
@@ -513,10 +513,10 @@
 			<target state="final">Den angivne dato skal være før {{formatLatestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address.</source>
-			<target state="final">Angiv venligst en gyldig e-mailadresse.</target><alt-trans><target>Angiv venligst en gyldig e-mail-adresse.</target></alt-trans></trans-unit>
+			<target state="final">Angiv venligst en gyldig e-mailadresse.</target></trans-unit>
       <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected.</source>
-			<target state="final">Et gyldigt decimaltal forventes.</target><alt-trans><target>Et gyldigt float-tal forventes.</target></alt-trans><alt-trans><target>Et gyldigt heltal forventes.</target></alt-trans></trans-unit>
+			<target state="final">Et gyldigt decimaltal forventes.</target></trans-unit>
       <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid integer number is expected.</source>
 			<target state="final">Et gyldigt heltal forventes.</target></trans-unit>
@@ -525,16 +525,16 @@
 			<target state="final">Kun bogstaver, tal, mellemrum og visse skilletegn forventes.</target></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
 				<source>This property is required.</source>
-			<target state="final">Dette felt er påkrævet.</target><alt-trans><target>Denne egenskab er påkrævet.</target></alt-trans></trans-unit>
+			<target state="final">Dette felt er påkrævet.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve" approved="yes">
 				<source>A valid number is expected.</source>
 			<target state="final">Et gyldigt tal forventes.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target state="final">Angiv venligst et gyldigt tal mellem {{minimum}} og {{maximum}}</target><alt-trans><target>Angiv et gyldigt tal mellem {{minimum}} og {{maximum}}</target></alt-trans></trans-unit>
+			<target state="final">Angiv venligst et gyldigt tal mellem {{minimum}} og {{maximum}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target state="final">Den givne værdi matcher ikke mønsteret ({{pattern}})</target><alt-trans><target>DEn givne genstand matcher ikke mønsteret ({{pattern}})</target></alt-trans></trans-unit>
+			<target state="final">Den givne værdi matcher ikke mønsteret ({{pattern}})</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
 			<target state="final">En gyldig streng forventes.</target></trans-unit>
@@ -543,10 +543,10 @@
 			<target state="final">Gyldig tekst uden XML-tags er forventet.</target></trans-unit>
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID.</source>
-			<target state="final">Det givne emne er ikke et gyldigt UUID.</target><alt-trans><target>Det givne emne er ikke en gyldig UUID.</target></alt-trans></trans-unit>
+			<target state="final">Det givne emne er ikke et gyldigt UUID.</target></trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve" approved="yes">
 				<source>Toggle content dimensions selector</source>
-			<target state="final">Vis/skjul indholdsdimensionsvælger</target><alt-trans><target>Åben/luk indholdsdimensionsvælger</target></alt-trans></trans-unit>
+			<target state="final">Vis/skjul indholdsdimensionsvælger</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve" approved="yes">
 				<source>Start with an empty or pre-filled document?</source>
 			<target state="final">Starte med et tomt eller forudfyldt dokument?</target></trans-unit>
@@ -570,7 +570,7 @@
 			<target state="final">Indhold</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve" approved="yes">
 				<source>Toggle menu group</source>
-			<target state="final">Vis/skjul menu gruppe</target><alt-trans><target>Åbn/luk menu gruppe</target></alt-trans></trans-unit>
+			<target state="final">Vis/skjul menu gruppe</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve" approved="yes">
 				<source>Toggle sticky menu mode</source>
 			<target state="final">Aktiver/deaktiver fastgjort menu</target></trans-unit>
@@ -579,13 +579,13 @@
 			<target state="final">Er du sikker på, at du vil slette</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target state="final">Dette vil slette elementet</target><alt-trans><target>Dette vil slette siden</target></alt-trans></trans-unit>
+			<target state="final">Dette vil slette elementet</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
 			<target state="final">og dens undersider</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target state="final">Denne handling kan fortrydes i arbejdsrumsadministration.</target><alt-trans><target>Denne handling kan fortrydes i arbejdsrum administration.</target></alt-trans></trans-unit>
+			<target state="final">Denne handling kan fortrydes i arbejdsrumsadministration.</target></trans-unit>
       <trans-unit id="height" xml:space="preserve" approved="yes">
 				<source>Height</source>
 			<target state="final">Højde</target></trans-unit>
@@ -600,7 +600,7 @@
 			<target state="final">Dette vil slette elementet.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target state="final">Denne handling kan fortrydes i arbejdsrumsadministration.</target><alt-trans><target>Denne handling kan fortrydes i arbejdsrum administration.</target></alt-trans></trans-unit>
+			<target state="final">Denne handling kan fortrydes i arbejdsrumsadministration.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target state="final">Medie</target></trans-unit>
@@ -621,7 +621,7 @@
 			<target state="final">Arbejdsrum</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
 				<source>An error occurred during saving</source>
-			<target state="final">Der opstod en fejl i forbindelse med at gemme</target><alt-trans><target>Der opstod en fejl under lagring</target></alt-trans></trans-unit>
+			<target state="final">Der opstod en fejl i forbindelse med at gemme</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Reload the page to attempt to fix the problem.</source>
 			<target state="final">Genindlæs siden for at forsøge at løse problemet.</target></trans-unit>
@@ -643,14 +643,14 @@
 			<target state="final">Rå indhold tilstand</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
-			<target state="final">Computer</target><alt-trans><target>Skrivebord</target></alt-trans></trans-unit>
+			<target state="final">Computer</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
-			<target state="final">Login til</target><alt-trans><target>TYPO3 Neos Log ind</target></alt-trans></trans-unit>
+			<target state="final">Login til</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
-			<target state="final">Autentificerer</target><alt-trans><target>Verificerer</target></alt-trans></trans-unit>
+			<target state="final">Autentificerer</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target state="final">Log ud</target></trans-unit>
@@ -681,7 +681,7 @@
 			<target state="final">Du kan angive webstedets domæne eller importere et nyt websted i opsætningen.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
-			<target state="final">Databasefejl</target><alt-trans><target>Database fejl</target></alt-trans></trans-unit>
+			<target state="final">Databasefejl</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
 			<target state="translated">Der er ingen databaseforbindelse endnu eller Neos databaseskemaet er ikke blevet oprettet.</target></trans-unit>
@@ -726,16 +726,16 @@
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve" approved="yes">
 				<source>Nodes</source>
-			<target state="final">Indholdselementer</target><alt-trans><target>Elementer</target></alt-trans><alt-trans><target>Indhold</target></alt-trans><alt-trans><target>Indholdsegenskaber</target></alt-trans></trans-unit>
+			<target state="final">Indholdselementer</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
 				<source>Show</source>
 			<target state="final">Vis</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve" approved="yes">
 				<source>This node cannot be accessed through a public URL</source>
-			<target state="final">Dette indholdselement kan ikke tilgås via en offentlig URL-adresse</target><alt-trans><target>Dette element kan ikke tilgås via en offentlig URL-adresse</target></alt-trans></trans-unit>
+			<target state="final">Dette indholdselement kan ikke tilgås via en offentlig URL-adresse</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
 				<source>Node Properties</source>
-			<target state="final">Indholdselement egenskaber</target><alt-trans><target>Elementegenskaber</target></alt-trans><alt-trans><target>Indholdsegenskaber</target></alt-trans></trans-unit>
+			<target state="final">Indholdselement egenskaber</target></trans-unit>
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
@@ -766,7 +766,7 @@
 			<target state="translated">Understreget</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target state="translated">Sænket skrift</target><alt-trans><target>Sænket</target></alt-trans></trans-unit>
+			<target state="translated">Sænket skrift</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
 			<target state="translated">Hævet skrift</target></trans-unit>

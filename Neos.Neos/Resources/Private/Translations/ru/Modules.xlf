@@ -11,16 +11,16 @@
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
-			<target state="final">Управление</target><alt-trans><target>Управление содержимым</target></alt-trans></trans-unit>
+			<target state="final">Управление</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to management of content</source>
-			<target state="final">Содержит модули управления содержимым</target><alt-trans><target>Модули для управления содержимым</target></alt-trans></trans-unit>
+			<target state="final">Содержит модули управления содержимым</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target state="final">Рабочие области</target><alt-trans><target>Рабочее пространство</target></alt-trans><alt-trans><target>Рабочие пространства</target></alt-trans><alt-trans><target>Workspaces</target></alt-trans></trans-unit>
+			<target state="final">Рабочие области</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
 				<source>Details for "{0}"</source>
-			<target state="final">Подробно об "{0}"</target><alt-trans><target>Детали для "{0}"</target></alt-trans><alt-trans><target>Детально об "{0}"</target></alt-trans></trans-unit>
+			<target state="final">Подробно об "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
 				<source>Create new workspace</source>
 			<target state="final">Создать новую рабочую область</target></trans-unit>
@@ -41,10 +41,10 @@
 			<target state="final">Редактировать рабочую область</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
 				<source>Personal workspace</source>
-			<target state="final">Персональная рабочая область</target><alt-trans><target>Личная рабочая область</target></alt-trans></trans-unit>
+			<target state="final">Персональная рабочая область</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
 				<source>Private workspace</source>
-			<target state="final">Приватная рабочая область</target><alt-trans><target>Частная рабочая область</target></alt-trans></trans-unit>
+			<target state="final">Приватная рабочая область</target></trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
 				<source>Internal workspace</source>
 			<target state="final">Внутренняя рабочая область</target></trans-unit>
@@ -68,10 +68,10 @@
 			<target state="final">Видимость</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
 				<source>Private</source>
-			<target state="final">Приватный</target><alt-trans><target>Частно</target></alt-trans><alt-trans><target>Приватно</target></alt-trans></trans-unit>
+			<target state="final">Приватный</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target state="final">Только рецензенты и администраторы имеют доступ к этой рабочей области и могут изменять её</target><alt-trans><target>Только рецензенты и администраторы имеют доступ к этой рабочей области и могут править её</target></alt-trans></trans-unit>
+			<target state="final">Только рецензенты и администраторы имеют доступ к этой рабочей области и могут изменять её</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
 				<source>Internal</source>
 			<target state="final">Внутренняя</target></trans-unit>
@@ -86,40 +86,40 @@
 			<target state="final">Открыть страницу в рабочей области "{0}"</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target state="final">Это ваша личная рабочяя область, которую вы не можете удалить.</target><alt-trans><target>Это ваша личная рабочяя область, которую вы не можете удалить сами.</target></alt-trans></trans-unit>
+			<target state="final">Это ваша личная рабочяя область, которую вы не можете удалить.</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target state="final">Рабочая область содержит изменения. Чтобы её удалить, отмените сначала эти изменения.</target><alt-trans><target>Рабочая область содержит изменения. Чтобы удалить, отмените сначала эти изменения.</target></alt-trans></trans-unit>
+			<target state="final">Рабочая область содержит изменения. Чтобы её удалить, отмените сначала эти изменения.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target state="final">Рабочая область не может быть перебазирована поверх другой, так как она всё ещё содержит изменения.</target><alt-trans><target>Рабочая область не может быть перебазирована поверх другой, потому что она всё ещё содержит изменения.</target></alt-trans><alt-trans><target>Рабочая область не может быть перебасирована на другую, потому что она всё ещё содержит изменения.</target></alt-trans></trans-unit>
+			<target state="final">Рабочая область не может быть перебазирована поверх другой, так как она всё ещё содержит изменения.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve" approved="yes">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
-			<target state="final">Рабочая область не может быть удалена, поскольку другие рабочие области зависят от неё.</target><alt-trans><target>Рабочая область не может быть удалена, если другие рабочие области зависят от неё.</target></alt-trans></trans-unit>
+			<target state="final">Рабочая область не может быть удалена, поскольку другие рабочие области зависят от неё.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve" approved="yes">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target state="final">У вас нет прав на удаление этой рабочей области.</target><alt-trans><target>У вас нет разрешения на удаление этой рабочей области.</target></alt-trans></trans-unit>
+			<target state="final">У вас нет прав на удаление этой рабочей области.</target></trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the workspace "{0}"?</source>
 			<target state="final">Вы действительно хотите удалить рабочую область "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve" approved="yes">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
-			<target state="final">Это безвозвратно удалит рабочую область, включая все неопубликованные изменения. Эта операция не может быть отменена.</target><alt-trans><target>Это безвозвратно удалит рабочую область, включая все неопубликованные материалы.</target></alt-trans></trans-unit>
+			<target state="final">Это безвозвратно удалит рабочую область, включая все неопубликованные изменения. Эта операция не может быть отменена.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target state="final">Этот модуль содержит обзор всех элементов текущей рабочей области, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target><alt-trans><target>Этот модуль содержит обзор всех элементов текущего Workspace, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target></alt-trans><alt-trans><target>Модуль для просмотра всех элементов текущей рабочей области, позволяющий рецензировать и публиковать эти элементы.</target></alt-trans></trans-unit>
+			<target state="final">Этот модуль содержит обзор всех элементов текущей рабочей области, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes in workspace "{0}"</source>
-			<target state="final">Неопубликованные изменения в рабочей области "{0}"</target><alt-trans><target>Неопубликованные изменения</target></alt-trans></trans-unit>
+			<target state="final">Неопубликованные изменения в рабочей области "{0}"</target></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
-			<target state="final">дополнения: {new}, изменения: {changed}, удаления: {removed}</target><alt-trans><target>дополнения: {new}, изменения: {changed}, абсорбции: {removed}</target></alt-trans></trans-unit>
+			<target state="final">дополнения: {new}, изменения: {changed}, удаления: {removed}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve" approved="yes">
 				<source>Review</source>
 			<target state="final">Проверить</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Discard selected changes</source>
-			<target state="final">Отклонить выбранные изменения</target><alt-trans><target>Отменить выбранные изменения</target></alt-trans></trans-unit>
+			<target state="final">Отклонить выбранные изменения</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Publish selected changes</source>
 			<target state="final">Опубликовать выбранные изменения</target></trans-unit>
@@ -149,13 +149,13 @@
 			<target state="final">скрыт</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>edited</source>
-			<target state="final">отредактирован</target><alt-trans><target>исправлен</target></alt-trans></trans-unit>
+			<target state="final">отредактирован</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target state="final">Существуют неопубликованные изменения в этой рабочей области.</target><alt-trans><target>Существуют неопубликованные изменения в этом Workspace.</target></alt-trans></trans-unit>
+			<target state="final">Существуют неопубликованные изменения в этой рабочей области.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target state="final">Вы действительно хотите отменить все изменения в рабочей области "{0}"?</target><alt-trans><target>Вы действительно хотите отменить все изменения в Workspace "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Вы действительно хотите отменить все изменения в рабочей области "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
         <source>A workspace with this title already exists.</source>
         <target state="final">Рабочая область с этим названием уже существует.</target>
@@ -171,9 +171,6 @@
       <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes" approved="yes">
         <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
         <target state="final">Произошла ошибка при получении неопубликованных элементов из рабочей области "{0}", ничего не было удалено.</target>
-        <alt-trans>
-          <target>Произошла ошибка при получении неопубликованных узлов из рабочей области "{0}", ничего не было удалено.</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges" approved="yes">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
@@ -236,7 +233,7 @@
 			<target state="final">Вот что недавно произошло в Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target state="final">Не было событий, которые могли бы быть отображены в данном журнале изменений.</target><alt-trans><target>Пока не были зарегистрированы события, которые могли бы быть отображены в данном журнале изменений.</target></alt-trans></trans-unit>
+			<target state="final">Не было событий, которые могли бы быть отображены в данном журнале изменений.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
 				<source>{0} created the {1} "{2}".</source>
 			<target state="final">{0} создал {1} "{2}".</target></trans-unit>
@@ -263,29 +260,29 @@
 			<target state="final">{0} изменил контент на {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve" approved="yes">
 				<source>{0} created a new user "{1}" for {2}.</source>
-			<target state="final">{0} создал нового пользователя "{1}" для {2}.</target><alt-trans><target>{0} создал нового пользователя «{1}» для {2}.</target></alt-trans></trans-unit>
+			<target state="final">{0} создал нового пользователя "{1}" для {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve" approved="yes">
 				<source>{0} deleted the account "{1}" of {2}.</source>
-			<target state="final">{0} удалил учётную запись "{1}" из {2}.</target><alt-trans><target>{0} удалил учётную запись «{1}» из {2}.</target></alt-trans></trans-unit>
+			<target state="final">{0} удалил учётную запись "{1}" из {2}.</target></trans-unit>
       <trans-unit id="history.loadMore.label" xml:space="preserve" approved="yes">
 				<source>Load More</source>
 			<target state="final">Загрузить ещё</target></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve" approved="yes">
 				<source>This node has been removed in the meantime</source>
-			<target state="final">За прошедшее время элемент был удален</target><alt-trans><target>Этот элемент был удален в то же время</target></alt-trans></trans-unit>
+			<target state="final">За прошедшее время элемент был удален</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
-			<target state="final">Администрирование</target><alt-trans><target>Администрация</target></alt-trans></trans-unit>
+			<target state="final">Администрирование</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to administration</source>
-			<target state="final">Содержит модули администрирования</target><alt-trans><target>Содержит модули администрации</target></alt-trans></trans-unit>
+			<target state="final">Содержит модули администрирования</target></trans-unit>
       <trans-unit id="users.label" xml:space="preserve" approved="yes">
 				<source>User Management</source>
-			<target state="final">Управление пользователями</target><alt-trans><target>Пользователи</target></alt-trans></trans-unit>
+			<target state="final">Управление пользователями</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve" approved="yes">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target state="final">Модуль управления пользователями даёт представление о всех пользователях в системе. Можно группировать их по свойствам для облегчения контроля их прав, точек доступа, принадлежности к группам и т.п.. Это незаменимый инструмент для контроля настроек пользователей.</target><alt-trans><target>Модуль управления пользователями даёт представление о всех пользователях в системе. Можно группировать их по свойствам для облегчения контроля их прав, точек доступа, принадлежности к группам и т. п. Это незаменимый инструмент для контроля настроек пользователей.</target></alt-trans></trans-unit>
+			<target state="final">Модуль управления пользователями даёт представление о всех пользователях в системе. Можно группировать их по свойствам для облегчения контроля их прав, точек доступа, принадлежности к группам и т.п.. Это незаменимый инструмент для контроля настроек пользователей.</target></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve" approved="yes">
 				<source>Overview</source>
 			<target state="final">Обзор</target></trans-unit>
@@ -297,7 +294,7 @@
 			<target state="final">Создать</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Редактировать</target><alt-trans><target>Править</target></alt-trans></trans-unit>
+			<target state="final">Редактировать</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
 			<target state="final">Изменить учетную запись</target></trans-unit>
@@ -387,7 +384,7 @@
 			<target state="final">Электронные адреса</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
-			<target state="final">Основной</target><alt-trans><target>Основное</target></alt-trans></trans-unit>
+			<target state="final">Основной</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve" approved="yes">
 				<source>N/A</source>
 			<target state="final">Н/Д</target></trans-unit>
@@ -399,25 +396,25 @@
 			<target state="final">Редактирование пользователя</target></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target state="final">Вы вошли как пользователь, и вы не можете удалить сами себя.</target><alt-trans><target>Вы вошли как этот пользователь, и не можете удалить сами себя.</target></alt-trans><alt-trans><target>Вы не можете удалить собственную запись.</target></alt-trans></trans-unit>
+			<target state="final">Вы вошли как пользователь, и вы не можете удалить сами себя.</target></trans-unit>
       <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve" approved="yes">
 				<source>Click here to delete this user</source>
 			<target state="final">Нажмите здесь, чтобы удалить этого пользователя</target></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target state="final">Вы действительно хотите удалить пользователя "{0}"?</target><alt-trans><target>Вы действительно хотите удалить этого пользователя "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Вы действительно хотите удалить пользователя "{0}"?</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
 			<target state="final">Да, удалить пользователя</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="final">Это удалит пользователя, все связанные учетные записи и личные рабочие области, включая неопубликованные изменения.</target><alt-trans><target>Это удалит пользователя, все связанные учетные записи и личные рабочие пространства, включая неопубликованные изменения.</target></alt-trans><alt-trans><target>Это удалит пользователя, все связанные учетные записи и личные Workspace, включая неопубликованные изменения.</target></alt-trans></trans-unit>
+			<target state="final">Это удалит пользователя, все связанные учетные записи и личные рабочие области, включая неопубликованные изменения.</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
 			<target state="final">Эта операция не может быть отменена</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve" approved="yes">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target state="final">Редактировать учетную запись "{accountIdentifier}"</target><alt-trans><target>Редактировать учетную запись «{accountIdentifier}»</target></alt-trans></trans-unit>
+			<target state="final">Редактировать учетную запись "{accountIdentifier}"</target></trans-unit>
       <trans-unit id="users.account" xml:space="preserve" approved="yes">
 				<source>Account</source>
 			<target state="final">Учетная запись</target></trans-unit>
@@ -447,28 +444,28 @@
 			<target state="final">Просмотр пользователя</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve" approved="yes">
 				<source>Edit user</source>
-			<target state="final">Редактировать учётную запись пользователя</target><alt-trans><target>Править учётную запись пользователя</target></alt-trans><alt-trans><target>Изменить пользователя</target></alt-trans></trans-unit>
+			<target state="final">Редактировать учётную запись пользователя</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete user</source>
-			<target state="final">Удалить учётную запись пользователя</target><alt-trans><target>Удалить пользователя</target></alt-trans></trans-unit>
+			<target state="final">Удалить учётную запись пользователя</target></trans-unit>
       <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target state="final">Вы вошли как пользователь, и вы не можете удалить сами себя.</target><alt-trans><target>Вы вошли как этот пользователь, и не можете удалить сами себя.</target></alt-trans><alt-trans><target>Вы не можете удалить собственную запись.</target></alt-trans></trans-unit>
+			<target state="final">Вы вошли как пользователь, и вы не можете удалить сами себя.</target></trans-unit>
       <trans-unit id="users.message.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target state="final">Вы действительно хотите удалить пользователя "{0}"?</target><alt-trans><target>Вы действительно хотите удалить этого пользователя "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Вы действительно хотите удалить пользователя "{0}"?</target></trans-unit>
       <trans-unit id="users.message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="final">Это удалит пользователя, все связанные учетные записи и личные рабочие области, включая неопубликованные изменения.</target><alt-trans><target>Это удалит пользователя, все связанные учетные записи и личные рабочие пространства, включая неопубликованные изменения.</target></alt-trans><alt-trans><target>Это удалит пользователя, все связанные учетные записи и личные Workspace, включая неопубликованные изменения.</target></alt-trans></trans-unit>
+			<target state="final">Это удалит пользователя, все связанные учетные записи и личные рабочие области, включая неопубликованные изменения.</target></trans-unit>
       <trans-unit id="users.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
 			<target state="final">Да, удалить пользователя</target></trans-unit>
       <trans-unit id="users.editUser" xml:space="preserve" approved="yes">
 				<source>Edit user "{0}"</source>
-			<target state="final">Редактирование учетной записи пользователя "{0}"</target><alt-trans><target>Править учётную запись пользователя "{0}"</target></alt-trans><alt-trans><target>Редактирование пользователя "{0}"</target></alt-trans></trans-unit>
+			<target state="final">Редактирование учетной записи пользователя "{0}"</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve" approved="yes">
 				<source>Home</source>
-			<target state="final">Домой</target><alt-trans><target>Главная</target></alt-trans></trans-unit>
+			<target state="final">Домой</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve" approved="yes">
 				<source>Work</source>
 			<target state="final">Рабочий</target></trans-unit>
@@ -492,31 +489,31 @@
 			<target state="final">Тип пакета</target></trans-unit>
       <trans-unit id="packages.deactivated" xml:space="preserve" approved="yes">
 				<source>Deactivated</source>
-			<target state="final">Деактивирован</target><alt-trans><target>Отключен</target></alt-trans></trans-unit>
+			<target state="final">Деактивирован</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve" approved="yes">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target state="final">Этот пакет в настоящее время заморожен. Нажмите, чтобы разморозить его.</target><alt-trans><target>Этот пакет в настоящее время заморожен. Нажмите, чтобы освободить его.</target></alt-trans></trans-unit>
+			<target state="final">Этот пакет в настоящее время заморожен. Нажмите, чтобы разморозить его.</target></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve" approved="yes">
 				<source>Freeze the package in order to speed up your website.</source>
 			<target state="final">Заморозить пакет для того, чтобы ускорить ваш веб-сайт.</target></trans-unit>
       <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve" approved="yes">
 				<source>This package is protected and cannot be deactivated.</source>
-			<target state="final">Этот пакет является защищенным и не может быть деактивирован.</target><alt-trans><target>Этот пакет является защищенным и не может быть отключен.</target></alt-trans></trans-unit>
+			<target state="final">Этот пакет является защищенным и не может быть деактивирован.</target></trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate Package</source>
-			<target state="final">Деактивировать пакет</target><alt-trans><target>Отключить пакет</target></alt-trans></trans-unit>
+			<target state="final">Деактивировать пакет</target></trans-unit>
       <trans-unit id="packages.tooltip.activate" xml:space="preserve" approved="yes">
 				<source>Activate Package</source>
-			<target state="final">Активировать пакет</target><alt-trans><target>Включить пакет</target></alt-trans></trans-unit>
+			<target state="final">Активировать пакет</target></trans-unit>
       <trans-unit id="packages.tooltip.noDelete" xml:space="preserve" approved="yes">
 				<source>This package is protected and cannot be deleted.</source>
-			<target state="final">Этот пакет защищён и не может быть удален.</target><alt-trans><target>Этот пакет является защищенным и не может быть удален.</target></alt-trans></trans-unit>
+			<target state="final">Этот пакет защищён и не может быть удален.</target></trans-unit>
       <trans-unit id="packages.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete Package</source>
 			<target state="final">Удалить пакет</target></trans-unit>
       <trans-unit id="packages.message.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"?</source>
-			<target state="final">Вы действительно хотите удалить "{0}"?</target><alt-trans><target>Вы действительно хотите удалить «{0}»?</target></alt-trans></trans-unit>
+			<target state="final">Вы действительно хотите удалить "{0}"?</target></trans-unit>
       <trans-unit id="packages.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the package</source>
 			<target state="final">Да, удалить пакет</target></trans-unit>
@@ -540,7 +537,7 @@
 			<target state="final">Отключить выбранные пакеты</target></trans-unit>
       <trans-unit id="packages.selected.activate" xml:space="preserve" approved="yes">
 				<source>Activate selected packages</source>
-			<target state="final">Активировать выбранные пакеты</target><alt-trans><target>Включить выбранные пакеты</target></alt-trans></trans-unit>
+			<target state="final">Активировать выбранные пакеты</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
 			<target state="final">Управление сайтами</target></trans-unit>
@@ -654,16 +651,16 @@
 			<target state="final">Модуль Конфигурации предоставляет вам обзор всех типов конфигурации.</target></trans-unit>
       <trans-unit id="dimensions.label" xml:space="preserve" approved="yes">
 				<source>Dimensions</source>
-			<target state="final">Размеры</target><alt-trans><target>Измерения</target></alt-trans></trans-unit>
+			<target state="final">Размеры</target></trans-unit>
       <trans-unit id="dimensions.description" xml:space="preserve" approved="yes">
 				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
-			<target state="final">Предоставляет графический обзор настроек резервного поведения внутри одного измерения контента и между ними.</target><alt-trans><target>Предоставляет графический обзор настроек резервного поведения внутри каждого измерения контента и между измерениями контента.</target></alt-trans></trans-unit>
+			<target state="final">Предоставляет графический обзор настроек резервного поведения внутри одного измерения контента и между ними.</target></trans-unit>
       <trans-unit id="dimensions.interDimension.legend" xml:space="preserve" approved="yes">
 				<source>Inter dimensional fallback graph</source>
 			<target state="final">Междименсиональная диаграмма резервного поведения</target></trans-unit>
       <trans-unit id="dimensions.interDimension.short" xml:space="preserve" approved="yes">
 				<source>Inter dimensional</source>
-			<target state="final">Междименсиональные</target><alt-trans><target>Междименсионально</target></alt-trans></trans-unit>
+			<target state="final">Междименсиональные</target></trans-unit>
       <trans-unit id="dimensions.interDimension.description" xml:space="preserve" approved="yes">
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
@@ -686,16 +683,16 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="final">Пользователь</target></trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve" approved="yes">
 				<source>User Settings</source>
-			<target state="final">Мои настройки</target><alt-trans><target>Пользовательские настройки</target></alt-trans><alt-trans><target>Настройки пользователя</target></alt-trans></trans-unit>
+			<target state="final">Мои настройки</target></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve" approved="yes">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
 			<target state="final">Этот модуль позволяет вам настроить ваш профиль пользователя. Здесь вы можете изменить ваш активный системный язык, имя и адрес электронной почты. Здесь вы также можете настроить другие функции системы.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Редактировать</target><alt-trans><target>Править</target></alt-trans></trans-unit>
+			<target state="final">Редактировать</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Редактировать</target><alt-trans><target>Править</target></alt-trans></trans-unit>
+			<target state="final">Редактировать</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
 			<target state="final">Новый электронный адрес</target></trans-unit>
@@ -737,7 +734,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="final">Электронные адреса</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target state="final">Вы действительно хотите удалить</target><alt-trans><target>Подтвердите удаление</target></alt-trans></trans-unit>
+			<target state="final">Вы действительно хотите удалить</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve" approved="yes">
 				<source>Yes, delete electronic address</source>
 			<target state="final">Да, удалить электронный адрес</target></trans-unit>

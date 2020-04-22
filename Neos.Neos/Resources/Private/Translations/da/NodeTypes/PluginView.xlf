@@ -7,10 +7,10 @@
 			<target state="final">Plugin-visning</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve" approved="yes">
 				<source>Plugin Views</source>
-			<target state="final">Plugin-visninger</target><alt-trans><target>Plugin-visning</target></alt-trans></trans-unit>
+			<target state="final">Plugin-visninger</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve" approved="yes">
 				<source>Master View</source>
-			<target state="final">Primærvisning</target><alt-trans><target>Mastervisning</target></alt-trans></trans-unit>
+			<target state="final">Primærvisning</target></trans-unit>
       <trans-unit id="properties.view" xml:space="preserve" approved="yes">
 				<source>Plugin View</source>
 			<target state="final">Plugin-visning</target></trans-unit>

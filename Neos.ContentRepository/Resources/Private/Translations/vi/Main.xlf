@@ -7,7 +7,7 @@
 			<target state="translated">sau</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>previous</source>
-			<target state="translated">trước </target><alt-trans><target>trước</target></alt-trans></trans-unit>
+			<target state="translated">trước </target></trans-unit>
     </body>
   </file>
 </xliff>

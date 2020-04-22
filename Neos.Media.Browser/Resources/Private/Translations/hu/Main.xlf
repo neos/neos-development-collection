@@ -82,7 +82,7 @@
 			<target state="translated">Tartalom törlése</target></trans-unit>
       <trans-unit id="message.reallyDeleteAsset" xml:space="preserve">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target state="translated">Valóban törölni akarja a tartalmat "{0}"?</target><alt-trans><target>Valóban törölni akarja az eszközt "{0}"?</target></alt-trans></trans-unit>
+			<target state="translated">Valóban törölni akarja a tartalmat "{0}"?</target></trans-unit>
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve">
 				<source>Do you really want to delete collection "{0}"?</source>
 			<target state="translated">Valóban törölni akarja a gyűjteményt "{0}"?</target></trans-unit>
@@ -380,34 +380,34 @@
 			<target state="translated">Aktuális fájl előnézete</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target state="translated">Nem sikerült kicserélni a tartalmat</target><alt-trans><target>Nem sikerült lecserélni a külső forrást</target></alt-trans></trans-unit>
+			<target state="translated">Nem sikerült kicserélni a tartalmat</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target state="translated">Tartalom {0} kicserélve.</target><alt-trans><target>Külső forrás {0} kicserélve.</target></alt-trans></trans-unit>
+			<target state="translated">Tartalom {0} kicserélve.</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target state="translated">Tartalom {0} frissítve.</target><alt-trans><target>Külső forrás {0} frissítve.</target></alt-trans></trans-unit>
+			<target state="translated">Tartalom {0} frissítve.</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
-			<target state="translated">Tartalom {0} hozzáadva.</target><alt-trans><target>Külső forrás {0} hozzáadva.</target></alt-trans></trans-unit>
+			<target state="translated">Tartalom {0} hozzáadva.</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
-			<target state="translated">Tartalom {0} törölve.</target><alt-trans><target>Külső forrás {0} törölve.</target></alt-trans></trans-unit>
+			<target state="translated">Tartalom {0} törölve.</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			<target state="translated">Ezt a tartalmat nem lehet törölni.</target><alt-trans><target>Ezt a külső forrást nem lehet törölni.</target></alt-trans></trans-unit>
+			<target state="translated">Ezt a tartalmat nem lehet törölni.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target state="translated">Jelölés {0} már létezik és hozzá van adva a gyűjteményhez.</target><alt-trans><target>Címke {0} már létezik és hozzáadva a gyűjteményhez.</target></alt-trans></trans-unit>
+			<target state="translated">Jelölés {0} már létezik és hozzá van adva a gyűjteményhez.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
-			<target state="translated">Jelölés {0} létrehozva.</target><alt-trans><target>Címke {0} létrehozva.</target></alt-trans></trans-unit>
+			<target state="translated">Jelölés {0} létrehozva.</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
-			<target state="translated">Jelölés {0} frissítve.</target><alt-trans><target>Címke {0} frissítve.</target></alt-trans></trans-unit>
+			<target state="translated">Jelölés {0} frissítve.</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
-			<target state="translated">Jelölés {0} törölve.</target><alt-trans><target>Címke {0} törölve.</target></alt-trans></trans-unit>
+			<target state="translated">Jelölés {0} törölve.</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
 			<target state="translated">Gyűjtemény {0} létrehozva.</target></trans-unit>

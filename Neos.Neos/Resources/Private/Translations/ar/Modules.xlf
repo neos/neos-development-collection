@@ -23,13 +23,13 @@
 			<target state="translated">تفاصيل عن "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
-			<target state="translated">إنشاء فضاء عمل جديد</target><alt-trans><target>إنشاء مجال عمل جديد</target></alt-trans></trans-unit>
+			<target state="translated">إنشاء فضاء عمل جديد</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
-			<target state="translated">إنشاء فضاء العمل</target><alt-trans><target>إنشاء مجال العمل</target></alt-trans></trans-unit>
+			<target state="translated">إنشاء فضاء العمل</target></trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
 				<source>Delete workspace</source>
-			<target state="translated">حذف فضاء العمل</target><alt-trans><target>حذف مجال العمل</target></alt-trans></trans-unit>
+			<target state="translated">حذف فضاء العمل</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace</source>
 			<target state="translated">تعديل مجال العمل</target></trans-unit>
@@ -41,16 +41,16 @@
 			<target state="translated">تعديل مجال العمل</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
-			<target state="translated">فضاء العمل الشخصي</target><alt-trans><target>مجال العمل الشخصي</target></alt-trans></trans-unit>
+			<target state="translated">فضاء العمل الشخصي</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
 				<source>Private workspace</source>
 			<target state="translated">مجال العمل الخاص</target></trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
 				<source>Internal workspace</source>
-			<target state="translated">فضاء العمل الداخلي</target><alt-trans><target>مجال العمل الداخلي</target></alt-trans></trans-unit>
+			<target state="translated">فضاء العمل الداخلي</target></trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
 				<source>Read-only workspace</source>
-			<target state="translated">فضاء العمل خاص بالقراءة فقط</target><alt-trans><target>مجال العمل خاص بالقراءة فقط</target></alt-trans></trans-unit>
+			<target state="translated">فضاء العمل خاص بالقراءة فقط</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
 			<target state="translated">العنوان</target></trans-unit>
@@ -77,19 +77,19 @@
 			<target state="translated">داخلي</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target state="translated">يمكن لأي محرر تسجيل الدخول رؤية وتعديل فضاء العمل هذا.</target><alt-trans><target>يمكن لأي محرر تسجيل الدخول رؤية وتعديل مجال العمل هذا.</target></alt-trans></trans-unit>
+			<target state="translated">يمكن لأي محرر تسجيل الدخول رؤية وتعديل فضاء العمل هذا.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
 			<target state="translated">التغييرات</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
-			<target state="translated">فتح الصفحة في فضاء العمل "{0}"</target><alt-trans><target>فتح الصفحة في مجال العمل "{0}"</target></alt-trans></trans-unit>
+			<target state="translated">فتح الصفحة في فضاء العمل "{0}"</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target state="translated">هذا هو فضاء العمل الخاص بك الذي لا يمكنك حذفه.</target><alt-trans><target>هذا هو مجال العمل  الخاص بك الذي لا يمكنك حذفه.</target></alt-trans></trans-unit>
+			<target state="translated">هذا هو فضاء العمل الخاص بك الذي لا يمكنك حذفه.</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target state="translated">يحتوي فضاء العمل على مجموعة من التغييرات. للحذف، يرجى تجاهل التغييرات أولاً.</target><alt-trans><target>يحتوي مجال العمل على مجموعة من التغييرات. للحذف، يرجى تجاهل التغييرات أولاً.</target></alt-trans></trans-unit>
+			<target state="translated">يحتوي فضاء العمل على مجموعة من التغييرات. للحذف، يرجى تجاهل التغييرات أولاً.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
 			<target state="translated">لا يمكن إعادة إنشاء هذا فضاء العمل على أساس فضاء عمل مختلف لأنه لا يزال يحتوي على التغييرات.</target></trans-unit>
@@ -98,7 +98,7 @@
 			<target state="translated">لا يمكن حذف فضاء العمل لأن مجالات عمل أخرى تعتمد عليه.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target state="translated">ليس لديك الصلاحية لحذف هذا الفضاء العمل.</target><alt-trans><target>ليس لديك الصلاحية لحذف المجال العمل هذا.</target></alt-trans></trans-unit>
+			<target state="translated">ليس لديك الصلاحية لحذف هذا الفضاء العمل.</target></trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
 				<source>Do you really want to delete the workspace "{0}"?</source>
 			<target state="translated">هل تريد حقاً حذف فضاء العمل "{0}"؟</target></trans-unit>
@@ -179,7 +179,7 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="translated">لم يتم حذف فضاء العمل "{0}" لأنه يحتوي حاليا على {1} عقد.</target>
+          <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
@@ -650,7 +650,7 @@
 			<target state="translated">حالة</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
-			<target state="translated">انشئ</target><alt-trans><target>انشاء</target></alt-trans></trans-unit>
+			<target state="translated">انشئ</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target state="needs-translation">Configuration</target></trans-unit>

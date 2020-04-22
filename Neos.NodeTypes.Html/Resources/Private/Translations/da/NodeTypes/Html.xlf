@@ -13,7 +13,7 @@
 			<target state="final">HTML-indhold</target></trans-unit>
       <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve" approved="yes">
 				<source>Edit HTML source</source>
-			<target state="final">Rediger HTML kode</target><alt-trans><target>Redigere HTML kode</target></alt-trans></trans-unit>
+			<target state="final">Rediger HTML kode</target></trans-unit>
     </body>
   </file>
 </xliff>

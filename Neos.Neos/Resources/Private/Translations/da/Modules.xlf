@@ -7,11 +7,11 @@
 			<target state="final">Tilbage</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target state="final">Annullér</target><alt-trans><target>Anuller</target></alt-trans></trans-unit>
+			<target state="final">Annullér</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
-			<target state="final">Management</target><alt-trans><target>Administration</target></alt-trans></trans-unit>
+			<target state="final">Management</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to management of content</source>
 			<target state="final">Indeholder flere moduler relateret til administration af indhold</target></trans-unit>
@@ -92,7 +92,7 @@
 			<target state="final">Arbejdsrummet indeholder ændringer. Hvis du vil slette, slet ændringerne først.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target state="final">Arbejdsrummet kan ikke sammenflettes med et andet arbejdsrum, fordi den stadig indeholder ændringer.</target><alt-trans><target>Arbejdsrummet kan ikke sammenflettes med et andet arbejdsområde, fordi den stadig indeholder ændringer.</target></alt-trans><alt-trans><target>Arbejdsrummet kan ikke flettes med et andet arbejdsområde, fordi den stadig indeholder ændringer.</target></alt-trans></trans-unit>
+			<target state="final">Arbejdsrummet kan ikke sammenflettes med et andet arbejdsrum, fordi den stadig indeholder ændringer.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve" approved="yes">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
 			<target state="final">Arbejdsrummet kan ikke slettes, fordi andre arbejdsrum er afhængige af det.</target></trans-unit>
@@ -107,7 +107,7 @@
 			<target state="final">Dette vil slette arbejdsrummet inklusiv alle ikke-publicerede ændringer. Denne handling kan ikke fortrydes.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target state="final">Dette modul indeholder en oversigt over alle elementer i det aktuelle arbejdsrum, og det gør det muligt at fortsætte korrektur- og udgivelsesarbejdsgangen for dem.</target><alt-trans><target>Dette modul indeholder en oversigt over alle elementer i det aktuelle arbejdsområde, og det gør det muligt at fortsætte korrektur- og udgivelsesarbejdsgangen for dem.</target></alt-trans></trans-unit>
+			<target state="final">Dette modul indeholder en oversigt over alle elementer i det aktuelle arbejdsrum, og det gør det muligt at fortsætte korrektur- og udgivelsesarbejdsgangen for dem.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes in workspace "{0}"</source>
 			<target state="final">Ikke publiceret ændringer</target></trans-unit>
@@ -119,10 +119,10 @@
 			<target state="final">Gennemgå</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Discard selected changes</source>
-			<target state="final">Kassér valgte ændringer</target><alt-trans><target>kassere valgte ændringer</target></alt-trans></trans-unit>
+			<target state="final">Kassér valgte ændringer</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Publish selected changes</source>
-			<target state="final">Publicér valgte ændringer</target><alt-trans><target>Publicer valgte ændringer</target></alt-trans></trans-unit>
+			<target state="final">Publicér valgte ændringer</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target state="final">Kassér alle ændringer</target></trans-unit>
@@ -143,19 +143,19 @@
 			<target state="final">oprettet</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
 				<source>moved</source>
-			<target state="final">flytted</target><alt-trans><target>oprettet</target></alt-trans></trans-unit>
+			<target state="final">flytted</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
 				<source>hidden</source>
-			<target state="final">skjult</target><alt-trans><target>oprettet</target></alt-trans></trans-unit>
+			<target state="final">skjult</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>edited</source>
-			<target state="final">redigeret</target><alt-trans><target>oprettet</target></alt-trans></trans-unit>
+			<target state="final">redigeret</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target state="final">Der er ingen upublicerede ændringer i dette arbejdsrum.</target><alt-trans><target>Der er ingen upublicerede ændringer i dette arbejdsområde.</target></alt-trans></trans-unit>
+			<target state="final">Der er ingen upublicerede ændringer i dette arbejdsrum.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target state="final">Er du sikker på du virkelig vil slette alle ændringer i "{0}" arbejdsrum?</target><alt-trans><target>Er du sikker på du virkelig vil slette alle ændringer i {0} workspace?</target></alt-trans></trans-unit>
+			<target state="final">Er du sikker på du virkelig vil slette alle ændringer i "{0}" arbejdsrum?</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
         <source>A workspace with this title already exists.</source>
         <target state="final">Der findes allerede et arbejdsrum med denne titel.</target>
@@ -286,10 +286,10 @@
 			<target state="final">Ny</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Redigér</target><alt-trans><target>Rediger</target></alt-trans></trans-unit>
+			<target state="final">Redigér</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="final">Rediger konto</target><alt-trans><target>Rediger</target></alt-trans></trans-unit>
+			<target state="final">Rediger konto</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
 			<target state="final">Ny elektronisk adresse</target></trans-unit>
@@ -304,7 +304,7 @@
 			<target state="final">Opret ny bruger</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
-			<target state="final">Brugerinformation</target><alt-trans><target>Bruger information</target></alt-trans></trans-unit>
+			<target state="final">Brugerinformation</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target state="final">Brugernavn</target></trans-unit>
@@ -319,7 +319,7 @@
 			<target state="final">Rolle(r)</target></trans-unit>
       <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve" approved="yes">
 				<source>Authentication Provider</source>
-			<target state="final">Autentificeringstjeneste</target><alt-trans><target>Autentificeringtjeneste</target></alt-trans><alt-trans><target>Tjeneste</target></alt-trans></trans-unit>
+			<target state="final">Autentificeringstjeneste</target></trans-unit>
       <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
 			<target state="final">Brug systemets standard</target></trans-unit>
@@ -343,7 +343,7 @@
 			<target state="final">Opret bruger</target></trans-unit>
       <trans-unit id="users.show.subtitle" xml:space="preserve" approved="yes">
 				<source>Details for user</source>
-			<target state="final">Brugerdetaljer</target><alt-trans><target>Bruger detaljer</target></alt-trans></trans-unit>
+			<target state="final">Brugerdetaljer</target></trans-unit>
       <trans-unit id="users.show.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target state="final">Personlig information</target></trans-unit>
@@ -373,7 +373,7 @@
 			<target state="final">Roller</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses" xml:space="preserve" approved="yes">
 				<source>Electronic Addresses</source>
-			<target state="final">Elektroniskeadresser</target><alt-trans><target>Elektroniske adresser</target></alt-trans></trans-unit>
+			<target state="final">Elektroniskeadresser</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
 			<target state="final">Primær</target></trans-unit>
@@ -400,7 +400,7 @@
 			<target state="final">Ja, slet brugeren</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="final">Dette sletter brugeren, de relaterede konti og personlige arbejdsrum, herunder alt ikke-publiceret indhold.</target><alt-trans><target>Dette sletter brugeren, de relaterede konti og personlige arbejdsområde, herunder alt ikke-publiceret indhold.</target></alt-trans><alt-trans><target>Dette sletter brugeren, de relaterede konti og personlige arbejdsområde, herunder alt ikke-publicerede indhold.</target></alt-trans></trans-unit>
+			<target state="final">Dette sletter brugeren, de relaterede konti og personlige arbejdsrum, herunder alt ikke-publiceret indhold.</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
 			<target state="final">Denne handling kan ikke fortrydes</target></trans-unit>
@@ -448,7 +448,7 @@
 			<target state="final">Vil du slette brugeren "{0}"?</target></trans-unit>
       <trans-unit id="users.message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="final">Dette sletter brugeren, de relaterede konti og personlige arbejdsrum, herunder alt ikke-publiceret indhold.</target><alt-trans><target>Dette sletter brugeren, de relaterede konti og personlige arbejdsområde, herunder alt ikke-publiceret indhold.</target></alt-trans><alt-trans><target>Dette sletter brugeren, de relaterede konti og personlige arbejdsområde, herunder alt ikke-publicerede indhold.</target></alt-trans></trans-unit>
+			<target state="final">Dette sletter brugeren, de relaterede konti og personlige arbejdsrum, herunder alt ikke-publiceret indhold.</target></trans-unit>
       <trans-unit id="users.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
 			<target state="final">Ja, slet brugeren</target></trans-unit>
@@ -541,7 +541,7 @@
 			<target state="translated">Tilføj nyt websted</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
-			<target state="final">Opret websted</target><alt-trans><target>Opret side</target></alt-trans></trans-unit>
+			<target state="final">Opret websted</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
 			<target state="final">Opret et nyt websted</target></trans-unit>
@@ -601,7 +601,7 @@
 			<target state="translated">Opret tomt websted</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
-			<target state="translated">Opret ny webstedspakke</target><alt-trans><target>Opret en ny webstedspakke</target></alt-trans></trans-unit>
+			<target state="translated">Opret ny webstedspakke</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
 			<target state="translated">EjerNavn.MinPakkeNøgle</target></trans-unit>
@@ -640,7 +640,7 @@
 			<target state="final">Konfiguration</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve" approved="yes">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
-			<target state="final">Konfigurationsmodulet giver dig et overblik over alle konfiguration typer.</target><alt-trans><target>Modulet Konfiguration giver dig et overblik over alle konfiguration typer.</target></alt-trans></trans-unit>
+			<target state="final">Konfigurationsmodulet giver dig et overblik over alle konfiguration typer.</target></trans-unit>
       <trans-unit id="dimensions.label" xml:space="preserve" approved="yes">
 				<source>Dimensions</source>
 			<target state="final">Dimensioner</target></trans-unit>
@@ -681,22 +681,22 @@ Klik på en af noderne for kun at se dens tilbagefald og varianter. Klik igen fo
 			<target state="final">Dette modul giver dig mulighed for at tilpasse din backend brugerprofil. Her kan du ændre det aktive systemsprog, dit navn og din e-mail adresse. Du kan også indstille andre funktionaliteter i systemet.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Redigér</target><alt-trans><target>Rediger</target></alt-trans></trans-unit>
+			<target state="final">Redigér</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Redigér</target><alt-trans><target>Rediger</target></alt-trans></trans-unit>
+			<target state="final">Redigér</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
 			<target state="final">Ny elektronisk adresse</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="final">Rediger konto</target><alt-trans><target>Rediger</target></alt-trans></trans-unit>
+			<target state="final">Rediger konto</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target state="final">Personlig information</target></trans-unit>
       <trans-unit id="userSettings.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
-			<target state="final">Brugerinformation</target><alt-trans><target>Bruger information</target></alt-trans></trans-unit>
+			<target state="final">Brugerinformation</target></trans-unit>
       <trans-unit id="userSettings.usermenu" xml:space="preserve" approved="yes">
 				<source>User Menu</source>
 			<target state="final">Brugermenu</target></trans-unit>
@@ -720,7 +720,7 @@ Klik på en af noderne for kun at se dens tilbagefald og varianter. Klik igen fo
 			<target state="final">Roller</target></trans-unit>
       <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve" approved="yes">
 				<source>Authentication Provider</source>
-			<target state="final">Autentificeringstjeneste</target><alt-trans><target>Autentificeringtjeneste</target></alt-trans><alt-trans><target>Tjeneste</target></alt-trans></trans-unit>
+			<target state="final">Autentificeringstjeneste</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses" xml:space="preserve" approved="yes">
 				<source>Electronic addresses</source>
 			<target state="final">Elektroniske adresser</target></trans-unit>

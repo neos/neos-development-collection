@@ -41,7 +41,7 @@
 			<target state="translated">コンテンツ ビュー</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target state="translated">後に作成</target><alt-trans><target>後に作成します。</target></alt-trans></trans-unit>
+			<target state="translated">後に作成</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target state="translated">新規作成 </target></trans-unit>
@@ -332,7 +332,7 @@
 			<target state="needs-translation">Package Key</target></trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
-			<target state="translated">概要</target><alt-trans><target>説明</target></alt-trans></trans-unit>
+			<target state="translated">概要</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
 			<target state="needs-translation">Toggle content tree</target></trans-unit>

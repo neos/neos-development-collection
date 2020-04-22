@@ -13,10 +13,10 @@
 			<target state="final">Wyśrodkowany</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve" approved="yes">
 				<source>Left</source>
-			<target state="final">Do lewej</target><alt-trans><target>lewo</target></alt-trans></trans-unit>
+			<target state="final">Do lewej</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve" approved="yes">
 				<source>Right</source>
-			<target state="final">Do prawej</target><alt-trans><target>Prawo</target></alt-trans></trans-unit>
+			<target state="final">Do prawej</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -217,7 +217,7 @@
 			<target state="translated">Thẻ</target></trans-unit>
       <trans-unit id="editTags" xml:space="preserve">
 				<source>Edit tags</source>
-			<target state="translated">Chỉnh sửa nhiều thẻ</target><alt-trans><target>Chỉnh sửa thẻ</target></alt-trans></trans-unit>
+			<target state="translated">Chỉnh sửa nhiều thẻ</target></trans-unit>
       <trans-unit id="editTag" xml:space="preserve">
 				<source>Edit tag</source>
 			<target state="translated">Chỉnh sửa thẻ</target></trans-unit>

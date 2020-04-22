@@ -44,7 +44,7 @@
 			<target state="final">Persoonlijke workspace</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
 				<source>Private workspace</source>
-			<target state="final">Privé workspace</target><alt-trans><target>Prive workspace</target></alt-trans></trans-unit>
+			<target state="final">Privé workspace</target></trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
 				<source>Internal workspace</source>
 			<target state="translated">Interne workspace</target></trans-unit>
@@ -59,7 +59,7 @@
 			<target state="final">Omschrijving</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
-			<target state="translated">Basis workspace</target><alt-trans><target>Hoofd workspace</target></alt-trans></trans-unit>
+			<target state="translated">Basis workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
 				<source>Owner</source>
 			<target state="final">Eigenaar</target></trans-unit>
@@ -92,7 +92,7 @@
 			<target state="final">De workspace bevat wijzigingen. Om deze te verwijderen dient u eerst de wijzigingen ongedaan te maken.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target state="translated">De workspace kan niet worden verplaatst omdat deze nog wijzigingen bevat.</target><alt-trans><target>De workspace kan niet worden verplaatst omdat het nog wijzigingen bevat.</target></alt-trans></trans-unit>
+			<target state="translated">De workspace kan niet worden verplaatst omdat deze nog wijzigingen bevat.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
 			<target state="translated">De workspace kan niet verwijderd worden omdat andere workspaces van deze workspace afhankelijk zijn.</target></trans-unit>
@@ -110,7 +110,7 @@
 			<target state="final">Deze module bevat een overzicht van alle elementen in de huidige workspace en geeft de mogelijkheid de review en publicatie workflow voort te zetten.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes in workspace "{0}"</source>
-			<target state="translated">Niet gepubliceerde wijzigingen in workspace "{0}"</target><alt-trans><target>Niet gepubliceerde wijzigingen</target></alt-trans><alt-trans><target>Niet-gepubliceerde wijzigingen</target></alt-trans></trans-unit>
+			<target state="translated">Niet gepubliceerde wijzigingen in workspace "{0}"</target></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
 			<target state="final">toevoegingen: {new}, wijzigingen: {changed}, verwijderd: {removed}</target></trans-unit>
@@ -152,7 +152,7 @@
 			<target state="final">bewerkt</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target state="final">Er zijn geen niet gepubliceerde wijzigingen in deze workspace.</target><alt-trans><target>Er zijn geen niet-gepubliceerde wijzigingen in deze workspace.</target></alt-trans></trans-unit>
+			<target state="final">Er zijn geen niet gepubliceerde wijzigingen in deze workspace.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
 			<target state="final">Wilt u echt alle wijzigingen in workspace "{0}" annuleren?</target></trans-unit>
@@ -175,9 +175,6 @@
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
         <target state="translated">Uw persoonlijke workspace bevat wijzigingen. Publiceer deze wijzigingen of maak ze ongedaan.</target>
-        <alt-trans>
-          <target>Uw persoonlijke workspace bevat wijzigingen. Publiceert u alstublieft deze wijzigingen of maak ze ongedaan.</target>
-        </alt-trans>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
@@ -219,7 +216,7 @@
       </trans-unit>
       <trans-unit id="history.label" xml:space="preserve" approved="yes">
 				<source>History</source>
-			<target state="final">Geschiedenis</target><alt-trans><target>Historie</target></alt-trans></trans-unit>
+			<target state="final">Geschiedenis</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve" approved="yes">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target state="final">Deze module biedt een overzicht van alle relevante gebeurtenissen op het gebied van deze Neos-installatie.</target></trans-unit>
@@ -277,7 +274,7 @@
 			<target state="final">Gebruikersbeheer</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve" approved="yes">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target state="final">De Gebruikersbeheer module biedt u met een overzicht van alle gebruikers van de backend. U kunt hen groeperen op basis van hen eigenschappen zodat u in staat bent hun machtigingen, filemounts, zijn rollen enz. te monitoren. Deze module is een onmisbaar instrument om ervoor te zorgen dat de gebruikers correct zijn geconfigureerd.</target><alt-trans><target>De User Management module biedt u met een overzicht van alle gebruikers van de backend. U kunt hen groeperen op basis van hen eigenschappen zodat u in staat bent hun machtigingen, filemounts, zijn rollen enz. te monitoren. Deze module is een onmisbaar instrument om ervoor te zorgen dat de gebruikers correct zijn geconfigureerd.</target></alt-trans></trans-unit>
+			<target state="final">De Gebruikersbeheer module biedt u met een overzicht van alle gebruikers van de backend. U kunt hen groeperen op basis van hen eigenschappen zodat u in staat bent hun machtigingen, filemounts, zijn rollen enz. te monitoren. Deze module is een onmisbaar instrument om ervoor te zorgen dat de gebruikers correct zijn geconfigureerd.</target></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve" approved="yes">
 				<source>Overview</source>
 			<target state="final">Overzicht</target></trans-unit>
@@ -364,7 +361,7 @@
 			<target state="final">Achternaam</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve" approved="yes">
 				<source>Other Name</source>
-			<target state="final">Achtervoegsel</target><alt-trans><target>Andere naam</target></alt-trans></trans-unit>
+			<target state="final">Achtervoegsel</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve" approved="yes">
 				<source>Accounts</source>
 			<target state="final">Gebruikers Accounts</target></trans-unit>
@@ -478,7 +475,7 @@
 			<target state="translated">Pakketnaam</target></trans-unit>
       <trans-unit id="packages.key" xml:space="preserve">
 				<source>Package Key</source>
-			<target state="translated">Pakket Sleutel</target><alt-trans><target>Pakket sleutel</target></alt-trans></trans-unit>
+			<target state="translated">Pakket Sleutel</target></trans-unit>
       <trans-unit id="packages.type" xml:space="preserve">
 				<source>Package Type</source>
 			<target state="translated">Pakket Type</target></trans-unit>
@@ -493,7 +490,7 @@
 			<target state="translated">Vergrendel dit pakket om je website sneller te laten lopen.</target></trans-unit>
       <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
 				<source>This package is protected and cannot be deactivated.</source>
-			<target state="translated">Dit pakket is beschermd en kan daarom niet worden uitgeschakeld.</target><alt-trans><target>Dit pakket is beschermd en kan niet worden uitgeschakeld.</target></alt-trans></trans-unit>
+			<target state="translated">Dit pakket is beschermd en kan daarom niet worden uitgeschakeld.</target></trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
 				<source>Deactivate Package</source>
 			<target state="translated">Pakket uitschakelen</target></trans-unit>
@@ -520,7 +517,7 @@
 			<target state="translated">Weet je zeker dat je de geselecteerde pakketten wil verwijderen?</target></trans-unit>
       <trans-unit id="packages.selected.freeze" xml:space="preserve">
 				<source>Freeze selected packages</source>
-			<target state="translated">Vergrendel de geselecteerde pakketten</target><alt-trans><target>Vergrendel de geselecteerde paketten</target></alt-trans></trans-unit>
+			<target state="translated">Vergrendel de geselecteerde pakketten</target></trans-unit>
       <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
 				<source>Unfreeze selected packages</source>
 			<target state="translated">Ontgrendel de geselecteerde pakketten</target></trans-unit>
@@ -735,7 +732,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="final">Ja, elektronische adres verwijderen</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Click to add a new Electronic address</source>
-			<target state="final">Klik om een nieuw elektronisch adres toe te voegen</target><alt-trans><target>Klik om een nieuw electronisch adres toe te voegen</target></alt-trans></trans-unit>
+			<target state="final">Klik om een nieuw elektronisch adres toe te voegen</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
 			<target state="final">Elektronisch adres toevoegen</target></trans-unit>

@@ -41,7 +41,7 @@
 			<target state="translated">Պարունակության դիտում</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target state="translated">Ստեղծել (-ից) հետո</target><alt-trans><target>Ստեղծել հետո</target></alt-trans></trans-unit>
+			<target state="translated">Ստեղծել (-ից) հետո</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target state="translated">Ստեղծել նորը</target></trans-unit>

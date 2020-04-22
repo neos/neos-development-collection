@@ -61,10 +61,10 @@
 			<target state="translated">Azalan</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="translated">Artan sıralamaya göre sırala</target><alt-trans><target>Sıralama yöntemi artan</target></alt-trans></trans-unit>
+			<target state="translated">Artan sıralamaya göre sırala</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="translated">Azalan sıralamaya göre sırala</target><alt-trans><target>Sıralama yöntemi azalan</target></alt-trans></trans-unit>
+			<target state="translated">Azalan sıralamaya göre sırala</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="translated">Etikete veya koleksiyona sürükle ve bırak</target></trans-unit>
@@ -109,7 +109,7 @@
 			<target state="translated">Değiştirmek</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="translated">Seçili objenin kaynağını değiştirin</target><alt-trans><target>Objenin kaynağını değiştir</target></alt-trans></trans-unit>
+			<target state="translated">Seçili objenin kaynağını değiştirin</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target state="translated">Kaydet</target></trans-unit>
@@ -169,7 +169,7 @@
 			<target state="translated">Belgeler</target></trans-unit>
       <trans-unit id="filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target state="translated">Ekran</target><alt-trans><target>Video</target></alt-trans></trans-unit>
+			<target state="translated">Ekran</target></trans-unit>
       <trans-unit id="filter.audio" xml:space="preserve">
 				<source>Audio</source>
 			<target state="translated">Ses</target></trans-unit>
@@ -304,19 +304,19 @@
 			<target state="translated">Önizleme</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">İndir</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">İleri</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">Geri</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target state="translated">Dosya yüklenemiyor</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target state="translated">Lütfen bir dosya seçiniz</target><alt-trans><target>Herhangi bir dosya seçili değil</target></alt-trans></trans-unit>
+			<target state="translated">Lütfen bir dosya seçiniz</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="translated">{0} dosya boyutu, izin verilen {1} sınırını aşıyor</target></trans-unit>
@@ -425,10 +425,10 @@
 			<target state="translated">Kaynak tipi {0} olan dosyalar sadece benzer kaynaklı olan dosyalara değişebilir. Tipi al {1}</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target state="translated">Çalışma alanına erişim izni yok "{0}"</target><alt-trans><target>Çalışma alanına izin yok "{0}"</target></alt-trans></trans-unit>
+			<target state="translated">Çalışma alanına erişim izni yok "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="translated">Bu ağ için herhangi bir belge ağı bulunamadı</target><alt-trans><target>Bu düğüm için belge düğümü bulunamadı</target></alt-trans></trans-unit>
+			<target state="translated">Bu ağ için herhangi bir belge ağı bulunamadı</target></trans-unit>
     </body>
   </file>
 </xliff>

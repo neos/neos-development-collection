@@ -14,7 +14,7 @@
 			<target state="translated">Xem trước thay đổi</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Đồng ý</target><alt-trans><target>Áp dụng</target></alt-trans></trans-unit>
+			<target state="translated">Đồng ý</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
 			<target state="translated">Đồng ý thay đổi</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target state="needs-translation">Inactive</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target state="translated">Nhấn vào để chỉnh sửa</target><alt-trans><target>Nhấn vào để thay đổi</target></alt-trans><alt-trans><target>Nhấp vào để sửa</target></alt-trans></trans-unit>
+			<target state="translated">Nhấn vào để chỉnh sửa</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
 			<target state="needs-translation">Click to deactivate</target></trans-unit>
@@ -370,7 +370,7 @@
 			<target state="translated">Click vào {0} để mở các liên kết.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target state="translated">(không có mục tiêu nào được lựa chọn)</target><alt-trans><target>(không có mục tiêu được lựa chọn)</target></alt-trans></trans-unit>
+			<target state="translated">(không có mục tiêu nào được lựa chọn)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
@@ -444,7 +444,7 @@
 			<target state="translated">Bỏ qua</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Đồng ý</target><alt-trans><target>Áp dụng</target></alt-trans></trans-unit>
+			<target state="translated">Đồng ý</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target state="translated">Chọn Plugin</target></trans-unit>

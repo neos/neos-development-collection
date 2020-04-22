@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve" approved="yes">
 				<source>Alignment</source>
-			<target state="final">Расположение</target><alt-trans><target>Выравнивание</target></alt-trans></trans-unit>
+			<target state="final">Расположение</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Default</source>
 			<target state="final">По умолчанию</target></trans-unit>
@@ -13,10 +13,10 @@
 			<target state="final">По центру</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve" approved="yes">
 				<source>Left</source>
-			<target state="final">Слева</target><alt-trans><target>По левой стороне</target></alt-trans></trans-unit>
+			<target state="final">Слева</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve" approved="yes">
 				<source>Right</source>
-			<target state="final">Справа</target><alt-trans><target>справа</target></alt-trans><alt-trans><target>По правой стороне</target></alt-trans></trans-unit>
+			<target state="final">Справа</target></trans-unit>
     </body>
   </file>
 </xliff>

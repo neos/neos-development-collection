@@ -7,7 +7,7 @@
 			<target state="translated">Mengaktifkan keterangan</target></trans-unit>
       <trans-unit id="properties.caption.ui.inline.editorOptions.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target state="translated"><![CDATA[<p>Tulis keterangan di sini</p>]]></target><alt-trans><target><![CDATA[<p>Tuliskan keterangan di sini</p>]]></target></alt-trans><alt-trans><target><![CDATA[<p>Enter caption here</p>]]></target></alt-trans></trans-unit>
+			<target state="translated"><![CDATA[<p>Tulis keterangan di sini</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>
