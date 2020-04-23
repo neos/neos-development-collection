@@ -14,11 +14,9 @@
                         <f:alias map="{documentNode: '{neos:node.closestDocument(node: node)}'}">
                             <f:if condition="{documentNode}">
                                 <f:then>
-                                    <f:alias map="{relativeUrl: '{neos:uri.node(node: documentNode, absolute: false, resolveShortcuts: false)}'}">
-                                        <a href="{neos:uri.node(node: documentNode, absolute: true, resolveShortcuts:false)}" class="node-frontend-uri">
-                                            {f:if(condition: relativeUrl, then: '{relativeUrl}', else: '{node.path}')}
-                                        </a>
-                                    </f:alias>
+                                    <a href="{neos:uri.node(node: documentNode, absolute: true, resolveShortcuts:false)}" class="node-frontend-uri">
+                                        <f:render section="breadcrumb" arguments="{node: documentNode}" />
+                                    </a>
                                 </f:then>
                                 <f:else>
                                     <a class="node-frontend-uri">
@@ -37,3 +35,4 @@
         </div>
     </body>
 </html>
+<f:section name="breadcrumb"><f:if condition="{node.parent} && {node.parent.depth} > 1"><f:render section="breadcrumb" arguments="{node: node.parent}" /> &gt; </f:if>{node.label}</f:section>
