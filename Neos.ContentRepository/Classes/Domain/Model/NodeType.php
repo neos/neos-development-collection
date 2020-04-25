@@ -692,7 +692,7 @@ class NodeType
     /**
      * @param array $fullConfiguration
      */
-    protected function setFullConfiguration(array $fullConfiguration)
+    protected function setFullConfiguration(array $fullConfiguration): void
     {
         $this->fullConfiguration = $fullConfiguration;
     }

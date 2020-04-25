@@ -78,7 +78,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param JoinPointInterface $joinPoint
      * @return void
      */
-    public function enrichNodeTypeLabelsConfiguration(JoinPointInterface $joinPoint)
+    public function enrichNodeTypeLabelsConfiguration(JoinPointInterface $joinPoint): void
     {
         $configuration = $joinPoint->getMethodArgument('configuration');
         $nodeTypeName = $joinPoint->getMethodArgument('name');
