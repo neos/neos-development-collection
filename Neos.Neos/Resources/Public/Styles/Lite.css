@@ -32,8 +32,6 @@
  */
 .fa,
 .fas,
-.neos button[class^="fa-"],
-.neos button[class*=" fa-"],
 .neos .neos-button[class^="fa-"],
 .neos .neos-button[class*=" fa-"],
 .neos .neos-modal .neos-modal-header .neos-close,
@@ -132,8 +130,6 @@
 
 .fa.fa-pull-left,
 .fas.fa-pull-left,
-.neos button.fa-pull-left[class^="fa-"],
-.neos button.fa-pull-left[class*=" fa-"],
 .neos .fa-pull-left.neos-button[class^="fa-"],
 .neos .fa-pull-left.neos-button[class*=" fa-"],
 .neos .neos-modal .neos-modal-header .fa-pull-left.neos-close,
@@ -154,8 +150,6 @@
 
 .fa.fa-pull-right,
 .fas.fa-pull-right,
-.neos button.fa-pull-right[class^="fa-"],
-.neos button.fa-pull-right[class*=" fa-"],
 .neos .fa-pull-right.neos-button[class^="fa-"],
 .neos .fa-pull-right.neos-button[class*=" fa-"],
 .neos .neos-modal .neos-modal-header .fa-pull-right.neos-close,
@@ -4529,8 +4523,6 @@ readers do not read off random characters that represent icons */
 
 .fa,
 .fas,
-.neos button[class^="fa-"],
-.neos button[class*=" fa-"],
 .neos .neos-button[class^="fa-"],
 .neos .neos-button[class*=" fa-"],
 .neos .neos-modal .neos-modal-header .neos-close,
@@ -6171,7 +6163,6 @@ q:after {
   .neos .neos-thumbnail .neos-caption {
     padding: 9px;
     color: #555; }
-  .neos button,
   .neos .neos-button {
     display: inline-block;
     padding: 0 16px;
@@ -6194,70 +6185,44 @@ q:after {
     box-shadow: none;
     box-sizing: border-box;
     transition: all 0 ease 0; }
-    .neos button.neos-button-small,
     .neos .neos-button.neos-button-small {
       height: 24px;
       line-height: 24px;
       font-size: 12px;
       padding: 0 8px; }
-    .neos button:not([disabled]):hover, .neos button:not([disabled]):active, .neos button:not([disabled]).neos-active, .neos button:not([disabled]).neos-pressed, .neos button:not(.neos-disabled):hover, .neos button:not(.neos-disabled):active, .neos button:not(.neos-disabled).neos-active, .neos button:not(.neos-disabled).neos-pressed,
-    .neos .neos-button:not([disabled]):hover,
-    .neos .neos-button:not([disabled]):active,
-    .neos .neos-button:not([disabled]).neos-active,
-    .neos .neos-button:not([disabled]).neos-pressed,
-    .neos .neos-button:not(.neos-disabled):hover,
-    .neos .neos-button:not(.neos-disabled):active,
-    .neos .neos-button:not(.neos-disabled).neos-active,
-    .neos .neos-button:not(.neos-disabled).neos-pressed {
+    .neos .neos-button:not([disabled]):hover, .neos .neos-button:not([disabled]):active, .neos .neos-button:not([disabled]).neos-active, .neos .neos-button:not([disabled]).neos-pressed, .neos .neos-button:not(.neos-disabled):hover, .neos .neos-button:not(.neos-disabled):active, .neos .neos-button:not(.neos-disabled).neos-active, .neos .neos-button:not(.neos-disabled).neos-pressed {
       color: #fff;
       background-color: #00b5ff;
       text-decoration: none; }
-    .neos button:focus,
     .neos .neos-button:focus {
       outline: thin dotted #333;
       outline: 5px auto -webkit-focus-ring-color;
       outline-offset: -2px;
       outline: 1px dotted #fff;
       outline-offset: 0; }
-    .neos button.neos-disabled, .neos button[disabled],
-    .neos .neos-button.neos-disabled,
-    .neos .neos-button[disabled] {
+    .neos .neos-button.neos-disabled, .neos .neos-button[disabled] {
       cursor: not-allowed;
       opacity: .65; }
-    .neos button.neos-button-primary,
     .neos .neos-button.neos-button-primary {
       background-color: #00b5ff; }
-      .neos button.neos-button-primary:focus,
       .neos .neos-button.neos-button-primary:focus {
         outline: 1px dotted #fff; }
-    .neos button.neos-button-success,
     .neos .neos-button.neos-button-success {
       background-color: #00a338; }
-      .neos button.neos-button-success:hover, .neos button.neos-button-success:active,
-      .neos .neos-button.neos-button-success:hover,
-      .neos .neos-button.neos-button-success:active {
+      .neos .neos-button.neos-button-success:hover, .neos .neos-button.neos-button-success:active {
         background-color: #00a338; }
-      .neos button.neos-button-success:focus,
       .neos .neos-button.neos-button-success:focus {
         outline: 1px dotted #fff; }
-    .neos button.neos-button-warning,
     .neos .neos-button.neos-button-warning {
       background-color: #ff8700; }
-      .neos button.neos-button-warning:hover, .neos button.neos-button-warning:active,
-      .neos .neos-button.neos-button-warning:hover,
-      .neos .neos-button.neos-button-warning:active {
+      .neos .neos-button.neos-button-warning:hover, .neos .neos-button.neos-button-warning:active {
         background-color: #ff8700; }
-      .neos button.neos-button-warning:focus,
       .neos .neos-button.neos-button-warning:focus {
         outline: 1px dotted #fff; }
-    .neos button.neos-button-danger,
     .neos .neos-button.neos-button-danger {
       background-color: #ff460d; }
-      .neos button.neos-button-danger:hover, .neos button.neos-button-danger:active,
-      .neos .neos-button.neos-button-danger:hover,
-      .neos .neos-button.neos-button-danger:active {
+      .neos .neos-button.neos-button-danger:hover, .neos .neos-button.neos-button-danger:active {
         background-color: #ff460d; }
-      .neos button.neos-button-danger:focus,
       .neos .neos-button.neos-button-danger:focus {
         outline: 1px dotted #fff; }
   .neos a.neos-button {
