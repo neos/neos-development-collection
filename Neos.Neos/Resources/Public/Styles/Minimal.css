@@ -6156,16 +6156,30 @@ q:after {
       .neos.neos-module table.table-bordered th,
       .neos.neos-module table.table-bordered td {
         border-left: 1px solid #3f3f3f; }
-    .neos.neos-module table.neos-table td:first-child,
-    .neos.neos-module table.neos-table th:first-child {
-      padding-left: 16px !important; }
-    .neos.neos-module table.neos-table td:last-child,
-    .neos.neos-module table.neos-table th:last-child {
-      padding-right: 16px !important; }
-    .neos.neos-module table.neos-table td.neos-action,
-    .neos.neos-module table.neos-table th.neos-action {
-      padding-left: 0 !important;
-      padding-right: 0 !important; }
+    .neos.neos-module table.neos-table td {
+      border-top: 1px solid #222; }
+    .neos.neos-module table.neos-table th {
+      text-shadow: none; }
+    .neos.neos-module table.neos-table td,
+    .neos.neos-module table.neos-table th {
+      height: 40px;
+      padding: 0 16px;
+      line-height: 40px;
+      box-sizing: border-box; }
+      .neos.neos-module table.neos-table td i,
+      .neos.neos-module table.neos-table th i {
+        vertical-align: baseline;
+        text-align: center; }
+      .neos.neos-module table.neos-table td:first-child,
+      .neos.neos-module table.neos-table th:first-child {
+        padding-left: 16px !important; }
+      .neos.neos-module table.neos-table td:last-child,
+      .neos.neos-module table.neos-table th:last-child {
+        padding-right: 16px !important; }
+      .neos.neos-module table.neos-table td.neos-action,
+      .neos.neos-module table.neos-table th.neos-action {
+        padding-left: 0 !important;
+        padding-right: 0 !important; }
     .neos.neos-module table.neos-table tr.neos-folder td {
       background: #222;
       padding-left: 0 !important;
@@ -6215,30 +6229,6 @@ q:after {
       .neos.neos-module table.neos-info-table tbody tr:first-child th,
       .neos.neos-module table.neos-info-table tbody tr:first-child td {
         border-top: 0; }
-    .neos.neos-module table td {
-      border-top: 1px solid #222; }
-    .neos.neos-module table th {
-      text-shadow: none; }
-    .neos.neos-module table td,
-    .neos.neos-module table th {
-      height: 40px;
-      padding: 0 16px;
-      line-height: 40px;
-      box-sizing: border-box; }
-      .neos.neos-module table td:first-child,
-      .neos.neos-module table th:first-child {
-        padding-left: 32px !important; }
-      .neos.neos-module table td:last-child,
-      .neos.neos-module table th:last-child {
-        padding-right: 32px !important; }
-      .neos.neos-module table td.neos-action,
-      .neos.neos-module table th.neos-action {
-        padding-left: 0 !important;
-        padding-right: 0 !important; }
-      .neos.neos-module table td i,
-      .neos.neos-module table th i {
-        vertical-align: baseline;
-        text-align: center; }
     .neos.neos-module table td > .neos-button,
     .neos.neos-module table td > form > .neos-button,
     .neos.neos-module table td div.neos-pull-right > .neos-button,
