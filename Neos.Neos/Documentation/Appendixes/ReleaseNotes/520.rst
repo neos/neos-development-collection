@@ -42,6 +42,7 @@ Example:
 
 
 FEATURE: Fusion performance optimization (lazy Component props)
+===============================================================
 
 Components provide a nice way to structure Fusion code but prevent lazy evaluation as Fusion by default does eager evaluation of all properties as `props`.
 If conditions are used inside the `renderer`, it's quite probable that not all props are used - so a large amount of unnecessary evaluations could be performed.
