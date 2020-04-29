@@ -77,12 +77,12 @@ final class LazyProps implements \ArrayAccess, \Iterator, \JsonSerializable
 
     public function offsetSet($path, $value)
     {
-        // NOOP
+        throw new BadMethodCallException('Lazy props can not be set.', 1588182804);
     }
 
     public function offsetUnset($path)
     {
-        // NOOP
+        throw new BadMethodCallException('Lazy props can not be unset.', 1588182805);
     }
 
     public function current()
