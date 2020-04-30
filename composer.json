@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "dev-master",
+        "neos/flow-development-collection": "6.2.x-dev",
         "neos/neos-setup": "^1.0",
         "neos/flow": "*",
         "neos/cache": "*",
@@ -28,10 +28,10 @@
         "doctrine/dbal": "^2.8",
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
-        "neos/fusion-afx": "*",
-        "neos/fusion-form": "*",
+        "neos/fusion-afx": "^1.4",
+        "neos/fusion-form": "^1.0",
         "neos/form": "*",
-        "neos/kickstarter": "dev-master "
+        "neos/kickstarter": "~6.2.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -58,6 +58,7 @@
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
+        "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime",
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },

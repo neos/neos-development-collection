@@ -43,8 +43,7 @@ class AuthenticationProviderLabelViewHelper extends AbstractViewHelper
      */
     public function render(): string
     {
-        $identifier = (string) $this->arguments['identifier'];
-
+        $identifier = $this->arguments['identifier'];
         return ($this->authenticationProviderSettings[$identifier]['label'] ?? $identifier);
     }
 }

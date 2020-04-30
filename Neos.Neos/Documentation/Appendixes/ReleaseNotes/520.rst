@@ -1,0 +1,113 @@
+=====
+5.2.0
+=====
+
+This is a planned feature release and includes the following new feature as well as some bugfixes.
+
+Update procedure includes updating dependencies and running `./flow doctrine:migrate` as for  most updates.
+
+================
+What has changed
+================
+
+FEATURE: Reduced stylesheet for backend modules
+===============================================
+The old stylesheets from pre-react times override a lot of basic styles for backend modules.
+This makes it hard to implement custom styles there or use our react ui components.
+
+With this change it's possible to configure a "Lite" and a "Minimal" variant of the Neos backend stylesheet via the module configuration.
+
+The old "Main" stylesheet variant is kept for compatibility reasons.
+
+The "Lite" stylesheet should be used with almost all modules and will also be used for the core modules.
+It also provides all relevant Neos CSS variables and is about 50% smaller than the old one.
+
+The "Minimal" stylesheet should be used for modules that bring their own styles. For example modules that use the Neos react-components library.
+It also provides all relevant Neos CSS variables and is about 70% smaller than the old one.
+
+Example:
+
+.. code-block: yaml
+  Neos:
+    modules:
+      management: # Or any other module group
+        submodules:
+          myModule:
+            controller: \\My\\Site\\Controller\\MyModuleController
+            label: 'My module'
+            description: 'My module'
+            icon: 'fas fa-camera'
+            privilegeTarget: 'My.Site:ManageMyModule'
+            mainStylesheet: 'Lite' # Or 'Minimal', default is 'Main'
+
+
+FEATURE: Fusion performance optimization (lazy Component props)
+===============================================================
+
+Components provide a nice way to structure Fusion code but prevent lazy evaluation as Fusion by default does eager evaluation of all properties as `props`.
+If conditions are used inside the `renderer`, it's quite probable that not all props are used - so a large amount of unnecessary evaluations could be performed.
+
+This change introduces a `LazyProps` object implementing `ArrayAccess` that evaluates the actually accessed `props` lazily (and caches the results).
+
+FEATURE: Reduce backend load time with nodetype schema cache
+============================================================
+This prevents the generation of the nodetype schema on every backend reload.
+
+Load times for Neos instances with lots of nodetypes
+are reduced by several seconds depending on the setup.
+Also the response has a cache header to allow the browser to keep the result longer.
+
+This also helps in development context as the `version` parameter changes when the nodetypes change.
+Therefore changing Fusion and reloading is faster ;)
+
+FEATURE: Sortable NodeType Post processors
+==========================================
+Allows a `position` to be specified in the NodeType `postprocessors` configuration:
+
+.. code-block: yaml
+  'Some.Custom:NodeType':
+    # ...
+    postprocessors:
+      SomeCustomTypePostprocessor:
+        position: 'end'
+        postprocessor: 'Some\\TypePostprocessor'
+
+FEATURE: Icons and description for asset sources
+================================================
+Icons and descriptions can now be provided by the asset source. 
+The icon makes the asset source easier to identify while the description can provide further information or a link to the asset source as required by some free asset source API guidelines.
+
+To make your AssetSources compatible with Neos 6.x add the methods
+* `public function getIcon(): string`
+* `public function getDescription(): string;`
+
+to your asset source.
+
+FEATURE: Upgrade to fontawesome 5.12.1
+======================================
+Adds new icons.
+
+FEATURE: Allow more than one authentication provider
+====================================================
+Implemented the changes to allow more than one authentication provider.
+Please note: This PR does not cover the issues that arise when more than one account is associated with a single Neos user. It only allows one account per user (a limitation that already exists right now, though).
+Instead of always using the default authentication provider (Neos.Neos:Backend) to retrieve a user or username, the authentication provider associated with the respective account is used (also see #940).
+
+FEATURE: Keep tags and collections of assets when exporting sites
+=================================================================
+With this change tags and collections of assets are included in site exports to XML and are imported properly, too.
+
+FEATURE: Freely position content collections
+============================================
+Together with https://github.com/neos/neos-ui/pull/2609 and https://github.com/neos/neos-ui/pull/2667
+this change allows to have a `Neos.Neos:Content` nodetype
+that is also a `Neos.Neos:ContentCollection` and have one
+or more wrapping tags around the Fusion `Neos.Neos:ContentCollection`.
+
+To specify the point for inserting children of a content collection in your markup,
+you add an attribute on the container element: `data-__neos-insertion-anchor`.
+If found, that container will be used for inserting new items, otherwise the parent
+element (as usual).
+
+Without the change in the UI new nodes are added into the outermost div instead
+of the collection div.
