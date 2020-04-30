@@ -342,7 +342,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
             return 'http://localhost/_Resources/01';
         }));
 
-        $expectedResult = 'and an external link inside another tag beginning with a <article> test <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example1</a></article>';
+        $expectedResult = 'and an external link inside another tag beginning with a <article> test <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example1</a></article>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         $this->assertSame($expectedResult, $actualResult);
     }
