@@ -107,7 +107,7 @@ class NodeType
      * @param array $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
      */
-    public function __construct($name, array $declaredSuperTypes, array $configuration, array $fullConfiguration = null)
+    public function __construct($name, array $declaredSuperTypes, array $configuration)
     {
         $this->name = $name;
 
@@ -129,17 +129,14 @@ class NodeType
         }
 
         $this->localConfiguration = $configuration;
-
-        $this->fullConfiguration = $fullConfiguration;
-        if ($fullConfiguration !== null) {
-            $this->initialized = true;
-        }
     }
 
     /**
      * Initializes this node type
      *
      * @return void
+     * @throws InvalidNodeTypePostprocessorException
+     * @throws \Exception
      */
     protected function initialize()
     {
@@ -147,16 +144,15 @@ class NodeType
             return;
         }
         $this->initialized = true;
-        $this->buildFullConfiguration();
-        $this->applyPostprocessing();
+        $this->setFullConfiguration($this->applyPostprocessing($this->buildFullConfiguration()));
     }
 
     /**
      * Builds the full configuration by merging configuration from the supertypes into the local configuration.
      *
-     * @return void
+     * @return array
      */
-    protected function buildFullConfiguration()
+    protected function buildFullConfiguration() : array
     {
         $mergedConfiguration = [];
         $applicableSuperTypes = static::getFlattenedSuperTypes($this);
@@ -169,6 +165,8 @@ class NodeType
             $sorter = new PositionalArraySorter($this->fullConfiguration['childNodes']);
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
+
+        return $this->fullConfiguration;
     }
 
     /**
@@ -200,13 +198,14 @@ class NodeType
     /**
      * Iterates through configured postprocessors and invokes them
      *
-     * @return void
+     * @param array $fullConfiguration
+     * @return array
      * @throws InvalidNodeTypePostprocessorException
      */
-    protected function applyPostprocessing()
+    protected function applyPostprocessing($fullConfiguration): array
     {
-        if (!isset($this->fullConfiguration['postprocessors'])) {
-            return;
+        if (!isset($fullConfiguration['postprocessors'])) {
+            return $fullConfiguration;
         }
         $sortedPostProcessors = (new PositionalArraySorter($this->fullConfiguration['postprocessors']))->toArray();
         foreach ($sortedPostProcessors as $postprocessorConfiguration) {
@@ -218,8 +217,11 @@ class NodeType
             if (isset($postprocessorConfiguration['postprocessorOptions'])) {
                 $postprocessorOptions = $postprocessorConfiguration['postprocessorOptions'];
             }
-            $postprocessor->process($this, $this->fullConfiguration, $postprocessorOptions);
+            // TODO: Needs to be made more transparent by returning configuration
+            $postprocessor->process($this, $fullConfiguration, $postprocessorOptions);
         }
+
+        return $fullConfiguration;
     }
 
     /**
@@ -687,6 +689,16 @@ class NodeType
 
         return null;
     }
+
+    /**
+     * @param array $fullConfiguration
+     */
+    protected function setFullConfiguration(array $fullConfiguration): void
+    {
+        $this->fullConfiguration = $fullConfiguration;
+    }
+
+
 
     /**
      * Alias for getName().

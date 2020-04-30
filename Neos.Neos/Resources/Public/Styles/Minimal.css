@@ -32,8 +32,6 @@
  */
 .fa,
 .fas,
-.neos button[class^="fa-"],
-.neos button[class*=" fa-"],
 .neos .neos-button[class^="fa-"],
 .neos .neos-button[class*=" fa-"],
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
@@ -126,8 +124,6 @@
 
 .fa.fa-pull-left,
 .fas.fa-pull-left,
-.neos button.fa-pull-left[class^="fa-"],
-.neos button.fa-pull-left[class*=" fa-"],
 .neos .fa-pull-left.neos-button[class^="fa-"],
 .neos .fa-pull-left.neos-button[class*=" fa-"],
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-left::before,
@@ -143,8 +139,6 @@
 
 .fa.fa-pull-right,
 .fas.fa-pull-right,
-.neos button.fa-pull-right[class^="fa-"],
-.neos button.fa-pull-right[class*=" fa-"],
 .neos .fa-pull-right.neos-button[class^="fa-"],
 .neos .fa-pull-right.neos-button[class*=" fa-"],
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-right::before,
@@ -4513,8 +4507,6 @@ readers do not read off random characters that represent icons */
 
 .fa,
 .fas,
-.neos button[class^="fa-"],
-.neos button[class*=" fa-"],
 .neos .neos-button[class^="fa-"],
 .neos .neos-button[class*=" fa-"],
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
@@ -4848,7 +4840,6 @@ q:after {
         color: #ccc; }
     .neos .neos-breadcrumb .neos-active {
       color: #3f3f3f; }
-  .neos button,
   .neos .neos-button {
     display: inline-block;
     padding: 0 16px;
@@ -4871,70 +4862,44 @@ q:after {
     box-shadow: none;
     box-sizing: border-box;
     transition: all 0 ease 0; }
-    .neos button.neos-button-small,
     .neos .neos-button.neos-button-small {
       height: 24px;
       line-height: 24px;
       font-size: 12px;
       padding: 0 8px; }
-    .neos button:not([disabled]):hover, .neos button:not([disabled]):active, .neos button:not([disabled]).neos-active, .neos button:not([disabled]).neos-pressed, .neos button:not(.neos-disabled):hover, .neos button:not(.neos-disabled):active, .neos button:not(.neos-disabled).neos-active, .neos button:not(.neos-disabled).neos-pressed,
-    .neos .neos-button:not([disabled]):hover,
-    .neos .neos-button:not([disabled]):active,
-    .neos .neos-button:not([disabled]).neos-active,
-    .neos .neos-button:not([disabled]).neos-pressed,
-    .neos .neos-button:not(.neos-disabled):hover,
-    .neos .neos-button:not(.neos-disabled):active,
-    .neos .neos-button:not(.neos-disabled).neos-active,
-    .neos .neos-button:not(.neos-disabled).neos-pressed {
+    .neos .neos-button:not([disabled]):hover, .neos .neos-button:not([disabled]):active, .neos .neos-button:not([disabled]).neos-active, .neos .neos-button:not([disabled]).neos-pressed, .neos .neos-button:not(.neos-disabled):hover, .neos .neos-button:not(.neos-disabled):active, .neos .neos-button:not(.neos-disabled).neos-active, .neos .neos-button:not(.neos-disabled).neos-pressed {
       color: #fff;
       background-color: #00b5ff;
       text-decoration: none; }
-    .neos button:focus,
     .neos .neos-button:focus {
       outline: thin dotted #333;
       outline: 5px auto -webkit-focus-ring-color;
       outline-offset: -2px;
       outline: 1px dotted #fff;
       outline-offset: 0; }
-    .neos button.neos-disabled, .neos button[disabled],
-    .neos .neos-button.neos-disabled,
-    .neos .neos-button[disabled] {
+    .neos .neos-button.neos-disabled, .neos .neos-button[disabled] {
       cursor: not-allowed;
       opacity: .65; }
-    .neos button.neos-button-primary,
     .neos .neos-button.neos-button-primary {
       background-color: #00b5ff; }
-      .neos button.neos-button-primary:focus,
       .neos .neos-button.neos-button-primary:focus {
         outline: 1px dotted #fff; }
-    .neos button.neos-button-success,
     .neos .neos-button.neos-button-success {
       background-color: #00a338; }
-      .neos button.neos-button-success:hover, .neos button.neos-button-success:active,
-      .neos .neos-button.neos-button-success:hover,
-      .neos .neos-button.neos-button-success:active {
+      .neos .neos-button.neos-button-success:hover, .neos .neos-button.neos-button-success:active {
         background-color: #00a338; }
-      .neos button.neos-button-success:focus,
       .neos .neos-button.neos-button-success:focus {
         outline: 1px dotted #fff; }
-    .neos button.neos-button-warning,
     .neos .neos-button.neos-button-warning {
       background-color: #ff8700; }
-      .neos button.neos-button-warning:hover, .neos button.neos-button-warning:active,
-      .neos .neos-button.neos-button-warning:hover,
-      .neos .neos-button.neos-button-warning:active {
+      .neos .neos-button.neos-button-warning:hover, .neos .neos-button.neos-button-warning:active {
         background-color: #ff8700; }
-      .neos button.neos-button-warning:focus,
       .neos .neos-button.neos-button-warning:focus {
         outline: 1px dotted #fff; }
-    .neos button.neos-button-danger,
     .neos .neos-button.neos-button-danger {
       background-color: #ff460d; }
-      .neos button.neos-button-danger:hover, .neos button.neos-button-danger:active,
-      .neos .neos-button.neos-button-danger:hover,
-      .neos .neos-button.neos-button-danger:active {
+      .neos .neos-button.neos-button-danger:hover, .neos .neos-button.neos-button-danger:active {
         background-color: #ff460d; }
-      .neos button.neos-button-danger:focus,
       .neos .neos-button.neos-button-danger:focus {
         outline: 1px dotted #fff; }
   .neos a.neos-button {
@@ -6191,16 +6156,30 @@ q:after {
       .neos.neos-module table.table-bordered th,
       .neos.neos-module table.table-bordered td {
         border-left: 1px solid #3f3f3f; }
-    .neos.neos-module table.neos-table td:first-child,
-    .neos.neos-module table.neos-table th:first-child {
-      padding-left: 16px !important; }
-    .neos.neos-module table.neos-table td:last-child,
-    .neos.neos-module table.neos-table th:last-child {
-      padding-right: 16px !important; }
-    .neos.neos-module table.neos-table td.neos-action,
-    .neos.neos-module table.neos-table th.neos-action {
-      padding-left: 0 !important;
-      padding-right: 0 !important; }
+    .neos.neos-module table.neos-table td {
+      border-top: 1px solid #222; }
+    .neos.neos-module table.neos-table th {
+      text-shadow: none; }
+    .neos.neos-module table.neos-table td,
+    .neos.neos-module table.neos-table th {
+      height: 40px;
+      padding: 0 16px;
+      line-height: 40px;
+      box-sizing: border-box; }
+      .neos.neos-module table.neos-table td i,
+      .neos.neos-module table.neos-table th i {
+        vertical-align: baseline;
+        text-align: center; }
+      .neos.neos-module table.neos-table td:first-child,
+      .neos.neos-module table.neos-table th:first-child {
+        padding-left: 16px !important; }
+      .neos.neos-module table.neos-table td:last-child,
+      .neos.neos-module table.neos-table th:last-child {
+        padding-right: 16px !important; }
+      .neos.neos-module table.neos-table td.neos-action,
+      .neos.neos-module table.neos-table th.neos-action {
+        padding-left: 0 !important;
+        padding-right: 0 !important; }
     .neos.neos-module table.neos-table tr.neos-folder td {
       background: #222;
       padding-left: 0 !important;
@@ -6250,30 +6229,6 @@ q:after {
       .neos.neos-module table.neos-info-table tbody tr:first-child th,
       .neos.neos-module table.neos-info-table tbody tr:first-child td {
         border-top: 0; }
-    .neos.neos-module table td {
-      border-top: 1px solid #222; }
-    .neos.neos-module table th {
-      text-shadow: none; }
-    .neos.neos-module table td,
-    .neos.neos-module table th {
-      height: 40px;
-      padding: 0 16px;
-      line-height: 40px;
-      box-sizing: border-box; }
-      .neos.neos-module table td:first-child,
-      .neos.neos-module table th:first-child {
-        padding-left: 32px !important; }
-      .neos.neos-module table td:last-child,
-      .neos.neos-module table th:last-child {
-        padding-right: 32px !important; }
-      .neos.neos-module table td.neos-action,
-      .neos.neos-module table th.neos-action {
-        padding-left: 0 !important;
-        padding-right: 0 !important; }
-      .neos.neos-module table td i,
-      .neos.neos-module table th i {
-        vertical-align: baseline;
-        text-align: center; }
     .neos.neos-module table td > .neos-button,
     .neos.neos-module table td > form > .neos-button,
     .neos.neos-module table td div.neos-pull-right > .neos-button,

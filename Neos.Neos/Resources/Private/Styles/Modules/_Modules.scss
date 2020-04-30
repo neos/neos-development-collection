@@ -389,8 +389,26 @@
 		}
 
 		&.neos-table {
+			td {
+				border-top: 1px solid $grayDark;
+			}
+
+			th {
+				text-shadow: none;
+			}
+
 			td,
 			th {
+				height: $unit;
+				padding: 0 $defaultMargin;
+				line-height: $unit;
+				box-sizing: border-box;
+
+				i {
+					vertical-align: baseline;
+					text-align: center;
+				}
+
 				&:first-child {
 					padding-left: $defaultMargin !important;
 				}
@@ -481,40 +499,6 @@
 						border-top: 0;
 					}
 				}
-			}
-		}
-
-		td {
-			border-top: 1px solid $grayDark;
-		}
-
-		th {
-			text-shadow: none;
-		}
-
-		td,
-		th {
-			height: $unit;
-			padding: 0 $defaultMargin;
-			line-height: $unit;
-			box-sizing: border-box;
-
-			&:first-child {
-				padding-left: $wideMargin !important;
-			}
-
-			&:last-child {
-				padding-right: $wideMargin !important;
-			}
-
-			&.neos-action {
-				padding-left: 0 !important;
-				padding-right: 0 !important;
-			}
-
-			i {
-				vertical-align: baseline;
-				text-align: center;
 			}
 		}
 

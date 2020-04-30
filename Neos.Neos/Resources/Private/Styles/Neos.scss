@@ -31,6 +31,10 @@
 
 	// Components: Buttons & Alerts
 	@import "Foundation/buttons";
+	// Override standard button style for backwards compatibility
+	button {
+		@extend .neos-button;
+	}
 	@import "Foundation/button-groups";
 
 	// Components: Nav

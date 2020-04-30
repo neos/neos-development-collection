@@ -222,7 +222,7 @@ class UsersController extends AbstractModuleController
     {
         $this->view->assignMultiple([
             'account' => $account,
-            'user' => $this->userService->getUser($account->getAccountIdentifier(), (string) $account->getAuthenticationProviderName()),
+            'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName()),
             'availableRoles' => $this->policyService->getRoles()
         ]);
     }
@@ -242,7 +242,7 @@ class UsersController extends AbstractModuleController
      */
     public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = []): void
     {
-        $user = $this->userService->getUser($account->getAccountIdentifier(), (string) $account->getAuthenticationProviderName());
+        $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
         if ($user === $this->currentUser) {
             $roles = [];
             foreach ($roleIdentifiers as $roleIdentifier) {
