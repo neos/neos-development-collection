@@ -318,4 +318,32 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $actualResult = $this->convertUrisImplementation->evaluate();
         self::assertSame($expectedResult, $actualResult);
     }
+
+    /**
+     * This test checks that targets for resource links are correctly replaced if the a Tag is inside a tag with the name beginning wit a
+     *
+     * @test
+     */
+    public function evaluateReplaceResourceLinkTargetsInsideTag()
+    {
+        $assetIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff8';
+        $resourceLinkTarget = '_blank';
+
+        $value = 'and an external link inside another tag beginning with a <article> test <a href="asset://' . $assetIdentifier . '">example1</a></article>';
+        $this->addValueExpectation($value, null, false, null, $resourceLinkTarget);
+
+        $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+
+        $self = $this;
+        $this->mockLinkingService->expects($this->atLeastOnce())->method('resolveAssetUri')->will($this->returnCallback(function ($assetUri) use ($self, $assetIdentifier) {
+            if ($assetUri !== 'asset://' . $assetIdentifier) {
+                $self->fail('Unexpected asset URI "' . $assetUri . '"');
+            }
+            return 'http://localhost/_Resources/01';
+        }));
+
+        $expectedResult = 'and an external link inside another tag beginning with a <article> test <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example1</a></article>';
+        $actualResult = $this->convertUrisImplementation->evaluate();
+        $this->assertSame($expectedResult, $actualResult);
+    }
 }
