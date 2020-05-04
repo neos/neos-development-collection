@@ -1,0 +1,168 @@
+`4.3.13 (2020-05-04) <https://github.com/neos/neos-development-collection/releases/tag/4.3.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Fix failing evaluateReplaceResourceLinkTargetsInsideTag test <https://github.com/neos/neos-development-collection/pull/2972>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes the test that is failing since merging https://github.com/neos/neos-development-collection/pull/2409
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent exception in asset usage view via editor <https://github.com/neos/neos-development-collection/pull/2957>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Resolves: #2956
+
+* Packages: ``Browser``
+
+`BUGFIX: Respect super types in CreateNodePrivilege <https://github.com/neos/neos-development-collection/pull/2961>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Fixes the `createdNodeIsOfType()` matcher so that it works respects
+the inheritance chain:
+
+  privilegeTargets:
+    'Neos\\ContentRepository\\Security\\Authorization\\Privilege\\Node\\CreateNodePrivilege':
+      'Cornelsen.Webkatalog:Nodes.DisableCreation':
+        matcher: 'createdNodeIsOfType("Some.Package:Some.Mixin")'
+
+Fixes: #2960
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Prevent black shapes in document thumbnails <https://github.com/neos/neos-development-collection/pull/2879>`_
+----------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Tested with the following imagick versions:
+
+- V. 6.7.8
+- V. 6.9
+- V. 7.0
+**How I did it**
+
+See below
+**How to verify it**
+
+You can verifiy it by running this small code local:
+
+```php
+<?php
+$filePath = 'pdf.pdf[0]';
+$width = 500;
+$height = 500;
+
+$im = new \\Imagick();
+$im->setResolution(120, 120);
+$im->readImage($filePath);
+$im->setImageFormat('png');
+$im->setImageBackgroundColor('white');
+$im->setImageCompose(\\Imagick::COMPOSITE_OVER);
+
+if (method_exists($im, 'mergeImageLayers')) {
+    // Replace flattenImages in imagick 3.3.0
+    // @see https://pecl.php.net/package/imagick/3.3.0RC2
+    $im = $im->mergeImageLayers(\\Imagick::LAYERMETHOD_MERGE);
+} else {
+    $im->flattenImages();
+}
+
+if (defined('\\Imagick::ALPHACHANNEL_OFF')) {
+    // ImageMagick >= 7.0, Imagick >= 3.4.3RC1
+    // @see https://pecl.php.net/package/imagick/3.4.3RC1
+    $im->setImageAlphaChannel(\\Imagick::ALPHACHANNEL_OFF);
+} else {
+    $im->setImageAlphaChannel(\\Imagick::ALPHACHANNEL_RESET);
+}
+
+$im->thumbnailImage($width, $height, true);
+
+$im->writeImage('thumb.png');
+$im->destroy();
+```
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Media``
+
+`BUGFIX: Neos.NodeTypes:Menu has no default class attribute <https://github.com/neos/neos-development-collection/pull/2518>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This fixes a previous breaking change where "Menu" node-type is not
+getting a default class attribute rendered for instance 'neos-nodetypes-menu'
+where a website's stylesheet is relying on this CSS class
+
+<!--
+Thanks for your contribution, we appreciate it!
+
+Please read through our pull request guidelines, there are some interesting things there:
+https://discuss.neos.io/t/creating-a-pull-request/506
+
+And one more thing... Don't forget about the tests!
+-->
+
+
+**What I did**
+In fusion prototype Neos.NodeTypes.Navigation:Navigation loaded fusion  path 'attributes.class.@process' from Neos.Neos:Content.
+**How I did it**
+
+**How to verify it**
+Add the Menu node type on the page and check in the console/page source it should have css class 'neos-nodetypes-menu'
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [ ] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Navigation``
+
+`BUGFIX: change regex for selecting \`<a href="">\` Tag <https://github.com/neos/neos-development-collection/pull/2409>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+fixe the behaviour when the a Tag is inside a Tag with the name beginning with a
+
+Example: `<article> test <a target="_blank" href="http://localhost/_Resources/01">example1</a></article>`
+
+the function replaceLinkTargets returned  `<a target="_blank"rticle> test <a target="_blank" href="http://localhost/_Resources/01">example1</a></article>`
+
+create new test evaluateReplaceResourceLinkTargetsInsideTag
+
+this issue was already fixed in 4.2 release on 5 Nov 2018
+
+Fixes #2395
+
+* Packages: ``Neos``
+
+`BUGFIX: Only count local assets within collections <https://github.com/neos/neos-development-collection/pull/2773>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Since collections only show up if the current asset source is local
+("Neos"), we should not sum up all assets from external asset sources.
+
+We do not support collections for external asset sources and the
+possibly much larger number is irritating, because when clicking
+the "All" link the user will only see the local assets.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Ensure node query by identifier uses strings <https://github.com/neos/neos-development-collection/pull/2939>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Due to how the query is handled using an integer node identifier in a query by identifier 
+will not break but result in severe performance problems as the query will not use 
+the index for identifier anymore. Casting to string prevents that.
+
+To expose the problem you can simply try to run such a query with an integer instead 
+of a string and you will see extreme performance degradation.
+Not giving numbers because it depends on the amount of nodes but it is VERY noticeable.
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.3.12...4.3.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
