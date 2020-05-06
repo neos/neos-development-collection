@@ -16,7 +16,6 @@ namespace Neos\Neos\View;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
@@ -25,8 +24,6 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\I18n\Locale;
-use Neos\Flow\I18n\Service;
 use Neos\Flow\Security\Context;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Mvc\ActionRequest;
@@ -34,8 +31,10 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Controller\Arguments;
 
-class FusionExceptionView extends AbstractView implements ViewInterface
+class FusionExceptionView extends AbstractView
 {
+    use FusionViewI18nTrait;
+
     /**
      * This contains the supported options, their default values, descriptions and types.
      * @var array
@@ -55,12 +54,6 @@ class FusionExceptionView extends AbstractView implements ViewInterface
      * @Flow\Inject
      */
     protected $objectManager;
-
-    /**
-     * @Flow\Inject
-     * @var Service
-     */
-    protected $i18nService;
 
     /**
      * @var FusionService
@@ -129,12 +122,7 @@ class FusionExceptionView extends AbstractView implements ViewInterface
 
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
-        $dimensions = $currentSiteNode->getContext()->getDimensions();
-        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
-            $currentLocale = new Locale($dimensions['language'][0]);
-            $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
-        }
+        $this->setFallbackRuleFromDimension($currentSiteNode);
 
         $fusionRuntime->pushContextArray(array_merge(
             $this->variables,
