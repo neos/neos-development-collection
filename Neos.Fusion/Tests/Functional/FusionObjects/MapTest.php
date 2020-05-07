@@ -53,6 +53,17 @@ class MapTest extends AbstractFusionObjectTest
     /**
      * @test
      */
+    public function resultKeysCanBeRendered(): void
+    {
+        $view = $this->buildView();
+        $view->assign('items', ['foo' => 'element1', 'bar' => 'element2']);
+        $view->setFusionPath('map/keyRenderer');
+        self::assertEquals(['key-element1' => 'value-element1', 'key-element2' => 'value-element2'], $view->render());
+    }
+
+    /**
+     * @test
+     */
     public function basicCollectionWorksAndStillContainsOtherContextVariables()
     {
         $view = $this->buildView();
