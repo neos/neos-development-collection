@@ -31,7 +31,7 @@
         "neos/fusion-afx": "^1.4",
         "neos/fusion-form": "^1.0",
         "neos/form": "*",
-        "neos/kickstarter": "~6.2.0"
+        "neos/kickstarter": "dev-master"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
