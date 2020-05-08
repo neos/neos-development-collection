@@ -33,3 +33,10 @@ map.iteration = Neos.Fusion:Map {
 		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
 	}
 }
+
+map.keyRenderer = Neos.Fusion:Map {
+  items = ${items}
+  itemName = 'element'
+  itemRenderer = ${'value-' + element}
+  keyRenderer = ${'key-' + element}
+}
