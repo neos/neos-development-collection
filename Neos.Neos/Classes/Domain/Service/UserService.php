@@ -236,17 +236,36 @@ class UserService
      */
     public function getCurrentUser()
     {
-        if ($this->securityContext->canBeInitialized() === true) {
-            $account = $this->securityContext->getAccount();
-            if ($account !== null) {
-                return $this->getUser(
-                    $account->getAccountIdentifier(),
-                    $account->getAuthenticationProviderName()
-                );
-            }
+        if ($this->securityContext->canBeInitialized() === false) {
+            return null;
         }
 
-        return null;
+        $runtimeCacheIdentifier = 'sec-context-' . $this->securityContext->getContextHash();
+        if (array_key_exists($runtimeCacheIdentifier, $this->runtimeUserCache)) {
+            return $this->runtimeUserCache[$runtimeCacheIdentifier];
+        }
+
+        $tokens = $this->securityContext->getAuthenticationTokens();
+        $user = array_reduce($tokens, function ($foundUser, TokenInterface $token) {
+            if ($foundUser !== null) {
+                return $foundUser;
+            }
+
+            $account = $token->getAccount();
+            if ($account === null) {
+                return $foundUser;
+            }
+
+            $user = $this->getNeosUserForAccount($account);
+            if ($user === null) {
+                return $foundUser;
+            }
+
+            return $user;
+        }, null);
+
+        $this->runtimeUserCache[$runtimeCacheIdentifier] = $user;
+        return $user;
     }
 
     /**
@@ -866,5 +885,15 @@ class UserService
         }
 
         return $user;
+    }
+
+    /**
+     * @param Account $account
+     * @return User|null
+     */
+    private function getNeosUserForAccount(Account $account):? User
+    {
+        $user = $this->partyService->getAssignedPartyOfAccount($account);
+        return ($user instanceof User) ? $user : null;
     }
 }
