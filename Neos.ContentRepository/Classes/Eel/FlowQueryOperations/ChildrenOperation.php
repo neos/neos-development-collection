@@ -156,7 +156,7 @@ class ChildrenOperation extends AbstractOperation
                     /** @var TraversableNodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
                         /** @var TraversableNodeInterface $childNode */
-                        foreach ($contextNode->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString(implode($allowedNodeTypes, ','))) as $childNode) {
+                        foreach ($contextNode->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString(implode(',', $allowedNodeTypes))) as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
                                 $filteredOutput[] = $childNode;
                                 $filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
