@@ -1,0 +1,38 @@
+`5.0.12 (2020-05-18) <https://github.com/neos/neos-development-collection/releases/tag/5.0.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Passing glue string after array is deprecated <https://github.com/neos/neos-development-collection/pull/2982>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Wrong parameter order leads to deprecation warning and to an exception
+in PHP 7.4
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`BUGFIX: Respect fallback rule "strictness" in FusionView <https://github.com/neos/neos-development-collection/pull/2976>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+When Neos finds a content dimension named "language" it uses that
+dimension to set the locale fallback order for rendering in the
+`FusionView`.
+
+In Neos 5.0 that rule was switched to "strict" mode, meaning the order
+was used without falling back to implicit parents in locales. This
+broke translations in case the "language" dimension was configured with
+e.g. `de_DE` or `en_US` - for those cases translations were never used if
+the respective XLIFF files were in `de` (or `en`) folders.
+
+This change makes the `FusionView` use the strict flag from the settings,
+giving back control to the user (in case non-strict is really needed).
+At the same time it makes translations work as would be expected in
+most cases, by using e.g. `de_DE` first, but falling back to `de` later.
+
+Fixes #2963
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.0.11...5.0.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
