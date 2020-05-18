@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2020-03-29
+This reference was automatically generated from code on 2020-05-18
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -2251,7 +2251,7 @@ Arguments
 
 * ``packageKey`` (string, *optional*): PackageKey of the package defining the role.
 
-* ``account`` (Neos\Flow\Security\AccountInterface, *optional*): If specified, this subject of this check is the given Account instead of the currently authenticated account
+* ``account`` (Neos\Flow\Security\Account, *optional*): If specified, this subject of this check is the given Account instead of the currently authenticated account
 
 
 
