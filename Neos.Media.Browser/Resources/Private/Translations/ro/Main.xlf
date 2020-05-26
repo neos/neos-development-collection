@@ -429,7 +429,7 @@
 			<target state="translated">Resursele de tipul "{0}" pot fi înlocuite doar de resurse similare. Primesc tipul "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target state="translated">Nu există acces la spațiul de lucru "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
 			<target state="needs-translation">No document node found for this node</target></trans-unit>
