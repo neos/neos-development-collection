@@ -26,9 +26,9 @@
       <trans-unit id="field.caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
 			<target state="final">Подпись</target></trans-unit>
-      <trans-unit id="field.copyrightnotice" xml:space="preserve">
+      <trans-unit id="field.copyrightnotice" xml:space="preserve" approved="yes">
 				<source>Copyright Notice</source>
-			<target state="translated">Copyright Notice</target></trans-unit>
+			<target state="final">Информация об авторских правах</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified</source>
 			<target state="final">Дата последнего изменения</target></trans-unit>
@@ -68,12 +68,12 @@
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target state="final">Перетащите на тег или коллекцию</target></trans-unit>
-      <trans-unit id="view" xml:space="preserve">
+      <trans-unit id="view" xml:space="preserve" approved="yes">
 				<source>View</source>
-			<target state="translated">Показать</target></trans-unit>
-      <trans-unit id="viewAsset" xml:space="preserve">
+			<target state="final">Вид</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve" approved="yes">
 				<source>View asset</source>
-			<target state="translated">View asset</target></trans-unit>
+			<target state="final">Просмотр медиа-ресурса</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target state="final">Редактировать медиа-ресурс</target></trans-unit>
@@ -182,15 +182,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target state="final">Отображать в виде миниатюр</target></trans-unit>
-      <trans-unit id="connectionError" xml:space="preserve">
+      <trans-unit id="connectionError" xml:space="preserve" approved="yes">
 				<source>Connection error</source>
-			<target state="translated">Connection error</target></trans-unit>
-      <trans-unit id="mediaSource" xml:space="preserve">
+			<target state="final">Ошибка соединения</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve" approved="yes">
 				<source>Media source</source>
-			<target state="translated">Media source</target></trans-unit>
-      <trans-unit id="mediaSources" xml:space="preserve">
+			<target state="final">Медиа источник</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve" approved="yes">
 				<source>Media sources</source>
-			<target state="translated">Медиа источник</target></trans-unit>
+			<target state="final">Медиа источники</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target state="final">Коллекции</target></trans-unit>
@@ -296,21 +296,21 @@
       <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
 			<target state="final">Подпись</target></trans-unit>
-      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve" approved="yes">
 				<source>Copyright Notice</source>
-			<target state="translated">Copyright Notice</target></trans-unit>
+			<target state="final">Информация об авторских правах</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target state="final">Предпросмотр</target></trans-unit>
-      <trans-unit id="download" xml:space="preserve">
+      <trans-unit id="download" xml:space="preserve" approved="yes">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
-      <trans-unit id="next" xml:space="preserve">
+			<target state="final">Скачать</target></trans-unit>
+      <trans-unit id="next" xml:space="preserve" approved="yes">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
-      <trans-unit id="previous" xml:space="preserve">
+			<target state="final">Вперёд</target></trans-unit>
+      <trans-unit id="previous" xml:space="preserve" approved="yes">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="final">Назад</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="final">Не удается загрузить файл</target></trans-unit>
