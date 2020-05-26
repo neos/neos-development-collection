@@ -333,18 +333,18 @@
       <trans-unit id="description" xml:space="preserve" approved="yes">
 				<source>Description</source>
 			<target state="final">Описание</target></trans-unit>
-      <trans-unit id="toggleContentTree" xml:space="preserve">
+      <trans-unit id="toggleContentTree" xml:space="preserve" approved="yes">
 				<source>Toggle content tree</source>
-			<target state="translated">Toggle content tree</target></trans-unit>
-      <trans-unit id="showPublishOptions" xml:space="preserve">
+			<target state="final">Переключить дерево контента</target></trans-unit>
+      <trans-unit id="showPublishOptions" xml:space="preserve" approved="yes">
 				<source>Show publish options</source>
-			<target state="translated">Show publish options</target></trans-unit>
-      <trans-unit id="activateFullscreen" xml:space="preserve">
+			<target state="final">Показать параметры публикации</target></trans-unit>
+      <trans-unit id="activateFullscreen" xml:space="preserve" approved="yes">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="translated">Activate Fullscreen edit mode</target></trans-unit>
-      <trans-unit id="deactivateFullscreen" xml:space="preserve">
+			<target state="final">Включить полноэкранный режим редактирования</target></trans-unit>
+      <trans-unit id="deactivateFullscreen" xml:space="preserve" approved="yes">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target state="translated">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target state="final">Отключить полноэкранный режим редактирования</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve" approved="yes">
 				<source>Show preview</source>
 			<target state="final">Предварительный просмотр</target></trans-unit>
@@ -661,15 +661,15 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target state="final">Ваша сессия истекла. Пожалуйста, войдите снова.</target></trans-unit>
       <!-- Error handlers -->
-      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
+      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve" approved="yes">
 				<source>Welcome to Neos</source>
-			<target state="needs-translation">Welcome to Neos</target></trans-unit>
+			<target state="final">Добро пожаловать в Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
 			<target state="final">Перейти к установке</target></trans-unit>
-      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
+      <trans-unit id="error.exception.technicalInformation" xml:space="preserve" approved="yes">
 				<source>Technical Information</source>
-			<target state="needs-translation">Technical Information</target></trans-unit>
+			<target state="final">Техническая информация</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
 			<target state="final">Домашняя страница отсутствует</target></trans-unit>
@@ -682,12 +682,12 @@
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target state="final">Ошибка базы данных</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="translated">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+			<target state="final">Пока нет соединения с базой данных или схема базы данных Neos не была создана.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
 				<source>Run the setup to configure your database.</source>
-			<target state="translated">Run the setup to configure your database.</target></trans-unit>
+			<target state="final">Запустите установку для конфигурации базы данных.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target state="final">Страница не найдена</target></trans-unit>
