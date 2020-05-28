@@ -613,15 +613,15 @@
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve" approved="yes">
 				<source>VendorName.MyPackageKey</source>
 			<target state="final">НазваниеФирмы.КолонтитулПакета</target></trans-unit>
-      <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
+      <trans-unit id="sites.noSitesAvailable" xml:space="preserve" approved="yes">
 				<source>No sites available</source>
-			<target state="translated">Нет доступных сайтов</target></trans-unit>
+			<target state="final">Нет доступных сайтов</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="final">Пакет &lt;em&gt;Neos Kickstarter&lt;/em&gt; не установлен, установите его для кикстарта новых сайтов.</target></trans-unit>
-      <trans-unit id="sites.new" xml:space="preserve">
+      <trans-unit id="sites.new" xml:space="preserve" approved="yes">
 				<source>New site</source>
-			<target state="translated">Создать сайт</target></trans-unit>
+			<target state="final">Создать сайт</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="final">Вы действительно хотите удалить "{0}"? Это действие безвозвратное.</target></trans-unit>
@@ -631,18 +631,18 @@
       <trans-unit id="domain.edit" xml:space="preserve" approved="yes">
 				<source>Edit domain</source>
 			<target state="final">Править домен</target></trans-unit>
-      <trans-unit id="domainform.domainData" xml:space="preserve">
+      <trans-unit id="domainform.domainData" xml:space="preserve" approved="yes">
 				<source>Domain data</source>
-			<target state="translated">Данные домена</target></trans-unit>
-      <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
+			<target state="final">Данные домена</target></trans-unit>
+      <trans-unit id="domainform.hostPlaceholder" xml:space="preserve" approved="yes">
 				<source>e.g. www.neos.io</source>
-			<target state="translated">например www.neos.io</target></trans-unit>
-      <trans-unit id="domainform.state" xml:space="preserve">
+			<target state="final">например www.neos.io</target></trans-unit>
+      <trans-unit id="domainform.state" xml:space="preserve" approved="yes">
 				<source>State</source>
-			<target state="translated">Состояние</target></trans-unit>
-      <trans-unit id="domainform.create" xml:space="preserve">
+			<target state="final">Состояние</target></trans-unit>
+      <trans-unit id="domainform.create" xml:space="preserve" approved="yes">
 				<source>Create</source>
-			<target state="translated">Создать</target></trans-unit>
+			<target state="final">Создать</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target state="final">Конфигурация</target></trans-unit>
