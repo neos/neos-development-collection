@@ -70,6 +70,12 @@ class SortOperation extends AbstractOperation
             throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
         }
 
+        // Check sort flags
+        $sortOptions = [];
+        if (isset($arguments[2]) && !empty($arguments[2])) {
+            $sortOptions = str_split(strtoupper($arguments[2]));
+        }
+
         $sortedNodes = [];
         $sortSequence = [];
         $nodesByIdentifier = [];
@@ -91,10 +97,39 @@ class SortOperation extends AbstractOperation
         }
 
         // Create the sort sequence
+        $sortFlags = SORT_REGULAR;
+        foreach ($sortOptions as $sortOpt) {
+            // see https://www.php.net/manual/en/function.sort
+            // no flag - SORT_REGULAR
+            // 'N' - SORT_NUMERIC
+            // 'S' - SORT_STRING
+            // 'L' - SORT_LOCALE_STRING
+            // 'T' - SORT_NATURAL
+            // 'I' - SORT_FLAG_CASE (use as last option with SORT_STRING, SORT_LOCALE_STRING or SORT_NATURAL)
+            switch ($sortOpt) {
+                case 'I':
+                    if ($sortFlags & (SORT_STRING | SORT_LOCALE_STRING | SORT_NATURAL)) {
+                        $sortFlags |= SORT_FLAG_CASE;
+                    }
+                    break;
+                case 'N':
+                    $sortFlags = SORT_NUMERIC;
+                    break;
+                case 'S':
+                    $sortFlags = SORT_STRING;
+                    break;
+                case 'L':
+                    $sortFlags = SORT_LOCALE_STRING;
+                    break;
+                case 'T':
+                    $sortFlags = SORT_NATURAL;
+                    break;
+            }
+        }
         if ($sortOrder === 'DESC') {
-            arsort($sortSequence);
+            arsort($sortSequence, $sortFlags);
         } elseif ($sortOrder === 'ASC') {
-            asort($sortSequence);
+            asort($sortSequence, $sortFlags);
         }
 
         // Build the sorted context that is returned
