@@ -19,10 +19,13 @@ Neos:
         - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
         - 'resource://Neos.Media.Browser/Public/Styles/Main.css'
 
-      # By default, disable the beta feature "variants tab":
       features:
+         # By default, disable the beta feature "variants tab":
         variantsTab:
           enable: false
+        # By default, enable the option to create redirects for replaced asset resources
+        createAssetRedirectsOption:
+          enable: true
 
   Flow:
     security:
