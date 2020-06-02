@@ -70,10 +70,16 @@ class SortOperation extends AbstractOperation
             throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
         }
 
-        // Check sort flags
+        // Check sort options
         $sortOptions = [];
         if (isset($arguments[2]) && !empty($arguments[2])) {
-            $sortOptions = str_split(strtoupper($arguments[2]));
+            foreach ($arguments[2] as $arg) {
+                if (!in_array(strtoupper($arg), ['SORT_REGULAR', 'SORT_NUMERIC', 'SORT_STRING', 'SORT_LOCALE_STRING', 'SORT_NATURAL', 'SORT_FLAG_CASE'])) {
+                    throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort option (see https://www.php.net/manual/en/function.sort)',1591107722);
+                } else {
+                    $sortOptions[] = $arg;
+                }
+            }
         }
 
         $sortedNodes = [];
@@ -99,29 +105,21 @@ class SortOperation extends AbstractOperation
         // Create the sort sequence
         $sortFlags = SORT_REGULAR;
         foreach ($sortOptions as $sortOpt) {
-            // see https://www.php.net/manual/en/function.sort
-            // no flag - SORT_REGULAR
-            // 'N' - SORT_NUMERIC
-            // 'S' - SORT_STRING
-            // 'L' - SORT_LOCALE_STRING
-            // 'T' - SORT_NATURAL
-            // 'I' - SORT_FLAG_CASE (use as last option with SORT_STRING, SORT_LOCALE_STRING or SORT_NATURAL)
-            switch ($sortOpt) {
-                case 'I':
-                    if ($sortFlags & (SORT_STRING | SORT_LOCALE_STRING | SORT_NATURAL)) {
+            switch (strtoupper($sortOpt)) {
+                case 'SORT_FLAG_CASE':
+                    if ($sortFlags & (SORT_STRING | SORT_LOCALE_STRING | SORT_NATURAL))
                         $sortFlags |= SORT_FLAG_CASE;
-                    }
                     break;
-                case 'N':
+                case 'SORT_NUMERIC':
                     $sortFlags = SORT_NUMERIC;
                     break;
-                case 'S':
+                case 'SORT_STRING':
                     $sortFlags = SORT_STRING;
                     break;
-                case 'L':
+                case 'SORT_LOCALE_STRING':
                     $sortFlags = SORT_LOCALE_STRING;
                     break;
-                case 'T':
+                case 'SORT_NATURAL':
                     $sortFlags = SORT_NATURAL;
                     break;
             }
