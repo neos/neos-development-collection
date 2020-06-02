@@ -113,8 +113,9 @@ class SortOperation extends AbstractOperation
         foreach ($sortOptions as $sortOpt) {
             switch (strtoupper($sortOpt)) {
                 case 'SORT_FLAG_CASE':
-                    if ($sortFlags & (SORT_STRING | SORT_LOCALE_STRING | SORT_NATURAL))
+                    if ($sortFlags & (SORT_STRING | SORT_LOCALE_STRING | SORT_NATURAL)) {
                         $sortFlags |= SORT_FLAG_CASE;
+                    }
                     break;
                 case 'SORT_NUMERIC':
                     $sortFlags = SORT_NUMERIC;
