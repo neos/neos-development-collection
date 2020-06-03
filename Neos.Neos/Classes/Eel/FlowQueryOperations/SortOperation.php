@@ -74,11 +74,7 @@ class SortOperation extends AbstractOperation
         $sortOptions = [];
         $sortOptions = [];
         if (isset($arguments[2]) && !empty($arguments[2])) {
-            if (gettype($arguments[2]) == "string") {
-                $args[] = $arguments[2];
-            } else {
-                $args = $arguments[2];
-            }
+            $args = is_array($arguments[2]) ? $arguments[2] : [$arguments[2]];
             foreach ($args as $arg) {
                 if (!in_array(strtoupper($arg), ['SORT_REGULAR', 'SORT_NUMERIC', 'SORT_STRING', 'SORT_LOCALE_STRING', 'SORT_NATURAL', 'SORT_FLAG_CASE'])) {
                     throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort option (see https://www.php.net/manual/en/function.sort)', 1591107722);
