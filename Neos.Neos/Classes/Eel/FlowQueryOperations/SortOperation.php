@@ -105,28 +105,8 @@ class SortOperation extends AbstractOperation
         }
 
         // Create the sort sequence
-        $sortFlags = SORT_REGULAR;
-        foreach ($sortOptions as $sortOpt) {
-            switch (strtoupper($sortOpt)) {
-                case 'SORT_FLAG_CASE':
-                    if ($sortFlags & (SORT_STRING | SORT_LOCALE_STRING | SORT_NATURAL)) {
-                        $sortFlags |= SORT_FLAG_CASE;
-                    }
-                    break;
-                case 'SORT_NUMERIC':
-                    $sortFlags = SORT_NUMERIC;
-                    break;
-                case 'SORT_STRING':
-                    $sortFlags = SORT_STRING;
-                    break;
-                case 'SORT_LOCALE_STRING':
-                    $sortFlags = SORT_LOCALE_STRING;
-                    break;
-                case 'SORT_NATURAL':
-                    $sortFlags = SORT_NATURAL;
-                    break;
-            }
-        }
+        $sortFlags = array_sum(array_map('constant', $sortOptions));
+        $sortFlags = $sortFlags === 0 ? SORT_REGULAR : $sortFlags;
         if ($sortOrder === 'DESC') {
             arsort($sortSequence, $sortFlags);
         } elseif ($sortOrder === 'ASC') {
