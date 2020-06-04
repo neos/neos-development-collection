@@ -72,7 +72,6 @@ class SortOperation extends AbstractOperation
 
         // Check sort options
         $sortOptions = [];
-        $sortOptions = [];
         if (isset($arguments[2]) && !empty($arguments[2])) {
             $args = is_array($arguments[2]) ? $arguments[2] : [$arguments[2]];
             foreach ($args as $arg) {
