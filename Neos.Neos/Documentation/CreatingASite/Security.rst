@@ -81,7 +81,7 @@ Here is an example for a role (limiting editing to a specific language) that sho
 
   privilegeTargets:
     'Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege':
-      # this privilegeTarget is defined to switch to a "whitelist" approach
+      # this privilegeTarget is defined to switch to an "allowlist" approach
       'Acme.Com:EditAllNodes':
         matcher: 'TRUE'
 
@@ -109,7 +109,7 @@ Node privileges define what can be restricted in relation to accessing and editi
 (see the next section) they allow to define privilege targets that can be granted or denied for specific roles.
 
 .. note::
-  This is a blacklist by default, so the privilege won't match if one of the conditions don't match. So the example:
+  This is an excludelist by default, so the privilege won't match if one of the conditions don't match. So the example:
 
   .. code-block:: yaml
 
@@ -395,7 +395,7 @@ target is then granted for the "Editor" role.
 
   privilegeTargets:
     'Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege':
-      # This privilegeTarget must be defined, so that we switch to a "whitelist" approach
+      # This privilegeTarget must be defined, so that we switch to an "allowlist" approach
       'Neos.Demo:EditAllNodes':
         matcher: 'TRUE'
 
@@ -416,7 +416,7 @@ Asset privileges define what can be restricted in relation to accessing Assets (
 AssetCollections and Tags.
 
 .. note::
-  Like Node Privileges this is a blacklist by default, so the privilege won't match if one of the conditions don't match.
+  Like Node Privileges this is an excludelist by default, so the privilege won't match if one of the conditions don't match.
 
 ReadAssetPrivilege
 ------------------

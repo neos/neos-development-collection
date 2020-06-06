@@ -392,10 +392,10 @@ class Asset implements AssetInterface
         $assetClassType = str_replace('Neos\Media\Domain\Model\\', '', get_class($this));
         $this->systemLogger->debug(sprintf('%s: refresh() called, clearing all thumbnails. Filename: %s. PersistentResource SHA1: %s', $assetClassType, $this->getResource()->getFilename(), $this->getResource()->getSha1()));
 
-        // whitelist objects so they can be deleted (even during safe requests)
-        $this->persistenceManager->whitelistObject($this);
+        // allow objects so they can be deleted (even during safe requests)
+        $this->persistenceManager->allowObject($this);
         foreach ($this->thumbnails as $thumbnail) {
-            $this->persistenceManager->whitelistObject($thumbnail);
+            $this->persistenceManager->allowObject($thumbnail);
         }
 
         $this->thumbnails->clear();

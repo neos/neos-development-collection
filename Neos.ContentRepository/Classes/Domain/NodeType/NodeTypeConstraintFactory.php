@@ -67,7 +67,7 @@ class NodeTypeConstraintFactory
         }
 
         // in case there are no filters, we fall back to allowing every node type.
-        // Furthermore, if there are only negated filters, we also fall back to allowing every node type (when the blacklist does not match)
+        // Furthermore, if there are only negated filters, we also fall back to allowing every node type (when the excludelist does not match)
         $wildcardAllowed = empty($serializedFilters) || (!empty($serializedFilters) && $onlyNegatedFilters);
 
         return new NodeTypeConstraints($wildcardAllowed, $explicitlyAllowedNodeTypeNames, $explicitlyDisallowedNodeTypeNames);
