@@ -443,7 +443,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
             $nodeEvent = $this->eventEmittingService->emit(self::DOCUMENT_PUBLISHED, [], NodeEvent::class);
             $nodeEvent->setNode($documentPublish['documentNode']);
             $nodeEvent->setWorkspaceName($documentPublish['targetWorkspace']);
-            $this->persistenceManager->whitelistObject($nodeEvent);
+            $this->persistenceManager->allowObject($nodeEvent);
             $this->persistenceManager->persistAll(true);
 
             $parentEventIdentifier = $this->persistenceManager->getIdentifierByObject($nodeEvent);

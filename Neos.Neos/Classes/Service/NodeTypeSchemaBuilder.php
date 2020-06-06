@@ -33,7 +33,7 @@ class NodeTypeSchemaBuilder
      * - "nodeTypes" contains the original (merged) node type schema
      * - "inheritanceMap.subTypes" contains for every parent type the transitive list of subtypes
      * - "constraints" contains for each node type, the list of allowed child node types; normalizing
-     *   whitelists and blacklists:
+     *   allowlists and excludelists:
      *   - [node type]
      *     - nodeTypes:
      *       [child node type name]: true
