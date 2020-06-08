@@ -8886,6 +8886,62 @@ q:after {
         color: white;
         font-weight: 400;
         font-size: 14px; }
+  .neos .page-navigation ul {
+    border-top: 1px solid #3f3f3f;
+    text-align: center;
+    font-size: 0; }
+    .neos .page-navigation ul li {
+      display: inline-block;
+      font-size: 14px;
+      width: 40px; }
+      .neos .page-navigation ul li.previous, .neos .page-navigation ul li.next {
+        position: relative;
+        border: 1px solid #3f3f3f;
+        border-top: 0;
+        overflow: hidden; }
+        .neos .page-navigation ul li.previous a, .neos .page-navigation ul li.next a {
+          text-indent: -9999px; }
+          .neos .page-navigation ul li.previous a:before, .neos .page-navigation ul li.next a:before {
+            position: relative;
+            top: 5px;
+            display: block;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 26px;
+            line-height: 26px;
+            font-weight: normal;
+            font-style: normal;
+            text-decoration: inherit;
+            -webkit-font-smoothing: antialiased;
+            text-indent: 0;
+            color: #fff; }
+      .neos .page-navigation ul li.previous {
+        float: left; }
+        .neos .page-navigation ul li.previous a:before {
+          content: "‹"; }
+      .neos .page-navigation ul li.next {
+        float: right; }
+        .neos .page-navigation ul li.next a:before {
+          content: "›"; }
+      .neos .page-navigation ul li.current {
+        border: 1px solid #3f3f3f;
+        border-top: 0;
+        height: 40px;
+        width: 40px;
+        line-height: 40px;
+        color: #00b5ff; }
+      .neos .page-navigation ul li a {
+        display: block;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        color: #fff; }
+        .neos .page-navigation ul li a:hover {
+          color: #fff;
+          background-color: #00b5ff;
+          text-decoration: none; }
 
 body.neos-backend {
   transition-property: margin;
