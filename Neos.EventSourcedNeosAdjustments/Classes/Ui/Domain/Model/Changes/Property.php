@@ -254,7 +254,7 @@ class Property extends AbstractChange
                 );
 
                 // TODO: Make changing the node type a separated, specific/defined change operation.
-                if ($propertyName{0} !== '_' || $propertyName === '_hiddenInIndex') {
+                if ($propertyName[0] !== '_' || $propertyName === '_hiddenInIndex') {
                     $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
                     $command = new SetNodeProperties(
                         $node->getContentStreamIdentifier(),
