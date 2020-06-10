@@ -335,7 +335,7 @@
 			<target state="translated">Deskripsi</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target state="needs-translation">Toggle content tree</target></trans-unit>
+			<target state="translated">Beralih ke pohon konten</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
 			<target state="translated">Tampilkan opsi publikasi</target></trans-unit>
@@ -663,13 +663,13 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target state="needs-translation">Welcome to Neos</target></trans-unit>
+			<target state="translated">Selamat datang di Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target state="translated">Pergi ke pengaturan</target></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
-			<target state="needs-translation">Technical Information</target></trans-unit>
+			<target state="translated">Informasi Teknis</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target state="translated">Homepage hilang</target></trans-unit>
