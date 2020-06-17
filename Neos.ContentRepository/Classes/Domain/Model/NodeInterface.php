@@ -384,6 +384,10 @@ interface NodeInterface
      *
      * @return NodeInterface The parent node or NULL if this is the root node
      * @deprecated with version 4.3, use findParentNode() instead.
+     *  Beware that findParentNode() is not fully equivalent to this method.
+     *  It has a different root node handling:
+     *    - findParentNode() throws an exception for the root node
+     *    - getParent() returns <code>null</code> for the root node
      */
     public function getParent();
 
