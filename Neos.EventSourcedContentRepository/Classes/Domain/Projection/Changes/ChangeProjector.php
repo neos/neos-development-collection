@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
@@ -55,6 +56,19 @@ class ChangeProjector implements ProjectorInterface
         $this->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentrepository_projection_change');
         });
+    }
+
+
+    public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event)
+    {
+        // WORKAROUND: we simply use the first MoveNodeMapping here to find the dimension space point
+        $mapping = iterator_to_array($event->getNodeMoveMappings());
+
+        $this->markAsMoved(
+            $event->getContentStreamIdentifier(),
+            $event->getNodeAggregateIdentifier(),
+            $mapping[0]->getMovedNodeOrigin()
+        );
     }
 
     public function whenNodePropertiesWereSet(NodePropertiesWereSet $event)
@@ -134,7 +148,8 @@ class ChangeProjector implements ProjectorInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): void {
+    ): void
+    {
         $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
@@ -164,7 +179,8 @@ class ChangeProjector implements ProjectorInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): void {
+    ): void
+    {
         $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
@@ -193,7 +209,8 @@ class ChangeProjector implements ProjectorInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?Change {
+    ): ?Change
+    {
         $changeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentrepository_projection_change n
 WHERE n.contentStreamIdentifier = :contentStreamIdentifier
