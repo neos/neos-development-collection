@@ -283,8 +283,7 @@ class ContentRepositoryExportService
         array $propertyReferences,
         NodePath $nodePath,
         bool $isHidden
-    )
-    {
+    ) {
         echo $nodePath . "\n";
 
         try {

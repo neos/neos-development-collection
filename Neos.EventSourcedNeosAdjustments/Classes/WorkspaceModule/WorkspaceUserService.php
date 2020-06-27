@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Neos\EventSourcedNeosAdjustments\WorkspaceModule;
+
 /*
  * This file is part of the Neos.Neos package.
  *
@@ -126,5 +127,4 @@ class WorkspaceUserService
         // ownership back to themselves.
         return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
     }
-
 }
