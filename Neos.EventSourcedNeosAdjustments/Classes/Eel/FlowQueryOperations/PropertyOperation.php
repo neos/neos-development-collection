@@ -96,8 +96,8 @@ class PropertyOperation extends AbstractOperation
                         $res = reset($arr);
                         return $res;
                     }
-                } elseif ($element->getNodeType()->getPropertyType($propertyPath) === 'reference') {
-                    return $element->findNamedReferencedNodes(PropertyName::fromString($propertyPath));
+                } elseif ($element->getNodeType()->getPropertyType($propertyPath) === 'references') {
+                    return $element->findNamedReferencedNodes(PropertyName::fromString($propertyPath))->toArray();
                 } else {
                     return $element->getProperty($propertyPath);
                 }
