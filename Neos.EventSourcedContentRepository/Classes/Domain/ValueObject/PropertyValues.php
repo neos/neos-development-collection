@@ -41,6 +41,20 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
         return new PropertyValues(array_merge($this->values, $other->getValues()));
     }
 
+    public function propertyExists($propertyName): bool
+    {
+        return isset($this->values[$propertyName]);
+    }
+
+    public function getProperty($propertyName): ?PropertyValue
+    {
+        if (!isset($this->values[$propertyName])) {
+            return null;
+        }
+
+        return $this->values[$propertyName];
+    }
+
     /**
      * @return array|PropertyValue[]
      * @param PropertyValue[] values

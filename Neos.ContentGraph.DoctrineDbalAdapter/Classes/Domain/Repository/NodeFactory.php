@@ -28,6 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -72,14 +73,7 @@ final class NodeFactory
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
 
-        $properties = json_decode($nodeRow['properties'], true);
-
-        // Reference and References "are no properties" anymore by definition; so Node does not know
-        // anything about it.
-        $properties = array_filter($properties, function ($propertyName) use ($nodeType) {
-            $propertyType = $nodeType->getPropertyType($propertyName);
-            return $propertyType !== 'reference' && $propertyType !== 'references';
-        }, ARRAY_FILTER_USE_KEY);
+        $properties = PropertyValues::fromArray(json_decode($nodeRow['properties'], true));
 
         $propertyCollection = new ContentProjection\PropertyCollection($properties);
 

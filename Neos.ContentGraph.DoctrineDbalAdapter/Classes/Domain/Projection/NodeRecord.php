@@ -17,6 +17,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 
 /**
  * The active record for reading and writing nodes from and to the database
@@ -44,7 +45,7 @@ class NodeRecord
     public $originDimensionSpacePointHash;
 
     /**
-     * @var array
+     * @var PropertyValues
      */
     public $properties;
 
@@ -70,7 +71,7 @@ class NodeRecord
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ?array $originDimensionSpacePoint,
         ?string $originDimensionSpacePointHash,
-        ?array $properties,
+        PropertyValues $properties,
         NodeTypeName $nodeTypeName,
         NodeAggregateClassification $classification,
         NodeName $nodeName = null
@@ -148,7 +149,7 @@ class NodeRecord
             NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],
-            json_decode($databaseRow['properties'], true),
+            PropertyValues::fromArray(json_decode($databaseRow['properties'], true)),
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::fromString($databaseRow['classification']),
             isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null

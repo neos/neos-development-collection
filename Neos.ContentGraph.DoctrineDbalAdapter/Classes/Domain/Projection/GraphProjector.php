@@ -84,7 +84,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
             $event->getNodeAggregateIdentifier(),
             $dimensionSpacePoint->getCoordinates(),
             $dimensionSpacePoint->getHash(),
-            [],
+            PropertyValues::fromArray([]),
             $event->getNodeTypeName(),
             $event->getNodeAggregateClassification()
         );
@@ -228,7 +228,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
             $nodeAggregateIdentifier,
             $originDimensionSpacePoint->jsonSerialize(),
             $originDimensionSpacePoint->getHash(),
-            $propertyDefaultValuesAndTypes->getPlainValues(),
+            $propertyDefaultValuesAndTypes,
             $nodeTypeName,
             $nodeAggregateClassification,
             $nodeName
@@ -485,9 +485,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
     {
         $this->transactional(function () use ($event) {
             $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
-                foreach ($event->getPropertyValues() as $propertyName => $propertyValue) {
-                    $node->properties[$propertyName] = $propertyValue->getValue();
-                }
+                $node->properties = $event->getPropertyValues();
             });
         });
     }

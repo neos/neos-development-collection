@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Annotations as Flow;
@@ -30,7 +31,7 @@ final class PropertyCollection implements PropertyCollectionInterface
     /**
      * Properties from Nodes
      *
-     * @var array
+     * @var PropertyValues
      */
     protected $properties;
 
@@ -56,24 +57,25 @@ final class PropertyCollection implements PropertyCollectionInterface
      */
     protected $persistenceManager;
 
-    public function __construct(array $properties)
+    public function __construct(PropertyValues $properties)
     {
         $this->properties = $properties;
-        $this->iterator = new \ArrayIterator($properties);
+        $this->iterator = new \ArrayIterator($properties->getPlainValues());
     }
 
     public function offsetExists($offset)
     {
-        return isset($this->properties[$offset]);
+        return $this->properties->propertyExists($offset);
     }
 
     public function offsetGet($offset)
     {
-        if (!isset($this->properties[$offset])) {
+        $property = $this->properties->getProperty($offset);
+        if ($property === null) {
             return null;
         }
-        $value = $this->properties[$offset];
-        if (isset($value['__flow_object_type'])) {
+        $value = $property->getValue();
+        if (is_array($value) && isset($value['__flow_object_type'])) {
             if (!isset($this->resolvedPropertyObjects[$offset])) {
                 $this->resolvedPropertyObjects[$offset] = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type']);
             }

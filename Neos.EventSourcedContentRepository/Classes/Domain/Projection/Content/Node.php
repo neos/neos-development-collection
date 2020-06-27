@@ -172,12 +172,12 @@ class Node implements NodeInterface
      */
     public function getProperty($propertyName)
     {
-        return $this->properties[$propertyName] ?? null;
+        return $this->properties->offsetGet($propertyName);
     }
 
     public function hasProperty($propertyName): bool
     {
-        return isset($this->properties[$propertyName]);
+        return $this->properties->offsetExists($propertyName);
     }
 
     /**
