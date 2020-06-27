@@ -365,6 +365,10 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), $visibilityConstraints);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
+        if ($node === null) {
+            return false;
+        }
+
         if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return false;
         }
