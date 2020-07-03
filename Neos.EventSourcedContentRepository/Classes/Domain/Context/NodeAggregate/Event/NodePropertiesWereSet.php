@@ -15,7 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -43,7 +43,7 @@ final class NodePropertiesWereSet implements DomainEventInterface, PublishableTo
     private $originDimensionSpacePoint;
 
     /**
-     * @var PropertyValues
+     * @var SerializedPropertyValues
      */
     private $propertyValues;
 
@@ -51,7 +51,7 @@ final class NodePropertiesWereSet implements DomainEventInterface, PublishableTo
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        PropertyValues $propertyValues
+        SerializedPropertyValues $propertyValues
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -84,9 +84,9 @@ final class NodePropertiesWereSet implements DomainEventInterface, PublishableTo
     }
 
     /**
-     * @return PropertyValues
+     * @return SerializedPropertyValues
      */
-    public function getPropertyValues(): PropertyValues
+    public function getPropertyValues(): SerializedPropertyValues
     {
         return $this->propertyValues;
     }

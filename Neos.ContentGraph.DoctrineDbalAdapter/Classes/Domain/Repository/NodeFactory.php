@@ -28,7 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -73,7 +73,7 @@ final class NodeFactory
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
 
-        $properties = PropertyValues::fromArray(json_decode($nodeRow['properties'], true));
+        $properties = SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true));
 
         $propertyCollection = new ContentProjection\PropertyCollection($properties);
 

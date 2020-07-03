@@ -23,12 +23,14 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\Co
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RebasableToOtherContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\PublishableToOtherContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
@@ -505,14 +507,14 @@ final class WorkspaceCommandHandler
             case ChangeNodeAggregateName::class:
                 return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
                 break;
-            case CreateNodeAggregateWithNode::class:
-                return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command);
+            case CreateNodeAggregateWithNodeAndSerializedProperties::class:
+                return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNodeAndSerializedProperties($command);
                 break;
             case MoveNodeAggregate::class:
                 return $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command);
                 break;
-            case SetNodeProperties::class:
-                return $this->nodeAggregateCommandHandler->handleSetNodeProperties($command);
+            case SetSerializedNodeProperties::class:
+                return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties($command);
                 break;
             case DisableNodeAggregate::class:
                 return $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command);

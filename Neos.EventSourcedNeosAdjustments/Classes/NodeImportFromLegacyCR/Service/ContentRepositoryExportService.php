@@ -43,8 +43,8 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -303,7 +303,7 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
-                        PropertyValues::fromArray($propertyValues)
+                        SerializedPropertyValues::fromArray($propertyValues)
                     ))->blockUntilProjectionsAreUpToDate();
                 }
             } else {
@@ -322,7 +322,7 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
-                        PropertyValues::fromArray($propertyValues)
+                        SerializedPropertyValues::fromArray($propertyValues)
                     ))->blockUntilProjectionsAreUpToDate();
                 } else {
                     $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePath, $nodeTypeName);
@@ -336,7 +336,7 @@ class ContentRepositoryExportService
                         $parentNodeAggregateIdentifierAndNodeType->getNodeAggregateIdentifier(),
                         null,
                         $nodeName,
-                        PropertyValues::fromArray($propertyValues),
+                        SerializedPropertyValues::fromArray($propertyValues),
                         $nodeAggregateIdentifiersByNodePaths
                     // TODO: tethered descendant IDs
                     ))->blockUntilProjectionsAreUpToDate();
@@ -388,11 +388,11 @@ class ContentRepositoryExportService
                 continue;
             }
             $this->encodeObjectReference($propertyValue);
-            $properties[$propertyName] = new PropertyValue($propertyValue, $type);
+            $properties[$propertyName] = new SerializedPropertyValue($propertyValue, $type);
         }
 
         if ($nodeData->isHiddenInIndex()) {
-            $properties['_hiddenInIndex'] = new PropertyValue($nodeData->isHiddenInIndex(), 'boolean');
+            $properties['_hiddenInIndex'] = new SerializedPropertyValue($nodeData->isHiddenInIndex(), 'boolean');
         }
 
         return $properties;

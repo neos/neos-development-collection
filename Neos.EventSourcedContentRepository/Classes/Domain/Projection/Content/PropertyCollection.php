@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Annotations as Flow;
@@ -31,7 +31,7 @@ final class PropertyCollection implements PropertyCollectionInterface
     /**
      * Properties from Nodes
      *
-     * @var PropertyValues
+     * @var SerializedPropertyValues
      */
     protected $properties;
 
@@ -57,7 +57,7 @@ final class PropertyCollection implements PropertyCollectionInterface
      */
     protected $persistenceManager;
 
-    public function __construct(PropertyValues $properties)
+    public function __construct(SerializedPropertyValues $properties)
     {
         $this->properties = $properties;
         $this->iterator = new \ArrayIterator($properties->getPlainValues());

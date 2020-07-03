@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -82,7 +82,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
     /**
      * The node's initial property values
      *
-     * @var PropertyValues
+     * @var SerializedPropertyValues
      */
     private $initialPropertyValues;
 
@@ -108,7 +108,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $nodeName
-     * @param PropertyValues $initialPropertyValues
+     * @param SerializedPropertyValues $initialPropertyValues
      * @param NodeAggregateClassification $nodeAggregateClassification
      * @param NodeAggregateIdentifier|null $succeedingNodeAggregateIdentifier
      */
@@ -120,7 +120,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         ?NodeName $nodeName,
-        PropertyValues $initialPropertyValues,
+        SerializedPropertyValues $initialPropertyValues,
         NodeAggregateClassification $nodeAggregateClassification,
         NodeAggregateIdentifier $succeedingNodeAggregateIdentifier = null
     ) {
@@ -171,7 +171,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
         return $this->nodeName;
     }
 
-    public function getInitialPropertyValues(): PropertyValues
+    public function getInitialPropertyValues(): SerializedPropertyValues
     {
         return $this->initialPropertyValues;
     }

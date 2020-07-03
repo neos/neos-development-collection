@@ -26,8 +26,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
@@ -256,13 +256,13 @@ class Property extends AbstractChange
                 // TODO: Make changing the node type a separated, specific/defined change operation.
                 if ($propertyName[0] !== '_' || $propertyName === '_hiddenInIndex') {
                     $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
-                    $command = new SetNodeProperties(
+                    $command = SetNodeProperties::create(
                         $node->getContentStreamIdentifier(),
                         $node->getNodeAggregateIdentifier(),
                         $node->getOriginDimensionSpacePoint(),
-                        PropertyValues::fromArray(
+                        PropertyValuesToWrite::fromArray(
                             [
-                                $propertyName => new PropertyValue($value, $propertyType)
+                                $propertyName => new PropertyValueToWrite($value, $propertyType)
                             ]
                         )
                     );

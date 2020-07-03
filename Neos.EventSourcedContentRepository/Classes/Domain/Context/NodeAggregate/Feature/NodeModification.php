@@ -14,8 +14,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
 
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -28,11 +30,31 @@ trait NodeModification
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
+    abstract protected function getPropertyConversionService(): PropertyConversionService;
+
     /**
      * @param SetNodeProperties $command
      * @return CommandResult
      */
-    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
+    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult {
+        $serializedPropertyValues = $this->getPropertyConversionService()->serializePropertyValues($command->getPropertyValues());
+
+        $newCommand = new SetSerializedNodeProperties(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier(),
+            $command->getOriginDimensionSpacePoint(),
+            $serializedPropertyValues
+        );
+
+        return $this->handleSetSerializedNodeProperties($newCommand);
+    }
+
+    /**
+     * @param SetNodeProperties $command
+     * @return CommandResult
+     * @internal instead, use {@see self::handleSetNodeProperties} instead publicly.
+     */
+    public function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command): CommandResult
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 

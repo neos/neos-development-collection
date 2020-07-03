@@ -15,8 +15,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeUriPathSegmentGenerator;
 use Neos\Flow\Annotations as Flow;
 
@@ -49,9 +49,9 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
-                    PropertyValues::fromArray(
+                    SerializedPropertyValues::fromArray(
                         [
-                            'title' => new PropertyValue($data['title'], 'string')
+                            'title' => new SerializedPropertyValue($data['title'], 'string')
                         ]
                     )
                 ));
@@ -62,9 +62,9 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
-                PropertyValues::fromArray(
+                SerializedPropertyValues::fromArray(
                     [
-                        'uriPathSegment' => new PropertyValue($uriPathSegment, 'string')
+                        'uriPathSegment' => new SerializedPropertyValue($uriPathSegment, 'string')
                     ]
                 )
             ))->blockUntilProjectionsAreUpToDate();

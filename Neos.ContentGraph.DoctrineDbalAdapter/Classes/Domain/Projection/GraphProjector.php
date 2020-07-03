@@ -34,7 +34,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeRe
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 use Neos\Flow\Annotations as Flow;
 
@@ -84,7 +84,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
             $event->getNodeAggregateIdentifier(),
             $dimensionSpacePoint->getCoordinates(),
             $dimensionSpacePoint->getHash(),
-            PropertyValues::fromArray([]),
+            SerializedPropertyValues::fromArray([]),
             $event->getNodeTypeName(),
             $event->getNodeAggregateClassification()
         );
@@ -204,7 +204,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
-     * @param PropertyValues $propertyDefaultValuesAndTypes
+     * @param SerializedPropertyValues $propertyDefaultValuesAndTypes
      * @param NodeAggregateClassification $nodeAggregateClassification
      * @param NodeAggregateIdentifier|null $succeedingSiblingNodeAggregateIdentifier
      * @param NodeName $nodeName
@@ -217,7 +217,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
-        PropertyValues $propertyDefaultValuesAndTypes,
+        SerializedPropertyValues $propertyDefaultValuesAndTypes,
         NodeAggregateClassification $nodeAggregateClassification,
         NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
         NodeName $nodeName = null

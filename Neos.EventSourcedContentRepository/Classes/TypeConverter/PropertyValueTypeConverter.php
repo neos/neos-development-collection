@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
@@ -31,7 +31,7 @@ class PropertyValueTypeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = PropertyValue::class;
+    protected $targetType = SerializedPropertyValue::class;
 
     /**
      * @var integer
@@ -40,6 +40,6 @@ class PropertyValueTypeConverter extends AbstractTypeConverter
 
     public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        return new PropertyValue($source['value'], $source['type']);
+        return new SerializedPropertyValue($source['value'], $source['type']);
     }
 }
