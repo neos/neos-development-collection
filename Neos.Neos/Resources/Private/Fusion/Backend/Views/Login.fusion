@@ -36,7 +36,7 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
                     }
                 '}</style>
             </head>
-            <body class="neos" style={props.backgroundImageSource ? 'background-image:url(' + props.backgroundImageSource + ')' : null}>
+            <body class="neos" style={'background-image:url(' + props.backgroundImageSource + ')'} style.@if.set={props.backgroundImageSource}>
                 <div class="neos-modal-centered">
                     <main class="neos-login-main">
                         <div class={['neos-login-box', props.backgroundImageSource ? 'background-image-active' : null]}>
