@@ -270,7 +270,10 @@ class LoginController extends AbstractAuthenticationController
     protected function initializeView(ViewInterface $view)
     {
         parent::initializeView($view);
-        /** @var FusionView $view */
-        $view->setFusionPathPattern('resource://Neos.Neos/Private/Fusion/Backend');
+
+        if ($view instanceof FusionView) {
+            /** @var FusionView $view */
+            $view->setFusionPathPattern('resource://Neos.Neos/Private/Fusion/Backend');
+        }
     }
 }
