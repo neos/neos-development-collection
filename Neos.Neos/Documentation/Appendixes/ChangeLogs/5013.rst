@@ -1,0 +1,17 @@
+`5.0.13 (2020-07-06) <https://github.com/neos/neos-development-collection/releases/tag/5.0.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: pass copied node to emitAfterNodeCopy signal <https://github.com/neos/neos-development-collection/pull/2995>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Pass copied node instead of current node instance to `emitAfterNodeCopy` signal.
+
+This fixes #2994 
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.0.12...5.0.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
