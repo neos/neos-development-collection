@@ -260,17 +260,4 @@ class LoginController extends AbstractAuthenticationController
         $sessionCookie = new Cookie($this->sessionName, $sessionIdentifier);
         $this->response->setCookie($sessionCookie);
     }
-
-    /**
-     * Simply sets the Fusion path pattern on the view.
-     *
-     * @param ViewInterface $view
-     * @return void
-     */
-    protected function initializeView(ViewInterface $view)
-    {
-        parent::initializeView($view);
-        /** @var FusionView $view */
-        $view->setFusionPathPattern('resource://Neos.Neos/Private/Fusion/Backend');
-    }
 }
