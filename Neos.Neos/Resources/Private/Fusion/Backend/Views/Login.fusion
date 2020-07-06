@@ -12,6 +12,7 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
       @apply.props = ${props}
 
       backgroundImageSource = Neos.Fusion:ResourceUri {
+        @if.set = ${this.path}
         path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
       }
 
@@ -29,16 +30,16 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
                         <Neos.Fusion:ResourceUri path={item}/>
                     </link>
                 </Neos.Fusion:Loop>
-                <style type="text/css">{'
+                <style type="text/css" @if.set={props.backgroundImageSource}>{'
                     .neos-login-box:before {
                         background-image: url(' + props.backgroundImageSource + ');
                     }
                 '}</style>
             </head>
-            <body class="neos" style={'background-image:url(' + props.backgroundImageSource + ')'}>
+            <body class="neos" style={'background-image:url(' + props.backgroundImageSource + ')'} style.@if.set={props.backgroundImageSource}>
                 <div class="neos-modal-centered">
                     <main class="neos-login-main">
-                        <div class={'neos-login-box ' + (props.backgroundImageSource ? 'background-image-active' : '')}>
+                        <div class={['neos-login-box', props.backgroundImageSource ? 'background-image-active' : null]}>
                             <figure class="neos-login-box-logo">
                                 <img class="neos-login-box-logo-resource" @children="attributes.src" width="200px" height="200px" alt="Neos Logo">
                                     <Neos.Fusion:ResourceUri path="resource://Neos.Neos/Public/Images/Login/Logo.svg" />
