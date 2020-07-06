@@ -12,7 +12,7 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
       @apply.props = ${props}
 
       backgroundImageSource = Neos.Fusion:ResourceUri {
-        @if.hasNeededSetting = ${this.path}
+        @if.set = ${this.path}
         path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
       }
 
