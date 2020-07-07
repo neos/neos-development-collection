@@ -795,7 +795,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     {
         $this->emitBeforeNodeCopy($this, $referenceNode);
         $copiedNode = $this->copyIntoInternal($referenceNode, $nodeName, $this->getNodeType()->isAggregate());
-        $this->emitAfterNodeCopy($this, $referenceNode);
+        $this->emitAfterNodeCopy($copiedNode, $referenceNode);
 
         return $copiedNode;
     }

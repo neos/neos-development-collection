@@ -53,9 +53,9 @@ interface TraversableNodeInterface extends NodeInterface
 
     /**
      * Retrieves and returns the parent node from the node's subgraph.
-     * Returns null if this is a root node.
+     * If no parent node is present, an {@link NodeException} is thrown.
      *
-     * @return TraversableNodeInterface
+     * @return TraversableNodeInterface the parent node, never <code>null</code>
      * @throws NodeException If this node has no parent (i.e. is the root)
      */
     public function findParentNode(): TraversableNodeInterface;
