@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target state="translated">Auto-Publicar</target></trans-unit>
+			<target state="translated">Auto-publicar</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target state="translated">Auto-publicar em {0}</target></trans-unit>
