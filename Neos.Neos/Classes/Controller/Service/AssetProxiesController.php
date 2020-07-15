@@ -18,7 +18,6 @@ use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
 use Neos\Media\Domain\Model\Dto\AssetConstraints;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetSourceService;

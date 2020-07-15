@@ -39,7 +39,7 @@ final class AssetConstraints
     {
         $this->allowedAssetSourceIdentifiers = $allowedAssetSourceIdentifiers;
         $this->allowedMediaTypes = $allowedMediaTypes;
-        $this->allowedAssetTypes = array_unique(array_map(static function(string $mediaType) {
+        $this->allowedAssetTypes = array_unique(array_map(static function (string $mediaType) {
             if (preg_match(self::PATTERN_MEDIA_TYPE, $mediaType, $matches) === 0) {
                 throw new \InvalidArgumentException(sprintf('Failed to parse media type "%s"', $mediaType), 1594727068);
             }
@@ -176,7 +176,7 @@ final class AssetConstraints
         if (!$this->hasAssetSourceConstraint()) {
             return $assetSources;
         }
-        return array_filter($assetSources, function(AssetSourceInterface $assetSource) {
+        return array_filter($assetSources, function (AssetSourceInterface $assetSource) {
             return in_array($assetSource->getIdentifier(), $this->allowedAssetSourceIdentifiers, true);
         });
     }

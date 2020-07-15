@@ -12,7 +12,6 @@ namespace Neos\Media\Browser\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
