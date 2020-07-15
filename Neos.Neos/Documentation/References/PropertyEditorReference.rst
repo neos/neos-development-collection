@@ -600,9 +600,10 @@ image format must be ``16:9``::
         inspector:
           group: 'document'
           editorOptions:
-            accept: 'image/png'
             features:
               crop: true
+            constraints:
+              mediaTypes: ['image/png']
             crop:
               aspectRatio:
                 forceCrop: true
@@ -622,7 +623,8 @@ to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``true`
         inspector:
           group: 'document'
           editorOptions:
-            accept: 'image/png'
+            constraints:
+              mediaTypes: ['image/png']
             features:
               crop: true
             crop:
@@ -648,7 +650,18 @@ Options Reference:
 	Defaults to the maximum allowed upload size configured in php.ini
 
 ``accept`` (string)
-  Set the accepted mime type for this editor. If non is given it falls back to ``image/*``.
+  DEPRECATED. Use ``constraints.mediaTypes`` instead
+
+``constraints``
+
+	``mediaTypes`` (array)
+		If set, the media browser and file upload will be limited to assets with the specified media type. Default ``['image/*']``
+		Example: ``['image/png', 'image/jpeg']``
+		Note: Due to technical limitations the media browser currently ignores the media sub type, so ``image/png`` has the same effect as ``image/*``
+
+	``assetSources`` (array)
+		If set, the media browser will be limited to assets of the specified asset source. Default: ``[]`` (all asset sources)
+		Example: ``['neos', 'custom_asset_source]``
 
 ``features``
 
@@ -733,8 +746,19 @@ Conversely, if multiple assets shall be uploaded, use ``array<Neos\Media\Domain\
 
 Options Reference:
 
-``accept``
-  Set the accepted mime type for this editor. If non is given all files are allowed.
+``accept`` (string)
+  DEPRECATED. Use ``constraints.mediaTypes`` instead
+
+``constraints``
+
+	``mediaTypes`` (array)
+		If set, the media browser, file search and file upload will be limited to assets with the specified media type. Default ``[]`` (all media types)
+		Example: ``['application/msword', 'application/pdf']``
+		Note: Due to technical limitations the media browser currently ignores the media sub type, so ``application/pdf`` has the same effect as ``application/*``.
+
+	``assetSources`` (array)
+		If set, the media browser and file search will be limited to assets of the specified asset source. Default: ``[]`` (all asset sources)
+		Example: ``['neos', 'custom_asset_source]``
 
 ``features``
 

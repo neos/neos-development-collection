@@ -7,6 +7,9 @@
             multipart: true,
             url: uploadUrl,
             max_file_size: maximumFileUploadSize,
+            filters: {
+                mime_types : $('#resource').attr('accept')
+            },
             file_data_name: $('#resource').attr('name'),
             drop_element: 'dropzone'
         });

@@ -15,7 +15,7 @@
                 <li class="asset">
                     <f:if condition="!{activeAssetSource.readOnly}">
                         <f:then>
-                            <f:link.action action="edit" class="neos-thumbnail" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" data="{asset-identifier: '{assetProxy.identifier}', local-asset-identifier: '{assetProxy.localAssetIdentifier}', asset-source-identifier: '{assetProxy.assetSource.identifier}'}">
+                            <f:link.action action="edit" class="neos-thumbnail" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" addQueryString="true" data="{asset-identifier: '{assetProxy.identifier}', local-asset-identifier: '{assetProxy.localAssetIdentifier}', asset-source-identifier: '{assetProxy.assetSource.identifier}'}">
                                 <div class="neos-img-container draggable-asset {f:if(condition: '{assetProxy.asset.tags -> f:count()} === 0', then: ' neos-media-untagged')}">
                                     <f:if condition="{assetProxy.thumbnailUri}">
                                         <f:then><img src="{assetProxy.thumbnailUri}" alt="" width="250" height="250"/></f:then>
@@ -25,7 +25,7 @@
                             </f:link.action>
                         </f:then>
                         <f:else>
-                            <f:link.action action="show" class="neos-thumbnail" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" data="{asset-identifier: '{assetProxy.identifier}', local-asset-identifier: '{assetProxy.localAssetIdentifier}', asset-source-identifier: '{assetProxy.assetSource.identifier}'}">
+                            <f:link.action action="show" class="neos-thumbnail" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" addQueryString="true" data="{asset-identifier: '{assetProxy.identifier}', local-asset-identifier: '{assetProxy.localAssetIdentifier}', asset-source-identifier: '{assetProxy.assetSource.identifier}'}">
                                 <div class="neos-img-container">
                                     <f:if condition="{assetProxy.thumbnailUri}">
                                         <f:then><img src="{assetProxy.thumbnailUri}" alt="" width="250" height="250"/></f:then>
@@ -45,13 +45,13 @@
                                 <div class="neos-dropdown-menu-list neos-pull-right" role="menu">
                                     <ul>
                                         <li>
-                                            <f:link.action action="edit" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+                                            <f:link.action action="edit" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" addQueryString="true" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
                                                 <i class="fas fa-edit icon-white"></i> {editLabel}
                                             </f:link.action>
                                         </li>
                                         <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
                                             <li>
-                                                <f:link.action action="replaceAssetResource" arguments="{asset: assetProxy.asset}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+                                                <f:link.action action="replaceAssetResource" arguments="{asset: assetProxy.asset}" title="{replaceAssetResourceLabel}" addQueryString="true" data="{neos-toggle: 'tooltip', placement: 'left'}">
                                                     <i class="fas fa-random icon-white"></i> {replaceLabel}
                                                 </f:link.action>
                                             </li>

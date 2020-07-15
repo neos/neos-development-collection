@@ -1,0 +1,6 @@
+<f:for each="{constraints.allowedAssetSourceIdentifiers}" as="assetSourceIdentifier" iteration="iteration">
+    <f:form.hidden name="constraints[assetSources][{iteration.index}]" value="{assetSourceIdentifier}" />
+</f:for>
+<f:for each="{constraints.allowedMediaTypes}" as="mediaType" iteration="iteration">
+    <f:form.hidden name="constraints[mediaTypes][{iteration.index}]" value="{mediaType}" />
+</f:for>
