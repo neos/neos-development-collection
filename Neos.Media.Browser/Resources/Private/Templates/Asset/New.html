@@ -11,7 +11,7 @@
                     <label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">
                         {neos:backend.translate(id: 'chooseFile', package: 'Neos.Media.Browser')} <i class="fas fa-file"></i>
                     </label>
-                    <f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}"/>
+                    <f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required', accept: constraints.mediaTypeAcceptAttribute}"/>
                 </span>
                 <label for="title">{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}</label>
                 <f:form.textfield property="title" id="title" placeholder="{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}"/>
@@ -40,7 +40,8 @@
             </div>
         </fieldset>
         <div class="neos-footer">
-            <f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</f:link.action>
+            <f:link.action action="index" addQueryString="true" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</f:link.action>
+            <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
             <f:form.submit id="import" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'upload', package: 'Neos.Media.Browser')}"/>
         </div>
     </f:form>

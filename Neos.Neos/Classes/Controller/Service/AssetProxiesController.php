@@ -18,6 +18,8 @@ use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
+use Neos\Media\Domain\Model\Dto\AssetConstraints;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetSourceService;
 use Neos\Media\Domain\Repository\TagRepository;
@@ -90,19 +92,21 @@ class AssetProxiesController extends ActionController
      * Shows a list of assets
      *
      * @param string $searchTerm An optional search term used for filtering the list of assets
-     * @param string $assetSourceIdentifier If specified, results are only from the given asset source
      * @param int $limit The maximum number of results shown in total
      * @return void
      */
-    public function indexAction(string $searchTerm = '', string $assetSourceIdentifier = '', int $limit = 10): void
+    public function indexAction(string $searchTerm = '', int $limit = 10): void
     {
+        $assetConstraints = $this->request->hasArgument('constraints') ? AssetConstraints::fromArray($this->request->getArgument('constraints')) : AssetConstraints::create();
+        $assetSources = $assetConstraints->applyToAssetSources($this->assetSourceService->getAssetSources());
+
         $assetProxyQueryResultsIterator = new \MultipleIterator(\MultipleIterator::MIT_NEED_ANY);
-        foreach ($this->assetSourceService->getAssetSources() as $assetSource) {
-            if ($assetSourceIdentifier === '' || $assetSource->getIdentifier() === $assetSourceIdentifier) {
-                $assetProxyQueryResult = $assetSource->getAssetProxyRepository()->findBySearchTerm($searchTerm);
-                if ($assetProxyQueryResult->valid()) {
-                    $assetProxyQueryResultsIterator->attachIterator($assetProxyQueryResult);
-                }
+        foreach ($assetSources as $assetSource) {
+            $assetRepository = $assetSource->getAssetProxyRepository();
+            $assetRepository->filterByType($assetConstraints->applyToAssetTypeFilter());
+            $assetProxyQueryResult = $assetRepository->findBySearchTerm($searchTerm);
+            if ($assetProxyQueryResult->valid()) {
+                $assetProxyQueryResultsIterator->attachIterator($assetProxyQueryResult);
             }
         }
 
