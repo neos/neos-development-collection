@@ -56,9 +56,11 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\StreamName;
+use Neos\EventSourcing\Projection\ProjectionManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Property\PropertyMapper;
 use Neos\Utility\TypeHandling;
 use Ramsey\Uuid\Uuid;
 
@@ -88,6 +90,12 @@ class ContentRepositoryExportService
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
 
     /**
      * @var ContentStreamIdentifier
@@ -367,6 +375,7 @@ class ContentRepositoryExportService
 
             $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = $originDimensionSpacePoint;
         } catch (\Exception $e) {
+            throw $e;
             $message = 'There was an error exporting the node ' . $nodeAggregateIdentifier . ' at path ' . $nodePath . ' in Dimension Space Point ' . $originDimensionSpacePoint . ':' . $e->getMessage();
             $this->systemLogger->warning($message, ['exception' => $e]);
             echo $message;
@@ -388,7 +397,8 @@ class ContentRepositoryExportService
                 // TODO: support other types than string
                 continue;
             }
-            $properties[$propertyName] = $propertyValue;
+
+            $properties[$propertyName] = $this->propertyMapper->convert($propertyValue, $type);
         }
 
         if ($nodeData->isHiddenInIndex()) {

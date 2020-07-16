@@ -41,7 +41,11 @@ final class SerializedPropertyValue implements \JsonSerializable
     {
         if (!is_scalar($value) && !is_array($value)) {
             // TODO: check that array does not contain nested objects...
-            throw new \RuntimeException('TODO: Property value must not contain any objects, contained' . gettype($value));
+            $exceptionMessage = 'TODO: Property value must not contain any objects, contained' . gettype($value);
+            if (is_object($value)) {
+                $exceptionMessage .= ' - object type: ' . get_class($value);
+            }
+            throw new \RuntimeException($exceptionMessage);
         }
         $this->value = $value;
         $this->type = $type;

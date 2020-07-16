@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonSetNodePropertiesTrait;
@@ -21,6 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValu
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
 /**
+ * @Flow\Proxy(false)
  * @internal
  */
 final class SetSerializedNodeProperties implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface

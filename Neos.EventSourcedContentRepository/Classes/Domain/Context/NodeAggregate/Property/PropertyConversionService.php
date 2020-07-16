@@ -35,7 +35,7 @@ final class PropertyConversionService
         $this->serializer = $serializer;
     }
 
-    private static function assertPropertyTypeMatchesPropertyValue(string $propertyTypeFromSchema, $propertyValue)
+    private static function assertPropertyTypeMatchesPropertyValue(string $propertyTypeFromSchema, $propertyValue, $propertyName)
     {
         if (is_object($propertyValue)) {
             if ($propertyValue === null) {
@@ -45,7 +45,7 @@ final class PropertyConversionService
                 return;
             }
 
-            throw new \RuntimeException('TODO: Property type must match the type ' . $propertyTypeFromSchema . ', was ' . get_class($propertyValue));
+            throw new \RuntimeException('TODO: Property "' . $propertyName . '": type must match the type ' . $propertyTypeFromSchema . ', was ' . get_class($propertyValue));
         }
         // TODO: do we need to handle simple types here?
     }
@@ -60,18 +60,17 @@ final class PropertyConversionService
     public function serializePropertyValues(PropertyValuesToWrite $propertyValuesToWrite, NodeType $nodeType): SerializedPropertyValues
     {
         $serializedPropertyValues = [];
+
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
             $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
             self::assertTypeIsNoReference($propertyTypeFromSchema);
-            self::assertPropertyTypeMatchesPropertyValue($propertyTypeFromSchema, $propertyValue);
+            self::assertPropertyTypeMatchesPropertyValue($propertyTypeFromSchema, $propertyValue, $propertyName);
 
-            if (!is_scalar($propertyValue)) {
-                // TODO: only here call the serializer??
-                try {
-                    $propertyValue = $this->serializer->serialize($propertyValue, 'json');
-                } catch (NotEncodableValueException $e) {
-                    throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
-                }
+            // TODO: only here call the serializer??
+            try {
+                $propertyValue = $this->serializer->normalize($propertyValue);
+            } catch (NotEncodableValueException $e) {
+                throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
             }
 
             $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, $propertyTypeFromSchema);
@@ -82,12 +81,6 @@ final class PropertyConversionService
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue)
     {
-        $value = $serializedPropertyValue->getValue();
-        if (is_array($value)) {
-            return $this->serializer->deserialize($value, $serializedPropertyValue->getType(), 'json');
-        } else {
-            // TODO: how do we handle simple types like Strings?
-            return $value;
-        }
+        return $this->serializer->denormalize($serializedPropertyValue->getValue(), $serializedPropertyValue->getType());
     }
 }

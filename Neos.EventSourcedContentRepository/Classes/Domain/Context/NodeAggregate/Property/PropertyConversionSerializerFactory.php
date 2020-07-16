@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Proper
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\NoOperationEncoder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer;
@@ -34,17 +35,17 @@ final class PropertyConversionSerializerFactory
 
     /**
      * @var array
-     * @Flow\InjectConfiguration(path="propertyConversion.serializationNormalizers")
+     * @Flow\InjectConfiguration(path="propertyConverters")
      */
-    protected $serializationNormalizersConfiguration;
+    protected $propertyConvertersConfiguration;
 
     public function buildSerializer(): Serializer
     {
-        $serializationNormalizersConfiguration = (new PositionalArraySorter($this->serializationNormalizersConfiguration))->toArray();
+        $propertyConvertersConfiguration = (new PositionalArraySorter($this->propertyConvertersConfiguration))->toArray();
 
         $normalizers = [];
-        foreach ($serializationNormalizersConfiguration as $serializationNormalizerConfiguration) {
-            $normalizers[] = new $serializationNormalizerConfiguration['className'];
+        foreach ($propertyConvertersConfiguration as $propertyConverterConfiguration) {
+            $normalizers[] = new $propertyConverterConfiguration['className'];
         }
 
         return new Serializer($normalizers);

@@ -26,6 +26,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
@@ -39,7 +40,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNo
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
-use Neos\EventSourcedContentRepository\Domain\Context\Property\PropertyConversionService;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -370,15 +371,8 @@ trait NodeCreation
 
     private function getDefaultPropertyValues(NodeType $nodeType): SerializedPropertyValues
     {
-        $rawDefaultPropertyValues = [];
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            $rawDefaultPropertyValues[$propertyName] = [
-                'type' => $nodeType->getPropertyType($propertyName),
-                'value' => $defaultValue
-            ];
-        }
-
-        return SerializedPropertyValues::fromArray($rawDefaultPropertyValues);
+        $rawDefaultPropertyValues = PropertyValuesToWrite::fromArray($nodeType->getDefaultValuesForProperties());
+        return $this->getPropertyConversionService()->serializePropertyValues($rawDefaultPropertyValues, $nodeType);
     }
 
     /**

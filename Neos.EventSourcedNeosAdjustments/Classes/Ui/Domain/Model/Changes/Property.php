@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
@@ -256,13 +257,13 @@ class Property extends AbstractChange
                 // TODO: Make changing the node type a separated, specific/defined change operation.
                 if ($propertyName[0] !== '_' || $propertyName === '_hiddenInIndex') {
                     $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
-                    $command = SetNodeProperties::create(
+                    $command = new SetNodeProperties(
                         $node->getContentStreamIdentifier(),
                         $node->getNodeAggregateIdentifier(),
                         $node->getOriginDimensionSpacePoint(),
                         PropertyValuesToWrite::fromArray(
                             [
-                                $propertyName => new PropertyValueToWrite($value, $propertyType)
+                                $propertyName => $value
                             ]
                         )
                     );
