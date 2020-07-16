@@ -39,9 +39,9 @@ final class SerializedPropertyValue implements \JsonSerializable
      */
     public function __construct($value, string $type)
     {
-        if (!is_scalar($value) || !is_array($value)) {
+        if (!is_scalar($value) && !is_array($value)) {
             // TODO: check that array does not contain nested objects...
-            throw new \RuntimeException('TODO: Property value must not contain any objects.');
+            throw new \RuntimeException('TODO: Property value must not contain any objects, contained' . gettype($value));
         }
         $this->value = $value;
         $this->type = $type;
@@ -56,21 +56,7 @@ final class SerializedPropertyValue implements \JsonSerializable
             throw new \InvalidArgumentException('Missing array key "type"', 1546524609);
         }
 
-        $value = self::convertValueToObject($valueAndType['value'], $valueAndType['type']);
-
-        return new static($value, $valueAndType['type']);
-    }
-
-    private static function convertValueToObject($value, $type)
-    {
-        if ($type === 'DateTime' && is_array($value) && isset($value['date']) && isset($value['timezone']) && isset($value['dateFormat'])) {
-            return \DateTime::createFromFormat($value['dateFormat'], $value['date'], new \DateTimeZone($value['timezone']));
-        }
-
-        if (($type === 'DateTimeImmutable' || $type === 'DateTimeInterface') && is_array($value) && isset($value['date']) && isset($value['timezone']) && isset($value['dateFormat'])) {
-            return \DateTimeImmutable::createFromFormat($value['dateFormat'], $value['date'], new \DateTimeZone($value['timezone']));
-        }
-        return $value;
+        return new static($valueAndType['value'], $valueAndType['type']);
     }
 
     /**

@@ -12,12 +12,18 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Property\PropertyConversionService;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -32,12 +38,25 @@ trait NodeModification
 
     abstract protected function getPropertyConversionService(): PropertyConversionService;
 
+    abstract protected function getContentGraph(): ContentGraphInterface;
+
+    abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
+
+    abstract protected function requireProjectedNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): ReadableNodeAggregateInterface;
+
     /**
      * @param SetNodeProperties $command
      * @return CommandResult
      */
     public function handleSetNodeProperties(SetNodeProperties $command): CommandResult {
-        $serializedPropertyValues = $this->getPropertyConversionService()->serializePropertyValues($command->getPropertyValues());
+
+        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
+
+        $serializedPropertyValues = $this->getPropertyConversionService()->serializePropertyValues($command->getPropertyValues(), $nodeType);
 
         $newCommand = new SetSerializedNodeProperties(
             $command->getContentStreamIdentifier(),

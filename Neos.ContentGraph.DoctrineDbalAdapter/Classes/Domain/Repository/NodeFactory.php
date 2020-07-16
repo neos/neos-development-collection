@@ -25,6 +25,7 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
@@ -58,6 +59,11 @@ final class NodeFactory
      */
     protected $reflectionService;
 
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var PropertyConversionService
+     */
+    protected $propertyConversionService;
 
     /**
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
@@ -75,7 +81,7 @@ final class NodeFactory
 
         $properties = SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true));
 
-        $propertyCollection = new ContentProjection\PropertyCollection($properties);
+        $propertyCollection = new ContentProjection\PropertyCollection($properties, $this->propertyConversionService);
 
         /* @var NodeInterface $node */
         $node = new $className(

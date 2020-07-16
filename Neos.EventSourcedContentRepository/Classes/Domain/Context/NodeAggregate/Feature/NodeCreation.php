@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
@@ -59,6 +60,8 @@ trait NodeCreation
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
+
+    abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     /**
      * @param CreateRootNodeAggregateWithNode $command
@@ -125,11 +128,12 @@ trait NodeCreation
 
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
-        $serializedPropertyValues = $this->getPropertyConversionService()->serializePropertyValues($command->getInitialPropertyValues());
+        $nodeType = $this->requireNodeType($command->getNodeTypeName());
+        $serializedPropertyValues = $this->getPropertyConversionService()->serializePropertyValues($command->getInitialPropertyValues(), $nodeType);
 
         $newCommand = new CreateNodeAggregateWithNodeAndSerializedProperties(
             $command->getContentStreamIdentifier(),
-            $command->nodeAggregateIdentifier,
+            $command->getNodeAggregateIdentifier(),
             $command->getNodeTypeName(),
             $command->getOriginDimensionSpacePoint(),
             $command->getInitiatingUserIdentifier(),
@@ -221,7 +225,7 @@ trait NodeCreation
     }
 
     /**
-     * @param CreateNodeAggregateWithNode $command
+     * @param CreateNodeAggregateWithNodeAndSerializedProperties $command
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param SerializedPropertyValues $initialPropertyValues
      * @return DomainEvents
@@ -229,7 +233,7 @@ trait NodeCreation
      * @throws \Neos\Flow\Security\Exception
      */
     private function createRegularWithNode(
-        CreateNodeAggregateWithNode $command,
+        CreateNodeAggregateWithNodeAndSerializedProperties $command,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         SerializedPropertyValues $initialPropertyValues
     ): DomainEvents {
@@ -261,7 +265,7 @@ trait NodeCreation
     }
 
     /**
-     * @param CreateNodeAggregateWithNode $command
+     * @param CreateNodeAggregateWithNodeAndSerializedProperties $command
      * @param NodeType $nodeType
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
@@ -275,7 +279,7 @@ trait NodeCreation
      * @throws \Neos\Flow\Security\Exception
      */
     private function handleTetheredChildNodes(
-        CreateNodeAggregateWithNode $command,
+        CreateNodeAggregateWithNodeAndSerializedProperties $command,
         NodeType $nodeType,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
@@ -315,7 +319,7 @@ trait NodeCreation
     }
 
     /**
-     * @param CreateNodeAggregateWithNode $command
+     * @param CreateNodeAggregateWithNodeAndSerializedProperties $command
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints
@@ -328,7 +332,7 @@ trait NodeCreation
      * @throws \Neos\Flow\Security\Exception
      */
     private function createTetheredWithNode(
-        CreateNodeAggregateWithNode $command,
+        CreateNodeAggregateWithNodeAndSerializedProperties $command,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
         DimensionSpacePointSet $coveredDimensionSpacePoints,

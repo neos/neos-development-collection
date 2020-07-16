@@ -24,7 +24,7 @@ final class SetNodeProperties
 
     private PropertyValuesToWrite $propertyValues;
 
-    private function __construct(
+    public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,

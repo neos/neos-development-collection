@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -88,11 +89,12 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     {
         $values = [];
 
-        foreach ($node->getProperties() as $propertyName => $propertyValue) {
-            $values[$propertyName] = new SerializedPropertyValue($propertyValue, $node->getNodeType()->getPropertyType($propertyName));
-        }
+        $nodeProperties = $node->getProperties();
 
-        return new static($values);
+        if (!($nodeProperties instanceof PropertyCollection)) {
+            throw new \RuntimeException('TODO: Node properties are no Property Collection');
+        }
+        return $nodeProperties->getSerializedPropertyValues();
     }
 
     /**

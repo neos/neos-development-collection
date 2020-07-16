@@ -1,6 +1,16 @@
 Neos:
   EventSourcedContentRepository:
     contentDimensions: {}
+    propertyConversion:
+      # todo: naming?
+      serializationNormalizers:
+        DateTime:
+          className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+        DoctrinePersistentObjectNormalizer:
+          className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\DoctrinePersistentObjectNormalizer
+        ProxyAwareObjectNormalizer:
+          className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
+
   EventSourcing:
     EventStore:
       stores:

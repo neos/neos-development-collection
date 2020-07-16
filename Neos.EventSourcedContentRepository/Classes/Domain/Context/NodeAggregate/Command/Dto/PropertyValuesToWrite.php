@@ -26,7 +26,7 @@ use Neos\Flow\Annotations as Flow;
 final class PropertyValuesToWrite
 {
     /**
-     * @var array|PropertyValueToWrite[]
+     * @var array|mixed[]
      */
     private $values = [];
 
@@ -41,7 +41,7 @@ final class PropertyValuesToWrite
     }
 
     /**
-     * @return array|PropertyValueToWrite[]
+     * @return array|mixed[]
      */
     public function getValues(): array
     {
