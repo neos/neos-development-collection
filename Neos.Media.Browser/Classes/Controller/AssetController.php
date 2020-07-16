@@ -957,7 +957,7 @@ class AssetController extends ActionController
     }
 
     /**
-     * Overridden redirect method that adds "constraints" arguments from the current request
+     * Custom redirect method that adds "constraints" arguments from the current request
      *
      * @param array $arguments
      * @throws StopActionException | NoSuchArgumentException
@@ -971,7 +971,7 @@ class AssetController extends ActionController
     }
 
     /**
-     * Overridden forward method that adds "constraints" arguments from the current request
+     * Custom forward method that adds "constraints" arguments from the current request
      *
      * @param string $actionName
      * @param string $controllerName
