@@ -140,7 +140,7 @@ final class NodeAggregateCommandHandler
         return $this->readSideMemoryCacheManager;
     }
 
-    public function getPropertyConversionService(): PropertyConversionService
+    protected function getPropertyConversionService(): PropertyConversionService
     {
         return $this->propertyConversionService;
     }

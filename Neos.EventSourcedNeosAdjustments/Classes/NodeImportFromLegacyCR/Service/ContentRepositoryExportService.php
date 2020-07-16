@@ -398,6 +398,8 @@ class ContentRepositoryExportService
                 continue;
             }
 
+            // In the old `NodeInterface`, we call the property mapper to convert the returned properties from NodeData;
+            // so we need to do the same here.
             $properties[$propertyName] = $this->propertyMapper->convert($propertyValue, $type);
         }
 
@@ -407,35 +409,7 @@ class ContentRepositoryExportService
 
         return $properties;
     }
-/* TODO change
-    protected function encodeObjectReference(&$value)
-    {
-        if (is_array($value)) {
-            foreach ($value as &$item) {
-                $this->encodeObjectReference($item);
-            }
-        }
 
-        if (!is_object($value)) {
-            return;
-        }
-
-        $propertyClassName = TypeHandling::getTypeForValue($value);
-
-        if ($value instanceof \DateTimeInterface) {
-            $value = [
-                'date' => $value->format('Y-m-d H:i:s.u'),
-                'timezone' => $value->format('e'),
-                'dateFormat' => 'Y-m-d H:i:s.u'
-            ];
-        } else {
-            $value = [
-                '__flow_object_type' => $propertyClassName,
-                '__identifier' => $this->persistenceManager->getIdentifierByObject($value)
-            ];
-        }
-    }
-*/
     private function processPropertyReferences(NodeData $nodeData)
     {
         $references = [];

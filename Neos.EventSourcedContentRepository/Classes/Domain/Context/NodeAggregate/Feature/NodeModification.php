@@ -38,8 +38,6 @@ trait NodeModification
 
     abstract protected function getPropertyConversionService(): PropertyConversionService;
 
-    abstract protected function getContentGraph(): ContentGraphInterface;
-
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     abstract protected function requireProjectedNodeAggregate(
@@ -51,8 +49,8 @@ trait NodeModification
      * @param SetNodeProperties $command
      * @return CommandResult
      */
-    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult {
-
+    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
+    {
         $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
         $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
 

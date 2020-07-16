@@ -47,7 +47,6 @@ final class PropertyConversionService
 
             throw new \RuntimeException('TODO: Property "' . $propertyName . '": type must match the type ' . $propertyTypeFromSchema . ', was ' . get_class($propertyValue));
         }
-        // TODO: do we need to handle simple types here?
     }
 
     private static function assertTypeIsNoReference(string $propertyTypeFromSchema)
@@ -66,7 +65,6 @@ final class PropertyConversionService
             self::assertTypeIsNoReference($propertyTypeFromSchema);
             self::assertPropertyTypeMatchesPropertyValue($propertyTypeFromSchema, $propertyValue, $propertyName);
 
-            // TODO: only here call the serializer??
             try {
                 $propertyValue = $this->serializer->normalize($propertyValue);
             } catch (NotEncodableValueException $e) {

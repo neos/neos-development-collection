@@ -12,7 +12,6 @@ use Neos\Utility\TypeHandling;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-// TODO: maybe move out of this package?
 class DoctrinePersistentObjectNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     /**

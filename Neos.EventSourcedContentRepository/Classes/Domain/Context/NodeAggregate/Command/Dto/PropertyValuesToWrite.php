@@ -21,6 +21,10 @@ use Neos\Flow\Annotations as Flow;
  * Property values to write, supports arbitrary objects. Will be then converted to {@see SerializedPropertyValues}
  * inside the events and persisted commands.
  *
+ * This object does not store the types of the values separately, while in {@see SerializedPropertyValues}, the types
+ * are stored in the data structure.
+ * We expect the value types to match the NodeType's property types (this is validated in the command handler).
+ *
  * @Flow\Proxy(false)
  */
 final class PropertyValuesToWrite

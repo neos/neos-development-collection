@@ -63,7 +63,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             $sourceNode->getNodeTypeName(),
             $sourceNode->getNodeName(),
             NodeAggregateClassification::fromNode($sourceNode),
-            SerializedPropertyValues::fromNode($sourceNode), // TODO: hier keine externe dependency; wir können sofort auf die serialized properties zugreifen
+            SerializedPropertyValues::fromNode($sourceNode),
             NodeReferences::fromArray([]), // TODO
             $childNodes
         );

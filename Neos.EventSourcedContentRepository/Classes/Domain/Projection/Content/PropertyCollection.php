@@ -16,16 +16,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * The property collection implementation
  *
  * @package Neos\EventSourcedContentRepository
- *
- * @todo iterate over resolved properties
  */
 final class PropertyCollection implements PropertyCollectionInterface
 {
@@ -37,26 +33,9 @@ final class PropertyCollection implements PropertyCollectionInterface
     protected $serializedPropertyValues;
 
     /**
-     * @var array
-     */
-    protected $resolvedPropertyObjects;
-
-    /**
      * @var \ArrayIterator
      */
     protected $iterator;
-
-    /**
-     * @Flow\Inject
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
-
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
 
     protected PropertyConversionService $propertyConversionService;
 
@@ -79,16 +58,6 @@ final class PropertyCollection implements PropertyCollectionInterface
             return null;
         }
         return $this->propertyConversionService->deserializePropertyValue($property);
-
-        /*$value = $property->getValue();
-        if (is_array($value) && isset($value['__flow_object_type'])) {
-            if (!isset($this->resolvedPropertyObjects[$offset])) {
-                $this->resolvedPropertyObjects[$offset] = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type']);
-            }
-            return $this->resolvedPropertyObjects[$offset];
-        }
-
-        return $value;*/
     }
 
     public function offsetSet($offset, $value)

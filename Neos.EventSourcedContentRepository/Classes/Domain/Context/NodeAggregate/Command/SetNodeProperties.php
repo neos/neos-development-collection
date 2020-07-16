@@ -18,6 +18,15 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonSetNodePropertiesTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
+/**
+ * Set property values for a given node.
+ *
+ * The property values support arbitrary types (but must match the NodeType's property types -
+ * this is validated in the command handler).
+ *
+ * Internally, this object is converted into a {@see SetSerializedNodeProperties} command, which is
+ * then processed and stored.
+ */
 final class SetNodeProperties
 {
     use CommonSetNodePropertiesTrait;

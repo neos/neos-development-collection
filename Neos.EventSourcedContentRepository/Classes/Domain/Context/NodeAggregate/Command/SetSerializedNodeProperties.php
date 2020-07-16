@@ -22,8 +22,12 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValu
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
 /**
+ * Set property values for a given node (internal implementation).
+ *
+ * The property values contain the serialized types already, and include type information.
+ *
  * @Flow\Proxy(false)
- * @internal
+ * @internal you most likely want to use {@see SetNodeProperties} instead
  */
 final class SetSerializedNodeProperties implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
