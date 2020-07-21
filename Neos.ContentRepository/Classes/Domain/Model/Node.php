@@ -325,7 +325,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param NodeInterface $nodeToMove
      * @return array NodeVariant and old and new path
      */
-    protected function moveVariantOrChild(string $aggregateOriginalPath, string $aggregateDestinationPath, NodeInterface $nodeToMove = null): array
+    protected function moveVariantOrChild(string $aggregateOriginalPath, string $aggregateDestinationPath, NodeInterface $nodeToMove = null): ?array
     {
         if ($nodeToMove === null) {
             return null;
