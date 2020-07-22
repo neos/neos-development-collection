@@ -855,7 +855,7 @@ order by level asc, position asc;')
                 throw new \Exception('TODO: must not happen');
             }
 
-            $subtree = new Subtree($nodeData['level'], $node);
+            $subtree = new Subtree((int)$nodeData['level'], $node);
             $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']]->add($subtree);
             $subtreesByNodeIdentifier[$nodeData['nodeaggregateidentifier']] = $subtree;
 

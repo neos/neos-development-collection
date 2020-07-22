@@ -10,7 +10,7 @@
         "doctrine/migrations": "*",
         "neos/neos": "*",
         "neos/neos-ui": "*",
-        "neos/event-sourcing": "*",
+        "neos/event-sourcing": "^2.0",
         "neos/content-repository": "*",
         "neos/content-repository-dimensionspace": "*"
     },

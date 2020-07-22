@@ -138,17 +138,17 @@ The resulting `composer.json` file should look something like this:
     "require": {
         "neos/neos-development-collection": "@dev",
         "neos/flow-development-collection": "@dev",
-        
+
         "neos/contentrepository-development-collection": "dev-master",
         "neos/content-repository-dimensionspace": "dev-master",
-        "neos/event-sourcing": "dev-master",
+        "neos/event-sourcing": "^2.0",
         "flowpack/jobqueue-common": "dev-master",
-        
+
         "neos/demo": "@dev",
-        
+
         "neos/neos-ui": "dev-event-sourced-patch as dev-master",
         "neos/neos-ui-compiled": "dev-master as dev-event-sourced-patch",
-        
+
         "neos/party": "@dev",
         "neos/seo": "@dev",
         "neos/imagine": "@dev",
