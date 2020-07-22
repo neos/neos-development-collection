@@ -71,171 +71,20 @@ Lateron, we will also support [PostgreSQL](https://www.postgresql.org/docs/8.4/q
 
 ### PHP
 
-The new code should be compatible with **PHP 7.2**
+The new code should be compatible with **PHP 7.3**
 
 ## Getting Started / Installation
 
-1. Get started by cloning the master branch of the [neos-development-distribution](https://github.com/neos/neos-development-distribution/).
-Assuming you want to install to a directory named `neos-es`
-```bash
-git clone https://github.com/neos/neos-development-distribution.git neos-es
-cd neos-es
-composer install
-```
-**NOTE**: PHP7.2 is recommmend
+1. See https://github.com/neos/neos-development-distribution/tree/event-sourced
 
-2. Install Neos as usual, via the browser or manually:
-   - define a database in `Configuration/Settings.yaml`
-   - run `./flow doctrine:migrate`
-   - import the demo site using `./flow site:import --package-key=Neos.Demo`
-   - create a backend user using `./flow user:create --roles Administrator admin password My Admin`
-   - ensure that when running `./flow server:run`, you get frontend output; and you can log into the backend.
-
-### In order to get the necessary code base you need to do a few things:
-
-1. Add `neos/contentrepository-development-collection` and `neos/content-repository-dimensionspace` dependencies ` as custom repositories`
-```
-"repositories": [
-    {
-        "type": "git",
-        "url": "https://github.com/neos/contentrepository-development-collection.git"
-    },
-    {
-        "type": "git",
-        "url": "https://github.com/neos/content-repository-dimensionspace.git"
-    }
-]
-```
-2. Set `minimum-stability` to `dev`
-```
-"minimum-stability": "dev"
-```
-3. Set `prefer-stable` as `true`
-```
-"prefer-stable": true
-```
-4. use the `require` part ot the composer.json file below:
-
-The resulting `composer.json` file should look something like this:
-```yaml
-{
-    "config": {
-        "vendor-dir": "Packages/Libraries",
-        "bin-dir": "bin"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/neos/contentrepository-development-collection.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/neos/content-repository-dimensionspace.git"
-        }
-    ],
-    "require": {
-        "neos/neos-development-collection": "@dev",
-        "neos/flow-development-collection": "@dev",
-        
-        "neos/contentrepository-development-collection": "dev-master",
-        "neos/content-repository-dimensionspace": "dev-master",
-        "neos/event-sourcing": "dev-master",
-        "flowpack/jobqueue-common": "dev-master",
-        
-        "neos/demo": "@dev",
-        
-        "neos/neos-ui": "dev-event-sourced-patch as dev-master",
-        "neos/neos-ui-compiled": "dev-master as dev-event-sourced-patch",
-        
-        "neos/party": "@dev",
-        "neos/seo": "@dev",
-        "neos/imagine": "@dev",
-        "neos/twitter-bootstrap": "@dev",
-        "neos/form": "@dev",
-        "neos/setup": "@dev",
-        "flowpack/neos-frontendlogin": "@dev",
-        "neos/buildessentials": "@dev",
-        "mikey179/vfsstream": "~1.6",
-        "phpunit/phpunit": "~7.1.0",
-        "symfony/css-selector": "~2.0",
-        "neos/behat": "dev-master"
-    },
-    "scripts": {
-        "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
-        "post-install-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
-        "post-package-update": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall",
-        "post-package-install": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall"
-    }
-}
-```
-5. Then, run `composer update`.
-
-6. After that, run `./flow flow:package:rescan`.
-
-**HINT**: If you experice issues clear the `Data/Temporary` directory and run the command again.
-
-7. If using dimensions, the dimension configuration has changed. Use the following configuration in `Settings.yaml` for the Demo site (Adjust as needed):
-
-```yaml
-Neos:
-  EventSourcedContentRepository:
-    contentDimensions:
-      language:
-        label: 'Neos.Demo:Main:contentDimensions.language'
-        icon: icon-language
-        defaultValue: en_US
-        resolution:
-          mode: 'uriPathSegment'
-        values:
-          en_US:
-            label: 'English (US)'
-            resolution:
-              value: en
-            specializations:
-              en_UK:
-                label: 'English (UK)'
-                resolution:
-                  value: uk
-          de:
-            label: German
-            resolution:
-              value: de
-            specializations:
-              nl:
-                label: Dutch
-                resolution:
-                  value: nl
-          fr:
-            label: French
-            resolution:
-              value: fr
-          da:
-            label: Danish
-            resolution:
-              value: da
-          lv:
-            label: Latvian
-            resolution:
-              value: lv
-```
-
-8. create necessary tables using `./flow doctrine:migrate`
-
-9. create events from your (legacy) NodeData by running `./flow contentrepositorymigrate:run` - this also populates the projection.
-
-   NOTE: The output of this command is still a little weird; showing lots of var_dumps. When this command does
-         not show a fatal error, it ran through successfully.
-
-10. Do a manual UI rebuild due to https://github.com/neos/neos-ui/pull/2178 currently needed:
+1. Do a manual UI rebuild due to https://github.com/neos/neos-ui/pull/2178 currently needed:
 
 ```
 cd Packages/Application/Neos.Neos.Ui
 make setup
 ```
 
-11. Enable FrontendDevelopmentMode in `Settings.yaml`:
+1. Enable FrontendDevelopmentMode in `Settings.yaml`:
 
 ```yaml
 Neos:
@@ -244,13 +93,13 @@ Neos:
       frontendDevelopmentMode: true
 ```
 
-12. The frontend should now work as expected. Test that the frontend rendering works.
+1. The frontend should now work as expected. Test that the frontend rendering works.
 
-13. After logging into the backend, you might still see a fatal error. In that case manually remove the URL query parameters so that the URL is only `/neos/content`
+1. After logging into the backend, you might still see a fatal error. In that case manually remove the URL query parameters so that the URL is only `/neos/content`
 
-14. In case you want to start with clean events and a clean projection (after you did some changes), re-run `./flow contentrepositorymigrate:run`
+1. In case you want to start with clean events and a clean projection (after you did some changes), re-run `./flow contentrepositorymigrate:run`
 
-15. To set up Behavioral tests, do the following:
+1. To set up Behavioral tests, do the following:
 
     - install Behat: `composer require neos/behat ^6.0`
     - clear the cache: `rm -Rf Data/Temporary; rm -Rf Build/Behat`
@@ -271,7 +120,7 @@ Neos:
 
         Important: the driver must be set to pdo_mysql; and the DB name and user need to be specified.
 
-16. To run the behavioral tests, do:
+1. To run the behavioral tests, do:
 
     ```bash
     bin/behat -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
