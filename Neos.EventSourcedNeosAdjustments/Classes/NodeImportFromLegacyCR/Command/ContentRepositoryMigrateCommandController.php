@@ -12,6 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Command;
  * source code.
  */
 
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
@@ -25,8 +27,8 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProj
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ClosureEventPublisher;
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ContentRepositoryExportService;
-use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\EventListenerInvoker;
+use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\Storage\EventStorageInterface;
 use Neos\Flow\Annotations as Flow;
@@ -43,6 +45,12 @@ class ContentRepositoryMigrateCommandController extends CommandController
      * @var array
      */
     protected $eventStoreConfiguration;
+
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var EventNormalizer
+     */
+    protected $eventNormalizer;
 
     /**
      * @Flow\Inject(lazy=false)
@@ -99,6 +107,16 @@ class ContentRepositoryMigrateCommandController extends CommandController
     protected $readSideMemoryCacheManager;
 
     /**
+     * @var Connection
+     */
+    private $dbal;
+
+    public function injectEntityManager(EntityManagerInterface $entityManager): void
+    {
+        $this->dbal = $entityManager->getConnection();
+    }
+
+    /**
      * Run a CR export
      */
     public function runCommand()
@@ -109,7 +127,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
         // We need to build an own $eventStore instance, because we need a custom EventPublisher.
         $eventPublisher = new ClosureEventPublisher();
-        $eventStore = new EventStore($eventStoreStorage, $eventPublisher);
+        $eventStore = new EventStore($eventStoreStorage, $eventPublisher, $this->eventNormalizer);
 
         // We also need to build our own NodeAggregateCommandHandler (and dependencies),
         // so that the custom $eventStore is used there.
@@ -130,12 +148,14 @@ class ContentRepositoryMigrateCommandController extends CommandController
         );
         $contentRepositoryExportService = new ContentRepositoryExportService($eventStore, $nodeAggregateCommandHandler);
 
-        $eventListenerInvoker = new EventListenerInvoker($eventStore);
+        $contentStreamProjectorInvoker = new EventListenerInvoker($eventStore, $this->contentStreamProjector, $this->dbal);
+        $workspaceProjectorInvoker = new EventListenerInvoker($eventStore, $this->workspaceProjector, $this->dbal);
+        $graphProjectorInvoker = new EventListenerInvoker($eventStore, $this->graphProjector, $this->dbal);
 
-        $eventPublisher->setClosure(function (DomainEvents $e) use ($eventListenerInvoker) {
-            $eventListenerInvoker->catchUp($this->contentStreamProjector);
-            $eventListenerInvoker->catchUp($this->workspaceProjector);
-            $eventListenerInvoker->catchUp($this->graphProjector);
+        $eventPublisher->setClosure(static function () use ($contentStreamProjectorInvoker, $workspaceProjectorInvoker, $graphProjectorInvoker) {
+            $contentStreamProjectorInvoker->catchUp();
+            $workspaceProjectorInvoker->catchUp();
+            $graphProjectorInvoker->catchUp();
         });
 
         $contentRepositoryExportService->reset();
