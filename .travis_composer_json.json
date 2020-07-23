@@ -20,13 +20,13 @@
 
       "neos/contentrepository-development-collection": "dev-master",
       "neos/content-repository-dimensionspace": "dev-master",
-      "neos/event-sourcing": "dev-master",
+      "neos/event-sourcing": "^2.0",
       "flowpack/jobqueue-common": "dev-master",
 
       "neos/demo": "@dev",
 
-      "neos/neos-ui": "dev-event-sourced-patch as dev-master",
-      "neos/neos-ui-compiled": "dev-master as dev-event-sourced-patch",
+      "neos/neos-ui": "dev-master",
+      "neos/neos-ui-compiled": "dev-master",
 
       "neos/party": "@dev",
       "neos/seo": "@dev",

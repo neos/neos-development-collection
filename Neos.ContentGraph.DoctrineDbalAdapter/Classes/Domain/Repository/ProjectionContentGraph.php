@@ -594,7 +594,6 @@ class ProjectionContentGraph
     {
         $dimensionSpacePointData = json_decode($rawData['dimensionspacepoint'], true);
         $dimensionSpacePoint = new DimensionSpacePoint($dimensionSpacePointData);
-
         return new HierarchyRelation(
             NodeRelationAnchorPoint::fromString($rawData['parentnodeanchor']),
             NodeRelationAnchorPoint::fromString($rawData['childnodeanchor']),
@@ -602,7 +601,7 @@ class ProjectionContentGraph
             ContentStreamIdentifier::fromString($rawData['contentstreamidentifier']),
             $dimensionSpacePoint,
             $rawData['dimensionspacepointhash'],
-            $rawData['position']
+            (int)$rawData['position']
         );
     }
 

@@ -14,7 +14,6 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri;
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\Flow\Annotations as Flow;
@@ -141,7 +140,8 @@ class NodeViewHelper extends AbstractViewHelper
      *
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
-    public function render() {
+    public function render()
+    {
         $node = $this->arguments['node'];
         $uri = null;
         $nodeAddress = null;
