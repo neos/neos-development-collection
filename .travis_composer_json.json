@@ -20,7 +20,7 @@
 
       "neos/contentrepository-development-collection": "dev-master",
       "neos/content-repository-dimensionspace": "dev-master",
-      "neos/event-sourcing": "^2,0",
+      "neos/event-sourcing": "^2.0",
       "flowpack/jobqueue-common": "dev-master",
 
       "neos/demo": "@dev",
