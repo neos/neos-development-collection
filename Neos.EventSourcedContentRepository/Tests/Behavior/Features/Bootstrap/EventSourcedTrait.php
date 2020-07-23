@@ -18,6 +18,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -31,6 +32,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\Co
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
@@ -43,6 +45,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
@@ -75,6 +78,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommand
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
@@ -583,7 +588,27 @@ trait EventSourcedTrait
         if (!isset($commandArguments['originDimensionSpacePoint'])) {
             $commandArguments['originDimensionSpacePoint'] = [];
         }
-        $command = CreateNodeAggregateWithNode::fromArray($commandArguments);
+
+        $command = new CreateNodeAggregateWithNode(
+            ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
+            NodeTypeName::fromString($commandArguments['nodeTypeName']),
+            new OriginDimensionSpacePoint($commandArguments['originDimensionSpacePoint']),
+            UserIdentifier::fromString($commandArguments['initiatingUserIdentifier']),
+            NodeAggregateIdentifier::fromString($commandArguments['parentNodeAggregateIdentifier']),
+            isset($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
+                ? NodeAggregateIdentifier::fromString($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
+                : null,
+            isset($commandArguments['nodeName'])
+                ? NodeName::fromString($commandArguments['nodeName'])
+                : null,
+            isset($commandArguments['initialPropertyValues'])
+                ? PropertyValuesToWrite::fromArray($commandArguments['initialPropertyValues'])
+                : null,
+            isset($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
+                ? NodeAggregateIdentifiersByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
+                : null
+        );
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleCreateNodeAggregateWithNode($command);
