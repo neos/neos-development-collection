@@ -75,57 +75,7 @@ The new code should be compatible with **PHP 7.3**
 
 ## Getting Started / Installation
 
-1. See https://github.com/neos/neos-development-distribution/tree/event-sourced
-
-1. Do a manual UI rebuild due to https://github.com/neos/neos-ui/pull/2178 currently needed:
-
-```
-cd Packages/Application/Neos.Neos.Ui
-make setup
-```
-
-1. Enable FrontendDevelopmentMode in `Settings.yaml`:
-
-```yaml
-Neos:
-  Neos:
-    Ui:
-      frontendDevelopmentMode: true
-```
-
-1. The frontend should now work as expected. Test that the frontend rendering works.
-
-1. After logging into the backend, you might still see a fatal error. In that case manually remove the URL query parameters so that the URL is only `/neos/content`
-
-1. In case you want to start with clean events and a clean projection (after you did some changes), re-run `./flow contentrepositorymigrate:run`
-
-1. To set up Behavioral tests, do the following:
-
-    - install Behat: `composer require neos/behat ^6.0`
-    - clear the cache: `rm -Rf Data/Temporary; rm -Rf Build/Behat`
-    - set up behat: `./flow behat:setup`
-    - Create a new database for behat
-    - create `Configuration/Testing/Behat/Settings.yaml` with the following contents:
-
-        ```yaml
-        Neos:
-          Flow:
-            persistence:
-              backendOptions:
-                driver: pdo_mysql
-                dbname: 'YOUR-DB-NAME-HERE'
-                user: 'root'
-                password: ''
-        ```
-
-        Important: the driver must be set to pdo_mysql; and the DB name and user need to be specified.
-
-1. To run the behavioral tests, do:
-
-    ```bash
-    bin/behat -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
-    ```
-
+See https://github.com/neos/neos-development-distribution/tree/event-sourced
 
 ## Road to first running beta
 
