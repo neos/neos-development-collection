@@ -240,11 +240,6 @@ class UserService
             return null;
         }
 
-        $runtimeCacheIdentifier = 'sec-context-' . $this->securityContext->getContextHash();
-        if (array_key_exists($runtimeCacheIdentifier, $this->runtimeUserCache)) {
-            return $this->runtimeUserCache[$runtimeCacheIdentifier];
-        }
-
         $tokens = $this->securityContext->getAuthenticationTokens();
         $user = array_reduce($tokens, function ($foundUser, TokenInterface $token) {
             if ($foundUser !== null) {
@@ -264,7 +259,6 @@ class UserService
             return $user;
         }, null);
 
-        $this->runtimeUserCache[$runtimeCacheIdentifier] = $user;
         return $user;
     }
 
