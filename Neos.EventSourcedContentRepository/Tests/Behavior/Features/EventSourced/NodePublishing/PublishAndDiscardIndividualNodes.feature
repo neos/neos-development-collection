@@ -57,15 +57,15 @@ Feature: Publishing and discard individual nodes (basics)
       | initialPropertyValues         | {"text": {"type": "string", "value": "Initial t2"}} |
       | nodeAggregateClassification   | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                  |
-      | contentStreamIdentifier       | "cs-identifier"                                        |
-      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Image"                 |
-      | originDimensionSpacePoint     | {}                                                     |
-      | coveredDimensionSpacePoints   | [{}]                                                   |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                               |
-      | initialPropertyValues         | {"image": {"type": "image", "value": "Initial image"}} |
-      | nodeAggregateClassification   | "regular"                                              |
+      | Key                           | Value                                                   |
+      | contentStreamIdentifier       | "cs-identifier"                                         |
+      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                            |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Image"                  |
+      | originDimensionSpacePoint     | {}                                                      |
+      | coveredDimensionSpacePoints   | [{}]                                                    |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                |
+      | initialPropertyValues         | {"image": {"type": "string", "value": "Initial image"}} |
+      | nodeAggregateClassification   | "regular"                                               |
     And the graph projection is fully up to date
 
     # Create user workspace
@@ -77,23 +77,23 @@ Feature: Publishing and discard individual nodes (basics)
     And the graph projection is fully up to date
     # modify nodes in user WS
     And the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                             |
-      | contentStreamIdentifier   | "user-cs-identifier"                              |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                          |
-      | originDimensionSpacePoint | {}                                                |
-      | propertyValues            | {"text": {"value":"Modified t1","type":"string"}} |
+      | Key                       | Value                    |
+      | contentStreamIdentifier   | "user-cs-identifier"     |
+      | nodeAggregateIdentifier   | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {}                       |
+      | propertyValues            | {"text": "Modified t1"}  |
     And the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                             |
-      | contentStreamIdentifier   | "user-cs-identifier"                              |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                |
-      | originDimensionSpacePoint | {}                                                |
-      | propertyValues            | {"text": {"value":"Modified t2","type":"string"}} |
+      | Key                       | Value                   |
+      | contentStreamIdentifier   | "user-cs-identifier"    |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"      |
+      | originDimensionSpacePoint | {}                      |
+      | propertyValues            | {"text": "Modified t2"} |
     And the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                                 |
-      | contentStreamIdentifier   | "user-cs-identifier"                                  |
-      | nodeAggregateIdentifier   | "sir-nodeward-nodington-iii"                          |
-      | originDimensionSpacePoint | {}                                                    |
-      | propertyValues            | {"image": {"value":"Modified image","type":"string"}} |
+      | Key                       | Value                        |
+      | contentStreamIdentifier   | "user-cs-identifier"         |
+      | nodeAggregateIdentifier   | "sir-nodeward-nodington-iii" |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"image": "Modified image"}  |
     And the graph projection is fully up to date
 
   ################

@@ -19,7 +19,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;

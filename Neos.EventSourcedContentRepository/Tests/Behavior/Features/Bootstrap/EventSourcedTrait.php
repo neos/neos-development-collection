@@ -78,7 +78,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommand
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;

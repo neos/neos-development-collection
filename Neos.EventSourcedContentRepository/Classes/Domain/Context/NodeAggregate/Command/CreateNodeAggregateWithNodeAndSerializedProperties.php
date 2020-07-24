@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
@@ -55,8 +56,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
         ?NodeName $nodeName = null,
         ?SerializedPropertyValues $initialPropertyValues = null,
         ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null
-    )
-    {
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
@@ -159,8 +159,8 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
     {
         return (
             (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
-                && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
-                && $this->originDimensionSpacePoint->equals(OriginDimensionSpacePoint::fromDimensionSpacePoint($nodeAddress->getDimensionSpacePoint()))
+            && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
+            && $this->originDimensionSpacePoint->equals(OriginDimensionSpacePoint::fromDimensionSpacePoint($nodeAddress->getDimensionSpacePoint()))
         );
     }
 }

@@ -44,8 +44,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -56,12 +54,10 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\StreamName;
-use Neos\EventSourcing\Projection\ProjectionManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Utility\TypeHandling;
 use Ramsey\Uuid\Uuid;
 
 class ContentRepositoryExportService
@@ -292,8 +288,7 @@ class ContentRepositoryExportService
         array $propertyReferences,
         NodePath $nodePath,
         bool $isHidden
-    )
-    {
+    ) {
         echo $nodePath . ' (' . $nodeAggregateIdentifier . ")\n";
 
         try {

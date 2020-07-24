@@ -46,11 +46,11 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     And the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                          |
-      | contentStreamIdentifier   | "cs-identifier"                                |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                             |
-      | originDimensionSpacePoint | {}                                             |
-      | propertyValues            | {"text": {"value":"Original","type":"string"}} |
+      | Key                       | Value                |
+      | contentStreamIdentifier   | "cs-identifier"      |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
+      | originDimensionSpacePoint | {}                   |
+      | propertyValues            | {"text": "Original"} |
     And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |

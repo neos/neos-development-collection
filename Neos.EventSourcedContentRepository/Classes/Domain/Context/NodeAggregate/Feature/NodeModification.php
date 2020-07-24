@@ -23,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePr
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;

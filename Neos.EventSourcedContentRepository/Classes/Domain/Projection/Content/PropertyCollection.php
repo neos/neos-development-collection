@@ -16,7 +16,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The property collection implementation
@@ -39,6 +38,9 @@ final class PropertyCollection implements PropertyCollectionInterface
 
     protected PropertyConversionService $propertyConversionService;
 
+    /**
+     * @internal do not create from userspace
+     */
     public function __construct(SerializedPropertyValues $serializedPropertyValues, PropertyConversionService $propertyConversionService)
     {
         $this->serializedPropertyValues = $serializedPropertyValues;

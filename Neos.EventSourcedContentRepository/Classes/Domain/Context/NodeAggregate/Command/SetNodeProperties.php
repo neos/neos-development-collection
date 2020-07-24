@@ -54,4 +54,13 @@ final class SetNodeProperties
         return $this->propertyValues;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
+            PropertyValuesToWrite::fromArray($array['propertyValues'])
+        );
+    }
 }

@@ -27,7 +27,6 @@ use Symfony\Component\Serializer\Serializer;
  */
 final class PropertyConversionService
 {
-
     private Serializer $serializer;
 
     public function __construct(Serializer $serializer)

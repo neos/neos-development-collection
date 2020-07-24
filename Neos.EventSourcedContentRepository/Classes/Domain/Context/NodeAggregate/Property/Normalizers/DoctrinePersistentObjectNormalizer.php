@@ -26,7 +26,7 @@ class DoctrinePersistentObjectNormalizer implements NormalizerInterface, Denorma
      */
     protected $reflectionService;
 
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         return [
             '__flow_object_type' => TypeHandling::getTypeForValue($object),
@@ -34,9 +34,8 @@ class DoctrinePersistentObjectNormalizer implements NormalizerInterface, Denorma
         ];
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, string $format = null)
     {
-
         return (
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), Entity::class) ||
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), ValueObject::class) ||
@@ -44,12 +43,12 @@ class DoctrinePersistentObjectNormalizer implements NormalizerInterface, Denorma
         );
     }
 
-    public function denormalize($data, $type, $format = null, array $context = [])
+    public function denormalize($data, $type, string $format = null, array $context = [])
     {
         return $this->persistenceManager->getObjectByIdentifier($data['__identifier'], $data['__flow_object_type']);
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, string $format = null)
     {
         return (
             $this->reflectionService->isClassAnnotatedWith($type, Entity::class) ||

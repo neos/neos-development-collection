@@ -52,4 +52,3 @@ final class PropertyValuesToWrite
         return $this->values;
     }
 }
-

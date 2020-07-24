@@ -27,8 +27,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
