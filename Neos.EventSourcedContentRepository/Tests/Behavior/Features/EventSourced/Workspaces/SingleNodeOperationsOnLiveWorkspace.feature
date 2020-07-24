@@ -39,11 +39,11 @@ Feature: Single Node operations on live workspace
 
   Scenario: Set property of a node
     Given the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                       |
-      | contentStreamIdentifier   | "cs-identifier"                             |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                          |
-      | originDimensionSpacePoint | {}                                          |
-      | propertyValues            | {"text": {"value":"Hello","type":"string"}} |
+      | Key                       | Value              |
+      | contentStreamIdentifier   | "cs-identifier"    |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface" |
+      | originDimensionSpacePoint | {}                 |
+      | propertyValues            | {"text": "Hello"}  |
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 3 is of type "Neos.EventSourcedContentRepository:NodePropertiesWereSet" with payload:
