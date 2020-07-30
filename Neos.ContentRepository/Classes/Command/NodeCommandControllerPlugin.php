@@ -1074,9 +1074,9 @@ HELPTEXT;
             ->add(
                 'where',
                 $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->notIn('n.workspace', $workspaceNames),
-                $queryBuilder->expr()->isNull('n.workspace')
-            )
+                    $queryBuilder->expr()->notIn('n.workspace', $workspaceNames),
+                    $queryBuilder->expr()->isNull('n.workspace')
+                )
             );
 
         foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
