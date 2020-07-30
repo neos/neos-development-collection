@@ -12,8 +12,8 @@ namespace Neos\Media\Browser\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Model\ImportedAsset;
 use Neos\Media\Domain\Model\Tag;
@@ -54,19 +54,19 @@ class ImageController extends AssetController
      */
     public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
     {
-        $this->view->assign('disableFilter', true);
+        $this->view->assign('filterOptions', []);
         parent::indexAction($view, $sortBy, $sortDirection, 'Image', $tagMode, $tag, $searchTerm, $collectionMode, $assetCollection, $assetSourceIdentifier);
     }
 
     /**
      * @param string $assetSourceIdentifier
      * @param string $assetProxyIdentifier
-     * @param Asset $asset
+     * @param AssetInterface $asset
      * @return void
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
-    public function editAction(string $assetSourceIdentifier = null, string $assetProxyIdentifier = null, Asset $asset = null): void
+    public function editAction(string $assetSourceIdentifier = null, string $assetProxyIdentifier = null, AssetInterface $asset = null): void
     {
         if ($assetSourceIdentifier !== null && $assetProxyIdentifier !== null) {
             parent::editAction($assetSourceIdentifier, $assetProxyIdentifier);

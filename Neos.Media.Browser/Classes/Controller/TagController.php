@@ -15,7 +15,10 @@ namespace Neos\Media\Browser\Controller;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Media\Browser\Domain\Session\BrowserState;
+use Neos\Media\Domain\Model\Dto\AssetConstraints;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -54,6 +57,12 @@ class TagController extends ActionController
      */
     protected $assetRepository;
 
+    protected function initializeView(ViewInterface $view)
+    {
+        $view->assign('constraints', $this->request->hasArgument('constraints') ? AssetConstraints::fromArray($this->request->getArgument('constraints')) : AssetConstraints::create());
+        parent::initializeView($view);
+    }
+
     /**
      * @param string $label
      * @return void
@@ -76,7 +85,7 @@ class TagController extends ActionController
             }
             $this->addFlashMessage('tagHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($label)]);
         }
-        $this->redirect('index', 'Asset', 'Neos.Media.Browser');
+        $this->redirectToAssetIndex();
     }
 
     /**
@@ -99,7 +108,7 @@ class TagController extends ActionController
     {
         $this->tagRepository->update($tag);
         $this->addFlashMessage('tagHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
-        $this->redirect('index', 'Asset', 'Neos.Media.Browser');
+        $this->redirectToAssetIndex();
     }
 
     /**
@@ -115,6 +124,20 @@ class TagController extends ActionController
         }
         $this->tagRepository->remove($tag);
         $this->addFlashMessage('tagHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
-        $this->redirect('index', 'Asset', 'Neos.Media.Browser');
+        $this->redirectToAssetIndex();
+    }
+
+    /**
+     * Overridden redirect method that points to the "index" action of the "Asset" controller and adds "constraints" arguments from the current request
+     *
+     * @param array $arguments
+     * @throws StopActionException
+     */
+    private function redirectToAssetIndex(array $arguments = []): void
+    {
+        if (!isset($arguments['constraints']) && $this->request->hasArgument('constraints')) {
+            $arguments['constraints'] = $this->request->getArgument('constraints');
+        }
+        $this->redirect('index', 'Asset', 'Neos.Media.Browser', $arguments);
     }
 }
