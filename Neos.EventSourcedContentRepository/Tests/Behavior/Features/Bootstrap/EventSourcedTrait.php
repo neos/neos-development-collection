@@ -1202,7 +1202,8 @@ trait EventSourcedTrait
             Assert::assertNotEquals(
                 $workspaceA->getCurrentContentStreamIdentifier(),
                 $workspaceB->getCurrentContentStreamIdentifier(),
-                'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"');
+                'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"'
+            );
         }
     }
 
@@ -1295,7 +1296,9 @@ trait EventSourcedTrait
             $nodeIdentifier->getNodeAggregateIdentifier(),
             $nodeIdentifier->getOriginDimensionSpacePoint()
         );
-        Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
+        Assert::assertNotNull(
+            $this->currentNode,
+            'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
             . '" and originating in dimension space point "' . $nodeIdentifier->getOriginDimensionSpacePoint()
             . '" was not found in content stream "' . $nodeIdentifier->getContentStreamIdentifier() . '"'
         );

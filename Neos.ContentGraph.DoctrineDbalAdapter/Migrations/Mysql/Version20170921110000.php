@@ -15,8 +15,10 @@ class Version20170921110000 extends AbstractMigration
 
     public function up(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql',
-            'Migration can only be executed safely on "mysql".');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on "mysql".'
+        );
 
         $this->addSql('DROP INDEX IDENTIFIER_IN_GRAPH ON neos_contentgraph_node');
 
@@ -42,8 +44,10 @@ class Version20170921110000 extends AbstractMigration
 
     public function down(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql',
-            'Migration can only be executed safely on "mysql".');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on "mysql".'
+        );
 
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation DROP PRIMARY KEY');
 

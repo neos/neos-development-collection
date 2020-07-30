@@ -15,16 +15,20 @@ class Version20180226165300 extends AbstractMigration
 
     public function up(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql',
-            'Migration can only be executed safely on "mysql".');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on "mysql".'
+        );
 
         $this->addSql('ALTER TABLE neos_contentgraph_node ADD `hidden` tinyint(1) NOT NULL');
     }
 
     public function down(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql',
-            'Migration can only be executed safely on "mysql".');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on "mysql".'
+        );
 
         $this->addSql('ALTER TABLE neos_contentgraph_node DROP `hidden`');
     }

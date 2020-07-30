@@ -9,7 +9,6 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-
     public function normalize($object, string $format = null, array $context = [])
     {
         return $object;

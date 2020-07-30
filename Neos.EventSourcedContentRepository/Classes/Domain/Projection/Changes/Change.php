@@ -87,17 +87,20 @@ class Change
 
     public function updateToDatabase(Connection $databaseConnection): void
     {
-        $databaseConnection->update('neos_contentrepository_projection_change', [
+        $databaseConnection->update(
+            'neos_contentrepository_projection_change',
+            [
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
             'deleted' => (int)$this->deleted
         ],
-        [
+            [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
             'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->getHash(),
-        ]);
+        ]
+        );
     }
 
     /**

@@ -532,7 +532,8 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
     {
         $this->transactional(function () use ($event) {
             // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
-            $this->getDatabaseConnection()->executeUpdate('
+            $this->getDatabaseConnection()->executeUpdate(
+                '
 -- GraphProjector::whenNodeAggregateWasDisabled
 insert ignore into neos_contentgraph_restrictionrelation
 (
@@ -586,9 +587,10 @@ insert ignore into neos_contentgraph_restrictionrelation
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
                     'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
                 ],
-            [
+                [
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]);
+            ]
+            );
         });
     }
 
@@ -598,7 +600,8 @@ insert ignore into neos_contentgraph_restrictionrelation
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->getDatabaseConnection()->executeUpdate(
+            '
             -- GraphProjector::cascadeRestrictionRelations
             INSERT INTO neos_contentgraph_restrictionrelation
             (
@@ -748,10 +751,10 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             if (count($unassignedIngoingDimensionSpacePoints) > 0) {
                 $ingoingSourceHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
-                        $sourceNode->relationAnchorPoint,
-                        $event->getContentStreamIdentifier(),
-                        new DimensionSpacePointSet([$event->getSourceOrigin()])
-                    )[$event->getSourceOrigin()->getHash()] ?? null;
+                    $sourceNode->relationAnchorPoint,
+                    $event->getContentStreamIdentifier(),
+                    new DimensionSpacePointSet([$event->getSourceOrigin()])
+                )[$event->getSourceOrigin()->getHash()] ?? null;
                 // the null case is caught by the NodeAggregate or its command handler
                 foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
@@ -927,7 +930,8 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node". IMPORTANT: We need to reconnect
             // BOTH the incoming and outgoing edges.
-            $this->getDatabaseConnection()->executeUpdate('
+            $this->getDatabaseConnection()->executeUpdate(
+                '
                 UPDATE neos_contentgraph_hierarchyrelation h
                     SET
                         -- if our (copied) node is the child, we update h.childNodeAnchor

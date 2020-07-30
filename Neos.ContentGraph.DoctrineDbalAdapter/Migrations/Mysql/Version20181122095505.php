@@ -15,8 +15,10 @@ class Version20181122095505 extends AbstractMigration
 
     public function up(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql',
-            'Migration can only be executed safely on "mysql".');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on "mysql".'
+        );
         $this->addSql('
         CREATE TABLE neos_contentgraph_restrictionedge (
                 contentstreamidentifier VARCHAR(255) NOT NULL,
@@ -32,8 +34,10 @@ class Version20181122095505 extends AbstractMigration
 
     public function down(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql',
-            'Migration can only be executed safely on "mysql".');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on "mysql".'
+        );
 
         $this->addSql('DROP TABLE neos_contentgraph_restrictionedge');
     }

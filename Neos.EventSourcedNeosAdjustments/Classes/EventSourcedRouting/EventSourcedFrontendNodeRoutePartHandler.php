@@ -432,8 +432,10 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
                 $node,
                 function (NodeInterface $node) use (&$requestPathSegments, $contentSubgraph) {
                     if (!$node->hasProperty('uriPathSegment')) {
-                        throw new MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
-                            $node->getNodeAggregateIdentifier()), 1415020326);
+                        throw new MissingNodePropertyException(sprintf(
+                            'Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
+                            $node->getNodeAggregateIdentifier()
+                        ), 1415020326);
                     }
 
                     $parentNode = $contentSubgraph->findParentNode($node->getNodeAggregateIdentifier());

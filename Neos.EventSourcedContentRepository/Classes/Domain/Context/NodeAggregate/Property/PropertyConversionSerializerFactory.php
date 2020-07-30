@@ -13,7 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Proper
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\NoOperationEncoder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\PositionalArraySorter;
 use Symfony\Component\Serializer\Serializer;

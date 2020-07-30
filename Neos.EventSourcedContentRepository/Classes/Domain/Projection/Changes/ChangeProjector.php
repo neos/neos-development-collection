@@ -161,7 +161,6 @@ class ChangeProjector implements ProjectorInterface
                     $contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
-
                     true,
                     false,
                     false
