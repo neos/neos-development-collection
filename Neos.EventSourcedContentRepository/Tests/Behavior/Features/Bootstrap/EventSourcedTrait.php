@@ -588,6 +588,11 @@ trait EventSourcedTrait
             $commandArguments['originDimensionSpacePoint'] = [];
         }
 
+        if (isset($commandArguments['initialPropertyValues.dateProperty'])) {
+            // special case to test Date type conversion
+            $commandArguments['initialPropertyValues']['dateProperty'] = \DateTime::createFromFormat(\DateTime::W3C, $commandArguments['initialPropertyValues.dateProperty']);
+        }
+
         $command = new CreateNodeAggregateWithNode(
             ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
@@ -940,9 +945,15 @@ trait EventSourcedTrait
             $commandArguments = $this->readPayloadTable($payloadTable);
         }
 
+        if (isset($commandArguments['propertyValues.dateProperty'])) {
+            // special case to test Date type conversion
+            $commandArguments['propertyValues']['dateProperty'] = \DateTime::createFromFormat(\DateTime::W3C, $commandArguments['propertyValues.dateProperty']);
+        }
+
         if (!method_exists($commandClassName, 'fromArray')) {
             throw new \InvalidArgumentException(sprintf('Command "%s" does not implement a static "fromArray" constructor', $commandClassName), 1545564621);
         }
+
         $command = $commandClassName::fromArray($commandArguments);
 
         $commandHandler = $this->getObjectManager()->get($commandHandlerClassName);
@@ -1560,7 +1571,10 @@ trait EventSourcedTrait
         foreach ($expectedProperties->getHash() as $row) {
             Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
             $actualProperty = $properties[$row['Key']];
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . $row['Value'] . '; Actual: ' . $actualProperty);
+            if (isset($row['Type']) && $row['Type'] === 'DateTime') {
+                $row['Value'] = \DateTime::createFromFormat(\DateTime::W3C, $row['Value']);
+            }
+            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
         }
     }
 

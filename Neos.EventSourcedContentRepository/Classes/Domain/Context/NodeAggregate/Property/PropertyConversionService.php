@@ -60,6 +60,9 @@ final class PropertyConversionService
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
+            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+            $nodeType->getProperties();
+
             $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
             self::assertTypeIsNoReference($propertyTypeFromSchema);
             self::assertPropertyTypeMatchesPropertyValue($propertyTypeFromSchema, $propertyValue, $propertyName);
