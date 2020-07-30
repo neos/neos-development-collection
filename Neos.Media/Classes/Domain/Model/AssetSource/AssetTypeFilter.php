@@ -16,7 +16,7 @@ final class AssetTypeFilter implements \JsonSerializable
     /**
      * @var string
      */
-    private $assetType = 'All';
+    private $assetType;
 
     /**
      * AssetType constructor.
@@ -25,10 +25,18 @@ final class AssetTypeFilter implements \JsonSerializable
      */
     public function __construct(string $assetType)
     {
-        if (!in_array($assetType, ['All', 'Image', 'Document', 'Video', 'Audio'])) {
-            throw new \InvalidArgumentException(sprintf('Invalid asset type "%s".', $assetType), 1524130064);
+        if (!in_array($assetType, self::getAllowedValues(), true)) {
+            throw new \InvalidArgumentException(sprintf('Invalid asset type "%s", allowed values are: "%s".', $assetType, implode('", "', self::getAllowedValues())), 1524130064);
         }
         $this->assetType = $assetType;
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getAllowedValues(): array
+    {
+        return ['All', 'Image', 'Document', 'Video', 'Audio'];
     }
 
     /**
@@ -50,7 +58,7 @@ final class AssetTypeFilter implements \JsonSerializable
     /**
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->assetType;
     }
