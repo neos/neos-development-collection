@@ -105,7 +105,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
             $exception instanceof FlowException ? $exception->getStatusCode() : 500,
             ['Cache-Control' => 'no-store'],
             $bodyContent
-            );
+        );
 
         return str($response);
     }
