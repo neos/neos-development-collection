@@ -45,7 +45,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
     protected $uriPathSegmentDelimiter;
 
     /**
-     * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions")
+     * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions", package="Neos.Neos")
      * @var boolean
      */
     protected $supportEmptySegmentForDimensions;
