@@ -110,12 +110,12 @@ class ContentStreamCommandController extends CommandController
 
         $commandResult = $this->workspaceCommandHandler->handleCreateRootWorkspace(
             new CreateRootWorkspace(
-            WorkspaceName::forLive(),
-            WorkspaceTitle::fromString('Live'),
-            WorkspaceDescription::fromString(''),
-            UserIdentifier::forSystemUser(),
-            $contentStreamToImportTo
-        )
+                WorkspaceName::forLive(),
+                WorkspaceTitle::fromString('Live'),
+                WorkspaceDescription::fromString(''),
+                UserIdentifier::forSystemUser(),
+                $contentStreamToImportTo
+            )
         );
 
         $this->outputLine('Created workspace "Live" for the given content stream identifier');
