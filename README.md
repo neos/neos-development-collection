@@ -71,7 +71,7 @@ Lateron, we will also support [PostgreSQL](https://www.postgresql.org/docs/8.4/q
 
 ### PHP
 
-The new code should be compatible with **PHP 7.3**
+The new code should be compatible with **PHP 7.4**
 
 ## Getting Started / Installation
 
