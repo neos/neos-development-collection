@@ -16,8 +16,8 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsNormalization($data, string $format = null)
     {
-        // TODO: array of objects
-        return TypeHandling::isSimpleType(TypeHandling::getTypeForValue($data));
+        $type = TypeHandling::getTypeForValue($data);
+        return TypeHandling::isSimpleType($type) && !TypeHandling::isCollectionType($type);
     }
 
     public function denormalize($data, $type, string $format = null, array $context = [])
@@ -27,7 +27,6 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsDenormalization($data, $type, string $format = null)
     {
-        // TODO: array of objects
-        return TypeHandling::isSimpleType($type);
+        return TypeHandling::isSimpleType($type) && !TypeHandling::isCollectionType($type);
     }
 }

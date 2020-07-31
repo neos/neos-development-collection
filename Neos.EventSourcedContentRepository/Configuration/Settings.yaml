@@ -2,6 +2,8 @@ Neos:
   EventSourcedContentRepository:
     contentDimensions: {}
     propertyConverters:
+      CustomArrayDenormalizer:
+        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\CustomArrayDenormalizer
       ScalarNormalizer:
         className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\ScalarNormalizer
       DateTime:
