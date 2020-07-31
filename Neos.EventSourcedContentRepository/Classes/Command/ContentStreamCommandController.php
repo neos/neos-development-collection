@@ -71,7 +71,8 @@ class ContentStreamCommandController extends CommandController
         foreach ($events as $eventEvelope) {
             $prepend = $i > 0 ? ',' : '';
             $properties = ObjectAccess::getGettableProperties($eventEvelope->getRawEvent());
-            $this->outputLine($prepend . json_encode($properties)
+            $this->outputLine(
+                $prepend . json_encode($properties)
             );
             $i++;
         }
@@ -107,12 +108,14 @@ class ContentStreamCommandController extends CommandController
         $workspaceProjection = $this->projectionManager->getProjection('workspace');
         $this->projectionManager->replay($workspaceProjection->getIdentifier());
 
-        $commandResult = $this->workspaceCommandHandler->handleCreateRootWorkspace(new CreateRootWorkspace(
-            WorkspaceName::forLive(),
-            WorkspaceTitle::fromString('Live'),
-            WorkspaceDescription::fromString(''),
-            UserIdentifier::forSystemUser(),
-            $contentStreamToImportTo)
+        $commandResult = $this->workspaceCommandHandler->handleCreateRootWorkspace(
+            new CreateRootWorkspace(
+                WorkspaceName::forLive(),
+                WorkspaceTitle::fromString('Live'),
+                WorkspaceDescription::fromString(''),
+                UserIdentifier::forSystemUser(),
+                $contentStreamToImportTo
+            )
         );
 
         $this->outputLine('Created workspace "Live" for the given content stream identifier');

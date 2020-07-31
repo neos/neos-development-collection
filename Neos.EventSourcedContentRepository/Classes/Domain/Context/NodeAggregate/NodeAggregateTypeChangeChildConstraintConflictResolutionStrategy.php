@@ -43,7 +43,8 @@ final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy imp
     {
         if ($strategy !== self::STRATEGY_DELETE) {
             throw new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown(
-                'Given strategy "' . $strategy . '" is not known for resolving child node type constraint conflicts when changing a node type.', 15200134492
+                'Given strategy "' . $strategy . '" is not known for resolving child node type constraint conflicts when changing a node type.',
+                15200134492
             );
         }
         return new self($strategy);

@@ -27,7 +27,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
@@ -152,7 +152,7 @@ final class IntegrityViolationCommandHandler
         return NodeName::fromString($tetheredNodeNames[$index + 1]);
     }
 
-    private function getDefaultPropertyValues(NodeType $nodeType): PropertyValues
+    private function getDefaultPropertyValues(NodeType $nodeType): SerializedPropertyValues
     {
         $rawDefaultPropertyValues = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
@@ -162,6 +162,6 @@ final class IntegrityViolationCommandHandler
             ];
         }
 
-        return PropertyValues::fromArray($rawDefaultPropertyValues);
+        return SerializedPropertyValues::fromArray($rawDefaultPropertyValues);
     }
 }

@@ -14,73 +14,52 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Annotations as Flow;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
 /**
  * The property collection implementation
  *
  * @package Neos\EventSourcedContentRepository
- *
- * @todo iterate over resolved properties
  */
 final class PropertyCollection implements PropertyCollectionInterface
 {
     /**
      * Properties from Nodes
      *
-     * @var array
+     * @var SerializedPropertyValues
      */
-    protected $properties;
-
-    /**
-     * @var array
-     */
-    protected $resolvedPropertyObjects;
+    protected $serializedPropertyValues;
 
     /**
      * @var \ArrayIterator
      */
     protected $iterator;
 
-    /**
-     * @Flow\Inject
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
+    protected PropertyConversionService $propertyConversionService;
 
     /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
+     * @internal do not create from userspace
      */
-    protected $persistenceManager;
-
-    public function __construct(array $properties)
+    public function __construct(SerializedPropertyValues $serializedPropertyValues, PropertyConversionService $propertyConversionService)
     {
-        $this->properties = $properties;
-        $this->iterator = new \ArrayIterator($properties);
+        $this->serializedPropertyValues = $serializedPropertyValues;
+        $this->iterator = new \ArrayIterator($serializedPropertyValues->getPlainValues());
+        $this->propertyConversionService = $propertyConversionService;
     }
 
     public function offsetExists($offset)
     {
-        return isset($this->properties[$offset]);
+        return $this->serializedPropertyValues->propertyExists($offset);
     }
 
     public function offsetGet($offset)
     {
-        if (!isset($this->properties[$offset])) {
+        $property = $this->serializedPropertyValues->getProperty($offset);
+        if ($property === null) {
             return null;
         }
-        $value = $this->properties[$offset];
-        if (isset($value['__flow_object_type'])) {
-            if (!isset($this->resolvedPropertyObjects[$offset])) {
-                $this->resolvedPropertyObjects[$offset] = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type']);
-            }
-            return $this->resolvedPropertyObjects[$offset];
-        }
-
-        return $value;
+        return $this->propertyConversionService->deserializePropertyValue($property);
     }
 
     public function offsetSet($offset, $value)
@@ -96,5 +75,13 @@ final class PropertyCollection implements PropertyCollectionInterface
     public function getIterator()
     {
         return $this->iterator;
+    }
+
+    /**
+     * @return SerializedPropertyValues
+     */
+    public function getSerializedPropertyValues(): SerializedPropertyValues
+    {
+        return $this->serializedPropertyValues;
     }
 }

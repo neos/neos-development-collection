@@ -529,7 +529,8 @@ class ProjectionContentGraph
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): array {
-        $rows = $this->getDatabaseConnection()->executeQuery('
+        $rows = $this->getDatabaseConnection()->executeQuery(
+            '
             -- ProjectionContentGraph::findDescendantNodeAggregateIdentifiers
 
             WITH RECURSIVE nestedNodes AS (

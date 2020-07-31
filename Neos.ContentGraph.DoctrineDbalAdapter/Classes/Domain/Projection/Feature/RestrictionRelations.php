@@ -27,7 +27,8 @@ trait RestrictionRelations
         NodeAggregateIdentifier $originNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->getDatabaseConnection()->executeUpdate(
+            '
 -- GraphProjector::removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints
 
 DELETE r.*
@@ -53,7 +54,8 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
      */
     private function removeAllRestrictionRelationsUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
     {
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->getDatabaseConnection()->executeUpdate(
+            '
                 -- GraphProjector::removeAllRestrictionRelationsUnderneathNodeAggregate
  
                 delete r.* from
@@ -107,7 +109,8 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
             [
                 'entryNodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            ]);
+            ]
+        );
     }
 
     /**
@@ -123,7 +126,8 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
     ) {
         $descendantNodeAggregateIdentifiers = $this->projectionContentGraph->findDescendantNodeAggregateIdentifiers($contentStreamIdentifier, $entryNodeAggregateIdentifier, $affectedDimensionSpacePoints);
 
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->getDatabaseConnection()->executeUpdate(
+            '
                 -- GraphProjector::removeAllRestrictionRelationsInSubtreeImposedByAncestors
  
                 DELETE r.*

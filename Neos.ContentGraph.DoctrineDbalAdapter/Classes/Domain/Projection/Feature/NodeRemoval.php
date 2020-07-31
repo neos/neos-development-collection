@@ -66,7 +66,8 @@ trait NodeRemoval
         }
 
         // remove node itself if it does not have any incoming hierarchy relations anymore
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->getDatabaseConnection()->executeUpdate(
+            '
             DELETE n FROM neos_contentgraph_node n
                 LEFT JOIN
                     neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint

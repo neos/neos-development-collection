@@ -25,9 +25,11 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -57,6 +59,11 @@ final class NodeFactory
      */
     protected $reflectionService;
 
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var PropertyConversionService
+     */
+    protected $propertyConversionService;
 
     /**
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
@@ -72,16 +79,9 @@ final class NodeFactory
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
 
-        $properties = json_decode($nodeRow['properties'], true);
+        $properties = SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true));
 
-        // Reference and References "are no properties" anymore by definition; so Node does not know
-        // anything about it.
-        $properties = array_filter($properties, function ($propertyName) use ($nodeType) {
-            $propertyType = $nodeType->getPropertyType($propertyName);
-            return $propertyType !== 'reference' && $propertyType !== 'references';
-        }, ARRAY_FILTER_USE_KEY);
-
-        $propertyCollection = new ContentProjection\PropertyCollection($properties);
+        $propertyCollection = new ContentProjection\PropertyCollection($properties, $this->propertyConversionService);
 
         /* @var NodeInterface $node */
         $node = new $className(

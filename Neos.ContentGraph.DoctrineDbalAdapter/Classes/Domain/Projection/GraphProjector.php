@@ -34,7 +34,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeRe
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 use Neos\Flow\Annotations as Flow;
 
@@ -84,7 +84,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
             $event->getNodeAggregateIdentifier(),
             $dimensionSpacePoint->getCoordinates(),
             $dimensionSpacePoint->getHash(),
-            [],
+            SerializedPropertyValues::fromArray([]),
             $event->getNodeTypeName(),
             $event->getNodeAggregateClassification()
         );
@@ -204,7 +204,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
-     * @param PropertyValues $propertyDefaultValuesAndTypes
+     * @param SerializedPropertyValues $propertyDefaultValuesAndTypes
      * @param NodeAggregateClassification $nodeAggregateClassification
      * @param NodeAggregateIdentifier|null $succeedingSiblingNodeAggregateIdentifier
      * @param NodeName $nodeName
@@ -217,7 +217,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
-        PropertyValues $propertyDefaultValuesAndTypes,
+        SerializedPropertyValues $propertyDefaultValuesAndTypes,
         NodeAggregateClassification $nodeAggregateClassification,
         NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
         NodeName $nodeName = null
@@ -228,7 +228,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
             $nodeAggregateIdentifier,
             $originDimensionSpacePoint->jsonSerialize(),
             $originDimensionSpacePoint->getHash(),
-            $propertyDefaultValuesAndTypes->getPlainValues(),
+            $propertyDefaultValuesAndTypes,
             $nodeTypeName,
             $nodeAggregateClassification,
             $nodeName
@@ -485,9 +485,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
     {
         $this->transactional(function () use ($event) {
             $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
-                foreach ($event->getPropertyValues() as $propertyName => $propertyValue) {
-                    $node->properties[$propertyName] = $propertyValue->getValue();
-                }
+                $node->properties = $node->properties->merge($event->getPropertyValues());
             });
         });
     }
@@ -534,7 +532,8 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
     {
         $this->transactional(function () use ($event) {
             // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
-            $this->getDatabaseConnection()->executeUpdate('
+            $this->getDatabaseConnection()->executeUpdate(
+                '
 -- GraphProjector::whenNodeAggregateWasDisabled
 insert ignore into neos_contentgraph_restrictionrelation
 (
@@ -588,9 +587,10 @@ insert ignore into neos_contentgraph_restrictionrelation
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
                     'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
                 ],
-            [
+                [
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]);
+            ]
+            );
         });
     }
 
@@ -600,7 +600,8 @@ insert ignore into neos_contentgraph_restrictionrelation
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->getDatabaseConnection()->executeUpdate(
+            '
             -- GraphProjector::cascadeRestrictionRelations
             INSERT INTO neos_contentgraph_restrictionrelation
             (
@@ -750,10 +751,10 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             if (count($unassignedIngoingDimensionSpacePoints) > 0) {
                 $ingoingSourceHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
-                        $sourceNode->relationAnchorPoint,
-                        $event->getContentStreamIdentifier(),
-                        new DimensionSpacePointSet([$event->getSourceOrigin()])
-                    )[$event->getSourceOrigin()->getHash()] ?? null;
+                    $sourceNode->relationAnchorPoint,
+                    $event->getContentStreamIdentifier(),
+                    new DimensionSpacePointSet([$event->getSourceOrigin()])
+                )[$event->getSourceOrigin()->getHash()] ?? null;
                 // the null case is caught by the NodeAggregate or its command handler
                 foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
@@ -929,7 +930,8 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node". IMPORTANT: We need to reconnect
             // BOTH the incoming and outgoing edges.
-            $this->getDatabaseConnection()->executeUpdate('
+            $this->getDatabaseConnection()->executeUpdate(
+                '
                 UPDATE neos_contentgraph_hierarchyrelation h
                     SET
                         -- if our (copied) node is the child, we update h.childNodeAnchor

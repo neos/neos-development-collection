@@ -93,8 +93,11 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 }
 
                 if (!$variant && $this->includeGeneralizations()) {
-                    $variant = $this->findClosestGeneralizationMatchingDimensionValue($dimensionSpacePoint, $this->getContentDimensionIdentifierToLimitTo(),
-                        $this->currentNode->getNodeAggregateIdentifier());
+                    $variant = $this->findClosestGeneralizationMatchingDimensionValue(
+                        $dimensionSpacePoint,
+                        $this->getContentDimensionIdentifierToLimitTo(),
+                        $this->currentNode->getNodeAggregateIdentifier()
+                    );
                 }
 
                 $metadata = $this->determineMetadata($dimensionSpacePoint);

@@ -320,7 +320,8 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
     public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): array
     {
         $query = new SqlQueryBuilder();
-        $query->addToQuery('
+        $query->addToQuery(
+            '
 -- ContentSubgraph::findReferencedNodes
 SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchyrelation sh
  INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint
@@ -342,12 +343,14 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'd', 'dh');
 
         if ($name) {
-            $query->addToQuery('
+            $query->addToQuery(
+                '
  AND r.name = :name
  ORDER BY r.position'
             );
         } else {
-            $query->addToQuery('
+            $query->addToQuery(
+                '
  ORDER BY r.name, r.position'
             );
         }
