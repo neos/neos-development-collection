@@ -62,12 +62,8 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $existingParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters') ?? RouteParameters::createEmpty();
         $parameters = $existingParameters
             ->withParameter('dimensionSpacePoint', $this->detectDimensionSpacePoint($componentContext, $uriPathSegmentUsed))
-            ->withParameter('uriPathSegmentOffset', $uriPathSegmentUsed ? 1 : 0);
-        $workspaceName = $this->detectWorkspaceName($componentContext);
-        if ($workspaceName) {
-            $parameters = $parameters->withParameter('workspaceName', $workspaceName);
-        }
-
+            ->withParameter('uriPathSegmentOffset', $uriPathSegmentUsed ? 1 : 0)
+            ->withParameter('host', $componentContext->getHttpRequest()->getUri()->getHost());
         $componentContext->setParameter(RoutingComponent::class, 'parameters', $parameters);
     }
 
@@ -144,24 +140,5 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
             return ($dimensionA->getConfigurationValue('resolution.options.offset') ?: 0)
                 <=> ($dimensionB->getConfigurationValue('resolution.options.offset') ?: 0);
         });
-    }
-
-    /**
-     * @param Http\Component\ComponentContext $componentContext
-     * @return WorkspaceName|null
-     */
-    protected function detectWorkspaceName(Http\Component\ComponentContext $componentContext): ?WorkspaceName
-    {
-        $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
-        $requestPath = mb_substr($requestPath, mb_strrpos($requestPath, '/'));
-        if ($requestPath !== '' && WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($requestPath)) {
-            $nodePathAndContext = WorkspaceNameAndDimensionSpacePointForUriSerialization::fromBackendUri($requestPath);
-            try {
-                return $nodePathAndContext->getWorkspaceName();
-            } catch (\InvalidArgumentException $exception) {
-            }
-        }
-
-        return null;
     }
 }

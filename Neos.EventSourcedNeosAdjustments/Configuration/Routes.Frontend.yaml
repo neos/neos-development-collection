@@ -1,0 +1,26 @@
+#                                                                        #
+# Adjusted "Frontend" subroutes                                          #
+#                                                                        #
+
+-
+  name:          'Preview'
+  uriPattern:    'neos/preview'
+  defaults:
+    '@action':   'preview'
+  appendExceedingArguments: true
+
+-
+  name: 'Homepage'
+  uriPattern: '{node}'
+  routeParts:
+    'node':
+      handler:     'Neos\EventSourcedNeosAdjustments\EventSourcedRouting\HomepageRoutePartHandler'
+  appendExceedingArguments: true
+
+-
+  name: 'content with URI suffix'
+  uriPattern: '{node}<defaultUriSuffix>'
+  routeParts:
+    'node':
+      handler:     'Neos\EventSourcedNeosAdjustments\EventSourcedRouting\FrontendRoutePartHandler'
+  appendExceedingArguments: true

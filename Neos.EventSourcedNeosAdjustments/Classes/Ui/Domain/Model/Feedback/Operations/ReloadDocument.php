@@ -111,7 +111,7 @@ class ReloadDocument extends AbstractFeedback
 
         if ($documentNode = $this->nodeService->getClosestDocument($this->node)) {
             return [
-                'uri' => $nodeInfoHelper->createRedirectToNode($controllerContext, $documentNode)
+                'uri' => $nodeInfoHelper->previewUri($documentNode, $controllerContext)
             ];
         }
 

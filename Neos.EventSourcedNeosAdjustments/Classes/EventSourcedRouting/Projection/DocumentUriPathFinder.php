@@ -11,6 +11,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * @Flow\Scope("singleton")
@@ -34,7 +35,7 @@ class DocumentUriPathFinder
 
     public function findNodeAddressForRequestPathAndDimensionSpacePoint(string $requestPath, DimensionSpacePoint $dimensionSpacePoint): ?NodeAddress
     {
-        $nodeAggregateIdentifier = $this->dbal->fetchColumn('SELECT nodeAggregateIdentifier FROM document_uri WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND uriPath = :uriPath', [
+        $nodeAggregateIdentifier = $this->dbal->fetchColumn('SELECT nodeAggregateIdentifier FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND uriPath = :uriPath AND disabled = 0', [
             'dimensionSpacepointHash' => $dimensionSpacePoint->getHash(),
             'uriPath' => $requestPath,
         ]);
@@ -50,9 +51,27 @@ class DocumentUriPathFinder
     }
 
 
+    public function findHomepageNodeAddressForSiteAndDimensionSpacePoint(Site $site, DimensionSpacePoint $dimensionSpacePoint): ?NodeAddress
+    {
+        $nodeAggregateIdentifier = $this->dbal->fetchColumn('SELECT nodeAggregateIdentifier FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodePath = :nodePath AND disabled = 0', [
+            'dimensionSpacepointHash' => $dimensionSpacePoint->getHash(),
+            'nodePath' => '/' . $site->getNodeName(),
+        ]);
+        if ($nodeAggregateIdentifier === false) {
+            return null;
+        }
+        return new NodeAddress(
+            $this->getLiveContentStreamIdentifier(),
+            $dimensionSpacePoint,
+            NodeAggregateIdentifier::fromString($nodeAggregateIdentifier),
+            WorkspaceName::forLive()
+        );
+    }
+
+
     public function findUriPathForNodeAddress(NodeAddress $nodeAddress): ?string
     {
-        $uriPath = $this->dbal->fetchColumn('SELECT uriPath FROM document_uri WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier', [
+        $uriPath = $this->dbal->fetchColumn('SELECT uriPath FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier', [
             'dimensionSpacepointHash' => $nodeAddress->getDimensionSpacePoint()->getHash(),
             'nodeAggregateIdentifier' => $nodeAddress->getNodeAggregateIdentifier(),
         ]);
@@ -65,7 +84,7 @@ class DocumentUriPathFinder
     private function getLiveContentStreamIdentifier(): ContentStreamIdentifier
     {
         if ($this->liveContentStreamIdentifierRuntimeCache === null) {
-            $this->liveContentStreamIdentifierRuntimeCache = ContentStreamIdentifier::fromString($this->dbal->fetchColumn('SELECT contentStreamIdentifier FROM document_uri_livecontentstreams'));
+            $this->liveContentStreamIdentifierRuntimeCache = ContentStreamIdentifier::fromString($this->dbal->fetchColumn('SELECT contentStreamIdentifier FROM ' . DocumentUriPathProjector::TABLE_NAME_LIVE_CONTENT_STREAMS . ''));
         }
         return $this->liveContentStreamIdentifierRuntimeCache;
     }

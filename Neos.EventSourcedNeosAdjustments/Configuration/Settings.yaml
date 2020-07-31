@@ -1,17 +1,8 @@
 Neos:
   EventSourcedNeosAdjustments:
-    contentDimensions:
-      resolution:
-        uriPathSegmentDelimiter: '_'
     fusion:
       enableObjectTreeCache: false
   Flow:
-    http:
-      chain:
-        preprocess:
-          chain:
-            detectContentSubgraph:
-              component: Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphComponent
     error:
       debugger:
         ignoredClasses:
@@ -69,7 +60,7 @@ Neos:
           documentNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(documentNode)}'
           siteNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(site)}'
 
-          previewUrl: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.createRedirectToNode(controllerContext, q(documentNode).context({workspaceName: documentNode.context.workspace.baseWorkspace.name}).get(0))}'
+          previewUrl: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.previewUri(documentNode, controllerContext)}'
 
           contentDimensions:
             active: '${documentNode.dimensionSpacePoint.toLegacyDimensionArray()}'

@@ -13,18 +13,17 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
  */
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
@@ -32,10 +31,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
-use Neos\Flow\Security\Context as SecurityContext;
 
 /**
  * Event Sourced Node Controller; as Replacement of NodeController
@@ -109,15 +108,65 @@ class EventSourcedNodeController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressService;
-
-    /**
-     * @Flow\Inject
      * @var NodeSiteResolvingService
      */
     protected $nodeSiteResolvingService;
+
+    /**
+     * @param NodeAddress $node Legacy name for backwards compatibility of route components
+     * @throws NodeNotFoundException
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
+     * @throws \Neos\Neos\Exception
+     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     */
+    public function previewAction(NodeAddress $node)
+    {
+        $nodeAddress = $node;
+
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+        if ($subgraph === null) {
+            throw new NodeNotFoundException("TODO: SUBGRAPH NOT FOUND; should not happen (for address " . $nodeAddress);
+        }
+
+
+        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
+        if ($site === null) {
+            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
+        }
+
+        $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
+        $nodeInstance = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+
+        if (is_null($nodeInstance)) {
+            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
+        }
+
+        $traversableNode = new TraversableNode($nodeInstance, $subgraph);
+        $traversableSite = new TraversableNode($site, $subgraph);
+
+        $this->view->assignMultiple([
+            'value' => $traversableNode,
+            'subgraph' => $subgraph,
+            'site' => $traversableSite,
+        ]);
+
+        $this->overrideViewVariablesFromInternalArguments();
+        $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'no-cache');
+        if (!$this->view->canRenderWithNodeAndPath()) {
+            $this->view->setFusionPath('rawContent');
+        }
+
+        if ($this->session->isStarted()) {
+            $this->session->putData('lastVisitedNode', $nodeAddress);
+        }
+    }
 
     /**
      * Initializes the view with the necessary parameters encoded in the given NodeAddress
@@ -134,33 +183,36 @@ class EventSourcedNodeController extends ActionController
     public function showAction(NodeAddress $node)
     {
         $nodeAddress = $node;
-
-        $inBackend = !$nodeAddress->isInLiveWorkspace();
-        $visibilityConstraints = $this->createVisibilityConstraints($inBackend);
+        if (!$nodeAddress->isInLiveWorkspace()) {
+            throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
+        }
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $nodeAddress->getContentStreamIdentifier(),
             $nodeAddress->getDimensionSpacePoint(),
-            $visibilityConstraints
+            VisibilityConstraints::frontend()
         );
+        if ($subgraph === null) {
+            throw new NodeNotFoundException("TODO: SUBGRAPH NOT FOUND; should not happen (for address " . $nodeAddress);
+        }
 
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
-        if (!$site) {
+        if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $nodeInstance = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
-        if (is_null($node)) {
-            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
+        if (is_null($nodeInstance)) {
+            throw new NodeNotFoundException('The requested node does not exist', 1596191460);
         }
 
-        if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut') && !$inBackend) {
-            $this->handleShortcutNode($subgraph, $node, $nodeAddress);
+        if ($nodeInstance->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
+            $this->handleShortcutNode($subgraph, $nodeInstance, $nodeAddress);
         }
 
-        $traversableNode = new TraversableNode($node, $subgraph);
+        $traversableNode = new TraversableNode($nodeInstance, $subgraph);
         $traversableSite = new TraversableNode($site, $subgraph);
 
         $this->view->assignMultiple([
@@ -168,32 +220,6 @@ class EventSourcedNodeController extends ActionController
             'subgraph' => $subgraph,
             'site' => $traversableSite,
         ]);
-
-        if ($inBackend) {
-            $this->overrideViewVariablesFromInternalArguments();
-            $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'no-cache');
-            if (!$this->view->canRenderWithNodeAndPath()) {
-                $this->view->setFusionPath('rawContent');
-            }
-        }
-
-        if ($this->session->isStarted() && $inBackend) {
-            $this->session->putData('lastVisitedNode', $nodeAddress);
-        }
-    }
-
-
-    /**
-     * @param bool $inBackend
-     * @return VisibilityConstraints
-     */
-    protected function createVisibilityConstraints(bool $inBackend): VisibilityConstraints
-    {
-        if ($inBackend) {
-            return VisibilityConstraints::withoutRestrictions();
-        } else {
-            return VisibilityConstraints::frontend();
-        }
     }
 
     /**
