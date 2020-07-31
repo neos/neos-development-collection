@@ -50,10 +50,18 @@ class DoctrinePersistentObjectNormalizer implements NormalizerInterface, Denorma
 
     public function supportsDenormalization($data, $type, string $format = null)
     {
-        return (
-            $this->reflectionService->isClassAnnotatedWith($type, Entity::class) ||
-            $this->reflectionService->isClassAnnotatedWith($type, ValueObject::class) ||
-            $this->reflectionService->isClassAnnotatedWith($type, \Doctrine\ORM\Mapping\Entity::class)
-        );
+        // NOTE: we do not check for $type which is the expected type,
+        // but we instead check for $data['__flow_object_type']. This is
+        // needed because $type might be an abstract type or an interface;
+        // and $data['__flow_object_type'] is the *specific* type of the
+        // object.
+        if (is_array($data) && isset($data['__flow_object_type'])) {
+            return (
+                $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], Entity::class) ||
+                $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], ValueObject::class) ||
+                $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], \Doctrine\ORM\Mapping\Entity::class)
+            );
+        }
+        return false;
     }
 }
