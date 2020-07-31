@@ -25,6 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
@@ -43,8 +44,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -58,7 +57,7 @@ use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\TypeHandling;
+use Neos\Flow\Property\PropertyMapper;
 use Ramsey\Uuid\Uuid;
 
 class ContentRepositoryExportService
@@ -87,6 +86,12 @@ class ContentRepositoryExportService
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
 
     /**
      * @var ContentStreamIdentifier
@@ -284,7 +289,7 @@ class ContentRepositoryExportService
         NodePath $nodePath,
         bool $isHidden
     ) {
-        echo $nodePath . "\n";
+        echo $nodePath . ' (' . $nodeAggregateIdentifier . ")\n";
 
         try {
             $this->recordNodeAggregateIdentifierAndNodeType($nodePath, $originDimensionSpacePoint, $nodeAggregateIdentifier, $nodeTypeName);
@@ -302,7 +307,7 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
-                        PropertyValues::fromArray($propertyValues)
+                        PropertyValuesToWrite::fromArray($propertyValues)
                     ))->blockUntilProjectionsAreUpToDate();
                 }
             } else {
@@ -321,7 +326,7 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
-                        PropertyValues::fromArray($propertyValues)
+                        PropertyValuesToWrite::fromArray($propertyValues)
                     ))->blockUntilProjectionsAreUpToDate();
                 } else {
                     $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePath, $nodeTypeName);
@@ -335,7 +340,7 @@ class ContentRepositoryExportService
                         $parentNodeAggregateIdentifierAndNodeType->getNodeAggregateIdentifier(),
                         null,
                         $nodeName,
-                        PropertyValues::fromArray($propertyValues),
+                        PropertyValuesToWrite::fromArray($propertyValues),
                         $nodeAggregateIdentifiersByNodePaths
                     // TODO: tethered descendant IDs
                     ))->blockUntilProjectionsAreUpToDate();
@@ -365,6 +370,7 @@ class ContentRepositoryExportService
 
             $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = $originDimensionSpacePoint;
         } catch (\Exception $e) {
+            throw $e;
             $message = 'There was an error exporting the node ' . $nodeAggregateIdentifier . ' at path ' . $nodePath . ' in Dimension Space Point ' . $originDimensionSpacePoint . ':' . $e->getMessage();
             $this->systemLogger->warning($message, ['exception' => $e]);
             echo $message;
@@ -386,43 +392,17 @@ class ContentRepositoryExportService
                 // TODO: support other types than string
                 continue;
             }
-            $this->encodeObjectReference($propertyValue);
-            $properties[$propertyName] = new PropertyValue($propertyValue, $type);
+
+            // In the old `NodeInterface`, we call the property mapper to convert the returned properties from NodeData;
+            // so we need to do the same here.
+            $properties[$propertyName] = $this->propertyMapper->convert($propertyValue, $type);
         }
 
         if ($nodeData->isHiddenInIndex()) {
-            $properties['_hiddenInIndex'] = new PropertyValue($nodeData->isHiddenInIndex(), 'boolean');
+            $properties['_hiddenInIndex'] = $nodeData->isHiddenInIndex();
         }
 
         return $properties;
-    }
-
-    protected function encodeObjectReference(&$value)
-    {
-        if (is_array($value)) {
-            foreach ($value as &$item) {
-                $this->encodeObjectReference($item);
-            }
-        }
-
-        if (!is_object($value)) {
-            return;
-        }
-
-        $propertyClassName = TypeHandling::getTypeForValue($value);
-
-        if ($value instanceof \DateTimeInterface) {
-            $value = [
-                'date' => $value->format('Y-m-d H:i:s.u'),
-                'timezone' => $value->format('e'),
-                'dateFormat' => 'Y-m-d H:i:s.u'
-            ];
-        } else {
-            $value = [
-                '__flow_object_type' => $propertyClassName,
-                '__identifier' => $this->persistenceManager->getIdentifierByObject($value)
-            ];
-        }
     }
 
     private function processPropertyReferences(NodeData $nodeData)

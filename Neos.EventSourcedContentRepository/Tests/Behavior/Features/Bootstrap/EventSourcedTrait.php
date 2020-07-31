@@ -18,6 +18,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -31,6 +32,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\Co
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
@@ -43,6 +45,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
@@ -75,6 +78,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommand
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
@@ -583,7 +587,32 @@ trait EventSourcedTrait
         if (!isset($commandArguments['originDimensionSpacePoint'])) {
             $commandArguments['originDimensionSpacePoint'] = [];
         }
-        $command = CreateNodeAggregateWithNode::fromArray($commandArguments);
+
+        if (isset($commandArguments['initialPropertyValues.dateProperty'])) {
+            // special case to test Date type conversion
+            $commandArguments['initialPropertyValues']['dateProperty'] = \DateTime::createFromFormat(\DateTime::W3C, $commandArguments['initialPropertyValues.dateProperty']);
+        }
+
+        $command = new CreateNodeAggregateWithNode(
+            ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
+            NodeTypeName::fromString($commandArguments['nodeTypeName']),
+            new OriginDimensionSpacePoint($commandArguments['originDimensionSpacePoint']),
+            UserIdentifier::fromString($commandArguments['initiatingUserIdentifier']),
+            NodeAggregateIdentifier::fromString($commandArguments['parentNodeAggregateIdentifier']),
+            isset($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
+                ? NodeAggregateIdentifier::fromString($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
+                : null,
+            isset($commandArguments['nodeName'])
+                ? NodeName::fromString($commandArguments['nodeName'])
+                : null,
+            isset($commandArguments['initialPropertyValues'])
+                ? PropertyValuesToWrite::fromArray($commandArguments['initialPropertyValues'])
+                : null,
+            isset($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
+                ? NodeAggregateIdentifiersByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
+                : null
+        );
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleCreateNodeAggregateWithNode($command);
@@ -916,9 +945,15 @@ trait EventSourcedTrait
             $commandArguments = $this->readPayloadTable($payloadTable);
         }
 
+        if (isset($commandArguments['propertyValues.dateProperty'])) {
+            // special case to test Date type conversion
+            $commandArguments['propertyValues']['dateProperty'] = \DateTime::createFromFormat(\DateTime::W3C, $commandArguments['propertyValues.dateProperty']);
+        }
+
         if (!method_exists($commandClassName, 'fromArray')) {
             throw new \InvalidArgumentException(sprintf('Command "%s" does not implement a static "fromArray" constructor', $commandClassName), 1545564621);
         }
+
         $command = $commandClassName::fromArray($commandArguments);
 
         $commandHandler = $this->getObjectManager()->get($commandHandlerClassName);
@@ -1167,7 +1202,8 @@ trait EventSourcedTrait
             Assert::assertNotEquals(
                 $workspaceA->getCurrentContentStreamIdentifier(),
                 $workspaceB->getCurrentContentStreamIdentifier(),
-                'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"');
+                'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"'
+            );
         }
     }
 
@@ -1260,7 +1296,9 @@ trait EventSourcedTrait
             $nodeIdentifier->getNodeAggregateIdentifier(),
             $nodeIdentifier->getOriginDimensionSpacePoint()
         );
-        Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
+        Assert::assertNotNull(
+            $this->currentNode,
+            'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
             . '" and originating in dimension space point "' . $nodeIdentifier->getOriginDimensionSpacePoint()
             . '" was not found in content stream "' . $nodeIdentifier->getContentStreamIdentifier() . '"'
         );
@@ -1536,7 +1574,10 @@ trait EventSourcedTrait
         foreach ($expectedProperties->getHash() as $row) {
             Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
             $actualProperty = $properties[$row['Key']];
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . $row['Value'] . '; Actual: ' . $actualProperty);
+            if (isset($row['Type']) && $row['Type'] === 'DateTime') {
+                $row['Value'] = \DateTime::createFromFormat(\DateTime::W3C, $row['Value']);
+            }
+            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
         }
     }
 

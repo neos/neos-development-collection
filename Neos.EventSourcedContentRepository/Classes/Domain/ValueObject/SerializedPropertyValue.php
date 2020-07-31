@@ -15,13 +15,16 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Property value with type
+ * "Raw" / Serialized property value as saved in the event log // in projections.
+ *
+ * This means: "value" must be a simple PHP data type (no objects allowed!)
+ *
  * @Flow\Proxy(false)
  */
-final class PropertyValue implements \JsonSerializable
+final class SerializedPropertyValue implements \JsonSerializable
 {
     /**
-     * @var mixed
+     * @var int|float|string|bool|array
      */
     private $value;
 
@@ -36,6 +39,14 @@ final class PropertyValue implements \JsonSerializable
      */
     public function __construct($value, string $type)
     {
+        if (!is_scalar($value) && !is_array($value)) {
+            // TODO: check that array does not contain nested objects...
+            $exceptionMessage = 'TODO: Property value must not contain any objects, contained' . gettype($value);
+            if (is_object($value)) {
+                $exceptionMessage .= ' - object type: ' . get_class($value);
+            }
+            throw new \RuntimeException($exceptionMessage);
+        }
         $this->value = $value;
         $this->type = $type;
     }
@@ -48,6 +59,7 @@ final class PropertyValue implements \JsonSerializable
         if (!array_key_exists('type', $valueAndType)) {
             throw new \InvalidArgumentException('Missing array key "type"', 1546524609);
         }
+
         return new static($valueAndType['value'], $valueAndType['type']);
     }
 

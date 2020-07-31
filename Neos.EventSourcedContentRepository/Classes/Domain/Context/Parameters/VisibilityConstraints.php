@@ -18,6 +18,9 @@ use Neos\Flow\Annotations as Flow;
  * The context parameters value object
  *
  * Maybe future: "Node Filter" tree or so as replacement of ReadNodePrivilege?
+ *
+ * TODO: move to ContentSubgraph
+ *
  * @Flow\Proxy(false)
  */
 final class VisibilityConstraints

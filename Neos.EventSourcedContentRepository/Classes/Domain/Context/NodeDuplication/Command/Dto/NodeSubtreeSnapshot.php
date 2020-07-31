@@ -8,7 +8,7 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeReferences;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
 /**
  * @Flow\Proxy(false)
@@ -37,7 +37,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
     private $nodeAggregateClassification;
 
     /**
-     * @var PropertyValues
+     * @var SerializedPropertyValues
      */
     private $propertyValues;
 
@@ -63,7 +63,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             $sourceNode->getNodeTypeName(),
             $sourceNode->getNodeName(),
             NodeAggregateClassification::fromNode($sourceNode),
-            PropertyValues::fromNode($sourceNode),
+            SerializedPropertyValues::fromNode($sourceNode),
             NodeReferences::fromArray([]), // TODO
             $childNodes
         );
@@ -75,11 +75,11 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
      * @param NodeTypeName $nodeTypeName
      * @param NodeName $nodeName
      * @param NodeAggregateClassification $nodeAggregateClassification
-     * @param PropertyValues $propertyValues
+     * @param SerializedPropertyValues $propertyValues
      * @param NodeReferences $nodeReferences
      * @param array|NodeSubtreeSnapshot[] $childNodes
      */
-    private function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, ?NodeName $nodeName, NodeAggregateClassification $nodeAggregateClassification, PropertyValues $propertyValues, NodeReferences $nodeReferences, array $childNodes)
+    private function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, ?NodeName $nodeName, NodeAggregateClassification $nodeAggregateClassification, SerializedPropertyValues $propertyValues, NodeReferences $nodeReferences, array $childNodes)
     {
         foreach ($childNodes as $childNode) {
             if (!$childNode instanceof NodeSubtreeSnapshot) {
@@ -129,9 +129,9 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
     }
 
     /**
-     * @return PropertyValues
+     * @return SerializedPropertyValues
      */
-    public function getPropertyValues(): PropertyValues
+    public function getPropertyValues(): SerializedPropertyValues
     {
         return $this->propertyValues;
     }
@@ -192,7 +192,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             NodeTypeName::fromString($array['nodeTypeName']),
             NodeName::fromString($array['nodeName']),
             NodeAggregateClassification::fromString($array['nodeAggregateClassification']),
-            PropertyValues::fromArray($array['propertyValues']),
+            SerializedPropertyValues::fromArray($array['propertyValues']),
             NodeReferences::fromArray($array['nodeReferences']),
             $childNodes
         );

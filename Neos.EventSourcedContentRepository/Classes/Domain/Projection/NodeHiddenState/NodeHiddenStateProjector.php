@@ -69,7 +69,8 @@ class NodeHiddenStateProjector implements ProjectorInterface
 
     public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
     {
-        $this->getDatabaseConnection()->executeQuery('
+        $this->getDatabaseConnection()->executeQuery(
+            '
                 DELETE FROM
                     neos_contentrepository_projection_nodehiddenstate
                 WHERE

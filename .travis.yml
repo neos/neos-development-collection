@@ -1,7 +1,7 @@
 language: php
 matrix:
   include:
-    - php: 7.2
+    - php: 7.4
       env: DB=mysql
       addons:
         mariadb: '10.2'

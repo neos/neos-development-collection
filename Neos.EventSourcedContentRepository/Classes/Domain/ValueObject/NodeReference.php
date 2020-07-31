@@ -39,8 +39,8 @@ final class NodeReference
     }
 
     /**
-     * @return array|PropertyValue[]
-     * @param PropertyValue[] values
+     * @param SerializedPropertyValue[] values
+     *@return array|SerializedPropertyValue[]
      */
     public function getValues(): array
     {
@@ -48,7 +48,7 @@ final class NodeReference
     }
 
     /**
-     * @return PropertyValue[]|\ArrayIterator<PropertyValue>
+     * @return SerializedPropertyValue[]|\ArrayIterator<SerializedPropertyValue>
      */
     public function getIterator(): \ArrayIterator
     {
