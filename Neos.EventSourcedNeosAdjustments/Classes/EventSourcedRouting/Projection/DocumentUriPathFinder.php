@@ -88,5 +88,4 @@ class DocumentUriPathFinder
         }
         return $this->liveContentStreamIdentifierRuntimeCache;
     }
-
 }

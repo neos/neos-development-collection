@@ -9,7 +9,6 @@ use Doctrine\Migrations\AbstractMigration;
 
 class Version20200731135535 extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Read model tables for the DocumentUriPathProjector';

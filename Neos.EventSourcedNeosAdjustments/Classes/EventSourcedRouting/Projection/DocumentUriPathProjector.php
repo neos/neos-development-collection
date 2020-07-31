@@ -123,7 +123,6 @@ class DocumentUriPathProjector implements ProjectorInterface, BeforeInvokeInterf
     public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
         $this->copyVariants($event->getNodeAggregateIdentifier(), $event->getSourceOrigin(), $event->getGeneralizationOrigin(), $event->getGeneralizationCoverage());
-
     }
 
     public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
@@ -259,7 +258,6 @@ class DocumentUriPathProjector implements ProjectorInterface, BeforeInvokeInterf
             'nodePath' => $sourceData['nodepath'],
             'childNodePathPrefix' => $sourceData['nodepath'] . '/%',
         ]);
-
     }
 
     public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void

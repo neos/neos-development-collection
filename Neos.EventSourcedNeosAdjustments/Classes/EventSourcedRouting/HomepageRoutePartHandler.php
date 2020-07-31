@@ -19,7 +19,6 @@ use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
-use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
