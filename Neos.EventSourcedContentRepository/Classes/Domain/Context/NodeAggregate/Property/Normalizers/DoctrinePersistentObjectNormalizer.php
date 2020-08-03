@@ -8,7 +8,6 @@ use Neos\Flow\Annotations\Entity;
 use Neos\Flow\Annotations\ValueObject;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\TypeHandling;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -38,7 +37,6 @@ class DoctrinePersistentObjectNormalizer implements NormalizerInterface, Denorma
     public function supportsNormalization($data, string $format = null)
     {
         return (
-            is_subclass_of(TypeHandling::getTypeForValue($data), ResourceBasedInterface::class, true) ||
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), Entity::class) ||
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), ValueObject::class) ||
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), \Doctrine\ORM\Mapping\Entity::class)
@@ -52,11 +50,18 @@ class DoctrinePersistentObjectNormalizer implements NormalizerInterface, Denorma
 
     public function supportsDenormalization($data, $type, string $format = null)
     {
-        return (
-            is_subclass_of($type, ResourceBasedInterface::class, true) ||
-            $this->reflectionService->isClassAnnotatedWith($type, Entity::class) ||
-            $this->reflectionService->isClassAnnotatedWith($type, ValueObject::class) ||
-            $this->reflectionService->isClassAnnotatedWith($type, \Doctrine\ORM\Mapping\Entity::class)
-        );
+        // NOTE: we do not check for $type which is the expected type,
+        // but we instead check for $data['__flow_object_type']. This is
+        // needed because $type might be an abstract type or an interface;
+        // and $data['__flow_object_type'] is the *specific* type of the
+        // object.
+        if (is_array($data) && isset($data['__flow_object_type'])) {
+            return (
+                $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], Entity::class) ||
+                $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], ValueObject::class) ||
+                $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], \Doctrine\ORM\Mapping\Entity::class)
+            );
+        }
+        return false;
     }
 }
