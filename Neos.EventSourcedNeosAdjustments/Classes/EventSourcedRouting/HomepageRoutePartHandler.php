@@ -27,7 +27,6 @@ use Neos\Flow\Mvc\Routing\Dto\RouteTags;
  */
 class HomepageRoutePartHandler extends AbstractRoutePartHandler
 {
-
     public function matchWithParameters(&$requestPath, RouteParameters $parameters)
     {
         $uriPathSegmentOffset = $parameters->getValue('uriPathSegmentOffset') ?? 0;
