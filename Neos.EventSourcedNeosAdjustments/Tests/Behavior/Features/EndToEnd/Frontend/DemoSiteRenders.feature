@@ -2,7 +2,7 @@ Feature: The demo site renders
 
   Background:
     Given I start with a clean database only once per feature
-    Given I execute the flow command "site:import" with the following arguments only once per feature:
+    And I execute the flow command "site:import" with the following arguments only once per feature:
       | Name       | Value     |
       | packageKey | Neos.Demo |
     And I execute the flow command "contentrepositorymigrate:run" only once per feature
