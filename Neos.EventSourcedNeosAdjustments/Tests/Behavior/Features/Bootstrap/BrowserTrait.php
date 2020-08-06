@@ -27,7 +27,7 @@ trait BrowserTrait
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     abstract protected function getObjectManager();
-    abstract public function getCurrentNodeAddress(string $alias = null): \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+    abstract protected function getCurrentNodeAddress(string $alias = null): \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
     /**
      * @var \Neos\Flow\Http\Client\Browser
@@ -60,6 +60,11 @@ trait BrowserTrait
     protected $currentResponse;
 
     /**
+     * @var string
+     */
+    protected $currentResponseContents;
+
+    /**
      * @var \Psr\Http\Message\ServerRequestInterface
      */
     protected $currentRequest;
@@ -73,6 +78,7 @@ trait BrowserTrait
             $uriPath = str_replace('CURRENT_NODE_ADDRESS', $this->getCurrentNodeAddress()->serializeForUri(), $uriPath);
         }
         $this->currentResponse = $this->browser->request(new Uri('http://localhost' . $uriPath));
+        $this->currentResponseContents = $this->currentResponse->getBody()->getContents();
         $this->currentRequest = $this->browser->getLastRequest();
     }
 
@@ -81,7 +87,7 @@ trait BrowserTrait
      */
     public function theContentOfThePageContains($expectedString)
     {
-        Assert::assertContains($expectedString, $this->currentResponse->getBody()->getContents());
+        Assert::assertContains($expectedString, $this->currentResponseContents);
     }
 
     /**
@@ -89,7 +95,7 @@ trait BrowserTrait
      */
     public function theContentOfThePageDoesNotContain($expectedString)
     {
-        Assert::assertNotContains($expectedString, $this->currentResponse->getBody()->getContents());
+        Assert::assertNotContains($expectedString, $this->currentResponseContents);
     }
 
     /**
@@ -106,7 +112,7 @@ trait BrowserTrait
      */
     public function iShouldBeLoggedInAs($user, $password)
     {
-        $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost/neos/login'), 'POST', [
+        $this->browser->request('http://localhost/neos/login', 'POST', [
             '__authentication' => [
                 'Neos' => [
                     'Flow' => [
@@ -159,9 +165,10 @@ trait BrowserTrait
         $server = [
             'HTTP_X_FLOW_CSRFTOKEN' => $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
         ];
-        $this->currentResponse = $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost/neos/ui-services/change'), 'POST', ['changes' => $changes], [], $server);
+        $this->currentResponse = $this->browser->request('http://localhost/neos/ui-services/change', 'POST', ['changes' => $changes], [], $server);
+        $this->currentResponseContents = $this->currentResponse->getBody()->getContents();
         $this->currentRequest = $this->browser->getLastRequest();
-        Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponse->getBody()->getContents());
+        Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponseContents);
     }
 
     /**
@@ -184,24 +191,25 @@ trait BrowserTrait
             'targetWorkspaceName' => $targetWorkspaceName
         ];
 
-        $this->currentResponse = $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost/neos/ui-services/publish'), 'POST', $payload, [], $server);
+        $this->currentResponse = $this->browser->request('http://localhost/neos/ui-services/publish', 'POST', $payload, [], $server);
+        $this->currentResponseContents = $this->currentResponse->getBody()->getContents();
         $this->currentRequest = $this->browser->getLastRequest();
-        Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponse->getBody()->getContents());
+        Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponseContents);
     }
 
     /**
      * @Then /^the feedback contains "([^"]*)"$/
+     * @throws JsonException
      */
     public function theFeedbackContains($feedbackType)
     {
-        $bodyContents = $this->currentResponse->getBody()->getContents();
-        $body = json_decode($bodyContents, true);
+        $body = json_decode($this->currentResponseContents, true, 512, JSON_THROW_ON_ERROR);
         foreach ($body['feedbacks'] as $feedback) {
             if ($feedback['type'] === $feedbackType) {
                 Assert::assertTrue(true, 'Feedback found');
                 return;
             }
         }
-        Assert::assertTrue(false, 'Did not find feedback ' . $feedbackType . ' in response: ' . $bodyContents);
+        Assert::assertTrue(false, 'Did not find feedback ' . $feedbackType . ' in response: ' . $this->currentResponseContents);
     }
 }

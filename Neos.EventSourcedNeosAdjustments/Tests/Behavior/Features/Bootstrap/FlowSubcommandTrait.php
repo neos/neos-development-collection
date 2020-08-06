@@ -60,7 +60,7 @@ trait FlowSubcommandTrait
     /**
      * @Given /^I execute the flow command "([^"]*)"(?: with the following arguments)?( only once per feature)?:?$/
      */
-    public function iExecuteTheFlowCommandWithTheFollowingArguments($flowCommandName, $onlyOncePerFeature, TableNode $arguments = null)
+    public function iExecuteTheFlowCommandWithTheFollowingArguments($flowCommandName, $onlyOncePerFeature = false, TableNode $arguments = null)
     {
         if ($onlyOncePerFeature) {
             if (isset(self::$onlyOnceRanStepsWhichShouldBeSkipped[$flowCommandName])) {
