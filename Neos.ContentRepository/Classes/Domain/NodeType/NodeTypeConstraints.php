@@ -85,7 +85,7 @@ final class NodeTypeConstraints
             }
         }
 
-        // if $nodeTypeName is explicitely allowed, it is ALLOWED.
+        // if $nodeTypeName is explicitely ALLOWED.
         foreach ($this->explicitlyAllowedNodeTypeNames as $allowed) {
             if ((string)$nodeTypeName === (string)$allowed) {
                 return true;

@@ -11,7 +11,7 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
           'Neos.ContentRepository:EditServiceNodes':
             matcher: 'isDescendantNodeOf("/sites/content-repository/service")'
 
-          # EditEverything is needed, to switch to a "ALLOWLIST MODE" - i.e. where everything must be allowed explicitely.
+          # EditEverything is needed, to switch to an "EXPLICIT ALLOW MODE"
           'Neos.ContentRepository:EditEverything':
             matcher: 'true'
 
