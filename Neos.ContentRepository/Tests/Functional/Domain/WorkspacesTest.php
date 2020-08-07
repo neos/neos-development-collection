@@ -260,7 +260,6 @@ class WorkspacesTest extends FunctionalTestCase
         $parentNode->createNode('child-node-a');
         $childNodeB = $parentNode->createNode('child-node-b');
         $childNodeB->createNode('child-node-c');
-        $this->persistenceManager->persistAll();
         $parentNode->getWorkspace()->publish($this->liveWorkspace);
 
         $this->saveNodesAndTearDownRootNodeAndRepository();
