@@ -1150,7 +1150,8 @@ class NodeData extends AbstractNodeData
     {
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return "NodeData[" . $this->identifier . ', ' . $this->path . ', ' . $this->workspace->getName();
     }
 }
