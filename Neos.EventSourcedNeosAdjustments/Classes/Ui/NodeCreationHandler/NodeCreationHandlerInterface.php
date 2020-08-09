@@ -12,19 +12,20 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 
 /**
- * NodeTypePostprocessorInterface
+ * Contract for Node Creation handler that allow to hook into the process just before a node is being added
+ * via the Neos UI
  */
 interface NodeCreationHandlerInterface
 {
     /**
      * Do something with the newly created node
      *
-     * @param TraversableNodeInterface $node The newly created node
+     * @param CreateNodeAggregateWithNode $command The original node creation command
      * @param array $data incoming data from the creationDialog
-     * @return void
+     * @return CreateNodeAggregateWithNode the original command or a new creation command with altered properties
      */
-    public function handle(TraversableNodeInterface $node, array $data);
+    public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode;
 }
