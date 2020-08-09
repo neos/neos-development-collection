@@ -17,6 +17,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\TypeHandling;
 
+/**
+ * Generic creation dialog node creation handler that iterates
+ * properties that are configured to appear in the Creation Dialog (via "ui.showInCreationDialog" setting)
+ * and sets the initial property values accordingly
+ */
 class CreationDialogPropertiesCreationHandler implements NodeCreationHandlerInterface
 {
 

@@ -22,6 +22,11 @@ use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Neos\Service\TransliterationService;
 
+/**
+ * Node creation handler that
+ * * sets the "title" property according to the incoming title from a creation dialog
+ * * sets the "uriPathSegment" property according to the specified title or node name
+ */
 class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 {
 
@@ -47,13 +52,19 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
             $propertyValues = $propertyValues->withValue('title', $data['title']);
         }
 
+        // if specified, the uriPathSegment equals the title
         $uriPathSegment = $data['title'];
+
+        // otherwise, we fall back to the node name
         if ($uriPathSegment === null && $command->getNodeName() !== null) {
             $uriPathSegment = (string)$command->getNodeName();
         }
+
+        // if not empty, we transliterate the uriPathSegment according to the language of the new node
         if ($uriPathSegment !== null && $uriPathSegment !== '') {
             $uriPathSegment = $this->transliterateText($command->getOriginDimensionSpacePoint(), $uriPathSegment);
         } else {
+            // alternatively we set it to a random string
             $uriPathSegment = uniqid('', true);
         }
         $uriPathSegment = Transliterator::urlize($uriPathSegment);
