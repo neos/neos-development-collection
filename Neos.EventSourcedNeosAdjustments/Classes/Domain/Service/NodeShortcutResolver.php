@@ -90,7 +90,7 @@ class NodeShortcutResolver
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1502793585);
         }
 
-        $newNodeAddress = $nodeAddress->setNodeAggregateIdentifier($resolvedNode->getNodeAggregateIdentifier());
+        $newNodeAddress = $nodeAddress->withNodeAggregateIdentifier($resolvedNode->getNodeAggregateIdentifier());
         $uriBuilder->reset();
         $uriBuilder->setFormat($format);
 

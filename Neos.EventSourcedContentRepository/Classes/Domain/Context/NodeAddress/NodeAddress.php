@@ -94,7 +94,7 @@ final class NodeAddress
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeAddress
      */
-    public function setNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAddress
+    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAddress
     {
         return new NodeAddress($this->contentStreamIdentifier, $this->dimensionSpacePoint, $nodeAggregateIdentifier, $this->workspaceName);
     }
