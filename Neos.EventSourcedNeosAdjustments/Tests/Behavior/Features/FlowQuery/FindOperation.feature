@@ -16,12 +16,12 @@ Feature: The FlowQuery find operation
     'Neos.ContentRepository.Testing:Document': []
     """
     And the event RootWorkspaceWasCreated was published with payload:
-      | Key                            | Value                                  |
-      | workspaceName                  | "live"                                 |
-      | workspaceTitle                 | "Live"                                 |
-      | workspaceDescription           | "The live workspace"                   |
-      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier     | "cs-identifier"                        |
+      | Key                        | Value                                  |
+      | workspaceName              | "live"                                 |
+      | workspaceTitle             | "Live"                                 |
+      | workspaceDescription       | "The live workspace"                   |
+      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                  |
       | contentStreamIdentifier     | "cs-identifier"                        |
@@ -50,26 +50,10 @@ Feature: The FlowQuery find operation
     Then I expect a node identified by aggregate identifier "nodewyn-tetherton" to exist in the FlowQuery context
 
   Scenario: Find named descendant, e.g. via q(node).find('parent/child')
-    When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | nodeName                      | "parent"                                  |
-      | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-    And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | nodeName                      | "child"                                   |
-      | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
-    And the graph projection is fully up to date
+    When the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                            | nodeName |
+      | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document | parent   |
+      | nody-mc-nodeface        | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document | child    |
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     And I have a FlowQuery with node "lady-eleonode-rootford"
@@ -77,26 +61,10 @@ Feature: The FlowQuery find operation
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the FlowQuery context
 
   Scenario: Find named node by absolute path, e.g. via q(node).find('/parent/child')
-    When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | nodeName                      | "parent"                                  |
-      | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-    And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | nodeName                      | "child"                                   |
-      | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
-    And the graph projection is fully up to date
+    When the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                            | nodeName |
+      | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document | parent   |
+      | nody-mc-nodeface        | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document | child    |
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     And I have a FlowQuery with node "sir-david-nodenborough"
@@ -104,85 +72,35 @@ Feature: The FlowQuery find operation
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the FlowQuery context
 
   Scenario: Find node by identifier, e.g. via q(node).find('#nody-mc-nodeface')
-    When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | nodeName                      | "parent"                                  |
-      | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-    And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | nodeName                      | "child"                                   |
-      | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
-    And the graph projection is fully up to date
+    When the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                            | nodeName |
+      | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document | parent   |
+      | nody-mc-nodeface        | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document | child    |
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     And I have a FlowQuery with node "lady-eleonode-rootford"
     And I call FlowQuery operation "find" with argument "#nody-mc-nodeface"
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the FlowQuery context
 
-    Scenario: Find nodes by node type, e.g. via q(node).find('[instanceof Neos.ContentRepository.Testing:Document]')
-      When the command CreateNodeAggregateWithNode is executed with payload:
-        | Key                           | Value                                     |
-        | contentStreamIdentifier       | "cs-identifier"                           |
-        | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
-        | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-        | originDimensionSpacePoint     | {}                                        |
-        | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-        | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-      And the command CreateNodeAggregateWithNode is executed with payload:
-        | Key                           | Value                                     |
-        | contentStreamIdentifier       | "cs-identifier"                           |
-        | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"              |
-        | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-        | originDimensionSpacePoint     | {}                                        |
-        | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-        | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-      And the graph projection is fully up to date
-      And the command CreateNodeAggregateWithNode is executed with payload:
-        | Key                           | Value                                     |
-        | contentStreamIdentifier       | "cs-identifier"                           |
-        | nodeAggregateIdentifier       | "albert-nodesworth"                       |
-        | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-        | originDimensionSpacePoint     | {}                                        |
-        | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-        | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
-      And the command CreateNodeAggregateWithNode is executed with payload:
-        | Key                           | Value                                     |
-        | contentStreamIdentifier       | "cs-identifier"                           |
-        | nodeAggregateIdentifier       | "berta-nodesworth"                       |
-        | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-        | originDimensionSpacePoint     | {}                                        |
-        | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-        | parentNodeAggregateIdentifier | "sir-nodeward-nodington-iii"                  |
-      And the command CreateNodeAggregateWithNode is executed with payload:
-        | Key                           | Value                                     |
-        | contentStreamIdentifier       | "cs-identifier"                           |
-        | nodeAggregateIdentifier       | "carl-nodesworth"                       |
-        | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes" |
-        | originDimensionSpacePoint     | {}                                        |
-        | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-        | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
-      And the graph projection is fully up to date
+  Scenario: Find nodes by node type, e.g. via q(node).find('[instanceof Neos.ContentRepository.Testing:Document]')
 
-      When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+      | nodeAggregateIdentifier    | parentNodeAggregateIdentifier | nodeTypeName                                              |
+      | sir-david-nodenborough     | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document                   |
+      | sir-nodeward-nodington-iii | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document                   |
+      | albert-nodesworth          | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document                   |
+      | berta-nodesworth           | sir-nodeward-nodington-iii    | Neos.ContentRepository.Testing:Document                   |
+      | carl-nodesworth            | sir-david-nodenborough        | Neos.ContentRepository.Testing:NodeWithTetheredChildNodes |
 
-      And I have a FlowQuery with node "sir-david-nodenborough"
-      And I call FlowQuery operation "find" with argument "[instanceof Neos.ContentRepository.Testing:Document]"
-      Then I expect the FlowQuery context to consist of exactly 1 item
-      And I expect a node identified by aggregate identifier "albert-nodesworth" to exist in the FlowQuery context
+    When I am in content stream "cs-identifier" and Dimension Space Point {}
 
-      And I have a FlowQuery with node "sir-david-nodenborough"
-      And I call FlowQuery operation "find" with argument "[instanceof Neos.ContentRepository.Testing:Document],[instanceof Neos.ContentRepository.Testing:NodeWithTetheredChildNodes]"
-      Then I expect the FlowQuery context to consist of exactly 2 items
-      And I expect a node identified by aggregate identifier "albert-nodesworth" to exist in the FlowQuery context
-      And I expect a node identified by aggregate identifier "carl-nodesworth" to exist in the FlowQuery context
+    And I have a FlowQuery with node "sir-david-nodenborough"
+    And I call FlowQuery operation "find" with argument "[instanceof Neos.ContentRepository.Testing:Document]"
+    Then I expect the FlowQuery context to consist of exactly 1 item
+    And I expect a node identified by aggregate identifier "albert-nodesworth" to exist in the FlowQuery context
+
+    And I have a FlowQuery with node "sir-david-nodenborough"
+    And I call FlowQuery operation "find" with argument "[instanceof Neos.ContentRepository.Testing:Document],[instanceof Neos.ContentRepository.Testing:NodeWithTetheredChildNodes]"
+    Then I expect the FlowQuery context to consist of exactly 2 items
+    And I expect a node identified by aggregate identifier "albert-nodesworth" to exist in the FlowQuery context
+    And I expect a node identified by aggregate identifier "carl-nodesworth" to exist in the FlowQuery context

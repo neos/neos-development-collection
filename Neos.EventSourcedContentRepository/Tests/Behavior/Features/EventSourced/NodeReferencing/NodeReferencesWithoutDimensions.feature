@@ -16,7 +16,7 @@ Feature: Node References without Dimensions
           type: references
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                      | Value                                  |
+      | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
@@ -30,38 +30,12 @@ Feature: Node References without Dimensions
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
       | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                               |
-      | contentStreamIdentifier       | "cs-identifier"                                     |
-      | nodeAggregateIdentifier       | "source-nodandaise"                                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"              |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
-    And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                               |
-      | contentStreamIdentifier       | "cs-identifier"                                     |
-      | nodeAggregateIdentifier       | "anthony-destinode"                                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"              |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
-    And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                               |
-      | contentStreamIdentifier       | "cs-identifier"                                     |
-      | nodeAggregateIdentifier       | "berta-destinode"                                   |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"              |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
-    And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                               |
-      | contentStreamIdentifier       | "cs-identifier"                                     |
-      | nodeAggregateIdentifier       | "carl-destinode"                                    |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"              |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
-    And the graph projection is fully up to date
+    And the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                      |
+      | source-nodandaise       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
+      | anthony-destinode       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
+      | berta-destinode         | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
+      | carl-destinode          | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
 
   Scenario: Ensure that a reference between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
