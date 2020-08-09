@@ -12,64 +12,66 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
-use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeUriPathSegmentGenerator;
+use Behat\Transliterator\Transliterator;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
+use Neos\Flow\I18n\Locale;
+use Neos\Neos\Service\TransliterationService;
 
 class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 {
-    /**
-     * @Flow\Inject
-     * @var NodeUriPathSegmentGenerator
-     */
-    protected $nodeUriPathSegmentGenerator;
 
     /**
      * @Flow\Inject
-     * @var NodeAggregateCommandHandler
+     * @var NodeTypeManager
      */
-    protected $nodeAggregateCommandHandler;
+    protected $nodeTypeManager;
 
     /**
-     * Set the node title for the newly created Document node
-     *
-     * @param TraversableNodeInterface $node The newly created node
-     * @param array $data incoming data from the creationDialog
-     * @return void
+     * @Flow\Inject
+     * @var TransliterationService
      */
-    public function handle(TraversableNodeInterface $node, array $data)
+    protected $transliterationService;
+
+    public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode
     {
-        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            if (isset($data['title'])) {
-                $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
-                    $node->getContentStreamIdentifier(),
-                    $node->getNodeAggregateIdentifier(),
-                    $node->getOriginDimensionSpacePoint(),
-                    SerializedPropertyValues::fromArray(
-                        [
-                            'title' => new SerializedPropertyValue($data['title'], 'string')
-                        ]
-                    )
-                ));
-            }
-
-            $uriPathSegment = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, $data['title']);
-            $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
-                $node->getContentStreamIdentifier(),
-                $node->getNodeAggregateIdentifier(),
-                $node->getOriginDimensionSpacePoint(),
-                SerializedPropertyValues::fromArray(
-                    [
-                        'uriPathSegment' => new SerializedPropertyValue($uriPathSegment, 'string')
-                    ]
-                )
-            ))->blockUntilProjectionsAreUpToDate();
-            // TODO: re-enable line below
-            // $node->setProperty('uriPathSegment', $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, (isset($data['title']) ? $data['title'] : null)));
+        if (!$this->nodeTypeManager->getNodeType($command->getNodeTypeName()->getValue())->isOfType('Neos.Neos:Document')) {
+            return $command;
         }
+        $propertyValues = $command->getInitialPropertyValues();
+        if (isset($data['title'])) {
+            $propertyValues = $propertyValues->withValue('title', $data['title']);
+        }
+
+        $uriPathSegment = $data['title'];
+        if ($uriPathSegment === null && $command->getNodeName() !== null) {
+            $uriPathSegment = (string)$command->getNodeName();
+        }
+        if ($uriPathSegment !== null && $uriPathSegment !== '') {
+            $uriPathSegment = $this->transliterateText($command->getOriginDimensionSpacePoint(), $uriPathSegment);
+        } else {
+            $uriPathSegment = uniqid('', true);
+        }
+        $uriPathSegment = Transliterator::urlize($uriPathSegment);
+        $propertyValues = $propertyValues->withValue('uriPathSegment', $uriPathSegment);
+
+        return $command->withInitialPropertyValues($propertyValues);
+    }
+
+    private function transliterateText(DimensionSpacePoint $dimensionSpacePoint, string $text): string
+    {
+        $languageDimensionValue = $dimensionSpacePoint->getCoordinate(new ContentDimensionIdentifier('language'));
+        if ($languageDimensionValue !== null) {
+            try {
+                $language = (new Locale($languageDimensionValue))->getLanguage();
+            } catch (InvalidLocaleIdentifierException $e) {
+                // we don't need to do anything here; we'll just transliterate the text.
+            }
+        }
+        return $this->transliterationService->transliterate($text, $language ?? null);
     }
 }

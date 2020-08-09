@@ -19,3 +19,11 @@
     nodeCreationHandlers:
       documentTitle:
         nodeCreationHandler: 'Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\DocumentTitleNodeCreationHandler'
+      creationDialogProperties:
+        nodeCreationHandler: 'Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\CreationDialogPropertiesCreationHandler'
+
+'Neos.Neos:Content':
+  options:
+    nodeCreationHandlers:
+      creationDialogProperties:
+        nodeCreationHandler: 'Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\CreationDialogPropertiesCreationHandler'

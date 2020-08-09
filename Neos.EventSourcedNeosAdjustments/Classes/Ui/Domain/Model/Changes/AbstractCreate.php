@@ -19,9 +19,11 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
 use Neos\Flow\Annotations as Flow;
@@ -140,85 +142,60 @@ abstract class AbstractCreate extends AbstractStructuralChange
      * @param TraversableNodeInterface $parentNode
      * @param NodeAggregateIdentifier|null $succeedingSiblingNodeAggregateIdentifier
      * @return TraversableNodeInterface
-     * @throws InvalidNodeCreationHandlerException
-     * @throws NodeNameIsAlreadyOccupied
-     * @throws \Neos\ContentRepository\Exception\NodeConstraintException
-     * @throws \Neos\ContentRepository\Exception\NodeException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous
-     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
+     * @throws InvalidNodeCreationHandlerException|NodeNameIsAlreadyOccupied|NodeException
      */
     protected function createNode(TraversableNodeInterface $parentNode, NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null): TraversableNodeInterface
     {
         // TODO: the $name=... line should be as expressed below
         // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());
-        $nodeName = NodeName::fromString($this->getName() ?: uniqid('node-'));
+        $nodeName = NodeName::fromString($this->getName() ?: uniqid('node-', false));
 
         $nodeAggregateIdentifier = NodeAggregateIdentifier::create(); // generate a new NodeAggregateIdentifier
+        $nodeTypeName = NodeTypeName::fromString($this->getNodeType()->getName());
 
         $command = new CreateNodeAggregateWithNode(
             $parentNode->getContentStreamIdentifier(),
             $nodeAggregateIdentifier,
-            NodeTypeName::fromString($this->getNodeType()->getName()),
-            $parentNode->getDimensionSpacePoint(),
+            $nodeTypeName,
+            OriginDimensionSpacePoint::fromDimensionSpacePoint($parentNode->getDimensionSpacePoint()),
             UserIdentifier::forSystemUser(), // TODO
             $parentNode->getNodeAggregateIdentifier(),
             $succeedingSiblingNodeAggregateIdentifier,
             $nodeName
         );
+        $command = $this->applyNodeCreationHandlers($command, $nodeTypeName);
 
         $this->contentCacheFlusher->registerNodeChange($parentNode);
         $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)->blockUntilProjectionsAreUpToDate();
 
         $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
-        $this->applyNodeCreationHandlers($newlyCreatedNode);
 
         $this->finish($newlyCreatedNode);
         // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed
         $this->addNodeCreatedFeedback($newlyCreatedNode);
-
         return $newlyCreatedNode;
     }
 
     /**
-     * Apply nodeCreationHandlers
-     *
-     * @param TraversableNodeInterface $node
+     * @param CreateNodeAggregateWithNode $command
+     * @param NodeTypeName $nodeTypeName
+     * @return CreateNodeAggregateWithNode
      * @throws InvalidNodeCreationHandlerException
-     * @return void
      */
-    protected function applyNodeCreationHandlers(TraversableNodeInterface $node)
+    protected function applyNodeCreationHandlers(CreateNodeAggregateWithNode $command, NodeTypeName $nodeTypeName): CreateNodeAggregateWithNode
     {
         $data = $this->getData() ?: [];
-        $nodeType = $node->getNodeType();
-        if (isset($nodeType->getOptions()['nodeCreationHandlers'])) {
-            $nodeCreationHandlers = $nodeType->getOptions()['nodeCreationHandlers'];
-            if (is_array($nodeCreationHandlers)) {
-                foreach ($nodeCreationHandlers as $nodeCreationHandlerConfiguration) {
-                    $nodeCreationHandler = new $nodeCreationHandlerConfiguration['nodeCreationHandler']();
-                    if (!$nodeCreationHandler instanceof NodeCreationHandlerInterface) {
-                        throw new InvalidNodeCreationHandlerException(sprintf('Expected NodeCreationHandlerInterface but got "%s"', get_class($nodeCreationHandler)), 1364759956);
-                    }
-                    $nodeCreationHandler->handle($node, $data);
-                }
-            }
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
+        if (!isset($nodeType->getOptions()['nodeCreationHandlers']) || !is_array($nodeType->getOptions()['nodeCreationHandlers'])) {
+            return $command;
         }
-
-        $this->emitNodeCreationHandlersApplied($node);
-    }
-
-    /**
-     * Signals, that all changes by node creation handlers are applied
-     *
-     * @Flow\Signal
-     *
-     * @param TraversableNodeInterface $node The node, the node creation handlers are applied to
-     * @return void
-     */
-    public function emitNodeCreationHandlersApplied(TraversableNodeInterface $node)
-    {
+        foreach ($nodeType->getOptions()['nodeCreationHandlers'] as $nodeCreationHandlerConfiguration) {
+            $nodeCreationHandler = new $nodeCreationHandlerConfiguration['nodeCreationHandler']();
+            if (!$nodeCreationHandler instanceof NodeCreationHandlerInterface) {
+                throw new InvalidNodeCreationHandlerException(sprintf('Expected NodeCreationHandlerInterface but got "%s"', get_class($nodeCreationHandler)), 1364759956);
+            }
+            $command = $nodeCreationHandler->handle($command, $data);
+        }
+        return $command;
     }
 }

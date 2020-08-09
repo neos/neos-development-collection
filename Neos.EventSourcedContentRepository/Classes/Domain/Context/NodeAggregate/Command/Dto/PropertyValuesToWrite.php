@@ -44,6 +44,13 @@ final class PropertyValuesToWrite
         return new self($values);
     }
 
+    public function withValue(string $valueName, $value): self
+    {
+        $values = $this->values;
+        $values[$valueName] = $value;
+        return new static($values);
+    }
+
     /**
      * @return array|mixed[]
      */

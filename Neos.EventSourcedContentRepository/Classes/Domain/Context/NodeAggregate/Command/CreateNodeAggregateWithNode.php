@@ -71,4 +71,20 @@ final class CreateNodeAggregateWithNode
     {
         return $this->initialPropertyValues;
     }
+
+    public function withInitialPropertyValues(PropertyValuesToWrite $newInitialPropertyValues): self
+    {
+        return new static(
+            $this->contentStreamIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->nodeTypeName,
+            $this->originDimensionSpacePoint,
+            $this->initiatingUserIdentifier,
+            $this->parentNodeAggregateIdentifier,
+            $this->succeedingSiblingNodeAggregateIdentifier,
+            $this->nodeName,
+            $newInitialPropertyValues,
+            $this->tetheredDescendantNodeAggregateIdentifiers
+        );
+    }
 }
