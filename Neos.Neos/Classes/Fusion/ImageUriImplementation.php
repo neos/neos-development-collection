@@ -2,7 +2,7 @@
 namespace Neos\Neos\Fusion;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,168 +11,24 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\ThumbnailConfiguration;
-use Neos\Media\Domain\Service\AssetService;
-use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Media\Domain\Service\ThumbnailService;
+use Exception;
+use Neos\Media\Fusion\ImageImplementation;
 
 /**
  * Render an AssetInterface: object. Accepts the same parameters as the uri.image ViewHelper of the Neos.Media package:
  * asset, width, maximumWidth, height, maximumHeight, allowCropping, allowUpScaling.
  *
+ * @deprecated This class will be replaced by Neos\Media\ImageImplementation
  */
-class ImageUriImplementation extends AbstractFusionObject
+class ImageUriImplementation extends ImageImplementation
 {
     /**
-     * Resource publisher
-     *
-     * @Flow\Inject
-     * @var AssetService
-     */
-    protected $assetService;
-
-    /**
-     * @Flow\Inject
-     * @var ThumbnailService
-     */
-    protected $thumbnailService;
-
-    /**
-     * Asset
-     *
-     * @return AssetInterface
-     */
-    public function getAsset()
-    {
-        return $this->fusionValue('asset');
-    }
-
-    /**
-     * Width
-     *
-     * @return integer
-     */
-    public function getWidth()
-    {
-        return $this->fusionValue('width');
-    }
-
-    /**
-     * MaximumWidth
-     *
-     * @return integer
-     */
-    public function getMaximumWidth()
-    {
-        return $this->fusionValue('maximumWidth');
-    }
-
-    /**
-     * Height
-     *
-     * @return integer
-     */
-    public function getHeight()
-    {
-        return $this->fusionValue('height');
-    }
-
-    /**
-     * MaximumHeight
-     *
-     * @return integer
-     */
-    public function getMaximumHeight()
-    {
-        return $this->fusionValue('maximumHeight');
-    }
-
-    /**
-     * AllowCropping
-     *
-     * @return boolean
-     */
-    public function getAllowCropping()
-    {
-        return $this->fusionValue('allowCropping');
-    }
-
-    /**
-     * AllowUpScaling
-     *
-     * @return boolean
-     */
-    public function getAllowUpScaling()
-    {
-        return $this->fusionValue('allowUpScaling');
-    }
-
-    /**
-     * Quality
-     *
-     * @return integer
-     */
-    public function getQuality()
-    {
-        return $this->fusionValue('quality');
-    }
-
-    /**
-     * Async
-     *
-     * @return boolean
-     */
-    public function getAsync()
-    {
-        return $this->fusionValue('async');
-    }
-
-    /**
-     * Async
-     *
-     * @return string|null
-     */
-    public function getFormat(): ?string
-    {
-        return $this->fusionValue('format');
-    }
-
-    /**
-     * Preset
-     *
      * @return string
-     */
-    public function getPreset()
-    {
-        return $this->fusionValue('preset');
-    }
-
-    /**
-     * Returns a processed image path
-     *
-     * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function evaluate()
     {
-        $asset = $this->getAsset();
-        $preset = $this->getPreset();
-
-        if (!$asset instanceof AssetInterface) {
-            throw new \Exception('No asset given for rendering.', 1415184217);
-        }
-        if (!empty($preset)) {
-            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
-        } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling(), $this->getAsync(), $this->getQuality(), $this->getFormat());
-        }
-        $request = $this->getRuntime()->getControllerContext()->getRequest();
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $request);
-        if ($thumbnailData === null) {
-            return '';
-        }
-        return $thumbnailData['src'];
+        $parentEvaulation = parent::evaluate();
+        return array_key_exists('src', $parentEvaulation) ? $parentEvaulation['src'] : '';
     }
 }

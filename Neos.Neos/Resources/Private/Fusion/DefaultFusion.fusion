@@ -21,7 +21,7 @@ include: Prototypes/Editable.fusion
 include: Prototypes/ContentElementWrapping.fusion
 include: Prototypes/ContentElementEditable.fusion
 include: Prototypes/NodeUri.fusion
-include: Prototypes/ImageUri.fusion
+include: Prototypes/Image.fusion
 include: Prototypes/NodeLink.fusion
 include: Prototypes/FallbackNode.fusion
 

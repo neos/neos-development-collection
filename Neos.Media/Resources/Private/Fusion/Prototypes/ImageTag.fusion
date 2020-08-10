@@ -1,0 +1,30 @@
+prototype(Neos.Media:ImageTag) < prototype(Neos.Fusion:Component) {
+  asset = 'pass-the-media-asset'
+  maximumWidth = 2560
+  width = NULL
+  maximumHeight = 2560
+  height = NULL
+  allowCropping = false
+  allowUpScaling = false
+  async = false
+  preset = NULL
+
+  renderer = Neos.Fusion:Component {
+    imageUri = Neos.Media:ImageUri {
+      maximumWidth = ${props.maximumWidth}
+      width = ${props.width}
+      maximumHeight = ${props.maximumHeight}
+      height = ${props.height}
+      allowCropping = ${props.allowCropping}
+      allowUpScaling = ${props.allowUpScaling}
+      async = ${props.async}
+      quality = ${props.quality}
+      format = ${props.format}
+      preset = ${props.preset}
+    }
+
+    renderer = afx`
+        <img @if.hasImageUri={props.imageUri} src={props.imageUri} />
+    `
+  }
+}

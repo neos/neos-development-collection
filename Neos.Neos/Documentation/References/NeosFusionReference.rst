@@ -1244,47 +1244,18 @@ Example::
 Neos.Neos:ImageUri
 ------------------
 
-Get a URI to a (thumbnail) image for an asset.
+See :ref:`Neos__Media__ImageUri`.
 
-:asset: (Asset) An asset object (``Image``, ``ImageInterface`` or other ``AssetInterface``)
-:width: (integer) Desired width of the image
-:maximumWidth: (integer) Desired maximum height of the image
-:height: (integer) Desired height of the image
-:maximumHeight: (integer) Desired maximum width of the image
-:allowCropping: (boolean) Whether the image should be cropped if the given sizes would hurt the aspect ratio, defaults to ``FALSE``
-:allowUpScaling: (boolean) Whether the resulting image size might exceed the size of the original image, defaults to ``FALSE``
-:async: (boolean) Return asynchronous image URI in case the requested image does not exist already, defaults to ``FALSE``
-:quality: (integer) Image quality, from 0 to 100
-:format: (string) Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
-:preset: (string) Preset used to determine image configuration, if set all other resize attributes will be ignored
-
-Example::
-
-	logoUri = Neos.Neos:ImageUri {
-		asset = ${q(node).property('image')}
-		width = 100
-		height = 100
-		allowCropping = TRUE
-		allowUpScaling = TRUE
-	}
+.. note:: The Neos.Neos:ImageUri object has been renamed to Neos.Media:ImageUri the old name is DEPRECATED;
 
 .. _Neos_Neos__ImageTag:
 
 Neos.Neos:ImageTag
 ------------------
 
-Render an image tag for an asset.
+See :ref:`Neos__Media__ImageTag`.
 
-:\*: All :ref:`Neos_Neos__ImageUri` properties
-:attributes: (:ref:`Neos_Fusion__Attributes`) Image tag attributes
-
-Example::
-
-	logoImage = Neos.Neos:ImageTag {
-		asset = ${q(node).property('image')}
-		maximumWidth = 400
-		attributes.alt = 'A company logo'
-	}
+.. note:: The Neos.Neos:ImageTag object has been renamed to Neos.Media:ImageTag the old name is DEPRECATED;
 
 .. _Neos_Neos__ConvertUris:
 
@@ -1353,4 +1324,75 @@ Example::
 		@process.contentElementEditableWrapping = Neos.Neos:ContentElementEditable {
 			property = 'title'
 		}
+	}
+
+Neos.Media Fusion Objects
+=========================
+
+This package contains the Fusion objects from Neos.Media.
+
+.. _Neos_Media__Image:
+
+Neos.Media:Image
+------------------
+
+Get the actual width, height and src to a (thumbnail) image for an asset.
+
+:asset: (Asset) An asset object (``Image``, ``ImageInterface`` or other ``AssetInterface``)
+:width: (integer) Desired width of the image
+:maximumWidth: (integer) Desired maximum height of the image
+:height: (integer) Desired height of the image
+:maximumHeight: (integer) Desired maximum width of the image
+:allowCropping: (boolean) Whether the image should be cropped if the given sizes would hurt the aspect ratio, defaults to ``FALSE``
+:allowUpScaling: (boolean) Whether the resulting image size might exceed the size of the original image, defaults to ``FALSE``
+:async: (boolean) Return asynchronous image URI in case the requested image does not exist already, defaults to ``FALSE``
+:quality: (integer) Image quality, from 0 to 100
+:format: (string) Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
+:preset: (string) Preset used to determine image configuration, if set all other resize attributes will be ignored
+
+Example::
+
+	logoImage = Neos.Media:Image {
+		asset = ${q(node).property('image')}
+		width = 100
+		height = 100
+		allowCropping = TRUE
+		allowUpScaling = TRUE
+	}
+
+.. _Neos_Media__ImageUri:
+
+Neos.Media:ImageUri
+------------------
+
+Get a URI to a (thumbnail) image for an asset
+
+:\*: All :ref:`Neos_Media__Image` properties
+
+Example::
+
+	logoImageUri = Neos.Neos:ImageUri {
+		asset = ${q(node).property('image')}
+		width = 100
+		height = 100
+		allowCropping = TRUE
+		allowUpScaling = TRUE
+	}
+
+.. _Neos_Neos__ImageTag:
+
+Neos.Media:ImageTag
+------------------
+
+Render an image tag for an asset.
+
+:\*: All :ref:`Neos_Media__ImageUri` properties
+:attributes: (:ref:`Neos_Fusion__Attributes`) Image tag attributes
+
+Example::
+
+	logoImageTag = Neos.Media:ImageTag {
+		asset = ${q(node).property('image')}
+		maximumWidth = 400
+		attributes.alt = 'A company logo'
 	}

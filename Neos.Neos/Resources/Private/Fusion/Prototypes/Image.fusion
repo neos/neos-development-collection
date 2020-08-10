@@ -1,0 +1,4 @@
+# DEPRECATED ImageUri object works exactly the same way as the uri.image ViewHelper in the Neos.Media package
+prototype(Neos.Neos:ImageUri) < prototype(Neos.Media:ImageUri)
+# DEPRECATED ImageTag object works exactly the same way as image ViewHelper in the Neos.Media package
+prototype(Neos.Neos:ImageTag) < prototype(Neos.Media:ImageTag)

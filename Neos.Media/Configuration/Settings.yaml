@@ -81,6 +81,11 @@ Neos:
           - ttf
           - otf
 
+  Neos:
+    fusion:
+      autoInclude:
+        Neos.Media: true
+
   DocTools:
     collections:
       Media:
