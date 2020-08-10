@@ -58,7 +58,7 @@ class Workspace
      * @ORM\Column(type="text", length=500, nullable=true)
      * @Flow\Validate(type="StringLength", options={ "minimum"=0, "maximum"=500 })
      */
-    protected $description = '';
+    protected $description;
 
     /**
      * This property contains a UUID of the User object which is the owner of this workspace.
@@ -208,9 +208,9 @@ class Workspace
      * @return string
      * @api
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
-        return (string)$this->description;
+        return $this->description;
     }
 
     /**
@@ -228,7 +228,7 @@ class Workspace
     /**
      * Returns the workspace owner.
      *
-     * @return UserInterface
+     * @return UserInterface|null
      * @api
      */
     public function getOwner(): ?UserInterface
@@ -245,7 +245,7 @@ class Workspace
      * @param UserInterface|string|null $user The new user, or user's UUID
      * @api
      */
-    public function setOwner(?UserInterface $user): void
+    public function setOwner($user): void
     {
         // Note: We need to do a bit of uuid juggling here, because we can't bind the workspaces Owner to a specific
         // implementation, and creating entity relations via interfaces is not supported by Flow. Since the property
@@ -329,7 +329,7 @@ class Workspace
     /**
      * Returns the base workspace, if any
      *
-     * @return Workspace
+     * @return Workspace|null
      * @api
      */
     public function getBaseWorkspace(): ?Workspace
@@ -695,7 +695,7 @@ class Workspace
      *
      * @param NodeInterface $node The reference node to find a corresponding variant for
      * @param Workspace $targetWorkspace The target workspace to look in
-     * @return NodeData Either a regular node, a shadow node or null
+     * @return NodeData|null Either a regular node, a shadow node or null
      */
     protected function findCorrespondingNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace): ?NodeData
     {
