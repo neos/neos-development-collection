@@ -11,6 +11,7 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
@@ -18,8 +19,7 @@ use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Flow\Security\Context;
@@ -40,9 +40,9 @@ class FusionView extends AbstractView
      *
      * @var array
      */
-    protected $supportedOptions = array(
-        'enableContentCache' => array(null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean')
-    );
+    protected $supportedOptions = [
+        'enableContentCache' => [null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
+    ];
 
     /**
      * @Flow\Inject
@@ -78,22 +78,22 @@ class FusionView extends AbstractView
     public function render()
     {
         $currentNode = $this->getCurrentNode();
-        $currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
+        $currentSiteNode = $this->getCurrentSiteNode();
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         $dimensions = $currentNode->getContext()->getDimensions();
-        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
+        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
             $currentLocale = new Locale($dimensions['language'][0]);
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            $this->i18nService->getConfiguration()->setFallbackRule(array('strict' => false, 'order' => array_reverse($dimensions['language'])));
+            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
         }
 
-        $fusionRuntime->pushContextArray(array(
+        $fusionRuntime->pushContextArray([
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSiteNode,
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
-        ));
+        ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
             $output = $this->mergeHttpResponseFromOutput($output, $fusionRuntime);
@@ -138,14 +138,13 @@ class FusionView extends AbstractView
     /**
      * Is it possible to render $node with $his->fusionPath?
      *
-     * @return boolean TRUE if $node can be rendered at fusionPath
+     * @return boolean true if $node can be rendered at fusionPath
      *
      * @throws Exception
      */
     public function canRenderWithNodeAndPath()
     {
-        $currentNode = $this->getCurrentNode();
-        $currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
+        $currentSiteNode = $this->getCurrentSiteNode();
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         return $fusionRuntime->canRender($this->fusionPath);
@@ -171,35 +170,55 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @param NodeInterface $node
-     * @return NodeInterface
+     * @param TraversableNodeInterface $node
+     * @return TraversableNodeInterface
      */
-    protected function getClosestDocumentNode(NodeInterface $node)
+    protected function getClosestDocumentNode(TraversableNodeInterface $node)
     {
         while ($node !== null && !$node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $node = $node->getParent();
+            $node = $node->findParentNode();
         }
         return $node;
     }
 
     /**
-     * @return NodeInterface
+     * @return TraversableNodeInterface
      * @throws Exception
      */
-    protected function getCurrentNode()
+    protected function getCurrentSiteNode(): TraversableNodeInterface
     {
-        $currentNode = isset($this->variables['value']) ? $this->variables['value'] : null;
-        if (!$currentNode instanceof Node) {
-            throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
+        $currentNode = isset($this->variables['site']) ? $this->variables['site'] : null;
+        if ($currentNode === null && $this->getCurrentNode() instanceof LegacyNodeInterface) {
+            // fallback to Legacy node API
+            /* @var $node LegacyNodeInterface */
+            $node = $this->getCurrentNode();
+            return $node->getContext()->getCurrentSiteNode();
+        }
+        if (!$currentNode instanceof TraversableNodeInterface) {
+            throw new Exception('FusionView needs a variable \'site\' set with a Node object.', 1538996432);
         }
         return $currentNode;
     }
 
     /**
-     * @param NodeInterface $currentSiteNode
+     * @return TraversableNodeInterface
+     * @throws Exception
+     */
+    protected function getCurrentNode(): TraversableNodeInterface
+    {
+        $currentNode = isset($this->variables['value']) ? $this->variables['value'] : null;
+        if (!$currentNode instanceof TraversableNodeInterface) {
+            throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
+        }
+        return $currentNode;
+    }
+
+
+    /**
+     * @param TraversableNodeInterface $currentSiteNode
      * @return \Neos\Fusion\Core\Runtime
      */
-    protected function getFusionRuntime(NodeInterface $currentSiteNode)
+    protected function getFusionRuntime(TraversableNodeInterface $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);

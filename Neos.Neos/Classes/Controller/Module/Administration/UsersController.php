@@ -73,7 +73,7 @@ class UsersController extends AbstractModuleController
             $propertyMappingConfigurationForPrimaryAccount = $propertyMappingConfigurationForUser->forProperty('user.primaryAccount');
             $propertyMappingConfigurationForPrimaryAccount->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, Account::class);
             /** @var PropertyMappingConfiguration $propertyMappingConfiguration */
-            foreach (array($propertyMappingConfigurationForUser, $propertyMappingConfigurationForUserName, $propertyMappingConfigurationForPrimaryAccount) as $propertyMappingConfiguration) {
+            foreach ([$propertyMappingConfigurationForUser, $propertyMappingConfigurationForUserName, $propertyMappingConfigurationForPrimaryAccount] as $propertyMappingConfiguration) {
                 $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
                 $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
             }
@@ -88,10 +88,10 @@ class UsersController extends AbstractModuleController
      */
     public function indexAction()
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
             'users' => $this->userService->getUsers()
-        ));
+        ]);
     }
 
     /**
@@ -102,10 +102,10 @@ class UsersController extends AbstractModuleController
      */
     public function showAction(User $user)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
             'user' => $user
-        ));
+        ]);
     }
 
     /**
@@ -116,12 +116,12 @@ class UsersController extends AbstractModuleController
      */
     public function newAction(User $user = null)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
             'user' => $user,
             'roles' => $this->policyService->getRoles(),
             'providers' => $this->getAuthenticationProviders()
-        ));
+        ]);
     }
 
     /**
@@ -140,7 +140,7 @@ class UsersController extends AbstractModuleController
     public function createAction($username, array $password, User $user, array $roleIdentifiers, $authenticationProviderName = null)
     {
         $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
-        $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, array(htmlspecialchars($username)), 1416225561);
+        $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, [htmlspecialchars($username)], 1416225561);
         $this->redirect('index');
     }
 
@@ -154,10 +154,11 @@ class UsersController extends AbstractModuleController
     {
         $this->assignElectronicAddressOptions();
 
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
+            'currentUser' => $this->currentUser,
             'user' => $user,
             'availableRoles' => $this->policyService->getRoles()
-        ));
+        ]);
     }
 
     /**
@@ -169,7 +170,7 @@ class UsersController extends AbstractModuleController
     public function updateAction(User $user)
     {
         $this->userService->updateUser($user);
-        $this->addFlashMessage('The user "%s" has been updated.', 'User updated', Message::SEVERITY_OK, array($user->getName()->getFullName()), 1412374498);
+        $this->addFlashMessage('The user "%s" has been updated.', 'User updated', Message::SEVERITY_OK, [$user->getName()->getFullName()], 1412374498);
         $this->redirect('index');
     }
 
@@ -182,11 +183,11 @@ class UsersController extends AbstractModuleController
     public function deleteAction(User $user)
     {
         if ($user === $this->currentUser) {
-            $this->addFlashMessage('You can not delete the currently logged in user', 'Current user can\'t be deleted', Message::SEVERITY_WARNING, array(), 1412374546);
+            $this->addFlashMessage('You can not delete the currently logged in user', 'Current user can\'t be deleted', Message::SEVERITY_WARNING, [], 1412374546);
             $this->redirect('index');
         }
         $this->userService->deleteUser($user);
-        $this->addFlashMessage('The user "%s" has been deleted.', 'User deleted', Message::SEVERITY_NOTICE, array(htmlspecialchars($user->getName()->getFullName())), 1412374546);
+        $this->addFlashMessage('The user "%s" has been deleted.', 'User deleted', Message::SEVERITY_NOTICE, [htmlspecialchars($user->getName()->getFullName())], 1412374546);
         $this->redirect('index');
     }
 
@@ -198,11 +199,11 @@ class UsersController extends AbstractModuleController
      */
     public function editAccountAction(Account $account)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'account' => $account,
             'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName()),
             'availableRoles' => $this->policyService->getRoles()
-        ));
+        ]);
     }
 
     /**
@@ -214,17 +215,17 @@ class UsersController extends AbstractModuleController
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @return void
      */
-    public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = array())
+    public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = [])
     {
         $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
         if ($user === $this->currentUser) {
-            $roles = array();
+            $roles = [];
             foreach ($roleIdentifiers as $roleIdentifier) {
                 $roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
             }
             if (!$this->privilegeManager->isPrivilegeTargetGrantedForRoles($roles, 'Neos.Neos:Backend.Module.Administration.Users')) {
-                $this->addFlashMessage('With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!', 'Don\'t lock yourself out', Message::SEVERITY_WARNING, array(), 1416501197);
-                $this->forward('edit', null, null, array('user' => $this->currentUser));
+                $this->addFlashMessage('With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!', 'Don\'t lock yourself out', Message::SEVERITY_WARNING, [], 1416501197);
+                $this->forward('edit', null, null, ['user' => $this->currentUser]);
             }
         }
         $password = array_shift($password);
@@ -234,7 +235,7 @@ class UsersController extends AbstractModuleController
 
         $this->userService->setRolesForAccount($account, $roleIdentifiers);
         $this->addFlashMessage('The account has been updated.', 'Account updated', Message::SEVERITY_OK);
-        $this->redirect('edit', null, null, array('user' => $user));
+        $this->redirect('edit', null, null, ['user' => $user]);
     }
 
     /**
@@ -263,8 +264,8 @@ class UsersController extends AbstractModuleController
         $user->addElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $this->addFlashMessage('An electronic address "%s" (%s) has been added.', 'Electronic address added', Message::SEVERITY_OK, array(htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType())), 1412374814);
-        $this->redirect('edit', null, null, array('user' => $user));
+        $this->addFlashMessage('An electronic address "%s" (%s) has been added.', 'Electronic address added', Message::SEVERITY_OK, [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType())], 1412374814);
+        $this->redirect('edit', null, null, ['user' => $user]);
     }
 
     /**
@@ -279,8 +280,8 @@ class UsersController extends AbstractModuleController
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, array(htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())), 1412374678);
-        $this->redirect('edit', null, null, array('user' => $user));
+        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())], 1412374678);
+        $this->redirect('edit', null, null, ['user' => $user]);
     }
 
     /**
@@ -289,20 +290,20 @@ class UsersController extends AbstractModuleController
     protected function assignElectronicAddressOptions()
     {
         $electronicAddress = new ElectronicAddress();
-        $electronicAddressTypes = array();
+        $electronicAddressTypes = [];
         foreach ($electronicAddress->getAvailableElectronicAddressTypes() as $type) {
             $electronicAddressTypes[$type] = $type;
         }
-        $electronicAddressUsageTypes = array();
+        $electronicAddressUsageTypes = [];
         $translationHelper = new TranslationHelper();
         foreach ($electronicAddress->getAvailableUsageTypes() as $type) {
             $electronicAddressUsageTypes[$type] = $translationHelper->translate('users.electronicAddress.usage.type.' . $type, $type, [], 'Modules', 'Neos.Neos');
         }
         array_unshift($electronicAddressUsageTypes, '');
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'electronicAddressTypes' => $electronicAddressTypes,
             'electronicAddressUsageTypes' => $electronicAddressUsageTypes
-        ));
+        ]);
     }
 
     /**

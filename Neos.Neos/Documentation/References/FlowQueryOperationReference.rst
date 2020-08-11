@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2018-08-10
+This reference was automatically generated from code on 2019-03-05
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -11,7 +11,9 @@ This reference was automatically generated from code on 2018-08-10
 add
 ---
 
-Add another $flowQuery object to the current one.
+Adds the given items to the current context.
+The operation accepts one argument that may be an Array, a FlowQuery
+or an Object.
 
 :Implementation: Neos\\Eel\\FlowQuery\\Operations\\AddOperation
 :Priority: 1
@@ -170,11 +172,11 @@ following operators:
 >=
   Value is greater than or equal to operand
 $=
-  Value ends with operand (string-based)
+  Value ends with operand (string-based) or value's last element is equal to operand (array-based)
 ^=
-  Value starts with operand (string-based)
+  Value starts with operand (string-based) or value's first element is equal to operand (array-based)
 *=
-  Value contains operand (string-based)
+  Value contains operand (string-based) or value contains an element that is equal to operand (array based)
 instanceof
   Checks if the value is an instance of the operand
 !instanceof
@@ -334,7 +336,7 @@ is
 
 Check whether the at least one of the context elements match the given filter.
 
-Without arguments is evaluates to TRUE if the context is not empty. If arguments
+Without arguments is evaluates to true if the context is not empty. If arguments
 are given, they are used to filter the context before evaluation.
 
 :Implementation: Neos\\Eel\\FlowQuery\\Operations\\IsOperation
@@ -633,6 +635,24 @@ element is returned.
 :Priority: 1
 :Final: Yes
 :Returns: mixed
+
+
+
+
+
+.. _`FlowQuery Operation Reference: remove`:
+
+remove
+------
+
+Removes the given items from the current context.
+The operation accepts one argument that may be an Array, a FlowQuery
+or an Object.
+
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\RemoveOperation
+:Priority: 1
+:Final: No
+:Returns: void
 
 
 

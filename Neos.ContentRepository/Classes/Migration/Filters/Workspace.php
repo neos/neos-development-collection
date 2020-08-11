@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Migration\Filters;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
@@ -38,7 +37,7 @@ class Workspace implements FilterInterface
     }
 
     /**
-     * Returns TRUE if the given node is in the workspace this filter expects.
+     * Returns true if the given node is in the workspace this filter expects.
      *
      * @param NodeData $node
      * @return boolean

@@ -27,4 +27,11 @@ class DefaultContentPrototypeGenerator extends DefaultPrototypeGenerator
      * @var string
      */
     protected $basePrototypeName = 'Neos.Neos:Content';
+
+    /**
+     * The template path in the package where templates are found
+     *
+     * @var string
+     */
+    protected $templatePath = 'Private/Templates/NodeTypes';
 }

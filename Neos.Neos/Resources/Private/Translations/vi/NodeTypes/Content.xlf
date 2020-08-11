@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="vi" state="translated">Nội dung</target></trans-unit>
+			<target state="translated">Nội dung</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="vi" state="translated">Thay đổi kiểu</target></trans-unit>
+			<target state="translated">Thay đổi kiểu</target></trans-unit>
     </body>
   </file>
 </xliff>

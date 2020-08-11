@@ -87,8 +87,8 @@
 				color: #fff;
 			}
 
-			[class^="icon-"],
-			[class*=" icon-"] {
+			[class^="fa-"],
+			[class*=" fa-"] {
 				margin: 0 $relatedMargin;
 				line-height: $unit;
 				vertical-align: top;
@@ -161,8 +161,8 @@
 					color: #fff;
 				}
 
-				[class^="icon-"],
-				[class*=" icon-"] {
+				[class^="fa-"],
+				[class*=" fa-"] {
 					margin: 0 $relatedMargin;
 					line-height: $unit;
 					vertical-align: top;

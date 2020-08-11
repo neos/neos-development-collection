@@ -33,24 +33,24 @@ class AssetJsonView extends JsonView
     {
         if (isset($this->variables['assets'])) {
             $this->setConfiguration(
-                array(
-                    'assets' => array(
-                        '_descendAll' => array(
-                            '_only' => array('label', 'tags', 'identifier')
-                        )
-                    )
-                )
+                [
+                    'assets' => [
+                        '_descendAll' => [
+                            '_only' => ['label', 'tags', 'identifier']
+                        ]
+                    ]
+                ]
             );
-            $this->setVariablesToRender(array('assets'));
+            $this->setVariablesToRender(['assets']);
         } else {
             $this->setConfiguration(
-                array(
-                    'asset' => array(
-                        '_only' => array('label', 'tags', 'identifier')
-                    )
-                )
+                [
+                    'asset' => [
+                        '_only' => ['label', 'tags', 'identifier']
+                    ]
+                ]
             );
-            $this->setVariablesToRender(array('asset'));
+            $this->setVariablesToRender(['asset']);
         }
 
         return parent::render();

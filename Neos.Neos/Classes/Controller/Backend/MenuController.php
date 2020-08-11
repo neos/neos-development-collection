@@ -13,7 +13,6 @@ namespace Neos\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 
 /**
@@ -39,11 +38,11 @@ class MenuController extends ActionController
         $contentModuleUri = $this->getControllerContext()->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)
-            ->uriFor('index', array(), 'Backend\Backend', 'Neos.Neos');
-        return json_encode(array(
+            ->uriFor('index', [], 'Backend\Backend', 'Neos.Neos');
+        return json_encode([
             'contentModuleUri' => $contentModuleUri,
             'sites' => $this->menuHelper->buildSiteList($this->controllerContext),
             'modules' => $this->menuHelper->buildModuleList($this->controllerContext)
-        ));
+        ]);
     }
 }

@@ -55,7 +55,7 @@ class NodeOperations
      */
     public function create(NodeInterface $referenceNode, array $nodeData, $position)
     {
-        if (!in_array($position, array('before', 'into', 'after'), true)) {
+        if (!in_array($position, ['before', 'into', 'after'], true)) {
             throw new \InvalidArgumentException('The position should be one of the following: "before", "into", "after".', 1347133640);
         }
         $nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
@@ -100,7 +100,7 @@ class NodeOperations
      */
     public function move(NodeInterface $node, NodeInterface $targetNode, $position)
     {
-        if (!in_array($position, array('before', 'into', 'after'), true)) {
+        if (!in_array($position, ['before', 'into', 'after'], true)) {
             throw new NodeException('The position should be one of the following: "before", "into", "after".', 1296132542);
         }
 
@@ -143,7 +143,7 @@ class NodeOperations
      */
     public function copy(NodeInterface $node, NodeInterface $targetNode, $position, $nodeName = null)
     {
-        if (!in_array($position, array('before', 'into', 'after'), true)) {
+        if (!in_array($position, ['before', 'into', 'after'], true)) {
             throw new NodeException('The position should be one of the following: "before", "into", "after".', 1346832303);
         }
 
@@ -172,7 +172,7 @@ class NodeOperations
     protected function getDesignatedParentNode(NodeInterface $targetNode, $position)
     {
         $referenceNode = $targetNode;
-        if (in_array($position, array('before', 'after'))) {
+        if (in_array($position, ['before', 'after'])) {
             $referenceNode = $targetNode->getParent();
         }
 

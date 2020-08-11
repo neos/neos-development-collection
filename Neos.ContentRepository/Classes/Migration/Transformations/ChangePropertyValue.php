@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Migration\Transformations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
@@ -114,7 +113,7 @@ class ChangePropertyValue extends AbstractTransformation
 
     /**
      * If the given node has the property this transformation should work on, this
-     * returns TRUE.
+     * returns true.
      *
      * @param NodeData $node
      * @return boolean

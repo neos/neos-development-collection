@@ -128,11 +128,11 @@ function (
 			iconClass: function () {
 				switch (this.get('position')) {
 					case 'before':
-						return 'icon-level-up';
+						return 'fas fa-level-up-alt';
 					case 'into':
-						return 'icon-long-arrow-right';
+						return 'fas fa-long-arrow-alt-right';
 					case 'after':
-						return 'icon-level-down';
+						return 'fas fa-level-down-alt';
 				}
 				return '';
 			}.property('position'),

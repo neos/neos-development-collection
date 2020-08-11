@@ -33,7 +33,7 @@ class NodeFactory
     /**
      * @var array<\Neos\ContentRepository\Domain\Model\Node>
      */
-    protected $nodes = array();
+    protected $nodes = [];
 
     /**
      * @Flow\Inject
@@ -141,13 +141,13 @@ class NodeFactory
      */
     public function createContextMatchingNodeData(NodeData $nodeData)
     {
-        return $this->contextFactory->create(array(
+        return $this->contextFactory->create([
             'workspaceName' => $nodeData->getWorkspace()->getName(),
             'invisibleContentShown' => true,
             'inaccessibleContentShown' => true,
             'removedContentShown' => true,
             'dimensions' => $nodeData->getDimensionValues()
-        ));
+        ]);
     }
 
     /**
@@ -157,6 +157,6 @@ class NodeFactory
      */
     public function reset()
     {
-        $this->nodes = array();
+        $this->nodes = [];
     }
 }

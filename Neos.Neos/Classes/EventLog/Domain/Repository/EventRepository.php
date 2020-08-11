@@ -28,9 +28,9 @@ class EventRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array(
+    protected $defaultOrderings = [
         'uid' => QueryInterface::ORDER_ASCENDING
-    );
+    ];
 
     /**
      * Find all events which are "top-level" and in a given workspace (or are not NodeEvents)

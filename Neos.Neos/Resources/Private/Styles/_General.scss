@@ -32,7 +32,7 @@ a {
 	}
 }
 
-[class^="icon-"], [class*=" icon-"] {
+[class^="fa-"], [class*=" fa-"] {
 	@include icon-font($baseIconFontFamily, 14px);
 	text-align: center;
 }

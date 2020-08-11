@@ -1,15 +1,18 @@
 # Neos.Neos:Menu provides basic menu rendering
 #
 prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
-	@class = 'Neos\\Neos\\Fusion\\MenuImplementation'
 	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Menu.html'
-	node = ${node}
-	items = ${this.items}
 
 	entryLevel = ${this.startingPoint ? 0 : 1}
 	maximumLevels = 2
-
+	startingPoint = null
+	lastLevel = null
 	filter = 'Neos.Neos:Document'
+	renderHiddenInIndex = false
+	itemCollection = null
+
+	node = ${node}
+
 	attributes = Neos.Fusion:Attributes
 
 	active.attributes = Neos.Fusion:Attributes {
@@ -22,6 +25,26 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 		class = 'normal'
 	}
 
+  @context {
+		entryLevel = ${this.entryLevel}
+		maximumLevels = ${this.maximumLevels}
+		startingPoint = ${this.startingPoint}
+		lastLevel = ${this.lastLevel}
+		filter = ${this.filter}
+		renderHiddenInIndex = ${this.renderHiddenInIndex}
+		itemCollection = ${this.itemCollection}
+	}
+
+	items = Neos.Neos:MenuItems {
+		entryLevel = ${entryLevel}
+		maximumLevels = ${maximumLevels}
+		startingPoint = ${startingPoint}
+		lastLevel = ${lastLevel}
+		filter = ${filter}
+		renderHiddenInIndex = ${renderHiddenInIndex}
+		itemCollection = ${itemCollection}
+	}
+
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
 
 	@cache {
@@ -30,7 +53,7 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 			documentNode = ${documentNode}
 		}
 		entryTags {
-			1 = 'NodeType_Neos.Neos:Document'
+			1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', documentNode)}
 		}
 	}
 }

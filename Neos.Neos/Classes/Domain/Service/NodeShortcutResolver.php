@@ -69,7 +69,7 @@ class NodeShortcutResolver
                 case 'firstChildNode':
                 default:
                     $childNodes = $node->getChildNodes('Neos.Neos:Document');
-                    if ($childNodes !== array()) {
+                    if ($childNodes !== []) {
                         $node = reset($childNodes);
                     } else {
                         return null;

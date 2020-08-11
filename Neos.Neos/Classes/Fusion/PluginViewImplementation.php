@@ -14,6 +14,7 @@ namespace Neos\Neos\Fusion;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
 use Neos\Neos\Service\PluginService;
@@ -76,7 +77,7 @@ class PluginViewImplementation extends PluginImplementation
             return $pluginRequest;
         }
 
-        $controllerObjectPairs = array();
+        $controllerObjectPairs = [];
         $pluginViewName = $this->pluginViewNode->getProperty('view');
         foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType($this->node->getNodeType()) as $pluginViewDefinition) {
             /** @var PluginViewDefinition $pluginViewDefinition */
@@ -87,7 +88,7 @@ class PluginViewImplementation extends PluginImplementation
             break;
         }
 
-        if ($controllerObjectPairs === array()) {
+        if ($controllerObjectPairs === []) {
             return $pluginRequest;
         }
 
@@ -111,7 +112,7 @@ class PluginViewImplementation extends PluginImplementation
         $this->pluginViewNode = $currentContext['node'];
         /** @var $parentResponse Response */
         $parentResponse = $this->runtime->getControllerContext()->getResponse();
-        $pluginResponse = new Response($parentResponse);
+        $pluginResponse = new ActionResponse($parentResponse);
 
         $pluginRequest = $this->buildPluginRequest();
         if ($pluginRequest->getControllerObjectName() === '') {
@@ -125,6 +126,11 @@ class PluginViewImplementation extends PluginImplementation
             return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment() ? '<p>' . $message . '</p>' : '<!-- ' . $message . '-->';
         }
         $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
+
+        foreach ($pluginResponse->getHeaders()->getAll() as $key => $value) {
+            $parentResponse->getHeaders()->set($key, $value, true);
+        }
+
         return $pluginResponse->getContent();
     }
 }

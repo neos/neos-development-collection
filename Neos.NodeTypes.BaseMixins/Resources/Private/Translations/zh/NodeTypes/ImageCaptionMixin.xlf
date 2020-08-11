@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve">
 				<source>Enable caption</source>
-			<target xml:lang="zh-CN" state="translated">开启标题</target></trans-unit>
+			<target state="translated">开启标题</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="zh-CN" state="translated"><![CDATA[<p>在此处输入标题</p>]]></target></trans-unit>
+			<target state="translated"><![CDATA[<p>在此处输入标题</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -16,6 +16,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 use Neos\ContentRepository\Migration\Filters\FilterInterface;
+use Neos\ContentRepository\Migration\Filters\DoctrineFilterInterface;
+use Neos\Flow\Persistence\Doctrine\Query;
 
 /**
  * Service to determine if a given node matches a series of filters given by configuration.
@@ -33,12 +35,37 @@ class NodeFilter
     /**
      * @var array
      */
-    protected $filterConjunctions = array();
+    protected $filterConjunctions = [];
 
     /**
+     * Return array with Doctrine expressions
+     *
+     * @param array $filterConfigurations
+     * @param Query $baseQuery
+     * @return array
+     * @throws MigrationException
+     */
+    public function getFilterExpressions(array $filterConfigurations, Query $baseQuery): array
+    {
+        $filterExpressions = [];
+        foreach ($filterConfigurations as $filterConfiguration) {
+            $filterObject = $this->constructFilterObject($filterConfiguration);
+            if ($filterObject instanceof DoctrineFilterInterface) {
+                foreach ($filterObject->getFilterExpressions($baseQuery) as $filterExpression) {
+                    $filterExpressions[] = $filterExpression;
+                }
+            }
+        }
+        return $filterExpressions;
+    }
+
+    /**
+     * Apply local filters to result.
+     *
      * @param NodeData $nodeData
      * @param array $filterConfiguration
      * @return boolean
+     * @throws MigrationException
      */
     public function matchFilters(NodeData $nodeData, array $filterConfiguration)
     {
@@ -54,6 +81,7 @@ class NodeFilter
     /**
      * @param array $filterConfigurations
      * @return array<\Neos\ContentRepository\Migration\FilterInterface>
+     * @throws MigrationException
      */
     protected function buildFilterConjunction(array $filterConfigurations)
     {
@@ -62,9 +90,12 @@ class NodeFilter
             return $this->filterConjunctions[$conjunctionIdentifier];
         }
 
-        $conjunction = array();
+        $conjunction = [];
         foreach ($filterConfigurations as $filterConfiguration) {
-            $conjunction[] = $this->constructFilterObject($filterConfiguration);
+            $filterObject = $this->constructFilterObject($filterConfiguration);
+            if ($filterObject instanceof FilterInterface) {
+                $conjunction[] = $filterObject;
+            }
         }
         $this->filterConjunctions[$conjunctionIdentifier] = $conjunction;
 
@@ -73,7 +104,7 @@ class NodeFilter
 
     /**
      * @param array $filterConfiguration
-     * @return FilterInterface
+     * @return FilterInterface|DoctrineFilterInterface
      * @throws MigrationException
      */
     protected function constructFilterObject($filterConfiguration)

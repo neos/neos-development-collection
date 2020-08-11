@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "siblings" operation working on ContentRepository nodes. It iterates over all
@@ -41,11 +41,11 @@ class SiblingsOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -57,21 +57,24 @@ class SiblingsOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
-        /** @var NodeInterface $contextNode */
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $outputNodePaths[$contextNode->getPath()] = true;
+            /** @var TraversableNodeInterface $contextNode */
+            $outputNodeAggregateIdentifiers[(string)$contextNode->getNodeAggregateIdentifier()] = true;
         }
 
         foreach ($flowQuery->getContext() as $contextNode) {
-            $parentNode = $contextNode->getParent();
-            if ($parentNode instanceof NodeInterface) {
-                foreach ($parentNode->getChildNodes() as $childNode) {
-                    if (!isset($outputNodePaths[$childNode->getPath()])) {
-                        $output[] = $childNode;
-                        $outputNodePaths[$childNode->getPath()] = true;
-                    }
+            try {
+                $parentNode = $contextNode->findParentNode();
+            } catch (NodeException $e) {
+                continue;
+            }
+
+            foreach ($parentNode->findChildNodes() as $childNode) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
+                    $output[] = $childNode;
+                    $outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
                 }
             }
         }

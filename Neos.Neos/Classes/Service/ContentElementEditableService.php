@@ -66,7 +66,7 @@ class ContentElementEditableService
             return $content;
         }
 
-        $attributes = array();
+        $attributes = [];
         $attributes['class'] = 'neos-inline-editable';
         $attributes['property'] = 'typo3:' . $property ;
         $attributes['data-neos-node-type'] = $node->getNodeType()->getName();

@@ -111,7 +111,7 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
     // starting from here, we just implement the interface in the "default" way without modifying things
     /**
      * @param string $propertyName
-     * @return boolean TRUE if the given propertyName should be mapped, FALSE otherwise.
+     * @return boolean true if the given propertyName should be mapped, false otherwise.
      * @api
      */
     public function shouldMap($propertyName)

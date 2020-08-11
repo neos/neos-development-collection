@@ -55,7 +55,7 @@
 			@include opacity(.75);
 		}
 
-		.icon-lock {
+		.fa-lock {
 			line-height: ($unit / 2) - 1;
 		}
 
@@ -95,8 +95,8 @@
 		margin-left: 0;
 
 		&::before {
-			@include fa-icon();
-			content: $fa-var-caret-down;
+			@extend .fas;
+			content: fa-content($fa-var-caret-down);
 			position: relative;
 			top: 0;
 			line-height: $unit;
@@ -116,7 +116,7 @@
 			}
 		}
 
-		.icon-review::after {
+		.fa-review::after {
 			bottom: -5px;
 			right: 5px;
 		}

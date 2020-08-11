@@ -11,18 +11,23 @@ namespace Neos\Media\Command;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
+use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
+use Neos\Utility\Arrays;
+use Neos\Utility\Files;
 
 /**
  * @Flow\Scope("singleton")
@@ -37,7 +42,7 @@ class MediaCommandController extends CommandController
 
     /**
      * @Flow\Inject(lazy=false)
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -67,7 +72,7 @@ class MediaCommandController extends CommandController
     /**
      * If enabled
      * @Flow\InjectConfiguration("asyncThumbnails")
-     * @var boolean
+     * @var bool
      */
     protected $asyncThumbnails;
 
@@ -84,10 +89,11 @@ class MediaCommandController extends CommandController
      * in the asset management. The type of the imported asset is determined by the file extension provided by the
      * PersistentResource.
      *
-     * @param boolean $simulate If set, this command will only tell what it would do instead of doing it right away
+     * @param bool $simulate If set, this command will only tell what it would do instead of doing it right away
+     * @param bool $quiet
      * @return void
      */
-    public function importResourcesCommand($simulate = false)
+    public function importResourcesCommand(bool $simulate = false, bool $quiet = false)
     {
         $this->initializeConnection();
 
@@ -105,8 +111,8 @@ class MediaCommandController extends CommandController
         $statement->execute();
         $resourceInfos = $statement->fetchAll();
 
-        if ($resourceInfos === array()) {
-            $this->outputLine('Found no resources which need to be imported.');
+        if ($resourceInfos === []) {
+            !$quiet || $this->outputLine('Found no resources which need to be imported.');
             $this->quit();
         }
 
@@ -114,11 +120,11 @@ class MediaCommandController extends CommandController
             $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], PersistentResource::class);
 
             if ($resource === null) {
-                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
+                !$quiet || $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
             if (!$resource->getStream()) {
-                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
+                !$quiet || $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
 
@@ -126,10 +132,10 @@ class MediaCommandController extends CommandController
             $resourceObj = new $className($resource);
 
             if ($simulate) {
-                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', array($resourceObj->getResource()->getFilename(), $className));
+                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             } else {
                 $this->assetRepository->add($resourceObj);
-                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', array($resourceObj->getResource()->getFilename(), $className));
+                !$quiet || $this->outputLine('Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             }
         }
     }
@@ -137,51 +143,109 @@ class MediaCommandController extends CommandController
     /**
      * Remove unused assets
      *
-     * This command iterates over all existing assets, checks their usage count
-     * and lists the assets which are not reported as used by any AssetUsageStrategies.
-     * The unused assets can than be removed.
+     * This command iterates over all existing assets, checks their usage count and lists the assets which are not
+     * reported as used by any AssetUsageStrategies. The unused assets can than be removed.
      *
+     * @param string $assetSource If specified, only assets of this asset source are considered. For example "neos" or "my-asset-management-system"
+     * @param bool $quiet If set, only errors will be displayed.
+     * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialogs
+     * @param string $onlyTags Comma-separated list of asset tags, that should be taken into account
+     * @param int $limit Limit the result of unused assets displayed and removed for this run.
      * @return void
      */
-    public function removeUnusedCommand()
+    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = null)
     {
         $iterator = $this->assetRepository->findAllIterator();
         $assetCount = $this->assetRepository->countAll();
         $unusedAssets = [];
-        $unusedAssetInfo = [];
+        $tableRowsByAssetSource = [];
         $unusedAssetCount = 0;
+        $unusedAssetsTotalSize = 0;
 
-        $this->outputLine('<b>Searching for unused assets:</b>');
-
-        $this->output->progressStart($assetCount);
-        /** @var AssetInterface $asset */
-        foreach ($this->assetRepository->iterate($iterator) as $asset) {
-            if ($asset->getUsageCount() === 0) {
-                $unusedAssets[] = $asset;
-                $unusedAssetInfo[] = sprintf('- %s (%s)', $asset->getIdentifier(), $asset->getResource()->getFilename());
-                $unusedAssetCount++;
-            }
-            $this->output->progressAdvance(1);
+        $filterByAssetSourceIdentifier = $assetSource;
+        if ($filterByAssetSourceIdentifier === '') {
+            !$quiet && $this->outputLine('<b>Searching for unused assets in all asset sources:</b>');
+        } else {
+            !$quiet && $this->outputLine('<b>Searching for unused assets of asset source "%s":</b>', [$filterByAssetSourceIdentifier]);
         }
+
+        $assetTagsMatchFilterTags = function (Collection $assetTags, string $filterTags): bool {
+            $filterTagValues = Arrays::trimExplode(',', $filterTags);
+            $assetTagValues = [];
+            foreach ($assetTags as $tag) {
+                /** @var Tag $tag */
+                $assetTagValues[] = $tag->getLabel();
+            }
+            return count(array_intersect($filterTagValues, $assetTagValues)) > 0;
+        };
+
+        !$quiet && $this->output->progressStart($assetCount);
+
+        foreach ($this->assetRepository->iterate($iterator) as $asset) {
+            !$quiet && $this->output->progressAdvance(1);
+
+            if ($limit !== null && $unusedAssetCount === $limit) {
+                break;
+            }
+
+            if (!$asset instanceof Asset) {
+                continue;
+            }
+            if (!$asset instanceof AssetSourceAwareInterface) {
+                continue;
+            }
+            if ($filterByAssetSourceIdentifier !== '' && $asset->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
+                continue;
+            }
+            if ($onlyTags !== '' && $assetTagsMatchFilterTags($asset->getTags(), $onlyTags) === false) {
+                continue;
+            }
+            if ($asset->getUsageCount() !== 0) {
+                continue;
+            }
+
+            $fileSize = str_pad(Files::bytesToSizeString($asset->getResource()->getFileSize()), 9, ' ', STR_PAD_LEFT);
+
+            $unusedAssets[] = $asset;
+            $tableRowsByAssetSource[$asset->getAssetSourceIdentifier()][] = [
+                $asset->getIdentifier(),
+                $asset->getResource()->getFilename(),
+                $fileSize
+            ];
+            $unusedAssetCount++;
+            $unusedAssetsTotalSize += $asset->getResource()->getFileSize();
+        }
+
+        !$quiet && $this->output->progressFinish();
 
         if ($unusedAssetCount === 0) {
-            $this->output->outputLine(PHP_EOL . sprintf('No unused assets found.', $unusedAssetCount));
-            $this->quit(0);
+            !$quiet && $this->output->outputLine(PHP_EOL . 'No unused assets found.');
+            exit;
         }
 
-        $this->outputLine(PHP_EOL . 'Found the following unused assets: ' . PHP_EOL . implode(PHP_EOL, $unusedAssetInfo));
+        foreach ($tableRowsByAssetSource as $assetSourceIdentifier => $tableRows) {
+            !$quiet && $this->outputLine(PHP_EOL . 'Found the following unused assets from asset source <success>%s</success>: ' . PHP_EOL, [$assetSourceIdentifier]);
 
-        $continue = $this->output->askConfirmation(sprintf('Do you want to remove <b>%s</b> unused assets?', $unusedAssetCount));
-        if ($continue !== true) {
-            $this->quit(0);
+            !$quiet && $this->output->outputTable(
+                $tableRows,
+                ['Asset identifier', 'Filename', 'Size']
+            );
         }
 
-        $this->output->progressStart($unusedAssetCount);
+        !$quiet && $this->outputLine(PHP_EOL . 'Total size of unused assets: %s' . PHP_EOL, [Files::bytesToSizeString($unusedAssetsTotalSize)]);
+
+        if ($assumeYes === false) {
+            if (!$this->output->askConfirmation(sprintf('Do you want to remove <b>%s</b> unused assets?', $unusedAssetCount))) {
+                exit(1);
+            }
+        }
+
+        !$quiet && $this->output->progressStart($unusedAssetCount);
         foreach ($unusedAssets as $asset) {
-            $this->output->progressAdvance(1);
+            !$quiet && $this->output->progressAdvance(1);
             $this->assetRepository->remove($asset);
         }
-        $this->outputLine('');
+        !$quiet && $this->output->progressFinish();
     }
 
     /**
@@ -193,12 +257,13 @@ class MediaCommandController extends CommandController
      * Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
      *
      * @param string $preset Preset name, if not provided thumbnails are created for all presets
-     * @param boolean $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
+     * @param bool $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
+     * @param bool $quiet If set, only errors will be displayed.
      * @return void
      */
-    public function createThumbnailsCommand($preset = null, $async = null)
+    public function createThumbnailsCommand(string $preset = null, bool $async = null, bool $quiet = false)
     {
-        $async = $async !== null ? $async : $this->asyncThumbnails;
+        $async = $async ?? $this->asyncThumbnails;
         $presets = $preset !== null ? [$preset] : array_keys($this->thumbnailService->getPresets());
         $presetThumbnailConfigurations = [];
         foreach ($presets as $preset) {
@@ -206,14 +271,15 @@ class MediaCommandController extends CommandController
         }
         $iterator = $this->assetRepository->findAllIterator();
         $imageCount = $this->assetRepository->countAll();
-        $this->output->progressStart($imageCount * count($presetThumbnailConfigurations));
+        !$quiet && $this->output->progressStart($imageCount * count($presetThumbnailConfigurations));
         foreach ($this->assetRepository->iterate($iterator) as $image) {
             foreach ($presetThumbnailConfigurations as $presetThumbnailConfiguration) {
                 $this->thumbnailService->getThumbnail($image, $presetThumbnailConfiguration);
                 $this->persistenceManager->persistAll();
-                $this->output->progressAdvance(1);
+                !$quiet && $this->output->progressAdvance(1);
             }
         }
+        !$quiet && $this->output->progressFinish();
     }
 
     /**
@@ -223,9 +289,10 @@ class MediaCommandController extends CommandController
      * matching a specific thumbnail preset configuration.
      *
      * @param string $preset Preset name, if provided only thumbnails matching that preset are cleared
+     * @param bool $quiet If set, only errors will be displayed.
      * @return void
      */
-    public function clearThumbnailsCommand($preset = null)
+    public function clearThumbnailsCommand(string $preset = null, bool $quiet = false)
     {
         if ($preset !== null) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
@@ -236,11 +303,13 @@ class MediaCommandController extends CommandController
             $thumbnailCount = $this->thumbnailRepository->countAll();
             $iterator = $this->thumbnailRepository->findAllIterator();
         }
-        $this->output->progressStart($thumbnailCount);
+
+        !$quiet && $this->output->progressStart($thumbnailCount);
         foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
             $this->thumbnailRepository->remove($thumbnail);
-            $this->output->progressAdvance(1);
+            !$quiet && $this->output->progressAdvance(1);
         }
+        !$quiet && $this->output->progressFinish();
     }
 
     /**
@@ -250,25 +319,26 @@ class MediaCommandController extends CommandController
      * thumbnails to be rendered to avoid memory exhaustion.
      *
      * @param integer $limit Limit the amount of thumbnails to be rendered to avoid memory exhaustion
+     * @param bool $quiet If set, only errors will be displayed.
      * @return void
      */
-    public function renderThumbnailsCommand($limit = null)
+    public function renderThumbnailsCommand(int $limit = null, bool $quiet = false)
     {
         $thumbnailCount = $this->thumbnailRepository->countUngenerated();
         $iterator = $this->thumbnailRepository->findUngeneratedIterator();
-        $this->output->progressStart($limit !== null && $thumbnailCount > $limit ? $limit : $thumbnailCount);
+        !$quiet && $this->output->progressStart($limit !== null && $thumbnailCount > $limit ? $limit : $thumbnailCount);
         $iteration = 0;
         foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
             if ($thumbnail->getResource() === null) {
                 $this->thumbnailService->refreshThumbnail($thumbnail);
                 $this->persistenceManager->persistAll();
             }
-            $this->output->progressAdvance(1);
-            $iteration++;
-            if ($iteration === $limit) {
+            !$quiet && $this->output->progressAdvance(1);
+            if (++$iteration === $limit) {
                 break;
             }
         }
+        !$quiet && $this->output->progressFinish();
     }
 
     /**
@@ -280,7 +350,7 @@ class MediaCommandController extends CommandController
     {
         if (!$this->entityManager instanceof EntityManager) {
             $this->outputLine('This command only supports database connections provided by the Doctrine ORM Entity Manager.
-				However, the current entity manager is an instance of %s.', array(get_class($this->entityManager)));
+				However, the current entity manager is an instance of %s.', [get_class($this->entityManager)]);
             $this->quit(1);
         }
 

@@ -47,7 +47,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $this->mockQueryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $this->mockQueryBuilder->expects($this->any())->method('getQuery')->will($this->returnValue($this->mockQuery));
 
-        $this->nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->setMethods(array('getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace', 'getNodeTypeFilterConstraintsForDql', 'createQueryBuilder', 'addPathConstraintToQueryBuilder', 'filterNodeDataByBestMatchInContext'))->getMock();
+        $this->nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->setMethods(['getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace', 'getNodeTypeFilterConstraintsForDql', 'createQueryBuilder', 'addPathConstraintToQueryBuilder', 'filterNodeDataByBestMatchInContext'])->getMock();
         $this->nodeDataRepository->expects($this->any())->method('filterNodesOverlaidInBaseWorkspace')->will($this->returnCallback(function (array $foundNodes, Workspace $baseWorkspace, $dimensions) {
             return $foundNodes;
         }));
@@ -94,7 +94,7 @@ class NodeDataRepositoryTest extends UnitTestCase
 
         $this->nodeDataRepository->add($nodeData);
 
-        $dimensions = array('persona' => array('everybody'), 'language' => array('de_DE', 'mul_ZZ'));
+        $dimensions = ['persona' => ['everybody'], 'language' => ['de_DE', 'mul_ZZ']];
 
         $nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(true));
 
@@ -115,7 +115,7 @@ class NodeDataRepositoryTest extends UnitTestCase
 
         $this->nodeDataRepository->remove($nodeData);
 
-        $dimensions = array('persona' => array('everybody'), 'language' => array('de_DE', 'mul_ZZ'));
+        $dimensions = ['persona' => ['everybody'], 'language' => ['de_DE', 'mul_ZZ']];
 
         $nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(true));
 
@@ -132,12 +132,12 @@ class NodeDataRepositoryTest extends UnitTestCase
         $parentPath = 'some/parent/path';
         $nodeTypeFilter = 'Some.Package:SomeNodeType';
         $mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $dimensions = array('persona' => array('everybody'), 'language' => array('de_DE', 'mul_ZZ'));
+        $dimensions = ['persona' => ['everybody'], 'language' => ['de_DE', 'mul_ZZ']];
         $removedNodesFlag = true;
         $recursiveFlag = true;
 
-        $this->nodeDataRepository->expects($this->once())->method('getNodeDataForParentAndNodeType')->with($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, $removedNodesFlag, $recursiveFlag)->will($this->returnValue(array()));
-        $this->nodeDataRepository->expects($this->once())->method('getNodeTypeFilterConstraintsForDql')->with($nodeTypeFilter)->will($this->returnValue(array('excludeNodeTypes' => array(), 'includeNodeTypes' => array($nodeTypeFilter))));
+        $this->nodeDataRepository->expects($this->once())->method('getNodeDataForParentAndNodeType')->with($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, $removedNodesFlag, $recursiveFlag)->will($this->returnValue([]));
+        $this->nodeDataRepository->expects($this->once())->method('getNodeTypeFilterConstraintsForDql')->with($nodeTypeFilter)->will($this->returnValue(['excludeNodeTypes' => [], 'includeNodeTypes' => [$nodeTypeFilter]]));
 
         $this->nodeDataRepository->findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, true);
     }
@@ -156,12 +156,12 @@ class NodeDataRepositoryTest extends UnitTestCase
 
         $this->nodeDataRepository->add($nodeData);
 
-        $dimensions = array('persona' => array('everybody'), 'language' => array('de_DE', 'mul_ZZ'));
+        $dimensions = ['persona' => ['everybody'], 'language' => ['de_DE', 'mul_ZZ']];
 
         $nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(true));
 
-        $this->nodeDataRepository->expects($this->any())->method('getNodeDataForParentAndNodeType')->will($this->returnValue(array()));
-        $this->nodeDataRepository->expects($this->once())->method('getNodeTypeFilterConstraintsForDql')->will($this->returnValue(array('excludeNodeTypes' => array(), 'includeNodeTypes' => array())));
+        $this->nodeDataRepository->expects($this->any())->method('getNodeDataForParentAndNodeType')->will($this->returnValue([]));
+        $this->nodeDataRepository->expects($this->once())->method('getNodeTypeFilterConstraintsForDql')->will($this->returnValue(['excludeNodeTypes' => [], 'includeNodeTypes' => []]));
 
         $result = $this->nodeDataRepository->findByParentAndNodeType('/foo', null, $liveWorkspace, $dimensions);
 
@@ -186,13 +186,13 @@ class NodeDataRepositoryTest extends UnitTestCase
 
         $this->nodeDataRepository->remove($nodeData);
 
-        $dimensions = array('persona' => array('everybody'), 'language' => array('de_DE', 'mul_ZZ'));
+        $dimensions = ['persona' => ['everybody'], 'language' => ['de_DE', 'mul_ZZ']];
 
         $nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(true));
 
-        $this->nodeDataRepository->expects($this->any())->method('getNodeDataForParentAndNodeType')->will($this->returnValue(array(
+        $this->nodeDataRepository->expects($this->any())->method('getNodeDataForParentAndNodeType')->will($this->returnValue([
             'abcd-efgh-ijkl-mnop' => $nodeData
-        )));
+        ]));
 
         $result = $this->nodeDataRepository->findByParentAndNodeType('/foo', null, $liveWorkspace, $dimensions);
 

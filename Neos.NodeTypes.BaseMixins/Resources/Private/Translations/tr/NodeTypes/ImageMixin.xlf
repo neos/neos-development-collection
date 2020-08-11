@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="groups.image" xml:space="preserve">
 				<source>Image</source>
-			<target xml:lang="tr" state="translated">Resim</target></trans-unit>
+			<target state="translated">Resim</target></trans-unit>
       <trans-unit id="properties.image" xml:space="preserve">
 				<source>Image</source>
-			<target xml:lang="tr" state="translated">Resim</target></trans-unit>
+			<target state="translated">Resim</target></trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve">
 				<source>Alternative text</source>
-			<target xml:lang="tr" state="translated">Alternatif metin</target></trans-unit>
+			<target state="translated">Alternatif metin</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="tr" state="translated">Başlık</target></trans-unit>
+			<target state="translated">Başlık</target></trans-unit>
     </body>
   </file>
 </xliff>

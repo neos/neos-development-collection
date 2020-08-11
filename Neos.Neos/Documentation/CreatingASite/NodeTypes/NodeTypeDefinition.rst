@@ -5,7 +5,8 @@ Node Type Definition
 
 Each Neos ContentRepository Node (we'll just call it Node in the remaining text) has a specific
 *node type*. Node Types can be defined in any package by declaring them in
-``Configuration/NodeTypes.yaml``.
+``Configuration/NodeTypes.yaml``. If you have a rather large list of Node Types, you can also split your
+NodeType definitions into multiple ``Configuration/NodeTypes.*.yaml`` files for organizing them.
 
 Each node type can have *one or multiple parent types*. If these are specified,
 all properties and settings of the parent types are inherited.
@@ -169,8 +170,17 @@ The following options are allowed:
   ``icon``
     This setting defines the icon that the Neos UI will use to display the node type.
 
-    Currently it is only possible to use a predefined selection of icons, which
-    are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
+    Legacy:
+    In Neos versions before 4.0 it was required to use icons from the Fontawesome 3 or 4 versions,
+    prefixed with "icon-"
+
+    Current:
+    In Neos 4.0, Fontawesome 5 was introduced, enabling the usage of all free Fontawesome icons:
+    https://fontawesome.com/icons?d=gallery&m=free
+    Those can still be referenced via "icon-[name]", as the UI includes a fallback to the "fas"
+    prefix-classes. To be sure which icon will be used, they can also be referenced by their
+    icon-classes, e.g. "fas fa-check".
+
 
   ``help``
     Configuration of contextual help. Displays a message that is rendered as popover
@@ -280,64 +290,78 @@ The following options are allowed:
       i.e. for properties which have a ``group`` set.
 
     ``inlineEditable``
-      If `true`, this property is inline editable, i.e. edited directly on the page through Aloha.
+      If `true`, this property is inline editable, i.e. edited directly on the page.
 
     ``aloha``
-      This section controls the text formatting options the user has available for this property.
+      Legacy configuration of rich text editor, works for the sake of backwards compatibility, but it
+      is advised to use `inline.editorOptions` instead.
+
+    ``inline``
+
+      ``editor``
+        A way to override default inline editor loaded for this property.
+        Two editors are available out of the box: `ckeditor` (loads CKeditor4) and `ckeditor5` (loads CKeditor5).
+        The default editor is configurable in Settings.yaml under the key `Neos.Neos.Ui.frontendConfiguration.defaultInlineEditor`.
+        It is strongly recommended to start using CKeditor5 today, as the CKeditor4 integration will be deprecated and removed in the future versions.
+        Additional custom inline editors are registered via the `inlineEditors` registry.
+        See :ref:`ui-extensibility` for the detailed information on the topic.
+
+      ``editorOptions``
+        This section controls the text formatting options the user has available for this property.
+
+        **Note**: When using `inline.editorOptions` anything defined under the legacy `aloha` key for a
+        property is ignored. Keep this in mind when using supertypes and mixins.
+
+        ``placeholder``
+          A text that is shown when the field is empty. Supports i18n.
+        
+        ``autoparagraph``
+          When configured to false, automatic creation of paragraphs is disabled for this property and <enter>
+          key would create soft line breaks instead (equivalent to configuring an editable on a span tag).
+
+        ``linking``
+          A way to configure additional options available for a link, e.g. target or rel attributes.
+
+        ``formatting``
+          Various formatting options (see example below for all available options).
+
       Example::
 
-        aloha:
-          'format': # Enable specific formatting options.
-            'strong': true
-            'b': false
-            'em': true
-            'i': false
-            'u': true
-            'sub': true
-            'sup': true
-            'p': true
-            'h1': true
-            'h2': true
-            'h3': true
-            'h4': false
-            'h5': false
-            'h6': false
-            'code': false
-            'removeFormat': true
-          'table':
-            'table': true
-          'link':
-            'a': true
-          'list':
-            'ul': true
-            'ol': true
-          'alignment':
-            'left': true
-            'center': true
-            'right': true
-            'justify': true
-          'formatlesspaste':
-            # Show toggle button for formatless pasting.
-            'button': true
-            # Whether the formatless pasting should be enable by default.
-            'formatlessPasteOption': false
-            # If not set the default setting is used: 'a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'code', 'del', 'dfn',
-            # 'em', 'i', 'ins', 'kbd', 'mark', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'strong', 'sub', 'sup',
-            # 'time', 'u', 'var'
-            'strippedElements': ['a']
-          'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
-
-      Example of disabling all formatting options::
-
-        aloha:
-          'format': []
-          'table': []
-          'link': []
-          'list': []
-          'alignment': []
-          'formatlesspaste':
-            'button': false
-            'formatlessPasteOption': true
+        inline:
+          editorOptions:
+            placeholder: i18n
+            autoparagraph: true
+            linking:
+              anchor: true
+              title: true
+              relNofollow: true
+              targetBlank: true
+            formatting:
+              strong: true
+              em: true
+              u: true
+              sub: true
+              sup: true
+              del: true
+              p: true
+              h1: true
+              h2: true
+              h3: true
+              h4: true
+              h5: true
+              h6: true
+              pre: true
+              underline: true
+              strikethrough: true
+              removeFormat: true
+              left: true
+              right: true
+              center: true
+              justify: true
+              table: true
+              ol: true
+              ul: true
+              a: true
 
     ``inspector``
       These settings configure the inspector in the Neos UI for the property.

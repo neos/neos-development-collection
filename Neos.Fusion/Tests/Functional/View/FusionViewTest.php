@@ -14,7 +14,6 @@ namespace Neos\Fusion\Tests\Functional\View;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\ViewInterface;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\View\FusionView;
 

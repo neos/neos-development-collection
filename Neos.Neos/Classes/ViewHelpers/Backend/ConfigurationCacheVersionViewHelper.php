@@ -11,7 +11,6 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 

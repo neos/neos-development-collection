@@ -82,12 +82,12 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
     /**
      * @var array
      */
-    protected $templateVariables = array();
+    protected $templateVariables = [];
 
     public function setUp()
     {
         parent::setUp();
-        $this->editableViewHelper = $this->getAccessibleMock(EditableViewHelper::class, array('renderChildren'));
+        $this->editableViewHelper = $this->getAccessibleMock(EditableViewHelper::class, ['renderChildren']);
 
         $this->mockPrivilegeManager = $this->getMockBuilder(PrivilegeManagerInterface::class)->getMock();
         $this->inject($this->editableViewHelper, 'privilegeManager', $this->mockPrivilegeManager);
@@ -108,10 +108,10 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
         $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
 
-        $this->mockContext = array('node' => $this->mockNode);
+        $this->mockContext = ['node' => $this->mockNode];
         $this->mockRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockContext));
         $this->mockTemplateImplementation->expects($this->any())->method('getRuntime')->will($this->returnValue($this->mockRuntime));
-        $this->mockView = $this->getAccessibleMock(FluidView::class, array(), array(), '', false);
+        $this->mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
         $this->mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($this->mockTemplateImplementation));
 
         $this->editableViewHelper->initializeArguments();
@@ -158,9 +158,9 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderThrowsExceptionIfTheTsTemplateObjectIsNotSet()
     {
-        $this->templateVariables = array(
+        $this->templateVariables = [
             'someProperty' => 'somePropertyValue',
-        );
+        ];
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
         $this->editableViewHelper->render('someProperty');
     }
@@ -170,9 +170,9 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderSetsThePropertyValueAsTagContentIfItExists()
     {
-        $this->templateVariables = array(
+        $this->templateVariables = [
             'someProperty' => 'somePropertyValue'
-        );
+        ];
         $this->tagBuilder->expects($this->once())->method('setContent')->with('somePropertyValue');
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
         $this->setUpViewMockAccess();
@@ -184,9 +184,9 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderSetsTheChildNodesAsTagContentIfTheyAreSet()
     {
-        $this->templateVariables = array(
+        $this->templateVariables = [
             'someProperty' => 'somePropertyValue'
-        );
+        ];
 
         $this->editableViewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('overriddenPropertyValue'));
         $this->tagBuilder->expects($this->once())->method('setContent')->with('overriddenPropertyValue');
@@ -200,9 +200,9 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderCallsContentElementEditableServiceForAugmentation()
     {
-        $this->templateVariables = array(
+        $this->templateVariables = [
             'someProperty' => 'somePropertyValue'
-        );
+        ];
         $this->tagBuilder->expects($this->once())->method('render')->with()->willReturn('<div>somePropertyValue</div>');
         $this->mockContentElementEditableService->expects($this->once())->method('wrapContentProperty')->with($this->mockNode, 'someProperty', '<div>somePropertyValue</div>');
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
@@ -215,9 +215,9 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesTheNodeArgumentIfSet()
     {
-        $this->templateVariables = array(
+        $this->templateVariables = [
             'someProperty' => 'somePropertyValue'
-        );
+        ];
 
         $this->tagBuilder->expects($this->once())->method('render');
 

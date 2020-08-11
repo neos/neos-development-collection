@@ -14,6 +14,7 @@ configuring inspector editors.
 For example, this functionality is used in Neos to ask users for title before creating document nodes:
 
 .. code-block:: yaml
+
   'Neos.Neos:Document':
     ui:
       group: 'general'

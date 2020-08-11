@@ -20,6 +20,17 @@ Neos:
     # Automatically create thumbnails for configured presets when assets are added
     autoCreateThumbnailPresets: true
 
+    iconSet:
+      path: 'resource://Neos.Media/Public/IconSets/vivid'
+      extension: 'svg'
+
+    assetSources:
+      'neos':
+        assetSource: 'Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetSource'
+        assetSourceOptions:
+          # asyncThumbnails: defaults to the value of Neos:Media:asyncThumbnails
+          asyncThumbnails: ~
+
     asset:
       modelMappingStrategy:
         default: Neos\Media\Domain\Model\Document
@@ -35,6 +46,10 @@ Neos:
         # Image quality, from 0 to 100
         quality: 90
         convertCMYKToRGB: true
+        # Image formats that shall always be converted regardless wether an adjustment was applied or not
+        # The key is the the source media-type and the value is the target media-type or file-extension
+        # like "image/tiff: image/jpeg". Please ensure the target format is supported by the imagine-driver.
+        convertFormats: []
         interlace: '%\Imagine\Image\ImageInterface::INTERLACE_NONE%'
         # defines the filter to use for resize operations.
         # Note that the default GD driver only supports the FILTER_UNDEFINED.
@@ -42,6 +57,11 @@ Neos:
         # They roughly line up with ImageMagick filters, so read up on those to see differences.
         # A very cheap filter with reasonable quality would be "FILTER_BOX", alternative is "FILTER_CATROM".
         resizeFilter: '%\Imagine\Image\ImageInterface::FILTER_UNDEFINED%'
+
+    # Variant presets
+    variantPresets: []
+    # Automatically create asset variants for configured presets when assets are added
+    autoCreateImageVariantPresets: false
 
     thumbnailGenerators:
 

@@ -25,38 +25,38 @@ class NextUntilOperationTest extends AbstractNodeTest
      */
     public function nextUntilOperationDataProvider()
     {
-        return array(
-            array(
-                'currentNodePaths' => array('/a/a1'),
+        return [
+            [
+                'currentNodePaths' => ['/a/a1'],
                 'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => array('/a/a2'),
-                'unexpectedNodePaths' => array('/a/a1','/a/a3','/a/a4')
-            ),
-            array(
-                'currentNodePaths' => array('/a/a3'),
+                'expectedNodePaths' => ['/a/a2'],
+                'unexpectedNodePaths' => ['/a/a1','/a/a3','/a/a4']
+            ],
+            [
+                'currentNodePaths' => ['/a/a3'],
                 'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => array('/a/a4'),
-                'unexpectedNodePaths' => array('/b')
-            ),
-            array(
-                'currentNodePaths' => array('/a/a4'),
+                'expectedNodePaths' => ['/a/a4'],
+                'unexpectedNodePaths' => ['/b']
+            ],
+            [
+                'currentNodePaths' => ['/a/a4'],
                 'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => array(),
-                'unexpectedNodePaths' => array('/a/a5')
-            ),
-            array(
-                'currentNodePaths' => array('/b/b1'),
+                'expectedNodePaths' => [],
+                'unexpectedNodePaths' => ['/a/a5']
+            ],
+            [
+                'currentNodePaths' => ['/b/b1'],
                 'subject' => 'b3[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => array('/b/b2'),
-                'unexpectedNodePaths' => array('/b/b4')
-            ),
-            array(
-                'currentNodePaths' => array('/a/a1'),
+                'expectedNodePaths' => ['/b/b2'],
+                'unexpectedNodePaths' => ['/b/b4']
+            ],
+            [
+                'currentNodePaths' => ['/a/a1'],
                 'subject' => '',
-                'expectedNodePaths' => array('/a/a2','/a/a3','/a/a4','/a/a5'),
-                'unexpectedNodePaths' => array('/a/a1','/b')
-            )
-        );
+                'expectedNodePaths' => ['/a/a2','/a/a3','/a/a4','/a/a5'],
+                'unexpectedNodePaths' => ['/a/a1','/b']
+            ]
+        ];
     }
 
     /**
@@ -97,13 +97,13 @@ class NextUntilOperationTest extends AbstractNodeTest
         $nodeB->createNode('b4');
 
 
-        $currentNodes = array();
+        $currentNodes = [];
         foreach ($currentNodePaths as $currentNodePath) {
             $currentNodes[] = $rootNode->getNode($currentNodePath);
         }
 
         if (is_array($subject)) {
-            $subjectNodes = array();
+            $subjectNodes = [];
             foreach ($subject as $subjectNodePath) {
                 $subjectNodes[] = $rootNode->getNode($subjectNodePath);
             }
@@ -113,7 +113,7 @@ class NextUntilOperationTest extends AbstractNodeTest
         $q = new FlowQuery($currentNodes);
         $result = $q->nextUntil($subject)->get();
 
-        if ($expectedNodePaths === array() && $unexpectedNodePaths === array()) {
+        if ($expectedNodePaths === [] && $unexpectedNodePaths === []) {
             $this->assertEmpty($result);
         } else {
             foreach ($expectedNodePaths as $expectedNodePath) {

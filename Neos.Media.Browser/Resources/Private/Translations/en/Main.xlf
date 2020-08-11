@@ -26,6 +26,9 @@
 			<trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			</trans-unit>
+			<trans-unit id="field.copyrightnotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			</trans-unit>
 			<trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			</trans-unit>
@@ -64,6 +67,12 @@
 			</trans-unit>
 			<trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
+			</trans-unit>
+			<trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			</trans-unit>
+			<trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
 			</trans-unit>
 			<trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
@@ -173,6 +182,15 @@
 			<trans-unit id="tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
 			</trans-unit>
+			<trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			</trans-unit>
+			<trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			</trans-unit>
+			<trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			</trans-unit>
 			<trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			</trans-unit>
@@ -272,8 +290,26 @@
 			<trans-unit id="metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			</trans-unit>
+			<trans-unit id="metadata.iptcProperties.Title" xml:space="preserve">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve">
+				<source>Caption</source>
+			</trans-unit>
+			<trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			</trans-unit>
 			<trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
+			</trans-unit>
+			<trans-unit id="download" xml:space="preserve">
+				<source>Download</source>
+			</trans-unit>
+			<trans-unit id="next" xml:space="preserve">
+				<source>Next</source>
+			</trans-unit>
+			<trans-unit id="previous" xml:space="preserve">
+				<source>Previous</source>
 			</trans-unit>
 			<trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>

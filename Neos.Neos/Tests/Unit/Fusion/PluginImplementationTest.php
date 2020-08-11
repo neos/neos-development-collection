@@ -17,7 +17,6 @@ use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\PluginImplementation;
 use Neos\Fusion\Core\Runtime;
@@ -109,6 +108,8 @@ class PluginImplementationTest extends UnitTestCase
         $this->mockDispatcher->expects($this->any())->method('dispatch')->will($this->returnCallback(function ($request, $response) use ($input) {
             $this->_setHeadersIntoResponse($response, $input['plugin']);
         }));
+
+        $this->mockRuntime->expects($this->any())->method('getCurrentContext')->willReturn(['node' => null, 'documentNode' => null]);
 
         $this->pluginImplementation->evaluate();
 

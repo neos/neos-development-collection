@@ -5,8 +5,8 @@ prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\Attribu
 prototype(Neos.Fusion:Tag) {
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
 	attributes = Attributes
-	omitClosingTag = FALSE
-	selfClosingTag = FALSE
+	omitClosingTag = false
+	selfClosingTag = false
 }
 
 

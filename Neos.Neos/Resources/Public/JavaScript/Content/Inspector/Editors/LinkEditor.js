@@ -90,7 +90,7 @@ define(
 									id: query.term,
 									text: query.term,
 									data: {
-										icon: 'icon-link'
+										icon: 'fas fa-link'
 									},
 									'type': 'external'
 								});
@@ -151,7 +151,7 @@ define(
 								id: url,
 								text: url,
 								data: {
-									icon: 'icon-link'
+									icon: 'fas fa-link'
 								},
 								'type': 'external'
 							}, true);
@@ -214,7 +214,7 @@ define(
 								},
 								function() {
 									item.set('text', '<i> Node missing</i>');
-									item.set('data', {icon: 'icon-warning-sign', identifier: nodeIdentifier});
+									item.set('data', {icon: 'fas fa-exclamation-triangle', identifier: nodeIdentifier});
 									that._updateSelect2();
 								}
 							);
@@ -224,19 +224,19 @@ define(
 							HttpRestClient.getResource('neos-service-assets', assetIdentifier).then(
 								function(result) {
 									item.set('text', $('.asset-label', result.resource).text().trim());
-									item.set('data', {icon: 'icon-file-alt', identifier: $('.asset-identifier', result.resource).text()});
+									item.set('data', {icon: 'far fa-file', identifier: $('.asset-identifier', result.resource).text()});
 									that._updateSelect2();
 								},
 								function() {
 									item.set('text', '<i> Asset missing</i>');
-									item.set('data', {icon: 'icon-warning-sign', identifier: assetIdentifier});
+									item.set('data', {icon: 'fas fa-exclamation-triangle', identifier: assetIdentifier});
 									that._updateSelect2();
 								}
 							);
 						break;
 						default:
 							item.set('text', value);
-							item.set('data', {icon: 'icon-link'});
+							item.set('data', {icon: 'fas fa-link'});
 						break;
 					}
 				} else if (value === '') {

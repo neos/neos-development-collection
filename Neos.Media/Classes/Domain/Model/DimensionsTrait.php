@@ -12,7 +12,6 @@ namespace Neos\Media\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Trait for methods regarding the dimensions of an asset

@@ -11,13 +11,13 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Render a Fusion collection of nodes as an array
  *
  * //tsPath collection *Collection
  * //tsPath itemRenderer the TS object which is triggered for each element in the node collection
+ * @deprecated since Neos 4.2 in favor of MapImplementation
  */
 class RawCollectionImplementation extends AbstractCollectionImplementation
 {
@@ -28,6 +28,6 @@ class RawCollectionImplementation extends AbstractCollectionImplementation
      */
     public function evaluate()
     {
-        return parent::evaluateAsArray();
+        return array_values(parent::evaluateAsArray());
     }
 }

@@ -30,13 +30,13 @@
 			<main class="neos-login-main">
 				<div class="neos-login-box {f:if(condition: settings.userInterface.backendLoginForm.backgroundImage, then: 'background-image-active')}">
 					<figure class="neos-login-box-logo">
-						<img class="neos-login-box-logo-resource" src="{f:uri.resource(path: 'Images/Login/Logo.svg')}" width="200px" height="200px" />
+						<img class="neos-login-box-logo-resource" src="{f:uri.resource(path: 'Images/Login/Logo.svg')}" width="200px" height="200px" alt="Neos Logo" />
 					</figure>
 
-					<header>
+					<h1 class="neos-login-heading">
 						<neos:backend.translate id="login.index.title">Login to</neos:backend.translate>
 						<strong>{site.name}</strong>
-					</header>
+					</h1>
 					<div class="neos-login-body neos">
 						<f:form name="login" action="authenticate">
 							<f:form.hidden name="lastVisitedNode"/>
@@ -48,6 +48,7 @@
 															  placeholder="{neos:backend.translate(id: 'username', value: 'Username')}"
 															  class="neos-span12"
 															  name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]"
+															  additionalAttributes="{aria-label:'{neos:backend.translate(id: \'username\', value: \'Username\')}'}"
 															  value="{username}"/>
 										</div>
 										<div class="neos-controls">
@@ -55,7 +56,7 @@
 															  placeholder="{neos:backend.translate(id: 'password', value: 'Password')}"
 															  class="neos-span12"
 															  name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]"
-															  additionalAttributes="{autofocus:'autofocus'}"/>
+															  additionalAttributes="{autofocus:'autofocus', aria-label:'{neos:backend.translate(id: \'password\', value: \'Password\')}'}"/>
 										</div>
 									</f:then>
 									<f:else>
@@ -64,14 +65,15 @@
 															  placeholder="{neos:backend.translate(id: 'username', value: 'Username')}"
 															  class="neos-span12"
 															  name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]"
-															  additionalAttributes="{autofocus:'autofocus'}"
+															  additionalAttributes="{autofocus:'autofocus', aria-label:'{neos:backend.translate(id: \'username\', value: \'Username\')}'}"
 															  value="{username}"/>
 										</div>
 										<div class="neos-controls">
 											<f:form.textfield required="required" id="password" type="password"
 															  placeholder="{neos:backend.translate(id: 'password', value: 'Password')}"
 															  class="neos-span12"
-															  name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]"/>
+															  name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]"
+															  additionalAttributes="{aria-label:'{neos:backend.translate(id: \'password\', value: \'Password\')}'}"/>
 										</div>
 									</f:else>
 								</f:if>
@@ -104,7 +106,7 @@
 												<div class="neos-tooltip neos-bottom neos-in neos-tooltip-error">
 											</f:if>
 											<div class="neos-tooltip-arrow"></div>
-											<div class="neos-tooltip-inner">{neos:backend.translate(id:
+											<div class="neos-tooltip-inner" role="alert">{neos:backend.translate(id:
 												'flashMessage.{flashMessage.code}', package: 'Neos.Neos', value: flashMessage)}
 											</div>
 										</f:for>

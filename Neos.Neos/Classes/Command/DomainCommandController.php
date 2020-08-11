@@ -125,58 +125,82 @@ class DomainCommandController extends CommandController
     }
 
     /**
-     * Delete a domain record by hostname
+     * Delete a domain record by hostname (with globbing)
      *
-     * @param string $hostname The hostname to remove
+     * @param string $hostname The hostname to remove (globbing is supported)
      * @return void
      */
     public function deleteCommand($hostname)
     {
-        $domain = $this->domainRepository->findOneByHostname($hostname);
-        if (!$domain instanceof Domain) {
-            $this->outputLine('<error>Domain not found.</error>');
+        $domains = $this->findDomainsByHostnamePattern($hostname);
+        if (empty($domains)) {
+            $this->outputLine('<error>No domain found for hostname-pattern "%s".</error>', [$hostname]);
             $this->quit(1);
         }
-
-        $this->domainRepository->remove($domain);
-        $this->outputLine('Domain entry deleted.');
+        foreach ($domains as $domain) {
+            $site = $domain->getSite();
+            if ($site->getPrimaryDomain() === $domain) {
+                $site->setPrimaryDomain(null);
+                $this->siteRepository->update($site);
+            }
+            $this->domainRepository->remove($domain);
+            $this->outputLine('Domain entry "%s" deleted.', [$domain->getHostname()]);
+        }
     }
 
     /**
-     * Activate a domain record by hostname
+     * Activate a domain record by hostname (with globbing)
      *
-     * @param string $hostname The hostname to activate
+     * @param string $hostname The hostname to activate (globbing is supported)
      * @return void
      */
     public function activateCommand($hostname)
     {
-        $domain = $this->domainRepository->findOneByHostname($hostname);
-        if (!$domain instanceof Domain) {
-            $this->outputLine('<error>Domain not found.</error>');
+        $domains = $this->findDomainsByHostnamePattern($hostname);
+        if (empty($domains)) {
+            $this->outputLine('<error>No domain found for hostname-pattern "%s".</error>', [$hostname]);
             $this->quit(1);
         }
-
-        $domain->setActive(true);
-        $this->domainRepository->update($domain);
-        $this->outputLine('Domain entry activated.');
+        foreach ($domains as $domain) {
+            $domain->setActive(true);
+            $this->domainRepository->update($domain);
+            $this->outputLine('Domain entry "%s" was activated.', [$domain->getHostname()]);
+        }
     }
 
     /**
-     * Deactivate a domain record by hostname
+     * Deactivate a domain record by hostname (with globbing)
      *
-     * @param string $hostname The hostname to deactivate
+     * @param string $hostname The hostname to deactivate (globbing is supported)
      * @return void
      */
     public function deactivateCommand($hostname)
     {
-        $domain = $this->domainRepository->findOneByHostname($hostname);
-        if (!$domain instanceof Domain) {
-            $this->outputLine('<error>Domain not found.</error>');
+        $domains = $this->findDomainsByHostnamePattern($hostname);
+        if (empty($domains)) {
+            $this->outputLine('<error>No domain found for hostname-pattern "%s".</error>', [$hostname]);
             $this->quit(1);
         }
+        foreach ($domains as $domain) {
+            $domain->setActive(false);
+            $this->domainRepository->update($domain);
+            $this->outputLine('Domain entry "%s" was deactivated.', [$domain->getHostname()]);
+        }
+    }
 
-        $domain->setActive(false);
-        $this->domainRepository->update($domain);
-        $this->outputLine('Domain entry deactivated.');
+    /**
+     * Find domains that match the given hostname with globbing support
+     *
+     * @param string $hostnamePattern pattern for the hostname of the domains
+     * @return array<Domain>
+     */
+    protected function findDomainsByHostnamePattern($hostnamePattern)
+    {
+        return array_filter(
+            $this->domainRepository->findAll()->toArray(),
+            function ($domain) use ($hostnamePattern) {
+                return fnmatch($hostnamePattern, $domain->getHostname());
+            }
+        );
     }
 }

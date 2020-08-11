@@ -38,7 +38,7 @@ function(
 				},
 				titleClass: 'neos-title',
 				messageClass: 'neos-message',
-				closeHtml: '<i class="icon-remove"></i>',
+				closeHtml: '<i class="fas fa-times"></i>',
 				closeButton: false,
 				positionClass: 'neos-notification-top',
 				showMethod: 'slideDown',

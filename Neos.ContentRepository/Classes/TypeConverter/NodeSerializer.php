@@ -24,7 +24,7 @@ class NodeSerializer extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array(NodeInterface::class);
+    protected $sourceTypes = [NodeInterface::class];
 
     /**
      * @var string
@@ -43,7 +43,7 @@ class NodeSerializer extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string The node context path
      */
-    public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         return $source->getContextPath();
     }

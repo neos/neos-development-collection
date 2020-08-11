@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -39,7 +40,7 @@ abstract class AbstractNodeData
      * @ORM\Column(type="flow_json_array")
      * @var array<mixed>
      */
-    protected $properties = array();
+    protected $properties = [];
 
     /**
      * An optional object which is used as a content container alternative to $properties
@@ -104,7 +105,7 @@ abstract class AbstractNodeData
      * @ORM\Column(type="flow_json_array")
      * @var array<string>
      */
-    protected $accessRoles = array();
+    protected $accessRoles = [];
 
     /**
      * @Flow\Inject
@@ -164,7 +165,7 @@ abstract class AbstractNodeData
         if (!is_object($this->contentObjectProxy)) {
             switch ($this->getNodeType()->getPropertyType($propertyName)) {
                 case 'references':
-                    $nodeIdentifiers = array();
+                    $nodeIdentifiers = [];
                     if (is_array($value)) {
                         foreach ($value as $nodeIdentifier) {
                             if ($nodeIdentifier instanceof NodeInterface || $nodeIdentifier instanceof AbstractNodeData) {
@@ -211,7 +212,7 @@ abstract class AbstractNodeData
     protected function persistRelatedEntities($value)
     {
         if (!is_array($value) && !$value instanceof \Iterator) {
-            $value = array($value);
+            $value = [$value];
         }
         foreach ($value as $element) {
             if (is_object($element) && $element instanceof PersistenceMagicInterface) {
@@ -254,7 +255,7 @@ abstract class AbstractNodeData
             if (!empty($value)) {
                 if ($this->getNodeType()->getPropertyType($propertyName) === 'references') {
                     if (!is_array($value)) {
-                        $value = array();
+                        $value = [];
                     }
                 }
             }
@@ -301,7 +302,7 @@ abstract class AbstractNodeData
             return ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
         }
 
-        $properties = array();
+        $properties = [];
         foreach ($this->properties as $propertyName => $propertyValue) {
             $properties[$propertyName] = $this->getProperty($propertyName);
         }
@@ -365,7 +366,7 @@ abstract class AbstractNodeData
     /**
      * Sets the node type of this node.
      *
-     * @param \Neos\ContentRepository\Domain\Model\NodeType $nodeType
+     * @param NodeType $nodeType
      * @return void
      */
     public function setNodeType(NodeType $nodeType)
@@ -379,7 +380,8 @@ abstract class AbstractNodeData
     /**
      * Returns the node type of this node.
      *
-     * @return \Neos\ContentRepository\Domain\Model\NodeType
+     * @return NodeType
+     * @throws NodeTypeNotFoundException
      */
     public function getNodeType()
     {
@@ -422,7 +424,7 @@ abstract class AbstractNodeData
     /**
      * Sets the "hidden" flag for this node.
      *
-     * @param boolean $hidden If TRUE, this Node will be hidden
+     * @param boolean $hidden If true, this Node will be hidden
      * @return void
      */
     public function setHidden($hidden)
@@ -494,7 +496,7 @@ abstract class AbstractNodeData
     /**
      * Sets if this node should be hidden in indexes, such as a site navigation.
      *
-     * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
+     * @param boolean $hidden true if it should be hidden, otherwise false
      * @return void
      */
     public function setHiddenInIndex($hidden)

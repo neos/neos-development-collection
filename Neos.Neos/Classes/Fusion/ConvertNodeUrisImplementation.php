@@ -11,7 +11,6 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A Fusion Object that converts Node references in the format "node://<UUID>" to proper URIs

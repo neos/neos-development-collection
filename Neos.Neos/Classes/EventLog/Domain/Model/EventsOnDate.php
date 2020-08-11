@@ -24,7 +24,7 @@ class EventsOnDate
     /**
      * @var array<Event>
      */
-    protected $events = array();
+    protected $events = [];
 
     /**
      * @param \DateTime $day

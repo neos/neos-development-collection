@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "prevUntil" operation working on ContentRepository nodes. It iterates over all context elements
@@ -42,11 +42,11 @@ class PrevUntilOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -55,18 +55,20 @@ class PrevUntilOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
-        $until = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
+        $until = [];
 
         foreach ($flowQuery->getContext() as $contextNode) {
             $prevNodes = $this->getPrevForNode($contextNode);
+
             if (isset($arguments[0]) && !empty($arguments[0])) {
                 $untilQuery = new FlowQuery($prevNodes);
-                $untilQuery->pushOperation('filter', array($arguments[0]));
+                $untilQuery->pushOperation('filter', [$arguments[0]]);
 
                 $until = $untilQuery->get();
             }
@@ -76,12 +78,14 @@ class PrevUntilOperation extends AbstractOperation
                 $prevNodes = $this->getNodesUntil($prevNodes, $until);
             }
 
-            if (is_array($prevNodes)) {
-                foreach ($prevNodes as $prevNode) {
-                    if ($prevNode !== null && !isset($outputNodePaths[$prevNode->getPath()])) {
-                        $outputNodePaths[$prevNode->getPath()] = true;
-                        $output[] = $prevNode;
-                    }
+            if (!is_array($prevNodes)) {
+                continue;
+            }
+
+            foreach ($prevNodes as $prevNode) {
+                if ($prevNode !== null && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])) {
+                    $outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
+                    $output[] = $prevNode;
                 }
             }
         }
@@ -89,41 +93,35 @@ class PrevUntilOperation extends AbstractOperation
         $flowQuery->setContext($output);
 
         if (isset($arguments[1]) && !empty($arguments[1])) {
-            $flowQuery->pushOperation('filter', array($arguments[1]));
+            $flowQuery->pushOperation('filter', [$arguments[1]]);
         }
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the previous nodes should be found
+     * @param TraversableNodeInterface $contextNode The node for which the previous nodes should be found
      * @return array|NULL The previous nodes of $contextNode or NULL
      */
-    protected function getPrevForNode(NodeInterface $contextNode)
+    protected function getPrevForNode(TraversableNodeInterface $contextNode)
     {
-        $nodesInContext = $contextNode->getParent()->getChildNodes();
-        $count = count($nodesInContext) - 1;
-
-        for ($i = $count; $i > 0; $i--) {
-            if ($nodesInContext[$i] === $contextNode) {
-                unset($nodesInContext[$i]);
-                return array_values($nodesInContext);
-            } else {
-                unset($nodesInContext[$i]);
-            }
+        try {
+            $parentNode = $contextNode->findParentNode();
+        } catch (NodeException $e) {
+            return null;
         }
-        return null;
+        return $parentNode->findChildNodes()->previousAll($contextNode)->toArray();
     }
 
     /**
-     * @param array $prevNodes the remaining nodes
-     * @param NodeInterface $until
-     * @return array
+     * @param array|TraversableNodeInterface[] $prevNodes the remaining nodes
+     * @param TraversableNodeInterface $until
+     * @return TraversableNodeInterface[]
      */
-    protected function getNodesUntil($prevNodes, NodeInterface $until)
+    protected function getNodesUntil(array $prevNodes, TraversableNodeInterface $until)
     {
         $count = count($prevNodes);
 
         for ($i = 0; $i < $count; $i++) {
-            if ($prevNodes[$i]->getPath() === $until->getPath()) {
+            if ($prevNodes[$i] === $until) {
                 unset($prevNodes[$i]);
                 return array_values($prevNodes);
             } else {

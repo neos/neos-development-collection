@@ -5,18 +5,18 @@
       <!-- UserDoesNotExistValidator -->
       <trans-unit id="1325156008" xml:space="preserve">
 				<source>The username is already in use.</source>
-			<target xml:lang="ar" state="translated">اسم المستخدم هذا مستخدم سلفا.</target></trans-unit>
+			<target state="translated">اسم المستخدم هذا مستخدم سلفا.</target></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
-			<target xml:lang="ar" state="translated">اسم المضيف "{0}" ليس صحيح.</target></trans-unit>
+			<target state="translated">اسم المضيف "{0}" ليس صحيح.</target></trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve">
 				<source>The given password was empty.</source>
-			<target xml:lang="ar" state="translated">كلمة المرور المعطاة فارغة.</target></trans-unit>
+			<target state="translated">كلمة المرور المعطاة فارغة.</target></trans-unit>
       <trans-unit id="1324640997" xml:space="preserve">
 				<source>The passwords did not match.</source>
-			<target xml:lang="ar" state="translated">كلمات المرور لا تتطابق.</target></trans-unit>
+			<target state="translated">كلمات المرور لا تتطابق.</target></trans-unit>
     </body>
   </file>
 </xliff>

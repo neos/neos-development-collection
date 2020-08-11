@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="id" state="translated">Halaman</target></trans-unit>
+			<target state="translated">Halaman</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="id" state="translated">Judul</target></trans-unit>
+			<target state="translated">Judul</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
-			<target xml:lang="id" state="translated">Tata letak</target></trans-unit>
+			<target state="translated">Tata letak</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
 				<source>Layout for this page only</source>
-			<target xml:lang="id" state="translated">Tampilan untuk halaman ini saja</target></trans-unit>
+			<target state="translated">Tampilan untuk halaman ini saja</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Inherit from parent</source>
-			<target xml:lang="id" state="translated">Mewarisi dari induk</target></trans-unit>
+			<target state="translated">Mewarisi dari induk</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="id" state="translated">Tampilan untuk subhalaman pada halaman ini</target></trans-unit>
+			<target state="translated">Tampilan untuk subhalaman pada halaman ini</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Inherit from parent</source>
-			<target xml:lang="id" state="translated">Mewarisi dari induk</target></trans-unit>
+			<target state="translated">Mewarisi dari induk</target></trans-unit>
     </body>
   </file>
 </xliff>

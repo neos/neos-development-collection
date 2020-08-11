@@ -11,8 +11,6 @@ namespace Neos\ContentRepository\Migration\Configuration;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Migration\Configuration\ConfigurationInterface;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 
 /**
@@ -28,7 +26,7 @@ abstract class Configuration implements ConfigurationInterface
     /**
      * @var array
      */
-    protected $loadedVersions = array();
+    protected $loadedVersions = [];
 
     /**
      * Returns an array with all available versions.
@@ -44,7 +42,7 @@ abstract class Configuration implements ConfigurationInterface
     }
 
     /**
-     * If the given version is available, TRUE is returned.
+     * If the given version is available, true is returned.
      *
      * @param string $version
      * @return boolean

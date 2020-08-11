@@ -102,12 +102,18 @@ class WorkspaceCommandController extends CommandController
             $this->quit(1);
         }
 
-        $this->outputLine('The workspace %s contains %u unpublished nodes.', [$workspaceName, count($nodes)]);
+        $amount = count($nodes);
+        $this->outputLine('The workspace %s contains %u unpublished nodes.', [$workspaceName, $amount]);
 
-        foreach ($nodes as $node) {
+        foreach ($nodes as $index => $node) {
             /** @var NodeInterface $node */
             if ($verbose) {
-                $this->outputLine('    ' . $node->getPath());
+                $this->outputLine("[%s][%s/%u] %s", [
+                    date('H:i:s'),
+                    str_pad($index + 1, strlen($amount . ''), ' ', STR_PAD_LEFT),
+                    $amount,
+                    $node->getContextPath()
+                ]);
             }
             if (!$dryRun) {
                 $this->publishingService->publishNode($node, $targetWorkspace);
@@ -238,6 +244,11 @@ class WorkspaceCommandController extends CommandController
             $this->quit(1);
         }
 
+        if ($workspace->getName() === 'live') {
+            $this->outputLine('Did not delete workspace "live" because it is required for Neos CMS to work properly.');
+            $this->quit(2);
+        }
+
         if ($workspace->isPersonalWorkspace()) {
             $this->outputLine('Did not delete workspace "%s" because it is a personal workspace. Personal workspaces cannot be deleted manually.', [$workspaceName]);
             $this->quit(2);
@@ -295,6 +306,11 @@ class WorkspaceCommandController extends CommandController
         if (!$workspace instanceof Workspace) {
             $this->outputLine('Workspace "%s" does not exist', [$workspaceName]);
             $this->quit(1);
+        }
+
+        if ($workspace->getName() === 'live') {
+            $this->outputLine('The workspace "live" cannot be rebased as it is the global base workspace.');
+            $this->quit(2);
         }
 
         $baseWorkspaceName = $baseWorkspace;

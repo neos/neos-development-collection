@@ -18,124 +18,145 @@ additionalProperties:
                 # here, we specify ONLY the "ui" part of the schema, as the remaining parts
                 # are already specified in the NodeTypes schema of the TYPO3CR package
                 type: dictionary
-                additionalProperties: FALSE
+                additionalProperties: false
                 properties:
 
-                  'label': { type: string, description: "Human-readable label for this property." }
+                  'label': { type: ['null', 'string'], description: "Human-readable label for this property." }
 
                   'help':
-                    type: dictionary
-                    additionalProperties: FALSE
-                    properties:
-                      'message': { type: string, description: "Help text for this property. Supports markdown." }
+                    type:
+                      -
+                        type: 'null'
+                      -
+                        type: dictionary
+                        additionalProperties: false
+                        properties:
+                          'message': { type: string, description: "Help text for this property. Supports markdown." }
 
-                  'reloadIfChanged': { type: boolean, description: "If this property changes, should a element refresh occur?" }
+                  'reloadIfChanged': { type: ['null', 'boolean'], description: "If this property changes, should a element refresh occur?" }
 
-                  'reloadPageIfChanged': { type: boolean, description: "If this property changes, should a page reload occur?" }
+                  'reloadPageIfChanged': { type: ['null', 'boolean'], description: "If this property changes, should a page reload occur?" }
 
-                  'inlineEditable': { type: boolean, description: "Is this property inline editable, i.e. edited directly on the page through Aloha/Hallo?" }
+                  'inlineEditable': { type: ['null', 'boolean'], description: "Is this property inline editable, i.e. edited directly on the page?" }
+
+                  'inline':
+                    type: ['null', 'dictionary']
 
                   'aloha':
-                    type: dictionary
-                    additionalProperties: FALSE
-                    properties:
-
-                      'format':
+                    type:
+                      -
+                        type: 'null'
+                      -
                         type: dictionary
-                        additionalProperties: FALSE
+                        additionalProperties: false
                         properties:
-                          'strong': { type: boolean }
-                          'b': { type: boolean }
-                          'em': { type: boolean }
-                          'i': { type: boolean }
-                          'u': { type: boolean }
-                          'del': { type: boolean }
-                          'sub': { type: boolean }
-                          'sup': { type: boolean }
-                          'p': { type: boolean }
-                          'h1': { type: boolean }
-                          'h2': { type: boolean }
-                          'h3': { type: boolean }
-                          'h4': { type: boolean }
-                          'h5': { type: boolean }
-                          'h6': { type: boolean }
-                          'pre': { type: boolean }
-                          'code': { type: boolean }
-                          'removeFormat': { type: boolean }
 
-                      'table':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'table': { type: boolean }
+                          'format':
+                            type: dictionary
+                            additionalProperties: false
+                            properties:
+                              'strong': { type: boolean }
+                              'b': { type: boolean }
+                              'em': { type: boolean }
+                              'i': { type: boolean }
+                              'u': { type: boolean }
+                              'del': { type: boolean }
+                              'sub': { type: boolean }
+                              'sup': { type: boolean }
+                              'p': { type: boolean }
+                              'h1': { type: boolean }
+                              'h2': { type: boolean }
+                              'h3': { type: boolean }
+                              'h4': { type: boolean }
+                              'h5': { type: boolean }
+                              'h6': { type: boolean }
+                              'pre': { type: boolean }
+                              'code': { type: boolean }
+                              'removeFormat': { type: boolean }
 
-                      'link':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'a': { type: boolean }
+                          'table':
+                            type: dictionary
+                            additionalProperties: false
+                            properties:
+                              'table': { type: boolean }
 
-                      'list':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'ol': { type: boolean }
-                          'ul': { type: boolean }
+                          'link':
+                            type: dictionary
+                            additionalProperties: false
+                            properties:
+                              'a': { type: boolean }
 
-                      'alignment':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'right': { type: boolean }
-                          'left': { type: boolean }
-                          'center': { type: boolean }
-                          'justify': { type: boolean }
-                          'top': { type: boolean }
-                          'middle': { type: boolean }
-                          'bottom': { type: boolean }
+                          'list':
+                            type: dictionary
+                            additionalProperties: false
+                            properties:
+                              'ol': { type: boolean }
+                              'ul': { type: boolean }
 
-                      'formatlesspaste':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'button': { type: boolean }
-                          'formatlessPasteOption': { type: boolean }
-                          'strippedElements':
-                            type: array
-                            items: { type: string, description: "List of HTML tags. If not set the default setting is used." }
+                          'alignment':
+                            type: dictionary
+                            additionalProperties: FALSE
+                            properties:
+                              'right': { type: boolean }
+                              'left': { type: boolean }
+                              'center': { type: boolean }
+                              'justify': { type: boolean }
+                              'top': { type: boolean }
+                              'middle': { type: boolean }
+                              'bottom': { type: boolean }
 
-                      'autoparagraph': { type: boolean, description: "Automatically wrap non-wrapped text blocks in paragraph blocks." }
+                          'formatlesspaste':
+                            type: dictionary
+                            additionalProperties: false
+                            properties:
+                              'button': { type: boolean }
+                              'formatlessPasteOption': { type: boolean }
+                              'strippedElements':
+                                type: array
+                                items: { type: string, description: "List of HTML tags. If not set the default setting is used." }
 
-                      'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
+                          'autoparagraph': { type: boolean, description: "Automatically wrap non-wrapped text blocks in paragraph blocks." }
+
+                          'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
 
                   'inspector':
-                    type: dictionary
-                    additionalProperties: FALSE
-                    properties:
-
-                      'group': { type: ['string', 'null'], description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
-
-                      'position': { type: integer, description: 'Position inside the inspector group, small numbers are sorted on top' }
-
-                      'editor': { type: string, description: 'Name of the JavaScript Editor Class which is instanciated to edit this element in the inspector.' }
-
-                      'editorOptions': { type: dictionary, description: 'options for the given editor' }
-
-                      'editorListeners':
+                    type:
+                      -
+                        type: 'null'
+                      -
                         type: dictionary
-                        additionalProperties:
-                          type: dictionary
-                          additionalProperties: FALSE
-                          properties:
-                            'property': { type: ['string'], description: 'The name of an observed property in the same NodeType.' }
-                            'handler': { type: ['string'], description: 'The path to a handler JavaScript object, similar to custom editors and validators.' }
-                            'handlerOptions':  { type: dictionary, description: 'options for the given handler' }
+                        additionalProperties: false
+                        properties:
+
+                          'hidden': { type: ['string', 'null'], description: 'Option to hide a property.' }
+
+                          'group': { type: ['string', 'null'], description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
+
+                          'position': { type: ['integer', 'null'], description: 'Position inside the inspector group, small numbers are sorted on top' }
+
+                          'editor': { type: ['string', 'null'], description: 'Name of the JavaScript Editor Class which is instanciated to edit this element in the inspector.' }
+
+                          'editorOptions': { type: ['null', 'dictionary'], description: 'options for the given editor' }
+
+                          'editorListeners':
+                            type:
+                              -
+                                type: 'null'
+                              -
+                                type: dictionary
+                                additionalProperties:
+                                  type: dictionary
+                                  additionalProperties: false
+                                  properties:
+                                    'property': { type: ['string'], description: 'The name of an observed property in the same NodeType.' }
+                                    'handler': { type: ['string'], description: 'The path to a handler JavaScript object, similar to custom editors and validators.' }
+                                    'handlerOptions':  { type: dictionary, description: 'options for the given handler' }
 
     'fusion':
       # here we specify only the neos specific options of the NodeType schema,
       # other options might be defined by cr or other packages
       type: dictionary
-      additionalProperties: TRUE
+      additionalProperties: true
       properties:
         prototypeGenerator:
           - { type: 'null' }
@@ -145,20 +166,20 @@ additionalProperties:
       # here, we specify ONLY the "ui" part of the schema, as the remaining parts
       # are already specified in the NodeTypes schema of the ContentRepository package
       type: dictionary
-      additionalProperties: FALSE
+      additionalProperties: false
       properties:
 
         'label': { type: string, description: "Human-readable label for this Node Type." }
 
         'help':
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'message': { type: string, description: "Help text for this Node Type. Supports markdown." }
 
         'icon': { type: string, description: "Icon class" }
 
-        'inlineEditable': { type: boolean, description: "If TRUE, it is possible to interact with this Node directly in the content view. If FALSE, an overlay is shown preventing any interaction with the node." }
+        'inlineEditable': { type: boolean, description: "If true, it is possible to interact with this Node directly in the content view. If false, an overlay is shown preventing any interaction with the node." }
 
         'group': { type: string, description: "Name of the group this content element is grouped into for the 'New Content Element' dialog." }
 
@@ -166,7 +187,7 @@ additionalProperties:
 
         'inspector':
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
 
             'tabs':
@@ -175,7 +196,7 @@ additionalProperties:
 
                 # for each inspector tab:
                 type: dictionary
-                additionalProperties: FALSE
+                additionalProperties: false
                 properties:
 
                   'label': { type: string, description: "Human-readable label for this Inspector Tab." }
@@ -190,7 +211,7 @@ additionalProperties:
 
                 # for each inspector group:
                 type: dictionary
-                additionalProperties: FALSE
+                additionalProperties: false
                 properties:
 
                   'label': { type: string, description: "Human-readable label for this Inspector Group." }
@@ -199,7 +220,7 @@ additionalProperties:
 
                   'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top' }
 
-                  'collapsed': { type: boolean, description: 'If TRUE, the group in the inspector panel is collapsed by default.' }
+                  'collapsed': { type: boolean, description: 'If true, the group in the inspector panel is collapsed by default.' }
 
                   'icon': { type: string, description: "CSS Class for displaying an icon for each group." }
 
@@ -209,7 +230,7 @@ additionalProperties:
 
                 # for each inspector view:
                 type: dictionary
-                additionalProperties: FALSE
+                additionalProperties: false
                 properties:
 
                   'label': { type: string, description: "Human-readable label for this view." }
@@ -224,7 +245,7 @@ additionalProperties:
 
         'creationDialog':
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'elements':
               -
@@ -233,12 +254,12 @@ additionalProperties:
                 type: dictionary
                 additionalProperties:
                   type: dictionary
-                  additionalProperties: FALSE
+                  additionalProperties: false
                   properties:
                     'type': { type: string, description: "Type of the element" }
                     'ui':
                       type: dictionary
-                      additionalProperties: FALSE
+                      additionalProperties: false
                       properties:
 
                         'label': { type: string, description: "Human-readable label for this element." }
@@ -252,7 +273,7 @@ additionalProperties:
 
         'search':
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
 
             'searchCategory': { type: string, description: "If searching for this node type in the search, the results will be grouped by this category." }

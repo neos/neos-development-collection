@@ -1,0 +1,10 @@
+prototype(Neos.NodeTypes:Page) < prototype(Neos.Neos:Page) {
+    body {
+        templatePath = 'resource://Neos.NodeTypes/Private/Templates/Documents/Page.html'
+        content {
+            main = Neos.Neos:PrimaryContent {
+                nodePath = 'main'
+            }
+        }
+    }
+}

@@ -20,14 +20,14 @@ class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege
     /**
      * @var array
      */
-    protected $methodNameToPropertyMapping = array(
+    protected $methodNameToPropertyMapping = [
         'setName' => 'name',
         'setHidden' => 'hidden',
         'setHiddenInIndex' => 'hiddenInIndex',
         'setHiddenBeforeDateTime' => 'hiddenBeforeDateTime',
         'setHiddenAfterDateTime' => 'hiddenAfterDateTime',
         'setAccessRoles' => 'accessRoles',
-    );
+    ];
 
     /**
      * @return string

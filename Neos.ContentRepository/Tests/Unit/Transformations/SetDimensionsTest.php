@@ -28,50 +28,50 @@ class SetDimensionsTest extends UnitTestCase
      */
     public function setDimensionsInput()
     {
-        return array(
+        return [
             // single dimension, single value
-            array(
-                array(
-                    'language' => array('en')
-                ),
-                array(
-                    array('language' => 'en')
-                )
-            ),
+            [
+                [
+                    'language' => ['en']
+                ],
+                [
+                    ['language' => 'en']
+                ]
+            ],
             // single dimension, two values
-            array(
-                array(
-                    'system' => array('iOS', 'Android')
-                ),
-                array(
-                    array('system' => 'iOS'),
-                    array('system' => 'Android')
-                )
-            ),
+            [
+                [
+                    'system' => ['iOS', 'Android']
+                ],
+                [
+                    ['system' => 'iOS'],
+                    ['system' => 'Android']
+                ]
+            ],
             // two dimension, single values
-            array(
-                array(
-                    'language' => array('lv'),
-                    'system' => array('Neos')
-                ),
-                array(
-                    array('language' => 'lv'),
-                    array('system' => 'Neos')
-                )
-            ),
+            [
+                [
+                    'language' => ['lv'],
+                    'system' => ['Neos']
+                ],
+                [
+                    ['language' => 'lv'],
+                    ['system' => 'Neos']
+                ]
+            ],
             // two dimension, multiple values
-            array(
-                array(
-                    'language' => array('lv'),
-                    'system' => array('Neos', 'Flow')
-                ),
-                array(
-                    array('language' => 'lv'),
-                    array('system' => 'Neos'),
-                    array('system' => 'Flow')
-                )
-            ),
-        );
+            [
+                [
+                    'language' => ['lv'],
+                    'system' => ['Neos', 'Flow']
+                ],
+                [
+                    ['language' => 'lv'],
+                    ['system' => 'Neos'],
+                    ['system' => 'Flow']
+                ]
+            ],
+        ];
     }
 
     /**
@@ -89,7 +89,7 @@ class SetDimensionsTest extends UnitTestCase
         $transformation->setDimensionValues($setValues);
 
         if ($configuredDimensions !== null) {
-            $configuredDimensionObjects = array();
+            $configuredDimensionObjects = [];
             foreach ($configuredDimensions as $dimensionIdentifier => $dimensionDefault) {
                 $configuredDimensionObjects[] = new ContentDimension($dimensionIdentifier, $dimensionDefault);
             }
@@ -99,20 +99,20 @@ class SetDimensionsTest extends UnitTestCase
             $this->inject($transformation, 'contentDimensionRepository', $mockContentDimensionRepository);
         }
 
-        $expected = array(
+        $expected = [
             'count' => count($expectedValues),
             'dimensions' => $expectedValues
-        );
+        ];
 
         $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $mockNode->expects($this->once())->method('setDimensions')->with($this->callback(function (array $dimensions) use ($expected) {
             if (count($dimensions) === $expected['count']) {
-                $simplifiedDimensions = array();
+                $simplifiedDimensions = [];
                 foreach ($dimensions as $dimension) {
                     if (!($dimension instanceof NodeDimension)) {
                         return false;
                     }
-                    $simplifiedDimensions[] = array($dimension->getName() => $dimension->getValue());
+                    $simplifiedDimensions[] = [$dimension->getName() => $dimension->getValue()];
                 }
                 if ($expected['dimensions'] === $simplifiedDimensions) {
                     return true;
@@ -130,22 +130,22 @@ class SetDimensionsTest extends UnitTestCase
      */
     public function setDimensionsFillsInDefaultDimensionsAndValues()
     {
-        $dimensionsToBeSet = array(
-            'language' => array('lv'),
-            'system' => array('Neos')
-        );
+        $dimensionsToBeSet = [
+            'language' => ['lv'],
+            'system' => ['Neos']
+        ];
 
-        $expectedDimensions = array(
-            array('language' => 'lv'),
-            array('system' => 'Neos'),
-            array('country' => 'New Zealand')
-        );
+        $expectedDimensions = [
+            ['language' => 'lv'],
+            ['system' => 'Neos'],
+            ['country' => 'New Zealand']
+        ];
 
-        $configuredDimensions = array(
+        $configuredDimensions = [
             'language' => 'en',
             'system' => 'Symfony',
             'country' => 'New Zealand'
-        );
+        ];
 
         $this->setDimensionsWorksAsExpected($dimensionsToBeSet, $expectedDimensions, $configuredDimensions);
     }

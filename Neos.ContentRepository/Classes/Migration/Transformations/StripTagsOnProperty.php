@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Migration\Transformations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
@@ -38,7 +37,7 @@ class StripTagsOnProperty extends AbstractTransformation
     }
 
     /**
-     * Returns TRUE if the given node has the property to work on.
+     * Returns true if the given node has the property to work on.
      *
      * @param NodeData $node
      * @return boolean

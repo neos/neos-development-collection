@@ -12,7 +12,6 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\Core\DslInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Fusion;
 

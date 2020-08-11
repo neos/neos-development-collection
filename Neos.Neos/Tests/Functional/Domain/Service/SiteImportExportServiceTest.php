@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Functional\Domain\Service;
  * source code.
  */
 
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteExportService;
@@ -61,9 +60,8 @@ class SiteImportExportServiceTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->markSkippedIfNodeTypesPackageIsNotInstalled();
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $contentContext = $this->contextFactory->create(['workspaceName' => 'live']);
 
         $this->siteImportService = $this->objectManager->get(SiteImportService::class);
 
@@ -77,7 +75,7 @@ class SiteImportExportServiceTest extends FunctionalTestCase
     {
         parent::tearDown();
 
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
     /**
@@ -86,18 +84,7 @@ class SiteImportExportServiceTest extends FunctionalTestCase
     public function exportingAPreviouslyImportedSiteLeadsToTheSameStructure()
     {
         $expectedResult = file_get_contents(__DIR__ . '/Fixtures/Sites.xml');
-        $actualResult = $this->siteExportService->export(array($this->importedSite), true);
+        $actualResult = $this->siteExportService->export([$this->importedSite], true);
         $this->assertEquals($expectedResult, $actualResult);
-    }
-
-    /**
-     * @return void
-     */
-    protected function markSkippedIfNodeTypesPackageIsNotInstalled()
-    {
-        $packageManager = $this->objectManager->get(PackageManagerInterface::class);
-        if (!$packageManager->isPackageActive('Neos.NodeTypes')) {
-            $this->markTestSkipped('This test needs the Neos.NodeTypes package.');
-        }
     }
 }

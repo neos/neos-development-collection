@@ -37,7 +37,7 @@ class NodeUriTest extends AbstractNodeTest
      */
     public function hiddenNodeGetsNewUriSegmentOnMoveIfUriAlreadyExists()
     {
-        $contextProperties = array_merge($this->node->getContext()->getProperties(), array('invisibleContentShown' => true));
+        $contextProperties = array_merge($this->node->getContext()->getProperties(), ['invisibleContentShown' => true]);
         $context = $this->contextFactory->create($contextProperties);
         $homeNode = $context->getNode($this->nodeContextPath);
 

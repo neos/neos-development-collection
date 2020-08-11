@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Four column content</source>
-			<target xml:lang="id" state="translated">Empat konten kolom</target></trans-unit>
+			<target state="translated">Empat konten kolom</target></trans-unit>
     </body>
   </file>
 </xliff>

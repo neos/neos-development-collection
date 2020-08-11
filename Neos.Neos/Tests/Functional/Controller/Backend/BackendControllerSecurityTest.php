@@ -12,7 +12,8 @@ namespace Neos\Neos\Tests\Functional\Controller\Backend;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Controller\Backend\BackendController;
+use Neos\Neos\Service\BackendRedirectionService;
 
 /**
  * Testcase for method security of the backend controller
@@ -31,7 +32,16 @@ class BackendControllerSecurityTest extends FunctionalTestCase
      */
     public function indexActionIsGrantedForAdministrator()
     {
-        $account = $this->authenticateRoles(array('Neos.Neos:Administrator'));
+        $backendRedirectionServiceMock = $this->getMockBuilder(BackendRedirectionService::class)->getMock();
+        $backendRedirectionServiceMock
+            ->expects(self::any())
+            ->method('getAfterLoginRedirectionUri')
+            ->willReturn('http://localhost/');
+
+        $backendController = $this->objectManager->get(BackendController::class);
+        $this->inject($backendController, 'backendRedirectionService', $backendRedirectionServiceMock);
+
+        $account = $this->authenticateRoles(['Neos.Neos:Administrator']);
         $account->setAccountIdentifier('admin');
         $this->browser->request('http://localhost/neos/login');
 

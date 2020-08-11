@@ -51,7 +51,7 @@ define(
 						var assetIdentifier = $('.asset-identifier', this).text();
 						convertedResults.push({
 							'id': assetIdentifier,
-							'__icon': '<i class="icon-file-alt"></i> ',
+							'__icon': '<i class="far fa-file"></i> ',
 							'__path': '<br />' + assetIdentifier,
 							'__thumbnail': that.getResultThumbnail($(this)),
 							'name': $('.asset-label', this).text(),

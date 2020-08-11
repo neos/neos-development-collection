@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Insert content references</source>
-			<target xml:lang="tr" state="translated">İçerik başvuruları ekleme</target></trans-unit>
+			<target state="translated">İçerik başvuruları ekleme</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve">
 				<source>References</source>
-			<target xml:lang="tr" state="translated">Referanslar</target></trans-unit>
+			<target state="translated">Referanslar</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve">
 				<source>Select</source>
-			<target xml:lang="tr" state="translated">Seçmek</target></trans-unit>
+			<target state="translated">Seçmek</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
 				<source>No references selected</source>
-			<target xml:lang="tr" state="translated">Seçilen referans yok</target></trans-unit>
+			<target state="translated">Seçilen referans yok</target></trans-unit>
     </body>
   </file>
 </xliff>

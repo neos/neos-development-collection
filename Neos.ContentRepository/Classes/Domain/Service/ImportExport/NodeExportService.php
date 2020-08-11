@@ -11,9 +11,10 @@ namespace Neos\ContentRepository\Domain\Service\ImportExport;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -22,6 +23,7 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\ExportException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Service for exporting content repository nodes as an XML structure
@@ -39,10 +41,14 @@ class NodeExportService
     const SUPPORTED_FORMAT_VERSION = '2.0';
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
 
     /**
      * @Flow\Inject
@@ -63,11 +69,10 @@ class NodeExportService
     protected $propertyMapper;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -110,6 +115,22 @@ class NodeExportService
     protected $exportedNodePaths;
 
     /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
+
+    /**
      * Exports the node data of all nodes in the given sub-tree
      * by writing them to the given XMLWriter.
      *
@@ -125,8 +146,8 @@ class NodeExportService
     public function export($startingPointNodePath = '/', $workspaceName = 'live', \XMLWriter $xmlWriter = null, $tidy = true, $endDocument = true, $resourceSavePath = null, $nodeTypeFilter = null)
     {
         $this->propertyMappingConfiguration = new ImportExportPropertyMappingConfiguration($resourceSavePath);
-        $this->exceptionsDuringExport = array();
-        $this->exportedNodePaths = array();
+        $this->exceptionsDuringExport = [];
+        $this->exportedNodePaths = [];
         if ($startingPointNodePath !== '/') {
             $startingPointParentPath = substr($startingPointNodePath, 0, strrpos($startingPointNodePath, '/'));
             $this->exportedNodePaths[$startingPointParentPath] = true;
@@ -208,7 +229,8 @@ class NodeExportService
         // Sort nodeDataList by path, replacing "/" with "!" (the first visible ASCII character)
         // because there may be characters like "-" in the node path
         // that would break the sorting order
-        usort($nodeDataList,
+        usort(
+            $nodeDataList,
             function ($node1, $node2) {
                 return strcmp(
                     str_replace("/", "!", $node1['path']),
@@ -230,7 +252,7 @@ class NodeExportService
         $this->xmlWriter->startElement('nodes');
         $this->xmlWriter->writeAttribute('formatVersion', self::SUPPORTED_FORMAT_VERSION);
 
-        $nodesStack = array();
+        $nodesStack = [];
         foreach ($nodeDataList as $nodeData) {
             $this->exportNodeData($nodeData, $nodesStack);
         }
@@ -291,14 +313,14 @@ class NodeExportService
         }
 
         foreach (
-            array(
+            [
                 'workspace',
                 'nodeType',
                 'version',
                 'removed',
                 'hidden',
                 'hiddenInIndex'
-            ) as $propertyName) {
+            ] as $propertyName) {
             $this->xmlWriter->writeAttribute($propertyName, $nodeData[$propertyName]);
         }
 
@@ -311,7 +333,7 @@ class NodeExportService
         $this->xmlWriter->endElement();
 
         foreach (
-            array(
+            [
                 'accessRoles',
                 'hiddenBeforeDateTime',
                 'hiddenAfterDateTime',
@@ -319,7 +341,7 @@ class NodeExportService
                 'lastModificationDateTime',
                 'lastPublicationDateTime',
                 'contentObjectProxy'
-            ) as $propertyName) {
+            ] as $propertyName) {
             $this->writeConvertedElement($nodeData, $propertyName);
         }
 
@@ -399,7 +421,8 @@ class NodeExportService
             } catch (\Exception $exception) {
                 $this->xmlWriter->writeComment(sprintf('Could not convert property "%s" to string.', $propertyName));
                 $this->xmlWriter->writeComment($exception->getMessage());
-                $this->systemLogger->logException($exception);
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 $this->exceptionsDuringExport[] = $exception;
             }
 

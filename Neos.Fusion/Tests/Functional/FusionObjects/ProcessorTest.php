@@ -48,12 +48,12 @@ class ProcessorTest extends AbstractFusionObjectTest
      */
     public function dataProviderForUnsettingProcessors()
     {
-        return array(
-            array('processors/newSyntax/unset/simple'),
-            array('processors/newSyntax/unset/prototypes1'),
-            array('processors/newSyntax/unset/prototypes2'),
-            array('processors/newSyntax/unset/nestedScope/prototypes3')
-        );
+        return [
+            ['processors/newSyntax/unset/simple'],
+            ['processors/newSyntax/unset/prototypes1'],
+            ['processors/newSyntax/unset/prototypes2'],
+            ['processors/newSyntax/unset/nestedScope/prototypes3']
+        ];
     }
 
     /**

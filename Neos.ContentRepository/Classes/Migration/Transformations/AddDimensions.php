@@ -33,7 +33,7 @@ class AddDimensions extends AbstractTransformation
      *
      * @var array
      */
-    protected $dimensionValues = array();
+    protected $dimensionValues = [];
 
     /**
      * Adds the default dimension values for all dimensions that were not given.
@@ -73,7 +73,7 @@ class AddDimensions extends AbstractTransformation
                 if (is_array($dimensionValues)) {
                     $dimensionValuesToBeAdded[$dimensionName] = $dimensionValues;
                 } else {
-                    $dimensionValuesToBeAdded[$dimensionName] = array($dimensionValues);
+                    $dimensionValuesToBeAdded[$dimensionName] = [$dimensionValues];
                 }
             }
         }
@@ -82,12 +82,12 @@ class AddDimensions extends AbstractTransformation
             $configuredDimensions = $this->contentDimensionRepository->findAll();
             foreach ($configuredDimensions as $configuredDimension) {
                 if (!isset($dimensionValuesToBeAdded[$configuredDimension->getIdentifier()])) {
-                    $dimensionValuesToBeAdded[$configuredDimension->getIdentifier()] = array($configuredDimension->getDefault());
+                    $dimensionValuesToBeAdded[$configuredDimension->getIdentifier()] = [$configuredDimension->getDefault()];
                 }
             }
         }
 
-        $dimensionsToBeSet = array();
+        $dimensionsToBeSet = [];
         foreach ($dimensionValuesToBeAdded as $dimensionName => $dimensionValues) {
             foreach ($dimensionValues as $dimensionValue) {
                 $dimensionsToBeSet[] = new NodeDimension($node, $dimensionName, $dimensionValue);

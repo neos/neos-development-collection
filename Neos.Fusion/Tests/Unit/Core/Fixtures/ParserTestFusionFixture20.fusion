@@ -6,8 +6,8 @@
 somepath._stringValue = "A string value"
 
 somepath {
-	_booleanValueFalse = FALSE
-	_booleanValueTrue = TRUE
+	_booleanValueFalse = false
+	_booleanValueTrue = true
 	_integerValue = 42
 	value_with_underscores_inBetween = 42
 	nested_value {

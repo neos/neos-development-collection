@@ -11,7 +11,6 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Service\Context;
 
 /**

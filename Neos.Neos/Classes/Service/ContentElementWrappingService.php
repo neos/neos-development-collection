@@ -12,14 +12,7 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Property\PropertyMappingConfiguration;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Utility\TypeHandling;
-use Neos\Media\Domain\Model\Asset;
-use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -66,15 +59,16 @@ class ContentElementWrappingService
      * @param NodeInterface $node
      * @param string $content
      * @param string $fusionPath
+     * @param array $additionalAttributes additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...] to be rendered in the element wrapping
      * @return string
      */
-    public function wrapContentObject(NodeInterface $node, $content, $fusionPath)
+    public function wrapContentObject(NodeInterface $node, $content, $fusionPath, array $additionalAttributes = [])
     {
         if ($this->needsMetadata($node, false) === false) {
             return $content;
         }
 
-        $attributes = [];
+        $attributes = $additionalAttributes;
         $attributes['data-node-__typoscript-path'] = $fusionPath; // @deprecated
         $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes['tabindex'] = 0;
@@ -82,22 +76,23 @@ class ContentElementWrappingService
         $attributes = $this->addNodePropertyAttributes($attributes, $node);
         $attributes = $this->addCssClasses($attributes, $node, $this->collectEditingClassNames($node));
 
-        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', array('typeof'));
+        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
     }
 
     /**
      * @param NodeInterface $node
      * @param string $content
      * @param string $fusionPath
+     * @param array $additionalAttributes additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...] to be rendered in the element wrapping
      * @return string
      */
-    public function wrapCurrentDocumentMetadata(NodeInterface $node, $content, $fusionPath)
+    public function wrapCurrentDocumentMetadata(NodeInterface $node, $content, $fusionPath, array $additionalAttributes = [])
     {
         if ($this->needsMetadata($node, true) === false) {
             return $content;
         }
 
-        $attributes = [];
+        $attributes = $additionalAttributes;
         $attributes['data-node-__typoscript-path'] = $fusionPath; // @deprecated
         $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes = $this->addGenericEditingMetadata($attributes, $node);

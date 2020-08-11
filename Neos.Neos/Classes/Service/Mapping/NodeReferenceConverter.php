@@ -29,7 +29,7 @@ class NodeReferenceConverter extends AbstractTypeConverter
      * @var array<string>
      * @api
      */
-    protected $sourceTypes = array(NodeInterface::class, 'array');
+    protected $sourceTypes = [NodeInterface::class, 'array'];
 
     /**
      * The target type this converter can convert to.
@@ -56,7 +56,7 @@ class NodeReferenceConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string the target type
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_array($source)) {
             $result = [];

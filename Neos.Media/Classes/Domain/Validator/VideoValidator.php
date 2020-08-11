@@ -11,7 +11,6 @@ namespace Neos\Media\Domain\Validator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Validator for Video objects

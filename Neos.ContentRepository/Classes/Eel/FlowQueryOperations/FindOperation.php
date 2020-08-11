@@ -79,7 +79,7 @@ class FindOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
     {
@@ -96,11 +96,16 @@ class FindOperation extends AbstractOperation
     }
 
     /**
+     * This operation operates rather on the given Context object than on the given node
+     * and thus may work with the legacy node interface until subgraphs are available
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws FlowQueryException
+     * @throws \Neos\Eel\Exception
+     * @throws \Neos\Eel\FlowQuery\FizzleException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -109,13 +114,13 @@ class FindOperation extends AbstractOperation
             return;
         }
 
-        $result = array();
+        $result = [];
         $selectorAndFilter = $arguments[0];
 
         $parsedFilter = null;
         $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
         if (isset($parsedFilter['Filters']) && $this->hasOnlyInstanceOfFilters($parsedFilter['Filters'])) {
-            $nodeTypes = array();
+            $nodeTypes = [];
             foreach ($parsedFilter['Filters'] as $filter) {
                 $nodeTypes[] = $filter['AttributeFilters'][0]['Operand'];
             }
@@ -125,20 +130,21 @@ class FindOperation extends AbstractOperation
             }
         } else {
             foreach ($parsedFilter['Filters'] as $filter) {
-                $filterResults = array();
+                $filterResults = [];
                 $generatedNodes = false;
                 if (isset($filter['IdentifierFilter'])) {
                     if (!preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $filter['IdentifierFilter'])) {
                         throw new FlowQueryException('find() requires a valid node identifier', 1489921359);
                     }
-                    /** @var NodeInterface $contextNode */
                     foreach ($context as $contextNode) {
-                        $filterResults = array($contextNode->getContext()->getNodeByIdentifier($filter['IdentifierFilter']));
+                        /** @var NodeInterface $contextNode */
+                        $filterResults = [$contextNode->getContext()->getNodeByIdentifier($filter['IdentifierFilter'])];
                     }
                     $generatedNodes = true;
                 } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
                     foreach ($context as $contextNode) {
+                        /** @var NodeInterface $contextNode */
                         $node = $contextNode->getNode($nodePath);
                         if ($node !== null) {
                             array_push($filterResults, $node);
@@ -160,7 +166,7 @@ class FindOperation extends AbstractOperation
                     }
                     $filterQuery = new FlowQuery($filterResults);
                     foreach ($filter['AttributeFilters'] as $attributeFilter) {
-                        $filterQuery->pushOperation('filter', array($attributeFilter['text']));
+                        $filterQuery->pushOperation('filter', [$attributeFilter['text']]);
                     }
                     $filterResults = $filterQuery->get();
                 }

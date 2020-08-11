@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
-use Neos\Flow\Reflection\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService as UserDomainService;
@@ -82,7 +81,7 @@ class UserServiceTest extends UnitTestCase
         $this->mockUserDomainService = $this->getMockBuilder(UserDomainService::class)->getMock();
         $this->inject($this->userService, 'userDomainService', $this->mockUserDomainService);
 
-        $this->mockWorkspaceRepository = $this->getMockBuilder(WorkspaceRepository::class)->disableOriginalConstructor()->setMethods(array('findOneByName'))->getMock();
+        $this->mockWorkspaceRepository = $this->getMockBuilder(WorkspaceRepository::class)->disableOriginalConstructor()->setMethods(['findOneByName'])->getMock();
         $this->inject($this->userService, 'workspaceRepository', $this->mockWorkspaceRepository);
 
         $this->mockAccountRepository = $this->getMockBuilder(AccountRepository::class)->getMock();

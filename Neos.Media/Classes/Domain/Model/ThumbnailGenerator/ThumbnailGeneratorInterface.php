@@ -11,8 +11,6 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Media\Domain\Model\Thumbnail;
 
 /**
@@ -30,7 +28,7 @@ interface ThumbnailGeneratorInterface
 
     /**
      * @param Thumbnail $thumbnail
-     * @return boolean TRUE if this ThumbnailGenerator can convert the given thumbnail, FALSE otherwise.
+     * @return boolean true if this ThumbnailGenerator can convert the given thumbnail, false otherwise.
      * @api
      */
     public function canRefresh(Thumbnail $thumbnail);

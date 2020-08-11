@@ -1,37 +1,32 @@
 /**
- * Root Fusion template for the {siteName} site
+ * Root Fusion for the {siteName} site
  */
-page = Neos.Neos:Page {
-	head {
-		stylesheets.site = Neos.Fusion:Template {
-			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
-			sectionName = 'stylesheets'
-		}
 
-		javascripts.site = Neos.Fusion:Template {
-			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
-			sectionName = 'headScripts'
-		}
-	}
+prototype({packageKey}:DefaultPage) < prototype(Neos.Neos:Page) {
+    head {
+        stylesheets.site = Neos.Fusion:Template {
+            templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+            sectionName = 'stylesheets'
+        }
 
-	body {
-		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
-		sectionName = 'body'
-		parts {
-			menu = Neos.Neos:Menu
-		}
+        javascripts.site = Neos.Fusion:Template {
+            templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+            sectionName = 'headScripts'
+        }
+    }
 
-		// These are your content areas, you can define as many as you want, just name them and the nodePath.
-		content {
-			// The default content section
-			main = Neos.Neos:PrimaryContent {
-				nodePath = 'main'
-			}
-		}
+    body {
+        templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+        sectionName = 'body'
+        parts {
+            menu = Neos.Neos:Menu
+        }
 
-		javascripts.site = Neos.Fusion:Template {
-			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
-			sectionName = 'bodyScripts'
-		}
-	}
+        javascripts.site = Neos.Fusion:Template {
+            templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+            sectionName = 'bodyScripts'
+        }
+    }
 }
+
+include: NodeTypes/**/*

@@ -34,17 +34,17 @@ class AttributesImplementationTest extends UnitTestCase
 
     public function attributeExamples()
     {
-        return array(
-            'null' => array(null, ''),
-            'empty array' => array(array(), ''),
-            'boolean values' => array(array('booleanTrueAttribute' => true, 'booleanFalseAttribute' => false), ' booleanTrueAttribute'),
-            'empty string value' => array(array('emptyStringAttribute' => ''), ' emptyStringAttribute'),
-            'null value' => array(array('nullAttribute' => null), ''),
-            'simple array' => array(array('attributeName1' => 'attributeValue1'), ' attributeName1="attributeValue1"'),
-            'encoding' => array(array('spec<ial' => 'chara>cters'), ' spec&lt;ial="chara&gt;cters"'),
-            'array attributes' => array(array('class' => array('icon', null, 'icon-neos', '')), ' class="icon icon-neos"'),
-            'empty attribute value without allowEmpty' => array(array('emptyStringAttribute' => '', '__meta' => array('allowEmpty' => false)), ' emptyStringAttribute=""'),
-        );
+        return [
+            'null' => [null, ''],
+            'empty array' => [[], ''],
+            'boolean values' => [['booleanTrueAttribute' => true, 'booleanFalseAttribute' => false], ' booleanTrueAttribute'],
+            'empty string value' => [['emptyStringAttribute' => ''], ' emptyStringAttribute'],
+            'null value' => [['nullAttribute' => null], ''],
+            'simple array' => [['attributeName1' => 'attributeValue1'], ' attributeName1="attributeValue1"'],
+            'encoding' => [['spec<ial' => 'chara>cters'], ' spec&lt;ial="chara&gt;cters"'],
+            'array attributes' => [['class' => ['icon', null, 'icon-neos', '']], ' class="icon icon-neos"'],
+            'empty attribute value without allowEmpty' => [['emptyStringAttribute' => '', '__meta' => ['allowEmpty' => false]], ' emptyStringAttribute=""'],
+        ];
     }
 
     /**

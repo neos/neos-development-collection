@@ -299,7 +299,7 @@ Selects nodes with the given name.
 
 Options Reference:
 
-``name`` (string)
+``nodeName`` (string)
   The value to compare the node name against, strict equality is checked.
 
 NodeType

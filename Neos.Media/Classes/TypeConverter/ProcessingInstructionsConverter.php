@@ -25,7 +25,7 @@ class ProcessingInstructionsConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('array');
+    protected $sourceTypes = ['array'];
 
     /**
      * @var string
@@ -56,15 +56,15 @@ class ProcessingInstructionsConverter extends AbstractTypeConverter
      * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
-    public function convertFrom($source, $targetType = 'array', array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType = 'array', array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        $result = array();
+        $result = [];
         foreach ($source as $processingInstruction) {
             if ($processingInstruction['command'] !== '') {
                 $adjustment = null;
                 switch ($processingInstruction['command']) {
                     case 'crop':
-                        $options = array();
+                        $options = [];
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'start.x', 'x');
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'start.y', 'y');
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'size.width', 'width');
@@ -72,7 +72,7 @@ class ProcessingInstructionsConverter extends AbstractTypeConverter
                         $adjustment = new CropImageAdjustment($options);
                         break;
                     case 'resize':
-                        $options = array();
+                        $options = [];
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'size.width', 'width');
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'size.height', 'height');
                         $adjustment = new ResizeImageAdjustment($options);

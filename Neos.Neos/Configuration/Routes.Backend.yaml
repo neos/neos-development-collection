@@ -14,7 +14,7 @@
   defaults:
     '@controller': 'Backend\Content'
     '@action':     'uploadAsset'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['POST']
 
 -
@@ -23,7 +23,7 @@
   defaults:
     '@controller': 'Backend\Content'
     '@action':     'imageWithMetadata'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
 
 -
   name: 'Content Module - Asset metadata'
@@ -61,7 +61,7 @@
   defaults:
     '@controller': 'Backend\Schema'
     '@action':     'vieSchema'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
 
 -
   name: 'Schema - NodeType'
@@ -69,21 +69,21 @@
   defaults:
     '@controller': 'Backend\Schema'
     '@action':     'nodeTypeSchema'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
 
 -
   name: 'Menu'
   uriPattern: 'menu'
   defaults:
     '@controller': 'Backend\Menu'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
 
 -
   name: 'Settings'
   uriPattern: 'settings/{@action}'
   defaults:
     '@controller': 'Backend\Settings'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
 
 -
   name: 'Modules'
@@ -105,7 +105,7 @@
     moduleArguments:
       handler: 'Neos\Neos\Routing\BackendModuleArgumentsRoutePartHandler'
   toLowerCase: false
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
 
 -
   name: 'Backend switch site'
@@ -126,4 +126,4 @@
     '@package': 'Neos.Neos'
     '@controller': 'Backend\Backend'
     '@action': 'xliffAsJson'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true

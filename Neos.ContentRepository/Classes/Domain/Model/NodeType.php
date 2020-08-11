@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -157,14 +158,14 @@ class NodeType
      */
     protected function buildFullConfiguration()
     {
-        $mergedConfiguration = array();
-        $applicableSuperTypes = $this->buildInheritanceChain();
+        $mergedConfiguration = [];
+        $applicableSuperTypes = static::getFlattenedSuperTypes($this);
         foreach ($applicableSuperTypes as $key => $superType) {
             $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
         }
         $this->fullConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
 
-        if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== array()) {
+        if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== []) {
             $sorter = new PositionalArraySorter($this->fullConfiguration['childNodes']);
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
@@ -173,47 +174,27 @@ class NodeType
     /**
      * Returns a flat list of super types to inherit from.
      *
+     * @param NodeType $nodeType
+     *
      * @return array
      */
-    protected function buildInheritanceChain()
+    protected static function getFlattenedSuperTypes(NodeType $nodeType) : array
     {
-        $superTypes = array();
-        foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
+        $flattenedSuperTypes = [];
+        foreach ($nodeType->declaredSuperTypes as $superTypeName => $superType) {
             if ($superType !== null) {
-                $this->addInheritedSuperTypes($superTypes, $superType);
-                $superTypes[$superTypeName] = $superType;
+                $flattenedSuperTypes += static::getFlattenedSuperTypes($superType);
+                $flattenedSuperTypes[$superTypeName] = $superType;
             }
         }
 
-        foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
+        foreach ($nodeType->declaredSuperTypes as $superTypeName => $superType) {
             if ($superType === null) {
-                unset($superTypes[$superTypeName]);
+                unset($flattenedSuperTypes[$superTypeName]);
             }
         }
 
-        return array_unique($superTypes);
-    }
-
-    /**
-     * Recursively add super types
-     *
-     * @param array $superTypes
-     * @param NodeType $superType
-     * @return void
-     */
-    protected function addInheritedSuperTypes(array &$superTypes, NodeType $superType)
-    {
-        foreach ($superType->getDeclaredSuperTypes() as $inheritedSuperTypeName => $inheritedSuperType) {
-            $this->addInheritedSuperTypes($superTypes, $inheritedSuperType);
-            $superTypes[$inheritedSuperTypeName] = $inheritedSuperType;
-        }
-
-        $superTypesInSuperType = $superType->getConfiguration('superTypes') ?: [];
-        foreach ($superTypesInSuperType as $inheritedSuperTypeName => $inheritedSuperType) {
-            if (!$inheritedSuperType) {
-                unset($superTypes[$inheritedSuperTypeName]);
-            }
-        }
+        return $flattenedSuperTypes;
     }
 
     /**
@@ -232,7 +213,7 @@ class NodeType
             if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
                 throw new InvalidNodeTypePostprocessorException(sprintf('Expected NodeTypePostprocessorInterface but got "%s"', get_class($postprocessor)), 1364759955);
             }
-            $postprocessorOptions = array();
+            $postprocessorOptions = [];
             if (isset($postprocessorConfiguration['postprocessorOptions'])) {
                 $postprocessorOptions = $postprocessorConfiguration['postprocessorOptions'];
             }
@@ -252,7 +233,7 @@ class NodeType
     }
 
     /**
-     * Return boolean TRUE if marked abstract
+     * Return boolean true if marked abstract
      *
      * @return boolean
      */
@@ -262,7 +243,7 @@ class NodeType
     }
 
     /**
-     * Return boolean TRUE if marked final
+     * Return boolean true if marked final
      *
      * @return boolean
      */
@@ -298,7 +279,7 @@ class NodeType
      * - when moving this node, all node variants are also moved (across all dimensions)
      * - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
      *
-     * @return boolean TRUE if the node type is an aggregate
+     * @return boolean true if the node type is an aggregate
      * @api
      */
     public function isAggregate()
@@ -310,25 +291,17 @@ class NodeType
      * If this node type or any of the direct or indirect super types
      * has the given name.
      *
-     * Note: A supertype that is set to false after having been assigned, is still
-     * returning true here. Fixing that potentially breaks sites in non-obvious ways,
-     * so we did not fix that. See these links for details:
-     *
-     * - https://github.com/neos/neos-development-collection/issues/1983
-     * - https://github.com/neos/neos-development-collection/pull/2139
-     * - https://github.com/neos/neos-development-collection/pull/2145
-     * - https://github.com/neos/neos-development-collection/pull/2217
-     * - https://github.com/neos/neos-development-collection/pull/2265
-     * - https://discuss.neos.io/t/breaking-bugfixes/3882
-     *
      * @param string $nodeType
-     * @return boolean TRUE if this node type is of the given kind, otherwise FALSE
+     * @return boolean true if this node type is of the given kind, otherwise false
      * @api
      */
     public function isOfType($nodeType)
     {
         if ($nodeType === $this->name) {
             return true;
+        }
+        if (array_key_exists($nodeType, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeType] === null) {
+            return false;
         }
         foreach ($this->declaredSuperTypes as $superType) {
             if ($superType !== null && $superType->isOfType($nodeType) === true) {
@@ -409,7 +382,7 @@ class NodeType
     public function getOptions()
     {
         $this->initialize();
-        return (isset($this->fullConfiguration['options']) ? $this->fullConfiguration['options'] : array());
+        return (isset($this->fullConfiguration['options']) ? $this->fullConfiguration['options'] : []);
     }
 
     /**
@@ -448,7 +421,7 @@ class NodeType
     public function getProperties()
     {
         $this->initialize();
-        return (isset($this->fullConfiguration['properties']) ? $this->fullConfiguration['properties'] : array());
+        return (isset($this->fullConfiguration['properties']) ? $this->fullConfiguration['properties'] : []);
     }
 
     /**
@@ -477,10 +450,10 @@ class NodeType
     {
         $this->initialize();
         if (!isset($this->fullConfiguration['properties'])) {
-            return array();
+            return [];
         }
 
-        $defaultValues = array();
+        $defaultValues = [];
         foreach ($this->fullConfiguration['properties'] as $propertyName => $propertyConfiguration) {
             if (isset($propertyConfiguration['defaultValue'])) {
                 $type = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : '';
@@ -500,17 +473,17 @@ class NodeType
     /**
      * Return an array with child nodes which should be automatically created
      *
-     * @return array the key of this array is the name of the child, and the value its NodeType.
+     * @return self[] the key of this array is the name of the child, and the value its NodeType.
      * @api
      */
     public function getAutoCreatedChildNodes()
     {
         $this->initialize();
         if (!isset($this->fullConfiguration['childNodes'])) {
-            return array();
+            return [];
         }
 
-        $autoCreatedChildNodes = array();
+        $autoCreatedChildNodes = [];
         foreach ($this->fullConfiguration['childNodes'] as $childNodeName => $childNodeConfiguration) {
             if (isset($childNodeConfiguration['type'])) {
                 $autoCreatedChildNodes[Utility::renderValidNodeName($childNodeName)] = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
@@ -521,6 +494,28 @@ class NodeType
     }
 
     /**
+     * @param NodeName $nodeName
+     * @return bool true if $nodeName is an autocreated child node, false otherwise
+     */
+    public function hasAutoCreatedChildNode(NodeName $nodeName): bool
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]);
+    }
+
+    /**
+     * @param NodeName $nodeName
+     * @return NodeType|null
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            : null;
+    }
+
+
+    /**
      * Checks if the given NodeType is acceptable as sub-node with the configured constraints,
      * not taking constraints of auto-created nodes into account. Thus, this method only returns
      * the correct result if called on NON-AUTO-CREATED nodes!
@@ -528,11 +523,11 @@ class NodeType
      * Otherwise, allowsGrandchildNodeType() needs to be called on the *parent node type*.
      *
      * @param NodeType $nodeType
-     * @return boolean TRUE if the $nodeType is allowed as child node, FALSE otherwise.
+     * @return boolean true if the $nodeType is allowed as child node, false otherwise.
      */
     public function allowsChildNodeType(NodeType $nodeType)
     {
-        $constraints = $this->getConfiguration('constraints.nodeTypes') ?: array();
+        $constraints = $this->getConfiguration('constraints.nodeTypes') ?: [];
         return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
     }
 
@@ -544,7 +539,7 @@ class NodeType
      *
      * @param string $childNodeName The name of a configured childNode of this NodeType
      * @param NodeType $nodeType The NodeType to check constraints for.
-     * @return boolean TRUE if the $nodeType is allowed as grandchild node, FALSE otherwise.
+     * @return boolean true if the $nodeType is allowed as grandchild node, false otherwise.
      * @throws \InvalidArgumentException If the given $childNodeName is not configured to be auto-created in $this.
      */
     public function allowsGrandchildNodeType($childNodeName, NodeType $nodeType)
@@ -553,13 +548,13 @@ class NodeType
         if (!isset($autoCreatedChildNodes[$childNodeName])) {
             throw new \InvalidArgumentException('The method "allowsGrandchildNodeType" can only be used on auto-created childNodes, given $childNodeName "' . $childNodeName . '" is not auto-created.', 1403858395);
         }
-        $constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: array();
+        $constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: [];
 
         $childNodeConfiguration = [];
         foreach ($this->getConfiguration('childNodes') as $name => $configuration) {
             $childNodeConfiguration[Utility::renderValidNodeName($name)] = $configuration;
         }
-        $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath($childNodeConfiguration, $childNodeName . '.constraints.nodeTypes') ?: array();
+        $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath($childNodeConfiguration, $childNodeName . '.constraints.nodeTypes') ?: [];
 
         $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
 
@@ -569,8 +564,8 @@ class NodeType
     /**
      * Internal method to check whether the passed-in $nodeType is allowed by the $constraints array.
      *
-     * $constraints is an associative array where the key is the Node Type Name. If the value is "TRUE",
-     * the node type is explicitly allowed. If the value is "FALSE", the node type is explicitly denied.
+     * $constraints is an associative array where the key is the Node Type Name. If the value is "true",
+     * the node type is explicitly allowed. If the value is "false", the node type is explicitly denied.
      * If nothing is specified, the fallback "*" is used. If that one is also not specified, we DENY by
      * default.
      *
@@ -603,11 +598,11 @@ class NodeType
     /**
      * @param NodeType $nodeType
      * @param array $constraints
-     * @return boolean TRUE if the passed $nodeType is allowed by the $constraints
+     * @return boolean true if the passed $nodeType is allowed by the $constraints
      */
     protected function isNodeTypeAllowedByDirectConstraints(NodeType $nodeType, array $constraints)
     {
-        if ($constraints === array()) {
+        if ($constraints === []) {
             return true;
         }
 

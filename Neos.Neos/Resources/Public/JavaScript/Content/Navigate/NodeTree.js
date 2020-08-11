@@ -176,7 +176,7 @@ define(
 							unselectable: false,
 							nodeType: nodeType,
 							addClass: 'neos-matched',
-							iconClass: 'icon-globe'
+							iconClass: 'fas fa-globe'
 						}
 					],
 

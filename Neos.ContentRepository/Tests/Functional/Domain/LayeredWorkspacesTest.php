@@ -229,7 +229,6 @@ class LayeredWorkspacesTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $this->rootNode->getNode('foo/bar/baz')->moveInto($this->rootNode->getNode('foo'));
-        $this->persistenceManager->persistAll();
 
         $this->rootNode->getContext()->getWorkspace()->publish($this->groupWorkspace);
         $this->persistenceManager->persistAll();

@@ -35,7 +35,7 @@ abstract class AbstractTest extends FunctionalTestCase
     public function tearDown()
     {
         $persistenceManager = self::$bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
-        if (is_callable(array($persistenceManager, 'tearDown'))) {
+        if (is_callable([$persistenceManager, 'tearDown'])) {
             $persistenceManager->tearDown();
         }
         self::$bootstrap->getObjectManager()->forgetInstance(PersistenceManagerInterface::class);
@@ -65,7 +65,7 @@ abstract class AbstractTest extends FunctionalTestCase
      */
     protected function createMockResourceAndPointerFromHash($hash)
     {
-        $mockResource = $this->getMockBuilder(PersistentResource::class)->setMethods(array('getHash', 'getUri'))->getMock();
+        $mockResource = $this->getMockBuilder(PersistentResource::class)->setMethods(['getHash', 'getUri'])->getMock();
         $mockResource->expects($this->any())
                 ->method('getHash')
                 ->will($this->returnValue($hash));
@@ -81,7 +81,7 @@ abstract class AbstractTest extends FunctionalTestCase
      */
     protected function prepareTemporaryDirectory()
     {
-        $this->temporaryDirectory = Files::concatenatePaths(array(FLOW_PATH_DATA, 'Temporary', 'Testing', str_replace('\\', '_', __CLASS__)));
+        $this->temporaryDirectory = Files::concatenatePaths([FLOW_PATH_DATA, 'Temporary', 'Testing', str_replace('\\', '_', __CLASS__)]);
         if (!file_exists($this->temporaryDirectory)) {
             Files::createDirectoryRecursively($this->temporaryDirectory);
         }

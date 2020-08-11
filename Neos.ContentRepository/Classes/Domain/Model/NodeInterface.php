@@ -10,16 +10,16 @@ namespace Neos\ContentRepository\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Model\Workspace;
+
 use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 
 /**
- * Interface for a Node
+ * Interface for a Node. This is the central interface for the Neos Content Repository
+ * up to version 4.X; it will be REMOVED in version 5.0 and is replaced
+ * by {@see Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface}.
  *
  * @api
  */
@@ -83,6 +83,7 @@ interface NodeInterface
      *
      * @return string
      * @api
+     * @deprecated with version 4.3, use getNodeName() instead.
      */
     public function getName();
 
@@ -151,7 +152,7 @@ interface NodeInterface
      * If the node has a content object attached, the properties will be fetched
      * there.
      *
-     * @return array Property values, indexed by their name
+     * @return PropertyCollectionInterface Property values
      * @api
      */
     public function getProperties();
@@ -159,7 +160,7 @@ interface NodeInterface
     /**
      * Returns the names of all properties of this node.
      *
-     * @return array Property names
+     * @return string[] Property names
      * @api
      */
     public function getPropertyNames();
@@ -170,7 +171,7 @@ interface NodeInterface
      * @param object $contentObject The content object
      * @return void
      * @throws \InvalidArgumentException if the given contentObject is no object.
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
      */
     public function setContentObject($contentObject);
 
@@ -178,7 +179,7 @@ interface NodeInterface
      * Returns the content object of this node (if any).
      *
      * @return object The content object or NULL if none was set
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
      */
     public function getContentObject();
 
@@ -186,7 +187,7 @@ interface NodeInterface
      * Unsets the content object of this node.
      *
      * @return void
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
      */
     public function unsetContentObject();
 
@@ -210,7 +211,7 @@ interface NodeInterface
     /**
      * Sets the "hidden" flag for this node.
      *
-     * @param boolean $hidden If TRUE, this Node will be hidden
+     * @param boolean $hidden If true, this Node will be hidden
      * @return void
      * @api
      */
@@ -220,48 +221,48 @@ interface NodeInterface
      * Returns the current state of the hidden flag
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
      */
     public function isHidden();
 
     /**
      * Sets the date and time when this node becomes potentially visible.
      *
-     * @param \DateTime $dateTime Date before this node should be hidden
+     * @param \DateTimeInterface $dateTime Date before this node should be hidden
      * @return void
      * @api
      */
-    public function setHiddenBeforeDateTime(\DateTime $dateTime = null);
+    public function setHiddenBeforeDateTime(\DateTimeInterface $dateTime = null);
 
     /**
      * Returns the date and time before which this node will be automatically hidden.
      *
-     * @return \DateTime Date before this node will be hidden
-     * @api
+     * @return \DateTimeInterface|null Date before this node will be hidden - or null if no hidden before date is set
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
      */
     public function getHiddenBeforeDateTime();
 
     /**
      * Sets the date and time when this node should be automatically hidden
      *
-     * @param \DateTime $dateTime Date after which this node should be hidden
+     * @param \DateTimeInterface $dateTime Date after which this node should be hidden
      * @return void
      * @api
      */
-    public function setHiddenAfterDateTime(\DateTime $dateTime = null);
+    public function setHiddenAfterDateTime(\DateTimeInterface $dateTime = null);
 
     /**
      * Returns the date and time after which this node will be automatically hidden.
      *
-     * @return \DateTime Date after which this node will be hidden
-     * @api
+     * @return \DateTimeInterface|null Date after which this node will be hidden - or null if no hidden after date is set
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
      */
     public function getHiddenAfterDateTime();
 
     /**
      * Sets if this node should be hidden in indexes, such as a site navigation.
      *
-     * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
+     * @param boolean $hidden true if it should be hidden, otherwise false
      * @return void
      * @api
      */
@@ -280,7 +281,7 @@ interface NodeInterface
      *
      * @param array $accessRoles
      * @return void
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function setAccessRoles(array $accessRoles);
 
@@ -288,7 +289,7 @@ interface NodeInterface
      * Returns the names of defined access roles
      *
      * @return array
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function getAccessRoles();
 
@@ -299,6 +300,7 @@ interface NodeInterface
      *
      * @return string The absolute node path
      * @api
+     * @deprecated with version 4.3, use findNodePath() instead.
      */
     public function getPath();
 
@@ -308,7 +310,7 @@ interface NodeInterface
      * Example: /sites/mysitecom/homepage/about@user-admin
      *
      * @return string Node path with context information
-     * @api
+     * @deprecated with version 4.3 - Use the node's NodeAddress instead
      */
     public function getContextPath();
 
@@ -317,7 +319,7 @@ interface NodeInterface
      * Counting starts with 0 for "/", 1 for "/foo", 2 for "/foo/bar" etc.
      *
      * @return integer
-     * @api
+     * @deprecated with version 4.3 - Use TraversableNodeInterface::findNodePath()->getDepth() instead
      */
     public function getDepth();
 
@@ -329,6 +331,7 @@ interface NodeInterface
      *
      * @param Workspace $workspace
      * @return void
+     * @deprecated with version 4.3 - From 5.0 you will be able to use the ContentStream instead
      */
     public function setWorkspace(Workspace $workspace);
 
@@ -336,7 +339,7 @@ interface NodeInterface
      * Returns the workspace this node is contained in
      *
      * @return Workspace
-     * @api
+     * @deprecated with version 4.3 - From 5.0 you will be able to use the ContentStream instead
      */
     public function getWorkspace();
 
@@ -352,7 +355,7 @@ interface NodeInterface
      * as it does not change even if all of the nodes content or its path changes.
      *
      * @return string the node's UUID
-     * @api
+     * @deprecated with version 4.3, use getNodeAggregateIdentifier() instead.
      */
     public function getIdentifier();
 
@@ -363,6 +366,7 @@ interface NodeInterface
      *
      * @param integer $index The new index
      * @return void
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement
      */
     public function setIndex($index);
 
@@ -371,6 +375,7 @@ interface NodeInterface
      * with the same parent node.
      *
      * @return integer
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement
      */
     public function getIndex();
 
@@ -378,7 +383,7 @@ interface NodeInterface
      * Returns the parent node of this node
      *
      * @return NodeInterface The parent node or NULL if this is the root node
-     * @api
+     * @deprecated with version 4.3, use findParentNode() instead.
      */
     public function getParent();
 
@@ -386,7 +391,7 @@ interface NodeInterface
      * Returns the parent node path
      *
      * @return string Absolute node path of the parent node
-     * @api
+     * @deprecated with version 4.3, use findParentNode()->findNodePath() instead.
      */
     public function getParentPath();
 
@@ -397,7 +402,7 @@ interface NodeInterface
      * @param string $name Name of the new node
      * @param NodeType $nodeType Node type of the new node (optional)
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-     * @return Node
+     * @return NodeInterface
      * @throws \InvalidArgumentException if the node name is not accepted.
      * @throws NodeExistsException if a node with this path already exists.
      * @api
@@ -413,7 +418,7 @@ interface NodeInterface
      * @param string $name Name of the new node
      * @param NodeType $nodeType Node type of the new node (optional)
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-     * @return Node
+     * @return NodeInterface
      * @throws \InvalidArgumentException if the node name is not accepted.
      * @throws NodeExistsException if a node with this path already exists.
      */
@@ -434,18 +439,18 @@ interface NodeInterface
      *
      * @param string $path Path specifying the node, relative to this node
      * @return NodeInterface The specified node or NULL if no such node exists
-     * @api
+     * @deprecated with version 4.3 - use TraversableNodeInterface::findNamedChildNode() instead - for absolute paths a new API will be added with 5.0
      */
     public function getNode($path);
 
     /**
      * Returns the primary child node of this node.
      *
-     * Which node acts as a primary child node will in the future depend on the
+     * Which node acts as a primary child node will in the future depend on theLayeredWorkspacesTest
      * node type. For now it is just the first child node.
      *
      * @return NodeInterface The primary child node or NULL if no such node exists
-     * @api
+     * @deprecated with version 4.3, without any replacement.
      */
     public function getPrimaryChildNode();
 
@@ -457,7 +462,7 @@ interface NodeInterface
      * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
      * @param integer $offset An optional offset for the query
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
-     * @api
+     * @deprecated with version 4.3, use findChildNodes() instead.
      */
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null);
 
@@ -465,13 +470,13 @@ interface NodeInterface
      * Checks if this node has any child nodes.
      *
      * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
-     * @return boolean TRUE if this node has child nodes, otherwise FALSE
-     * @api
+     * @return boolean true if this node has child nodes, otherwise false
+     * @deprecated with version 4.3, use findChildNodes() instead and count the result
      */
     public function hasChildNodes($nodeTypeFilter = null);
 
     /**
-     * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
+     * Removes this node and all its child nodes. This is an alias for setRemoved(true)
      *
      * @return void
      * @api
@@ -481,7 +486,7 @@ interface NodeInterface
     /**
      * Removes this node and all its child nodes or sets ONLY this node to not being removed.
      *
-     * @param boolean $removed If TRUE, this node and it's child nodes will be removed or set to be not removed.
+     * @param boolean $removed If true, this node and it's child nodes will be removed or set to be not removed.
      * @return void
      * @api
      */
@@ -491,7 +496,7 @@ interface NodeInterface
      * If this node is a removed node.
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve removed nodes
      */
     public function isRemoved();
 
@@ -501,7 +506,7 @@ interface NodeInterface
      * taken into account.
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
      */
     public function isVisible();
 
@@ -509,7 +514,7 @@ interface NodeInterface
      * Tells if this node may be accessed according to the current security context.
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function isAccessible();
 
@@ -518,7 +523,7 @@ interface NodeInterface
      * current security context.
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function hasAccessRestrictions();
 
@@ -526,7 +531,8 @@ interface NodeInterface
      * Checks if the given $nodeType would be allowed as a child node of this node according to the configured constraints.
      *
      * @param NodeType $nodeType
-     * @return boolean TRUE if the passed $nodeType is allowed as child node
+     * @return boolean true if the passed $nodeType is allowed as child node
+     * @deprecated with version 4.3 - There will be a new utility method with 5.0 (probably part of the NodeType API)
      */
     public function isNodeTypeAllowedAsChildNode(NodeType $nodeType);
 
@@ -562,7 +568,7 @@ interface NodeInterface
      *
      * @param NodeInterface $referenceNode
      * @param string $nodeName
-     * @return NodeInterface
+     * @return NodeInterface The copied node
      * @throws NodeExistsException
      * @api
      */
@@ -573,7 +579,7 @@ interface NodeInterface
      *
      * @param NodeInterface $referenceNode
      * @param string $nodeName
-     * @return NodeInterface
+     * @return NodeInterface The copied node
      * @throws NodeExistsException
      * @api
      */
@@ -585,7 +591,7 @@ interface NodeInterface
      *
      * @param NodeInterface $referenceNode
      * @param string $nodeName
-     * @return NodeInterface
+     * @return NodeInterface The copied node
      * @throws NodeExistsException
      * @api
      */
@@ -595,6 +601,7 @@ interface NodeInterface
      * Return the NodeData representation of the node.
      *
      * @return NodeData
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement
      */
     public function getNodeData();
 
@@ -602,6 +609,7 @@ interface NodeInterface
      * Return the context of the node
      *
      * @return Context
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement, but you can access the node's subgraph via TraversableNodeInterface::getSubgraph()
      */
     public function getContext();
 
@@ -609,6 +617,7 @@ interface NodeInterface
      * Return the assigned content dimensions of the node.
      *
      * @return array An array of dimensions to array of dimension values
+     * @deprecated with version 4.3 - will be replaced in 5.0 by getOriginDimensionSpacePoint() and getDimensionSpacePoint()
      */
     public function getDimensions();
 
@@ -625,7 +634,9 @@ interface NodeInterface
      * Determine if this node is configured as auto-created childNode of the parent node. If that is the case, it
      * should not be deleted.
      *
-     * @return boolean TRUE if this node is auto-created by the parent.
+     * @return boolean true if this node is auto-created by the parent.
+     * @deprecated with version 4.3 - will be removed with 5.0. This information should not be required usually. Otherwise it can be determined via:
+     * if (array_key_exists((string)$node->getNodeName(), $parent->getNodeType()->getAutoCreatedChildNodes()))
      */
     public function isAutoCreated();
 
@@ -636,6 +647,7 @@ interface NodeInterface
      * The resulting node instances might belong to a different context.
      *
      * @return array<NodeInterface> All node variants of this node (excluding the current node)
+     * @deprecated with version 4.3 - will be removed in 5.0 without replacement. But the subGraph can be used to determine other variants of a node
      */
     public function getOtherNodeVariants();
 }

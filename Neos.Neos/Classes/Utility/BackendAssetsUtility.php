@@ -11,7 +11,6 @@ namespace Neos\Neos\Utility;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A collection of helper methods for the Neos backend assets
@@ -33,7 +32,7 @@ class BackendAssetsUtility
     }
 
     /**
-     * Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE otherwise.
+     * Returns true if the minified Neos JavaScript sources should be loaded, false otherwise.
      *
      * @return boolean
      */

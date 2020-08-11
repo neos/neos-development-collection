@@ -785,9 +785,9 @@ Fluid Template
 The Fluid templates of a widget are normal Fluid templates as you know them, but
 have a few ViewHelpers available additionally:
 
-<f:uri.widget>
+<f:widget.uri>
   Generates an URI to another action of the widget.
-<f:link.widget>
+<f:widget.link>
   Generates a link to another action of the widget.
 <f:renderChildren>
   Can be used to render the child nodes of the Widget ViewHelper,
@@ -810,7 +810,7 @@ To make a widget AJAX-aware, you need to do the following:
   triggers the AJAX functionality. There, you will need a URI which returns the
   AJAX response. For that, use the following ViewHelper inside the template::
 
-	<f:uri.widget ajax="TRUE" action="..." arguments="..." />
+	<f:widget.uri ajax="TRUE" action="..." arguments="..." />
 
 * Inside the template of the AJAX request, ``<f:renderChildren>`` is not available,
   because the child nodes of the Widget ViewHelper are not accessible there.
@@ -822,11 +822,11 @@ A XSD schema file for your ViewHelpers can be created by executing
 
 .. code-block:: text
 
-	./flow documenation:generatexsd <Your>\\<Package>\\ViewHelpers
+	./flow documentation:generatexsd <Your>\\<Package>\\ViewHelpers
 		--target-file /some/directory/your.package.xsd
 
 Then import the XSD file in your favorite IDE and map it to the namespace
-``http://typo3.org/ns/<Your/Package>/ViewHelpers``. Add the namespace to your
+``http://neos.io/ns/<Your/Package>/ViewHelpers``. Add the namespace to your
 Fluid template by adding the ``xmlns`` attribute to the root tag (usually
 ``<xml …>`` or ``<html …>``).
 
@@ -840,7 +840,7 @@ the render ViewHelper in order to only render the content of the partial.
 
 Partial::
 
-	<html xmlns:x="http://typo3.org/ns/Your/Package/ViewHelpers">
+	<html xmlns:x="http://neos.io/ns/Your/Package/ViewHelpers">
 	<f:section name="content">
 		<x:yourViewHelper />
 	</f:section>

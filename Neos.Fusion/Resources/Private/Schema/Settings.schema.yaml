@@ -5,11 +5,11 @@ properties:
     properties:
       Fusion:
         type: dictionary
-        additionalProperties: FALSE
+        additionalProperties: false
         properties:
           rendering:
             type: dictionary
-            additionalProperties: FALSE
+            additionalProperties: false
             properties:
               exceptionHandler:
                 type: string

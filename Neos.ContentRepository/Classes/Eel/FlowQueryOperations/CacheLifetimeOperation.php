@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
@@ -64,11 +65,11 @@ class CacheLifetimeOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -82,13 +83,15 @@ class CacheLifetimeOperation extends AbstractOperation
     {
         $minimumDateTime = null;
         foreach ($flowQuery->getContext() as $contextNode) {
-            $hiddenBeforeDateTime = $contextNode->getHiddenBeforeDateTime();
-            if ($hiddenBeforeDateTime !== null && $hiddenBeforeDateTime > $this->now && ($minimumDateTime === null || $hiddenBeforeDateTime < $minimumDateTime)) {
-                $minimumDateTime = $hiddenBeforeDateTime;
-            }
-            $hiddenAfterDateTime = $contextNode->getHiddenAfterDateTime();
-            if ($hiddenAfterDateTime !== null && $hiddenAfterDateTime > $this->now && ($minimumDateTime === null || $hiddenAfterDateTime < $minimumDateTime)) {
-                $minimumDateTime = $hiddenAfterDateTime;
+            if ($contextNode instanceof NodeInterface) {
+                $hiddenBeforeDateTime = $contextNode->getHiddenBeforeDateTime();
+                if ($hiddenBeforeDateTime !== null && $hiddenBeforeDateTime > $this->now && ($minimumDateTime === null || $hiddenBeforeDateTime < $minimumDateTime)) {
+                    $minimumDateTime = $hiddenBeforeDateTime;
+                }
+                $hiddenAfterDateTime = $contextNode->getHiddenAfterDateTime();
+                if ($hiddenAfterDateTime !== null && $hiddenAfterDateTime > $this->now && ($minimumDateTime === null || $hiddenAfterDateTime < $minimumDateTime)) {
+                    $minimumDateTime = $hiddenAfterDateTime;
+                }
             }
         }
 

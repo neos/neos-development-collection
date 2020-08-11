@@ -87,41 +87,41 @@ class NodeTest extends UnitTestCase
      */
     public function dataSourceForContextPathPattern()
     {
-        return array(
-            'empty node path' => array(
+        return [
+            'empty node path' => [
                 'path' => '',
-                'expected' => array(
-                )
-            ),
-            'node path starting with /' => array(
+                'expected' => [
+                ]
+            ],
+            'node path starting with /' => [
                 'path' => '/features',
-                'expected' => array(
+                'expected' => [
                     0 => '/features',
                     'NodePath' => '/features',
                     1 => '/features'
-                )
-            ),
-            'simple context with no workspace' => array(
+                ]
+            ],
+            'simple context with no workspace' => [
                 'path' => 'features',
-                'expected' => array(
+                'expected' => [
                     0 => 'features',
                     'NodePath' => 'features',
                     1 => 'features'
-                )
-            ),
-            'simple context with workspace' => array(
+                ]
+            ],
+            'simple context with workspace' => [
                 'path' => 'features@user-admin',
-                'expected' => array(
+                'expected' => [
                     0 => 'features@user-admin',
                     'NodePath' => 'features',
                     1 => 'features',
                     'WorkspaceName' => 'user-admin',
                     2 => 'user-admin'
-                )
-            ),
-            'simple dimension' => array(
+                ]
+            ],
+            'simple dimension' => [
                 'path' => 'features@user-admin;language=de_DE,mul_ZZ',
-                'expected' => array(
+                'expected' => [
                     0 => 'features@user-admin;language=de_DE,mul_ZZ',
                     'NodePath' => 'features',
                     1 => 'features',
@@ -129,11 +129,11 @@ class NodeTest extends UnitTestCase
                     2 => 'user-admin',
                     'Dimensions' => 'language=de_DE,mul_ZZ',
                     3 => 'language=de_DE,mul_ZZ'
-                )
-            ),
-            'multiple dimensions' => array(
+                ]
+            ],
+            'multiple dimensions' => [
                 'path' => 'features@user-admin;language=de_DE,mul_ZZ&original=blah',
-                'expected' => array(
+                'expected' => [
                     0 => 'features@user-admin;language=de_DE,mul_ZZ&original=blah',
                     'NodePath' => 'features',
                     1 => 'features',
@@ -141,9 +141,9 @@ class NodeTest extends UnitTestCase
                     2 => 'user-admin',
                     'Dimensions' => 'language=de_DE,mul_ZZ&original=blah',
                     3 => 'language=de_DE,mul_ZZ&original=blah'
-                )
-            )
-        );
+                ]
+            ]
+        ];
     }
 
     /**
@@ -152,7 +152,7 @@ class NodeTest extends UnitTestCase
      */
     public function contextPathPatternShouldWorkWithContexts($path, $expected)
     {
-        $matches = array();
+        $matches = [];
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
 
         $this->assertSame($expected, $matches);
@@ -189,7 +189,7 @@ class NodeTest extends UnitTestCase
     public function createNodeWithAutoCreatedChildNodesAndNoIdentifierUsesGeneratedIdentifierOfNodeForChildNodes()
     {
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $mockContext->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array('language' => 'mul_ZZ')));
+        $mockContext->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(['language' => 'mul_ZZ']));
         $mockFirstLevelNodeCache = $this->createMock(FirstLevelNodeCache::class);
         $mockContext->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
@@ -197,14 +197,14 @@ class NodeTest extends UnitTestCase
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockSubNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
 
-        $mockNodeType->expects($this->any())->method('getDefaultValuesForProperties')->will($this->returnValue(array()));
-        $mockNodeType->expects($this->any())->method('getAutoCreatedChildNodes')->will($this->returnValue(array(
+        $mockNodeType->expects($this->any())->method('getDefaultValuesForProperties')->will($this->returnValue([]));
+        $mockNodeType->expects($this->any())->method('getAutoCreatedChildNodes')->will($this->returnValue([
             'subnode1' => $mockSubNodeType
-        )));
+        ]));
 
         $i = 0;
-        $generatedIdentifiers = array();
-        $node = $this->getMockBuilder(Node::class)->setMethods(array('createSingleNode'))->setConstructorArgs(array($mockNodeData, $mockContext))->getMock();
+        $generatedIdentifiers = [];
+        $node = $this->getMockBuilder(Node::class)->setMethods(['createSingleNode'])->setConstructorArgs([$mockNodeData, $mockContext])->getMock();
         $node->expects($this->any())->method('createSingleNode')->will($this->returnCallback(function () use (&$i, &$generatedIdentifiers, $mockSubNodeType) {
             $newNode = $this->createMock(NodeInterface::class);
             $newNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-' . $i++));

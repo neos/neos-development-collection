@@ -12,13 +12,7 @@ namespace Neos\Neos\Controller\Module\Administration;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Error;
-use Neos\Error\Messages\Message;
-use Neos\Error\Messages\Warning;
 use Neos\Flow\Package;
-use Neos\Flow\Package\Exception\ProtectedPackageKeyException;
-use Neos\Flow\Package\Exception\UnknownPackageException;
-use Neos\Flow\Package\Exception;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 
@@ -38,29 +32,27 @@ class PackagesController extends AbstractModuleController
      */
     public function indexAction()
     {
-        $packageGroups = array();
+        $packageGroups = [];
         foreach ($this->packageManager->getAvailablePackages() as $package) {
             /** @var Package $package */
             $packagePath = substr($package->getPackagepath(), strlen(FLOW_PATH_PACKAGES));
             $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
-            $packageGroups[$packageGroup][$package->getPackageKey()] = array(
+            $packageGroups[$packageGroup][$package->getPackageKey()] = [
                 'sanitizedPackageKey' => str_replace('.', '', $package->getPackageKey()),
                 'version' => $package->getInstalledVersion(),
                 'name' => $package->getComposerManifest('name'),
                 'type' => $package->getComposerManifest('type'),
                 'description' => $package->getComposerManifest('description'),
-                'isActive' => $this->packageManager->isPackageActive($package->getPackageKey()),
-                'isFrozen' => $this->packageManager->isPackageFrozen($package->getPackageKey()),
-                'isProtected' => $package->isProtected()
-            );
+                'isFrozen' => $this->packageManager->isPackageFrozen($package->getPackageKey())
+            ];
         }
         ksort($packageGroups);
         foreach (array_keys($packageGroups) as $packageGroup) {
             ksort($packageGroups[$packageGroup]);
         }
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'packageGroups' => $packageGroups,
             'isDevelopmentContext' => $this->objectManager->getContext()->isDevelopment()
-        ));
+        ]);
     }
 }

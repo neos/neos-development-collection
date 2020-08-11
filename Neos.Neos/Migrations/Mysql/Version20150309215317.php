@@ -36,7 +36,10 @@ class Version20150309215317 extends AbstractMigration
             $this->addSql("CREATE UNIQUE INDEX UNIQ_FC846DAAE931A6F5 ON typo3_neos_domain_model_user (preferences)");
             $this->addSql("ALTER TABLE typo3_neos_domain_model_user ADD CONSTRAINT typo3_neos_domain_model_user_ibfk_1 FOREIGN KEY (preferences) REFERENCES typo3_neos_domain_model_userpreferences (persistence_object_identifier)");
         }
-        $this->addSql("DROP INDEX uid ON typo3_neos_eventlog_domain_model_event");
+        $indexes = $this->sm->listTableIndexes('typo3_neos_eventlog_domain_model_event');
+        if (array_key_exists('uid', $indexes)) {
+            $this->addSql("DROP INDEX uid ON typo3_neos_eventlog_domain_model_event");
+        }
     }
 
     /**
