@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Asset list</source>
-			<target xml:lang="tr" state="translated">Öğe listesi</target></trans-unit>
+			<target state="translated">Öğe listesi</target></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve">
 				<source>Resources</source>
-			<target xml:lang="tr" state="translated">Kaynaklar</target></trans-unit>
+			<target state="translated">Kaynaklar</target></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve">
 				<source>Assets</source>
-			<target xml:lang="tr" state="translated">Varlıklar</target></trans-unit>
+			<target state="translated">Varlıklar</target></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve">
 				<source>Empty asset list</source>
-			<target xml:lang="tr" state="translated">Boş varlık listesi</target></trans-unit>
+			<target state="translated">Boş varlık listesi</target></trans-unit>
     </body>
   </file>
 </xliff>

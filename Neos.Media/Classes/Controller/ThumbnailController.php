@@ -13,8 +13,11 @@ namespace Neos\Media\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Service\ThumbnailService;
+use Neos\Media\Exception\ThumbnailServiceException;
 
 /**
  * Controller for asynchronous thumbnail handling
@@ -34,6 +37,9 @@ class ThumbnailController extends ActionController
      *
      * @param Thumbnail $thumbnail
      * @return void
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     * @throws ThumbnailServiceException
      */
     public function thumbnailAction(Thumbnail $thumbnail)
     {

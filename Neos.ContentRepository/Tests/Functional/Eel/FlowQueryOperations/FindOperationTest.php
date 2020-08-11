@@ -26,7 +26,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByNodeIdentifierThrowsExceptionOnInvalidIdentifier()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $q->find('#_test')->get(0);
     }
 
@@ -51,7 +51,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function identifierFilterIsSupported($filter, array $expectedNodePaths)
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find($filter)->get();
         $foundNodePaths = array_map(function (NodeInterface $node) {
             return $node->getPath();
@@ -82,7 +82,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function pathAndPropertyNameFilterIsSupported($filter, array $expectedNodePaths)
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find($filter)->get();
         $foundNodePaths = array_map(function (NodeInterface $node) {
             return $node->getPath();
@@ -130,7 +130,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findWithNonInstanceofAttributeFilterAsFirstPartThrowsException()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $q->find('[title *= "Welcome"][instanceof Neos.ContentRepository.Testing:Headline]')->get(0);
     }
 
@@ -143,7 +143,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function attributeFilterIsSupported($filter, array $expectedNodePaths)
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find($filter)->get();
         $foundNodePaths = array_map(function (NodeInterface $node) {
             return $node->getPath();
@@ -156,14 +156,15 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByNodeIdentifierReturnsCorrectNodeInContext()
     {
-        $q = new FlowQuery(array($this->node));
+        $this->authenticateRoles(['Neos.ContentRepository:TestingAdministrator']);
+        $q = new FlowQuery([$this->node]);
         $foundNode = $q->find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')->get(0);
         $this->assertSame($this->node->getNode('about-us'), $foundNode);
 
-        $testContext = $this->contextFactory->create(array('workspaceName' => 'test'));
+        $testContext = $this->contextFactory->create(['workspaceName' => 'test']);
 
         $testNode = $testContext->getNode('/sites/example/home');
-        $testQ = new FlowQuery(array($testNode));
+        $testQ = new FlowQuery([$testNode]);
         $testFoundNode = $testQ->find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')->get(0);
         $this->assertSame($testNode->getNode('about-us'), $testFoundNode);
 
@@ -175,7 +176,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByNodeWithInstanceofFilterReturnsMatchingNodesRecursively()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Text]')->get();
         $this->assertGreaterThan(0, count($foundNodes));
         foreach ($foundNodes as $foundNode) {
@@ -186,12 +187,25 @@ class FindOperationTest extends AbstractNodeTest
     /**
      * @test
      */
+    public function findByNodeWithInstanceofFilterExcludeNodesWithADisabledCorrespondingSuperType()
+    {
+        $q = new FlowQuery([$this->node]);
+        $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:ContentMixin]')->get();
+        $foundNodeTypeNames = array_map(function (NodeInterface $node) {
+            return $node->getNodeType()->getName();
+        }, $foundNodes);
+        $this->assertNotContains('Neos.ContentRepository.Testing:ThreeColumn', $foundNodeTypeNames);
+    }
+
+    /**
+     * @test
+     */
     public function findByNodeWithMultipleInstanceofFilterReturnsMatchingNodesRecursively()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Text],[instanceof Neos.ContentRepository.Testing:Page]')->get();
         $this->assertGreaterThan(0, count($foundNodes));
-        $foundNodeTypes = array();
+        $foundNodeTypes = [];
         foreach ($foundNodes as $foundNode) {
             $nodeType = $foundNode->getNodeType()->getName();
             if (!in_array($nodeType, $foundNodeTypes)) {
@@ -199,7 +213,7 @@ class FindOperationTest extends AbstractNodeTest
             }
         }
         sort($foundNodeTypes);
-        $this->assertSame($foundNodeTypes, array('Neos.ContentRepository.Testing:Page', 'Neos.ContentRepository.Testing:Text'));
+        $this->assertSame($foundNodeTypes, ['Neos.ContentRepository.Testing:Page', 'Neos.ContentRepository.Testing:Text']);
     }
 
     /**
@@ -207,7 +221,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByNodeWithAbsolutePathReturnsCorrectNode()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('/sites/example/home/main/dummy42a')->get();
         $this->assertEquals(1, count($foundNodes));
         $foundNode = $foundNodes[0];
@@ -219,7 +233,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByNodeWithPathReturnsEmptyArrayIfNotFound()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('/sites/example/home/main/limbo')->get();
         $this->assertEmpty($foundNodes);
     }
@@ -229,7 +243,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findOperationEvaluatesWithEmptyContext()
     {
-        $q = new FlowQuery(array());
+        $q = new FlowQuery([]);
         $foundNodes = $q->find('/sites/example/home/main/limbo')->get();
         $this->assertEmpty($foundNodes);
     }
@@ -240,7 +254,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findOperationThrowsExceptionOnAtLeastOneInvalidContext()
     {
-        $q = new FlowQuery(array($this->node, '1'));
+        $q = new FlowQuery([$this->node, '1']);
         $q->find('/sites/example/home/main/limbo')->get();
     }
 
@@ -249,7 +263,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByNodeWithNodeNameReturnsCorrectNode()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('main')->get();
         $this->assertEquals(1, count($foundNodes));
         $foundNode = $foundNodes[0];
@@ -261,7 +275,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByNodeWithRelativePathReturnsCorrectNode()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('main/dummy42a')->get();
         $this->assertEquals(1, count($foundNodes));
         $foundNode = $foundNodes[0];
@@ -273,10 +287,11 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByMultipleNodesReturnsMatchingNodesForAllNodes()
     {
-        $testContext = $this->contextFactory->create(array('workspaceName' => 'test'));
+        $this->authenticateRoles(['Neos.ContentRepository:TestingAdministrator']);
+        $testContext = $this->contextFactory->create(['workspaceName' => 'test']);
         $testNodeA = $testContext->getNode('/sites/example/home/main/dummy44');
         $testNodeB = $testContext->getNode('/sites/example/home/main/dummy45');
-        $q = new FlowQuery(array($testNodeA, $testNodeB));
+        $q = new FlowQuery([$testNodeA, $testNodeB]);
 
         $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Headline],[instanceof Neos.ContentRepository.Testing:ListItem]')->get();
         $this->assertGreaterThan(0, count($foundNodes));
@@ -300,7 +315,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByNodeWithInstanceofFilterAppliesAdditionalAttributeFilter()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Text][text*="Twitter"]')->get();
         $this->assertCount(1, $foundNodes);
     }

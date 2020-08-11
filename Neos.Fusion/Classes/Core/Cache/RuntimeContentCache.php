@@ -12,7 +12,6 @@ namespace Neos\Fusion\Core\Cache;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\CacheAwareInterface;
 use Neos\Utility\Unicode\Functions;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;
@@ -168,7 +167,7 @@ class RuntimeContentCache
                 $evaluateContext['cacheIdentifierValues'] = $this->buildCacheIdentifierValues($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
                 $cacheDiscriminator = isset($evaluateContext['cacheDiscriminator']) ? $evaluateContext['cacheDiscriminator'] : null;
                 $self = $this;
-                $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self, $evaluateContext, $fusionObject) {
+                $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self) {
                     if (strpos($command, 'eval=') === 0) {
                         $unserializedContext = $self->unserializeContext($additionalData['context']);
                         $path = substr($command, 5);
@@ -214,8 +213,13 @@ class RuntimeContentCache
                 $maximumLifetime = $this->runtime->evaluate($evaluateContext['fusionPath'] . '/__meta/cache/maximumLifetime', $fusionObject);
 
                 if ($maximumLifetime !== null && $this->cacheMetadata !== []) {
-                    $cacheMetadata = &$this->cacheMetadata[count($this->cacheMetadata) - 1];
-                    $cacheMetadata['lifetime'] = $cacheMetadata['lifetime'] !== null ? min($cacheMetadata['lifetime'], $maximumLifetime) : $maximumLifetime;
+                    $parentCacheMetadata = &$this->cacheMetadata[count($this->cacheMetadata) - 1];
+
+                    if ($parentCacheMetadata['lifetime'] === null) {
+                        $parentCacheMetadata['lifetime'] = (int)$maximumLifetime;
+                    } elseif ($maximumLifetime > 0) {
+                        $parentCacheMetadata['lifetime'] = min((int)$parentCacheMetadata['lifetime'], (int)$maximumLifetime);
+                    }
                 }
             }
         }

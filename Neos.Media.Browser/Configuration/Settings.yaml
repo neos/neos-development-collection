@@ -17,6 +17,12 @@ Neos:
       styles:
         - 'resource://Neos.Neos/Public/Styles/Neos.css'
         - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
+        - 'resource://Neos.Media.Browser/Public/Styles/Main.css'
+
+      # By default, disable the beta feature "variants tab":
+      features:
+        variantsTab:
+          enable: false
 
   Flow:
     security:
@@ -40,11 +46,12 @@ Neos:
             controller: \Neos\Media\Browser\Controller\AssetController
             label: 'Neos.Media.Browser:Main:module.label'
             description: 'Neos.Media.Browser:Main:module.description'
-            icon: 'icon-camera'
+            icon: 'fas fa-camera'
             privilegeTarget: 'Neos.Media.Browser:ManageAssets'
             additionalResources:
               styleSheets:
                 - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
+                - 'resource://Neos.Media.Browser/Public/Styles/Main.css'
     userInterface:
       translation:
         autoInclude:

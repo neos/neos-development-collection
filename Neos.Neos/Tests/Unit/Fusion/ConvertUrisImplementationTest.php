@@ -17,7 +17,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -78,7 +77,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->convertUrisImplementation = $this->getAccessibleMock(ConvertUrisImplementation::class, array('fusionValue'), array(), '', false);
+        $this->convertUrisImplementation = $this->getAccessibleMock(ConvertUrisImplementation::class, ['fusionValue'], [], '', false);
 
         $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
@@ -108,19 +107,20 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation->_set('runtime', $this->mockRuntime);
     }
 
-    protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null, $absolute = false)
+    protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null, $absolute = false, $setNoOpener = true)
     {
         $this->convertUrisImplementation
             ->expects($this->atLeastOnce())
             ->method('fusionValue')
-            ->will($this->returnValueMap(array(
-                array('value', $value),
-                array('node', $node ?: $this->mockNode),
-                array('forceConversion', $forceConversion),
-                array('externalLinkTarget', $externalLinkTarget),
-                array('resourceLinkTarget', $resourceLinkTarget),
-                array('absolute', $absolute)
-            )));
+            ->will($this->returnValueMap([
+                ['value', $value],
+                ['node', $node ?: $this->mockNode],
+                ['forceConversion', $forceConversion],
+                ['externalLinkTarget', $externalLinkTarget],
+                ['resourceLinkTarget', $resourceLinkTarget],
+                ['absolute', $absolute],
+                ['setNoOpener', $setNoOpener]
+            ]));
     }
 
     /**
@@ -273,7 +273,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
             }
         }));
 
-        $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a target="' . $externalLinkTarget . '" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" href="http://www.example.org">example2</a>';
+        $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example2</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         $this->assertSame($expectedResult, $actualResult);
     }
@@ -301,7 +301,47 @@ class ConvertUrisImplementationTest extends UnitTestCase
             return 'http://localhost/_Resources/01';
         }));
 
-        $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example2</a> and an external link <a href="http://www.example.org">example3</a>';
+        $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example2</a> and an external link <a href="http://www.example.org">example3</a>';
+        $actualResult = $this->convertUrisImplementation->evaluate();
+        $this->assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function disablingSetNoOpenerWorks()
+    {
+        $value = 'This string contains an external link: <a href="http://www.example.org">example3</a>';
+        $this->addValueExpectation($value, null, false, '_blank', null, false, false);
+        $expectedResult = 'This string contains an external link: <a href="http://www.example.org">example3</a>';
+        $actualResult = $this->convertUrisImplementation->evaluate();
+        $this->assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * This test checks that targets for resource links are correctly replaced if the a Tag is inside a tag with the name beginning wit a
+     *
+     * @test
+     */
+    public function evaluateReplaceResourceLinkTargetsInsideTag()
+    {
+        $assetIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff8';
+        $resourceLinkTarget = '_blank';
+
+        $value = 'and an external link inside another tag beginning with a <article> test <a href="asset://' . $assetIdentifier . '">example1</a></article>';
+        $this->addValueExpectation($value, null, false, null, $resourceLinkTarget);
+
+        $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+
+        $self = $this;
+        $this->mockLinkingService->expects($this->atLeastOnce())->method('resolveAssetUri')->will($this->returnCallback(function ($assetUri) use ($self, $assetIdentifier) {
+            if ($assetUri !== 'asset://' . $assetIdentifier) {
+                $self->fail('Unexpected asset URI "' . $assetUri . '"');
+            }
+            return 'http://localhost/_Resources/01';
+        }));
+
+        $expectedResult = 'and an external link inside another tag beginning with a <article> test <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example1</a></article>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         $this->assertSame($expectedResult, $actualResult);
     }

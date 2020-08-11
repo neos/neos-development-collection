@@ -26,7 +26,14 @@ class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
      *
      * @var string
      */
-    protected $basePrototypeName = 'Neos.Fusion:Template';
+    protected $basePrototypeName = null;
+
+    /**
+     * The node template path inside the package resources
+     *
+     * @var string
+     */
+    protected $templatePath = null;
 
     /**
      * Generate a Fusion prototype definition for a given node type
@@ -44,11 +51,17 @@ class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
             return '';
         }
 
-        $output = 'prototype(' . $nodeType->getName() . ') < prototype(' . $this->basePrototypeName . ') {' . chr(10);
+        $output = 'prototype(' . $nodeType->getName() . ')';
+        if ($this->basePrototypeName !== null) {
+            $output .= ' < prototype(' . $this->basePrototypeName . ')';
+        }
+        $output .= ' {' . chr(10);
 
-        list($packageKey, $relativeName) = explode(':', $nodeType->getName(), 2);
-        $templatePath = 'resource://' . $packageKey . '/Private/Templates/NodeTypes/' . $relativeName . '.html';
-        $output .= "\t" . 'templatePath = \'' . $templatePath . '\'' . chr(10);
+        if ($this->templatePath !== null) {
+            list($packageKey, $relativeName) = explode(':', $nodeType->getName(), 2);
+            $nodeTemplatePath = 'resource://' . $packageKey . '/' . $this->templatePath . '/' . $relativeName . '.html';
+            $output .= "\t" . 'templatePath = \'' . $nodeTemplatePath . '\'' . chr(10);
+        }
 
         foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
             if (isset($propertyName[0]) && $propertyName[0] !== '_') {

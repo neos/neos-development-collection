@@ -12,7 +12,6 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Service\FileTypeIconService;
@@ -51,10 +50,10 @@ class IconThumbnailGenerator extends AbstractThumbnailGenerator
 
             /** @var AssetInterface $asset */
             $asset = $thumbnail->getOriginalAsset();
-            $icon = FileTypeIconService::getIcon($asset, $width, $height);
+            $icon = FileTypeIconService::getIcon($asset->getResource()->getFilename());
             $thumbnail->setStaticResource($icon['src']);
-            $thumbnail->setWidth($icon['width']);
-            $thumbnail->setHeight($icon['height']);
+            $thumbnail->setWidth($width);
+            $thumbnail->setHeight($height);
         } catch (\Exception $exception) {
             $message = sprintf('Unable to generate thumbnail for the given image (filename: %s, SHA1: %s)', $thumbnail->getOriginalAsset()->getResource()->getFilename(), $thumbnail->getOriginalAsset()->getResource()->getSha1());
             throw new Exception\NoThumbnailAvailableException($message, 1433109654, $exception);

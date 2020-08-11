@@ -11,11 +11,13 @@ namespace Neos\ContentRepository\Domain\Repository;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Utility\Arrays;
@@ -67,11 +69,10 @@ class NodeDataRepository extends Repository
     protected $removedNodes;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -83,7 +84,7 @@ class NodeDataRepository extends Repository
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -178,7 +179,7 @@ class NodeDataRepository extends Repository
      * @param string $path Absolute path of the node
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
-     * @param boolean|NULL $removedNodes Include removed nodes, NULL (all), FALSE (no removed nodes) or TRUE (only removed nodes)
+     * @param boolean|NULL $removedNodes Include removed nodes, NULL (all), false (no removed nodes) or true (only removed nodes)
      * @throws \InvalidArgumentException
      * @return NodeData The matching node if found, otherwise NULL
      */
@@ -373,6 +374,44 @@ class NodeDataRepository extends Repository
     }
 
     /**
+     * Find all objects and return an IterableResult
+     *
+     * @return IterableResult
+     */
+    public function findAllIterator()
+    {
+        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $queryBuilder
+            ->select('node')
+            ->from($this->getEntityClassName(), 'node')
+            ->getQuery()->iterate();
+    }
+
+    /**
+     * Iterate over an IterableResult and return a Generator
+     *
+     * This method is useful for batch processing a huge result set.
+     *
+     * @param IterableResult $iterator
+     * @param callable $callback
+     * @return \Generator
+     */
+    public function iterate(IterableResult $iterator, callable $callback = null)
+    {
+        $iteration = 0;
+        foreach ($iterator as $object) {
+            $object = current($object);
+            yield $object;
+            if ($callback !== null) {
+                call_user_func($callback, $iteration, $object);
+            }
+
+            $iteration++;
+        }
+    }
+
+    /**
      * Assigns an index to the given node which reflects the specified position.
      * If the position is "before" or "after", an index will be chosen which makes
      * the given node the previous or next node of the given reference node.
@@ -463,7 +502,7 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions to dimension values
-     * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
+     * @param boolean $removedNodes If true the result has ONLY removed nodes. If false removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to false)
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      */
     public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false)
@@ -473,7 +512,7 @@ class NodeDataRepository extends Repository
 
     /**
      * Finds nodes by its parent and (optionally) by its node type.
-     * If the $recursive flag is set to TRUE, all matching nodes underneath $parentPath will be returned
+     * If the $recursive flag is set to true, all matching nodes underneath $parentPath will be returned
      *
      * Note: Filters out removed nodes.
      *
@@ -484,8 +523,8 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions to dimension values
-     * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
-     * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
+     * @param boolean $removedNodes If true the result has ONLY removed nodes. If false removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to false)
+     * @param boolean $recursive If true *all* matching nodes underneath the specified parent path are returned
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      * @todo Improve implementation by using DQL
      */
@@ -647,7 +686,7 @@ class NodeDataRepository extends Repository
      * @param string $parentPath Absolute path of the parent node
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Context $context The containing workspace
-     * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
+     * @param boolean $recursive If true *all* matching nodes underneath the specified parent path are returned
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> The nodes found on the given path
      */
     public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context, $recursive = false)
@@ -673,7 +712,7 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions
-     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to false)
      * @return integer The number of nodes a similar call to findByParentAndNodeType() would return without any pending added nodes
      */
     public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $includeRemovedNodes = false)
@@ -691,7 +730,7 @@ class NodeDataRepository extends Repository
      */
     protected function openIndexSpace($parentPath, $referenceIndex)
     {
-        $this->systemLogger->log(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LOG_INFO);
+        $this->systemLogger->info(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LogEnvironment::fromMethodName(__METHOD__));
 
         /** @var Query $query */
         $query = $this->entityManager->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
@@ -870,7 +909,7 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param array $dimensions
      * @param Workspace $workspace The containing workspace
-     * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
+     * @param boolean $removedNodes If true the result has ONLY removed nodes. If false removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to false)
      * @return NodeData The node found or NULL
      */
     public function findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions, $removedNodes = false)
@@ -890,7 +929,7 @@ class NodeDataRepository extends Repository
      * @param string $parentPath Absolute path of the parent node
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Context $context The containing context
-     * @return NodeData The node found or NULL
+     * @return NodeInterface The node found or NULL
      */
     public function findFirstByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context)
     {
@@ -914,7 +953,7 @@ class NodeDataRepository extends Repository
      * @param string $pathEndPoint Absolute path specifying the end point
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions Array of dimensions to array of dimension values
-     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to false)
      * @param string $nodeTypeFilter Optional filter for the node type of the nodes, supports complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @throws \InvalidArgumentException
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
@@ -1017,7 +1056,8 @@ class NodeDataRepository extends Repository
                 $queryBuilder->expr()->orx()
                     ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
                     ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
+            )
                 ->setParameter('parentPathHash', md5($pathStartingPoint))
                 ->setParameter('pathHash', md5($pathStartingPoint))
                 ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
@@ -1093,13 +1133,13 @@ class NodeDataRepository extends Repository
             } else {
                 $negate = false;
             }
-            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
+            $nodeTypeFilterPartSubTypes = array_merge([$this->nodeTypeManager->getNodeType($nodeTypeFilterPart)], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
 
             foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
                 if ($negate === true) {
-                    $constraints['excludeNodeTypes'][] = $nodeTypeFilterPartSubType;
+                    $constraints['excludeNodeTypes'][] = $nodeTypeFilterPartSubType->getName();
                 } else {
-                    $constraints['includeNodeTypes'][] = $nodeTypeFilterPartSubType;
+                    $constraints['includeNodeTypes'][] = $nodeTypeFilterPartSubType->getName();
                 }
             }
         }
@@ -1125,13 +1165,13 @@ class NodeDataRepository extends Repository
             } else {
                 $negate = false;
             }
-            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart, false));
+            $nodeTypeFilterPartSubTypes = array_merge([$this->nodeTypeManager->getNodeType($nodeTypeFilterPart)], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart, false));
 
             foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
                 if ($negate === true) {
-                    $excludeNodeTypeConstraints[] = $query->logicalNot($query->equals('nodeType', $nodeTypeFilterPartSubType));
+                    $excludeNodeTypeConstraints[] = $query->logicalNot($query->equals('nodeType', $nodeTypeFilterPartSubType->getName()));
                 } else {
-                    $includeNodeTypeConstraints[] = $query->equals('nodeType', $nodeTypeFilterPartSubType);
+                    $includeNodeTypeConstraints[] = $query->equals('nodeType', $nodeTypeFilterPartSubType->getName());
                 }
             }
         }
@@ -1195,13 +1235,10 @@ class NodeDataRepository extends Repository
      */
     public function persistEntities()
     {
-        foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
-            if ($className === $this->entityClassName) {
-                $this->entityManager->flush($entities);
-                $this->emitRepositoryObjectsPersisted();
-                break;
-            }
-        }
+        // Flush all entities to circumvent an issue in Doctrine 2.x which reevaluates all changes
+        // for each change again when called individually leading to n^2 changeset calculations.
+        $this->entityManager->flush();
+        $this->emitRepositoryObjectsPersisted();
     }
 
     /**
@@ -1250,17 +1287,19 @@ class NodeDataRepository extends Repository
         $reducedNodes = [];
 
         $minimalDimensionPositionsByIdentifier = [];
+
+        $workspaceNames = array_map(
+            function (Workspace $workspace) {
+                return $workspace->getName();
+            },
+            $workspaces
+        );
+
         foreach ($nodes as $node) {
             /** @var NodeData $node */
             $nodeDimensions = $node->getDimensionValues();
 
             // Find the position of the workspace, a smaller value means more priority
-            $workspaceNames = array_map(
-                function (Workspace $workspace) {
-                    return $workspace->getName();
-                },
-                $workspaces
-            );
             $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
             if ($workspacePosition === false) {
                 throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
@@ -1279,12 +1318,19 @@ class NodeDataRepository extends Repository
                 if (isset($nodeDimensions[$dimensionName])) {
                     foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
                         $position = array_search($nodeDimensionValue, $dimensionValues);
-                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            $position) : $position;
+                        if ($position === false) {
+                            $position = PHP_INT_MAX;
+                        }
+                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min(
+                            $dimensionPositions[$dimensionName],
+                            $position
+                        ) : $position;
                     }
                 } else {
-                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            PHP_INT_MAX) : PHP_INT_MAX;
+                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min(
+                        $dimensionPositions[$dimensionName],
+                        PHP_INT_MAX
+                    ) : PHP_INT_MAX;
                 }
             }
             $dimensionPositions[] = $workspacePosition;
@@ -1353,7 +1399,7 @@ class NodeDataRepository extends Repository
             ->where('n.workspace = :workspace')
             ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
             ->orderBy('n.path', 'ASC')
-            ->setParameter('workspace', $workspace)
+            ->setParameter('workspace', $workspace->getName())
             ->setParameter('removed', false, \PDO::PARAM_BOOL);
 
         return $queryBuilder->getQuery()->getResult();
@@ -1379,7 +1425,7 @@ class NodeDataRepository extends Repository
                 ->from(NodeData::class, 'n')
                 ->where('n.pathHash = :pathHash')
                 ->setParameter('pathHash', md5($nodePath));
-            $result = (count($queryBuilder->getQuery()->getResult()) > 0 ? true : false);
+            $result = count($queryBuilder->getQuery()->getResult()) > 0;
         });
 
         return $result;
@@ -1392,7 +1438,7 @@ class NodeDataRepository extends Repository
      *
      * @param string $path
      * @param Workspace $workspace
-     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to false)
      * @param boolean $recursive
      * @return array<NodeData> Node data reduced by workspace but with all existing content dimension variants, includes removed nodes
      */
@@ -1477,7 +1523,7 @@ class NodeDataRepository extends Repository
      * Test if a given NodeData is in the set of removed node data objects
      *
      * @param NodeData $nodeData
-     * @return boolean TRUE If the NodeData was marked for removal
+     * @return boolean true If the NodeData was marked for removal
      */
     public function isInRemovedNodes(NodeData $nodeData)
     {
@@ -1491,13 +1537,17 @@ class NodeDataRepository extends Repository
      */
     protected function createQueryBuilder(array $workspaces)
     {
+        $workspacesNames = array_map(static function (Workspace $workspace) {
+            return $workspace->getName();
+        }, $workspaces);
+
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
             ->where('n.workspace IN (:workspaces)')
-            ->setParameter('workspaces', $workspaces);
+            ->setParameter('workspaces', $workspacesNames);
 
         return $queryBuilder;
     }
@@ -1517,7 +1567,8 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX()
                     ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
+            )
                 ->setParameter('parentPathHash', md5($parentPath))
                 ->setParameter('parentPath', rtrim($parentPath, '/') . '/%');
         }
@@ -1538,7 +1589,8 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX()
                     ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
-                    ->add($queryBuilder->expr()->like('n.path', ':path')))
+                    ->add($queryBuilder->expr()->like('n.path', ':path'))
+            )
                 ->setParameter('pathHash', md5($path))
                 ->setParameter('path', rtrim($path, '/') . '/%');
         }
@@ -1551,6 +1603,8 @@ class NodeDataRepository extends Repository
      */
     protected function addIdentifierConstraintToQueryBuilder(QueryBuilder $queryBuilder, $identifier)
     {
+        // TODO: We should add type hints in next major because this query becomes really SLOW if you use an integer here.
+        $identifier = (string)$identifier;
         $queryBuilder->andWhere('n.identifier = :identifier')
             ->setParameter('identifier', $identifier);
     }
@@ -1559,7 +1613,7 @@ class NodeDataRepository extends Repository
      * @param array $nodeDataObjects
      * @param Workspace $workspace
      * @param array $dimensions
-     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to false)
      * @return array
      */
     protected function filterNodeDataByBestMatchInContext(array $nodeDataObjects, Workspace $workspace, array $dimensions, $includeRemovedNodes = false)

@@ -22,7 +22,7 @@ class Version20150324185019 extends AbstractMigration
         // to prevent issues
         $findNonMigratedNodes = $this->connection->query("SELECT * FROM typo3_typo3cr_domain_model_nodedata WHERE properties LIKE '%Persistence_Object_Identifier%'");
         if ($findNonMigratedNodes->rowCount() > 0) {
-            $this->abortIf(true, "Stopped the migration as you now have to run a node migration first, and then restart the doctrine:migrate. ./flow node:migrate --version 20141103100401 --confirmation TRUE");
+            $this->abortIf(true, "Stopped the migration as you now have to run a node migration first, and then restart the doctrine:migrate. ./flow node:migrate --version 20141103100401 --confirmation true");
         }
 
         $select = $this->connection->query("SELECT * FROM typo3_typo3cr_domain_model_nodedata WHERE properties LIKE 'a:%'");

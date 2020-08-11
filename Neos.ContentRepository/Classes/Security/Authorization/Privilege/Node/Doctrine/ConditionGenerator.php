@@ -83,7 +83,7 @@ class ConditionGenerator extends EntityConditionGenerator
             $nodePath = rtrim($nodePathOrIdentifier, '/');
         }
 
-        return new DisjunctionGenerator(array($propertyConditionGenerator1->like($nodePath . '/%'), $propertyConditionGenerator2->equals($nodePath)));
+        return new DisjunctionGenerator([$propertyConditionGenerator1->like($nodePath . '/%'), $propertyConditionGenerator2->equals($nodePath)]);
     }
 
     /**
@@ -95,12 +95,12 @@ class ConditionGenerator extends EntityConditionGenerator
         $propertyConditionGenerator = new PropertyConditionGenerator('nodeType');
         $nodeTypes = $propertyConditionGenerator->getValueForOperand($nodeTypes);
         if (!is_array($nodeTypes)) {
-            $nodeTypes = array($nodeTypes);
+            $nodeTypes = [$nodeTypes];
         }
-        $expandedNodeTypeNames = array();
+        $expandedNodeTypeNames = [];
         foreach ($nodeTypes as $nodeTypeName) {
             $subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeTypeName, false);
-            $expandedNodeTypeNames = array_merge($expandedNodeTypeNames, array($nodeTypeName), array_keys($subNodeTypes));
+            $expandedNodeTypeNames = array_merge($expandedNodeTypeNames, [$nodeTypeName], array_keys($subNodeTypes));
         }
         return $propertyConditionGenerator->in(array_unique($expandedNodeTypeNames));
     }
@@ -114,7 +114,7 @@ class ConditionGenerator extends EntityConditionGenerator
         $propertyConditionGenerator = new PropertyConditionGenerator('workspace');
         $workspaceNames = $propertyConditionGenerator->getValueForOperand($workspaceNames);
         if (!is_array($workspaceNames)) {
-            $workspaceNames = array($workspaceNames);
+            $workspaceNames = [$workspaceNames];
         }
         return $propertyConditionGenerator->in($workspaceNames);
     }

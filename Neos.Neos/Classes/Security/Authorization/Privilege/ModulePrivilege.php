@@ -76,14 +76,14 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      *
      * @return string
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         $this->initialize();
         return $this->methodPrivilege->getCacheEntryIdentifier();
     }
 
     /**
-     * Returns TRUE, if this privilege covers the given subject
+     * Returns true, if this privilege covers the given subject
      *
      * @param PrivilegeSubjectInterface $subject
      * @return boolean
@@ -99,7 +99,9 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
                     ModulePrivilegeSubject::class,
                     MethodPrivilegeSubject::class,
                     get_class($subject)
-                ), 1493130646);
+                ),
+                1493130646
+            );
         }
         $this->initialize();
         if ($subject instanceof MethodPrivilegeSubject) {

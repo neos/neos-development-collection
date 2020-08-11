@@ -57,11 +57,11 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
         $segments = Arrays::trimExplode('/', $value);
 
         $currentModuleBase = $this->settings['modules'];
-        if ($segments === array() || !isset($currentModuleBase[$segments[0]])) {
+        if ($segments === [] || !isset($currentModuleBase[$segments[0]])) {
             return self::MATCHRESULT_NOSUCHMODULE;
         }
 
-        $modulePath = array();
+        $modulePath = [];
         $level = 0;
         $moduleConfiguration = null;
         $moduleController = null;
@@ -80,7 +80,7 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
                 if (isset($moduleConfiguration['submodules'])) {
                     $currentModuleBase = $moduleConfiguration['submodules'];
                 } else {
-                    $currentModuleBase = array();
+                    $currentModuleBase = [];
                 }
             } else {
                 if ($level === count($segments) - 1) {
@@ -99,11 +99,11 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
             return self::MATCHRESULT_NOCONTROLLER;
         }
 
-        $this->value = array(
+        $this->value = [
             'module' => implode('/', $modulePath),
             'controller' => $moduleController,
             'action' => $moduleAction
-        );
+        ];
 
         if ($format !== '') {
             $this->value['format'] = $format;

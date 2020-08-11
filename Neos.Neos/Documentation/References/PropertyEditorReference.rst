@@ -543,7 +543,7 @@ example::
               resize: true
 
 If cropping is enabled, you might want to enforce a certain aspect ratio, which can be done by setting
-``crop.aspectRatio.locked.width`` and ``crop.aspectRatio.locked.height``. In the following example, the
+``crop.aspectRatio.locked.width`` and ``crop.aspectRatio.locked.height``. To show the crop dialog automatically on image upload, configure the ``crop.aspectRatio.forceCrop`` option. In the following example, the
 image format must be ``16:9``::
 
     'teaserImage'
@@ -558,6 +558,7 @@ image format must be ``16:9``::
               crop: true
             crop:
               aspectRatio:
+                forceCrop: true
                 locked:
                   width: 16
                   height: 9
@@ -620,6 +621,9 @@ Options Reference:
 	crop-related options. Only relevant if ``features.crop`` is enabled.
 
 		``aspectRatio``
+
+      ``forceCrop``
+        Show the crop dialog on image upload
 
 			``locked``
 				Locks the aspect ratio to a specific width/height ratio

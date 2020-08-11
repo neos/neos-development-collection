@@ -43,16 +43,16 @@ class BackendModuleArgumentsRoutePartHandler extends DynamicRoutePart
             if ($this->value !== '' && isset($value['@format'])) {
                 $this->value .= '.' . $value['@format'];
             }
-            $exceedingArguments = array();
+            $exceedingArguments = [];
             foreach ($value as $argumentKey => $argumentValue) {
                 if (substr($argumentKey, 0, 1) !== '@' && substr($argumentKey, 0, 2) !== '__') {
                     $exceedingArguments[$argumentKey] = $argumentValue;
                 }
             }
-            if ($exceedingArguments !== array()) {
+            if ($exceedingArguments !== []) {
                 $exceedingArguments = Arrays::removeEmptyElementsRecursively($exceedingArguments);
                 $exceedingArguments = $this->persistenceManager->convertObjectsToIdentityArrays($exceedingArguments);
-                $queryString = http_build_query(array($this->name => $exceedingArguments), null, '&');
+                $queryString = http_build_query([$this->name => $exceedingArguments], null, '&');
                 if ($queryString !== '') {
                     $this->value .= '?' . $queryString;
                 }

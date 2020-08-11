@@ -73,11 +73,18 @@ class Runtime
     protected $objectManager;
 
     /**
-     * Contains list of contexts
+     * Stack of evaluated "@context" values
      *
      * @var array
      */
-    protected $renderingStack = [];
+    protected $contextStack = [];
+
+    /**
+     * Stack of evaluated "@apply" values
+     *
+     * @var array
+     */
+    protected $applyValueStack = [];
 
     /**
      * Default context with helper definitions
@@ -192,7 +199,7 @@ class Runtime
      */
     public function pushContextArray(array $contextArray)
     {
-        $this->renderingStack[] = $contextArray;
+        $this->contextStack[] = $contextArray;
     }
 
     /**
@@ -206,7 +213,7 @@ class Runtime
     {
         $newContext = $this->getCurrentContext();
         $newContext[$key] = $context;
-        $this->renderingStack[] = $newContext;
+        $this->contextStack[] = $newContext;
     }
 
     /**
@@ -216,7 +223,7 @@ class Runtime
      */
     public function popContext()
     {
-        return array_pop($this->renderingStack);
+        return array_pop($this->contextStack);
     }
 
     /**
@@ -226,7 +233,32 @@ class Runtime
      */
     public function getCurrentContext()
     {
-        return end($this->renderingStack);
+        return end($this->contextStack);
+    }
+
+    /**
+     * @param null|array $values
+     * @return void
+     */
+    public function pushApplyValues(?array $values)
+    {
+        $this->applyValueStack[] = $values;
+    }
+
+    /**
+     * @return null|array the topmost "@apply" values as associative array
+     */
+    public function popApplyValues()
+    {
+        return array_pop($this->applyValueStack);
+    }
+
+    /**
+     * @return null|array the current "@apply"
+     */
+    public function getCurrentApplyValues()
+    {
+        return end($this->applyValueStack);
     }
 
     /**
@@ -264,7 +296,8 @@ class Runtime
         try {
             $output = $this->evaluateInternal($fusionPath, self::BEHAVIOR_EXCEPTION);
             if ($this->debugMode) {
-                $output = sprintf('%1$s<!-- Beginning to render TS path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render TS path "%2$s" (Context: %3$s) -->',
+                $output = sprintf(
+                    '%1$s<!-- Beginning to render TS path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render TS path "%2$s" (Context: %3$s) -->',
                     chr(10),
                     $fusionPath,
                     implode(', ', array_keys($this->getCurrentContext())),
@@ -384,9 +417,22 @@ class Runtime
     protected function evaluateInternal($fusionPath, $behaviorIfPathNotFound, $contextObject = null)
     {
         $needToPopContext = false;
+        $needToPopApply = false;
         $this->lastEvaluationStatus = self::EVALUATION_EXECUTED;
         $fusionConfiguration = $this->getConfigurationForPath($fusionPath);
         $cacheContext = $this->runtimeContentCache->enter(isset($fusionConfiguration['__meta']['cache']) ? $fusionConfiguration['__meta']['cache'] : [], $fusionPath);
+
+        // check if the current "@apply" contain an entry for the requested fusionPath
+        // in which case this value is returned after applying @if and @process rules
+        $currentProperties = $this->getCurrentApplyValues();
+        if (is_array($currentProperties) && array_key_exists($fusionPath, $currentProperties)) {
+            if ($this->evaluateIfCondition($fusionConfiguration, $fusionPath, $contextObject) === false) {
+                $this->finalizePathEvaluation($cacheContext);
+                return null;
+            }
+            $this->finalizePathEvaluation($cacheContext);
+            return $this->evaluateProcessors($currentProperties[$fusionPath]['value'], $fusionConfiguration, $fusionPath, $contextObject);
+        }
 
         if (!$this->canRenderWithConfiguration($fusionConfiguration)) {
             $this->finalizePathEvaluation($cacheContext);
@@ -399,25 +445,25 @@ class Runtime
             if ($this->hasExpressionOrValue($fusionConfiguration)) {
                 return $this->evaluteExpressionOrValueInternal($fusionPath, $fusionConfiguration, $cacheContext, $contextObject);
             }
-
+            $needToPopApply = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
             $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration);
             $needToPopContext = $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
             $output = $this->evaluateObjectOrRetrieveFromCache($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
         } catch (StopActionException $stopActionException) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext);
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
             throw $stopActionException;
         } catch (SecurityException $securityException) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext);
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
             throw $securityException;
         } catch (RuntimeException $runtimeException) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext);
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
             throw $runtimeException;
         } catch (\Exception $exception) {
-            $this->finalizePathEvaluation($cacheContext, $needToPopContext);
+            $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
             return $this->handleRenderingException($fusionPath, $exception, true);
         }
 
-        $this->finalizePathEvaluation($cacheContext, $needToPopContext);
+        $this->finalizePathEvaluation($cacheContext, $needToPopContext, $needToPopApply);
         return $output;
     }
 
@@ -483,19 +529,25 @@ class Runtime
     }
 
     /**
-     * Possibly prepares a new context for the current FusionObject and cache context and pushes it to the stack.
-     * Returns if a new context was pushed to the stack or not.
+     * Possibly prepares a new "@apply" context for the current fusionPath and pushes it to the stack.
+     * Returns true to express that new properties were pushed and have to be popped during finalizePathEvaluation.
      *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param AbstractFusionObject $fusionObject
+     * Since "@apply" are not inherited every call of this method leads to a completely new  "@apply"
+     * context, which is null by default.
+     *
      * @param string $fusionPath
      * @param array $fusionConfiguration
-     * @param array $cacheContext
      * @return boolean
+     * @throws Exception
+     * @throws RuntimeException
+     * @throws SecurityException
+     * @throws StopActionException
      */
-    protected function prepareContextForTypoScriptObject(AbstractFusionObject $fusionObject, $fusionPath, $fusionConfiguration, $cacheContext)
+    protected function prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration)
     {
-        return $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
+        $spreadValues = $this->evaluateApplyValues($fusionConfiguration, $fusionPath);
+        $this->pushApplyValues($spreadValues);
+        return true;
     }
 
     /**
@@ -507,6 +559,10 @@ class Runtime
      * @param array $fusionConfiguration
      * @param array $cacheContext
      * @return boolean
+     * @throws Exception
+     * @throws RuntimeException
+     * @throws SecurityException
+     * @throws StopActionException
      */
     protected function prepareContextForFusionObject(AbstractFusionObject $fusionObject, $fusionPath, $fusionConfiguration, $cacheContext)
     {
@@ -536,16 +592,21 @@ class Runtime
     }
 
     /**
-     * Ends the evaluation of a fusion path by popping the context stack if needed and leaving the cache context.
+     * Ends the evaluation of a fusion path by popping the context and property stack if needed and leaving the cache context.
      *
      * @param array $cacheContext
      * @param boolean $needToPopContext
+     * @param boolean $needToPopApplyValues
      * @return void
      */
-    protected function finalizePathEvaluation($cacheContext, $needToPopContext = false)
+    protected function finalizePathEvaluation($cacheContext, $needToPopContext = false, $needToPopApplyValues = false)
     {
         if ($needToPopContext) {
             $this->popContext();
+        }
+
+        if ($needToPopApplyValues) {
+            $this->popApplyValues();
         }
 
         $this->runtimeContentCache->leave($cacheContext);
@@ -568,7 +629,7 @@ class Runtime
         $configuration = $this->fusionConfiguration;
 
         $pathUntilNow = '';
-        $currentPrototypeDefinitions = array();
+        $currentPrototypeDefinitions = [];
         if (isset($configuration['__prototypes'])) {
             $currentPrototypeDefinitions = $configuration['__prototypes'];
         }
@@ -660,7 +721,9 @@ class Runtime
                     throw new Exception(sprintf(
                         'The Fusion object `%s` which you tried to inherit from does not exist.
 									Maybe you have a typo on the right hand side of your inheritance statement for `%s`.',
-                        $prototypeName, $currentPathSegmentType), 1427134340);
+                        $prototypeName,
+                        $currentPathSegmentType
+                    ), 1427134340);
                 }
 
                 $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $this->simpleTypeToArrayClosure);
@@ -679,20 +742,6 @@ class Runtime
 
 
         return $configuration;
-    }
-
-    /**
-     * Instantiates a Fusion object specified by the given path and configuration
-     *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param string $fusionPath Path to the configuration for this object instance
-     * @param array $fusionConfiguration Configuration at the given path
-     * @return AbstractFusionObject
-     * @throws Exception
-     */
-    protected function instantiateTypoScriptObject($fusionPath, $fusionConfiguration)
-    {
-        return $this->instantiateFusionObject($fusionPath, $fusionConfiguration);
     }
 
     /**
@@ -717,7 +766,9 @@ class Runtime
             throw new Exception(sprintf(
                 'The implementation class `%s` defined for Fusion object of type `%s` does not exist.
 				Maybe a typo in the `@class` property.',
-                $fusionObjectClassName, $fusionObjectType), 1347952109);
+                $fusionObjectClassName,
+                $fusionObjectType
+            ), 1347952109);
         }
 
         /** @var $fusionObject AbstractFusionObject */
@@ -726,23 +777,11 @@ class Runtime
             /** @var $fusionObject AbstractArrayFusionObject */
             if (isset($fusionConfiguration['__meta']['ignoreProperties'])) {
                 $evaluatedIgnores = $this->evaluate($fusionPath . '/__meta/ignoreProperties', $fusionObject);
-                $fusionObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : array());
+                $fusionObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : []);
             }
             $this->setPropertiesOnFusionObject($fusionObject, $fusionConfiguration);
         }
         return $fusionObject;
-    }
-
-    /**
-     * Check if the given object is an array like object that should get all properties set to iterate or process internally.
-     *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param AbstractFusionObject $fusionObject
-     * @return boolean
-     */
-    protected function isArrayTypoScriptObject(AbstractFusionObject $fusionObject)
-    {
-        return $this->isArrayFusionObject($fusionObject);
     }
 
     /**
@@ -770,19 +809,6 @@ class Runtime
     /**
      * Set options on the given (AbstractArray)Fusion object
      *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param AbstractArrayFusionObject $fusionObject
-     * @param array $fusionConfiguration
-     * @return void
-     */
-    protected function setPropertiesOnTypoScriptObject(AbstractArrayFusionObject $fusionObject, array $fusionConfiguration)
-    {
-        $this->setPropertiesOnFusionObject($fusionObject, $fusionConfiguration);
-    }
-
-    /**
-     * Set options on the given (AbstractArray)Fusion object
-     *
      * @param AbstractArrayFusionObject $fusionObject
      * @param array $fusionConfiguration
      * @return void
@@ -791,11 +817,31 @@ class Runtime
     {
         foreach ($fusionConfiguration as $key => $value) {
             // skip keys which start with __, as they are purely internal.
-            if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
+            if (is_string($key) && $key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
                 continue;
             }
 
             ObjectAccess::setProperty($fusionObject, $key, $value);
+        }
+
+        $currentProperties = $this->getCurrentApplyValues();
+        if (is_array($currentProperties)) {
+            foreach ($currentProperties as $path => $property) {
+                $key = $property['key'];
+                $valueAst = [
+                    '__eelExpression' => null,
+                    '__objectType' => null,
+                    '__value' => $property['value']
+                ];
+
+                // merge existing meta-configuration to valueAst
+                // to preserve @if, @process and @position informations
+                if ($meta = Arrays::getValueByPath($fusionConfiguration, [$key, '__meta'])) {
+                    $valueAst['__meta'] = $meta;
+                }
+
+                ObjectAccess::setProperty($fusionObject, $property['key'], $valueAst);
+            }
         }
     }
 
@@ -806,6 +852,7 @@ class Runtime
      * @param array $valueConfiguration Fusion configuration for the value
      * @param \Neos\Fusion\FusionObjects\AbstractFusionObject $contextObject An optional object for the "this" value inside the context
      * @return mixed The result of the evaluation
+     * @throws Exception
      */
     protected function evaluateEelExpressionOrSimpleValueWithProcessor($fusionPath, array $valueConfiguration, AbstractFusionObject $contextObject = null)
     {
@@ -848,6 +895,68 @@ class Runtime
         }
 
         return EelUtility::evaluateEelExpression($expression, $this->eelEvaluator, $contextVariables);
+    }
+
+    /**
+     * Evaluate "@apply" for the given fusion key.
+     *
+     * If apply-definitions are found they are evaluated and the returned keys are combined.
+     * The result is returned as array with the following structure:
+     *
+     * [
+     *    'fusionPath/key_1' => ['key' => 'key_1', 'value' => 'evaluated value 1'],
+     *    'fusionPath/key_2' => ['key' => 'key_2', 'value' => 'evaluated value 2']
+     * ]
+     *
+     * If no apply-expression is defined null is returned instead.
+     *
+     * @param array $configurationWithEventualProperties
+     * @param string $fusionPath
+     * @return array|null
+     */
+    protected function evaluateApplyValues($configurationWithEventualProperties, $fusionPath): ?array
+    {
+        if (isset($configurationWithEventualProperties['__meta']['apply'])) {
+            $fusionObjectType = $configurationWithEventualProperties['__objectType'];
+            if (!preg_match('#<[^>]*>$#', $fusionPath)) {
+                // Only add Fusion object type to last path part if not already set
+                $fusionPath .= '<' . $fusionObjectType . '>';
+            }
+            $combinedApplyValues = [];
+            $propertiesConfiguration = $configurationWithEventualProperties['__meta']['apply'];
+            $positionalArraySorter = new PositionalArraySorter($propertiesConfiguration, '__meta.position');
+            foreach ($positionalArraySorter->getSortedKeys() as $key) {
+                // skip keys which start with __, as they are purely internal.
+                if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
+                    continue;
+                }
+
+                $singleApplyPath = $fusionPath . '/__meta/apply/' . $key;
+                if ($this->evaluateIfCondition($propertiesConfiguration[$key], $singleApplyPath) === false) {
+                    continue;
+                }
+                if (isset($propertiesConfiguration[$key]['expression'])) {
+                    $singleApplyPath .= '/expression';
+                }
+                $singleApplyValues = $this->evaluateInternal($singleApplyPath, self::BEHAVIOR_EXCEPTION);
+                if ($this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED && is_array($singleApplyValues)) {
+                    foreach ($singleApplyValues as $key => $value) {
+                        // skip keys which start with __, as they are purely internal.
+                        if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
+                            continue;
+                        }
+
+                        $combinedApplyValues[$fusionPath . '/' . $key] = [
+                            'key' => $key,
+                            'value' => $value
+                        ];
+                    }
+                }
+            }
+            return $combinedApplyValues;
+        }
+
+        return null;
     }
 
     /**
@@ -926,7 +1035,7 @@ class Runtime
     protected function getDefaultContextVariables()
     {
         if ($this->defaultContextVariables === null) {
-            $this->defaultContextVariables = array();
+            $this->defaultContextVariables = [];
             if (isset($this->settings['defaultContext']) && is_array($this->settings['defaultContext'])) {
                 $this->defaultContextVariables = EelUtility::getDefaultContextVariables($this->settings['defaultContext']);
             }
@@ -949,18 +1058,23 @@ class Runtime
         if (isset($fusionConfiguration['__objectType'])) {
             $objectType = $fusionConfiguration['__objectType'];
             throw new Exceptions\MissingFusionImplementationException(sprintf(
-                "The Fusion object at path `%s` could not be rendered:
-					The Fusion object `%s` is not completely defined (missing property `@class`).
-					Most likely you didn't inherit from a basic object.
-					For example you could add the following line to your Fusion:
-					`prototype(%s) < prototype(Neos.Fusion:Template)`",
-                $fusionPath, $objectType, $objectType), 1332493995);
+                "The Fusion object `%s` cannot be rendered:
+					Most likely you mistyped the prototype name or did not define 
+					the Fusion prototype with `prototype(%s) < prototype ...` . 
+					Other possible reasons are a missing parent-prototype or 
+					a missing `@class` annotation for prototypes without parent.
+					It is also possible your Fusion file is not read because 
+					of a missing `include:` statement.",
+                $objectType,
+                $objectType
+            ), 1332493995);
         }
 
         if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
             throw new Exceptions\MissingFusionObjectException(sprintf(
                 'No Fusion object found in path "%s"
-					Please make sure to define one in your Fusion configuration.', $fusionPath
+					Please make sure to define one in your Fusion configuration.',
+                $fusionPath
             ), 1332493990);
         }
     }

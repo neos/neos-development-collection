@@ -9,7 +9,7 @@
 </div>
 <div class="neos-inspector-form">
 	<div class="neos-inspector-field">
-		<label for="neos-content-breadcrumb"><i class="icon-mouse-pointer"></i> <b>{{translate id="content.inspector.inspectorView.selectedElement" fallback="Selected element"}}</b></label>
+		<label for="neos-content-breadcrumb"><i class="fas fa-mouse-pointer"></i> <b>{{translate id="content.inspector.inspectorView.selectedElement" fallback="Selected element"}}</b></label>
 		{{view view.Breadcrumb}}
 	</div>
 	{{#each tab in groupedViews}}
@@ -23,7 +23,7 @@
 							{{/if}}
 							{{unbound group.label}}
 						</span>
-						{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
+						{{#if view._hasValidationErrors}}<i class="fas fa-warning-sign"></i>{{/if}}
 						<div {{bindAttr class=":neos-inspector-collapse view._collapsed:neos-collapsed:neos-open"}} {{action "toggleCollapsed" target="view"}} data-neos-tooltip title="Toggle {{unbound group.label}}"></div>
 					</div>
 					{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="group.properties"}}
@@ -58,7 +58,7 @@
 		<button class="neos-inspector-cancel" title="{{translate id='discardChanges' fallback='Discard changes'}}" {{bindAttr disabled="unmodified"}} {{action "revert"}}>{{translate id="discardChanges" fallback="Discard changes"}}</button>
 		{{#if hasValidationErrors}}
 			<button class="neos-button neos-inspector-apply neos-disabled" title="{{translate id='content.inspector.inspectorView.selectedElement' fallback='There are fields that are not correctly filled in.'}}">
-				<i class="icon-warning-sign"></i> {{translate id='okay' fallback='OK'}}
+				<i class="fas fa-warning-sign"></i> {{translate id='okay' fallback='OK'}}
 			</button>
 		{{else}}
 			<button class="neos-inspector-apply" title="{{translate id='applyChanges' fallback='Apply changes'}}" {{bindAttr disabled="unmodified"}} {{action "apply"}}>{{translate id="apply" fallback="Apply"}}</button>

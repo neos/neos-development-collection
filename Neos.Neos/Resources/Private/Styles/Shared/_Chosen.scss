@@ -47,8 +47,8 @@
 			}
 
 			&:after {
-				@include fa-icon();
-				content: $fa-var-caret-down;
+				@extend .fas;
+				content: fa-content($fa-var-caret-down);
 				display: block;
 				position: absolute;
 				width: $unit;
@@ -74,8 +74,8 @@
 			}
 
 			&::after {
-				@include fa-icon();
-				content: $fa-var-times-circle;
+				@extend .fas;
+				content: fa-content($fa-var-times-circle);
 			}
 		}
 	}
@@ -90,9 +90,9 @@
 		margin-top: 0;
 
 		.chosen-search {
+			@extend .fas;
 			padding: 0;
 			color: $black;
-			@include fa-icon();
 			font-size: 0;
 
 			input {
@@ -121,7 +121,7 @@
 				text-decoration: inherit;
 				display: inline-block;
 				speak: none;
-				content: $fa-var-search;
+				content: fa-content($fa-var-search);
 				line-height: 100%;
 				font-size: 12px;
 			}

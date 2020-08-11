@@ -23,14 +23,14 @@ class ReadNodePropertyPrivilege extends AbstractNodePropertyPrivilege
     /**
      * @var array
      */
-    protected $methodNameToPropertyMapping = array(
+    protected $methodNameToPropertyMapping = [
         'getName' => 'name',
         'isHidden' => 'hidden',
         'isHiddenInIndex' => 'hiddenInIndex',
         'getHiddenBeforeDateTime' => 'hiddenBeforeDateTime',
         'getHiddenAfterDateTime' => 'hiddenAfterDateTime',
         'getAccessRoles' => 'accessRoles',
-    );
+    ];
 
     /**
      * @return string

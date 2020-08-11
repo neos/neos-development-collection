@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\ContentRepository\Domain\Model\NodeType;
 
@@ -43,8 +42,8 @@ interface NodeCommandControllerPluginInterface
      * @param ConsoleOutput $output An instance of ConsoleOutput which can be used for output or dialogues
      * @param NodeType $nodeType Only handle this node type (if specified)
      * @param string $workspaceName Only handle this workspace (if specified)
-     * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
-     * @param boolean $cleanup If FALSE, cleanup tasks are skipped
+     * @param boolean $dryRun If true, don't do any changes, just simulate what you would do
+     * @param boolean $cleanup If false, cleanup tasks are skipped
      * @return void
      */
     public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true);

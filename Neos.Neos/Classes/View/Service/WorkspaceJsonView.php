@@ -33,20 +33,20 @@ class WorkspaceJsonView extends JsonView
     {
         if (isset($this->variables['workspaces'])) {
             $this->setConfiguration(
-                array(
-                    'workspaces' => array(
-                        '_descendAll' => array()
-                    )
-                )
+                [
+                    'workspaces' => [
+                        '_descendAll' => []
+                    ]
+                ]
             );
-            $this->setVariablesToRender(array('workspaces'));
+            $this->setVariablesToRender(['workspaces']);
         } else {
             $this->setConfiguration(
-                array(
-                    'workspace' => array()
-                )
+                [
+                    'workspace' => []
+                ]
             );
-            $this->setVariablesToRender(array('workspace'));
+            $this->setVariablesToRender(['workspace']);
         }
 
         return parent::render();

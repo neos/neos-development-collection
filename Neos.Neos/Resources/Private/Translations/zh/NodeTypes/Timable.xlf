@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="zh-CN" state="translated">隐藏前面的元素</target></trans-unit>
+			<target state="translated">隐藏前面的元素</target></trans-unit>
       <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="zh-CN" state="translated">隐藏后面的元素</target></trans-unit>
+			<target state="translated">隐藏后面的元素</target></trans-unit>
     </body>
   </file>
 </xliff>

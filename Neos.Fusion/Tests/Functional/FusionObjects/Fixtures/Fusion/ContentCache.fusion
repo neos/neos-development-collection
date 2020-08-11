@@ -432,6 +432,24 @@ contentCache.maximumLifetimeInNestedEmbedAndCachedSegments = Neos.Fusion:Array {
 		}
 	}
 
+	30 = '|'
+
+	35 = Neos.Fusion:Value {
+		value = 'Qux'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				static = 35
+			}
+
+			maximumLifetime = 0
+
+			# A maximum lifetime of 0 means infinity caching for this segment. Infinity must not be propagated upwards
+		}
+	}
+
 	@cache {
 		mode = 'cached'
 

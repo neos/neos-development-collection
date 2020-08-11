@@ -11,7 +11,6 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Renderer Fusion Object
@@ -23,7 +22,7 @@ class RendererImplementation extends AbstractFusionObject
 {
 
     /**
-     * The type to render if condition is TRUE
+     * The type to render if condition is true
      *
      * @return string
      */

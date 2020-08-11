@@ -43,8 +43,8 @@ class NodeUriPathSegmentGenerator
     public static function setUniqueUriPathSegment(NodeInterface $node)
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $q = new FlowQuery(array($node));
-            $q = $q->context(array('invisibleContentShown' => true, 'removedContentShown' => true, 'inaccessibleContentShown' => true));
+            $q = new FlowQuery([$node]);
+            $q = $q->context(['invisibleContentShown' => true, 'removedContentShown' => true, 'inaccessibleContentShown' => true]);
 
             $possibleUriPathSegment = $initialUriPathSegment = !$node->hasProperty('uriPathSegment') ? $node->getName() : $node->getProperty('uriPathSegment');
             $i = 1;
@@ -67,7 +67,7 @@ class NodeUriPathSegmentGenerator
         if ($node) {
             $text = $text ?: $node->getLabel() ?: $node->getName();
             $dimensions = $node->getContext()->getDimensions();
-            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
+            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
                 $locale = new Locale($dimensions['language'][0]);
                 $language = $locale->getLanguage();
             }

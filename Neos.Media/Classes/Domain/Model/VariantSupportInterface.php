@@ -19,7 +19,7 @@ interface VariantSupportInterface
     /**
      * Returns all variants (if any) derived from this asset
      *
-     * @return array
+     * @return AssetVariantInterface[]
      * @api
      */
     public function getVariants();

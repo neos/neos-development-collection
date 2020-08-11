@@ -102,21 +102,21 @@ class SiteImportService
      *
      * @var array<string>
      */
-    protected $imageVariantClassNames = array();
+    protected $imageVariantClassNames = [];
 
     /**
      * An array that contains all fully qualified class names that implement AssetInterface
      *
      * @var array<string>
      */
-    protected $assetClassNames = array();
+    protected $assetClassNames = [];
 
     /**
      * An array that contains all fully qualified class names that extend \DateTime including \DateTime itself
      *
      * @var array<string>
      */
-    protected $dateTimeClassNames = array();
+    protected $dateTimeClassNames = [];
 
     /**
      * @return void
@@ -141,7 +141,7 @@ class SiteImportService
      */
     public function importFromPackage($packageKey)
     {
-        if (!$this->packageManager->isPackageActive($packageKey)) {
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
             throw new NeosException(sprintf('Error: Package "%s" is not active.', $packageKey), 1384192950);
         }
         $contentPathAndFilename = sprintf('resource://%s/Private/Content/Sites.xml', $packageKey);
@@ -193,7 +193,7 @@ class SiteImportService
             if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
                 throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
             }
-            if (!$this->packageManager->isPackageActive($siteResourcesPackageKey)) {
+            if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
                 throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
             }
             $site->setSiteResourcesPackageKey($siteResourcesPackageKey);
@@ -203,6 +203,7 @@ class SiteImportService
             // so the workspace and site node are persisted before we import any nodes to it.
             $rootNode->getContext()->getWorkspace();
             $this->persistenceManager->persistAll();
+
             $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
             if ($sitesNode === null) {
                 $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));

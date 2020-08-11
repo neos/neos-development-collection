@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Form</source>
-			<target xml:lang="zh-TW" state="translated">表格</target></trans-unit>
+			<target state="translated">表格</target></trans-unit>
       <trans-unit id="groups.form" xml:space="preserve">
 				<source>Form</source>
-			<target xml:lang="zh-TW" state="translated">表格</target></trans-unit>
+			<target state="translated">表格</target></trans-unit>
       <trans-unit id="properties.formIdentifier" xml:space="preserve">
 				<source>Form Identifier</source>
-			<target xml:lang="zh-TW" state="translated">表格驗證器</target></trans-unit>
+			<target state="translated">表格驗證器</target></trans-unit>
       <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Select the Form identifier</source>
-			<target xml:lang="zh-TW" state="translated">選擇表格驗證器</target></trans-unit>
+			<target state="translated">選擇表格驗證器</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target xml:lang="zh-TW" state="translated">請在檢視器中選擇一個正確的表格驗證器。</target></trans-unit>
+			<target state="translated">請在檢視器中選擇一個正確的表格驗證器。</target></trans-unit>
     </body>
   </file>
 </xliff>

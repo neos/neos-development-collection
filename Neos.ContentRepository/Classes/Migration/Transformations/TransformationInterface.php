@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Migration\Transformations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
@@ -24,7 +23,7 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 interface TransformationInterface
 {
     /**
-     * Returns TRUE if the given node can be transformed by this transformation.
+     * Returns true if the given node can be transformed by this transformation.
      *
      * @param NodeData $node
      * @return boolean

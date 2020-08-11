@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="cs" state="translated">Dokument</target></trans-unit>
+			<target state="translated">Dokument</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="cs" state="translated">Titul</target></trans-unit>
+			<target state="translated">Titul</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="cs" state="translated">Segment cesty adresy URL</target></trans-unit>
+			<target state="translated">Segment cesty adresy URL</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="cs" state="translated">Skrýt v menu</target></trans-unit>
+			<target state="translated">Skrýt v menu</target></trans-unit>
       <trans-unit id="creationDialog.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="cs" state="translated">Titul</target></trans-unit>
+			<target state="translated">Titul</target></trans-unit>
     </body>
   </file>
 </xliff>

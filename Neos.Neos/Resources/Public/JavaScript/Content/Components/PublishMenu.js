@@ -210,7 +210,7 @@ define(
         _numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
         label: function () {
-          return ('<i class="icon-ban-circle"></i> ' + I18n.translate('Neos.Neos:Main:discard') + (this.get('_noChanges') ? '' : ' (' + this.get('_numberOfChanges') + ')')).htmlSafe();
+          return ('<i class="fas fa-ban"></i> ' + I18n.translate('Neos.Neos:Main:discard') + (this.get('_noChanges') ? '' : ' (' + this.get('_numberOfChanges') + ')')).htmlSafe();
         }.property('_noChanges', '_numberOfChanges'),
 
         disabled: function () {
@@ -222,7 +222,7 @@ define(
         classNameBindings: ['disabledClass'],
         classNames: ['neos-publish-all-button'],
         controller: PublishableNodes,
-        labelIcon: '<i class="icon-upload"></i> ',
+        labelIcon: '<i class="fas fa-upload"></i> ',
 
         label: function () {
           return (this.get('labelIcon') + ' ' + I18n.translate('Neos.Neos:Main:publishAll') + (this.get('_noWorkspaceWideChanges') ? '' : ' (' + this.get('_numberOfWorkspaceWideChanges') + ')')).htmlSafe();
@@ -255,7 +255,7 @@ define(
         classNameBindings: ['disabledClass'],
         classNames: ['neos-publish-all-button'],
         controller: PublishableNodes,
-        labelIcon: '<i class="icon-ban-circle"></i> ',
+        labelIcon: '<i class="fas fa-ban"></i> ',
 
         label: function () {
           var label = I18n.translate('Neos.Neos:Main:discardAll') + (this.get('_noWorkspaceWideChanges') ? ' (' + this.get('_numberOfWorkspaceWideChanges') + ')' : '');

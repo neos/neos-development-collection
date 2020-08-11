@@ -2,10 +2,10 @@
 namespace Neos\Media\Browser\Domain\Session;
 
 /*
- * This file is part of the Neos.Media package.
+ * This file is part of the Neos.Media.Browser package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
- *
+  *
  * This package is Open Source Software. For the full copyright and license
  * information, please view the LICENSE file which was distributed with this
  * source code.
@@ -21,15 +21,14 @@ use Neos\Flow\Annotations as Flow;
 class BrowserState
 {
     /**
+     * @var string
+     */
+    protected $activeAssetSourceIdentifier = 'neos';
+
+    /**
      * @var array
      */
-    protected $data = array(
-        'activeTag' => null,
-        'view' => 'Thumbnail',
-        'sortBy' => 'Modified',
-        'sortDirection' => 'DESC',
-        'filter' => 'All'
-    );
+    protected $data = [];
 
     /**
      * Set a $value for $key
@@ -37,11 +36,14 @@ class BrowserState
      * @param string $key
      * @param mixed $value
      * @return void
-     * @Flow\Session(autoStart = TRUE)
+     * @Flow\Session(autoStart = true)
      */
-    public function set($key, $value)
+    public function set(string $key, $value)
     {
-        $this->data[$key] = $value;
+        if (!isset($this->data[$this->activeAssetSourceIdentifier])) {
+            $this->initializeData($this->activeAssetSourceIdentifier);
+        }
+        $this->data[$this->activeAssetSourceIdentifier][$key] = $value;
     }
 
     /**
@@ -50,8 +52,41 @@ class BrowserState
      * @param string $key
      * @return mixed
      */
-    public function get($key)
+    public function get(string $key)
     {
-        return isset($this->data[$key]) ? $this->data[$key] : null;
+        if (!isset($this->data[$this->activeAssetSourceIdentifier])) {
+            $this->initializeData($this->activeAssetSourceIdentifier);
+        }
+        return $this->data[$this->activeAssetSourceIdentifier][$key] ?? null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getActiveAssetSourceIdentifier(): string
+    {
+        return $this->activeAssetSourceIdentifier;
+    }
+
+    /**
+     * @param string $activeAssetSourceIdentifier
+     */
+    public function setActiveAssetSourceIdentifier(string $activeAssetSourceIdentifier)
+    {
+        $this->activeAssetSourceIdentifier = $activeAssetSourceIdentifier;
+    }
+
+    /**
+     * @param string $assetSourceIdentifier
+     */
+    private function initializeData(string $assetSourceIdentifier)
+    {
+        $this->data[$assetSourceIdentifier] = [
+            'activeTag' => null,
+            'view' => 'Thumbnail',
+            'sortBy' => 'Modified',
+            'sortDirection' => 'DESC',
+            'filter' => 'All'
+        ];
     }
 }

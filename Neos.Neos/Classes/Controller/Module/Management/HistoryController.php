@@ -53,10 +53,10 @@ class HistoryController extends AbstractModuleController
                 ->controllerContext
                 ->getUriBuilder()
                 ->setCreateAbsoluteUri(true)
-                ->uriFor('Index', array('offset' => $offset + $limit), 'History', 'Neos.Neos');
+                ->uriFor('Index', ['offset' => $offset + $limit], 'History', 'Neos.Neos');
         }
 
-        $eventsByDate = array();
+        $eventsByDate = [];
         foreach ($events as $event) {
             /* @var $event Event */
             $day = $event->getTimestamp()->format('Y-m-d');
@@ -69,10 +69,10 @@ class HistoryController extends AbstractModuleController
             $eventsOnThisDay->add($event);
         }
 
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'eventsByDate' => $eventsByDate,
             'nextPage' => $nextPage
-        ));
+        ]);
     }
 
     /**

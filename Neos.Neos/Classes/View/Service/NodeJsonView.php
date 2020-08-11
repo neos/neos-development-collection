@@ -33,24 +33,24 @@ class NodeJsonView extends JsonView
     {
         if (isset($this->variables['nodes'])) {
             $this->setConfiguration(
-                array(
-                    'nodes' => array(
-                        '_descendAll' => array(
-                            '_only' => array('name', 'path', 'identifier', 'properties', 'nodeType')
-                        )
-                    )
-                )
+                [
+                    'nodes' => [
+                        '_descendAll' => [
+                            '_only' => ['name', 'path', 'identifier', 'properties', 'nodeType']
+                        ]
+                    ]
+                ]
             );
-            $this->setVariablesToRender(array('nodes'));
+            $this->setVariablesToRender(['nodes']);
         } else {
             $this->setConfiguration(
-                array(
-                    'node' => array(
-                        '_only' => array('name', 'path', 'identifier', 'properties', 'nodeType')
-                    )
-                )
+                [
+                    'node' => [
+                        '_only' => ['name', 'path', 'identifier', 'properties', 'nodeType']
+                    ]
+                ]
             );
-            $this->setVariablesToRender(array('node'));
+            $this->setVariablesToRender(['node']);
         }
 
         return parent::render();

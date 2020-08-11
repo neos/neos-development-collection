@@ -14,9 +14,11 @@ namespace Neos\ContentRepository\Domain\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\UnitOfWork;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Utility\Algorithms;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -39,14 +41,11 @@ use Neos\ContentRepository\Utility;
  *    },
  *    indexes={
  *      @ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
- *      @ORM\Index(name="parentpath",columns={"parentpath"}),
+ *      @ORM\Index(name="parentpath",columns={"parentpath"},options={"lengths": {255}}),
  *      @ORM\Index(name="identifierindex",columns={"identifier"}),
  *      @ORM\Index(name="nodetypeindex",columns={"nodetype"})
  *    }
  * )
- *
- * The parentpath index above is actually limited to a size of 255 characters in the corresponding MySQL migration,
- * something that cannot be expressed through the annotation.
  */
 class NodeData extends AbstractNodeData
 {
@@ -564,7 +563,7 @@ class NodeData extends AbstractNodeData
     }
 
     /**
-     * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
+     * Removes this node and all its child nodes. This is an alias for setRemoved(true)
      *
      * @return void
      */
@@ -576,7 +575,7 @@ class NodeData extends AbstractNodeData
     /**
      * Enables using the remove method when only setters are available
      *
-     * @param boolean $removed If TRUE, this node and it's child nodes will be removed. This can handle FALSE as well.
+     * @param boolean $removed If true, this node and it's child nodes will be removed. This can handle false as well.
      * @return void
      */
     public function setRemoved($removed)
@@ -927,8 +926,35 @@ class NodeData extends AbstractNodeData
                     $this->addOrUpdate($movedNodeData);
 
                     $shadowNodeData = $sourceNodeData;
-                    $shadowNodeData->setRemoved(true);
+
+                    /**
+                     * WARNING: we need to call MovedTo BEFORE calling setRemoved(), as OTHERWISE, the following happens:
+                     *
+                     * 1) {@see NodeData::setRemoved()} calls {@see NodeData::addOrUpdate()}, which then triggers
+                     *    {@see NodeDataRepository::remove()}.
+                     * 1a) In the {@see UnitOfWork::doRemove()}, the entity is marked with {@see UnitOfWork::STATE_REMOVED}.
+                     * 2) {@see NodeData::setMovedTo()} calls  {@see NodeData::addOrUpdate()}, which then triggers
+                     *    {@see NodeDataRepository::update()}.
+                     * 2a) In the {@see UnitOfWork::doPersist()}, the entity is marked as {@see UnitOfWork::STATE_MANAGED}
+                     *     AGAIN (it was marked as removed beforehand). NOTE: Doctrine does NOT call
+                     *     {@see UnitOfWork::scheduleForDirtyCheck()}, which it would call if the entity was already in
+                     *     STATE_MANAGED. We rely on this scheduleForDirtyCheck to be called, because we use DEFERRED_EXPLICIT
+                     *     as default Flow change tracking policy.
+                     * 3) When THEN calling {@see PersistenceManagerInterface::persistAll()}, which triggers a
+                     *    {@see UnitOfWork::commit()}, which triggers {@see UnitOfWork::computeChangeSets()}.
+                     * 3a) Because the scheduleForDirtyCheck has NOT been called in step 2a, `$this->scheduledForSynchronization[$className]`
+                     *     returns FALSE
+                     * 3b) thus, we DO NOT PERSIST OUR ENTITY CHANGE!
+                     *
+                     * WORKAROUND:
+                     * - before marking a NodeData object as removed, do all other changes (like setMovedTo). Because then,
+                     *   {@see NodeData::addOrUpdate()} will NOT call {@see NodeDataRepository::remove()} - and thus we do not
+                     *   trigger the described behavior.
+                     *
+                     * We reported this as Doctrine bug https://github.com/doctrine/orm/issues/8231
+                     */
                     $shadowNodeData->setMovedTo($movedNodeData);
+                    $shadowNodeData->setRemoved(true);
                     $this->addOrUpdate($shadowNodeData);
                 } else {
                     // A shadow node that references this node data already exists, so we just move the current node data
@@ -999,7 +1025,7 @@ class NodeData extends AbstractNodeData
 
     /**
      * This becomes a shdow of the given NodeData object.
-     * If NULL or no argument is given then movedTo is nulled and removed is set to FALSE effectively turning this into a normal NodeData.
+     * If NULL or no argument is given then movedTo is nulled and removed is set to false effectively turning this into a normal NodeData.
      *
      * @param NodeData $nodeData
      * @return void

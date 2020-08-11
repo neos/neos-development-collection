@@ -14,11 +14,23 @@ This package contains general-purpose Fusion objects, which are usable both with
 Neos.Fusion:Array
 -----------------
 
+:[key]: (string) A nested definition (simple value, expression or object) that evaluates to a string
+:[key].@ignoreProperties: (array) A list of properties to ignore from being "rendered" during evaluation
+:[key].@position: (string/integer) Define the ordering of the nested definition
+
+.. note:: The Neos.Fusion:Array object has been renamed to Neos.Fusion:Join the old name is DEPRECATED;
+
+.. _Neos_Fusion__Join:
+
+Neos.Fusion:Join
+----------------
+
 Render multiple nested definitions and concatenate the results.
 
 :[key]: (string) A nested definition (simple value, expression or object) that evaluates to a string
 :[key].@ignoreProperties: (array) A list of properties to ignore from being "rendered" during evaluation
 :[key].@position: (string/integer) Define the ordering of the nested definition
+:@glue: (string) The glue used to join the items together (default = '').
 
 The order in which nested definitions are evaluated are specified using their
 ``@position`` meta property. For this argument, the following sort order applies:
@@ -55,7 +67,7 @@ Example Ordering::
 	# order (o1 ... o9) is *always* fixed, no matter in which order the
 	# individual statements are defined.
 
-	myArray = Neos.Fusion:Array {
+	myArray = Neos.Fusion:Join {
 		o1 = Neos.NodeTypes:Text
 		o1.@position = 'start 12'
 		o2 = Neos.NodeTypes:Text
@@ -87,7 +99,7 @@ to use ``@position`` and meaningful keys in your application, and not numeric on
 
 Example of numeric keys (discouraged)::
 
-	myArray = Neos.Fusion:Array {
+	myArray = Neos.Fusion:Join {
 		10 = Neos.NodeTypes:Text
 		20 = Neos.NodeTypes:Text
 	}
@@ -104,7 +116,9 @@ Render each item in ``collection`` using ``itemRenderer``.
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
-:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated
+:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
+
+.. note:: The Neos.Fusion:Collection object is DEPRECATED use Neos.Fusion:Loop instead.
 
 Example using an object ``itemRenderer``::
 
@@ -137,7 +151,71 @@ Render each item in ``collection`` using ``itemRenderer`` and return the result 
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
-:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element
+:itemRenderer: (mixed, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
+
+.. note:: The Neos.Fusion:RawCollection object is DEPRECATED use Neos.Fusion:Map instead.**
+
+.. _Neos_Fusion__Loop:
+
+Neos.Fusion:Loop
+----------------
+
+Render each item in ``items`` using ``itemRenderer``.
+
+:items: (array/Iterable, **required**) The array or iterable to iterate over
+:itemName: (string, defaults to ``item``) Context variable name for each item
+:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
+:@glue: (string) The glue used to join the items together (default = '').
+
+Example using an object ``itemRenderer``::
+
+	myLoop = Neos.Fusion:Loop {
+		items = ${[1, 2, 3]}
+		itemName = 'element'
+		itemRenderer = Neos.Fusion:Template {
+			templatePath = 'resource://...'
+			element = ${element}
+		}
+	}
+
+
+Example using an expression ``itemRenderer``::
+
+	myLoop = Neos.Fusion:Loop {
+		items = ${[1, 2, 3]}
+		itemName = 'element'
+		itemRenderer = ${element * 2}
+	}
+
+.. _Neos_Fusion__Map:
+
+Neos.Fusion:Map
+---------------
+
+Render each item in ``items`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`Neos_Fusion__Collection`)
+
+:items: (array/Iterable, **required**) The array or iterable to iterate over
+:itemName: (string, defaults to ``item``) Context variable name for each item
+:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:itemRenderer: (mixed, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
+
+.. _Neos_Fusion__Reduce:
+
+Neos.Fusion:Reduce
+------------------
+
+Reduce the given items to a single value by using ``itemRenderer``.
+
+:items: (array/Iterable, **required**) The array or iterable to iterate over
+:itemName: (string, defaults to ``item``) Context variable name for each item
+:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
+:carryName: (string, defaults to ``carry``) Context variable that contains the result of the last iteration
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:itemReducer: (mixed, **required**) The reducer definition (simple value, expression or object) that will be applied for every item.
+:initialValue: (mixed, defaults to ``null``) The value that is passed to the first iteration or returned if the items are empty
 
 .. _Neos_Fusion__Case:
 
@@ -218,19 +296,16 @@ Shows the result of Fusion Expressions directly.
 
 Example::
 
-  debugObject = Debug {
+  valueToDebug = "hello neos world"
+  valueToDebug.@process.debug = Neos.Fusion:Debug {
         title = 'Debug of hello world'
-
-        # If only the "value"-key is given it is debugged directly,
-        # otherwise all keys except "title" and "plaintext" are debugged.
-        value = "hello neos world"
 
         # Additional values for debugging
         documentTitle = ${q(documentNode).property('title')}
         documentPath = ${documentNode.path}
   }
 
-  # the value of this object is the formatted debug output of all keys given to the object
+  # the initial value is not changed, so you can define the Debug prototype anywhere in your Fusion code
 
 
 .. _Neos_Fusion__Component:
@@ -251,11 +326,11 @@ Example::
 		bold = false
 
 		renderer = Neos.Fusion:Tag {
-			attributes.class = Neos.Fusion:RawArray {
+			attributes.class = Neos.Fusion:DataStructure {
 				component = 'component'
 				bold = ${props.bold ? 'component--bold' : false}
 			}
-			content = Neos.Fusion:Array {
+			content = Neos.Fusion:Join {
 				headline = Neos.Fusion:Tag {
 					tagName = ${props.titleTagName}
 					content = ${props.title}
@@ -283,7 +358,7 @@ Example as a standalone augmenter::
 
 	augmentedContent = Neos.Fusion:Augmenter {
 
-		content = Neos.Fusion:Array {
+		content = Neos.Fusion:Join {
 			title = Neos.Fusion:Tag {
 				@if.hasContent = ${this.content}
 				tagName = 'h2'
@@ -367,6 +442,21 @@ Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusi
 
 .. tip:: For simple cases an expression with an array literal ``${[1, 2, 3]}`` might be easier to read
 
+.. note:: The Neos.Fusion:RawArray object has been renamed to Neos.Fusion:DataStructure the old name is DEPRECATED;
+
+.. _Neos_Fusion__Tag:
+
+
+Neos.Fusion:DataStructure
+--------------------
+
+Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusion__Array`)
+
+:[key]: (mixed) A nested definition (simple value, expression or object), ``[key]`` will be used for the resulting array key
+:[key].@position: (string/integer) Define the ordering of the nested definition
+
+.. tip:: For simple cases an expression with an array literal ``${[1, 2, 3]}`` might be easier to read
+
 .. _Neos_Fusion__Tag:
 
 Neos.Fusion:Tag
@@ -417,7 +507,7 @@ Example:
 
 	attributes = Neos.Fusion:Attributes {
 		foo = 'bar'
-		class = Neos.Fusion:RawArray {
+		class = Neos.Fusion:DataStructure {
 			class1 = 'class1'
 			class2 = 'class2'
 		}
@@ -517,6 +607,18 @@ Example::
 		}
 	}
 
+Neos.Fusion:CanRender
+---------------------
+
+Check whether a Fusion prototype can be rendered. For being renderable a prototype must exist and have an implementation class, or inherit from an existing renderable prototype. The implementation class can be defined indirectly via base prototypes.
+
+:type: (string) The prototype name that is checked
+
+Example::
+
+	canRender = Neos.Fusion:CanRender {
+		type = 'My.Package:Prototype'
+	}
 
 Neos.Neos Fusion Objects
 =============================
@@ -525,13 +627,10 @@ The Fusion objects defined in the Neos package contain all Fusion objects which
 are needed to integrate a site. Often, it contains generic Fusion objects
 which do not need a particular node type to work on.
 
-As Neos.Neos is the default namespace, the Fusion objects do not need to be
-prefixed with Neos.Neos.
-
 .. _Neos_Neos__Page:
 
-Page
-----
+Neos.Neos:Page
+--------------
 Subclass of :ref:`Neos_Fusion__Http_Message`, which is based on :ref:`Neos_Fusion__Array`. Main entry point
 into rendering a page; responsible for rendering the ``<html>`` tag and everything inside.
 
@@ -608,8 +707,8 @@ Adding body attributes with ``bodyTag.attributes``:
 
 .. _Neos_Neos__ContentCollection:
 
-ContentCollection
------------------
+Neos.Neos:ContentCollection
+---------------------------
 
 Render nested content from a ``ContentCollection`` node. Individual nodes are rendered using the
 :ref:`Neos_Neos__ContentCase` object.
@@ -623,10 +722,10 @@ Example::
 
 	page.body {
 		content {
-			main = PrimaryContent {
+			main = Neos.Neos:PrimaryContent {
 				nodePath = 'main'
 			}
-			footer = ContentCollection {
+			footer = Neos.Neos:ContentCollection {
 				nodePath = 'footer'
 			}
 		}
@@ -634,8 +733,8 @@ Example::
 
 .. _Neos_Neos__PrimaryContent:
 
-PrimaryContent
---------------
+Neos.Neos:PrimaryContent
+------------------------
 
 Primary content rendering, extends :ref:`Neos_Fusion__Case`. This is a prototype that can be used from packages
 to extend the default content rendering (e.g. to handle specific document node types).
@@ -648,7 +747,7 @@ Example for basic usage::
 
 	page.body {
 		content {
-			main = PrimaryContent {
+			main = Neos.Neos:PrimaryContent {
 				nodePath = 'main'
 			}
 		}
@@ -665,8 +764,8 @@ Example for custom matcher::
 
 .. _Neos_Neos__ContentCase:
 
-ContentCase
------------
+Neos.Neos:ContentCase
+---------------------
 
 Render a content node, extends :ref:`Neos_Fusion__Case`. This is a prototype that is used by the default content
 rendering (:ref:`Neos_Neos__ContentCollection`) and can be extended to add custom matchers.
@@ -676,8 +775,8 @@ rendering (:ref:`Neos_Neos__ContentCollection`) and can be extended to add custo
 
 .. _Neos_Neos__Content:
 
-Content
--------
+Neos.Neos:Content
+-----------------
 
 Base type to render content nodes, extends :ref:`Neos_Fusion__Template`. This prototype is extended by the
 auto-generated Fusion to define prototypes for each node type extending ``Neos.Neos:Content``.
@@ -697,8 +796,8 @@ Example::
 
 .. _Neos_Neos__ContentComponent:
 
-ContentComponent
-----------------
+Neos.Neos:ContentComponent
+--------------------------
 
 Base type to render component based content-nodes, extends :ref:`Neos_Fusion__Component`.
 
@@ -707,8 +806,8 @@ Base type to render component based content-nodes, extends :ref:`Neos_Fusion__Co
 
 .. _Neos_Neos__Editable:
 
-Editable
---------
+Neos.Neos:Editable
+------------------
 
 Create an editable tag for a property. In the frontend, only the content of the property gets rendered.
 
@@ -727,8 +826,8 @@ Example::
 
 .. _Neos_Neos__Plugin:
 
-Plugin
-------
+Neos.Neos:Plugin
+----------------
 
 Base type to render plugin content nodes or static plugins. A *plugin* is a Flow controller that can implement
 arbitrary logic.
@@ -749,8 +848,8 @@ Example::
 
 .. _Neos_Neos__Menu:
 
-Menu
-----
+Neos.Neos:Menu
+--------------
 
 Render a menu with items for nodes. Extends :ref:`Neos_Fusion__Template`.
 
@@ -766,6 +865,9 @@ Render a menu with items for nodes. Extends :ref:`Neos_Fusion__Template`.
 :normal.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for normal state
 :active.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for active state
 :current.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for current state
+
+.. note:: The ``items`` of the ``Menu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
+   you can use directly aswell.
 
 Menu item properties:
 ^^^^^^^^^^^^^^^^^^^^^
@@ -784,7 +886,7 @@ Custom menu template:
 
 ::
 
-	menu = Menu {
+	menu = Neos.Neos:Menu {
 		entryLevel = 1
 		maximumLevels = 3
 		templatePath = 'resource://My.Site/Private/Templates/FusionObjects/MyMenu.html'
@@ -795,7 +897,7 @@ Menu including site node:
 
 ::
 
-	menu = Menu {
+	menu = Neos.Neos:Menu {
 		itemCollection = ${q(site).add(q(site).children('[instanceof Neos.Neos:Document]')).get()}
 	}
 
@@ -804,7 +906,7 @@ Menu with custom starting point:
 
 ::
 
-	menu = Menu {
+	menu = Neos.Neos:Menu {
 		entryLevel = 2
 		maximumLevels = 1
 		startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
@@ -812,20 +914,23 @@ Menu with custom starting point:
 
 .. _Neos_Neos__BreadcrumbMenu:
 
-BreadcrumbMenu
---------------
+Neos.Neos:BreadcrumbMenu
+------------------------
 
 Render a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__Menu`.
 
 Example::
 
-	breadcrumb = BreadcrumbMenu
+	breadcrumb = Neos.Neos:BreadcrumbMenu
+
+.. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
+   you can use directly aswell.
 
 .. _Neos_Neos__DimensionMenu:
 .. _Neos_Neos__DimensionsMenu:
 
-DimensionsMenu
---------------
+Neos.Neos:DimensionsMenu
+------------------------
 
 Create links to other node variants (e.g. variants of the current node in other dimensions) by using this Fusion object.
 
@@ -850,6 +955,9 @@ In the template for the menu, each ``item`` has the following properties:
 :targetDimensions: (array) The target dimensions, indexed by dimension name and values being arrays with ``value``, ``label`` and ``isPinnedDimension``
 
 .. note:: The ``DimensionMenu`` is an alias to ``DimensionsMenu``, available for compatibility reasons only.
+
+.. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuItems` which
+   you can use directly aswell.
 
 Examples
 ^^^^^^^^
@@ -902,10 +1010,153 @@ found, it is used.
 Only if the current node is not available at all (even after considering default presets with their fallback rules),
 no node be assigned (so no link will be created and the items will have the ``absent`` state.)
 
+.. _Neos_Neos__MenuItems:
+
+Neos.Neos:MenuItems
+-------------------
+
+Create a list of menu-items items for nodes.
+
+:entryLevel: (integer) Start the menu at the given depth
+:maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
+:startingPoint: (Node) The parent node of the first menu level (defaults to ``node`` context variable)
+:lastLevel: (integer) Restrict the menu depth by node depth (relative to site node)
+:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``
+:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
+:itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
+
+MenuItems item properties:
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
+:originalNode: (Node) Original node for the item
+:state: (string) Menu state of the item: ``'normal'``, ``'current'`` (the current node) or ``'active'`` (ancestor of current node)
+:label: (string) Full label of the node
+:menuLevel: (integer) Men^u level the item is rendered on
+
+Examples:
+^^^^^^^^^
+
+::
+
+	menuItems = Neos.Neos:MenuItems {
+		entryLevel = 1
+		maximumLevels = 3
+	}
+
+MenuItems including site node:
+""""""""""""""""""""""""""""""
+
+::
+
+	menuItems = Neos.Neos:MenuItems {
+		itemCollection = ${q(site).add(q(site).children('[instanceof Neos.Neos:Document]')).get()}
+	}
+
+Menu with custom starting point:
+""""""""""""""""""""""""""""""""
+
+::
+
+	menuItems = Neos.Neos:MenuItems {
+		entryLevel = 2
+		maximumLevels = 1
+		startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
+	}
+
+.. _Neos_Neos__BreadcrumbMenuItems:
+
+Neos.Neos:BreadcrumbMenuItems
+-----------------------------
+
+Create a list of of menu-items for a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__MenuItems`.
+
+Example::
+
+	breadcrumbItems = Neos.Neos:BreadcrumbMenuItems
+
+.. _Neos_Neos__DimensionsMenuItems:
+
+Neos.Neos:DimensionsMenuItems
+-----------------------------
+
+Create a list of menu-items for other node variants (e.g. variants of the current node in other dimensions) by using this Fusion object.
+
+If the ``dimension`` setting is given, the menu will only include items for this dimension, with all other configured
+dimension being set to the value(s) of the current node. Without any ``dimension`` being configured, all possible
+variants will be included.
+
+If no node variant exists for the preset combination, a ``NULL`` node will be included in the item with a state ``absent``.
+
+:dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
+:presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
+:includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
+:renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+
+Each ``item`` has the following properties:
+
+:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
+:state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
+:label: (string) Label of the item (the dimension preset label)
+:menuLevel: (integer) Menu level the item is rendered on
+:dimensions: (array) Dimension values of the node, indexed by dimension name
+:targetDimensions: (array) The target dimensions, indexed by dimension name and values being arrays with ``value``, ``label`` and ``isPinnedDimension``
+
+Examples
+^^^^^^^^
+
+Minimal Example, outputting a menu with all configured dimension combinations::
+
+	variantMenuItems = Neos.Neos:DimensionsMenuItems
+
+This example will create two menus, one for the 'language' and one for the 'country' dimension::
+
+	languageMenuItems = Neos.Neos:DimensionsMenuItems {
+		dimension = 'language'
+	}
+	countryMenuItems = Neos.Neos:DimensionsMenuItems {
+		dimension = 'country'
+	}
+
+If you only want to render a subset of the available presets or manually define a specific order for a menu,
+you can override the "presets"::
+
+	languageMenuItems = Neos.Neos:DimensionsMenuItems {
+		dimension = 'language'
+		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
+	}
+
+In some cases, it can be good to ignore the availability of variants when rendering a dimensions menu. Consider a
+situation with two independent menus for country and language, where the following variants of a node exist
+(language / country):
+
+- english / Germany
+- german / Germany
+- english / UK
+
+If the user selects UK, only english will be linked in the language selector. German is only available again, if the
+user switches back to Germany first. This can be changed by setting the ``includeAllPresets`` option::
+
+	languageMenuItems = Neos.Neos:DimensionsMenuItems {
+		dimension = 'language'
+		includeAllPresets = true
+	}
+
+Now the language menu will try to find nodes for all languages, if needed the menu items will point to a different
+country than currently selected. The menu tries to find a node to link to by using the current preset for the language
+(in this example) and the default presets for any other dimensions. So if fallback rules are in place and a node can be
+found, it is used.
+
+.. note:: The ``item.targetDimensions`` will contain the "intended" dimensions, so that information can be used to
+   inform the user about the potentially unexpected change of dimensions when following  such a link.
+
+Only if the current node is not available at all (even after considering default presets with their fallback rules),
+no node be assigned (so no link will be created and the items will have the ``absent`` state.)
+
 .. _Neos_Neos__NodeUri:
 
-NodeUri
--------
+Neos.Neos:NodeUri
+-----------------
 
 Build a URI to a node. Accepts the same arguments as the node link/uri view helpers.
 
@@ -924,10 +1175,32 @@ Example::
 		node = ${q(node).parent().get(0)}
 	}
 
+
+.. _Neos_Neos__NodeLink:
+
+Neos.Neos:NodeLink
+-----------------
+
+Renders an anchor tag pointing to the node given via the argument. Based on :ref:`Neos_Neos__NodeUri`.
+The link text is the node label, unless overridden.
+
+:\*: All :ref:`Neos_Neos__NodeUri` properties
+:attributes: (:ref:`Neos_Fusion__Attributes`) Link tag attributes
+:content: (string) The label of the link, defaults to ``node.label``.
+
+Example::
+
+	nodeLink = Neos.Neos:NodeLink {
+		node = ${q(node).parent().get(0)}
+	}
+
+.. note::
+   By default no ``title`` is generated. By setting ``attributes.title = ${node.label}`` the label is rendered as title.
+
 .. _Neos_Neos__ImageUri:
 
-ImageUri
---------
+Neos.Neos:ImageUri
+------------------
 
 Get a URI to a (thumbnail) image for an asset.
 
@@ -938,7 +1211,9 @@ Get a URI to a (thumbnail) image for an asset.
 :maximumHeight: (integer) Desired maximum width of the image
 :allowCropping: (boolean) Whether the image should be cropped if the given sizes would hurt the aspect ratio, defaults to ``FALSE``
 :allowUpScaling: (boolean) Whether the resulting image size might exceed the size of the original image, defaults to ``FALSE``
-:async (boolean): Return asynchronous image URI in case the requested image does not exist already, defaults to ``FALSE``
+:async: (boolean) Return asynchronous image URI in case the requested image does not exist already, defaults to ``FALSE``
+:quality: (integer) Image quality, from 0 to 100
+:format: (string) Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
 :preset: (string) Preset used to determine image configuration, if set all other resize attributes will be ignored
 
 Example::
@@ -953,8 +1228,8 @@ Example::
 
 .. _Neos_Neos__ImageTag:
 
-ImageTag
---------
+Neos.Neos:ImageTag
+------------------
 
 Render an image tag for an asset.
 
@@ -971,8 +1246,8 @@ Example::
 
 .. _Neos_Neos__ConvertUris:
 
-ConvertUris
------------
+Neos.Neos:ConvertUris
+---------------------
 
 Convert internal node and asset URIs (``node://...`` or ``asset://...``) in a string to public URIs and allows for
 overriding the target attribute for external links and resource links.
@@ -983,6 +1258,7 @@ overriding the target attribute for external links and resource links.
 :resourceLinkTarget: (string) Override the target attribute for resource links, defaults to ``_blank``. Can be disabled with an empty value.
 :forceConversion: (boolean) Whether to convert URIs in a non-live workspace, defaults to ``FALSE``
 :absolute: (boolean) Can be used to convert node URIs to absolute links, defaults to ``FALSE``
+:setNoOpener: (boolean) Sets the rel="noopener" attribute to external links, which is good practice, defaults to ``TRUE``
 
 Example::
 
@@ -992,8 +1268,8 @@ Example::
 
 .. _TYPO3_Neos__ContentElementWrapping:
 
-ContentElementWrapping
-----------------------
+Neos.Neos:ContentElementWrapping
+--------------------------------
 
 Processor to augment rendered HTML code with node metadata that allows the Neos UI to select the node and show
 node properties in the inspector. This is especially useful if your renderer prototype is not derived from ``Neos.Neos:Content``.
@@ -1017,8 +1293,8 @@ Example::
 
 .. _TYPO3_Neos__ContentElementEditable:
 
-ContentElementEditable
-----------------------
+Neos.Neos:ContentElementEditable
+--------------------------------
 
 Processor to augment an HTML tag with metadata for inline editing to make a rendered representation of a property editable.
 

@@ -14,15 +14,17 @@ namespace Neos\Neos\ViewHelpers\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\I18n\Service;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Files;
 use Neos\Utility\PositionalArraySorter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Utility\BackendAssetsUtility;
+use Psr\Log\LoggerInterface;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -54,12 +56,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
-     * @Flow\Inject
      * @var Service
      */
     protected $i18nService;
@@ -83,6 +79,27 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     protected $domainRepository;
 
     /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -96,7 +113,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        $configuration = array(
+        $configuration = [
             'window.T3Configuration = {};',
             'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
             'window.T3Configuration.nodeTypes = {};',
@@ -105,7 +122,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             'window.T3Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
             'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';',
             'window.T3Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
-        );
+        ];
 
         $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://Neos.Neos/Public/JavaScript');
 
@@ -133,7 +150,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     {
         $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
 
-        $matches = array();
+        $matches = [];
         try {
             if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
                 $packageKey = $matches[1];
@@ -141,7 +158,8 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
                 return $this->resourceManager->getPublicPackageResourceUri($packageKey, $path);
             }
         } catch (\Exception $exception) {
-            $this->systemLogger->logException($exception);
+            $logMessage = $this->throwableStorage->logThrowable($exception);
+            $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
         }
         return '';
     }
@@ -151,7 +169,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     protected function getRequireJsPathMapping()
     {
-        $pathMappings = array();
+        $pathMappings = [];
 
         $validatorSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.validators');
         if (is_array($validatorSettings)) {
@@ -186,17 +204,17 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     protected function getNodeTypeGroupsSettings()
     {
-        $settings = array();
+        $settings = [];
         $nodeTypeGroupsSettings = new PositionalArraySorter($this->settings['nodeTypes']['groups']);
         foreach ($nodeTypeGroupsSettings->toArray() as $nodeTypeGroupName => $nodeTypeGroupSettings) {
             if (!isset($nodeTypeGroupSettings['label'])) {
                 continue;
             }
-            $settings[] = array(
+            $settings[] = [
                 'name' => $nodeTypeGroupName,
                 'label' => $nodeTypeGroupSettings['label'],
                 'collapsed' => isset($nodeTypeGroupSettings['collapsed']) ? $nodeTypeGroupSettings['collapsed'] : true
-            );
+            ];
         }
 
         return $settings;

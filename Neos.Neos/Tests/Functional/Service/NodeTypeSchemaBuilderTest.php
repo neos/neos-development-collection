@@ -44,11 +44,11 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     public function inheritanceMapContainsTransitiveSubTypes()
     {
         $this->assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:Document', $this->schema['inheritanceMap']['subTypes']), 'Document must be found in InheritanceMap');
-        $expectedSubTypesOfDocument = array(
+        $expectedSubTypesOfDocument = [
             'Neos.Neos.BackendSchemaControllerTest:Page',
             'Neos.Neos.BackendSchemaControllerTest:SubPage',
             'Neos.Neos.BackendSchemaControllerTest:Folder'
-        );
+        ];
 
         $this->assertEquals($expectedSubTypesOfDocument, $this->schema['inheritanceMap']['subTypes']['Neos.Neos.BackendSchemaControllerTest:Document']);
     }
@@ -60,11 +60,11 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     {
         $this->assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['nodeTypes']), 'AlohaNodeType');
 
-        $expectedSuperTypes = array('Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => true);
-        $expectedPropertyConfiguration = array(
-            'alignment' => array('left', 'center', 'right'),
-            'format' => array('h3', 'sup')
-        );
+        $expectedSuperTypes = ['Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => true];
+        $expectedPropertyConfiguration = [
+            'alignment' => ['left', 'center', 'right'],
+            'format' => ['h3', 'sup']
+        ];
 
         $this->assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['superTypes']);
         $this->assertEquals($expectedPropertyConfiguration, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha']);
@@ -96,8 +96,8 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         $this->assertArrayNotHasKey('h3', $alohaConfiguration['format']);
         $this->assertArrayNotHasKey('sup', $alohaConfiguration['format']);
 
-        $this->assertEquals(array('left', 'center', 'right'), $alohaConfiguration['alignment']);
-        $this->assertEquals(array('h3', 'sup'), $alohaConfiguration['format']);
+        $this->assertEquals(['left', 'center', 'right'], $alohaConfiguration['alignment']);
+        $this->assertEquals(['h3', 'sup'], $alohaConfiguration['format']);
     }
 
     /**
@@ -105,12 +105,12 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
      */
     public function constraintsAreEvaluatedForANodeType()
     {
-        $expectedConstraints = array(
-            'nodeTypes' => array(
+        $expectedConstraints = [
+            'nodeTypes' => [
                 'Neos.Neos.BackendSchemaControllerTest:SubPage' => true
-            ),
-            'childNodes' => array()
-        );
+            ],
+            'childNodes' => []
+        ];
         $this->assertEquals($expectedConstraints, $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:Page']);
     }
 

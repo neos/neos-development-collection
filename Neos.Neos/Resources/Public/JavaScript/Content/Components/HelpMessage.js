@@ -11,7 +11,7 @@ define([
 		Popover
 	) {
 		return Popover.extend({
-			template: Ember.Handlebars.compile('<i {{bindAttr class="view.hovered:icon-question-circle-o:icon-question-circle :neos-help-message-icon"}}></i>'),
+			template: Ember.Handlebars.compile('<i {{bindAttr class="view.hovered:far fa-question-circle:fas fa-question-circle :neos-help-message-icon"}}></i>'),
 			tagName: 'a',
 			classNames: ['neos-help-message-button'],
 			placement: 'bottom',

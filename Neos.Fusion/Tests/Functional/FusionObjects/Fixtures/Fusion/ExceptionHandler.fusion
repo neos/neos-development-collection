@@ -25,7 +25,7 @@ exceptionHandler.eelExpressionInOverride = Neos.Fusion:Array {
 
 exceptionHandler.nestedHandlerIsEvaluated = Neos.Fusion:Value {
 	value = Neos.Fusion:Testing.Throwing {
-		shouldThrow = TRUE
+		shouldThrow = true
 		@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
 	}
 }

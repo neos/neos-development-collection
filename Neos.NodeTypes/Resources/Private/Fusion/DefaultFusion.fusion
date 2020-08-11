@@ -1,0 +1,11 @@
+#
+# Extend the root matcher from Neos.Neos to handle the `layout property before the `default` matcher
+#
+root {
+    layout {
+        @position = 'before default'
+        layout = ${q(node).property('layout') != null && q(node).property('layout') != '' ? q(node).property('layout') : q(node).parents('[subpageLayout][subpageLayout != ""]').first().property('subpageLayout')}
+        condition = ${this.layout != null && this.layout != ''}
+        renderPath = ${'/' + this.layout}
+    }
+}

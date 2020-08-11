@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /* Color palette */
 /* Sizes & margins */
 /* Components */
@@ -26,11 +25,30 @@
   font-weight: 700;
   src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url("../Fonts/NotoSans/NotoSans-BoldItalic.ttf") format("truetype");
 }
+/*!
+ * Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ */
+@font-face {
+  font-family: 'FontAwesome';
+  font-style: normal;
+  font-weight: 900;
+  src: url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.eot");
+  src: url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.woff2") format("woff2"), url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.woff") format("woff"), url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.ttf") format("truetype"), url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.svg#fontawesome") format("svg");
+}
+.fa,
+.fas,
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-drag-active:not(.neos-active)::after {
+  font-family: 'FontAwesome';
+  font-weight: 900;
+}
+
 .neos.media-browser-inspector {
   padding: 40px 54px;
 }
 .neos.media-browser {
   background-color: transparent;
+  padding-bottom: 30px;
 }
 .neos.media-browser:not(.media-module) .neos-footer {
   position: fixed;
@@ -125,6 +143,10 @@
     margin: 0;
   }
 }
+.neos.media-browser .neos-media-content {
+  display: flex;
+  flex-direction: row;
+}
 .neos.media-browser .neos-media-content:not(.neos-media-aside-condensed) {
   *zoom: 1;
 }
@@ -181,6 +203,9 @@
 }
 .neos.media-browser .neos-media-content .neos-search button[type="submit"] i {
   vertical-align: baseline;
+}
+.neos.media-browser .neos-media-content.neos-media-aside-condensed {
+  flex-direction: column;
 }
 .neos.media-browser .neos-media-content.neos-media-aside-condensed .neos-media-aside {
   margin-top: 32px;
@@ -297,6 +322,9 @@
   max-width: 320px;
 }
 @media (max-width: 767px) {
+  .neos.media-browser .neos-media-content {
+    flex-direction: column;
+  }
   .neos.media-browser .neos-media-content .neos-media-aside {
     margin-top: 32px;
     *zoom: 1;
@@ -474,13 +502,15 @@
   display: none;
 }
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a:not(.neos-active).neos-drag-active::after {
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  content: "";
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: -.125em;
+  content: \f063;
   position: absolute;
   right: 12px;
   top: 12px;
@@ -714,7 +744,7 @@
   width: 40px;
   padding: 0;
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button.dropdown-toggle .icon-ellipsis-horizontal {
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button.dropdown-toggle .fa-ellipsis-h {
   line-height: 40px;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label {
@@ -737,6 +767,7 @@
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label > img {
   float: left;
   padding: 4px;
+  width: 24px;
 }
 @media (max-width: 540px) {
   .neos.media-browser .neos-media-assets .page-navigation ul li {
@@ -754,16 +785,22 @@
   cursor: pointer;
   outline: 4px solid #00b5ff;
 }
-.neos.media-browser .neos-row-fluid .neos-image-inputs {
-  float: left;
-  margin-left: 0;
+.neos.media-browser .neos-image-inputs,
+.neos.media-browser .neos-image-example {
+  flex: 1;
 }
-.neos.media-browser .neos-row-fluid .neos-image-inputs legend {
+.neos.media-browser .neos-image-example {
+  margin-bottom: 80px;
+}
+.neos.media-browser .neos-image-inputs {
+  margin-right: 0;
+}
+.neos.media-browser .neos-image-inputs legend {
   display: none;
 }
-.neos.media-browser .neos-row-fluid .neos-image-inputs input[type="text"],
-.neos.media-browser .neos-row-fluid .neos-image-inputs select,
-.neos.media-browser .neos-row-fluid .neos-image-inputs textarea {
+.neos.media-browser .neos-image-inputs input[type="text"],
+.neos.media-browser .neos-image-inputs select,
+.neos.media-browser .neos-image-inputs textarea {
   width: 100%;
   margin-bottom: 16px;
   background: #3f3f3f;
@@ -776,16 +813,16 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos.media-browser .neos-row-fluid .neos-image-inputs input[type="text"]:focus,
-.neos.media-browser .neos-row-fluid .neos-image-inputs select:focus,
-.neos.media-browser .neos-row-fluid .neos-image-inputs textarea:focus {
+.neos.media-browser .neos-image-inputs input[type="text"]:focus,
+.neos.media-browser .neos-image-inputs select:focus,
+.neos.media-browser .neos-image-inputs textarea:focus {
   background: #fff;
   outline: 0;
 }
-.neos.media-browser .neos-row-fluid .neos-image-inputs .neos-tag-select {
+.neos.media-browser .neos-image-inputs .neos-tag-select {
   margin-bottom: 32px;
 }
-.neos.media-browser .neos-row-fluid .neos-image-inputs .neos-button {
+.neos.media-browser .neos-image-inputs .neos-button {
   margin-right: 8px;
   margin-bottom: 32px;
 }
@@ -793,25 +830,28 @@
   font-style: italic;
   padding-bottom: 1em;
 }
-.neos.media-browser .neos-row-fluid [class*="neos-span"].neos-image-example label {
+.neos.media-browser .neos-image-example label {
   text-align: right;
 }
 @media screen and (max-width: 767px) {
-  .neos.media-browser .neos-row-fluid [class*="neos-span"].neos-image-example label {
+  .neos.media-browser .neos-image-example label {
     text-align: left;
   }
 }
-.neos.media-browser .neos-row-fluid [class*="neos-span"].neos-image-example .neos-preview-image {
+.neos.media-browser .neos-image-example .neos-preview-image {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   height: 0;
   padding-bottom: 100%;
-  position: relative;
   background-color: #141414;
   background-image: url("../../Neos.Neos/Images/ajax-preloader-222222.gif");
   background-position: center center;
   background-repeat: no-repeat;
   overflow: hidden;
 }
-.neos.media-browser .neos-row-fluid [class*="neos-span"].neos-image-example .neos-preview-image img {
+.neos.media-browser .neos-image-example .neos-preview-image img {
   float: none;
   position: absolute;
   top: 50%;
@@ -943,7 +983,7 @@
   color: #00b5ff;
   text-shadow: none;
 }
-.neos.media-browser:not(.media-module) table.neos-table:not(.neos-no-hover) .icon-move {
+.neos.media-browser:not(.media-module) table.neos-table:not(.neos-no-hover) .fa-move {
   cursor: move;
 }
 .neos.media-browser .neos-upload-area {
@@ -955,6 +995,9 @@
 }
 .neos.media-browser .neos-upload-area.neos-upload-area-active {
   border-color: #fff;
+}
+.neos.media-browser .neos-upload-area.neos-upload-area-active div {
+  pointer-events: none;
 }
 .neos.media-browser .neos-upload-area.neos-upload-area-active i {
   display: inline;
@@ -1018,9 +1061,68 @@
 .neos.media-browser .fold-toggle {
   cursor: pointer;
 }
-.neos.media-browser .icon-ok-sign {
+.neos.media-browser .fa-ok-sign {
   color: #00a338;
 }
-.neos.media-browser .icon-exclamation-sign {
+.neos.media-browser .fa-exclamation-sign {
   color: #ff8700;
+}
+.neos.media-browser .neos-preview-page-cursor span {
+  height: 40px;
+  line-height: 40px;
+}
+.neos.media-browser .neos-preview-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: 16px;
+}
+.neos.media-browser .neos-nav-tabs {
+  *zoom: 1;
+  height: 28px;
+  margin-bottom: 8px;
+}
+.neos.media-browser .neos-nav-tabs:before, .neos.media-browser .neos-nav-tabs:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.neos.media-browser .neos-nav-tabs:after {
+  clear: both;
+}
+.neos.media-browser .neos-nav-tabs > li {
+  float: left;
+}
+.neos.media-browser .neos-nav-tabs > li > a {
+  padding-right: 12px;
+  padding-left: 12px;
+  margin-right: 2px;
+  line-height: 14px;
+}
+.neos.media-browser .neos-nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.neos.media-browser .neos-nav-tabs > li {
+  margin-bottom: -1px;
+}
+.neos.media-browser .neos-nav-tabs > li > a {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  line-height: 20px;
+  border: 1px solid transparent;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+.neos.media-browser .neos-nav-tabs > li > a:hover, .neos.media-browser .neos-nav-tabs > li > a:focus {
+  border-color: #eee #eee #ddd;
+}
+.neos.media-browser .neos-nav-tabs > .neos-active > a,
+.neos.media-browser .neos-nav-tabs > .neos-active > a:hover,
+.neos.media-browser .neos-nav-tabs > .neos-active > a:focus {
+  color: #555;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+  cursor: default;
 }

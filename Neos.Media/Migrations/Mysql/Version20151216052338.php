@@ -28,6 +28,6 @@ class Version20151216052338 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail CHANGE resource resource VARCHAR(40) NOT NULL COLLATE utf8_unicode_ci");
+        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail CHANGE resource resource VARCHAR(40) NOT NULL COLLATE utf8mb4_unicode_ci");
     }
 }

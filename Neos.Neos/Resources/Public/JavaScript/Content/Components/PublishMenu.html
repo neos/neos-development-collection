@@ -14,7 +14,7 @@
 	{{#if view._hasWorkspaceWideChanges}}
 		<li>
 			<a {{bind-attr href="view._currentWorkspaceManagementModuleUri"}}>
-				<i class="icon-review"></i>{{translate id="reviewChanges" fallback="Review changes"}}
+				<i class="fas fa-review"></i>{{translate id="reviewChanges" fallback="Review changes"}}
 			</a>
 		</li>
 	{{/if}}
@@ -25,7 +25,7 @@
 	</li>
 	<li>
 		<a href="{{unbound view._workspacesManagementModuleUri}}">
-			<i class="icon-th-large"></i>{{translate id="workspaces" fallback="Workspaces"}}
+			<i class="fas fa-th-large"></i>{{translate id="workspaces" fallback="Workspaces"}}
 		</a>
 	</li>
 </ul>

@@ -33,14 +33,14 @@ class NodeTypeManager
      *
      * @var array
      */
-    protected $cachedNodeTypes = array();
+    protected $cachedNodeTypes = [];
 
     /**
      * Node types, indexed by supertype (also including abstract node types)
      *
      * @var array
      */
-    protected $cachedSubNodeTypes = array();
+    protected $cachedSubNodeTypes = [];
 
     /**
      * @Flow\Inject
@@ -68,13 +68,13 @@ class NodeTypeManager
     /**
      * Return all registered node types.
      *
-     * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
+     * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to true
      * @return array<NodeType> All node types registered in the system, indexed by node type name
      * @api
      */
     public function getNodeTypes($includeAbstractNodeTypes = true)
     {
-        if ($this->cachedNodeTypes === array()) {
+        if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
         if ($includeAbstractNodeTypes) {
@@ -93,13 +93,13 @@ class NodeTypeManager
      * the $superType itself.
      *
      * @param string $superTypeName
-     * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
+     * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to true
      * @return array<NodeType> Sub node types of the given super type, indexed by node type name
      * @api
      */
     public function getSubNodeTypes($superTypeName, $includeAbstractNodeTypes = true)
     {
-        if ($this->cachedNodeTypes === array()) {
+        if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
 
@@ -133,7 +133,7 @@ class NodeTypeManager
      */
     public function getNodeType($nodeTypeName)
     {
-        if ($this->cachedNodeTypes === array()) {
+        if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
         if (isset($this->cachedNodeTypes[$nodeTypeName])) {
@@ -154,12 +154,12 @@ class NodeTypeManager
      * Checks if the specified node type exists
      *
      * @param string $nodeTypeName Name of the node type
-     * @return boolean TRUE if it exists, otherwise FALSE
+     * @return boolean true if it exists, otherwise false
      * @api
      */
     public function hasNodeType($nodeTypeName)
     {
-        if ($this->cachedNodeTypes === array()) {
+        if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
         return isset($this->cachedNodeTypes[$nodeTypeName]);
@@ -217,7 +217,7 @@ class NodeTypeManager
      */
     public function overrideNodeTypes(array $completeNodeTypeConfiguration)
     {
-        $this->cachedNodeTypes = array();
+        $this->cachedNodeTypes = [];
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
             $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
         }

@@ -22,9 +22,9 @@ class HtmlArrayRenderer extends AbstractRenderer
     /**
      * @var array Array of the default options that apply to this renderer.
      */
-    protected $defaultOptions = array(
+    protected $defaultOptions = [
         'tabSize' => 4
-    );
+    ];
 
     /**
      * Render and return an array structure suitable for generating HTML
@@ -41,10 +41,10 @@ class HtmlArrayRenderer extends AbstractRenderer
         $a = $this->diff->getA();
         $b = $this->diff->getB();
 
-        $changes = array();
+        $changes = [];
         $opCodes = $this->diff->getGroupedOpcodes();
         foreach ($opCodes as $group) {
-            $blocks = array();
+            $blocks = [];
             $lastTag = null;
             $lastBlock = 0;
             foreach ($group as $code) {
@@ -70,17 +70,17 @@ class HtmlArrayRenderer extends AbstractRenderer
                 }
 
                 if ($tag != $lastTag) {
-                    $blocks[] = array(
+                    $blocks[] = [
                         'tag' => $tag,
-                        'base' => array(
+                        'base' => [
                             'offset' => $i1,
-                            'lines' => array()
-                        ),
-                        'changed' => array(
+                            'lines' => []
+                        ],
+                        'changed' => [
                             'offset' => $j1,
-                            'lines' => array()
-                        )
-                    );
+                            'lines' => []
+                        ]
+                    ];
                     $lastBlock = count($blocks) - 1;
                 }
 
@@ -95,14 +95,14 @@ class HtmlArrayRenderer extends AbstractRenderer
                     if ($tag == 'replace' || $tag == 'delete') {
                         $lines = array_slice($a, $i1, ($i2 - $i1));
                         $lines = $this->formatLines($lines);
-                        $lines = str_replace(array("\0", "\1"), array('<del>', '</del>'), $lines);
+                        $lines = str_replace(["\0", "\1"], ['<del>', '</del>'], $lines);
                         $blocks[$lastBlock]['base']['lines'] += $lines;
                     }
 
                     if ($tag == 'replace' || $tag == 'insert') {
                         $lines = array_slice($b, $j1, ($j2 - $j1));
                         $lines = $this->formatLines($lines);
-                        $lines = str_replace(array("\0", "\1"), array('<ins>', '</ins>'), $lines);
+                        $lines = str_replace(["\0", "\1"], ['<ins>', '</ins>'], $lines);
                         $blocks[$lastBlock]['changed']['lines'] += $lines;
                     }
                 }
@@ -124,7 +124,7 @@ class HtmlArrayRenderer extends AbstractRenderer
     {
         $start = 0;
         $limit = min(strlen($fromLine), strlen($toLine));
-        while ($start < $limit && $fromLine{$start} == $toLine{$start}) {
+        while ($start < $limit && $fromLine[$start] == $toLine[$start]) {
             ++$start;
         }
         $end = -1;
@@ -132,10 +132,10 @@ class HtmlArrayRenderer extends AbstractRenderer
         while (-$end <= $limit && substr($fromLine, $end, 1) == substr($toLine, $end, 1)) {
             --$end;
         }
-        return array(
+        return [
             $start,
             $end + 1
-        );
+        ];
     }
 
     /**
@@ -148,8 +148,8 @@ class HtmlArrayRenderer extends AbstractRenderer
      */
     private function formatLines(array $lines)
     {
-        $lines = array_map(array($this, 'ExpandTabs'), $lines);
-        $lines = array_map(array($this, 'HtmlSafe'), $lines);
+        $lines = array_map([$this, 'ExpandTabs'], $lines);
+        $lines = array_map([$this, 'HtmlSafe'], $lines);
         foreach ($lines as &$line) {
             $line = preg_replace_callback('# ( +)|^ #', function (array $matches) {
                 return (isset($matches[1]) ? $matches[1] : '');

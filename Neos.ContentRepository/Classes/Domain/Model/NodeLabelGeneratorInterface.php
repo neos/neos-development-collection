@@ -21,9 +21,9 @@ interface NodeLabelGeneratorInterface
     /**
      * Render a node label
      *
-     * @param NodeInterface $node
+     * @param \Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node
      * @return string
      * @api
      */
-    public function getLabel(NodeInterface $node);
+    public function getLabel(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node);
 }

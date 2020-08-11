@@ -78,7 +78,7 @@ class TestModel implements CacheAwareInterface
      *
      * @return string
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         return $this->id;
     }

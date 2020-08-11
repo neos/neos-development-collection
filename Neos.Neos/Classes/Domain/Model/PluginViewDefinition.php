@@ -11,7 +11,6 @@ namespace Neos\Neos\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\ContentRepository\Domain\Model\NodeType;
 
@@ -101,7 +100,7 @@ class PluginViewDefinition
      */
     public function getControllerActionPairs()
     {
-        return isset($this->configuration['controllerActions']) ? $this->configuration['controllerActions'] : array();
+        return isset($this->configuration['controllerActions']) ? $this->configuration['controllerActions'] : [];
     }
 
     /**

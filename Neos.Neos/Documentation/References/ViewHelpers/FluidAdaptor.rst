@@ -3,37 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2018-08-10
-
-
-.. _`FluidAdaptor ViewHelper Reference: f:base`:
-
-f:base
-------
-
-View helper which creates a <base href="..." /> tag. The Base URI
-is taken from the current request.
-
-:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\BaseViewHelper
-
-
-
-
-
-Examples
-********
-
-**Example**::
-
-	<f:base />
-
-
-Expected result::
-
-	<base href="http://yourdomain.tld/" />
-	(depending on your domain)
-
-
+This reference was automatically generated from code on 2019-03-05
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -51,7 +21,7 @@ View helper that outputs its child nodes with \Neos\Flow\var_dump()
 Arguments
 *********
 
-* ``title`` (string, *optional*)
+* ``title`` (string, *optional*): The title
 
 * ``typeOnly`` (boolean, *optional*): Whether only the type should be returned instead of the whole chain.
 
@@ -102,10 +72,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``as`` (string, *optional*): The name of the current flashMessage variable for rendering inside
-
-* ``severity`` (string, *optional*): severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -123,6 +89,10 @@ Arguments
 * ``tabindex`` (integer, *optional*): Specifies the tab order of this element
 
 * ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+* ``as`` (string, *optional*): The name of the current flashMessage variable for rendering inside
+
+* ``severity`` (string, *optional*): severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
 
 
 
@@ -197,29 +167,39 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``action`` (string, *optional*): target action
+* ``enctype`` (string, *optional*): MIME type with which the form is submitted
 
-* ``arguments`` (array, *optional*): additional arguments
+* ``method`` (string, *optional*): Transfer type (GET or POST or dialog)
 
-* ``controller`` (string, *optional*): name of target controller
+* ``name`` (string, *optional*): Name of form
 
-* ``package`` (string, *optional*): name of target package
+* ``onreset`` (string, *optional*): JavaScript: On reset of the form
 
-* ``subpackage`` (string, *optional*): name of target subpackage
+* ``onsubmit`` (string, *optional*): JavaScript: On submit of the form
+
+* ``action`` (string, *optional*): Target action
+
+* ``arguments`` (array, *optional*): Arguments
+
+* ``controller`` (string, *optional*): Target controller. If NULL current controllerName is used
+
+* ``package`` (string, *optional*): Target package. if NULL current package is used
+
+* ``subpackage`` (string, *optional*): Target subpackage. if NULL current subpackage is used
 
 * ``object`` (mixed, *optional*): object to use for the form. Use in conjunction with the "property" attribute on the sub tags
 
-* ``section`` (string, *optional*): The anchor to be added to the action URI (only active if $actionUri is not set)
+* ``section`` (string, *optional*): The anchor to be added to the URI
 
-* ``format`` (string, *optional*): The requested format (e.g. ".html") of the target page (only active if $actionUri is not set)
+* ``format`` (string, *optional*): The requested format, e.g. ".html"
 
-* ``additionalParams`` (array, *optional*): additional action URI query parameters that won't be prefixed like $arguments (overrule $arguments) (only active if $actionUri is not set)
+* ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
 
 * ``absolute`` (boolean, *optional*): If set, an absolute action URI is rendered (only active if $actionUri is not set)
 
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the action URI (only active if $actionUri is not set)
+* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the action URI. Only active if $addQueryString = TRUE and $actionUri is not set
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``fieldNamePrefix`` (string, *optional*): Prefix that will be added to all field names within this form
 
@@ -228,16 +208,6 @@ Arguments
 * ``objectName`` (string, *optional*): name of the object that is bound to this form. If this argument is not specified, the name attribute of this form is used to determine the FormObjectName
 
 * ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead ob the current one
-
-* ``enctype`` (string, *optional*): MIME type with which the form is submitted
-
-* ``method`` (string, *optional*): Transfer type (GET or POST)
-
-* ``name`` (string, *optional*): Name of form
-
-* ``onreset`` (string, *optional*): JavaScript: On reset of the form
-
-* ``onsubmit`` (string, *optional*): JavaScript: On submit of the form
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -328,8 +298,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``type`` (string, *optional*): Specifies the type of button (e.g. "button", "reset" or "submit")
-
 * ``name`` (string, *optional*): Name of input tag
 
 * ``value`` (mixed, *optional*): Value of input tag
@@ -338,7 +306,7 @@ Arguments
 
 * ``autofocus`` (string, *optional*): Specifies that a button should automatically get focus when the page loads
 
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+* ``disabled`` (boolean, *optional*): Specifies that the input element should be disabled when the page loads
 
 * ``form`` (string, *optional*): Specifies one or more forms the button belongs to
 
@@ -351,6 +319,8 @@ Arguments
 * ``formnovalidate`` (string, *optional*): Specifies that the form-data should not be validated on submission. Only for type="submit"
 
 * ``formtarget`` (string, *optional*): Specifies where to display the response after submitting the form. Only for type="submit" (e.g. "_blank", "_self", "_parent", "_top", "framename")
+
+* ``type`` (string, *optional*): Specifies the type of button (e.g. "button", "reset" or "submit")
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -417,19 +387,19 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``checked`` (boolean, *optional*): Specifies that the input element should be preselected
-
-* ``multiple`` (boolean, *optional*): Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)
-
 * ``name`` (string, *optional*): Name of input tag
 
 * ``value`` (mixed): Value of input tag. Required for checkboxes
 
 * ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
 
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+* ``disabled`` (boolean, *optional*): Specifies that the input element should be disabled when the page loads
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
+
+* ``checked`` (boolean, *optional*): Specifies that the input element should be preselected
+
+* ``multiple`` (boolean, *optional*): Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -569,15 +539,15 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``required`` (boolean, *optional*): If the field is required or not
-
 * ``name`` (string, *optional*): Name of input tag
 
 * ``value`` (mixed, *optional*): Value of input tag
 
 * ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
 
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+* ``disabled`` (boolean, *optional*): Specifies that the input element should be disabled when the page loads
+
+* ``required`` (boolean, *optional*): Specifies that the input element requires a entry pre submit
 
 * ``maxlength`` (int, *optional*): The maxlength attribute of the input field (will not be validated)
 
@@ -644,17 +614,17 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``checked`` (boolean, *optional*): Specifies that the input element should be preselected
-
 * ``name`` (string, *optional*): Name of input tag
 
-* ``value`` (string): Value of input tag. Required for radio buttons
+* ``value`` (mixed): Value of input tag. Required for radio buttons
 
 * ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
 
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+* ``disabled`` (boolean, *optional*): Specifies that the input element should be disabled when the page loads
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
+
+* ``checked`` (boolean, *optional*): Specifies that the input element should be preselected
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -798,7 +768,9 @@ Arguments
 
 * ``size`` (string, *optional*): Size of input field
 
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+* ``disabled`` (boolean, *optional*): Specifies that the input element should be disabled when the page loads
+
+* ``required`` (boolean, *optional*): Specifies that the select element requires at least one selected option
 
 * ``options`` (array): Associative array with internal IDs as key, and the values are displayed in the select box
 
@@ -923,7 +895,7 @@ Arguments
 
 * ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
 
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+* ``disabled`` (boolean, *optional*): Specifies that the input element should be disabled when the page loads
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -1001,15 +973,17 @@ Arguments
 
 * ``cols`` (int, *optional*): The number of columns of a text area
 
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+* ``disabled`` (boolean, *optional*): Specifies that the input element should be disabled when the page loads
+
+* ``required`` (boolean, *optional*): If the field should be marked as required or not
 
 * ``placeholder`` (string, *optional*): The placeholder of the textarea
 
 * ``autofocus`` (string, *optional*): Specifies that a text area should automatically get focus when the page loads
 
-* ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
+* ``maxlength`` (int, *optional*): The maxlength attribute of the textarea (will not be validated)
 
-* ``required`` (boolean, *optional*): If the field should be marked as required or not
+* ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -1066,17 +1040,15 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``required`` (boolean, *optional*): If the field is required or not
-
-* ``type`` (string, *optional*): The field type, e.g. "text", "email", "url" etc.
-
 * ``name`` (string, *optional*): Name of input tag
 
 * ``value`` (mixed, *optional*): Value of input tag
 
 * ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
 
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+* ``disabled`` (boolean, *optional*): Specifies that the input element should be disabled when the page loads
+
+* ``required`` (boolean, *optional*): If the field should be marked as required or not
 
 * ``maxlength`` (int, *optional*): The maxlength attribute of the input field (will not be validated)
 
@@ -1087,6 +1059,8 @@ Arguments
 * ``placeholder`` (string, *optional*): The placeholder of the input field
 
 * ``autofocus`` (string, *optional*): Specifies that a input field should automatically get focus when the page loads
+
+* ``type`` (string, *optional*): The field type, e.g. "text", "email", "url" etc.
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
@@ -1158,7 +1132,7 @@ Arguments
 
 * ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
 
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
+* ``disabled`` (boolean, *optional*): Specifies that the input element should be disabled when the page loads
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
@@ -1230,28 +1204,6 @@ Expected result::
 
 	<input type="file" name="yourInvoice" />
 	<input type="hidden" name="yourInvoice[__collectionName]" value="invoices" />
-
-
-
-
-.. _`FluidAdaptor ViewHelper Reference: f:form.validationResults`:
-
-f:form.validationResults
-------------------------
-
-
-
-:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\ValidationResultsViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``for`` (string, *optional*): The name of the error name (e.g. argument name or property name). This can also be a property path (like blog.title), and will then only display the validation errors of that property.
-
-* ``as`` (string, *optional*): The name of the variable to store the current error
 
 
 
@@ -1460,6 +1412,8 @@ Arguments
 
 * ``decimals`` (integer, *optional*): (optional) The number of decimal places.
 
+* ``currencyCode`` (string, *optional*): (optional) The ISO 4217 currency code of the currency to format. Used to set decimal places and rounding.
+
 
 
 
@@ -1564,7 +1518,7 @@ Arguments
 
 * ``format`` (string, *optional*): Format String which is taken to format the Date/Time if none of the locale options are set.
 
-* ``localeFormatType`` (string, *optional*): Whether to format (according to locale set in $forceLocale) date, time or dateTime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
+* ``localeFormatType`` (string, *optional*): Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
 
 * ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
 
@@ -1683,11 +1637,11 @@ Arguments
 
 * ``value`` (string, *optional*): string to format
 
-* ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
+* ``keepQuotes`` (boolean, *optional*): if true, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*)
+* ``encoding`` (string, *optional*): the encoding format
 
-* ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
+* ``doubleEncode`` (string, *optional*): If false existing html entities won't be encoded, the default is to convert everything.
 
 
 
@@ -1709,9 +1663,9 @@ Arguments
 
 * ``value`` (string, *optional*): string to format
 
-* ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
+* ``keepQuotes`` (boolean, *optional*): if true, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*)
+* ``encoding`` (string, *optional*): the encoding format
 
 
 
@@ -1929,32 +1883,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``action`` (string): Target action
-
-* ``arguments`` (array, *optional*): Arguments
-
-* ``controller`` (string, *optional*): Target controller. If NULL current controllerName is used
-
-* ``package`` (string, *optional*): Target package. if NULL current package is used
-
-* ``subpackage`` (string, *optional*): Target subpackage. if NULL current subpackage is used
-
-* ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``format`` (string, *optional*): The requested format, e.g. ".html
-
-* ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
-
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
-
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
-
-* ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
-
-* ``absolute`` (boolean, *optional*): By default this ViewHelper renders links with absolute URIs. If this is FALSE, a relative URI is created instead
-
-* ``useMainRequest`` (boolean, *optional*): If set, the main Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -1980,6 +1908,32 @@ Arguments
 * ``rev`` (string, *optional*): Specifies the relationship between the linked document and the current document
 
 * ``target`` (string, *optional*): Specifies where to open the linked document
+
+* ``action`` (string): Target action
+
+* ``arguments`` (array, *optional*): Arguments
+
+* ``controller`` (string, *optional*): Target controller. If NULL current controllerName is used
+
+* ``package`` (string, *optional*): Target package. if NULL current package is used
+
+* ``subpackage`` (string, *optional*): Target subpackage. if NULL current subpackage is used
+
+* ``section`` (string, *optional*): The anchor to be added to the URI
+
+* ``format`` (string, *optional*): The requested format, e.g. ".html"
+
+* ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
+
+* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
+
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
+
+* ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
+
+* ``absolute`` (boolean, *optional*): By default this ViewHelper renders links with absolute URIs. If this is false, a relative URI is created instead
+
+* ``useMainRequest`` (boolean, *optional*): If set, the main Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
 
 
 
@@ -2031,8 +1985,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``email`` (string): The email address to be turned into a link.
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -2058,6 +2010,8 @@ Arguments
 * ``rev`` (string, *optional*): Specifies the relationship between the linked document and the current document
 
 * ``target`` (string, *optional*): Specifies where to open the linked document
+
+* ``email`` (string): The email address to be turned into a link.
 
 
 
@@ -2106,10 +2060,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``uri`` (string): the URI that will be put in the href attribute of the rendered link tag
-
-* ``defaultScheme`` (string, *optional*): scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -2135,6 +2085,10 @@ Arguments
 * ``rev`` (string, *optional*): Specifies the relationship between the linked document and the current document
 
 * ``target`` (string, *optional*): Specifies where to open the linked document
+
+* ``uri`` (string): the URI that will be put in the href attribute of the rendered link tag
+
+* ``defaultScheme`` (string, *optional*): scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
 
 
 
@@ -2239,6 +2193,8 @@ Arguments
 
 * ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
 
+* ``condition`` (boolean, *optional*): Condition expression conforming to Fluid boolean rules
+
 * ``privilegeTarget`` (string): Condition expression conforming to Fluid boolean rules
 
 * ``parameters`` (array, *optional*): Condition expression conforming to Fluid boolean rules
@@ -2285,15 +2241,17 @@ This view helper implements an ifHasRole/else condition.
 Arguments
 *********
 
+* ``then`` (mixed, *optional*): Value to be returned if the condition if met.
+
+* ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
+
+* ``condition`` (boolean, *optional*): Condition expression conforming to Fluid boolean rules
+
 * ``role`` (mixed): The role or role identifier.
 
 * ``packageKey`` (string, *optional*): PackageKey of the package defining the role.
 
 * ``account`` (Neos\Flow\Security\Account, *optional*): If specified, this subject of this check is the given Account instead of the currently authenticated account
-
-* ``then`` (mixed, *optional*): Value to be returned if the condition if met.
-
-* ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
 
 
 
@@ -2424,15 +2382,15 @@ Arguments
 
 * ``section`` (string, *optional*): The anchor to be added to the URI
 
-* ``format`` (string, *optional*): The requested format, e.g. ".html
+* ``format`` (string, *optional*): The requested format, e.g. ".html"
 
 * ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
 
-* ``absolute`` (boolean, *optional*): If set, an absolute URI is rendered
+* ``absolute`` (boolean, *optional*): By default this ViewHelper renders links with absolute URIs. If this is false, a relative URI is created instead
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
 
@@ -2522,7 +2480,7 @@ Arguments
 
 * ``uri`` (string): target URI
 
-* ``defaultScheme`` (string, *optional*): scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
+* ``defaultScheme`` (string, *optional*): target URI
 
 
 
@@ -2778,9 +2736,9 @@ Arguments
 
 * ``format`` (string, *optional*): The requested format, e.g. ".html
 
-* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
+* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise.
 
-* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+* ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -2861,9 +2819,9 @@ Arguments
 
 * ``format`` (string, *optional*): The requested format, e.g. ".html
 
-* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
+* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise.
 
-* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+* ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
 
 
 

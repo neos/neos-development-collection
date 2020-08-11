@@ -12,10 +12,12 @@ namespace Neos\Neos\Fusion;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Neos\Service\LinkingService;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Neos\Exception as NeosException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Create a link to a node
@@ -24,15 +26,35 @@ class NodeUriImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
-     * @Flow\Inject
      * @var LinkingService
      */
     protected $linkingService;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * A node object or a string node path or NULL to resolve the current document node
@@ -71,11 +93,11 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getAdditionalParams()
     {
-        return $this->fusionValue('additionalParams');
+        return array_merge($this->fusionValue('additionalParams'), $this->fusionValue('arguments'));
     }
 
     /**
-     * Arguments to be removed from the URI. Only active if addQueryString = TRUE
+     * Arguments to be removed from the URI. Only active if addQueryString = true
      *
      * @return array
      */
@@ -85,7 +107,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * If TRUE, the current query parameters will be kept in the URI
+     * If true, the current query parameters will be kept in the URI
      *
      * @return boolean
      */
@@ -95,7 +117,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * If TRUE, an absolute URI is rendered
+     * If true, an absolute URI is rendered
      *
      * @return boolean
      */
@@ -144,7 +166,9 @@ class NodeUriImplementation extends AbstractFusionObject
                 $this->getArgumentsToBeExcludedFromQueryString()
             );
         } catch (NeosException $exception) {
-            $this->systemLogger->logException($exception);
+            // TODO: Revisit if we actually need to store a stack trace.
+            $logMessage = $this->throwableStorage->logThrowable($exception);
+            $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
             return '';
         }
     }

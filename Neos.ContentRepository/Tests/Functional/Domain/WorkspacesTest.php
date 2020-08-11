@@ -86,7 +86,7 @@ class WorkspacesTest extends FunctionalTestCase
     protected function setUpRootNodeAndRepository()
     {
         $this->contextFactory = $this->objectManager->get(ContextFactory::class);
-        $personalContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName));
+        $personalContext = $this->contextFactory->create(['workspaceName' => $this->currentTestWorkspaceName]);
 
         $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         if ($this->liveWorkspace === null) {
@@ -141,7 +141,7 @@ class WorkspacesTest extends FunctionalTestCase
         $this->saveNodesAndTearDownRootNodeAndRepository();
         $this->setUpRootNodeAndRepository();
 
-        $liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $liveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $liveRootNode = $liveContext->getRootNode();
 
         $this->assertNull($liveRootNode->getNode('/homepage/about'));
@@ -154,7 +154,7 @@ class WorkspacesTest extends FunctionalTestCase
     {
         $this->rootNode->createNode('homepage')->createNode('imprint');
 
-        $liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $liveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $liveRootNode = $liveContext->getRootNode();
 
         $this->assertNull($liveRootNode->getNode('/homepage/imprint'));
@@ -284,7 +284,7 @@ class WorkspacesTest extends FunctionalTestCase
      */
     public function changedNodeCanBePublishedFromPersonalToLiveWorkspace()
     {
-        $liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $liveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $liveContext->getRootNode()->createNode('homepage')->createNode('teaser')->createNode('node52697bdfee199');
 
         $teaserNode = $this->rootNode->getNode('/homepage/teaser/node52697bdfee199');
@@ -298,7 +298,7 @@ class WorkspacesTest extends FunctionalTestCase
         $this->saveNodesAndTearDownRootNodeAndRepository();
         $this->setUpRootNodeAndRepository();
 
-        $liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $liveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $liveRootNode = $liveContext->getRootNode();
 
         $teaserNode = $liveRootNode->getNode('/homepage/teaser/node52697bdfee199');
@@ -319,7 +319,7 @@ class WorkspacesTest extends FunctionalTestCase
         $this->saveNodesAndTearDownRootNodeAndRepository();
         $this->setUpRootNodeAndRepository();
 
-        $liveContext = $this->contextFactory->create(array('workspaceName' => 'live', 'removedContentShown' => true));
+        $liveContext = $this->contextFactory->create(['workspaceName' => 'live', 'removedContentShown' => true]);
         $liveRootNode = $liveContext->getRootNode();
 
         $liveHomepageNode = $liveRootNode->getNode('homepage');

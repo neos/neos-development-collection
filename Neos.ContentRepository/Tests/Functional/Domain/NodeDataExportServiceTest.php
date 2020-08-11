@@ -110,7 +110,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase
     protected function setUpRootNodeAndRepository()
     {
         $this->contextFactory = $this->objectManager->get(ContextFactory::class);
-        $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
         $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
         $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         $this->workspaceRepository->add(new Workspace('live'));

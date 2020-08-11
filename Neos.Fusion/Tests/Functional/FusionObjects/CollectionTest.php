@@ -23,7 +23,7 @@ class CollectionTest extends AbstractFusionObjectTest
     public function basicCollectionWorks()
     {
         $view = $this->buildView();
-        $view->assign('collection', array('element1', 'element2'));
+        $view->assign('collection', ['element1', 'element2']);
         $view->setFusionPath('collection/basicLoop');
         $this->assertEquals('Xelement1Xelement2', $view->render());
     }
@@ -34,7 +34,7 @@ class CollectionTest extends AbstractFusionObjectTest
     public function basicCollectionWorksAndStillContainsOtherContextVariables()
     {
         $view = $this->buildView();
-        $view->assign('collection', array('element1', 'element2'));
+        $view->assign('collection', ['element1', 'element2']);
         $view->assign('other', 'var');
         $view->setFusionPath('collection/basicLoopOtherContextVariables');
         $this->assertEquals('Xelement1varXelement2var', $view->render());
@@ -57,7 +57,7 @@ class CollectionTest extends AbstractFusionObjectTest
     public function iterationInformationIsAddedToCollection()
     {
         $view = $this->buildView();
-        $view->assign('collection', array('element1', 'element2', 'element3', 'element4'));
+        $view->assign('collection', ['element1', 'element2', 'element3', 'element4']);
         $view->setFusionPath('collection/iteration');
         $this->assertEquals('Xelement1-0-1-1--1-Xelement2-1-2----1Xelement3-2-3---1-Xelement4-3-4--1--1', $view->render());
     }

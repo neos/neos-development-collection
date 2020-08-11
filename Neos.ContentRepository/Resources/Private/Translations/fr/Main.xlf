@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.ContentRepository" source-language="en" datatype="plaintext" target-language="fr">
+    <body>
+      <trans-unit id="next" xml:space="preserve" approved="yes">
+				<source>next</source>
+			<target state="final">suivant</target></trans-unit>
+      <trans-unit id="previous" xml:space="preserve" approved="yes">
+				<source>previous</source>
+			<target state="final">précédent</target></trans-unit>
+    </body>
+  </file>
+</xliff>

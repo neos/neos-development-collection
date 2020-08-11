@@ -34,7 +34,7 @@ class NodeTransformation
     /**
      * @var array<\Neos\ContentRepository\Migration\Transformations\TransformationInterface>
      */
-    protected $transformationConjunctions = array();
+    protected $transformationConjunctions = [];
 
     /**
      * Executes all configured transformations starting on the given node.
@@ -64,7 +64,7 @@ class NodeTransformation
             return $this->transformationConjunctions[$conjunctionIdentifier];
         }
 
-        $conjunction = array();
+        $conjunction = [];
         foreach ($transformationConfigurations as $transformationConfiguration) {
             $conjunction[] = $this->buildTransformationObject($transformationConfiguration);
         }

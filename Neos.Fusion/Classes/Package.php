@@ -16,6 +16,7 @@ use Neos\Flow\Core\Booting\Sequence;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Package\Package as BasePackage;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Fusion\Core\Cache\FileMonitorListener;
 
@@ -39,15 +40,16 @@ class Package extends BasePackage
             $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'neos.flow:systemfilemonitor') {
                     $fusionFileMonitor = FileMonitor::createFileMonitorAtBoot('Fusion_Files', $bootstrap);
+                    /** @var PackageManager $packageManager */
                     $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
-                    foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+                    foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
                         }
 
-                        $fusionPaths = array(
+                        $fusionPaths = [
                             $package->getResourcesPath() . 'Private/Fusion'
-                        );
+                        ];
                         foreach ($fusionPaths as $fusionPath) {
                             if (is_dir($fusionPath)) {
                                 $fusionFileMonitor->monitorDirectory($fusionPath);

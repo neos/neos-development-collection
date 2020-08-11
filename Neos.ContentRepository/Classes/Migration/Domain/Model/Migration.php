@@ -11,8 +11,6 @@ namespace Neos\ContentRepository\Migration\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
 
 /**
  * Migration.

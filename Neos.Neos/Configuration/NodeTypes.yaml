@@ -1,10 +1,10 @@
 # Base node, which just configures the "removed" property of the node.
 'Neos.Neos:Node':
-  label: "${String.cropAtWord(String.trim(String.stripTags(String.pregReplace(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + (node.autoCreated ? ' (' + node.name + ')' : '')), '/<br\\W*?\\/?>|\\x{00a0}|[[^:print:]]|\\s+/u', ' '))), 100, '...')}"
-  abstract: TRUE
+  label: "${String.cropAtWord(String.trim(String.stripTags(String.pregReplace(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + (node.autoCreated ? ' (' + node.name + ')' : '')), '/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' '))), 100, '...')}"
+  abstract: true
   options:
     fusion:
-      prototypeGenerator: Neos\Neos\Domain\Service\DefaultPrototypeGenerator
+      prototypeGenerator: ~
   ui:
     inspector:
       tabs:
@@ -50,7 +50,7 @@
       type: string
       ui:
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           group: 'type'
           position: 100
@@ -61,7 +61,7 @@
 
 # Hidable Mixin
 'Neos.Neos:Hidable':
-  abstract: TRUE
+  abstract: true
   ui:
     inspector:
       groups:
@@ -81,7 +81,7 @@
 
 # Timable Mixin
 'Neos.Neos:Timable':
-  abstract: TRUE
+  abstract: true
   ui:
     inspector:
       groups:
@@ -120,20 +120,24 @@
 # anything page-like (like a blog post) should subclass "Neos.Neos:Document".
 'Neos.Neos:Document':
   superTypes:
-    'Neos.Neos:Node': TRUE
-    'Neos.Neos:Hidable': TRUE
-    'Neos.Neos:Timable': TRUE
-  abstract: TRUE
-  aggregate: TRUE
+    'Neos.Neos:Node': true
+    'Neos.Neos:Hidable': true
+    'Neos.Neos:Timable': true
+  abstract: true
+  aggregate: true
   constraints:
     nodeTypes:
-      '*': FALSE
-      'Neos.Neos:Document': TRUE
+      '*': false
+      'Neos.Neos:Document': true
   options:
     fusion:
-      prototypeGenerator: Neos\Neos\Domain\Service\DefaultDocumentPrototypeGenerator
+      prototypeGenerator: ~
+    nodeCreationHandlers:
+      documentTitle:
+        nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\DocumentTitleNodeCreationHandler'
   ui:
     label: 'Document'
+    group: 'general'
     search:
       searchCategory: 'Documents'
     inspector:
@@ -142,6 +146,15 @@
           label: i18n
           position: 10
           icon: 'icon-file'
+    creationDialog:
+      elements:
+        title:
+          type: string
+          ui:
+            label: i18n
+            editor: 'Neos.Neos/Inspector/Editors/TextFieldEditor'
+          validation:
+            'Neos.Neos/Validation/NotEmptyValidator': []
   properties:
     _nodeType:
       ui:
@@ -152,7 +165,7 @@
       type: string
       ui:
         label: i18n
-        reloadPageIfChanged: TRUE
+        reloadPageIfChanged: true
         inspector:
           group: 'document'
       validation:
@@ -164,7 +177,7 @@
       type: string
       ui:
         label: i18n
-        reloadPageIfChanged: TRUE
+        reloadPageIfChanged: true
         inspector:
           group: 'document'
       validation:
@@ -176,12 +189,12 @@
           regularExpression: '/^[a-z0-9\-]+$/i'
     _hidden:
       ui:
-        reloadPageIfChanged: TRUE
+        reloadPageIfChanged: true
     _hiddenInIndex:
       type: boolean
       ui:
         label: i18n
-        reloadPageIfChanged: TRUE
+        reloadPageIfChanged: true
         inspector:
           group: 'visibility'
           position: 40
@@ -190,7 +203,7 @@
 # "Shortcuts" can be linked to but instead of displaying content themselves they redirect to another "Document" node
 'Neos.Neos:Shortcut':
   superTypes:
-    'Neos.Neos:Document': TRUE
+    'Neos.Neos:Document': true
   ui:
     label: i18n
     icon: 'icon-share'
@@ -205,7 +218,7 @@
       defaultValue: 'firstChildNode'
       ui:
         label: i18n
-        reloadPageIfChanged: TRUE
+        reloadPageIfChanged: true
         inspector:
           group: 'document'
           editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
@@ -225,8 +238,9 @@
       type: string
       ui:
         label: i18n
-        reloadPageIfChanged: TRUE
+        reloadPageIfChanged: true
         inspector:
+          hidden: 'ClientEval:node.properties.targetMode === "selectedTarget" ? false : true'
           group: 'document'
           editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
           editorListeners:
@@ -237,8 +251,8 @@
 # Base class for all "Plugins"; that are PHP controllers being called during the rendering.
 'Neos.Neos:Plugin':
   superTypes:
-    'Neos.Neos:Content': TRUE
-  abstract: TRUE
+    'Neos.Neos:Content': true
+  abstract: true
   options:
     fusion:
       prototypeGenerator: Neos\Neos\Domain\Service\DefaultPluginPrototypeGenerator
@@ -257,7 +271,7 @@
 
 'Neos.Neos:PluginView':
   superTypes:
-    'Neos.Neos:Content': TRUE
+    'Neos.Neos:Content': true
   ui:
     label: i18n
     group: 'plugins'
@@ -274,7 +288,7 @@
       type: string
       ui:
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           group: 'pluginViews'
           position: 10
@@ -283,7 +297,7 @@
       type: string
       ui:
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           group: 'pluginViews'
           position: 20
@@ -291,13 +305,13 @@
 
 'Neos.Neos:Content':
   superTypes:
-    'Neos.Neos:Node': TRUE
-    'Neos.Neos:Hidable': TRUE
-    'Neos.Neos:Timable': TRUE
-  abstract: TRUE
+    'Neos.Neos:Node': true
+    'Neos.Neos:Hidable': true
+    'Neos.Neos:Timable': true
+  abstract: true
   constraints:
     nodeTypes:
-      '*': FALSE
+      '*': false
   options:
     fusion:
       prototypeGenerator: Neos\Neos\Domain\Service\DefaultContentPrototypeGenerator
@@ -324,19 +338,20 @@
 # i.e. contains variable number of children.
 'Neos.Neos:ContentCollection':
   superTypes:
-    'Neos.Neos:Node': TRUE
+    'Neos.Neos:Node': true
   ui:
     label: i18n
     icon: 'icon-folder-open-alt'
+    inlineEditable: true
   constraints:
     nodeTypes:
-      'Neos.Neos:Document': FALSE
-      '*': TRUE
+      'Neos.Neos:Document': false
+      '*': true
 
 # The fallback node is used if you have remainings of a nodeType that doesn't exist anymore so you can at least delete it
 'Neos.Neos:FallbackNode':
   superTypes:
-    'Neos.Neos:Node': TRUE
+    'Neos.Neos:Node': true
   ui:
     label: i18n
     icon: 'icon-remove-sign'

@@ -82,11 +82,11 @@ class PageHandler extends AbstractRenderingExceptionHandler
             $fluidView->assign('metaData', $this->contentElementWrappingService->wrapCurrentDocumentMetadata($documentNode, '<div id="neos-document-metadata"></div>', $fusionPath));
         }
 
-        $fluidView->assignMultiple(array(
+        $fluidView->assignMultiple([
             'isBackend' => $isBackend,
             'message' => $output,
             'node' => $node
-        ));
+        ]);
 
         return $this->wrapHttpResponse($exception, $fluidView->render());
     }

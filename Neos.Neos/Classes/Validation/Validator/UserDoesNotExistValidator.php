@@ -28,9 +28,9 @@ class UserDoesNotExistValidator extends AbstractValidator
     protected $userService;
 
     /**
-     * Returns TRUE, if the specified user ($value) does not exist yet.
+     * Returns true, if the specified user ($value) does not exist yet.
      *
-     * If at least one error occurred, the result is FALSE.
+     * If at least one error occurred, the result is false.
      *
      * @param mixed $value The value that should be validated
      * @return void

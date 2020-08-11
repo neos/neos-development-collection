@@ -44,7 +44,7 @@ class StandaloneViewViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\Abstra
      * @param array $arguments Arguments to assign to the template before rendering
      * @return string
      */
-    public function render($templatePathAndFilename, $arguments = array())
+    public function render($templatePathAndFilename, $arguments = [])
     {
         $standaloneView = new \Neos\FluidAdaptor\View\StandaloneView($this->controllerContext->getRequest());
         $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);

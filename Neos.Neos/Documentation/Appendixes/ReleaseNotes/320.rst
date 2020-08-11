@@ -23,15 +23,13 @@ If less then two providers are given, the selector does not appear and the defau
 Add ModulePrivilege to protect Neos Backend modules
 ===================================================
 Introduces a new Privilege `ModulePrivilege` that should be used to
-access-protect Neos Backend modules.
-Usage:
-```
-privilegeTargets:
-  'Neos\\Neos\\Security\\Authorization\\Privilege\\ModulePrivilege':
+access-protect Neos Backend modules. Usage::
 
-    'SomePrivilegeTargetIdentifier':
-      matcher: 'module/path'
-```
+  privilegeTargets:
+    'Neos\\Neos\\Security\\Authorization\\Privilege\\ModulePrivilege':
+
+      'SomePrivilegeTargetIdentifier':
+        matcher: 'module/path'
 
 This new privilege will be used to hide links to inaccessible modules
 in the Backend. Furthermore they automatically protect access to all
@@ -41,7 +39,7 @@ Setting a `privilegeTarget` in the module settings is still supported
 but deprecated as of Neos 3.2.
 
 HtmlAugmenter will augment plaintext with the given fallback-tag
-=========================================================================
+================================================================
 If plaintext is given to the html augmenter now uses the fallback-tag
 as it already does if multiple tags are found on the same level.
 
@@ -79,10 +77,13 @@ This can be tested/verified by setting up an arbitrary dimension configuration a
 Add extension point for domain specific languages to fusion
 ===========================================================
 DSLs are implemented for fusion-assignments using the tagged-template-string syntax of es6.
-DSL-identifiers are configured in the configuration key `Neos.Fusion.dsl`. The configured objects must satisfy the `DslInterface` and return fusion code that is parsed by the fusion-parser afterwards.
-```
-value = dslExample`... the code that is passed to the dsl ...`
-```
+DSL-identifiers are configured in the configuration key `Neos.Fusion.dsl`. The configured objects must satisfy the `DslInterface`
+and return fusion code that is parsed by the fusion-parser afterwards.
+
+.. code-block:: text
+
+    value = dslExample`... the code that is passed to the dsl ...`
+
 In addition this pr adds a schema for the fusion part of the Settings and integrates it into the automatic schema-validation.
 
 Allow strings and arrays in ``CachingHelper::nodeTypeTag``
@@ -94,8 +95,8 @@ ignoring anything that won't result in a valid tag.
 
 Evaluate `@if` in fusion as falsy or truthy values
 ==================================================
-The behavior of ``@if`` is altered to make the distinction between falsy or truthy 
-values and no longer check for an exactly false value in the condition-expression. 
+The behavior of ``@if`` is altered to make the distinction between falsy or truthy
+values and no longer check for an exactly false value in the condition-expression.
 For the distinction the php rules for casting to boolean are applied.
 Examples for falsy-values that are now detected in ``@if``:
 

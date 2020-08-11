@@ -12,7 +12,6 @@ namespace Neos\Neos\Fusion\ExceptionHandlers;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Neos\Service\ContentElementWrappingService;
@@ -27,12 +26,6 @@ use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
  */
 class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 {
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
     /**
      * @Flow\Inject
      * @var ContentElementWrappingService

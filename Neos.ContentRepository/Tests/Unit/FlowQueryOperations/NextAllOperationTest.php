@@ -11,16 +11,17 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Eel\FlowQueryOperations\NextAllOperation;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery NextAllOperation
  */
-class NextAllOperationTest extends UnitTestCase
+class NextAllOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var Context
@@ -49,25 +50,25 @@ class NextAllOperationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->siteNode = $this->createMock(NodeInterface::class);
-        $this->firstNodeInLevel = $this->createMock(NodeInterface::class);
-        $this->secondNodeInLevel = $this->createMock(NodeInterface::class);
-        $this->thirdNodeInLevel = $this->createMock(NodeInterface::class);
+        $this->siteNode = $this->mockNode('site');
+        $this->firstNodeInLevel = $this->mockNode('node1');
+        $this->secondNodeInLevel = $this->mockNode('node2');
+        $this->thirdNodeInLevel = $this->mockNode('node3');
 
-        $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
-        $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array(
+        $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site')));
+        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
-        )));
+        ])));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->firstNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->firstNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
-        $this->secondNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/second'));
-        $this->thirdNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/third'));
+        $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->firstNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/first')));
+        $this->secondNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->secondNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/second')));
+        $this->thirdNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->thirdNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/third')));
     }
 
     /**
@@ -75,14 +76,14 @@ class NextAllOperationTest extends UnitTestCase
      */
     public function nextAllWillReturnEmptyResultForLastNodeInLevel()
     {
-        $context = array($this->thirdNodeInLevel);
+        $context = [$this->thirdNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new NextAllOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array(), $output);
+        $this->assertEquals([], $output);
     }
 
     /**
@@ -90,14 +91,14 @@ class NextAllOperationTest extends UnitTestCase
      */
     public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstNodeInLevel()
     {
-        $context = array($this->firstNodeInLevel);
+        $context = [$this->firstNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new NextAllOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->secondNodeInLevel, $this->thirdNodeInLevel), $output);
+        $this->assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
     /**
@@ -105,14 +106,14 @@ class NextAllOperationTest extends UnitTestCase
      */
     public function nextAllWillReturnThirdNodeInLevelForSecondNodeInLevel()
     {
-        $context = array($this->secondNodeInLevel);
+        $context = [$this->secondNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new NextAllOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->thirdNodeInLevel), $output);
+        $this->assertEquals([$this->thirdNodeInLevel], $output);
     }
 
     /**
@@ -120,13 +121,13 @@ class NextAllOperationTest extends UnitTestCase
      */
     public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstAndSecondNodeInLevel()
     {
-        $context = array($this->firstNodeInLevel, $this->secondNodeInLevel);
+        $context = [$this->firstNodeInLevel, $this->secondNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new NextAllOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->secondNodeInLevel, $this->thirdNodeInLevel), $output);
+        $this->assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 }

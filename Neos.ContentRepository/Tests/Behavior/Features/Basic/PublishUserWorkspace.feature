@@ -58,7 +58,7 @@ Feature: Publish user workspace
     'unstructured':
       constraints:
         nodeTypes:
-          '*': TRUE
+          '*': true
 
     'Neos.ContentRepository.Testing:Page':
       properties:
@@ -79,7 +79,7 @@ Feature: Publish user workspace
     'unstructured':
       constraints:
         nodeTypes:
-          '*': TRUE
+          '*': true
 
     'Neos.ContentRepository.Testing:Page':
       properties:

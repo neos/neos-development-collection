@@ -14,7 +14,47 @@
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</f:link.action>
 			<f:form.submit value="{neos:backend.translate(id: 'userSettings.saveUser', source: 'Modules', value: 'Save user')}" class="neos-button neos-button-primary" />
+			<f:if condition="{currentUser} === {user}">
+				<f:then>
+					<div class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.show.cannotDeleteYourself', value: 'You are logged in as this user and you cannot delete yourself.', source: 'Modules', package: 'Neos.Neos')}">
+						<i class="fas fa-trash-alt icon-white"></i> {neos:backend.translate(id: 'users.show.deleteUser', value: 'Delete User', source: 'Modules', package: 'Neos.Neos')}
+					</div>
+				</f:then>
+				<f:else>
+					<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.show.clickToDeleteUser', value: 'Click here to delete this user', source: 'Modules', package: 'Neos.Neos')}" data-toggle="modal" href="#delete">
+						<i class="fas fa-trash-alt icon-white"></i> {neos:backend.translate(id: 'users.show.deleteUser', value: 'Delete User', source: 'Modules', package: 'Neos.Neos')}
+					</button>
+				</f:else>
+			</f:if>
 		</div>
 	</f:form>
 	<f:form action="index" id="postHelper" method="post"></f:form>
+
+	<f:if condition="{currentUser} === {user}">
+		<div class="neos-hide" id="delete">
+			<div class="neos-modal-centered">
+				<div class="neos-modal-content">
+					<div class="neos-modal-header">
+						<button type="button" class="neos-close" data-dismiss="modal"></button>
+						<div class="neos-header">{neos:backend.translate(id: 'users.show.buttonDelete', value: 'Do you really want to delete the user "{user.name}"?', arguments: {0: user.name}, source: 'Modules', package: 'Neos.Neos')}</div>
+						<div>
+							<div class="neos-subheader">
+								{neos:backend.translate(id: 'users.show.deleteDialogWarning', value: 'This will delete the user, the related accounts and his personal workspace, including all unpublished content.', source: 'Modules', package: 'Neos.Neos')}
+								{neos:backend.translate(id: 'users.show.operationCannotBeUndone', value: 'This operation cannot be undone', source: 'Modules', package: 'Neos.Neos')}.
+							</div>
+						</div>
+					</div>
+					<div class="neos-modal-footer">
+						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel', source: 'Modules', package: 'Neos.Neos')}</a>
+						<f:form action="delete" arguments="{user: user}" class="neos-inline">
+							<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.show.deleteUser', value: 'Delete User', source: 'Modules', package: 'Neos.Neos')}">
+								{neos:backend.translate(id: 'users.show.confirmDeleteButton', value: 'Yes, delete the user', source: 'Modules', package: 'Neos.Neos')}
+							</button>
+						</f:form>
+					</div>
+				</div>
+			</div>
+			<div class="neos-modal-backdrop neos-in"></div>
+		</div>
+	</f:if>
 </f:section>

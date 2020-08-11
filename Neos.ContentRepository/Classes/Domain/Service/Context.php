@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -20,6 +20,8 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\Cache\FirstLevelNodeCache;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 
 /**
  * Context
@@ -54,7 +56,7 @@ class Context
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -74,21 +76,21 @@ class Context
     protected $currentDateTime;
 
     /**
-     * If TRUE, invisible content elements will be shown.
+     * If true, invisible content elements will be shown.
      *
      * @var boolean
      */
     protected $invisibleContentShown = false;
 
     /**
-     * If TRUE, removed content elements will be shown, even though they are removed.
+     * If true, removed content elements will be shown, even though they are removed.
      *
      * @var boolean
      */
     protected $removedContentShown = false;
 
     /**
-     * If TRUE, even content elements will be shown which are not accessible by the currently logged in account.
+     * If true, even content elements will be shown which are not accessible by the currently logged in account.
      *
      * @var boolean
      */
@@ -97,12 +99,12 @@ class Context
     /**
      * @var array
      */
-    protected $dimensions = array();
+    protected $dimensions = [];
 
     /**
      * @var array
      */
-    protected $targetDimensions = array();
+    protected $targetDimensions = [];
 
     /**
      * @Flow\IgnoreValidation
@@ -143,6 +145,7 @@ class Context
      * @param boolean $createWorkspaceIfNecessary DEPRECATED: If enabled, creates a workspace with the configured name if it doesn't exist already. This option is DEPRECATED, create workspace explicitly instead.
      * @return Workspace The workspace or NULL
      * @api
+     * @throws IllegalObjectTypeException
      */
     public function getWorkspace($createWorkspaceIfNecessary = true)
     {
@@ -155,7 +158,7 @@ class Context
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
             $this->workspace = new Workspace($this->workspaceName, $liveWorkspace);
             $this->workspaceRepository->add($this->workspace);
-            $this->systemLogger->log(sprintf('Notice: %s::getWorkspace() implicitly created the new workspace "%s". This behaviour is discouraged and will be removed in future versions. Make sure to create workspaces explicitly by adding a new workspace to the Workspace Repository.', __CLASS__, $this->workspaceName), LOG_NOTICE);
+            $this->systemLogger->notice(sprintf('Notice: %s::getWorkspace() implicitly created the new workspace "%s". This behaviour is discouraged and will be removed in future versions. Make sure to create workspaces explicitly by adding a new workspace to the Workspace Repository.', __CLASS__, $this->workspaceName), LogEnvironment::fromMethodName(__METHOD__));
         }
 
         if ($this->workspace !== null) {
@@ -267,7 +270,7 @@ class Context
         if ($node !== false) {
             return $node;
         }
-        $nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $this->getWorkspace(), $this->dimensions);
+        $nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $this->getWorkspace(), $this->dimensions, $this->removedContentShown);
         if ($nodeData !== null) {
             $node = $this->nodeFactory->createFromNodeData($nodeData, $this);
         } else {
@@ -288,7 +291,7 @@ class Context
      */
     public function getNodeVariantsByIdentifier($identifier)
     {
-        $nodeVariants = array();
+        $nodeVariants = [];
         $nodeDataElements = $this->nodeDataRepository->findByIdentifierWithoutReduce($identifier, $this->getWorkspace());
         /** @var NodeData $nodeData */
         foreach ($nodeDataElements as $nodeData) {
@@ -317,7 +320,7 @@ class Context
         $endPointPath = ($endPoint instanceof NodeInterface) ? $endPoint->getPath() : $endPoint;
 
         $nodeDataElements = $this->nodeDataRepository->findOnPath($startingPointPath, $endPointPath, $this->getWorkspace(), $this->getDimensions(), $this->isRemovedContentShown());
-        $nodes = array();
+        $nodes = [];
         foreach ($nodeDataElements as $nodeData) {
             $node = $this->nodeFactory->createFromNodeData($nodeData, $this);
             if ($node !== null) {
@@ -339,7 +342,7 @@ class Context
      * new, more specific node is created and returned.
      *
      * @param NodeInterface $node The node with a different context. If the context of the given node is the same as this context the operation will have no effect.
-     * @param boolean $recursive If TRUE also adopt all descendant nodes which are non-aggregate
+     * @param boolean $recursive If true also adopt all descendant nodes which are non-aggregate
      * @return NodeInterface A new or existing node that matches this context
      */
     public function adoptNode(NodeInterface $node, $recursive = false)
@@ -473,7 +476,7 @@ class Context
      */
     public function getProperties()
     {
-        return array(
+        return [
             'workspaceName' => $this->workspaceName,
             'currentDateTime' => $this->currentDateTime,
             'dimensions' => $this->dimensions,
@@ -481,7 +484,7 @@ class Context
             'invisibleContentShown' => $this->invisibleContentShown,
             'removedContentShown' => $this->removedContentShown,
             'inaccessibleContentShown' => $this->inaccessibleContentShown
-        );
+        ];
     }
 
     /**

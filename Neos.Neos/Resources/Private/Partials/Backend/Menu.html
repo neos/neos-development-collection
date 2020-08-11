@@ -3,7 +3,7 @@
 	<div id="neos-menu-panel" class="neos-noscript">
 		<div class="neos-menu-section">
 			<f:link.action package="Neos.Neos" controller="Backend\Backend" action="index" title="{neos:backend.translate(id: 'contentView', value: 'Content View')}" class="neos-menu-headline">
-				<i class="icon-file"></i> {neos:backend.translate(id: 'content', value: 'Content')}
+				<i class="fas fa-file"></i> {neos:backend.translate(id: 'content', value: 'Content')}
 			</f:link.action>
 			<f:if condition="{sites}">
 				<div class="neos-menu-list">
@@ -13,19 +13,19 @@
 								<f:if condition="{modulePath}">
 									<f:then>
 										<a href="{site.uri}" title="{site.nodeName}">
-											<i class="icon-globe"></i> {site.name}
+											<i class="fas fa-globe"></i> {site.name}
 										</a>
 									</f:then>
 									<f:else>
 										<a href="{site.uri}" title="{site.nodeName}" class="{f:if(condition: site.active, then: 'neos-active')}{f:if(condition: '{sites -> f:count()} === 1', then: ' neos-active')}">
-											<i class="icon-globe"></i> {site.name}
+											<i class="fas fa-globe"></i> {site.name}
 										</a>
 									</f:else>
 								</f:if>
 							</f:then>
 							<f:else>
 								<span title="{site.nodeName}" class="neos-menu-item neos-disabled">
-									<i class="icon-globe"></i> {site.name}
+									<i class="fas fa-globe"></i> {site.name}
 								</span>
 							</f:else>
 						</f:if>
@@ -46,7 +46,7 @@
 <f:section name="moduleMenu">
 	<div class="neos-menu-section">
 		<neos:link.module path="{module.modulePath}" class="neos-menu-headline{f:if(condition: '{module.modulePath} === {modulePath}', then: ' neos-active')}">
-			<i class="{f:if(condition: module.icon, then: module.icon, else: 'icon-puzzle-piece')}"></i>
+			<i class="{f:if(condition: module.icon, then: module.icon, else: 'fas fa-puzzle-piece')}"></i>
 			{neos:backend.translate(id: module.label, source: 'Modules', value: module.label)}
 		</neos:link.module>
 		<f:if condition="{module.submodules}">
@@ -65,7 +65,7 @@
 
 <f:section name="submoduleMenu">
 	<neos:link.module path="{submodule.modulePath}" class="{f:if(condition: '{submodule.modulePath} === {modulePath}', then: ' neos-active')}">
-		<i class="{f:if(condition: submodule.icon, then: submodule.icon, else: 'icon-puzzle-piece')}"></i>
+		<i class="{f:if(condition: submodule.icon, then: submodule.icon, else: 'fas fa-puzzle-piece')}"></i>
 		{neos:backend.translate(id: submodule.label, source: 'Modules', value: submodule.label)}
 	</neos:link.module>
 </f:section>

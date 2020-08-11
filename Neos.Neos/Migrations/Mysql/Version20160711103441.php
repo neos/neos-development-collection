@@ -40,7 +40,7 @@ class Version20160711103441 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
 
         $this->addSql('DROP INDEX flow_identity_typo3_neos_domain_model_domain ON typo3_neos_domain_model_domain');
-        $this->addSql('ALTER TABLE typo3_neos_domain_model_domain CHANGE hostname hostpattern VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci');
+        $this->addSql('ALTER TABLE typo3_neos_domain_model_domain CHANGE hostname hostpattern VARCHAR(255) NOT NULL COLLATE utf8mb4_unicode_ci');
         $this->addSql('CREATE UNIQUE INDEX flow_identity_typo3_neos_domain_model_domain ON typo3_neos_domain_model_domain (hostpattern)');
     }
 }

@@ -64,9 +64,9 @@ button,
 		@include opacity(.65);
 	}
 
-	&[class^="icon-"],
-	&[class*=" icon-"] {
-		font-family: FontAwesome;
+	&[class^="fa-"],
+	&[class*=" fa-"] {
+		@extend .fas;
 	}
 
 	&.neos-button-primary {

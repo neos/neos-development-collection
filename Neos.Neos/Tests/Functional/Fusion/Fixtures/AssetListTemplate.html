@@ -1,0 +1,19 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:if condition="{assets}">
+	<f:then>
+		<ul{attributes -> f:format.raw()}>
+			<f:for each="{assets}" as="asset">
+				<li><a href="{f:uri.resource(resource: asset.resource)}">{asset.resource.filename}</a></li>
+			</f:for>
+		</ul>
+	</f:then>
+	<f:else>
+		<f:if condition="{neos:rendering.inEditMode()}">
+			<ul{attributes -> f:format.raw()}>
+				<li>
+					empty asset List
+				</li>
+			</ul>
+		</f:if>
+	</f:else>
+</f:if>

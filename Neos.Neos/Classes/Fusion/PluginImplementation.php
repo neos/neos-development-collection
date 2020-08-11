@@ -12,9 +12,9 @@ namespace Neos\Neos\Fusion;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -46,12 +46,6 @@ class PluginImplementation extends AbstractArrayFusionObject
      * @var NodeInterface
      */
     protected $documentNode;
-
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
 
     /**
      * @return string
@@ -152,7 +146,7 @@ class PluginImplementation extends AbstractArrayFusionObject
         $this->documentNode = $currentContext['documentNode'];
         /** @var $parentResponse Response */
         $parentResponse = $this->runtime->getControllerContext()->getResponse();
-        $pluginResponse = new Response($parentResponse);
+        $pluginResponse = new ActionResponse($parentResponse);
 
         $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
@@ -188,7 +182,7 @@ class PluginImplementation extends AbstractArrayFusionObject
             return $nodeArgumentNamespace;
         }
 
-        $argumentNamespace = str_replace(array(':', '.', '\\'), array('_', '_', '_'), ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController()));
+        $argumentNamespace = str_replace([':', '.', '\\'], ['_', '_', '_'], ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController()));
         $argumentNamespace = strtolower($argumentNamespace);
 
         return $argumentNamespace;

@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2018-08-10
+This reference was automatically generated from code on 2019-03-05
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -31,6 +31,37 @@ Concatenate arrays or values to a new array
 
 **Return** (array) The array with concatenated arrays or values
 
+Array.every(array, callback)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Check if all elements in an array pass a test given by the calback,
+passing each element and key as arguments
+
+Example::
+
+    Array.every([1, 2, 3, 4], x => x % 2 == 0) // == false
+    Array.every([2, 4, 6, 8], x => x % 2) // == true
+
+* ``array`` (array) Array of elements to test
+* ``callback`` (callable) Callback for testing elements, current value and key will be passed as arguments
+
+**Return** (bool) True if all elements passed the test
+
+Array.filter(array, callback)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Filter an array by a test given as the callback, passing each element and key as arguments
+
+Examples:
+
+    Array.filter([1, 2, 3, 4], x => x % 2 == 0) // == [2, 4]
+    Array.filter(['foo', 'bar', 'baz'], (x, index) => index < 2) // == ['foo', 'bar']
+
+* ``array`` (array) Array of elements to filter
+* ``callback`` (callable, *optional*) Callback for testing if an element should be included in the result, current value and key will be passed as arguments
+
+**Return** (array) The array with elements where callback returned true
+
 Array.first(array)
 ^^^^^^^^^^^^^^^^^^
 
@@ -45,7 +76,7 @@ Array.flip(array)
 
 Exchanges all keys with their associated values in an array
 
-Note that the values of array need to be valid keys, i.e. they need to be either integer or string.
+Note that the values of array need to be valid keys, i.e. they need to be either int or string.
 If a value has several occurrences, the latest key will be used as its value, and all others will be lost.
 
 * ``array`` (array)
@@ -55,11 +86,14 @@ If a value has several occurrences, the latest key will be used as its value, an
 Array.indexOf(array, searchElement, fromIndex)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``array`` (array)
-* ``searchElement`` (mixed)
-* ``fromIndex`` (integer, *optional*)
+Returns the first index at which a given element can be found in the array,
+or -1 if it is not present
 
-**Return** (mixed)
+* ``array`` (array) The array
+* ``searchElement`` (mixed) The element value to find
+* ``fromIndex`` (int, *optional*) Position in the array to start the search.
+
+**Return** (int)
 
 Array.isEmpty(array)
 ^^^^^^^^^^^^^^^^^^^^
@@ -68,7 +102,7 @@ Check if an array is empty
 
 * ``array`` (array) The array
 
-**Return** (boolean) TRUE if the array is empty
+**Return** (bool) true if the array is empty
 
 Array.join(array, separator)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -105,7 +139,22 @@ Get the length of an array
 
 * ``array`` (array) The array
 
-**Return** (integer)
+**Return** (int)
+
+Array.map(array, callback)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Apply the callback to each element of the array, passing each element and key as arguments
+
+Examples::
+
+    Array.map([1, 2, 3, 4], x => x * x)
+    Array.map([1, 2, 3, 4], (x, index) => x * index)
+
+* ``array`` (array) Array of elements to map
+* ``callback`` (callable) Callback to apply for each element, current value and key will be passed as arguments
+
+**Return** (array) The array with callback applied, keys will be preserved
 
 Array.pop(array)
 ^^^^^^^^^^^^^^^^
@@ -141,7 +190,7 @@ Picks a random element from the array
 
 * ``array`` (array)
 
-**Return** (mixed) A random entry or NULL if the array is empty
+**Return** (mixed) A random entry or null if the array is empty
 
 Array.range(start, end, step)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -153,9 +202,25 @@ step should be given as a positive number. If not specified, step will default t
 
 * ``start`` (mixed) First value of the sequence.
 * ``end`` (mixed) The sequence is ended upon reaching the end value.
-* ``step`` (integer, *optional*) The increment between items, will default to 1.
+* ``step`` (int, *optional*) The increment between items, will default to 1.
 
 **Return** (array) Array of elements from start to end, inclusive.
+
+Array.reduce(array, callback, initialValue)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Apply the callback to each element of the array and accumulate a single value
+
+Examples::
+
+    Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue) // == 10
+    Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue, 1) // == 11
+
+* ``array`` (array) Array of elements to reduce to a value
+* ``callback`` (callable) Callback for accumulating values, accumulator, current value and key will be passed as arguments
+* ``initialValue`` (mixed, *optional*) Initial value, defaults to first item in array and callback starts with second entry
+
+**Return** (mixed)
 
 Array.reverse(array)
 ^^^^^^^^^^^^^^^^^^^^
@@ -165,6 +230,17 @@ Returns an array in reverse order
 * ``array`` (array) The array
 
 **Return** (array)
+
+Array.set(array, key, value)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Set the specified key in the the array
+
+* ``array`` (array)
+* ``key`` (string|integer) the key that should be set
+* ``value`` (mixed) the value to assign to the key
+
+**Return** (array) The modified array.
 
 Array.shift(array)
 ^^^^^^^^^^^^^^^^^^
@@ -185,10 +261,10 @@ Array.shuffle(array, preserveKeys)
 Shuffle an array
 
 Randomizes entries an array with the option to preserve the existing keys.
-When this option is set to FALSE, all keys will be replaced
+When this option is set to false, all keys will be replaced
 
 * ``array`` (array)
-* ``preserveKeys`` (boolean, *optional*) Wether to preserve the keys when shuffling the array
+* ``preserveKeys`` (bool, *optional*) Wether to preserve the keys when shuffling the array
 
 **Return** (array) The shuffled array
 
@@ -198,10 +274,26 @@ Array.slice(array, begin, end)
 Extract a portion of an indexed array
 
 * ``array`` (array) The array (with numeric indices)
-* ``begin`` (string)
-* ``end`` (string, *optional*)
+* ``begin`` (int)
+* ``end`` (int, *optional*)
 
 **Return** (array)
+
+Array.some(array, callback)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Check if at least one element in an array passes a test given by the calback,
+passing each element and key as arguments
+
+Example::
+
+    Array.some([1, 2, 3, 4], x => x % 2 == 0) // == true
+    Array.some([1, 2, 3, 4], x => x > 4) // == false
+
+* ``array`` (array) Array of elements to test
+* ``callback`` (callable) Callback for testing elements, current value and key will be passed as arguments
+
+**Return** (bool) True if at least one element passed the test
 
 Array.sort(array)
 ^^^^^^^^^^^^^^^^^
@@ -227,8 +319,8 @@ Allows to give multiple replacements at once::
     Array.splice(array, 3, 2, 'a', 'b')
 
 * ``array`` (array)
-* ``offset`` (integer) Index of the first element to remove
-* ``length`` (integer, *optional*) Number of elements to remove
+* ``offset`` (int) Index of the first element to remove
+* ``length`` (int, *optional*) Number of elements to remove
 * ``replacements`` (mixed, *optional*) Elements to insert instead of the removed range
 
 **Return** (array) The array with removed and replaced elements
@@ -323,6 +415,20 @@ Add an interval to a date and return a new DateTime object
 
 * ``date`` (\DateTime)
 * ``interval`` (string|\DateInterval)
+
+**Return** (\DateTime)
+
+Date.create(time)
+^^^^^^^^^^^^^^^^^
+
+Get a date object by given date or time format
+
+Examples::
+
+    Date.create('2018-12-04')
+    Date.create('first day of next year')
+
+* ``time`` (String) A date/time string. For valid formats see http://php.net/manual/en/datetime.formats.php
 
 **Return** (\DateTime)
 
@@ -456,6 +562,54 @@ Get the year of a date
 
 
 
+.. _`Eel Helpers Reference: File`:
+
+File
+----
+
+Helper to read files.
+
+Implemented in: ``Neos\Eel\Helper\FileHelper``
+
+File.fileInfo(filepath)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Get file name and path information
+
+* ``filepath`` (string)
+
+**Return** (array) with keys dirname, basename, extension (if any), and filename
+
+File.getSha1(filepath)
+^^^^^^^^^^^^^^^^^^^^^^
+
+* ``filepath`` (string)
+
+**Return** (string)
+
+File.readFile(filepath)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Read and return the files contents for further use.
+
+* ``filepath`` (string)
+
+**Return** (string)
+
+File.stat(filepath)
+^^^^^^^^^^^^^^^^^^^
+
+Get file information like creation and modification times as well as size.
+
+* ``filepath`` (string)
+
+**Return** (array) with keys mode, uid, gid, size, atime, mtime, ctime, (blksize, blocks, dev, ino, nlink, rdev)
+
+
+
+
+
+
 .. _`Eel Helpers Reference: Json`:
 
 Json
@@ -475,12 +629,17 @@ JSON decode the given string
 
 **Return** (mixed)
 
-Json.stringify(value)
-^^^^^^^^^^^^^^^^^^^^^
+Json.stringify(value, options)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 JSON encode the given value
 
+Usage example for options:
+
+Json.stringify(value, ['JSON_UNESCAPED_UNICODE', 'JSON_FORCE_OBJECT'])
+
 * ``value`` (mixed)
+* ``options`` (array, *optional*) Array of option constant names as strings
 
 **Return** (string)
 
@@ -667,7 +826,7 @@ This is equivalent to the global isFinite() function in JavaScript.
 
 * ``x`` (mixed) A value
 
-**Return** (boolean) TRUE if the value is a finite (not NAN) number
+**Return** (boolean) true if the value is a finite (not NAN) number
 
 Math.isInfinite(x)
 ^^^^^^^^^^^^^^^^^^
@@ -678,7 +837,7 @@ This function has no direct equivalent in JavaScript.
 
 * ``x`` (mixed) A value
 
-**Return** (boolean) TRUE if the value is INF or -INF
+**Return** (boolean) true if the value is INF or -INF
 
 Math.isNaN(x)
 ^^^^^^^^^^^^^
@@ -689,7 +848,7 @@ This is equivalent to the global isNaN() function in JavaScript.
 
 * ``x`` (mixed) A value
 
-**Return** (boolean) TRUE if the value is not a number
+**Return** (boolean) true if the value is not a number
 
 Math.log(x)
 ^^^^^^^^^^^
@@ -857,7 +1016,7 @@ Implemented in: ``Neos\Neos\Fusion\Helper\ArrayHelper``
 Neos.Array.filter(set, filterProperty)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to TRUE.
+Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to true.
 
 * ``set`` (array|Collection)
 * ``filterProperty`` (string)
@@ -867,7 +1026,7 @@ Filter an array of objects, by only keeping the elements where each object's $fi
 Neos.Array.filterNegated(set, filterProperty)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to FALSE.
+Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to false.
 
 * ``set`` (array|Collection)
 * ``filterProperty`` (string)
@@ -921,8 +1080,19 @@ given nodes (for any variant) is updated.
 
 **Return** (array)
 
-Neos.Caching.nodeTypeTag(nodeType)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Neos.Caching.nodeTagForIdentifier(identifier, contextNode)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate a `@cache` entry tag for a single node identifier. If a NodeInterface $contextNode is given the
+entry tag will respect the workspace hash.
+
+* ``identifier`` (string)
+* ``contextNode`` (NodeInterface|null, *optional*)
+
+**Return** (string)
+
+Neos.Caching.nodeTypeTag(nodeType, contextNode)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Generate an `@cache` entry tag for a node type
 A cache entry with this tag will be flushed whenever a node
@@ -930,8 +1100,16 @@ A cache entry with this tag will be flushed whenever a node
 (including inheritance) is updated.
 
 * ``nodeType`` (string|NodeType|string[]|NodeType[])
+* ``contextNode`` (NodeInterface|null, *optional*)
 
 **Return** (string|string[])
+
+Neos.Caching.renderWorkspaceTagForContextNode(workspaceName)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``workspaceName`` (string)
+
+**Return** (string)
 
 
 
@@ -999,6 +1177,17 @@ Eel helper for ContentRepository Nodes
 
 Implemented in: ``Neos\Neos\Fusion\Helper\NodeHelper``
 
+Neos.Node.isOfType(node, nodeType)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If this node type or any of the direct or indirect super types
+has the given name.
+
+* ``node`` (NodeInterface)
+* ``nodeType`` (string)
+
+**Return** (bool)
+
 Neos.Node.nearestContentCollection(node, nodePath)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1050,23 +1239,6 @@ Render a human-readable description for the passed $dimensions
 * ``dimensions`` (array)
 
 **Return** (string)
-
-
-
-
-
-
-.. _`Eel Helpers Reference: Neos.Ui.Activation`:
-
-Neos.Ui.Activation
-------------------
-
-
-
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\ActivationHelper``
-
-Neos.Ui.Activation.isLegacyBackendEnabled()
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
@@ -1238,7 +1410,7 @@ NodeInfo.renderNodeWithMinimalPropertiesAndChildrenInformation(node, controllerC
 * ``controllerContext`` (ControllerContext|null, *optional*)
 * ``nodeTypeFilterOverride`` (string, *optional*)
 
-**Return** (array)
+**Return** (array|null)
 
 NodeInfo.renderNodeWithPropertiesAndChildrenInformation(node, controllerContext, nodeTypeFilterOverride)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1247,7 +1419,7 @@ NodeInfo.renderNodeWithPropertiesAndChildrenInformation(node, controllerContext,
 * ``controllerContext`` (ControllerContext|null, *optional*)
 * ``nodeTypeFilterOverride`` (string, *optional*)
 
-**Return** (array)
+**Return** (array|null)
 
 NodeInfo.renderNodes(nodes, controllerContext, omitMostPropertiesForTreeState)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1288,6 +1460,13 @@ Helper for security related information
 
 Implemented in: ``Neos\Eel\Helper\SecurityHelper``
 
+Security.csrfToken()
+^^^^^^^^^^^^^^^^^^^^
+
+Returns CSRF token which is required for "unsafe" requests (e.g. POST, PUT, DELETE, ...)
+
+**Return** (string)
+
 Security.getAccount()
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -1295,15 +1474,32 @@ Get the account of the first authenticated token.
 
 **Return** (Account|NULL)
 
+Security.hasAccess(privilegeTarget, parameters)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns true, if access to the given privilege-target is granted
+
+* ``privilegeTarget`` (string) The identifier of the privilege target to decide on
+* ``parameters`` (array, *optional*) Optional array of privilege parameters (simple key => value array)
+
+**Return** (boolean) true if access is granted, false otherwise
+
 Security.hasRole(roleIdentifier)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Returns TRUE, if at least one of the currently authenticated accounts holds
+Returns true, if at least one of the currently authenticated accounts holds
 a role with the given identifier, also recursively.
 
 * ``roleIdentifier`` (string) The string representation of the role to search for
 
-**Return** (boolean) TRUE, if a role with the given string representation was found
+**Return** (boolean) true, if a role with the given string representation was found
+
+Security.isAuthenticated()
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns true, if any account is currently authenticated
+
+**Return** (boolean) true if any account is authenticated
 
 
 
@@ -1319,6 +1515,25 @@ String helpers for Eel contexts
 
 Implemented in: ``Neos\Eel\Helper\StringHelper``
 
+String.base64decode(string, strict)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Implementation of the PHP base64_decode function
+
+* ``string`` (string) The encoded data.
+* ``strict`` (bool, *optional*) If TRUE this function will return FALSE if the input contains character from outside the base64 alphabet.
+
+**Return** (string|bool) The decoded data or FALSE on failure. The returned data may be binary.
+
+String.base64encode(string)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Implementation of the PHP base64_encode function
+
+* ``string`` (string) The data to encode.
+
+**Return** (string) The encoded data
+
 String.charAt(string, index)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1332,6 +1547,21 @@ Example::
 * ``index`` (integer) The index to get
 
 **Return** (string) The character at the given index
+
+String.chr(value)
+^^^^^^^^^^^^^^^^^
+
+Generate a single-byte string from a number
+
+Example::
+
+    String.chr(65) == "A"
+
+This is a wrapper for the chr() PHP function.
+
+* ``value`` (int) An integer between 0 and 255
+
+**Return** (string) A single-character string containing the specified byte
 
 String.crop(string, maximumCharacters, suffix)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1381,7 +1611,7 @@ Example::
 * ``search`` (string) A string to search
 * ``position`` (integer, *optional*) Optional position for limiting the string
 
-**Return** (boolean) TRUE if the string ends with the given search
+**Return** (boolean) true if the string ends with the given search
 
 String.firstLetterToLowerCase(string)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1408,6 +1638,16 @@ Example::
 * ``string`` (string) The input string
 
 **Return** (string) The string with the first letter in uppercase
+
+String.format(format, args)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Implementation of the PHP vsprintf function
+
+* ``format`` (string) A formatting string containing directives
+* ``args`` (array) An array of values to be inserted according to the formatting string $format
+
+**Return** (string) A string produced according to the formatting string $format
 
 String.htmlSpecialChars(string, preserveEntities)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1477,9 +1717,43 @@ String.md5(string)
 
 Calculate the MD5 checksum of the given string
 
+Example::
+
+    String.md5("joh316") == "bacb98acf97e0b6112b1d1b650b84971"
+
 * ``string`` (string) The string to hash
 
 **Return** (string) The MD5 hash of ``string``
+
+String.nl2br(string)
+^^^^^^^^^^^^^^^^^^^^
+
+Insert HTML line breaks before all newlines in a string
+
+Example::
+
+    String.nl2br(someStingWithLinebreaks) == 'line1<br />line2'
+
+This is a wrapper for the nl2br() PHP function.
+
+* ``string`` (string) The input string
+
+**Return** (string) The string with new lines replaced
+
+String.ord(string)
+^^^^^^^^^^^^^^^^^^
+
+Convert the first byte of a string to a value between 0 and 255
+
+Example::
+
+    String.ord('A') == 65
+
+This is a wrapper for the ord() PHP function.
+
+* ``string`` (string) A character
+
+**Return** (int) An integer between 0 and 255
 
 String.pregMatch(string, pattern)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1578,6 +1852,19 @@ Note: this method does not perform regular expression matching, @see pregReplace
 
 **Return** (string) The string with all occurrences replaced
 
+String.sha1(string)
+^^^^^^^^^^^^^^^^^^^
+
+Calculate the SHA1 checksum of the given string
+
+Example::
+
+    String.sha1("joh316") == "063b3d108bed9f88fa618c6046de0dccadcf3158"
+
+* ``string`` (string) The string to hash
+
+**Return** (string) The SHA1 hash of ``string``
+
 String.split(string, separator, limit)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1671,7 +1958,7 @@ String.toBoolean(string)
 
 Convert a string to boolean
 
-A value is ``true``, if it is either the string ``"TRUE"`` or ``"true"`` or the number ``1``.
+A value is ``true``, if it is either the string ``"true"`` or ``"true"`` or the number ``1``.
 
 * ``string`` (string) The string to convert
 
@@ -1781,7 +2068,7 @@ translated label.
 
 * ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
 * ``originalLabel`` (string, *optional*) The original translation value (the untranslated source string).
-* ``arguments`` (array, *optional*) Numerically indexed array of values to be inserted into placeholders
+* ``arguments`` (array, *optional*) Array of numerically indexed or named values to be inserted into placeholders. Have a look at the internationalization documentation in the definitive guide for details.
 * ``source`` (string, *optional*) Name of file with translations
 * ``package`` (string, *optional*) Target package key. If not set, the current package key will be used
 * ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms

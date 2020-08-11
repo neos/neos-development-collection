@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Migration\Transformations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
@@ -56,7 +55,7 @@ class RenameProperty extends AbstractTransformation
     }
 
     /**
-     * Returns TRUE if the given node has a property with the name to work on
+     * Returns true if the given node has a property with the name to work on
      * and does not yet have a property with the name to rename that property to.
      *
      * @param NodeData $node

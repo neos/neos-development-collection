@@ -18,27 +18,27 @@ class ConditionsTest extends AbstractFusionObjectTest
 {
     public function conditionExamples()
     {
-        return array(
-            array('conditions/simpleValueTrue', 'Foo'),
-            array('conditions/simpleValueFalse', null),
-            array('conditions/simpleValueAtLeastOneFalse', null),
-            array('conditions/expressionTrue', 'Foo'),
-            array('conditions/expressionFalse', null),
-            array('conditions/expressionAtLeastOneFalse', null),
-            array('conditions/objectTrue', 'Foo'),
-            array('conditions/objectFalse', null),
-            array('conditions/objectAtLeastOneFalse', null),
-            array('conditions/objectThis', null),
-            array('conditions/rawArray', array('key' => 'foo', 'nullValue' => null)),
-            array('conditions/attributes', ' key="foo"'),
-            array('conditions/supportForConditionInProcess', 'wrappedValue'),
-            array('conditions/supportForConditionInProcessFalse', 'originalValue'),
-            array('conditions/supportForConditionInProcessWithAdvancedProcess', 'wrappedValue'),
-            array('conditions/supportForConditionInProcessWithAdvancedProcessFalse', 'originalValue'),
-            array('conditions/processorOnSimpleValueWithCondition', null),
-            array('conditions/processorOnExpressionWithCondition', null),
-            array('conditions/processorOnObjectWithCondition', null)
-        );
+        return [
+            ['conditions/simpleValueTrue', 'Foo'],
+            ['conditions/simpleValueFalse', null],
+            ['conditions/simpleValueAtLeastOneFalse', null],
+            ['conditions/expressionTrue', 'Foo'],
+            ['conditions/expressionFalse', null],
+            ['conditions/expressionAtLeastOneFalse', null],
+            ['conditions/objectTrue', 'Foo'],
+            ['conditions/objectFalse', null],
+            ['conditions/objectAtLeastOneFalse', null],
+            ['conditions/objectThis', null],
+            ['conditions/rawArray', ['key' => 'foo', 'nullValue' => null]],
+            ['conditions/attributes', ' key="foo"'],
+            ['conditions/supportForConditionInProcess', 'wrappedValue'],
+            ['conditions/supportForConditionInProcessFalse', 'originalValue'],
+            ['conditions/supportForConditionInProcessWithAdvancedProcess', 'wrappedValue'],
+            ['conditions/supportForConditionInProcessWithAdvancedProcessFalse', 'originalValue'],
+            ['conditions/processorOnSimpleValueWithCondition', null],
+            ['conditions/processorOnExpressionWithCondition', null],
+            ['conditions/processorOnObjectWithCondition', null]
+        ];
     }
 
     /**
@@ -55,19 +55,19 @@ class ConditionsTest extends AbstractFusionObjectTest
 
     public function valuesForCondition()
     {
-        return array(
-            array(false, null),
-            array(true, 'Rendered'),
-            array(null, null),
-            array(1, 'Rendered'),
-            array('', null),
-            array('0', null),
-            array('Foo', 'Rendered'),
-            array(0, null),
-            array(-1, 'Rendered'),
-            array([], null),
-            array([12], 'Rendered')
-        );
+        return [
+            [false, null],
+            [true, 'Rendered'],
+            [null, null],
+            [1, 'Rendered'],
+            ['', null],
+            ['0', null],
+            ['Foo', 'Rendered'],
+            [0, null],
+            [-1, 'Rendered'],
+            [[], null],
+            [[12], 'Rendered']
+        ];
     }
 
     /**

@@ -73,7 +73,7 @@ function(
 							'nodeType': nodeTypeName,
 							'label': label,
 							'helpMessage': helpMessage,
-							'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
+							'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'fas fa-file',
 							'position': type.metadata.ui.position
 						});
 					} else {

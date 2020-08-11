@@ -10,7 +10,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 	htmlTag = Neos.Fusion:Tag {
 		@position = 'start'
 		tagName = 'html'
-		omitClosingTag = TRUE
+		omitClosingTag = true
 
 		attributes {
 			version = 'HTML+RDFa 1.1'
@@ -33,7 +33,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 	headTag = Neos.Fusion:Tag {
 		@position = 'after htmlTag'
 		tagName = 'head'
-		omitClosingTag = TRUE
+		omitClosingTag = true
 	}
 
 	# The content of the head tag, integrators can add their own head content in this array.
@@ -105,7 +105,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 	bodyTag = Neos.Fusion:Tag {
 		@position = '20'
 		tagName = 'body'
-		omitClosingTag = TRUE
+		omitClosingTag = true
 		attributes.class.@process.addNeosBackendClass = Neos.Fusion:Case {
 			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 
@@ -131,7 +131,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		tagName = 'div'
 		@position = 'after neosBackendDocumentNodeData'
 		attributes = Neos.Fusion:Attributes {
-			data-preview-uri = NodeUri {
+			data-preview-uri = Neos.Neos:NodeUri {
 				node = ${q(documentNode).context({'workspaceName': documentNode.context.workspace.baseWorkspace.name}).get(0)}
 			}
 		}
@@ -203,9 +203,11 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 			documentNode = ${node}
 		}
 		entryTags {
-			1 = ${'Node_' + node.identifier}
+			1 = ${Neos.Caching.nodeTag(node)}
 		}
 	}
+
+  @process.debugDump = Neos.Fusion:DebugDump
 
 	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
 }

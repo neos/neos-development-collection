@@ -6,8 +6,8 @@
 somepath.stringValue = "A string value"
 
 somepath {
-	booleanValueFalse = FALSE
-	booleanValueTrue = TRUE
+	booleanValueFalse = false
+	booleanValueTrue = true
 	nullValue = NULL
 	integerValue = 42
 }

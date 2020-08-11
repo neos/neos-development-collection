@@ -2,7 +2,7 @@
 <div class="neos-row neos-module-container">
 	<fieldset class="neos-span12">
 		<f:form.hidden property="site" value="{f:if(condition: domain.site, then: domain.site, else: site)}" />
-		<legend>{neos:backend.translate(id: 'domainform.domainData', value: 'Domain data')}</legend>
+		<legend>{neos:backend.translate(id: 'domainform.domainData', value: 'Domain data', source: 'Modules')}</legend>
 
 		<div class="neos-row">
 			<div class="neos-span2">
@@ -21,7 +21,7 @@
 							<div class="neos-control-group neos-error">
 								<label class="neos-control-label" for="host">{neos:backend.translate(id: 'host', value: 'Host')}</label>
 								<div class="neos-controls">
-									<f:form.textfield property="hostname" value="{domain.hostname}" id="host" class="neos-span6" placeholder="{neos:backend.translate(id: 'domainform.hostPlaceholder', value: 'e.g. www.neos.io')}" />
+									<f:form.textfield property="hostname" value="{domain.hostname}" id="host" class="neos-span6" placeholder="{neos:backend.translate(id: 'domainform.hostPlaceholder', value: 'e.g. www.neos.io', source: 'Modules')}" />
 									<ul class="errors">
 										<f:for each="{validationResults.errors}" as="error">
 											<li><span class="neos-help-block">{error}</span></li>
@@ -34,7 +34,7 @@
 							<div class="neos-control-group{f:validation.ifHasErrors(for: 'domain.hostname', then: ' neos-error')}">
 								<label class="neos-control-label" for="host">{neos:backend.translate(id: 'host', value: 'Host')}</label>
 								<div class="neos-controls">
-									<f:form.textfield property="hostname" value="{domain.hostname}" id="host" class="neos-span6" placeholder="{neos:backend.translate(id: 'domainform.hostPlaceholder', value: 'e.g. www.neos.io')}" />
+									<f:form.textfield property="hostname" value="{domain.hostname}" id="host" class="neos-span6" placeholder="{neos:backend.translate(id: 'domainform.hostPlaceholder', value: 'e.g. www.neos.io', source: 'Modules')}" />
 									<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'domain.hostname'}"/>
 								</div>
 							</div>
@@ -53,7 +53,7 @@
 			</div>
 		</div>
 		<div class="neos-control-group">
-			<label class="neos-control-label" for="active">{neos:backend.translate(id: 'domainform.state', value: 'State')}</label>
+			<label class="neos-control-label" for="active">{neos:backend.translate(id: 'domainform.state', value: 'State', source: 'Modules')}</label>
 			<div class="neos-controls">
 				<label class="neos-radio neos-inline">
 					<f:if condition="{domain}">

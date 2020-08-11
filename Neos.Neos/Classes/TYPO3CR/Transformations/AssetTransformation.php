@@ -11,7 +11,7 @@ namespace Neos\Neos\TYPO3CR\Transformations;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -35,10 +35,10 @@ class AssetTransformation extends AbstractTransformation
     protected $persistenceManager;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related interface.
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -86,10 +86,10 @@ class AssetTransformation extends AbstractTransformation
                 $objectType = TypeHandling::getTypeForValue($assetObject);
                 $objectIdentifier = ObjectAccess::getProperty($assetObject, 'Persistence_Object_Identifier', true);
 
-                $nodeProperties[$propertyName] = array(
+                $nodeProperties[$propertyName] = [
                     '__flow_object_type' => $objectType,
                     '__identifier' => $objectIdentifier
-                );
+                ];
             }
         }
 
@@ -104,11 +104,11 @@ class AssetTransformation extends AbstractTransformation
      */
     protected function getHandledObjectTypes()
     {
-        return array(
+        return [
             Asset::class,
             Audio::class,
             Document::class,
             Video::class
-        );
+        ];
     }
 }
