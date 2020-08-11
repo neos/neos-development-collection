@@ -72,10 +72,24 @@ class ModuleViewHelperTest extends UnitTestCase
     public function callingRenderCallsTheUriModuleViewHelpersRenderMethodWithTheCorrectArguments()
     {
         $this->uriModuleViewHelper->expects($this->once())->method('render')->with(
-            'path', 'action', ['arguments'], 'section', 'format', ['additionalParams'], 'addQueryString', ['argumentsToBeExcludedFromQueryString']
+            'path',
+            'action',
+            ['arguments'],
+            'section',
+            'format',
+            ['additionalParams'],
+            'addQueryString',
+            ['argumentsToBeExcludedFromQueryString']
         );
         $this->viewHelper->render(
-            'path', 'action', ['arguments'], 'section', 'format', ['additionalParams'], 'addQueryString', ['argumentsToBeExcludedFromQueryString']
+            'path',
+            'action',
+            ['arguments'],
+            'section',
+            'format',
+            ['additionalParams'],
+            'addQueryString',
+            ['argumentsToBeExcludedFromQueryString']
         );
     }
 
