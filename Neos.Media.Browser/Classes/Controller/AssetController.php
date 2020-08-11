@@ -437,7 +437,7 @@ class AssetController extends ActionController
                 'overviewAction' => $overviewAction,
                 'originalInformation' => (new ImageMapper($asset))->getMappingResult(),
                 'variantsInformation' => $variantInformation,
-                'useParentRequest' => !$this->request->isMainRequest()
+                'isSubRequest' => !$this->request->isMainRequest()
             ]);
         } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
