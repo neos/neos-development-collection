@@ -13,7 +13,8 @@ namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Uri;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Property\PropertyMapper;
@@ -97,7 +98,7 @@ class LinkingService
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -117,7 +118,7 @@ class LinkingService
      * @param string|Uri $uri
      * @return boolean
      */
-    public function hasSupportedScheme($uri)
+    public function hasSupportedScheme($uri): bool
     {
         if ($uri instanceof Uri) {
             $uri = (string)$uri;
@@ -129,7 +130,7 @@ class LinkingService
      * @param string|Uri $uri
      * @return string
      */
-    public function getScheme($uri)
+    public function getScheme($uri): string
     {
         if ($uri instanceof Uri) {
             return $uri->getScheme();
@@ -149,13 +150,17 @@ class LinkingService
      * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
      * @param bool $absolute
-     * @return string
+     * @return string|null If the node cannot be resolved, null is returned
+     * @throws NeosException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext, $absolute = false)
+    public function resolveNodeUri(string $uri, NodeInterface $contextNode, ControllerContext $controllerContext, bool $absolute = false): ?string
     {
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
-            $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri));
+            $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
         return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
@@ -165,13 +170,13 @@ class LinkingService
      * Resolves a given asset:// URI to a "normal" HTTP(S) URI for the addressed asset's resource.
      *
      * @param string|Uri $uri
-     * @return string
+     * @return string|null If the URI cannot be resolved, null is returned
      */
-    public function resolveAssetUri($uri)
+    public function resolveAssetUri(string $uri): ?string
     {
         $targetObject = $this->convertUriToObject($uri);
         if ($targetObject === null) {
-            $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri));
+            $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
         return $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
@@ -217,13 +222,15 @@ class LinkingService
      * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
      * @param string $section
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
+     * @param boolean $resolveShortcuts INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @return string The rendered URI
-     * @throws \InvalidArgumentException if the given node/baseNode is not valid
      * @throws NeosException if no URI could be resolved for the given node
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $resolveShortcuts = true)
+    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
     {
         $this->lastLinkedNode = null;
         if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
@@ -233,7 +240,7 @@ class LinkingService
         if (is_string($node)) {
             $nodeString = $node;
             if ($nodeString === '') {
-                throw new NeosException(sprintf('Empty strings can not be resolved to nodes.', $nodeString), 1415709942);
+                throw new NeosException(sprintf('Empty strings can not be resolved to nodes.'), 1415709942);
             }
             preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $nodeString, $matches);
             if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {
@@ -286,7 +293,7 @@ class LinkingService
             ->setAddQueryString($addQueryString)
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
             ->setFormat($format ?: $request->getFormat())
-            ->uriFor('show', array('node' => $resolvedNode), 'Frontend\Node', 'Neos.Neos');
+            ->uriFor('show', ['node' => $resolvedNode], 'Frontend\Node', 'Neos.Neos');
 
         $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
         if ($siteNode instanceof NodeInterface && NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
@@ -309,7 +316,9 @@ class LinkingService
                 $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
             }
         } elseif ($absolute === true) {
-            $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+            if (substr($uri, 0, 7) !== 'http://' && substr($uri, 0, 8) !== 'https://') {
+                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+            }
         }
 
         return $uri;
@@ -321,7 +330,7 @@ class LinkingService
      * @return string
      * @throws NeosException
      */
-    public function createSiteUri(ControllerContext $controllerContext, Site $site)
+    public function createSiteUri(ControllerContext $controllerContext, Site $site): string
     {
         $primaryDomain = $site->getPrimaryDomain();
         if ($primaryDomain === null) {
@@ -345,7 +354,7 @@ class LinkingService
      *
      * @return NodeInterface
      */
-    public function getLastLinkedNode()
+    public function getLastLinkedNode(): ?NodeInterface
     {
         return $this->lastLinkedNode;
     }

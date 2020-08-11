@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Migration\Filters;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
@@ -20,7 +19,7 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 class IsRemoved implements FilterInterface
 {
     /**
-     * Returns TRUE if the given node is removed
+     * Returns true if the given node is removed
      *
      * @param NodeData $node
      * @return boolean

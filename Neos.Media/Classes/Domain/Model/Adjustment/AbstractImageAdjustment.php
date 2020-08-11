@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\Model\Adjustment;
 
 /*
@@ -27,12 +29,12 @@ abstract class AbstractImageAdjustment extends AbstractAdjustment implements Ima
      * Order in which the adjustment is applied to the ImageVariant
      *
      * @var integer
-     * @ORM\Column(nullable = FALSE)
+     * @ORM\Column(nullable = false)
      */
     protected $position;
 
     /**
-     * @var \Neos\Media\Domain\Model\ImageVariant
+     * @var ImageVariant
      * @ORM\ManyToOne(inversedBy="adjustments", cascade={"all"})
      */
     protected $imageVariant;
@@ -52,7 +54,7 @@ abstract class AbstractImageAdjustment extends AbstractAdjustment implements Ima
     /**
      * @return integer
      */
-    public function getPosition()
+    public function getPosition(): int
     {
         return $this->position;
     }
@@ -60,7 +62,7 @@ abstract class AbstractImageAdjustment extends AbstractAdjustment implements Ima
     /**
      * @param integer $position
      */
-    public function setPosition($position)
+    public function setPosition(int $position)
     {
         $this->position = $position;
     }

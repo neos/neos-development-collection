@@ -39,7 +39,7 @@ class ArrayConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array(AssetInterface::class, ImageInterface::class, Image::class, Asset::class);
+    protected $sourceTypes = [AssetInterface::class, ImageInterface::class, Image::class, Asset::class];
 
     /**
      * @var string
@@ -71,9 +71,9 @@ class ArrayConverter extends AbstractTypeConverter
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {
-        $sourceChildPropertiesToBeConverted = array(
+        $sourceChildPropertiesToBeConverted = [
             'resource' => $source->getResource()
-        );
+        ];
 
         if ($source instanceof AssetVariantInterface) {
             $sourceChildPropertiesToBeConverted['originalAsset'] = $source->getOriginalAsset();
@@ -107,7 +107,7 @@ class ArrayConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return array The converted asset or NULL
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $identity = $this->persistenceManager->getIdentifierByObject($source);
         switch (true) {
@@ -118,12 +118,12 @@ class ArrayConverter extends AbstractTypeConverter
 
                 $convertedChildProperties['originalAsset']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getOriginalAsset());
 
-                return array(
+                return [
                     '__identity' => $identity,
                     '__type' => \Neos\Media\Domain\Model\ImageVariant::class,
                     'originalAsset' => $convertedChildProperties['originalAsset'],
                     'adjustments' => $convertedChildProperties['adjustments']
-                );
+                ];
             case $source instanceof AssetInterface:
                 if (!isset($convertedChildProperties['resource']) || !is_array($convertedChildProperties['resource'])) {
                     return null;
@@ -131,12 +131,14 @@ class ArrayConverter extends AbstractTypeConverter
 
                 $convertedChildProperties['resource']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getResource());
 
-                return array(
+                return [
                     '__identity' => $identity,
                     '__type' => \Neos\Utility\TypeHandling::getTypeForValue($source),
                     'title' => $source->getTitle(),
+                    'copyrightNotice' => $source->getCopyrightNotice(),
+                    'caption' => $source->getCaption(),
                     'resource' => $convertedChildProperties['resource']
-                );
+                ];
         }
     }
 }

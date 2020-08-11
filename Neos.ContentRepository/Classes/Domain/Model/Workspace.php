@@ -344,7 +344,7 @@ class Workspace
      */
     public function getBaseWorkspaces()
     {
-        $baseWorkspaces = array();
+        $baseWorkspaces = [];
         $baseWorkspace = $this->baseWorkspace;
 
         while ($baseWorkspace !== null) {

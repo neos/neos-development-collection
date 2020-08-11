@@ -32,8 +32,8 @@ class RemoveNodePrivilege extends AbstractNodePrivilege
             throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', RemoveNodePrivilege::class, NodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417017296);
         }
 
-        $this->initialize();
         if ($subject instanceof MethodPrivilegeSubject) {
+            $this->initializeMethodPrivilege();
             if ($this->methodPrivilege->matchesSubject($subject) === false) {
                 return false;
             }

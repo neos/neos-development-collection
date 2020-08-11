@@ -1,0 +1,37 @@
+prototype(Neos.Fusion:Reduce).@class = 'Neos\\Fusion\\FusionObjects\\ReduceImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+reduce.basicLoop = Neos.Fusion:Reduce {
+  items = ${items}
+  itemName = 'element'
+  carryName = 'carry'
+  initialValue = ${initialValue}
+  itemReducer = Neos.Fusion:TestRenderer {
+    test = ${carry + element}
+  }
+}
+
+reduce.additionLoop = Neos.Fusion:Reduce {
+  items = ${items}
+  itemName = 'element'
+  carryName = 'carry'
+  initialValue = ${initialValue}
+  itemReducer = ${carry + element}
+}
+
+reduce.basicLoopOtherContextVariables = Neos.Fusion:Reduce {
+  items = ${items}
+  itemName = 'element'
+  carryName = 'carry'
+  itemReducer = Neos.Fusion:TestRenderer {
+    test = ${carry + element + other}
+  }
+}
+
+reduce.iteration = Neos.Fusion:Reduce {
+  items = ${items}
+  itemName = 'element'
+  carryName = 'carry'
+  iterationName = 'iteration'
+  itemReducer = ${carry + '::' + element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
+}

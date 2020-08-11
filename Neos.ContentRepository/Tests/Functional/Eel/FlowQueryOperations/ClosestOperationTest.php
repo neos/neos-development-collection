@@ -25,38 +25,38 @@ class ClosestOperationTest extends AbstractNodeTest
      */
     public function closestOperationDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'currentNodePath' => '/b/b1/b1a',
                 'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePath' => '/b/b1'
-            ),
-            array(
+            ],
+            [
                 'currentNodePath' => '/b/b1/b1a',
                 'nodeTypeFilter' => 'InvalidFilter',
                 'expectedNodePath' => null
-            ),
-            array(
+            ],
+            [
                 'currentNodePath' => '/b/b3/b3b',
                 'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeTypeWithSubnodes]',
                 'expectedNodePath' => '/b/b3'
-            ),
-            array(
+            ],
+            [
                 'currentNodePath' => '/b/b1/b1a',
                 'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeTypeWithSubnodes]',
                 'expectedNodePath' => null
-            ),
-            array(
+            ],
+            [
                 'currentNodePath' => '/b/b1',
                 'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeTypeWithSubnodes]',
                 'expectedNodePath' => null
-            ),
-            array(
+            ],
+            [
                 'currentNodePath' => '/b/b3/b3a',
                 'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePath' => '/b/b3/b3a'
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -95,7 +95,7 @@ class ClosestOperationTest extends AbstractNodeTest
         $nodeB3->createNode('b3b');
 
         $currentNode = $rootNode->getNode($currentNodePath);
-        $q = new FlowQuery(array($currentNode));
+        $q = new FlowQuery([$currentNode]);
         $actualNode = $q->closest($nodeTypeFilter)->get(0);
 
         if ($expectedNodePath === null) {

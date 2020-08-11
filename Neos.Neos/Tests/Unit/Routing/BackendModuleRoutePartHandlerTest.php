@@ -26,22 +26,22 @@ class BackendModuleRoutePartHandlerTest extends UnitTestCase
      */
     public function requestPaths()
     {
-        return array(
-            'empty' => array('', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null),
-            'unknown root module' => array('unknown', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null),
-            'unknown submodule' => array('unknown/module', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null),
-            'unknown submodule with root module' => array('administration/unknown', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null),
-            'root module' =>  array('administration', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration', 'controller' => AdministrationController::class, 'action' => 'index')),
-            'submodule' => array('administration/users', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration/users', 'controller' => UsersController::class, 'action' => 'index')),
-            'submodule with action' => array('administration/users/new', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration/users', 'controller' => UsersController::class, 'action' => 'new')),
-            'module without controller' => array('nocontroller', BackendModuleRoutePartHandler::MATCHRESULT_NOCONTROLLER, null),
-            'submodule without controller' => array('administration/nocontroller', BackendModuleRoutePartHandler::MATCHRESULT_NOCONTROLLER, null),
+        return [
+            'empty' => ['', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null],
+            'unknown root module' => ['unknown', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null],
+            'unknown submodule' => ['unknown/module', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null],
+            'unknown submodule with root module' => ['administration/unknown', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null],
+            'root module' =>  ['administration', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, ['module' => 'administration', 'controller' => AdministrationController::class, 'action' => 'index']],
+            'submodule' => ['administration/users', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, ['module' => 'administration/users', 'controller' => UsersController::class, 'action' => 'index']],
+            'submodule with action' => ['administration/users/new', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, ['module' => 'administration/users', 'controller' => UsersController::class, 'action' => 'new']],
+            'module without controller' => ['nocontroller', BackendModuleRoutePartHandler::MATCHRESULT_NOCONTROLLER, null],
+            'submodule without controller' => ['administration/nocontroller', BackendModuleRoutePartHandler::MATCHRESULT_NOCONTROLLER, null],
 
             // Json requests
-            'root module in json' =>  array('administration.json', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration', 'controller' => AdministrationController::class, 'action' => 'index', 'format' => 'json')),
-            'submodule in json' => array('administration/users.json', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration/users', 'controller' => UsersController::class, 'action' => 'index', 'format' => 'json')),
-            'submodule with action in json' => array('administration/users/new.json', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, array('module' => 'administration/users', 'controller' => UsersController::class, 'action' => 'new', 'format' => 'json')),
-        );
+            'root module in json' =>  ['administration.json', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, ['module' => 'administration', 'controller' => AdministrationController::class, 'action' => 'index', 'format' => 'json']],
+            'submodule in json' => ['administration/users.json', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, ['module' => 'administration/users', 'controller' => UsersController::class, 'action' => 'index', 'format' => 'json']],
+            'submodule with action in json' => ['administration/users/new.json', BackendModuleRoutePartHandler::MATCHRESULT_FOUND, ['module' => 'administration/users', 'controller' => UsersController::class, 'action' => 'new', 'format' => 'json']],
+        ];
     }
 
     /**
@@ -53,20 +53,20 @@ class BackendModuleRoutePartHandlerTest extends UnitTestCase
         $routePartHandler = new BackendModuleRoutePartHandler();
         $routePartHandler->setName('module');
 
-        $routePartHandler->injectSettings(array(
-            'modules' => array(
-                'administration' => array(
+        $routePartHandler->injectSettings([
+            'modules' => [
+                'administration' => [
                     'controller' => AdministrationController::class,
-                    'submodules' => array(
-                        'users' => array(
+                    'submodules' => [
+                        'users' => [
                             'controller' => UsersController::class
-                        ),
-                        'nocontroller' => array()
-                    ),
-                ),
-                'nocontroller' => array()
-            )
-        ));
+                        ],
+                        'nocontroller' => []
+                    ],
+                ],
+                'nocontroller' => []
+            ]
+        ]);
 
         $matches = $routePartHandler->match($requestPath);
         $value = $routePartHandler->getValue();

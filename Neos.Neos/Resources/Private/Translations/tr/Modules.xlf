@@ -65,7 +65,7 @@
 			<target state="translated">Sahibi</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target state="translated">Netlik</target><alt-trans><target>Görünürlük</target></alt-trans></trans-unit>
+			<target state="translated">Netlik</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
 				<source>Private</source>
 			<target state="translated">Özel</target></trans-unit>
@@ -228,16 +228,16 @@
 			<target state="translated">Henüz bu geçmişte gösterilebilecek herhangi bir olay kaydedildi.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0}, {1} "{2}" oluşturdu.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0}, {1} "{2}" 'yi kaldırdı.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target state="translated">{0}, {2} "{3}" varyantını {1} oluşturdu.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0}, {1} "{2}" değiştirdi.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
 			<target state="translated">{0}, {1} "{2}" taşıdı.</target></trans-unit>
@@ -328,10 +328,10 @@
 			<target state="translated">Kişisel bilgi</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target state="translated">Ad</target><alt-trans><target>İsim</target></alt-trans></trans-unit>
+			<target state="translated">Ad</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target state="translated">Soyad</target><alt-trans><target>Soyisim</target></alt-trans></trans-unit>
+			<target state="translated">Soyad</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target state="translated">Kullanıcı tercihleri</target></trans-unit>
@@ -352,13 +352,13 @@
 			<target state="translated">Başlık</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target state="translated">Ad</target><alt-trans><target>İsim</target></alt-trans></trans-unit>
+			<target state="translated">Ad</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target state="translated">Ikinci adınız varsa yazınız</target><alt-trans><target>İkinci İsminiz</target></alt-trans></trans-unit>
+			<target state="translated">Ikinci adınız varsa yazınız</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target state="translated">Soyad</target><alt-trans><target>Soyisim</target></alt-trans></trans-unit>
+			<target state="translated">Soyad</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
 			<target state="translated">Diğer İsminiz</target></trans-unit>
@@ -625,13 +625,13 @@
 			<target state="translated">Alan adını düzenle</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">Domain datası</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
 			<target state="translated">örneğin www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
-			<target state="needs-translation">State</target></trans-unit>
+			<target state="translated">Devlet</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
 			<target state="translated">Oluştur</target></trans-unit>

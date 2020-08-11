@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "parent" operation working on ContentRepository nodes. It iterates over all
@@ -41,11 +41,11 @@ class ParentOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -57,13 +57,18 @@ class ParentOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $parentNode = $contextNode->getParent();
-            if ($parentNode !== null && !isset($outputNodePaths[$parentNode->getPath()])) {
+            /* @var $contextNode TraversableNodeInterface */
+            try {
+                $parentNode = $contextNode->findParentNode();
+            } catch (NodeException $e) {
+                continue;
+            }
+            if (!isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
                 $output[] = $parentNode;
-                $outputNodePaths[$parentNode->getPath()] = true;
+                $outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()] = true;
             }
         }
 

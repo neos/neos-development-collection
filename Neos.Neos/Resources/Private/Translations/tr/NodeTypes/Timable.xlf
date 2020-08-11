@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target state="translated">Öncesini gizle</target><alt-trans><target>Daha önce gizle</target></alt-trans></trans-unit>
+			<target state="translated">Öncesini gizle</target></trans-unit>
       <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target state="translated">Sonrasını gizle</target><alt-trans><target>Sonra gizle</target></alt-trans></trans-unit>
+			<target state="translated">Sonrasını gizle</target></trans-unit>
     </body>
   </file>
 </xliff>

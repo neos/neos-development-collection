@@ -11,7 +11,6 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Creates text representations of the given exceptions.

@@ -22,6 +22,6 @@
 
 	&:before,
 	&:after {
-		font-family: $fontFamily;
+		font-family: inherit;
 	}
 }

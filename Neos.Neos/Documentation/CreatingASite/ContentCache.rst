@@ -59,9 +59,9 @@ path::
 
 			entryTags {
 				# Whenever the node changes the matched condition could change
-				1 = ${'Node_' + documentNode.identifier}
+				1 = ${Neos.Caching.nodeTag(documentNode)}
 				# Whenever one of the parent nodes changes the layout could change
-				2 = ${'DescendantOf_' + documentNode.identifier}
+				2 = ${Neos.Caching.descendantOfTag(documentNode)}
 			}
 		}
 	}
@@ -80,7 +80,7 @@ In the ``@cache`` meta property the following subproperties are allowed:
   ``'dynamic'`` or ``'uncached'``.
   Only simple string values are supported for this property.
 
-  It defaults to mode ``embed`` which will not create a new cache entry but store the con`tent into the next outer ``cached``
+  It defaults to mode ``embed`` which will not create a new cache entry but store the content into the next outer ``cached``
   entry. With mode ``cached`` a separate cache entry will be created for the path. Mode ``uncached`` can be used to
   always evaluate a path even if is contained inside a cached path. The ``dynamic`` mode evalutes a so called
   "discriminator" on every request and caches results differently depending on it's value. Dynamic cache mode is therefore
@@ -158,7 +158,7 @@ In the ``@cache`` meta property the following subproperties are allowed:
 				2 = 'documentNode'
 			}
 			entryTags {
-				1 = ${'Node_' + node.identifier}
+				1 = ${Neos.Caching.nodeTag(node)}
 			}
 		}
 	}
@@ -191,27 +191,33 @@ Cache Entry Tags
 
 Neos will automatically flush a set of tags whenever nodes are created, changed, published or discarded.
 The exact set of tags depends on the node hierarchy and node type of the changed node. You should assign tags that
-mathches one of these patterns in your configuration. You can use an Eel expression to build the pattern depending on
+matches one of these patterns in your configuration. You can use an Eel expression to build the pattern depending on
 any context variable including the node identifier or type.
 
-The following patterns of tags will be flushed by Neos:
+To create the correct tags for your node it is important to make use if our CachingHelper.
+The following methods are provided by default to create all kind of patterns of tags wich will be flushed by Neos:
 
 ``Everything``
   Flushes cache entries for every changed node.
 
-``NodeType_[My.Package:NodeTypeName]``
+``${Neos.Caching.nodeTypeTag('[My.Package:NodeTypeName]', node)}``
   Flushes cache entries if any node with the given node type changes. ``[My.Package:NodeTypeName]`` needs to be
   replaced by any node type name. Inheritance will be taken into account, so for a changed node of type
   ``Neos.NodeTypes:Page`` the tags ``NodeType_Neos.NodeTypes:Page`` and ``NodeType_Neos.Neos:Document``
-  (and some more) will be flushed.
+  (and some more) will be flushed. The second property node is needed to calculate the correct context to create tags for.
+  Notice: In earlier versions of Neos we just used a plain String ``NodeType_[My.Package:NodeTypeName]`` which could lead into
+  unwanted cache flush behaviours
 
-``Node_[Identifier]``
-  Flushes cache entries if a node with the given identifier changes. ``Identifier`` needs to be replaced by a valid node
-  identifier.
+``${Neos.Caching.nodeTag(node)}``
+  Flushes cache entries if the node changes.
+  Notice: In earlier versions of Neos we just used a plain String ``Node_[Identifier]`` which could lead into
+  unwanted cache flush behaviours. ``Identifier`` had to be replaced by a valid node identifier. You might want to use
+  ``${Neos.Caching.nodeTagForIdentifier("identifier")}`` if you don't have a node instance but only a node identifier as string.
 
-``DescendantOf_[Identifier]``
-  Flushes cache entries if a child node of the node with the given identifier changes. ``Identifier`` need to be
-  replaced by a valid node identifier.
+``${Neos.Caching.descendantOfTag(node)}``
+  Flushes cache entries if a child node of the node changes.
+  Notice: In earlier versions of Neos we just used a plain String ``DescendantOf_[Identifier]`` which could lead into
+  unwanted cache flush behaviours. ``Identifier`` had to be replaced by a valid node identifier.
 
 Example::
 
@@ -222,13 +228,13 @@ Example::
 			#...
 
 			entryTags {
-				1 = ${'Node_' + node.identifier}
-				2 = ${'DescendantOf_' + contentCollectionNode.identifier}
+				1 = ${Neos.Caching.nodeTag(node)}
+				2 = ${Neos.Caching.descendantOfTag(contentCollectionNode)}
 			}
 		}
 	}
 
-The ``ContentCollection`` cache configuration declares a tag that will flush the cache entry for the collection if
+The ``ContentCollection`` cache configuration declares tags that will flush the cache entry for the collection if
 any of it's descendants (direct or indirect child) changes. So editing a node inside the collection will flush the
 whole collection cache entry and cause it to re-render.
 
@@ -240,10 +246,15 @@ whole collection cache entry and cause it to re-render.
   	@cache {
   		mode = 'cached'
   		entryTags {
-  			1 = ${'Node_' + node.identifier}
+  			1 = ${Neos.Caching.nodeTag(node)}
   			2 = ... additional entry tags ...
   		}
   	}
+
+
+	Notice: In earlier versions of Neos there might be some problems with unwanted cache flush behaviours. To make sure
+	to avoid this always use the CachingEelHelper. See https://github.com/neos/neos-development-collection/issues/2096
+	for more informations
 
 Default cache configuration
 ===========================
@@ -337,7 +348,7 @@ By default, all cache entries are stored on the local filesystem. You can change
 the example below will use the Redis backend for the content cache::
 
 	Neos_Fusion_Content:
-	  backend: Neos\Flow\Cache\Backend\RedisBackend
+	  backend: Neos\Cache\Backend\RedisBackend
 
 .. note::
 	The best practice is to change the cache configuration in your distribution.

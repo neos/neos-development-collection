@@ -76,6 +76,11 @@ class ImageService
     protected $settings;
 
     /**
+     * @var array<string>
+     */
+    protected static $allowedFormats = ['jpg', 'jpeg', 'gif', 'png', 'wbmp', 'xbm', 'webp', 'bmp'];
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -87,14 +92,15 @@ class ImageService
     /**
      * @param PersistentResource $originalResource
      * @param array $adjustments
+     * @param string $format
      * @return array resource, width, height as keys
      * @throws ImageFileException
      * @throws InvalidConfigurationException
      * @throws Exception
      */
-    public function processImage(PersistentResource $originalResource, array $adjustments)
+    public function processImage(PersistentResource $originalResource, array $adjustments, string $format = null)
     {
-        $additionalOptions = array();
+        $additionalOptions = [];
         $adjustmentsApplied = false;
 
         // TODO: Special handling for SVG should be refactored at a later point.
@@ -111,9 +117,15 @@ class ImageService
         }
 
         $resourceUri = $originalResource->createTemporaryLocalCopy();
-
-        $resultingFileExtension = $originalResource->getFileExtension();
-        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $resultingFileExtension;
+        $fileExtension = $originalResource->getFileExtension();
+        if ($format !== null
+            && $originalResource->getFileExtension() !== $format
+            && in_array($format, self::$allowedFormats, true)
+        ) {
+            $adjustmentsApplied = true;
+            $fileExtension = $format;
+        }
+        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $fileExtension;
 
         if (!file_exists($resourceUri)) {
             throw new ImageFileException(sprintf('An error occurred while transforming an image: the resource data of the original image does not exist (%s, %s).', $originalResource->getSha1(), $resourceUri), 1374848224);
@@ -129,7 +141,7 @@ class ImageService
         if ($this->imagineService instanceof Imagine && $originalResource->getFileExtension() === 'gif' && $this->isAnimatedGif(file_get_contents($resourceUri)) === true) {
             $imagineImage->layers()->coalesce();
             $layers = $imagineImage->layers();
-            $newLayers = array();
+            $newLayers = [];
             foreach ($layers as $index => $imagineFrame) {
                 $imagineFrame = $this->applyAdjustments($imagineFrame, $adjustments, $adjustmentsApplied);
                 $newLayers[] = $imagineFrame;
@@ -176,7 +188,7 @@ class ImageService
             unlink($transformedImageTemporaryPathAndFilename);
 
             $pathInfo = UnicodeFunctions::pathinfo($originalResource->getFilename());
-            $resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $pathInfo['extension']));
+            $resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $fileExtension));
         } else {
             $originalResourceStream = $originalResource->getStream();
             $resource = $this->resourceManager->importResource($originalResourceStream, $originalResource->getCollectionName());
@@ -185,14 +197,14 @@ class ImageService
             $imageSize = $this->getImageSize($originalResource);
             $imageSize = new Box($imageSize['width'], $imageSize['height']);
         }
-        $this->imageSizeCache->set($resource->getCacheEntryIdentifier(), array('width' => $imageSize->getWidth(), 'height' => $imageSize->getHeight()));
+        $this->imageSizeCache->set($resource->getCacheEntryIdentifier(), ['width' => $imageSize->getWidth(), 'height' => $imageSize->getHeight()]);
 
-        $result = array(
+        $result = [
             'width' => $imageSize->getWidth(),
             'height' => $imageSize->getHeight(),
             'resource' => $resource,
             'quality' => $additionalOptions['quality']
-        );
+        ];
 
         return $result;
     }
@@ -202,13 +214,13 @@ class ImageService
      * @return array
      * @throws InvalidConfigurationException
      */
-    protected function getOptionsMergedWithDefaults(array $additionalOptions = array())
+    protected function getOptionsMergedWithDefaults(array $additionalOptions = [])
     {
         $defaultOptions = Arrays::getValueByPath($this->settings, 'image.defaultOptions');
         if (!is_array($defaultOptions)) {
-            $defaultOptions = array();
+            $defaultOptions = [];
         }
-        if ($additionalOptions !== array()) {
+        if ($additionalOptions !== []) {
             $defaultOptions = Arrays::arrayMergeRecursiveOverrule($defaultOptions, $additionalOptions);
         }
         $quality = isset($defaultOptions['quality']) ? (integer)$defaultOptions['quality'] : 90;
@@ -219,6 +231,7 @@ class ImageService
             );
         }
         $defaultOptions['jpeg_quality'] = $quality;
+        $defaultOptions['webp_quality'] = $quality;
         // png_compression_level should be an integer between 0 and 9 and inverse to the quality level given. So quality 100 should result in compression 0.
         $defaultOptions['png_compression_level'] = (9 - ceil($quality * 9 / 100));
 
@@ -248,9 +261,9 @@ class ImageService
             try {
                 $imagineImage = $this->imagineService->read($resource->getStream());
                 $sizeBox = $imagineImage->getSize();
-                $imageSize = array('width' => $sizeBox->getWidth(), 'height' => $sizeBox->getHeight());
+                $imageSize = ['width' => $sizeBox->getWidth(), 'height' => $sizeBox->getHeight()];
             } catch (\Exception $e) {
-                throw new ImageFileException(sprintf('The given resource was not an image file your choosen driver can open. The original error was: %s', $e->getMessage()), 1336662898);
+                throw new ImageFileException(sprintf('The given resource was not an image file your chosen driver can open. The original error was: %s', $e->getMessage()), 1336662898, $e);
             }
         }
 

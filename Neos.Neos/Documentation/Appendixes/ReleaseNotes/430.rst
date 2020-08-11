@@ -1,0 +1,146 @@
+=====
+4.3.0
+=====
+
+Automatic image variants generation
+===================================
+Automatically generate variants of an original image based on the newly introduced image variant presets configuration.
+
+In this first version, variants are automatically created as soon as an asset is created – for example, when it has been
+uploaded by an editor or otherwise been imported. Future versions may defer this generation into a job queue, or provide
+a way to put conditions of the generation of these variants.
+
+See the included documentation for configuration syntax and further background.
+
+This change also includes a basic view displaying all variants of an asset in the edit view of the Media Browser.
+While this new view (implemented as a tab) may be useful already, it is neither especially polished nor does it provide
+additional features.
+Therefore it is disabled by a feature switch for now. See the ``Settings.yaml`` of ``Neos.Media.Browser``
+for details on enabling the tab.
+
+Enable Loops in Fusion AFX without ``@children`` annotation
+===========================================================
+
+Fusion AFX uses the ``content`` key by default to render children. Since collections and loops
+use ``itemRenderer`` to define the inner content ``@children=itemRenderer`` had to be declared
+in the past. To overcome this, loop and derived prototypes now got a fallback from ``itemRenderer``
+to content. This avoids a common error in AFX code.
+
+Native 404 error rendering that can be controlled via Fusion
+============================================================
+This change adds the default Fusion path ``error`` that is used to render status messages
+for the status codes 403, 404 and 410.
+
+The matcher receives the context values ``exception``, ``renderingOptions``, ``statusCode``,
+ ``statusMessage`` and ``referenceCode`` and will by default render the previous template.
+
+By extending the ``error`` case you can add custom 404 rendering like in the example below.
+
+.. code-block: javascript
+
+  #
+  # Extend error matcher to render the document with uriPathSegment ``notfound``
+  # for exceptions with 4xx status code
+  #
+  error {
+      @context.notfoundDocument = ${q(site).children('[instanceof Neos.Neos:Document]').filter('[uriPathSegment="notfound"]').get(0)}
+
+      4xx {
+          @position = 'start'
+          condition = ${statusCode >= 400 && statusCode < 500 && notfoundDocument}
+          renderer = Neos.Fusion:Renderer {
+              @context.node = ${notfoundDocument}
+              renderPath = '/root'
+          }
+      }
+  }
+
+
+Set crop image adjustment by aspect ratio
+=========================================
+This change introduces a new property "aspectRatio" for the crop image
+adjustment. It allows users to set a cropping area simply by providing
+an aspect ratio, instead of x, y, width and height.
+
+If an aspect ratio is specified, the x, y, width, and height parameters
+are automatically deactivated. Likewise, if x, y, width or height are
+specified, a potentially defined aspect ratio value will be reset.
+
+Add ``format`` option for image-prototypes, viewHelpers and presets
+===================================================================
+The option ``format`` is added to imagePresets, viewHelpers and FusionPrototypes.
+The format is passed as string ``jpg``, ``jpeg``, ``gif``, ``png``, ``wbmp``, ``xbm``, ``webp`` and ``bmp`` are supported.
+If no format is given the crops will use the format of the original image.
+
+This allows to enforce rendering of crops in jpeg or png but also adds support for rendering
+of webp-images as alternate sources.
+
+.. note::
+
+    The selected imagine-diver has to support both the source and the target image format for a successful conversion.
+    Especially the ``Gd`` driver lacks some features in this regard. So please test your driver if you are using
+    format like ``webp`` or ``tiff``.
+
+Additionally the option ``convertFormats`` is added to settings to automatically convert non-web images into
+web images. The example shows how to configure Neos to automatically convert tiff images to jpg.
+
+.. code-block: yaml
+
+  Neos:
+    Media:
+      image:
+        defaultOptions:
+          # Image formats that shall always be converted regardless wether an adjustment was applied or not
+          # The key is the the source media-type and the value is the target media-type or file-extension.
+          convertFormats:
+            image/tiff: image/jpeg
+
+Add ``Neos.Neos:MenuItems``, ``Neos.Neos:DimensionMenuItems`` and ``Neos.Neos:BreadcrumbMenuItems`` prototypes
+==============================================================================================================
+Three new fusion prototypes are added that extract the rendering of the ``items`` that are passed to the template from
+``Neos.Neos:Menu``, ``Neos.Neos:BreadcrumbMenu`` and ``Neos.Neos:DimensionsMenu`` and make those items available for
+direct Fusion use without Template.
+In addition the ``Neos.Neos:*Menu`` prototypes are now based on ``Neos.Neos:Template`` and do not have a custom
+implementation any more.
+
+*Attention: This change removes the old MenuImplementation classes. Those are not part of the API so this is still
+non-breaking since the ``*Menu``fusion prototypes still support all previous options by beeing based on
+``Neos.Fusion:Template`` now instead of extending the TemplateImplementation class.*
+
+Trigger signal when Thumbnail is persisted
+==========================================
+Added a signal ``thumbnailPersisted`` and an ORM lifecycle callback that triggers the signal once the thumbnail is persisted.
+
+Add NodeLink fusion prototype
+=============================
+The ``Neos.Neos:NodeLink`` Fusion prototype has been added which renders an ``<a>`` tag based on ``Neos.Neos:NodeUri``,
+similar to ``Neos.Neos:ImageTag`` and ``Neos.Neos:ImageUri``.
+
+All properties of ``Neos.Neos:NodeUri`` are supported and passed on attributes (:ref:Neos_Fusion__Attributes) Link tag
+attributes content (string) The label of the link, defaults to the node label ``q(node).property('_label')``.
+This helps reducing code lines, especially when using Fusion AFX. With this prototype you can now directly link
+nodes in an AFX renderer.
+
+Hide property ``target`` of Neos.Neos.ShortCut depending on targetMode
+======================================================================
+I added configuration to the shortcut node type definition to hide the target-property in the UI when targetMode is not
+``selectedTarget`` Insert a shortcut node. You should not see the target-property until you change
+the targetMode to ``selectedTarget``.
+
+
+Potentially breaking changes (unplanned extensibility)
+======================================================
+
+Moved new NodeInterface and TraversableNodeInterface to core
+============================================================
+Introduced the event-sourced ``NodeInterface`` and ``TraversableNodeInterface`` in the core
+and made the "old" ``Node`` implement ``TraversableNodeInterface`` as far as possible.
+Also adjusted FlowQuery operations to work on the new ``TraversableNodeInterface`` wherever it makes sense.
+
+This change is necessary to ensure a smooth upgrade later on to the Event Sourced CR so people working with
+``NodeInterface`` in their custom code can already start using ``TraversableNodeInterface`` today.
+
+Upgraded our internal testing suite to latest neos/behat version
+================================================================
+In case you have Behat tests in place but did not set your own Behat version in the dev dependencies in your own,
+there might be some changes that could break your tests within the Behat version that is now acquired by Flow / Neos.

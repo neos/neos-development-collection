@@ -3,7 +3,7 @@
 Fusion ViewHelper Reference
 ===========================
 
-This reference was automatically generated from code on 2018-08-10
+This reference was automatically generated from code on 2019-03-05
 
 
 .. _`Fusion ViewHelper Reference: fusion:render`:
@@ -26,11 +26,7 @@ Arguments
 
 * ``context`` (array, *optional*): Additional context variables to be set.
 
-* ``typoScriptPackageKey`` (string, *optional*): The key of the package to load Fusion from, if not from the current context. Deprecated, use fusionFilePathPattern instead.
-
 * ``fusionPackageKey`` (string, *optional*): The key of the package to load Fusion from, if not from the current context.
-
-* ``typoScriptFilePathPattern`` (string, *optional*): Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/. Deprecated, use fusionFilePathPattern instead.
 
 * ``fusionFilePathPattern`` (string, *optional*): Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/
 
@@ -58,7 +54,7 @@ Expected result::
 
 **Fusion from a foreign package**::
 
-	<ts:render path="some.given.path" typoScriptPackageKey="Acme.Bookstore" />
+	<ts:render path="some.given.path" fusionPackageKey="Acme.Bookstore" />
 
 
 Expected result::

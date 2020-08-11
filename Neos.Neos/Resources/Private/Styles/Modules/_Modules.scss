@@ -81,7 +81,7 @@
 				}
 			}
 
-			i.icon-user {
+			i.fa-user {
 				margin-right: 11px;
 			}
 		}
@@ -111,6 +111,7 @@
 
 			i {
 				line-height: 20px;
+				padding-right: 5px;
 			}
 		}
 	}
@@ -255,8 +256,8 @@
 		}
 
 		&:after {
-			@include fa-icon();
-			content: $fa-var-caret-down;
+			@extend .fas;
+			content: fa-content($fa-var-caret-down);
 			display: block;
 			position: absolute;
 			right: 0;

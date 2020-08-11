@@ -83,7 +83,7 @@ class NodeCommandController extends CommandController
             $this->outputCommentsAndWarnings($migrationConfiguration);
             if ($migrationConfiguration->hasWarnings() && $confirmation === false) {
                 $this->outputLine();
-                $this->outputLine('Migration has warnings. You need to confirm execution by adding the "--confirmation TRUE" option to the command.');
+                $this->outputLine('Migration has warnings. You need to confirm execution by adding the "--confirmation true" option to the command.');
                 $this->quit(1);
             }
 
@@ -121,13 +121,13 @@ class NodeCommandController extends CommandController
         }
 
         $appliedMigrations = $this->migrationStatusRepository->findAll();
-        $appliedMigrationsDictionary = array();
+        $appliedMigrationsDictionary = [];
         /** @var $appliedMigration MigrationStatus */
         foreach ($appliedMigrations as $appliedMigration) {
             $appliedMigrationsDictionary[$appliedMigration->getVersion()][] = $appliedMigration;
         }
 
-        $tableRows = array();
+        $tableRows = [];
         foreach ($availableMigrations as $version => $migration) {
             $migrationUpConfigurationComments = $this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration()->getComments();
 
@@ -138,17 +138,17 @@ class NodeCommandController extends CommandController
                 }
             }
 
-            $tableRows[] = array(
+            $tableRows[] = [
                 $version,
                 $migration['formattedVersionNumber'],
                 $migration['package']->getPackageKey(),
                 wordwrap($migrationUpConfigurationComments, 60)
-            );
+            ];
         }
 
         $this->outputLine('<b>Available migrations</b>');
         $this->outputLine();
-        $this->output->outputTable($tableRows, array('Version', 'Date', 'Package', 'Comments'));
+        $this->output->outputTable($tableRows, ['Version', 'Date', 'Package', 'Comments']);
     }
 
     /**
@@ -162,13 +162,13 @@ class NodeCommandController extends CommandController
         if ($migrationConfiguration->hasComments()) {
             $this->outputLine();
             $this->outputLine('<b>Comments</b>');
-            $this->outputFormatted($migrationConfiguration->getComments(), array(), 2);
+            $this->outputFormatted($migrationConfiguration->getComments(), [], 2);
         }
 
         if ($migrationConfiguration->hasWarnings()) {
             $this->outputLine();
             $this->outputLine('<b><u>Warnings</u></b>');
-            $this->outputFormatted($migrationConfiguration->getWarnings(), array(), 2);
+            $this->outputFormatted($migrationConfiguration->getWarnings(), [], 2);
         }
     }
 
@@ -182,7 +182,7 @@ class NodeCommandController extends CommandController
             return $migrationA->getApplicationTimeStamp() > $migrationB->getApplicationTimeStamp();
         });
 
-        $applied = array();
+        $applied = [];
         /** @var MigrationStatus $migrationStatus */
         foreach ($migrationsInVersion as $migrationStatus) {
             $applied[] = sprintf(

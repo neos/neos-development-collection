@@ -10,6 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\ContentRepository\Domain\Model\ArrayPropertyCollection;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -27,29 +29,29 @@ class NodeServiceTest extends UnitTestCase
      *
      * @var array
      */
-    protected $subNodeTypesFixture = array(
-        'Neos.ContentRepository.Testing:MyFinalType' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:ContentObject' => true),
+    protected $subNodeTypesFixture = [
+        'Neos.ContentRepository.Testing:MyFinalType' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:ContentObject' => true],
             'final' => true
-        ),
-        'Neos.ContentRepository.Testing:Text' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:ContentObject' => true),
-            'ui' => array(
+        ],
+        'Neos.ContentRepository.Testing:Text' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:ContentObject' => true],
+            'ui' => [
                 'label' => 'Text',
-            ),
-            'properties' => array(
-                'headline' => array(
+            ],
+            'properties' => [
+                'headline' => [
                     'type' => 'string',
                     'placeholder' => 'Enter headline here'
-                ),
-                'text' => array(
+                ],
+                'text' => [
                     'type' => 'string',
                     'placeholder' => '<p>Enter text here</p>'
-                )
-            ),
-            'inlineEditableProperties' => array('headline', 'text')
-        )
-    );
+                ]
+            ],
+            'inlineEditableProperties' => ['headline', 'text']
+        ]
+    ];
 
     /**
      * @return NodeService
@@ -64,7 +66,7 @@ class NodeServiceTest extends UnitTestCase
         $mockNodeTypeManager->expects($this->any())
             ->method('getNodeType')
             ->will($this->returnCallback(function ($nodeTypeName) {
-                return new NodeType($nodeTypeName, array(), array());
+                return new NodeType($nodeTypeName, [], []);
             }));
 
         $this->inject($nodeService, 'nodeTypeManager', $mockNodeTypeManager);
@@ -115,9 +117,9 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects($this->once())
             ->method('getDefaultValuesForProperties')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                 'title' => 'hello'
-            )));
+            ]));
 
         $nodeService->setDefaultValues($mockNode);
     }
@@ -148,9 +150,9 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects($this->once())
             ->method('getDefaultValuesForProperties')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                 'date' => new \DateTime('2014-09-03')
-            )));
+            ]));
 
         $nodeService->setDefaultValues($mockNode);
     }
@@ -180,9 +182,9 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects($this->once())
             ->method('getDefaultValuesForProperties')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                 'title' => 'hello'
-            )));
+            ]));
 
         $nodeService->setDefaultValues($mockNode);
     }
@@ -202,10 +204,10 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects($this->once())
             ->method('getAutoCreatedChildNodes')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                 'first-child-node-name' => $firstChildNodeType,
                 'second-child-node-name' => $secondChildNodeType
-            )));
+            ]));
 
         $mockNode->expects($this->once())
             ->method('getNodeType')
@@ -239,10 +241,10 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects($this->once())
             ->method('getProperties')
-            ->will($this->returnValue(array(
-                'title' => array(),
-                'description' => array()
-            )));
+            ->will($this->returnValue([
+                'title' => [],
+                'description' => []
+            ]));
 
         $mockNode->expects($this->once())
             ->method('isRemoved')
@@ -258,11 +260,11 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects($this->once())
             ->method('getProperties')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue(new ArrayPropertyCollection([
                 'title' => 'hello',
                 'description' => 'world',
                 'invalidProperty' => 'world'
-            )));
+            ])));
 
         $nodeService->cleanUpProperties($mockNode);
     }
@@ -318,10 +320,10 @@ class NodeServiceTest extends UnitTestCase
         $mockSidebarChildNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:ContentCollection');
         $mockNodeType->expects($this->once())
             ->method('getAutoCreatedChildNodes')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                 'main' => $mockMainChildNodeType,
                 'sidebar' => $mockSidebarChildNodeType
-            )));
+            ]));
 
         $mockNode->expects($this->once())
             ->method('getNodeType')
@@ -329,11 +331,11 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects($this->once())
             ->method('getChildNodes')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                 $mockFirstChildNode,
                 $mockSecondChildNode,
                 $mockThirdChildNode
-            )));
+            ]));
 
         $nodeService->cleanUpChildNodes($mockNode);
     }
@@ -368,9 +370,9 @@ class NodeServiceTest extends UnitTestCase
         $mockMainChildNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:ContentCollection');
         $mockNodeType->expects($this->once())
             ->method('getAutoCreatedChildNodes')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                 'main' => $mockMainChildNodeType
-            )));
+            ]));
 
         $mockNode->expects($this->once())
             ->method('getNodeType')
@@ -378,9 +380,9 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects($this->once())
             ->method('getChildNodes')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                 $mockFirstChildNode,
-            )));
+            ]));
 
         $nodeService->cleanUpChildNodes($mockNode);
     }
@@ -428,22 +430,22 @@ class NodeServiceTest extends UnitTestCase
      */
     public function abnormalPaths()
     {
-        return array(
-            array('/', '/', '/'),
-            array('/', '/.', '/'),
-            array('/', '.', '/'),
-            array('/', 'foo/bar', '/foo/bar'),
-            array('/foo', '.', '/foo'),
-            array('/foo', '/foo/.', '/foo'),
-            array('/foo', '../', '/'),
-            array('/foo/bar', '../baz', '/foo/baz'),
-            array('/foo/bar', '../baz/../bar', '/foo/bar'),
-            array('/foo/bar', '.././..', '/'),
-            array('/foo/bar', '../../.', '/'),
-            array('/foo/bar/baz', '../..', '/foo'),
-            array('/foo/bar/baz', '../quux', '/foo/bar/quux'),
-            array('/foo/bar/baz', '../quux/.', '/foo/bar/quux')
-        );
+        return [
+            ['/', '/', '/'],
+            ['/', '/.', '/'],
+            ['/', '.', '/'],
+            ['/', 'foo/bar', '/foo/bar'],
+            ['/foo', '.', '/foo'],
+            ['/foo', '/foo/.', '/foo'],
+            ['/foo', '../', '/'],
+            ['/foo/bar', '../baz', '/foo/baz'],
+            ['/foo/bar', '../baz/../bar', '/foo/bar'],
+            ['/foo/bar', '.././..', '/'],
+            ['/foo/bar', '../../.', '/'],
+            ['/foo/bar/baz', '../..', '/foo'],
+            ['/foo/bar/baz', '../quux', '/foo/bar/quux'],
+            ['/foo/bar/baz', '../quux/.', '/foo/bar/quux']
+        ];
     }
 
     /**

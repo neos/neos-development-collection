@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target state="translated">Otomatik Yayın</target><alt-trans><target>Otomatik yayınlama</target></alt-trans></trans-unit>
+			<target state="translated">Otomatik Yayın</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target state="translated">{0} için otomatik yayınlama</target></trans-unit>
@@ -29,7 +29,7 @@
 			<target state="translated">Seç</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target state="translated">Aranacak metni girin</target><alt-trans><target>Aramak için yazınız</target></alt-trans></trans-unit>
+			<target state="translated">Aranacak metni girin</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target state="translated">İçerik</target></trans-unit>
@@ -38,10 +38,10 @@
 			<target state="translated">Düğüm</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target state="translated">İçerik Önizlemesi</target><alt-trans><target>İçerik görünümü</target></alt-trans></trans-unit>
+			<target state="translated">İçerik Önizlemesi</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target state="translated">Bundan sonra oluştur</target><alt-trans><target>Sonradan oluştur</target></alt-trans></trans-unit>
+			<target state="translated">Bundan sonra oluştur</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target state="translated">Yeni Oluştur</target></trans-unit>
@@ -65,7 +65,7 @@
 			<target state="translated">Bu elemanı sil</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target state="translated">Görmezden gel</target><alt-trans><target>Kullanma</target></alt-trans></trans-unit>
+			<target state="translated">Görmezden gel</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
 			<target state="translated">Değişiklikleri iptal et</target></trans-unit>
@@ -110,10 +110,10 @@
 			<target state="translated">Yeni giriş</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target state="translated">Git</target><alt-trans><target>Gezin</target></alt-trans></trans-unit>
+			<target state="translated">Git</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target state="translated">Yapıldı</target><alt-trans><target>Tamam</target></alt-trans></trans-unit>
+			<target state="translated">Yapıldı</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			<target state="translated">Sayfa</target></trans-unit>
@@ -333,6 +333,21 @@
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
 			<target state="translated">Açıklama</target></trans-unit>
+      <trans-unit id="toggleContentTree" xml:space="preserve">
+				<source>Toggle content tree</source>
+			<target state="translated">İçerik ağacı</target></trans-unit>
+      <trans-unit id="showPublishOptions" xml:space="preserve">
+				<source>Show publish options</source>
+			<target state="translated">Yayınlama seçeneklerini göster</target></trans-unit>
+      <trans-unit id="activateFullscreen" xml:space="preserve">
+				<source>Activate Fullscreen edit mode</source>
+			<target state="translated">Tam ekran düzenleme seçeneğini aktif et</target></trans-unit>
+      <trans-unit id="deactivateFullscreen" xml:space="preserve">
+				<source>Deactivate Fullscreen edit mode</source>
+			<target state="translated">Tam ekran düzenleme seçeneğini kapat</target></trans-unit>
+      <trans-unit id="showPreview" xml:space="preserve">
+				<source>Show preview</source>
+			<target state="translated">Ön izlemeyi göster</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -379,12 +394,12 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target state="translated">Bütün değişiklikleri iptal et</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
-				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="translated">Bu çalışma alanındaki ({numberOfChanges} tane) değişikliği geri almak istediğinden emin misin?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target state="translated">Bu çalışma alanındaki tüm değişiklikleri iptal etmek istediğinizden emin misiniz?</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
+			<target state="translated">Bu çalışma alanındaki ({numberOfChanges} tane) değişikliği geri almak istediğinden emin misin?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target state="translated">Tümünü yayımla</target></trans-unit>
@@ -417,7 +432,7 @@
 			<target state="translated">Seçili öğe</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target state="translated">Doğru şekilde doldurulmamış alanlar var.</target><alt-trans><target>Doğru şekilde doldurulmamış alanlar bulunmakta.</target></alt-trans></trans-unit>
+			<target state="translated">Doğru şekilde doldurulmamış alanlar var.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
 			<target state="translated">Hata ile işaretlenmiş alanlar henüz doğru şekilde doldurulmamış. Lütfen bu kısımları uygun şekilde tamamlayınız.</target></trans-unit>
@@ -426,7 +441,7 @@
 			<target state="translated">Düzenlemeye devam et</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target state="translated">At</target><alt-trans><target>Atmak</target></alt-trans></trans-unit>
+			<target state="translated">At</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
 			<target state="translated">Uygula</target></trans-unit>
@@ -445,12 +460,6 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			<target state="translated">Tarih ayarlanmadı</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
-				<source>Today</source>
-			<target state="translated">Bugün</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
-				<source>Apply</source>
-			<target state="translated">Uygula</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
 			<target state="translated">Kodu düzenle</target></trans-unit>
@@ -468,7 +477,7 @@
 			<target state="translated">İlave bilgi</target></trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target state="translated">Netlik</target><alt-trans><target>Görünürlük</target></alt-trans></trans-unit>
+			<target state="translated">Netlik</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			<target state="translated">Belge ayarları</target></trans-unit>
@@ -483,7 +492,7 @@
 			<target state="translated">Bu metin {maximum} karakteri aşamaz.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Sadece ingilizce harfler (a-z, ve noktalı harfler) kullanılabilir.</target><alt-trans><target>Sadece normal harfler (a-z, ve noktalı harfler) kullanılabilir.</target></alt-trans></trans-unit>
+			<target state="translated">Sadece ingilizce harfler (a-z, ve noktalı harfler) kullanılabilir.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target state="translated">Verilen başlık sayılabilir değildi.</target></trans-unit>
@@ -573,7 +582,7 @@
 			<target state="translated">Bu, öğeyi siler</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target state="translated">ve onun çocukları</target><alt-trans><target>ve çocukları</target></alt-trans></trans-unit>
+			<target state="translated">ve onun çocukları</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target state="translated">Bu eylem çalışma alanı yönetiminde geri alınabilir.</target></trans-unit>
@@ -588,7 +597,7 @@
 			<target state="translated">bu öğe</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target state="translated">Bu, öğeyi siler.</target><alt-trans><target>Bu, öğeyi silecektir.</target></alt-trans></trans-unit>
+			<target state="translated">Bu, öğeyi siler.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target state="translated">Bu eylem çalışma alanı yönetiminde geri alınabilir.</target></trans-unit>
@@ -641,7 +650,7 @@
 			<target state="translated">Giriş</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target state="translated">Kimlik Doğrulanıyor</target><alt-trans><target>Authenticating</target></alt-trans></trans-unit>
+			<target state="translated">Kimlik Doğrulanıyor</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
 			<target state="translated">Çıkış Yap</target></trans-unit>
@@ -652,9 +661,15 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target state="translated">Oturumunuz zaman aşımına uğradı. Lütfen tekrar giriş yapın.</target></trans-unit>
       <!-- Error handlers -->
+      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
+				<source>Welcome to Neos</source>
+			<target state="translated">Neos'a hoş geldiniz</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target state="translated">Kurulum dosyasına gidin</target><alt-trans><target>Kuruluma gidin</target></alt-trans></trans-unit>
+			<target state="translated">Kurulum dosyasına gidin</target></trans-unit>
+      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
+				<source>Technical Information</source>
+			<target state="translated">Teknik Bilgi</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target state="translated">Eksik ana sayfa</target></trans-unit>
@@ -668,11 +683,11 @@
 				<source>Database Error</source>
 			<target state="translated">Veri tabanı hatası</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target state="translated">Maalesef, veritabanınızla ilgili bir hata tespit ettik. Daha fazla bilgi için günlük dosyalarınızı Veri / Günlükler / * içinde kontrol edin.</target></trans-unit>
+				<source>There is no database connection yet or the Neos database schema has not been created.</source>
+			<target state="translated">Herhangi bir veri bağlantısı yok yada Neos veri tabanını oluşturulmamış.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target state="translated">Kurulumda veritabanı yapılandırmanızı yapılandırmak veya kontrol etmek isteyebilirsiniz.</target></trans-unit>
+				<source>Run the setup to configure your database.</source>
+			<target state="translated">Veritabanınızı yapılandırmak için kurulumu çalıştırın.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Sayfa bulunamadı</target></trans-unit>
@@ -724,7 +739,7 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target state="translated">{source}'ı, {target}'e kopyala</target><alt-trans><target>{source}'ı {target}'e kopyala</target></alt-trans></trans-unit>
+			<target state="translated">{source}'ı, {target}'e kopyala</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
 			<target state="translated">{source}'ı, {target}'e taşı</target></trans-unit>

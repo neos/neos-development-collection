@@ -73,8 +73,9 @@ class InterDimensionalFallbackGraph
         $weight = [];
         foreach ($this->prioritizedContentDimensions as $contentDimension) {
             $weight[$contentDimension->getName()] = $variant->getDimensionValue($contentDimension->getName())
-                ->calculateFallbackDepth($fallback->getDimensionValue($contentDimension->getName())
-            );
+                ->calculateFallbackDepth(
+                    $fallback->getDimensionValue($contentDimension->getName())
+                );
         }
 
         return $weight;

@@ -89,7 +89,7 @@
 			<target state="translated">Felfedés</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target state="translated">ide</target><alt-trans><target>ebbe</target></alt-trans></trans-unit>
+			<target state="translated">ide</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
 			<target state="translated">előtt</target></trans-unit>
@@ -215,7 +215,7 @@
 			<target state="translated">Ez a művelet nem vonható vissza.</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target state="translated">Tartalom</target><alt-trans><target>Eszköz</target></alt-trans></trans-unit>
+			<target state="translated">Tartalom</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
 			<target state="translated">Létrehozva</target></trans-unit>
@@ -333,6 +333,21 @@
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
 			<target state="translated">Leírás</target></trans-unit>
+      <trans-unit id="toggleContentTree" xml:space="preserve">
+				<source>Toggle content tree</source>
+			<target state="translated">Tartalmi fa megnyitása/bezárása</target></trans-unit>
+      <trans-unit id="showPublishOptions" xml:space="preserve">
+				<source>Show publish options</source>
+			<target state="translated">Publikálási beállítások</target></trans-unit>
+      <trans-unit id="activateFullscreen" xml:space="preserve">
+				<source>Activate Fullscreen edit mode</source>
+			<target state="translated">Teljes képernyős szerkesztési mód aktiválása</target></trans-unit>
+      <trans-unit id="deactivateFullscreen" xml:space="preserve">
+				<source>Deactivate Fullscreen edit mode</source>
+			<target state="translated">Teljes képernyős szerkesztési mód kikapcsolása</target></trans-unit>
+      <trans-unit id="showPreview" xml:space="preserve">
+				<source>Show preview</source>
+			<target state="translated">Előnézet</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -375,16 +390,16 @@
 			<target state="translated">Oldal megnyitása a cél munkaterületben</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target state="translated">Összes elvetése</target><alt-trans><target>Összes módosítás eldobása</target></alt-trans></trans-unit>
+			<target state="translated">Összes elvetése</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target state="translated">Összes változtatás elvetése</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
-				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="translated">Biztos elvet {numberOfChanges} módosítást a munkafelületen?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target state="translated">Biztos benne, hogy elveti az összes módosítást ezen a munkaterületen?</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
+			<target state="translated">Biztos elvet {numberOfChanges} módosítást a munkafelületen?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target state="translated">Minden közzététele</target></trans-unit>
@@ -445,12 +460,6 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			<target state="translated">Nincs dátum beállítva</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
-				<source>Today</source>
-			<target state="translated">Ma</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
-				<source>Apply</source>
-			<target state="translated">Alkamaz</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
 			<target state="translated">Kód szerkesztése</target></trans-unit>
@@ -652,9 +661,15 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target state="translated">Lejárt a bejelentkezési adatait. Kérjük, jelentkezzen be újra.</target></trans-unit>
       <!-- Error handlers -->
+      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
+				<source>Welcome to Neos</source>
+			<target state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target state="translated">Kattintsona a beállításhoz</target></trans-unit>
+      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
+				<source>Technical Information</source>
+			<target state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target state="translated">Hiányzó honlap</target></trans-unit>
@@ -668,11 +683,11 @@
 				<source>Database Error</source>
 			<target state="translated">Adatbázis hiba</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target state="translated">Sajnáljuk, de mi hibát észlelt az adatbázissal. Ellenőrizze a naplófájlokat, az adatok/Logs / * további információért.</target></trans-unit>
+				<source>There is no database connection yet or the Neos database schema has not been created.</source>
+			<target state="translated">Nincs adatbázis kapcsolat vagy a Neos adatbázis séma nem lett létrehozva.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target state="translated">Érdemes beállítani vagy ellenőrizni az adatbázis konfigurációt a telepítőben.</target></trans-unit>
+				<source>Run the setup to configure your database.</source>
+			<target state="translated">Futtassa a telepítőt az adatbázis beállításához.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Az oldal nem található</target></trans-unit>

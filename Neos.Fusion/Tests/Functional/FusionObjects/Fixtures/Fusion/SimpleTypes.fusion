@@ -2,10 +2,10 @@
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 
 simpleTypes.booleanTrue = Value {
-	value = TRUE
+	value = true
 }
 simpleTypes.booleanFalse = Value {
-	value = FALSE
+	value = false
 }
 simpleTypes.null = Value {
 	value = NULL

@@ -17,6 +17,15 @@
 	</nav>
 	<div class="content">
 		{content.main -> f:format.raw()}
+
+	<f:comment>
+		If you enabled the "sidebar" content area in your NodeType configuration and Fusion, you can uncomment this
+		section to actually render in in your output. Remove the "f:comment" tag and this text, and adjust the markup as you
+		like.
+
+		{content.sidebar -> f:format.raw()}
+	</f:comment>
+
 	</div>
 </f:section>
 <f:section name="bodyScripts">

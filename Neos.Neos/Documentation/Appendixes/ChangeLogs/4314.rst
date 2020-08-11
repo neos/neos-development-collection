@@ -1,0 +1,16 @@
+`4.3.14 (2020-05-18) <https://github.com/neos/neos-development-collection/releases/tag/4.3.14>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Passing glue string after array is deprecated <https://github.com/neos/neos-development-collection/pull/2982>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Wrong parameter order leads to deprecation warning and to an exception
+in PHP 7.4
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.3.13...4.3.14>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

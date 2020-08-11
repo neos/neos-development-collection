@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve">
 				<source>Enable caption</source>
-			<target state="needs-translation">Enable caption</target></trans-unit>
+			<target state="translated">字幕を有効にする</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
 			<target state="translated"><![CDATA[<p>ここにキャプションを入力してください</p>]]></target></trans-unit>

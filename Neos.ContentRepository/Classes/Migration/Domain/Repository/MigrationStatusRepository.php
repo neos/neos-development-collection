@@ -25,7 +25,7 @@ class MigrationStatusRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array(
+    protected $defaultOrderings = [
         'version' => QueryInterface::ORDER_ASCENDING
-    );
+    ];
 }

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Three column content</source>
-			<target state="translated">محتويات العمود الثالث</target><alt-trans><target>المحتوى بثلاثة أعمدة</target></alt-trans></trans-unit>
+			<target state="translated">محتويات العمود الثالث</target></trans-unit>
     </body>
   </file>
 </xliff>

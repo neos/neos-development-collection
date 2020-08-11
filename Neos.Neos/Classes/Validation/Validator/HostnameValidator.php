@@ -11,7 +11,6 @@ namespace Neos\Neos\Validation\Validator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Validation\Validator\AbstractValidator;
 
 /**
@@ -22,9 +21,9 @@ class HostnameValidator extends AbstractValidator
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'ignoredHostnames' => array('', 'Hostnames that are not to be validated', 'string'),
-    );
+    protected $supportedOptions = [
+        'ignoredHostnames' => ['', 'Hostnames that are not to be validated', 'string'],
+    ];
 
     /**
      * Validates if the hostname is valid.
@@ -44,7 +43,7 @@ class HostnameValidator extends AbstractValidator
         }
 
         if (!preg_match($pattern, $hostname)) {
-            $this->addError('The hostname "%1$s" was not valid.', 1415392993, array($hostname));
+            $this->addError('The hostname "%1$s" was not valid.', 1415392993, [$hostname]);
         }
     }
 }

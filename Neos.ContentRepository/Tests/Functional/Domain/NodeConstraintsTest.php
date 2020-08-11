@@ -64,7 +64,7 @@ class NodeConstraintsTest extends FunctionalTestCase
         $this->objectManager->get(WorkspaceRepository::class)->add($workspace);
         $this->persistenceManager->persistAll();
 
-        $context = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $context = $this->contextFactory->create(['workspaceName' => 'live']);
         $this->rootNode = $context->getRootNode();
     }
 
@@ -74,7 +74,7 @@ class NodeConstraintsTest extends FunctionalTestCase
     public function tearDown()
     {
         parent::tearDown();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
     /**

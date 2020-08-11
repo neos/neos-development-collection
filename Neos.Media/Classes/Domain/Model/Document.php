@@ -11,7 +11,6 @@ namespace Neos\Media\Domain\Model;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 
 /**

@@ -38,73 +38,73 @@ class ArrayImplementationTest extends UnitTestCase
      */
     public function positionalSubElements()
     {
-        return array(
-            array(
+        return [
+            [
                 'Position end should put element to end',
-                array('second' => array('__meta' => array('position' => 'end')), 'first' => array()),
-                array('/first', '/second')
-            ),
-            array(
+                ['second' => ['__meta' => ['position' => 'end']], 'first' => []],
+                ['/first', '/second']
+            ],
+            [
                 'Position start should put element to start',
-                array('second' => array(), 'first' => array('__meta' => array('position' => 'start'))),
-                array('/first', '/second')
-            ),
-            array(
+                ['second' => [], 'first' => ['__meta' => ['position' => 'start']]],
+                ['/first', '/second']
+            ],
+            [
                 'Position start should respect priority',
-                array('second' => array('__meta' => array('position' => 'start 50')), 'first' => array('__meta' => array('position' => 'start 52'))),
-                array('/first', '/second')
-            ),
-            array(
+                ['second' => ['__meta' => ['position' => 'start 50']], 'first' => ['__meta' => ['position' => 'start 52']]],
+                ['/first', '/second']
+            ],
+            [
                 'Position end should respect priority',
-                array('second' => array('__meta' => array('position' => 'end 17')), 'first' => array('__meta' => array('position' => 'end'))),
-                array('/first', '/second')
-            ),
-            array(
+                ['second' => ['__meta' => ['position' => 'end 17']], 'first' => ['__meta' => ['position' => 'end']]],
+                ['/first', '/second']
+            ],
+            [
                 'Positional numbers are in the middle',
-                array('last' => array('__meta' => array('position' => 'end')), 'second' => array('__meta' => array('position' => '17')), 'first' => array('__meta' => array('position' => '5')), 'third' => array('__meta' => array('position' => '18'))),
-                array('/first', '/second', '/third', '/last')
-            ),
-            array(
+                ['last' => ['__meta' => ['position' => 'end']], 'second' => ['__meta' => ['position' => '17']], 'first' => ['__meta' => ['position' => '5']], 'third' => ['__meta' => ['position' => '18']]],
+                ['/first', '/second', '/third', '/last']
+            ],
+            [
                 'Position before adds before named element if present',
-                array('second' => array(), 'first' => array('__meta' => array('position' => 'before second'))),
-                array('/first', '/second')
-            ),
-            array(
+                ['second' => [], 'first' => ['__meta' => ['position' => 'before second']]],
+                ['/first', '/second']
+            ],
+            [
                 'Position before adds after start if named element not present',
-                array('third' => array(), 'second' => array('__meta' => array('position' => 'before third')), 'first' => array('__meta' => array('position' => 'before unknown'))),
-                array('/first', '/second', '/third')
-            ),
-            array(
+                ['third' => [], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
+                ['/first', '/second', '/third']
+            ],
+            [
                 'Position before uses priority when referencing the same element; The higher the priority the closer before the element gets added.',
-                array('third' => array(), 'second' => array('__meta' => array('position' => 'before third 12')), 'first' => array('__meta' => array('position' => 'before third'))),
-                array('/first', '/second', '/third')
-            ),
-            array(
+                ['third' => [], 'second' => ['__meta' => ['position' => 'before third 12']], 'first' => ['__meta' => ['position' => 'before third']]],
+                ['/first', '/second', '/third']
+            ],
+            [
                 'Position before works recursively',
-                array('third' => array(), 'second' => array('__meta' => array('position' => 'before third')), 'first' => array('__meta' => array('position' => 'before second'))),
-                array('/first', '/second', '/third')
-            ),
-            array(
+                ['third' => [], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before second']]],
+                ['/first', '/second', '/third']
+            ],
+            [
                 'Position after adds after named element if present',
-                array('second' => array('__meta' => array('position' => 'after first')), 'first' => array()),
-                array('/first', '/second')
-            ),
-            array(
+                ['second' => ['__meta' => ['position' => 'after first']], 'first' => []],
+                ['/first', '/second']
+            ],
+            [
                 'Position after adds before end if named element not present',
-                array('second' => array('__meta' => array('position' => 'after unknown')), 'third' => array('__meta' => array('position' => 'end')), 'first' => array()),
-                array('/first', '/second', '/third')
-            ),
-            array(
+                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => []],
+                ['/first', '/second', '/third']
+            ],
+            [
                 'Position after uses priority when referencing the same element; The higher the priority the closer after the element gets added.',
-                array('third' => array('__meta' => array('position' => 'after first')), 'second' => array('__meta' => array('position' => 'after first 12')), 'first' => array()),
-                array('/first', '/second', '/third')
-            ),
-            array(
+                ['third' => ['__meta' => ['position' => 'after first']], 'second' => ['__meta' => ['position' => 'after first 12']], 'first' => []],
+                ['/first', '/second', '/third']
+            ],
+            [
                 'Position after works recursively',
-                array('third' => array('__meta' => array('position' => 'after second')), 'second' => array('__meta' => array('position' => 'after first')), 'first' => array()),
-                array('/first', '/second', '/third')
-            )
-        );
+                ['third' => ['__meta' => ['position' => 'after second']], 'second' => ['__meta' => ['position' => 'after first']], 'first' => []],
+                ['/first', '/second', '/third']
+            ]
+        ];
     }
 
     /**

@@ -1,14 +1,4 @@
 -
-  name: 'Media Browser'
-  uriPattern: 'neos/media/browser/assets(/{@action}).{@format}'
-  defaults:
-    '@package': 'Neos.Media.Browser'
-    '@controller': 'Asset'
-    '@format': 'html'
-    '@action': 'index'
-  appendExceedingArguments: TRUE
-
--
   name: 'Image Browser'
   uriPattern: 'neos/media/browser/images(/{@action}).{@format}'
   defaults:
@@ -16,4 +6,34 @@
     '@controller': 'Image'
     '@format': 'html'
     '@action': 'index'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
+
+-
+  name: 'Asset Browser'
+  uriPattern: 'neos/media/browser/assets(/{@action}).{@format}'
+  defaults:
+    '@package': 'Neos.Media.Browser'
+    '@controller': 'Asset'
+    '@format': 'html'
+    '@action': 'index'
+  appendExceedingArguments: true
+
+-
+  name: 'Asset Proxy Service'
+  uriPattern: 'neos/media/browser/asset-proxies(/{@action}).{@format}'
+  defaults:
+    '@package': 'Neos.Media.Browser'
+    '@controller': 'AssetProxy'
+    '@format': 'json'
+    '@action': 'index'
+  appendExceedingArguments: true
+
+-
+  name: 'ImageVariant Service'
+  uriPattern: 'neos/media/browser/image-variant(/{@action}).{@format}'
+  defaults:
+    '@package': 'Neos.Media.Browser'
+    '@controller': 'ImageVariant'
+    '@format': 'json'
+    '@action': 'index'
+  appendExceedingArguments: true

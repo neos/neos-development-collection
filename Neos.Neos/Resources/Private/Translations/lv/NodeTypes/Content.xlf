@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target state="translated">Saturs</target></trans-unit>
+			<target state="final">Saturs</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target state="translated">Mainīt veidu</target></trans-unit>
+			<target state="final">Mainīt veidu</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -16,7 +16,7 @@ class Version20150913173832 extends AbstractMigration
     public function up(Schema $schema)
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
-        
+
         $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD configuration LONGTEXT NOT NULL COMMENT '(DC2Type:json_array)', ADD configurationhash VARCHAR(32) NOT NULL");
 
         $thumbnailResult = $this->connection->executeQuery('SELECT * FROM typo3_media_domain_model_thumbnail');
@@ -46,8 +46,8 @@ class Version20150913173832 extends AbstractMigration
     public function down(Schema $schema)
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
-        
-        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD maximumwidth INT DEFAULT NULL, ADD maximumheight INT DEFAULT NULL, ADD ratiomode VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci, ADD allowupscaling TINYINT(1) DEFAULT NULL");
+
+        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD maximumwidth INT DEFAULT NULL, ADD maximumheight INT DEFAULT NULL, ADD ratiomode VARCHAR(255) NOT NULL COLLATE utf8mb4_unicode_ci, ADD allowupscaling TINYINT(1) DEFAULT NULL");
 
         $thumbnailResult = $this->connection->executeQuery('SELECT * FROM typo3_media_domain_model_thumbnail');
         while ($thumbnailInfo = $thumbnailResult->fetch(\PDO::FETCH_ASSOC)) {

@@ -179,9 +179,9 @@ class SequenceMatcher
                     $this->b2j[$char][] = $i;
                 }
             } else {
-                $this->b2j[$char] = array(
+                $this->b2j[$char] = [
                     $i
-                );
+                ];
             }
         }
 
@@ -287,8 +287,10 @@ class SequenceMatcher
         }
 
         while ($bestI + $bestSize < $ahi && ($bestJ + $bestSize) < $bhi &&
-            !$this->isBJunk($b[$bestJ + $bestSize]) && !$this->linesAreDifferent($bestI + $bestSize,
-                $bestJ + $bestSize)) {
+            !$this->isBJunk($b[$bestJ + $bestSize]) && !$this->linesAreDifferent(
+                $bestI + $bestSize,
+                $bestJ + $bestSize
+            )) {
             ++$bestSize;
         }
 
@@ -300,16 +302,18 @@ class SequenceMatcher
         }
 
         while ($bestI + $bestSize < $ahi && $bestJ + $bestSize < $bhi &&
-            $this->isBJunk($b[$bestJ + $bestSize]) && !$this->linesAreDifferent($bestI + $bestSize,
-                $bestJ + $bestSize)) {
+            $this->isBJunk($b[$bestJ + $bestSize]) && !$this->linesAreDifferent(
+                $bestI + $bestSize,
+                $bestJ + $bestSize
+            )) {
             ++$bestSize;
         }
 
-        return array(
+        return [
             $bestI,
             $bestJ,
             $bestSize
-        );
+        ];
     }
 
     /**
@@ -325,7 +329,7 @@ class SequenceMatcher
         $lineB = $this->b[$bIndex];
 
         if ($this->options['ignoreWhitespace']) {
-            $replace = array("\t", ' ');
+            $replace = ["\t", ' '];
             $lineA = str_replace($replace, '', $lineA);
             $lineB = str_replace($replace, '', $lineB);
         }
@@ -358,17 +362,17 @@ class SequenceMatcher
             return $this->matchingBlocks;
         }
 
-        $aLength = count($this->a);
-        $bLength = count($this->b);
+        $aLength = $this->a === null ? 0 : count($this->a);
+        $bLength = $this->b === null ? 0 : count($this->b);
 
-        $queue = array(
-            array(
+        $queue = [
+            [
                 0,
                 $aLength,
                 0,
                 $bLength
-            )
-        );
+            ]
+        ];
 
         $matchingBlocks = [];
         while (!empty($queue)) {
@@ -378,26 +382,26 @@ class SequenceMatcher
             if ($k) {
                 $matchingBlocks[] = $x;
                 if ($alo < $i && $blo < $j) {
-                    $queue[] = array(
+                    $queue[] = [
                         $alo,
                         $i,
                         $blo,
                         $j
-                    );
+                    ];
                 }
 
                 if ($i + $k < $ahi && $j + $k < $bhi) {
-                    $queue[] = array(
+                    $queue[] = [
                         $i + $k,
                         $ahi,
                         $j + $k,
                         $bhi
-                    );
+                    ];
                 }
             }
         }
 
-        usort($matchingBlocks, array($this, 'tupleSort'));
+        usort($matchingBlocks, [$this, 'tupleSort']);
 
         $i1 = 0;
         $j1 = 0;
@@ -409,11 +413,11 @@ class SequenceMatcher
                 $k1 += $k2;
             } else {
                 if ($k1) {
-                    $nonAdjacent[] = array(
+                    $nonAdjacent[] = [
                         $i1,
                         $j1,
                         $k1
-                    );
+                    ];
                 }
 
                 $i1 = $i2;
@@ -423,18 +427,18 @@ class SequenceMatcher
         }
 
         if ($k1) {
-            $nonAdjacent[] = array(
+            $nonAdjacent[] = [
                 $i1,
                 $j1,
                 $k1
-            );
+            ];
         }
 
-        $nonAdjacent[] = array(
+        $nonAdjacent[] = [
             $aLength,
             $bLength,
             0
-        );
+        ];
 
         $this->matchingBlocks = $nonAdjacent;
         return $this->matchingBlocks;
@@ -489,26 +493,26 @@ class SequenceMatcher
             }
 
             if ($tag) {
-                $this->opCodes[] = array(
+                $this->opCodes[] = [
                     $tag,
                     $i,
                     $ai,
                     $j,
                     $bj
-                );
+                ];
             }
 
             $i = $ai + $size;
             $j = $bj + $size;
 
             if ($size) {
-                $this->opCodes[] = array(
+                $this->opCodes[] = [
                     'equal',
                     $ai,
                     $i,
                     $bj,
                     $j
-                );
+                ];
             }
         }
         return $this->opCodes;
@@ -532,37 +536,37 @@ class SequenceMatcher
     {
         $opCodes = $this->getOpCodes();
         if (empty($opCodes)) {
-            $opCodes = array(
-                array(
+            $opCodes = [
+                [
                     'equal',
                     0,
                     1,
                     0,
                     1
-                )
-            );
+                ]
+            ];
         }
 
         if ($opCodes[0][0] == 'equal') {
-            $opCodes[0] = array(
+            $opCodes[0] = [
                 $opCodes[0][0],
                 max($opCodes[0][1], $opCodes[0][2] - $context),
                 $opCodes[0][2],
                 max($opCodes[0][3], $opCodes[0][4] - $context),
                 $opCodes[0][4]
-            );
+            ];
         }
 
         $lastItem = count($opCodes) - 1;
         if ($opCodes[$lastItem][0] == 'equal') {
             list($tag, $i1, $i2, $j1, $j2) = $opCodes[$lastItem];
-            $opCodes[$lastItem] = array(
+            $opCodes[$lastItem] = [
                 $tag,
                 $i1,
                 min($i2, $i1 + $context),
                 $j1,
                 min($j2, $j1 + $context)
-            );
+            ];
         }
 
         $maxRange = $context * 2;
@@ -571,25 +575,25 @@ class SequenceMatcher
         foreach ($opCodes as $code) {
             list($tag, $i1, $i2, $j1, $j2) = $code;
             if ($tag == 'equal' && $i2 - $i1 > $maxRange) {
-                $group[] = array(
+                $group[] = [
                     $tag,
                     $i1,
                     min($i2, $i1 + $context),
                     $j1,
                     min($j2, $j1 + $context)
-                );
+                ];
                 $groups[] = $group;
                 $group = [];
                 $i1 = max($i1, $i2 - $context);
                 $j1 = max($j1, $j2 - $context);
             }
-            $group[] = array(
+            $group[] = [
                 $tag,
                 $i1,
                 $i2,
                 $j1,
                 $j2
-            );
+            ];
         }
 
         if (!empty($group) && !(count($group) == 1 && $group[0][0] == 'equal')) {
@@ -615,7 +619,7 @@ class SequenceMatcher
      */
     public function ratio()
     {
-        $matches = array_reduce($this->getMatchingBlocks(), array($this, 'ratioReduce'), 0);
+        $matches = array_reduce($this->getMatchingBlocks(), [$this, 'ratioReduce'], 0);
         return $this->calculateRatio($matches, count($this->a) + count($this->b));
     }
 

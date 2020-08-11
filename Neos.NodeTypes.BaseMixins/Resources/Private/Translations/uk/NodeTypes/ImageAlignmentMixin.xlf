@@ -10,13 +10,13 @@
 			<target state="translated">За замовчанням</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
 				<source>Center</source>
-			<target state="translated">Центр</target><alt-trans><target>По центру</target></alt-trans><alt-trans><target>По-центру</target></alt-trans></trans-unit>
+			<target state="translated">Центр</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
 				<source>Left</source>
-			<target state="translated">Ліворуч</target><alt-trans><target>Зліва</target></alt-trans></trans-unit>
+			<target state="translated">Ліворуч</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
 				<source>Right</source>
-			<target state="translated">Праворуч</target><alt-trans><target>Право</target></alt-trans></trans-unit>
+			<target state="translated">Праворуч</target></trans-unit>
     </body>
   </file>
 </xliff>

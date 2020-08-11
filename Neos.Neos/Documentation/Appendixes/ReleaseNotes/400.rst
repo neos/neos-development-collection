@@ -1,0 +1,82 @@
+=====
+4.0.0
+=====
+
+Neos 4.0 is the next major version and comes with numerous changes, and a few additional features.
+Since some refactoring has happeend, developers will need to get familiar with a few changes.
+
+Assets sources support for Neos Media
+=====================================
+
+With this feature it is now possible to integrate remote asset
+libraries into Neos own media browser. You can search through these
+assets and import them into Neos for usage in the website.
+Adapters making use of this are currently being build, but the API is
+available for your integrations as well.
+
+“DocumentType” rendering entry point for Fusion
+===============================================
+
+If you provide a Fusion prototype with the same name as your Document NodeType,
+it will automatically be used for rendering those Document Nodes now.
+This aligns Document rendering with the way Content rendering happens
+by default and so should make it easier to use and understand.
+
+In general we favor using of a prototype for rendering documents now instead
+of paths (like the "page" fusion path). To that effect a newly created site
+will now only have a prototype for a (also created) custom Document NodeType.
+
+Change default charset and collation to utf8mb4
+===============================================
+
+We now use utf8mb4 in MySQL compatible database to store strings.
+That means you can now use the full range of unicode characters anywhere
+and especially in Neos content. Yes, also emoji 😂
+
+It also means your existing database must be updated to the new charset.
+
+Layout is now only supported with the NodeTypes package
+=======================================================
+
+We consider the layout property not a best practice, and therefore
+recommend not using it and relying on NodeTypes instead. To allow for
+backwards compatibility the matcher that automatically renders a fusion path
+with the same name as layout / sublayout is not removed yet though but moved
+to the NodeTypes package that makes use of it in the Page NodeType declared
+in that package. The NodeTypes package itself is also not recommended as
+best practice. Instead create your own set of NodeTypes, maybe based on the
+Neos.NodeTypes.BaseMixins package.
+
+Font Awesome 5 usage
+====================
+
+We switched to the free version of the latest Font Awesome, that means
+more icons for you to use but also that you need to adapt to Font Awesome 5
+icons and notation. You need to adapt custom backend modules by simply using
+the new icon classes as seen on  https://fontawesome.com/ .
+The `icon-` prefix way of defining NodeType icons still works fine, but you
+can also switch to FA5 notation to get more specific about the icon you want.
+This change was made for the legacy and React UI as well as the Neos
+backend modules.
+
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+
+See https://www.neos.io/download-and-extend/upgrade-instructions-3-3-4-0.html
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+As this is a major release a few breaking changes have gone in. All of them can be found
+in the ChangeLog, but everything important should be listed above and in the upgrade instructions.
+
+In case you have any problems with this guide, please get in touch with us
+via `discuss.neos.io <https://discuss.neos.io/>`_ or on `Slack <https://neos-project.slack.com/>`_.
+
+.. note::
+
+   Additionally all changes in Flow 5.0 apply, see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/5.0/TheDefinitiveGuide/PartV/ReleaseNotes/500.html

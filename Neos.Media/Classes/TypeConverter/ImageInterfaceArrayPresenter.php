@@ -32,7 +32,7 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array(ImageInterface::class);
+    protected $sourceTypes = [ImageInterface::class];
 
     /**
      * @var string
@@ -71,7 +71,7 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -83,22 +83,22 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string|Error The converted Image, a Validation Error or NULL
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        $data = array(
+        $data = [
             '__identity' => $this->persistenceManager->getIdentifierByObject($source),
             '__type' => TypeHandling::getTypeForValue($source)
-        );
+        ];
 
         if ($source instanceof ImageVariant) {
             $data['originalAsset'] = [
                 '__identity' => $this->persistenceManager->getIdentifierByObject($source->getOriginalAsset()),
             ];
 
-            $adjustments = array();
+            $adjustments = [];
             foreach ($source->getAdjustments() as $adjustment) {
                 $index = TypeHandling::getTypeForValue($adjustment);
-                $adjustments[$index] = array();
+                $adjustments[$index] = [];
                 foreach (ObjectAccess::getGettableProperties($adjustment) as $propertyName => $propertyValue) {
                     $adjustments[$index][$propertyName] = $propertyValue;
                 }

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target state="translated">Ibalik</target></trans-unit>
+			<target state="final">Ibalik</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target state="translated">Kanselahin</target></trans-unit>
@@ -35,7 +35,7 @@
 			<target state="needs-translation">Edit workspace</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Yes, delete the workspace</source>
-			<target state="translated">Oo, burahin ang workspace</target></trans-unit>
+			<target state="final">Oo, burahin ang workspace</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
 			<target state="needs-translation">Edit workspace</target></trans-unit>
@@ -62,31 +62,31 @@
 			<target state="needs-translation">Base workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
 				<source>Owner</source>
-			<target state="translated">May-ari</target></trans-unit>
+			<target state="final">May-ari</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target state="translated">Bisibilidad</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
 				<source>Private</source>
-			<target state="translated">Pribado</target></trans-unit>
+			<target state="final">Pribado</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
 			<target state="needs-translation">Only reviewers and administrators can access and modify this workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
 				<source>Internal</source>
-			<target state="translated">Panloob</target></trans-unit>
+			<target state="final">Panloob</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
 			<target state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
 				<source>Changes</source>
-			<target state="translated">Mga pagbabago</target></trans-unit>
+			<target state="final">Mga pagbabago</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
 			<target state="needs-translation">Open page in "{0}" workspace</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target state="translated">Ito ay iyong personal na workspace na kung saan ito ay hindi mabubura.</target></trans-unit>
+			<target state="final">Ito ay iyong personal na workspace na kung saan ito ay hindi mabubura.</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
 			<target state="needs-translation">The workspace contains changes. To delete, discard the changes first.</target></trans-unit>
@@ -137,19 +137,19 @@
 			<target state="needs-translation">Changed Content</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
-			<target state="translated">nabura</target></trans-unit>
+			<target state="final">nabura</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
 				<source>created</source>
-			<target state="translated">nagawa</target></trans-unit>
+			<target state="final">nagawa</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
 				<source>moved</source>
-			<target state="translated">inilipat</target></trans-unit>
+			<target state="final">inilipat</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
 				<source>hidden</source>
-			<target state="translated">nakatago</target></trans-unit>
+			<target state="final">nakatago</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>edited</source>
-			<target state="translated">na-edit</target></trans-unit>
+			<target state="final">na-edit</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>

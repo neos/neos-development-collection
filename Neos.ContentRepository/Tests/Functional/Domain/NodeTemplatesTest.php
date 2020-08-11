@@ -64,7 +64,7 @@ class NodeTemplatesTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
     }
 
     /**
@@ -73,7 +73,7 @@ class NodeTemplatesTest extends FunctionalTestCase
     public function tearDown()
     {
         parent::tearDown();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
     /**
@@ -108,7 +108,7 @@ class NodeTemplatesTest extends FunctionalTestCase
         $userWorkspace = new Workspace('user1', $this->liveWorkspace);
         $this->workspaceRepository->add($userWorkspace);
 
-        $this->context = $this->contextFactory->create(array('workspaceName' => 'user1'));
+        $this->context = $this->contextFactory->create(['workspaceName' => 'user1']);
 
         $rootNode = $this->context->getNode('/');
         $node = $rootNode->createNodeFromTemplate($nodeTemplate, 'just-a-node');
@@ -122,10 +122,10 @@ class NodeTemplatesTest extends FunctionalTestCase
      */
     protected function generateBasicNodeTemplate()
     {
-        $source = array(
+        $source = [
             '__nodeType' => 'Neos.ContentRepository.Testing:NodeType',
             'test1' => 'Neos rules!'
-        );
+        ];
 
         $typeConverter = new NodeTemplateConverter();
         return $typeConverter->convertFrom($source, NodeTemplate::class);

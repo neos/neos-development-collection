@@ -1,6 +1,5 @@
-# Navigation Fusion Object - extends Neos.Neos:Menu and is rendering menus inserted as content elements
-prototype(Neos.NodeTypes.Navigation:Navigation) < prototype(Neos.Neos:Content) {
-  @class = 'Neos\\Neos\\Fusion\\MenuImplementation'
+# Navigation Fusion Object - uses Neos.Neos:Menu and is rendering menus inserted as content elements
+prototype(Neos.NodeTypes.Navigation:Navigation) < prototype(Neos.Neos:Menu) {
   templatePath = 'resource://Neos.NodeTypes.Navigation/Private/Templates/NodeTypes/Navigation.html'
 
   startingPoint = ${q(node).property('startingPoint') ? q(node).property('startingPoint') : documentNode}
@@ -13,6 +12,8 @@ prototype(Neos.NodeTypes.Navigation:Navigation) < prototype(Neos.Neos:Content) {
   maximumLevels = ${q(node).property('maximumLevels')}
   maximumLevels.@process.1 = ${String.toInteger(value)}
 
+  attributes.class.@process < prototype(Neos.Neos:Content).attributes.class.@process
+
   active.attributes = Neos.Fusion:Attributes {
     class = 'active'
   }
@@ -24,7 +25,8 @@ prototype(Neos.NodeTypes.Navigation:Navigation) < prototype(Neos.Neos:Content) {
   }
 
   node = ${node}
-  items = ${this.items}
+
+  @process.contentElementWrapping = Neos.Neos:ContentElementWrapping
 
   @cache {
     mode = 'cached'
@@ -33,8 +35,8 @@ prototype(Neos.NodeTypes.Navigation:Navigation) < prototype(Neos.Neos:Content) {
       node = ${node}
     }
     entryTags {
-      1 = 'NodeType_Neos.Neos:Document'
-      2 = ${'Node_' + node.identifier}
+      1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', node)}
+      2 = ${Neos.Caching.nodeTag(node)}
     }
   }
 }

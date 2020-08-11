@@ -13,7 +13,7 @@
 			<target state="translated">Seleciar</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
 				<source>No references selected</source>
-			<target state="needs-translation">No references selected</target></trans-unit>
+			<target state="translated">Nenhuma referência selecionada</target></trans-unit>
     </body>
   </file>
 </xliff>

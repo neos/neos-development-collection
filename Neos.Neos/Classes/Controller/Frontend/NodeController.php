@@ -18,7 +18,6 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
-use Neos\Neos\Domain\Model\UserInterfaceMode;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -151,7 +150,7 @@ class NodeController extends ActionController
         } elseif (is_string($resolvedNode)) {
             $this->redirectToUri($resolvedNode);
         } elseif ($resolvedNode instanceof NodeInterface && $resolvedNode === $node) {
-            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1502793585229);
+            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1502793585);
         } elseif ($resolvedNode instanceof NodeInterface) {
             $this->redirect('show', null, null, ['node' => $resolvedNode]);
         } else {

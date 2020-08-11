@@ -34,7 +34,7 @@
 		&.neos-notification-error {
 			background-color: $warning;
 
-			.icon-error {
+			.fa-error {
 				@extend .#{$fa-css-prefix}-ban;
 			}
 		}
@@ -42,7 +42,7 @@
 		&.neos-notification-success {
 			background-color: $green;
 
-			.icon-success {
+			.fa-success {
 				@extend .#{$fa-css-prefix}-check;
 			}
 		}
@@ -50,7 +50,7 @@
 		&.neos-notification-warning {
 			background-color: $orange;
 
-			.icon-warning {
+			.fa-warning {
 				@extend .#{$fa-css-prefix}-exclamation-triangle;
 			}
 		}
@@ -58,7 +58,7 @@
 		&.neos-notification-info {
 			background-color: $blue;
 
-			.icon-info-circle {
+			.fa-info-circle {
 				@extend .#{$fa-css-prefix}-info-circle;
 			}
 		}
@@ -76,7 +76,7 @@
 			padding: 0;
 			margin: 0;
 			font-family: FontAwesome;
-			font-weight: normal;
+			font-weight: 900;
 			font-style: normal;
 			text-decoration: inherit;
 			-webkit-font-smoothing: antialiased;
@@ -94,6 +94,7 @@
 				right: 0;
 				cursor: pointer;
 				font-size: 18px;
+				@extend .fas;
 				@extend .#{$fa-css-prefix}-times-circle;
 
 				&:hover {

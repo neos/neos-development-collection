@@ -250,8 +250,8 @@
 			}
 
 			&:after {
-				@include fa-icon();
-				content: $fa-var-caret-down;
+				@extend .fas;
+				content: fa-content($fa-var-caret-down);
 				display: block;
 				position: absolute;
 				width: $unit;
@@ -292,6 +292,7 @@
 			}
 
 			&:after {
+				@extend .fas;
 				position: absolute;
 				bottom: 11px;
 				right: 10px;
@@ -300,10 +301,9 @@
 				text-decoration: inherit;
 				display: inline-block;
 				speak: none;
-				content: $fa-var-search;
+				content: fa-content($fa-var-search);
 				line-height: 100%;
 				font-size: 14px;
-				@include fa-icon();
 				cursor: pointer;
 			}
 		}
@@ -373,6 +373,7 @@
 .neos-select2-with-searchbox {
 	.neos-select2-search {
 		&:after {
+			@extend .fas;
 			position: absolute;
 			bottom: 11px;
 			right: 10px;
@@ -381,10 +382,9 @@
 			text-decoration: inherit;
 			display: inline-block;
 			speak: none;
-			content: $fa-var-search;
+			content: fa-content($fa-var-search);
 			line-height: 100%;
 			font-size: 14px;
-			@include fa-icon();
 			cursor: pointer;
 		}
 

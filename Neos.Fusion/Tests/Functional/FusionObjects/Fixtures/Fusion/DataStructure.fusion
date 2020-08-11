@@ -1,0 +1,88 @@
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+dataStructure.basicOrdering = Neos.Fusion:DataStructure {
+	100 = Neos.Fusion:TestRenderer
+	100.test = 'test100'
+
+	10 = Neos.Fusion:TestRenderer
+	10.test = 'test10'
+}
+
+dataStructure.positionalOrdering = Neos.Fusion:DataStructure {
+	c = Neos.Fusion:TestRenderer
+	c.test = 'before'
+	c.@position = '10'
+
+	a = Neos.Fusion:TestRenderer
+	a.test = 'after'
+	a.@position = '100'
+
+	f = Neos.Fusion:TestRenderer
+	f.test = 'middle'
+	f.@position = '50'
+}
+
+dataStructure.startEndOrdering = Neos.Fusion:DataStructure {
+	a = Neos.Fusion:TestRenderer
+	a.test = 'after'
+	a.@position = 'end'
+
+	c = Neos.Fusion:TestRenderer
+	c.test = 'before'
+	c.@position = 'start'
+
+	f = Neos.Fusion:TestRenderer
+	f.test = 'middle'
+	f.@position = '50'
+}
+
+# expected ordering:
+# - e
+# - d
+# - foobar
+# - f
+# - g
+# - 100
+# - b
+# - a
+# - c
+dataStructure.advancedStartEndOrdering = Neos.Fusion:DataStructure {
+	a = Neos.Fusion:TestRenderer
+	a.test = 'a'
+	a.@position = 'end 10'
+
+	b = Neos.Fusion:TestRenderer
+	b.test = 'b'
+	b.@position = 'end'
+
+	c = Neos.Fusion:TestRenderer
+	c.test = 'c'
+	c.@position = 'end 20'
+
+	d = Neos.Fusion:TestRenderer
+	d.test = 'd'
+	d.@position = 'start'
+
+	e = Neos.Fusion:TestRenderer
+	e.test = 'e'
+	e.@position = 'start 10'
+
+	f = Neos.Fusion:TestRenderer
+	f.test = 'f'
+	f.@position = '50'
+
+	100 = Neos.Fusion:TestRenderer
+	100.test = '100'
+
+	foobar = Neos.Fusion:TestRenderer
+	foobar.test = 'foobar'
+
+	g = Neos.Fusion:TestRenderer
+	g.test = 'g'
+	g.@position = '90'
+}
+
+dataStructure.ignoreProperties < dataStructure.positionalOrdering {
+	@ignoreProperties = ${['f']}
+}

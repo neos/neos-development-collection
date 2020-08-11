@@ -11,7 +11,6 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A Fusion object for tag based content
@@ -27,7 +26,7 @@ class TagImplementation extends AbstractFusionObject
      *
      * @var array
      */
-    protected static $SELF_CLOSING_TAGS = array('area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr');
+    protected static $SELF_CLOSING_TAGS = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
 
     /**
      * The tag name (e.g. 'body', 'head', 'title', ...)
@@ -44,7 +43,7 @@ class TagImplementation extends AbstractFusionObject
     }
 
     /**
-     * Whether to leave out the closing tag (defaults to FALSE)
+     * Whether to leave out the closing tag (defaults to false)
      *
      * @return boolean
      */

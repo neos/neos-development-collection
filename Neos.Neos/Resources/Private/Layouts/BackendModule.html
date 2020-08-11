@@ -4,7 +4,7 @@
 
 	<f:render partial="Module/FlashMessages" />
 
-	<f:form.validationResults>
+	<f:validation.results>
 		<f:if condition="{validationResults.flattenedErrors}">
 			<ul class="neos-error">
 				<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
@@ -14,7 +14,7 @@
 				</f:for>
 			</ul>
 		</f:if>
-	</f:form.validationResults>
+	</f:validation.results>
 
 	<f:render section="content" />
 </div>

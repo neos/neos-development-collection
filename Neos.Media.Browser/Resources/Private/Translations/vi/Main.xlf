@@ -26,6 +26,9 @@
       <trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target state="needs-translation">Caption</target></trans-unit>
+      <trans-unit id="field.copyrightnotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			<target state="needs-translation">Last modified</target></trans-unit>
@@ -58,13 +61,19 @@
 			<target state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target state="translated">Sắp xếp tăng dần</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target state="translated">Sắp xếp giảm dần</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="translated">Kéo và thả vào từ khóa hoặc bộ sưu tập</target></trans-unit>
+      <trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			<target state="needs-translation">View</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
+			<target state="needs-translation">View asset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target state="translated">Chỉnh sửa tài sản</target></trans-unit>
@@ -173,6 +182,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
 			<target state="translated">Xem hình thu nhỏ</target></trans-unit>
+      <trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			<target state="needs-translation">Connection error</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			<target state="needs-translation">Media source</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			<target state="needs-translation">Media sources</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			<target state="translated">Các bộ sưu tập</target></trans-unit>
@@ -199,7 +217,7 @@
 			<target state="translated">Thẻ</target></trans-unit>
       <trans-unit id="editTags" xml:space="preserve">
 				<source>Edit tags</source>
-			<target state="translated">Chỉnh sửa nhiều thẻ</target><alt-trans><target>Chỉnh sửa thẻ</target></alt-trans></trans-unit>
+			<target state="translated">Chỉnh sửa nhiều thẻ</target></trans-unit>
       <trans-unit id="editTag" xml:space="preserve">
 				<source>Edit tag</source>
 			<target state="translated">Chỉnh sửa thẻ</target></trans-unit>
@@ -272,15 +290,33 @@
       <trans-unit id="metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target state="translated">Định danh</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve">
+				<source>Title</source>
+			<target state="translated">Tiêu đề</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve">
+				<source>Caption</source>
+			<target state="needs-translation">Caption</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target state="translated">Xem trước</target></trans-unit>
+      <trans-unit id="download" xml:space="preserve">
+				<source>Download</source>
+			<target state="needs-translation">Download</target></trans-unit>
+      <trans-unit id="next" xml:space="preserve">
+				<source>Next</source>
+			<target state="needs-translation">Next</target></trans-unit>
+      <trans-unit id="previous" xml:space="preserve">
+				<source>Previous</source>
+			<target state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target state="translated">Không thể tải lên tập tin</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target state="needs-translation">No file selected</target></trans-unit>
+			<target state="translated">Chưa chọn tập tin nào</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="translated">Kích thước tập tin của {0} vượt quá giới hạn cho phép của {1}</target></trans-unit>
@@ -385,10 +421,10 @@
 			<target state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target state="translated">Chưa kết nối đến nơi làm việc</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="needs-translation">No document node found for this node</target></trans-unit>
+			<target state="translated">Thông tin chưa cập nhật.</target></trans-unit>
     </body>
   </file>
 </xliff>

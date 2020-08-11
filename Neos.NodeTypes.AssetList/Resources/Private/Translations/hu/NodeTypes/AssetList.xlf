@@ -13,7 +13,7 @@
 			<target state="translated">Tartalmak</target></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve">
 				<source>Empty asset list</source>
-			<target state="translated">Üres tartalom lista</target><alt-trans><target>Üres eszköz lista</target></alt-trans></trans-unit>
+			<target state="translated">Üres tartalom lista</target></trans-unit>
     </body>
   </file>
 </xliff>

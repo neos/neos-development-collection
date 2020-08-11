@@ -27,5 +27,5 @@ interface AssetModelMappingStrategyInterface
      * @param array $additionalProperties Optional properties that can be taken into account for deciding the model class. what you get here can depend on the caller, so you should always fallback to something based on the resource.
      * @return string the determined target class name
      */
-    public function map(PersistentResource $resource, array $additionalProperties = array());
+    public function map(PersistentResource $resource, array $additionalProperties = []);
 }

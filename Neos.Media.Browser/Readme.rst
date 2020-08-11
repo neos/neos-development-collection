@@ -3,7 +3,7 @@ Neos Media Browser
 ------------------
 
 .. note:: This repository is a **read-only subsplit** of a package that is part of the
-          Neos project (learn more on `www.neos.io <https://www.neos.io/>`_).
+Neos project (learn more on `www.neos.io <https://www.neos.io/>`_).
 
 This package contains the backend module to management Media assets.
 

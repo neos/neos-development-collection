@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target state="translated">Sisältö</target></trans-unit>
+			<target state="final">Sisältö</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target state="translated">Vaihda tyyppiä</target></trans-unit>
+			<target state="final">Vaihda tyyppiä</target></trans-unit>
     </body>
   </file>
 </xliff>

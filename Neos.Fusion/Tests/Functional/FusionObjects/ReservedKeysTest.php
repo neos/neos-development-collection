@@ -35,6 +35,6 @@ class ReservedKeysTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('reservedKeys');
-        $this->assertEquals($view->render(), array('__custom' => 1));
+        $this->assertEquals($view->render(), ['__custom' => 1]);
     }
 }

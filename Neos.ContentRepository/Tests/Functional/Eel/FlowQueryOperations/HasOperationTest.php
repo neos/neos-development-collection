@@ -25,53 +25,53 @@ class HasOperationTest extends AbstractNodeTest
      */
     public function hasOperationDataProvider()
     {
-        return array(
-            array(
-                'currentNodePaths' => array('/a', '/b'),
+        return [
+            [
+                'currentNodePaths' => ['/a', '/b'],
                 'subject' => 'a1',
-                'expectedNodePaths' => array('/a')
-            ),
-            array(
-                'currentNodePaths' => array('/a'),
+                'expectedNodePaths' => ['/a']
+            ],
+            [
+                'currentNodePaths' => ['/a'],
                 'subject' => 'b1',
-                'expectedNodePaths' => array()
-            ),
-            array(
-                'currentNodePaths' => array('/b'),
+                'expectedNodePaths' => []
+            ],
+            [
+                'currentNodePaths' => ['/b'],
                 'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => array('/b')
-            ),
-            array(
-                'currentNodePaths' => array('/b'),
+                'expectedNodePaths' => ['/b']
+            ],
+            [
+                'currentNodePaths' => ['/b'],
                 'subject' => 'b1[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => array('/b')
-            ),
-            array(
-                'currentNodePaths' => array('/b'),
+                'expectedNodePaths' => ['/b']
+            ],
+            [
+                'currentNodePaths' => ['/b'],
                 'subject' => '',
-                'expectedNodePaths' => array()
-            ),
-            array(
-                'currentNodePaths' => array('/a', '/b'),
-                'subject' => array('/a/a1'),
-                'expectedNodePaths' => array('/a')
-            ),
-            array(
-                'currentNodePaths' => array('/b'),
-                'subject' => array('/b/b1/b1a'),
-                'expectedNodePaths' => array('/b')
-            ),
-            array(
-                'currentNodePaths' => array('/a', '/b'),
-                'subject' => array('/c'),
-                'expectedNodePaths' => array()
-            ),
-            array(
-                'currentNodePaths' => array(),
-                'subject' => array('/c'),
-                'expectedNodePaths' => array()
-            )
-        );
+                'expectedNodePaths' => []
+            ],
+            [
+                'currentNodePaths' => ['/a', '/b'],
+                'subject' => ['/a/a1'],
+                'expectedNodePaths' => ['/a']
+            ],
+            [
+                'currentNodePaths' => ['/b'],
+                'subject' => ['/b/b1/b1a'],
+                'expectedNodePaths' => ['/b']
+            ],
+            [
+                'currentNodePaths' => ['/a', '/b'],
+                'subject' => ['/c'],
+                'expectedNodePaths' => []
+            ],
+            [
+                'currentNodePaths' => [],
+                'subject' => ['/c'],
+                'expectedNodePaths' => []
+            ]
+        ];
     }
 
     /**
@@ -100,13 +100,13 @@ class HasOperationTest extends AbstractNodeTest
         $nodeB1->createNode('b1a');
         $rootNode->createNode('c');
 
-        $currentNodes = array();
+        $currentNodes = [];
         foreach ($currentNodePaths as $currentNodePath) {
             $currentNodes[] = $rootNode->getNode($currentNodePath);
         }
 
         if (is_array($subject)) {
-            $subjectNodes = array();
+            $subjectNodes = [];
             foreach ($subject as $subjectNodePath) {
                 $subjectNodes[] = $rootNode->getNode($subjectNodePath);
             }
@@ -116,7 +116,7 @@ class HasOperationTest extends AbstractNodeTest
         $q = new FlowQuery($currentNodes);
         $result = $q->has($subject)->get();
 
-        if ($expectedNodePaths === array()) {
+        if ($expectedNodePaths === []) {
             $this->assertEmpty($result);
         } else {
             foreach ($expectedNodePaths as $expectedNodePath) {

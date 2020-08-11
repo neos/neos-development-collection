@@ -25,5 +25,5 @@ class AssetCollectionRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array('title' => QueryInterface::ORDER_ASCENDING);
+    protected $defaultOrderings = ['title' => QueryInterface::ORDER_ASCENDING];
 }

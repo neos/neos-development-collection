@@ -42,6 +42,6 @@ class TestObjectForSerialization
      */
     public function __sleep()
     {
-        return array('value');
+        return ['value'];
     }
 }

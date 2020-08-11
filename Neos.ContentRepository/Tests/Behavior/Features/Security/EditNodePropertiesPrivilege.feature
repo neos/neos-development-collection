@@ -55,7 +55,7 @@ Feature: Privilege to restrict editing of node properties
       | Workspace  |
       | user-admin |
     Then I should not be granted to set the "title" property to "NewTitle"
-    And I should get FALSE when asking the node authorization service if setting the "title" property is granted
+    And I should get false when asking the node authorization service if setting the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Anonymous users are granted to set title of service node
@@ -64,7 +64,7 @@ Feature: Privilege to restrict editing of node properties
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "title" property to "NewTitle"
-    And I should get TRUE when asking the node authorization service if setting the "title" property is granted
+    And I should get true when asking the node authorization service if setting the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set title of service text nodes
@@ -73,7 +73,7 @@ Feature: Privilege to restrict editing of node properties
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "title" property to "NewTitle"
-    And I should get TRUE when asking the node authorization service if setting the "title" property is granted
+    And I should get true when asking the node authorization service if setting the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Anonymous users are not granted to set visibility options of document nodes
@@ -81,18 +81,18 @@ Feature: Privilege to restrict editing of node properties
     And I get a node by path "/sites/content-repository" with the following context:
       | Workspace  |
       | user-admin |
-    Then I should not be granted to set the "hidden" property to "TRUE"
-    And I should get FALSE when asking the node authorization service if setting the "hidden" property is granted
+    Then I should not be granted to set the "hidden" property to "true"
+    And I should get false when asking the node authorization service if setting the "hidden" property is granted
     And I should not be granted to set the "hiddenBeforeDateTime" property to "2015-03-24"
-    And I should get FALSE when asking the node authorization service if setting the "hiddenBeforeDateTime" property is granted
+    And I should get false when asking the node authorization service if setting the "hiddenBeforeDateTime" property is granted
     And I should not be granted to set the "hiddenAfterDateTime" property to "2015-03-24"
-    And I should get FALSE when asking the node authorization service if setting the "hiddenAfterDateTime" property is granted
-    And I should not be granted to set the "hiddenInIndex" property to "TRUE"
-    And I should get FALSE when asking the node authorization service if setting the "hiddenInIndex" property is granted
+    And I should get false when asking the node authorization service if setting the "hiddenAfterDateTime" property is granted
+    And I should not be granted to set the "hiddenInIndex" property to "true"
+    And I should get false when asking the node authorization service if setting the "hiddenInIndex" property is granted
     And I should be granted to set the "accessRoles" property to "Neos.Flow:Everybody"
-    And I should get TRUE when asking the node authorization service if setting the "accessRoles" property is granted
+    And I should get true when asking the node authorization service if setting the "accessRoles" property is granted
     And I should be granted to set the "name" property to "new-name"
-    And I should get TRUE when asking the node authorization service if setting the "name" property is granted
+    And I should get true when asking the node authorization service if setting the "name" property is granted
 
   @Isolated @fixtures
   Scenario: Authorization service returns the denied properties of a node
@@ -113,9 +113,9 @@ Feature: Privilege to restrict editing of node properties
     And I get a node by path "/sites/content-repository/service/teaser" with the following context:
       | Workspace  |
       | user-admin |
-    Then I should not be granted to set the "hidden" property to "TRUE"
+    Then I should not be granted to set the "hidden" property to "true"
     And I should be granted to set the "text" property to "Some New Text"
-    And I should get FALSE when asking the node authorization service if setting the "hidden" property is granted
+    And I should get false when asking the node authorization service if setting the "hidden" property is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to hide service teaser
@@ -123,6 +123,6 @@ Feature: Privilege to restrict editing of node properties
     And I get a node by path "/sites/content-repository/service/teaser" with the following context:
       | Workspace  |
       | user-admin |
-    Then I should be granted to set the "hidden" property to "TRUE"
+    Then I should be granted to set the "hidden" property to "true"
     And I should be granted to set the "text" property to "Some New Text"
-    And I should get TRUE when asking the node authorization service if setting the "hidden" property is granted
+    And I should get true when asking the node authorization service if setting the "hidden" property is granted

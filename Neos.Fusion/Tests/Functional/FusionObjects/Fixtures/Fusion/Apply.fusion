@@ -1,0 +1,143 @@
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
+prototype(Neos.Fusion:Collection).@class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\FusionObjects\\RendererImplementation'
+
+prototype(Neos.Fusion:EelValue) < prototype(Neos.Fusion:Value) {
+  value = ${'original eel expression'}
+}
+
+apply.renderEelValue = Neos.Fusion:EelValue
+
+apply.renderEelValueWithSingleSpread = Neos.Fusion:EelValue {
+  @apply.alterValue = ${{value:'altered eel expression'}}
+}
+
+apply.renderEelValueWithFusionObjectSpread = Neos.Fusion:EelValue {
+  @apply.alterValue = Neos.Fusion:RawArray {
+    value = 'altered eel expression'
+  }
+}
+
+apply.renderEelValueWithInvalidFusionObjectSpread = Neos.Fusion:EelValue {
+  @apply.alterValue = Neos.Fusion:Value {
+    value = 'an fusion objects that retuns not an array!!!'
+  }
+}
+
+apply.renderEelValueWithInvalidExpressionSpread = Neos.Fusion:EelValue {
+  @apply.alterValue = ${'an expression but not an array!!!'}
+}
+
+apply.renderEelValueInvalidCyclicExpressionSpread = Neos.Fusion:EelValue {
+  @apply.alterValue = ${{value: this.value}}
+}
+
+apply.renderEelValueWithMultipleSpreads = Neos.Fusion:EelValue {
+  @apply.alterValue1 = ${{value:'altered eel expression 1'}}
+  @apply.alterValue2 = ${{value:'altered eel expression 2'}}
+  @apply.alterValue3 = ${{value:'altered eel expression 3'}}
+}
+
+apply.renderEelValueWithMultipleOrderedSpreads = Neos.Fusion:EelValue {
+  @apply.alterValue1 {
+    expression = ${{value:'altered eel expression to be evaluated last'}}
+    @position = 'end'
+  }
+  @apply.alterValue2 = ${{value:'altered eel expression'}}
+}
+
+prototype(Neos.Fusion:EelValueWithProcessor) < prototype(Neos.Fusion:Value) {
+  value = ${'original eel expression'}
+  value.@process.wrap = ${'foo:' + value + ':bar'}
+}
+
+apply.renderEelValueWithProcessor = Neos.Fusion:EelValueWithProcessor
+
+apply.renderEelValueWithProcessorAndSingleSpread = Neos.Fusion:EelValueWithProcessor {
+  @apply.alterValue = ${{value:'altered eel expression'}}
+}
+
+prototype(Neos.Fusion:ValueWithCondition) < prototype(Neos.Fusion:Value) {
+  value = ${'enabled value'}
+  value.@if.isEnabled = ${this.enabled}
+  enabled = false
+}
+
+apply.renderValueWithNonMatchingIfCondition = Neos.Fusion:ValueWithCondition
+
+apply.renderValueWithNonMatchingIfConditionThatUseSpreadValues = Neos.Fusion:ValueWithCondition {
+  @apply.disable = ${{enabled:false}}
+}
+
+apply.renderValueWithMatchingIfConditionThatUseSpreadValues = Neos.Fusion:ValueWithCondition {
+  @apply.enable = ${{enabled:true}}
+}
+
+apply.renderValueWithNonMatchingIfConditionIfSpreadAltersValue = Neos.Fusion:ValueWithCondition {
+  @apply.value = ${{value:'altered value'}}
+}
+
+apply.renderValueWithNonMatchingIfConditionIfSpreadAltersValueAndEnabledCondition = Neos.Fusion:ValueWithCondition {
+  @apply.value = ${{value:'altered value', enabled:true}}
+}
+
+apply.renderPrototypeWithNonMatchingIfCondition = Neos.Fusion:ValueWithCondition
+
+apply.renderPrototypeWithNonMatchingIfConditionThatUseSpreadValues = Neos.Fusion:ValueWithCondition {
+  @apply.disable = ${{enabled:false}}
+}
+
+apply.renderPrototypeWithMatchingIfConditionThatUseSpreadValues = Neos.Fusion:ValueWithCondition {
+  @apply.enable = ${{enabled:true}}
+}
+
+prototype(Neos.Fusion:NestedPrototype) < prototype(Neos.Fusion:Value) {
+  value = Neos.Fusion:Value {
+    value = 'expression from nested prototypes'
+  }
+}
+
+apply.renderNestedPrototype = Neos.Fusion:NestedPrototype
+
+apply.renderNestedPrototypeOverriddenWithSpreads = Neos.Fusion:NestedPrototype {
+  @apply.alterValue = ${{value: 'i can change this'}}
+}
+
+apply.renderCollectionWithoutSpread = Neos.Fusion:Collection {
+  collection = ${[{test:1},{test:2},{test:2},{test:3}]}
+  itemName = 'item'
+  itemRenderer = Neos.Fusion:TestRenderer {
+    test = ${item.test}
+  }
+}
+
+apply.renderCollectionWithSpread = Neos.Fusion:Collection {
+  collection = ${[{test:1},{test:2},{test:2},{test:3}]}
+  itemName = 'item'
+  itemRenderer = Neos.Fusion:TestRenderer {
+    @apply.applyItem = ${item}
+  }
+}
+
+apply.renderRendererWithTypeAndElementSpread = Neos.Fusion:Renderer {
+  type = 'Neos.Fusion:TestRenderer'
+  element.@apply.applyValues = ${{test: 'ValueAppliedViaElementSpread'}}
+}
+
+apply.renderRawArrayWithSpread = Neos.Fusion:RawArray {
+  key = 'original value'
+  alter = 'original value'
+  @apply.applyValues = ${{alter: 'altered value', add: 'added value' }}
+}
+
+apply.renderArrayWithPositionAndSpread = Neos.Fusion:Array {
+  last = 'end'
+  last.@position = 'end'
+  middle = 'middle'
+  first = 'start'
+  first.@position = 'start'
+  @apply.applyValues = ${{last: 'endModified', middle: 'middleModified'}}
+}

@@ -12,7 +12,8 @@ namespace Neos\Media\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -22,6 +23,9 @@ use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Exception\NoThumbnailAvailableException;
 use Neos\Media\Exception\ThumbnailServiceException;
+use Neos\Utility\Arrays;
+use Neos\Utility\MediaTypes;
+use Psr\Log\LoggerInterface;
 
 /**
  * An internal thumbnail service.
@@ -57,10 +61,10 @@ class ThumbnailService
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @Flow\InjectConfiguration("image.defaultOptions.convertFormats")
+     * @var boolean
      */
-    protected $systemLogger;
+    protected $formatConversions;
 
     /**
      * @Flow\InjectConfiguration("thumbnailPresets")
@@ -72,6 +76,32 @@ class ThumbnailService
      * @var array
      */
     protected $thumbnailCache = [];
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * Returns a thumbnail of the given asset
@@ -86,6 +116,15 @@ class ThumbnailService
      */
     public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
+        // Enforce format conversions if needed. This replaces the actual
+        // thumbnail-configuration with one that also enforces the target format
+        if ($configuration->getFormat() === null) {
+            $targetFormat = Arrays::getValueByPath($this->formatConversions, $asset->getMediaType());
+            if (is_string($targetFormat)) {
+                $configuration = $this->applyFormatToThumbnailConfiguration($configuration, $targetFormat);
+            }
+        }
+
         // Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new
         // dimensions differ from the specified image dimensions, otherwise the original image is returned.
         if ($asset instanceof ImageInterface) {
@@ -95,7 +134,8 @@ class ThumbnailService
             $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
             $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
             if ($configuration->isUpScalingAllowed() === false
-                && $configuration->getQuality() !== null
+                && $configuration->getQuality() === null
+                && $configuration->getFormat() === null
                 && $maximumWidth === $asset->getWidth()
                 && $maximumHeight === $asset->getHeight()
             ) {
@@ -117,7 +157,7 @@ class ThumbnailService
         $async = $configuration->isAsync();
         if ($thumbnail === null) {
             try {
-                $thumbnail = new Thumbnail($asset, $configuration, $async);
+                $thumbnail = new Thumbnail($asset, $configuration);
                 $this->emitThumbnailCreated($thumbnail);
 
                 // If the thumbnail strategy failed to generate a valid thumbnail
@@ -135,7 +175,8 @@ class ThumbnailService
                 $this->persistenceManager->whiteListObject($thumbnail);
                 $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
             } catch (NoThumbnailAvailableException $exception) {
-                $this->systemLogger->logException($exception);
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 return null;
             }
             $this->persistenceManager->whiteListObject($thumbnail);
@@ -144,7 +185,8 @@ class ThumbnailService
             try {
                 $this->refreshThumbnail($thumbnail);
             } catch (NoThumbnailAvailableException $exception) {
-                $this->systemLogger->logException($exception);
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 return null;
             }
         }
@@ -180,9 +222,37 @@ class ThumbnailService
             isset($presetConfiguration['allowCropping']) ? $presetConfiguration['allowCropping'] : false,
             isset($presetConfiguration['allowUpScaling']) ? $presetConfiguration['allowUpScaling'] : false,
             $async,
-            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null
+            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null,
+            isset($presetConfiguration['format']) ? $presetConfiguration['format'] : null
         );
         return $thumbnailConfiguration;
+    }
+
+    /**
+     * Create a new thumbnailConfiguration with the identical configuration
+     * to the given one PLUS setting of the target-format
+     *
+     * @param ThumbnailConfiguration $configuration
+     * @param string $targetFormat
+     * @return ThumbnailConfiguration
+     */
+    protected function applyFormatToThumbnailConfiguration(ThumbnailConfiguration $configuration, string $targetFormat): ThumbnailConfiguration
+    {
+        if (strpos($targetFormat, '/') !== false) {
+            $targetFormat = MediaTypes::getFilenameExtensionFromMediaType($targetFormat);
+        }
+        $configuration = new ThumbnailConfiguration(
+            $configuration->getWidth(),
+            $configuration->getMaximumWidth(),
+            $configuration->getHeight(),
+            $configuration->getMaximumHeight(),
+            $configuration->isCroppingAllowed(),
+            $configuration->isUpScalingAllowed(),
+            $configuration->isAsync(),
+            $configuration->getQuality(),
+            $targetFormat
+        );
+        return $configuration;
     }
 
     /**
@@ -221,6 +291,17 @@ class ThumbnailService
         }
 
         return $this->resourceManager->getPublicPackageResourceUriByPath($staticResource);
+    }
+
+    /**
+     * Signals that a thumbnail was persisted.
+     *
+     * @Flow\Signal
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    public function emitThumbnailPersisted(Thumbnail $thumbnail)
+    {
     }
 
     /**

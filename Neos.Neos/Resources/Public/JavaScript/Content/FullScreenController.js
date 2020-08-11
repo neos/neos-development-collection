@@ -33,7 +33,7 @@ define(
 			if (this.get('fullScreenMode')) {
 				var that = this;
 				$('body')
-					.append($('<div class="neos" />').addClass(fullScreenCloseClass).append($('<button class="neos-button neos-pressed"><i class="icon-resize-small"></i></button>'))
+					.append($('<div class="neos" />').addClass(fullScreenCloseClass).append($('<button class="neos-button neos-pressed"><i class="fas fa-compress"></i></button>'))
 					.on('click', function() {
 						that.toggleFullScreen();
 					}));

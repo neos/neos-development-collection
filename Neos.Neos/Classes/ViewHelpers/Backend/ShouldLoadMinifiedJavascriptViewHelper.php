@@ -16,7 +16,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Utility\BackendAssetsUtility;
 
 /**
- * Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE otherwise.
+ * Returns true if the minified Neos JavaScript sources should be loaded, false otherwise.
  */
 class ShouldLoadMinifiedJavascriptViewHelper extends AbstractViewHelper
 {

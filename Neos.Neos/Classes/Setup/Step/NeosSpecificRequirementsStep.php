@@ -76,7 +76,7 @@ class NeosSpecificRequirementsStep extends AbstractStep
         $formElement->setProperty('elementClassAttribute', 'alert alert-primary');
 
         $foundImageHandler = false;
-        foreach (array('gd', 'gmagick', 'imagick') as $extensionName) {
+        foreach (['gd', 'gmagick', 'imagick'] as $extensionName) {
             $formElement = $imageSection->createElement($extensionName, 'Neos.Form:StaticText');
 
             if (extension_loaded($extensionName)) {
@@ -97,7 +97,7 @@ class NeosSpecificRequirementsStep extends AbstractStep
 
         if ($foundImageHandler === false) {
             $formElement = $imageSection->createElement('noImageLibrary', 'Neos.Form:StaticText');
-            $formElement->setProperty('text', 'No suitable PHP extension for image manipulation was found. You can continue the setup but be aware that Neos might not work correctly without one of these extensions.');
+            $formElement->setProperty('text', 'No suitable PHP extension for image manipulation was found. Please install one of the required PHP extensions and restart the php process. Then proceed with the setup.');
             $formElement->setProperty('elementClassAttribute', 'alert alert-error');
         } else {
             $formElement = $imageSection->createElement('configuredImageLibrary', 'Neos.Form:StaticText');
@@ -114,12 +114,12 @@ class NeosSpecificRequirementsStep extends AbstractStep
      */
     protected function findUnsupportedImageFormats($driver)
     {
-        $this->imagineFactory->injectSettings(array('driver' => ucfirst($driver)));
+        $this->imagineFactory->injectSettings(['driver' => ucfirst($driver)]);
         $imagine = $this->imagineFactory->create();
-        $unsupportedFormats = array();
+        $unsupportedFormats = [];
 
-        foreach (array('jpg', 'gif', 'png') as $imageFormat) {
-            $imagePath = Files::concatenatePaths(array($this->packageManager->getPackage('Neos.Neos')->getResourcesPath(), 'Private/Installer/TestImages/Test.' . $imageFormat));
+        foreach (['jpg', 'gif', 'png'] as $imageFormat) {
+            $imagePath = Files::concatenatePaths([$this->packageManager->getPackage('Neos.Neos')->getResourcesPath(), 'Private/Installer/TestImages/Test.' . $imageFormat]);
 
             try {
                 $imagine->open($imagePath);

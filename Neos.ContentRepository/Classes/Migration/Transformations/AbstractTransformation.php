@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Migration\Transformations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
@@ -20,7 +19,7 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 abstract class AbstractTransformation implements TransformationInterface
 {
     /**
-     * Returns TRUE, indicating that the given node can be transformed by this transformation.
+     * Returns true, indicating that the given node can be transformed by this transformation.
      *
      * @param NodeData $node
      * @return boolean

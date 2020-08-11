@@ -10,7 +10,7 @@
 			<target state="translated">Opciones</target></trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve">
 				<source>Starting Level</source>
-			<target state="translated">Nivel de Inicio</target><alt-trans><target>Nivel de comienzo</target></alt-trans></trans-unit>
+			<target state="translated">Nivel de Inicio</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve">
 				<source>Four Levels Above Current Page</source>
 			<target state="translated">Cuatro niveles por encima de la página actual</target></trans-unit>

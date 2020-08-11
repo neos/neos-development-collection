@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\Model\Adjustment;
 
 /*
@@ -12,12 +14,13 @@ namespace Neos\Media\Domain\Model\Adjustment;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Media\Imagine\Box;
 use Imagine\Image\BoxInterface;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
+use Imagine\Image\ManipulatorInterface;
 use Imagine\Image\Point;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\ImageInterface;
+use Neos\Media\Imagine\Box;
 
 /**
  * An adjustment for resizing an image
@@ -33,37 +36,37 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $width;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $height;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $maximumWidth;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $maximumHeight;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $minimumWidth;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $minimumHeight;
 
@@ -71,13 +74,13 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * One of the ImagineImageInterface::RATIOMODE_* constants
      *
      * @var string
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
-    protected $ratioMode;
+    protected $ratioMode = ImageInterface::RATIOMODE_INSET;
 
     /**
      * @var boolean
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $allowUpScaling;
 
@@ -94,7 +97,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setMaximumHeight($maximumHeight)
+    public function setMaximumHeight(int $maximumHeight = null): void
     {
         $this->maximumHeight = $maximumHeight;
     }
@@ -105,7 +108,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return integer
      * @api
      */
-    public function getMaximumHeight()
+    public function getMaximumHeight(): ?int
     {
         return $this->maximumHeight;
     }
@@ -117,7 +120,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setMaximumWidth($maximumWidth)
+    public function setMaximumWidth(int $maximumWidth = null): void
     {
         $this->maximumWidth = $maximumWidth;
     }
@@ -128,7 +131,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return integer
      * @api
      */
-    public function getMaximumWidth()
+    public function getMaximumWidth(): ?int
     {
         return $this->maximumWidth;
     }
@@ -140,7 +143,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setHeight($height)
+    public function setHeight(int $height = null): void
     {
         $this->height = $height;
     }
@@ -151,7 +154,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return integer
      * @api
      */
-    public function getHeight()
+    public function getHeight(): ?int
     {
         return $this->height;
     }
@@ -163,7 +166,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setWidth($width)
+    public function setWidth(int $width = null): void
     {
         $this->width = $width;
     }
@@ -174,7 +177,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return integer
      * @api
      */
-    public function getWidth()
+    public function getWidth(): ?int
     {
         return $this->width;
     }
@@ -186,7 +189,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setMinimumHeight($minimumHeight)
+    public function setMinimumHeight(int $minimumHeight = null): void
     {
         $this->minimumHeight = $minimumHeight;
     }
@@ -197,7 +200,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return integer
      * @api
      */
-    public function getMinimumHeight()
+    public function getMinimumHeight(): ?int
     {
         return $this->minimumHeight;
     }
@@ -209,7 +212,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setMinimumWidth($minimumWidth)
+    public function setMinimumWidth(int $minimumWidth = null): void
     {
         $this->minimumWidth = $minimumWidth;
     }
@@ -220,7 +223,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return integer
      * @api
      */
-    public function getMinimumWidth()
+    public function getMinimumWidth(): ?int
     {
         return $this->minimumWidth;
     }
@@ -232,8 +235,16 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setRatioMode($ratioMode)
+    public function setRatioMode(string $ratioMode): void
     {
+        if ($ratioMode === '') {
+            $ratioMode = ImageInterface::RATIOMODE_INSET;
+        }
+        $supportedModes = [ImageInterface::RATIOMODE_INSET, ImageInterface::RATIOMODE_OUTBOUND];
+        if (!in_array($ratioMode, $supportedModes, true)) {
+            throw new \InvalidArgumentException(sprintf('Invalid mode "%s" specified, supported modes are: "%s" (but use the ImageInterface::RATIOMODE_* constants)', $ratioMode, implode('", "', $supportedModes)), 1574686876);
+        }
+
         $this->ratioMode = $ratioMode;
     }
 
@@ -243,7 +254,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @return string
      * @api
      */
-    public function getRatioMode()
+    public function getRatioMode(): string
     {
         return $this->ratioMode;
     }
@@ -253,7 +264,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      *
      * @return boolean
      */
-    public function getAllowUpScaling()
+    public function getAllowUpScaling(): bool
     {
         return (boolean)$this->allowUpScaling;
     }
@@ -264,7 +275,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param boolean $allowUpScaling
      * @return void
      */
-    public function setAllowUpScaling($allowUpScaling)
+    public function setAllowUpScaling(bool $allowUpScaling): void
     {
         $this->allowUpScaling = $allowUpScaling;
     }
@@ -286,13 +297,12 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * Applies this adjustment to the given Imagine Image object
      *
      * @param ImagineImageInterface $image
-     * @return ImagineImageInterface
+     * @return ImagineImageInterface|ManipulatorInterface
      * @internal Should never be used outside of the media package. Rely on the ImageService to apply your adjustments.
      */
     public function applyToImage(ImagineImageInterface $image)
     {
-        $ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
-        return $this->resize($image, $ratioMode, $this->filter);
+        return $this->resize($image, $this->ratioMode, $this->filter);
     }
 
     /**
@@ -302,7 +312,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param BoxInterface $originalDimensions Dimensions of the unadjusted image
      * @return BoxInterface
      */
-    protected function calculateDimensions(BoxInterface $originalDimensions)
+    protected function calculateDimensions(BoxInterface $originalDimensions): BoxInterface
     {
         $newDimensions = clone $originalDimensions;
 
@@ -310,15 +320,15 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
             // height and width are set explicitly:
             case ($this->width !== null && $this->height !== null):
                 $newDimensions = $this->calculateWithFixedDimensions($originalDimensions, $this->width, $this->height);
-                break;
+            break;
             // only width is set explicitly:
             case ($this->width !== null):
                 $newDimensions = $this->calculateScalingToWidth($originalDimensions, $this->width);
-                break;
+            break;
             // only height is set explicitly:
             case ($this->height !== null):
                 $newDimensions = $this->calculateScalingToHeight($originalDimensions, $this->height);
-                break;
+            break;
         }
 
         // We apply maximum dimensions and scale the new dimensions proportionally down to fit into the maximum.
@@ -339,20 +349,18 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param integer $requestedHeight
      * @return BoxInterface
      */
-    protected function calculateWithFixedDimensions(BoxInterface $originalDimensions, $requestedWidth, $requestedHeight)
+    protected function calculateWithFixedDimensions(BoxInterface $originalDimensions, int $requestedWidth, int $requestedHeight): BoxInterface
     {
-        $ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
-
-        if ($ratioMode === ImageInterface::RATIOMODE_OUTBOUND) {
+        if ($this->ratioMode === ImageInterface::RATIOMODE_OUTBOUND) {
             return $this->calculateOutboundBox($originalDimensions, $requestedWidth, $requestedHeight);
         }
 
         $newDimensions = clone $originalDimensions;
 
-        $ratios = array(
+        $ratios = [
             $requestedWidth / $originalDimensions->getWidth(),
             $requestedHeight / $originalDimensions->getHeight()
-        );
+        ];
 
         $ratio = min($ratios);
         $newDimensions = $newDimensions->scale($ratio);
@@ -373,7 +381,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param integer $requestedHeight
      * @return BoxInterface
      */
-    protected function calculateOutboundBox(BoxInterface $originalDimensions, $requestedWidth, $requestedHeight)
+    protected function calculateOutboundBox(BoxInterface $originalDimensions, int $requestedWidth, int $requestedHeight): BoxInterface
     {
         $newDimensions = new Box($requestedWidth, $requestedHeight);
 
@@ -382,10 +390,10 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
         }
 
         // We need to make sure that the new dimensions are such that no upscaling is needed.
-        $ratios = array(
+        $ratios = [
             $originalDimensions->getWidth() / $requestedWidth,
             $originalDimensions->getHeight() / $requestedHeight
-        );
+        ];
 
         $ratio = min($ratios);
         $newDimensions = $newDimensions->scale($ratio);
@@ -400,7 +408,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param integer $requestedWidth
      * @return BoxInterface
      */
-    protected function calculateScalingToWidth(BoxInterface $originalDimensions, $requestedWidth)
+    protected function calculateScalingToWidth(BoxInterface $originalDimensions, int $requestedWidth): BoxInterface
     {
         if ($this->getAllowUpScaling() === false && $requestedWidth >= $originalDimensions->getWidth()) {
             return $originalDimensions;
@@ -419,7 +427,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param integer $requestedHeight
      * @return BoxInterface
      */
-    protected function calculateScalingToHeight(BoxInterface $originalDimensions, $requestedHeight)
+    protected function calculateScalingToHeight(BoxInterface $originalDimensions, int $requestedHeight): BoxInterface
     {
         if ($this->getAllowUpScaling() === false && $requestedHeight >= $originalDimensions->getHeight()) {
             return $originalDimensions;
@@ -438,14 +446,14 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param ImagineImageInterface $image
      * @param string $mode
      * @param string $filter
-     * @return \Imagine\Image\ManipulatorInterface
+     * @return ManipulatorInterface
      */
-    protected function resize(ImagineImageInterface $image, $mode = ImageInterface::RATIOMODE_INSET, $filter = ImagineImageInterface::FILTER_UNDEFINED)
+    protected function resize(ImagineImageInterface $image, string $mode = ImageInterface::RATIOMODE_INSET, string $filter = ImagineImageInterface::FILTER_UNDEFINED): ManipulatorInterface
     {
         if ($mode !== ImageInterface::RATIOMODE_INSET &&
             $mode !== ImageInterface::RATIOMODE_OUTBOUND
         ) {
-            throw new \InvalidArgumentException('Invalid mode specified');
+            throw new \InvalidArgumentException('Invalid mode specified', 1574686891);
         }
 
         $imageSize = $image->getSize();
@@ -478,12 +486,12 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param BoxInterface $requestedDimensions
      * @return BoxInterface
      */
-    protected function calculateOutboundScalingDimensions(BoxInterface $imageSize, BoxInterface $requestedDimensions)
+    protected function calculateOutboundScalingDimensions(BoxInterface $imageSize, BoxInterface $requestedDimensions): BoxInterface
     {
-        $ratios = array(
+        $ratios = [
             $requestedDimensions->getWidth() / $imageSize->getWidth(),
             $requestedDimensions->getHeight() / $imageSize->getHeight()
-        );
+        ];
 
         return $imageSize->scale(max($ratios));
     }

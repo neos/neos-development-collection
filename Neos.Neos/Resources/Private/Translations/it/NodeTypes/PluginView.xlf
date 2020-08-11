@@ -7,7 +7,7 @@
 			<target state="translated">Visualizzazione di plugin</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target state="needs-translation">Plugin Views</target></trans-unit>
+			<target state="translated">Visualizza Plugin</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
 				<source>Master View</source>
 			<target state="translated">Visualizzazione Principale</target></trans-unit>

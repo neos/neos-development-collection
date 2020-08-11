@@ -14,7 +14,6 @@ namespace Neos\Media\Imagine;
 use Imagine\Image\BoxInterface;
 use Imagine\Image\Point;
 use Imagine\Image\PointInterface;
-use Neos\Flow\Annotations as Flow;
 
 class Box implements BoxInterface
 {
@@ -40,8 +39,11 @@ class Box implements BoxInterface
     public function __construct($width, $height)
     {
         if ($height < 1 || $width < 1) {
-            throw new \InvalidArgumentException(sprintf('Length of either side cannot be 0 or negative, current size is %sx%s',
-                $width, $height), 1465382619);
+            throw new \InvalidArgumentException(sprintf(
+                'Length of either side cannot be 0 or negative, current size is %sx%s',
+                $width,
+                $height
+            ), 1465382619);
         }
 
         $this->width = (integer)$width;

@@ -62,7 +62,8 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
         }
 
         $relatedNodes = array_map(function (NodeData $relatedNodeData) use ($asset) {
-            return new AssetUsageInNodeProperties($asset,
+            return new AssetUsageInNodeProperties(
+                $asset,
                 $relatedNodeData->getIdentifier(),
                 $relatedNodeData->getWorkspace()->getName(),
                 $relatedNodeData->getDimensionValues(),

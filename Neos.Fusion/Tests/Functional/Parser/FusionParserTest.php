@@ -125,7 +125,8 @@ class FusionParserTest extends FunctionalTestCase
     public function parserHandlesDslExpressionThatReturnsFusionObjectsInNamespace()
     {
         $parser = new Parser();
-        $actualAst = $parser->parse('
+        $actualAst = $parser->parse(
+            '
             namespace: F=Neos.Fusion
             value = TestFusionObjectDsl`{"objectName": "F:Value", "attributes": { "value": "foo" }}`'
         );

@@ -1,0 +1,176 @@
+`4.1.15 (2019-06-14) <https://github.com/neos/neos-development-collection/releases/tag/4.1.15>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Flush affected document node on asset change <https://github.com/neos/neos-development-collection/pull/2527>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When an asset is replaced, the content cache is flushed, but in most
+cases this does not have an effect. As most content nodes do not have
+a cache entry, the cache entry higher in the chain needs to be
+flushed.
+
+This is now done by fetching the affected node for an asset usage and
+passing that to `registerNodeChange(…)` in the `ContentCacheFlusher`.
+
+Fixes #2061
+
+* Packages: ``BaseMixins`` ``Navigation`` ``Neos``
+
+`BUGFIX: The caption of assets is lost when exporting to Sites.xml <https://github.com/neos/neos-development-collection/pull/2503>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Notes:
+1. I could not find tests covering this part of the code. If you point me to it, I will also add a test case for `caption`.
+2. The copyright notice is also missing from the export, but afaik this was added in Neos 4.2, so I will open a separate PR.
+3. Relations to tags and collections are also missing from the export, but they seem more complicated, so I will open separate PRs.
+
+<!--
+Thanks for your contribution, we appreciate it!
+
+Please read through our pull request guidelines, there are some interesting things there:
+https://discuss.neos.io/t/creating-a-pull-request/506
+
+And one more thing... Don't forget about the tests!
+-->
+
+
+**What I did**
+
+Included the caption of assets in exports to `Sites.xml`.
+
+**How I did it**
+
+Added `caption` in `ArrayConverter.php` the same way as `title`.
+
+**How to verify it**
+
+1. Add a caption to an asset.
+2. Export to `Sites.xml`.
+3. Do a clean import.
+4. Check that the caption is preserved.
+
+
+
+* Packages: ``Media``
+
+`BUGFIX: Changed Domains by UriConstraints will not no longer get destroyed by the LinkingService <https://github.com/neos/neos-development-collection/pull/2523>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+With `UriConstraints` we have the ability to modify the Host but there is a problem with the `LinkingService` in combination with `UriConstraints`. If you ask the `LinkingService` for a absolut Uri then it add the current base to the Url.
+
+Fixes #2398
+
+* Packages: ``Neos``
+
+`BUGFIX: node label sanitizing regex strips characters <https://github.com/neos/neos-development-collection/pull/2524>`_
+------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+[[^:print:]] resulted in the characters print: followed by ] being removed from the node label. Non-printable characters should be matched with [^[:print:]].
+
+Resolves neos/neos-ui#2496
+
+**How to verify it**
+Output node labels normally including n], i] etc. e.g. in the document tree.
+
+This PR replaces and closes #2515 which was targeting master.
+
+* Packages: ``Neos``
+
+`BUGFIX: Adjust warning text in setup <https://github.com/neos/neos-development-collection/pull/2510>`_
+-------------------------------------------------------------------------------------------------------
+
+Fixes Issue #2488
+In this PR I adjusted the somewhat missleading warning text, which is displayed in the image driver setup step, if none of the requiered drivers is installed. Additionaly I added some javascript to the image driver and the database configuration step in the setup package to disable the next button, if an error message is shown. See the PR https://github.com/neos/setup/pull/53
+
+* Packages: ``Neos``
+
+`TASK: Add setNoOpener property to Neos.Neos:ConvertUris documentation <https://github.com/neos/neos-development-collection/pull/2483>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Use countAll of AssetRepository to get count of all assets <https://github.com/neos/neos-development-collection/pull/2403>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+To get count of all assets, we should use the AssetRepository.
+Solves #2358 
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Workspace review module no longer shows target dimension <https://github.com/neos/neos-development-collection/pull/2509>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Fix the behaviour Workspace review module don't shows target dimension
+
+Fixes #2423
+
+* Packages: ``BaseMixins`` ``Browser`` ``Neos``
+
+`BUGFIX: Add translation for discard confirmation <https://github.com/neos/neos-development-collection/pull/2512>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Fixes https://github.com/neos/neos-ui/issues/2283
+
+* Packages: ``BaseMixins`` ``Browser`` ``Neos``
+
+`BUGFIX: Assigned asset collections cannot be unassigned <https://github.com/neos/neos-development-collection/pull/2502>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Fix the behaviour when the asset can't be unassigned from collections
+
+Fixes #2473
+
+`BUGFIX: Make exception for non renderable fusion path more helpful <https://github.com/neos/neos-development-collection/pull/2489>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+The existing exception for non renderable fusion pathes was not very helpful hard to read and missed mentioning likely reasons like a typo in the prototype name. It also suggested a solution that is unlikely to fix the problem.
+
+With this change the prototype name is moved to the front of the error message
+as it is the most important information.
+
+The path is removed from the message-body as the fusion exception handler will render it anyway.
+
+The most likely reasons typo + missing prototype are mentioned first and other possible reasons
+like missing parent-protopype, missing `@class` and missing `include:` later.
+
+The proposed solution to inherit from `Neos.Fusion:Template` is removed as it was misleading
+
+* Packages: ``Browser`` ``Fusion`` ``Neos``
+
+`[TASK] Create .codeclimate.yml <https://github.com/neos/neos-development-collection/pull/6>`_
+----------------------------------------------------------------------------------------------
+
+Adds a codeclimate configuration excluding Migrations, Tests and
+JavaScript libraries.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Avoid PHP exception in NamespaceDetectionTemplateProcessor <https://github.com/neos/neos-development-collection/pull/2484>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Related to neos/neos-development-collection#2479
+
+* Packages: ``Browser`` ``Neos``
+
+`Bugfix: Do access objects by key 0 in canEvaluate() of sort-operation <https://github.com/neos/neos-development-collection/pull/2474>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+For the current use of the sort operation, the element with key 0 must be present in $context. But this is not necessary for the sort itself. Consequently, the sort operation does not work using arrays without key 0. 
+
+Access via pointer avoids this problem in this PR.
+
+* Packages: ``Neos``
+
+`Remove wrong property from component wiring property list <https://github.com/neos/neos-development-collection/pull/2480>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The property `node` is not a wired property
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.1.14...4.1.15>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

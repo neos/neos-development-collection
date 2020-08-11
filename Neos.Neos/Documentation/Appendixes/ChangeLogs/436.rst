@@ -1,0 +1,53 @@
+`4.3.6 (2019-10-25) <https://github.com/neos/neos-development-collection/releases/tag/4.3.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Adjust wrong parameters for log call <https://github.com/neos/neos-development-collection/pull/2749>`_
+---------------------------------------------------------------------------------------------------------------
+
+This is probably an oversight during upmerges, the `log(…)` call expects
+the level as first parameter. By now this should be a `warning(…)` call.
+
+* Packages: ``Browser`` ``Media`` ``Neos``
+
+`BUGFIX: Add type="text" to title input field <https://github.com/neos/neos-development-collection/pull/2747>`_
+---------------------------------------------------------------------------------------------------------------
+
+Even though the input field is read-only, the type should be given. At least
+that makes sure the styling is correct.
+
+* Packages: ``Browser``
+
+`BUGFIX: Call PSR logger with warning directly <https://github.com/neos/neos-development-collection/pull/2746>`_
+----------------------------------------------------------------------------------------------------------------
+
+Fixes: #2744
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Always select local original asset in media browser <https://github.com/neos/neos-development-collection/pull/2743>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Only query for imported assets that are not a variant of an originally imported asset.
+
+Fixes #2742
+
+* Packages: ``Browser`` ``Media``
+
+`TASK: Make countAll() in AssetRepository work as expected for subclasses <https://github.com/neos/neos-development-collection/pull/2725>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Any repository extending AssetRepository would need to override the
+countAll() method or would always return the count of all assets,
+not only the type the repository dealt with.
+
+Now countAll() counts all assets or the specific type as expected.
+
+Fixes #2724
+
+* Packages: ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.3.5...4.3.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -32,7 +32,7 @@ Feature: Set Default Node Values on node creation
       properties:
         '_hiddenInIndex':
           type: boolean
-          defaultValue: TRUE
+          defaultValue: true
     """
     And I have the following nodes:
       | Identifier                           | Path   | Node Type                               |

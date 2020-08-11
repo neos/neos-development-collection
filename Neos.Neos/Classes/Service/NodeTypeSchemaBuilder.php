@@ -36,23 +36,23 @@ class NodeTypeSchemaBuilder
      *   whitelists and blacklists:
      *   - [node type]
      *     - nodeTypes:
-     *       [child node type name]: TRUE
+     *       [child node type name]: true
      *     - childNodes:
      *       - [child node name]
      *         - nodeTypes:
-     *          [child node type name]: TRUE
+     *          [child node type name]: true
      *
      * @return array the node type schema ready to be used by the JavaScript code
      */
     public function generateNodeTypeSchema()
     {
-        $schema = array(
-            'inheritanceMap' => array(
-                'subTypes' => array()
-            ),
-            'nodeTypes' => array(),
+        $schema = [
+            'inheritanceMap' => [
+                'subTypes' => []
+            ],
+            'nodeTypes' => [],
             'constraints' => $this->generateConstraints()
-        );
+        ];
 
         $nodeTypes = $this->nodeTypeManager->getNodeTypes(true);
         /** @var NodeType $nodeType */
@@ -64,7 +64,7 @@ class NodeTypeSchemaBuilder
                 $schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
             }
 
-            $schema['inheritanceMap']['subTypes'][$nodeTypeName] = array();
+            $schema['inheritanceMap']['subTypes'][$nodeTypeName] = [];
             foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), true) as $subNodeType) {
                 /** @var NodeType $subNodeType */
                 $schema['inheritanceMap']['subTypes'][$nodeTypeName][] = $subNodeType->getName();
@@ -76,7 +76,7 @@ class NodeTypeSchemaBuilder
 
     /**
      * In order to allow unsetting options via the YAML settings merging, the
-     * formatting options can be set via 'option': TRUE, however, the frontend
+     * formatting options can be set via 'option': true, however, the frontend
      * schema expects a flattened plain numeric array. This methods adjust the setting
      * accordingly.
      *
@@ -89,10 +89,10 @@ class NodeTypeSchemaBuilder
             foreach (array_keys($options['properties']) as $propertyName) {
                 if (isset($options['properties'][$propertyName]['ui']['aloha'])) {
                     foreach ($options['properties'][$propertyName]['ui']['aloha'] as $formatGroup => $settings) {
-                        if (!is_array($settings) || in_array($formatGroup, array('formatlesspaste'))) {
+                        if (!is_array($settings) || in_array($formatGroup, ['formatlesspaste'])) {
                             continue;
                         }
-                        $flattenedSettings = array();
+                        $flattenedSettings = [];
                         foreach ($settings as $key => $option) {
                             if (is_numeric($key) && is_string($option)) {
                                 $flattenedSettings[] = $option;
@@ -114,14 +114,14 @@ class NodeTypeSchemaBuilder
      */
     protected function generateConstraints()
     {
-        $constraints = array();
+        $constraints = [];
         $nodeTypes = $this->nodeTypeManager->getNodeTypes(true);
         /** @var NodeType $nodeType */
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
-            $constraints[$nodeTypeName] = array(
-                'nodeTypes' => array(),
-                'childNodes' => array()
-            );
+            $constraints[$nodeTypeName] = [
+                'nodeTypes' => [],
+                'childNodes' => []
+            ];
             foreach ($nodeTypes as $innerNodeTypeName => $innerNodeType) {
                 if ($nodeType->allowsChildNodeType($innerNodeType)) {
                     $constraints[$nodeTypeName]['nodeTypes'][$innerNodeTypeName] = true;

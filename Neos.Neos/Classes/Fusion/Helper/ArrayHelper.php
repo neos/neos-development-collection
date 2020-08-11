@@ -26,7 +26,7 @@ use Neos\Utility\ObjectAccess;
 class ArrayHelper implements ProtectedContextAwareInterface
 {
     /**
-     * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to TRUE.
+     * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to true.
      *
      * @param array|Collection $set
      * @param string $filterProperty
@@ -38,7 +38,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to FALSE.
+     * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to false.
      *
      * @param array|Collection $set
      * @param string $filterProperty
@@ -82,7 +82,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      */
     public function groupBy($set, $groupingKey)
     {
-        $result = array();
+        $result = [];
         foreach ($set as $element) {
             $result[ObjectAccess::getPropertyPath($element, $groupingKey)][] = $element;
         }

@@ -65,7 +65,7 @@ class BehatTestHelper
     /**
      * @return mixed
      */
-    protected function getObjectManager()
+    protected function getObjectManager(): ObjectManagerInterface
     {
         return $this->objectManager;
     }

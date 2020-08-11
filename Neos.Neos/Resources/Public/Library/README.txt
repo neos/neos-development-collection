@@ -133,21 +133,14 @@ To execute the update scripts method you'll need:
    which are used in the Cakefile in hallo root dir. Replace "sed -i ..." with "sed -i '' ..." or "sed -ibak ..." to ignore backup files.
 
 
-Font Awesome v4.6.0
+Font Awesome v5.2.0
 http://fontawesome.io
 
-* Changed $fa-font-path in sass/_variables.scss
-* Changed $fa-css-prefix in sass/_variables.scss
-* Wrapped everything in .neos sass/_animated.scss
-* Wrapped everything in .neos sass/_border-pulled.scss
-* Wrapped everything in .neos sass/_core.scss
-* Wrapped everything in .neos sass/_fixed-width.scss
-* Wrapped everything in .neos sass/_icons.scss
-* Wrapped everything in .neos sass/_larger.scss
-* Wrapped everything in .neos sass/_list.scss
-* Wrapped everything in .neos sass/_rotated-flipped.scss
-* Wrapped everything in .neos sass/_stacked.scss
-* Included old icon names from Font Awesome v3.2.1 in sass/_font-awesome.scss
+In Neos 4.0, Fontawesome 5 was introduced, enabling the usage of all free Fontawesome icons:
+https://fontawesome.com/icons?d=gallery&m=free
+Those can still be referenced via "icon-[name]", as the UI includes a fallback to the "fas"
+prefix-classes. To be sure which icon will be used, they can also be referenced by their
+icon-classes, e.g. "fas fa-check"
 
 
 Bootstrap Notify

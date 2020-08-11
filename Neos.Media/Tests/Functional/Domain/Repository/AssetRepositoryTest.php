@@ -138,9 +138,9 @@ class AssetRepositoryTest extends AbstractTest
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('home', array($tag)));
-        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('homepage', array($tag)));
-        $this->assertCount(1, $this->assetRepository->findBySearchTermOrTags('baz', array($tag)));
+        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('home', [$tag]));
+        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('homepage', [$tag]));
+        $this->assertCount(1, $this->assetRepository->findBySearchTermOrTags('baz', [$tag]));
 
         // This is necessary to initialize all resource instances before the tables are deleted
         foreach ($this->assetRepository->findAll() as $asset) {

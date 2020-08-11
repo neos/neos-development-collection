@@ -5,18 +5,18 @@
       <!-- UserDoesNotExistValidator -->
       <trans-unit id="1325156008" xml:space="preserve" approved="yes">
 				<source>The username is already in use.</source>
-			<target state="translated">Lietotājvārds tiek jau lietots.</target></trans-unit>
+			<target state="final">Lietotājvārds tiek jau lietots.</target></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve" approved="yes">
 				<source>The hostname "{0}" was not valid.</source>
-			<target state="translated">Savienojums {0} nav derīgs.</target></trans-unit>
+			<target state="final">Savienojums {0} nav derīgs.</target></trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve" approved="yes">
 				<source>The given password was empty.</source>
-			<target state="translated">Nav ievadīta parole.</target></trans-unit>
+			<target state="final">Nav ievadīta parole.</target></trans-unit>
       <trans-unit id="1324640997" xml:space="preserve" approved="yes">
 				<source>The passwords did not match.</source>
-			<target state="translated">Paroles nesakrīt.</target></trans-unit>
+			<target state="final">Paroles nesakrīt.</target></trans-unit>
     </body>
   </file>
 </xliff>

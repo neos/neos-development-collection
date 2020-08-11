@@ -33,7 +33,7 @@ class ContextFactory implements ContextFactoryInterface
     /**
      * @var array<Context>
      */
-    protected $contextInstances = array();
+    protected $contextInstances = [];
 
     /**
      * The context implementation this factory will create
@@ -49,7 +49,7 @@ class ContextFactory implements ContextFactoryInterface
     protected $contentDimensionRepository;
 
     /**
-     * @Flow\Inject(lazy=FALSE)
+     * @Flow\Inject(lazy=false)
      * @var Now
      */
     protected $now;
@@ -72,9 +72,9 @@ class ContextFactory implements ContextFactoryInterface
      *        'currentDateTime' => new \Neos\Flow\Utility\Now(),
      *        'dimensions' => array(...),
      *        'targetDimensions' => array('language' => 'de', 'persona' => 'Lisa'),
-     *        'invisibleContentShown' => FALSE,
-     *        'removedContentShown' => FALSE,
-     *        'inaccessibleContentShown' => FALSE
+     *        'invisibleContentShown' => false,
+     *        'removedContentShown' => false,
+     *        'inaccessibleContentShown' => false
      * )
      *
      * This array also shows the defaults that get used if you don't provide a certain property.
@@ -83,7 +83,7 @@ class ContextFactory implements ContextFactoryInterface
      * @return Context
      * @api
      */
-    public function create(array $contextProperties = array())
+    public function create(array $contextProperties = [])
     {
         $contextProperties = $this->mergeContextPropertiesWithDefaults($contextProperties);
         $contextIdentifier = $this->getIdentifier($contextProperties);
@@ -119,15 +119,15 @@ class ContextFactory implements ContextFactoryInterface
     {
         $contextProperties = $this->removeDeprecatedProperties($contextProperties);
 
-        $defaultContextProperties = array(
+        $defaultContextProperties = [
             'workspaceName' => 'live',
             'currentDateTime' => $this->now,
-            'dimensions' => array(),
-            'targetDimensions' => array(),
+            'dimensions' => [],
+            'targetDimensions' => [],
             'invisibleContentShown' => false,
             'removedContentShown' => false,
             'inaccessibleContentShown' => false
-        );
+        ];
 
         $mergedProperties = Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, true);
 
@@ -160,13 +160,13 @@ class ContextFactory implements ContextFactoryInterface
         $identifierSource = $this->contextImplementation;
         foreach ($contextProperties as $propertyName => $propertyValue) {
             if ($propertyName === 'dimensions') {
-                $stringParts = array();
+                $stringParts = [];
                 foreach ($propertyValue as $dimensionName => $dimensionValues) {
                     $stringParts[] = $dimensionName . '=' . implode(',', $dimensionValues);
                 }
                 $stringValue = implode('&', $stringParts);
             } elseif ($propertyName === 'targetDimensions') {
-                $stringParts = array();
+                $stringParts = [];
                 foreach ($propertyValue as $dimensionName => $dimensionValue) {
                     $stringParts[] = $dimensionName . '=' . $dimensionValue;
                 }
@@ -218,7 +218,7 @@ class ContextFactory implements ContextFactoryInterface
         foreach ($dimensions as $dimension) {
             if (!isset($contextProperties['dimensions'][$dimension->getIdentifier()])
                 || !is_array($contextProperties['dimensions'][$dimension->getIdentifier()])
-                || $contextProperties['dimensions'][$dimension->getIdentifier()] === array()
+                || $contextProperties['dimensions'][$dimension->getIdentifier()] === []
             ) {
                 throw new InvalidNodeContextException(sprintf('You have to set a non-empty array with one or more values for content dimension "%s" in the context', $dimension->getIdentifier()), 1390300646);
             }
@@ -262,7 +262,7 @@ class ContextFactory implements ContextFactoryInterface
      */
     public function reset()
     {
-        $this->contextInstances = array();
+        $this->contextInstances = [];
     }
 
     /**
@@ -278,7 +278,7 @@ class ContextFactory implements ContextFactoryInterface
             return reset($values);
         }, $mergedProperties['dimensions']);
         if (!isset($contextProperties['targetDimensions'])) {
-            $contextProperties['targetDimensions'] = array();
+            $contextProperties['targetDimensions'] = [];
         }
         $mergedProperties['targetDimensions'] = Arrays::arrayMergeRecursiveOverrule($defaultContextProperties['targetDimensions'], $contextProperties['targetDimensions']);
     }
@@ -295,7 +295,7 @@ class ContextFactory implements ContextFactoryInterface
         foreach ($dimensions as $dimension) {
             /** @var ContentDimension $dimension */
             $identifier = $dimension->getIdentifier();
-            $values = array($dimension->getDefault());
+            $values = [$dimension->getDefault()];
             if (isset($contextProperties['dimensions'][$identifier])) {
                 if (!is_array($contextProperties['dimensions'][$identifier])) {
                     throw new InvalidNodeContextException(sprintf('The given dimension fallback chain for "%s" should be an array of string, but "%s" was given.', $identifier, gettype($contextProperties['dimensions'][$identifier])), 1407417930);

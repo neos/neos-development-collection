@@ -1,7 +1,7 @@
 # folder inside repository, branch, title - adjust per branch!
-branch: '3.3'
-docs-path: 'neos/3.3'
-title: 'Neos (3.3 branch)'
+branch: '4.3'
+docs-path: 'neos/4.3'
+title: 'Neos (4.3 branch)'
 
 # some project specific settings
 docs-repository: 'neos/neos.github.io'

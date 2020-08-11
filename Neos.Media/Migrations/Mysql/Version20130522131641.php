@@ -18,14 +18,14 @@ class Version20130522131641 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
             // new tables for Asset, Document, Video, Audio
-        $this->addSql("CREATE TABLE typo3_media_domain_model_asset (persistence_object_identifier VARCHAR(40) NOT NULL, dtype VARCHAR(255) NOT NULL, resource VARCHAR(40) DEFAULT NULL, title VARCHAR(255) NOT NULL, INDEX IDX_B8306B8EBC91F416 (resource), PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
+        $this->addSql("CREATE TABLE typo3_media_domain_model_asset (persistence_object_identifier VARCHAR(40) NOT NULL, dtype VARCHAR(255) NOT NULL, resource VARCHAR(40) DEFAULT NULL, title VARCHAR(255) NOT NULL, INDEX IDX_B8306B8EBC91F416 (resource), PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->addSql("ALTER TABLE typo3_media_domain_model_asset ADD CONSTRAINT FK_B8306B8EBC91F416 FOREIGN KEY (resource) REFERENCES typo3_flow_resource_resource (persistence_object_identifier)");
 
-        $this->addSql("CREATE TABLE typo3_media_domain_model_document (persistence_object_identifier VARCHAR(40) NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
+        $this->addSql("CREATE TABLE typo3_media_domain_model_document (persistence_object_identifier VARCHAR(40) NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->addSql("ALTER TABLE typo3_media_domain_model_document ADD CONSTRAINT FK_F089E2F547A46B0A FOREIGN KEY (persistence_object_identifier) REFERENCES typo3_media_domain_model_asset (persistence_object_identifier) ON DELETE CASCADE");
-        $this->addSql("CREATE TABLE typo3_media_domain_model_video (persistence_object_identifier VARCHAR(40) NOT NULL, width INT NOT NULL, height INT NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
+        $this->addSql("CREATE TABLE typo3_media_domain_model_video (persistence_object_identifier VARCHAR(40) NOT NULL, width INT NOT NULL, height INT NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->addSql("ALTER TABLE typo3_media_domain_model_video ADD CONSTRAINT FK_C658EBFE47A46B0A FOREIGN KEY (persistence_object_identifier) REFERENCES typo3_media_domain_model_asset (persistence_object_identifier) ON DELETE CASCADE");
-        $this->addSql("CREATE TABLE typo3_media_domain_model_audio (persistence_object_identifier VARCHAR(40) NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
+        $this->addSql("CREATE TABLE typo3_media_domain_model_audio (persistence_object_identifier VARCHAR(40) NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->addSql("ALTER TABLE typo3_media_domain_model_audio ADD CONSTRAINT FK_A2E2074747A46B0A FOREIGN KEY (persistence_object_identifier) REFERENCES typo3_media_domain_model_asset (persistence_object_identifier) ON DELETE CASCADE");
 
             // populate Asset table with existing Image data

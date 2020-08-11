@@ -128,47 +128,47 @@ class PatternTest extends UnitTestCase
     {
         $pattern = Parser::SPLIT_PATTERN_OBJECTPATH;
 
-        $expected = array(
+        $expected = [
             0 => 'foo',
             1 => 'bar'
-        );
+        ];
         $this->assertSame($expected, preg_split($pattern, 'foo.bar'));
 
-        $expected = array(
+        $expected = [
             0 => 'prototype(Neos.Foo)',
             1 => 'bar'
-        );
+        ];
         $this->assertSame($expected, preg_split($pattern, 'prototype(Neos.Foo).bar'));
 
-        $expected = array(
+        $expected = [
             0 => 'asdf',
             1 => 'prototype(Neos.Foo)',
             2 => 'bar'
-        );
+        ];
         $this->assertSame($expected, preg_split($pattern, 'asdf.prototype(Neos.Foo).bar'));
 
-        $expected = array(
+        $expected = [
             0 =>  'blah',
             1 => 'asdf',
             2 => 'prototype(Neos.Foo)',
             3 => 'bar'
-        );
+        ];
         $this->assertSame($expected, preg_split($pattern, 'blah.asdf.prototype(Neos.Foo).bar'));
 
-        $expected = array(
+        $expected = [
             0 =>  'b-lah',
             1 => 'asdf',
             2 => 'prototype(Neos.Foo)',
             3 => 'b-ar'
-        );
+        ];
         $this->assertSame($expected, preg_split($pattern, 'b-lah.asdf.prototype(Neos.Foo).b-ar'));
 
-        $expected = array(
+        $expected = [
             0 =>  'b:lah',
             1 => 'asdf',
             2 => 'prototype(Neos.Foo)',
             3 => 'b:ar'
-        );
+        ];
         $this->assertSame($expected, preg_split($pattern, 'b:lah.asdf.prototype(Neos.Foo).b:ar'));
     }
 
@@ -179,7 +179,7 @@ class PatternTest extends UnitTestCase
     {
         $pattern = Parser::SPLIT_PATTERN_OBJECTDEFINITION;
 
-        $expected = array(
+        $expected = [
             0 => 'foo.bar = Test',
             'ObjectPath' => 'foo.bar',
             1 => 'foo.bar',
@@ -187,10 +187,10 @@ class PatternTest extends UnitTestCase
             2 => '=',
             'Value' => 'Test',
             3 => 'Test'
-        );
+        ];
         $this->assertRegexMatches('foo.bar = Test', $pattern, $expected, 'Simple assignment');
 
-        $expected = array(
+        $expected = [
             0 => 'foo.\'@bar\' = Test',
             'ObjectPath' => 'foo.\'@bar\'',
             1 => 'foo.\'@bar\'',
@@ -198,10 +198,10 @@ class PatternTest extends UnitTestCase
             2 => '=',
             'Value' => 'Test',
             3 => 'Test'
-        );
+        ];
         $this->assertRegexMatches('foo.\'@bar\' = Test', $pattern, $expected, 'Simple assignment with single quoted key');
 
-        $expected = array(
+        $expected = [
             0 => 'foo."@bar" = Test',
             'ObjectPath' => 'foo."@bar"',
             1 => 'foo."@bar"',
@@ -209,10 +209,10 @@ class PatternTest extends UnitTestCase
             2 => '=',
             'Value' => 'Test',
             3 => 'Test'
-        );
+        ];
         $this->assertRegexMatches('foo."@bar" = Test', $pattern, $expected, 'Simple assignment with double quoted key');
 
-        $expected = array(
+        $expected = [
             0 => 'foo.prototype(Neos.Blah).bar = Test',
             'ObjectPath' => 'foo.prototype(Neos.Blah).bar',
             1 => 'foo.prototype(Neos.Blah).bar',
@@ -220,10 +220,10 @@ class PatternTest extends UnitTestCase
             2 => '=',
             'Value' => 'Test',
             3 => 'Test'
-        );
+        ];
         $this->assertRegexMatches('foo.prototype(Neos.Blah).bar = Test', $pattern, $expected, 'Prototype Object assignment');
 
-        $expected = array(
+        $expected = [
             0 => 'prototype(Neos.Blah).bar = Test',
             'ObjectPath' => 'prototype(Neos.Blah).bar',
             1 => 'prototype(Neos.Blah).bar',
@@ -231,11 +231,11 @@ class PatternTest extends UnitTestCase
             2 => '=',
             'Value' => 'Test',
             3 => 'Test'
-        );
+        ];
         $this->assertRegexMatches('prototype(Neos.Blah).bar = Test', $pattern, $expected, 'Prototype Object assignment at root object');
 
-        $expected = array(
-        );
+        $expected = [
+        ];
         $this->assertRegexMatches('prototype(Neos.Blah) {', $pattern, $expected, 'Prototype Object assignment at root object');
     }
 
@@ -287,41 +287,41 @@ class PatternTest extends UnitTestCase
         $this->assertEquals(1, preg_match($pattern, 'Neos.Fusion:Foo'), 'It did not match a simple TS Object Type');
         $this->assertEquals(1, preg_match($pattern, 'Foo'), 'It matched an unqualified TS Object Type');
 
-        $expected = array(
+        $expected = [
             0 => 'Foo',
             'namespace' => '',
             1 => '',
             'unqualifiedType' => 'Foo',
             2 => 'Foo'
-        );
+        ];
         $this->assertRegexMatches('Foo', $pattern, $expected, 'Detailed result');
 
-        $expected = array(
+        $expected = [
             0 => 'Neos.Fusion:Foo',
             'namespace' => 'Neos.Fusion',
             1 => 'Neos.Fusion',
             'unqualifiedType' => 'Foo',
             2 => 'Foo'
-        );
+        ];
         $this->assertRegexMatches('Neos.Fusion:Foo', $pattern, $expected, 'Detailed result');
     }
 
     public function SPLIT_PATTERN_COMMENTTYPEdataProvider()
     {
-        return array(
-            'hashComment' => array(
+        return [
+            'hashComment' => [
                 'tsSnippet' => '# */asdf',
                 'expectedCommentToken' => '#'
-            ),
-            'doubleSlashComment' => array(
+            ],
+            'doubleSlashComment' => [
                 'tsSnippet' => '// comment with */ and more comment',
                 'expectedCommentToken' => '//'
-            ),
-            'slashStarComment' => array(
+            ],
+            'slashStarComment' => [
                 'tsSnippet' => '/* comment with // and more comment */',
                 'expectedCommentToken' => '/*'
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -336,10 +336,10 @@ class PatternTest extends UnitTestCase
 
         $this->assertEquals(1, preg_match($pattern, $tsSnippet), 'It did not match a complex TS comment.');
 
-        $expected = array(
+        $expected = [
             0 => $tsSnippet,
             1 => $expectedCommentToken
-        );
+        ];
         $this->assertRegexMatches($tsSnippet, $pattern, $expected, 'It did not match comment-parts as expected.');
     }
 
@@ -389,13 +389,13 @@ class PatternTest extends UnitTestCase
     public function testSPLIT_PATTERN_DSL_EXPRESSION($expression, $dslIdentidier, $dslCode)
     {
         $pattern = Parser::SPLIT_PATTERN_DSL_EXPRESSION;
-        $expected = array(
+        $expected = [
             0 => $expression,
             'identifier' => $dslIdentidier,
             1  => $dslIdentidier,
             'code' => $dslCode,
             2 => $dslCode
-        );
+        ];
         $this->assertRegexMatches($expression, $pattern, $expected, 'It did not match dsl-parts as expected.');
     }
 
@@ -409,7 +409,7 @@ class PatternTest extends UnitTestCase
      */
     protected function assertRegexMatches($testString, $pattern, $expectedMatches, $explanation)
     {
-        $matches = array();
+        $matches = [];
         preg_match($pattern, $testString, $matches);
 
         $this->assertSame($expectedMatches, $matches, $explanation);

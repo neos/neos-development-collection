@@ -63,13 +63,13 @@ configuration and constraints.
 *Remove undefined node properties*
 removeUndefinedProperties
 
+Will remove all undefined properties according to the node type configuration.
+
 *Remove broken object references*
 removeBrokenEntityReferences
 
 Detects and removes references from nodes to entities which don't exist anymore (for
 example Image nodes referencing ImageVariant objects which are gone for some reason).
-
-Will remove all undefined properties according to the node type configuration.
 
 *Remove nodes with invalid dimensions*
 removeNodesWithInvalidDimensions
@@ -120,6 +120,7 @@ have different node paths, but don't have a corresponding shadow node with a "mo
 value.
 
 *Generate missing URI path segments*
+generateUriPathSegments
 
 Generates URI path segment properties for all document nodes which don't have a path
 segment set yet.
@@ -132,13 +133,13 @@ Removes content dimensions from the root and sites nodes
 
 **Examples:**
 
-./flow node:repair
+``./flow node:repair``
 
-./flow node:repair --node-type Neos.NodeTypes:Page
+``./flow node:repair --node-type Neos.NodeTypes:Page``
 
-./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
+``./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions``
 
-./flow node:repair --skip removeUndefinedProperties
+``./flow node:repair --skip removeUndefinedProperties``
 
 
 
@@ -465,10 +466,10 @@ additionally supports autocompletion and a user-based command history.
 ``neos.flow:database:setcharset``
 *********************************
 
-**Convert the database schema to use the given character set and collation (defaults to utf8 and utf8_unicode_ci).**
+**Convert the database schema to use the given character set and collation (defaults to utf8mb4 and utf8mb4_unicode_ci).**
 
-This command can be used to convert the database configured in the Flow settings to the utf8 character
-set and the utf8_unicode_ci collation (by default, a custom collation can be given). It will only
+This command can be used to convert the database configured in the Flow settings to the utf8mb4 character
+set and the utf8mb4_unicode_ci collation (by default, a custom collation can be given). It will only
 work when using the pdo_mysql driver.
 
 **Make a backup** before using it, to be on the safe side. If you want to inspect the statements used
@@ -481,18 +482,18 @@ For background information on this, see:
 - http://dev.mysql.com/doc/refman/5.5/en/alter-table.html
 
 The main purpose of this is to fix setups that were created with Flow 2.3.x or earlier and whose
-database server did not have a default collation of utf8_unicode_ci. In those cases, the tables will
+database server did not have a default collation of utf8mb4_unicode_ci. In those cases, the tables will
 have a collation that does not match the default collation of later Flow versions, potentially leading
 to problems when creating foreign key constraints (among others, potentially).
 
 If you have special needs regarding the charset and collation, you *can* override the defaults with
-different ones. One thing this might be useful for is when switching to the utf8mb4 character set, see:
+different ones. One thing this might be useful for is when switching to the utf8mb4mb4 character set, see:
 
 - https://mathiasbynens.be/notes/mysql-utf8mb4
 - https://florian.ec/articles/mysql-doctrine-utf8/
 
 Note: This command **is not a general purpose conversion tool**. It will specifically not fix cases
-of actual utf8 stored in latin1 columns. For this a conversion to BLOB followed by a conversion to the
+of actual utf8mb4 stored in latin1 columns. For this a conversion to BLOB followed by a conversion to the
 proper type, charset and collation is needed instead.
 
 
@@ -501,9 +502,9 @@ Options
 ^^^^^^^
 
 ``--character-set``
-  Character set, defaults to utf8
+  Character set, defaults to utf8mb4
 ``--collation``
-  Collation to use, defaults to utf8_unicode_ci
+  Collation to use, defaults to utf8mb4_unicode_ci
 ``--output``
   A file to write SQL to, instead of executing it
 ``--verbose``

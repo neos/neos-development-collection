@@ -13,7 +13,7 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
 
           # EditEverything is needed, to switch to a "WHITELIST MODE" - i.e. where everything must be allowed explicitely.
           'Neos.ContentRepository:EditEverything':
-            matcher: 'TRUE'
+            matcher: 'true'
 
           'Neos.ContentRepository:EditGerman':
             matcher: 'isInDimensionPreset("language", "de")'
@@ -61,7 +61,7 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
     And I get a node by path "/sites/content-repository/company" with the following context:
       | Workspace  | Language      |
       | user-admin | en_ZZ, mul_ZZ |
-    Then I should get FALSE when asking the node authorization service if editing this node is granted
+    Then I should get false when asking the node authorization service if editing this node is granted
     And I should not be granted to set any of the node's attributes
 
   @Isolated @fixtures
@@ -71,12 +71,12 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
       | Workspace  | Language      |
       | user-admin | de_ZZ, mul_ZZ |
     Then I should be granted to set the "title" property to "Dienstleistungen speziell"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
     When I get a node by path "/sites/content-repository/company" with the following context:
       | Workspace  | Language      |
       | user-admin | de_ZZ, mul_ZZ |
     Then I should be granted to set the "title" property to "Firma speziell"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Language-Restricted (German) Managers should not be able to edit english nodes
@@ -85,12 +85,12 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
       | Workspace  | Language      |
       | user-admin | en_ZZ, mul_ZZ |
     Then I should not be granted to set any of the node's attributes
-    And I should get FALSE when asking the node authorization service if editing this node is granted
+    And I should get false when asking the node authorization service if editing this node is granted
     When I get a node by path "/sites/content-repository/company" with the following context:
       | Workspace  | Language      |
       | user-admin | en_ZZ, mul_ZZ |
     Then I should not be granted to set any of the node's attributes
-    And I should get FALSE when asking the node authorization service if editing this node is granted
+    And I should get false when asking the node authorization service if editing this node is granted
 
   @Isolated @fixtures
   Scenario: Service Managers should be able to edit both german and non-german nodes
@@ -99,19 +99,19 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
       | Workspace  | Language      |
       | user-admin | de_ZZ, mul_ZZ |
     Then I should be granted to set the "title" property to "Dienstleistungen speziell"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
     Given I get a node by path "/sites/content-repository/service" with the following context:
       | Workspace  | Language      |
       | user-admin | en_ZZ, mul_ZZ |
     Then I should be granted to set the "title" property to "Dienstleistungen speziell"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
     When I get a node by path "/sites/content-repository/company" with the following context:
       | Workspace  | Language      |
       | user-admin | de_ZZ, mul_ZZ |
     Then I should not be granted to set any of the node's attributes
-    And I should get FALSE when asking the node authorization service if editing this node is granted
+    And I should get false when asking the node authorization service if editing this node is granted
     When I get a node by path "/sites/content-repository/company" with the following context:
       | Workspace  | Language      |
       | user-admin | en_ZZ, mul_ZZ |
     Then I should not be granted to set any of the node's attributes
-    And I should get FALSE when asking the node authorization service if editing this node is granted
+    And I should get false when asking the node authorization service if editing this node is granted

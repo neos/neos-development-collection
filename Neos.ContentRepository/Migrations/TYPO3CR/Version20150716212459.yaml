@@ -7,7 +7,7 @@ up:
         -
           type: 'AddDimensions'
           settings:
-            addDefaultDimensionValues: TRUE
+            addDefaultDimensionValues: true
 
 down:
   comments: 'Use migration 20140326143834 to migrate nodes with dimensions to no dimensions. This down migration does nothing.'

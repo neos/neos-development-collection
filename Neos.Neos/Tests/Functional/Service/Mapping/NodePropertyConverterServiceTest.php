@@ -17,11 +17,9 @@ use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
-use Neos\Neos\Ui\Fusion\Helper\ActivationHelper;
 
 /**
  * Functional test case which tests the node property converter
- *
  */
 class NodePropertyConverterServiceTest extends FunctionalTestCase
 {
@@ -150,15 +148,11 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
      */
     public function complexTypesWithGivenTypeConverterAreConvertedByTypeConverter()
     {
-        $mockActivationHelper = self::getMockBuilder(ActivationHelper::class)->getMock();
-        $mockActivationHelper->expects(self::any())->method('isLegacyBackendEnabled')->willReturn(true);
-        $this->objectManager->setInstance(ActivationHelper::class, $mockActivationHelper);
-
         $propertyValue = $this->getMockForAbstractClass(ImageInterface::class);
-        $expected = json_encode([
+        $expected = [
             '__identity' => null,
             '__type' => get_class($propertyValue)
-        ]);
+        ];
 
         $nodeType = $this
             ->getMockBuilder(NodeType::class)

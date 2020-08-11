@@ -8,10 +8,10 @@
 			<target state="translated">Autopublicar</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target state="translated">Autopublicar a {0}</target><alt-trans><target>Autopublicar en {0}</target></alt-trans></trans-unit>
+			<target state="translated">Autopublicar a {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target state="translated">Revisar cambios</target><alt-trans><target>Revisar los cambios</target></alt-trans></trans-unit>
+			<target state="translated">Revisar cambios</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target state="translated">Aplicar</target></trans-unit>
@@ -20,16 +20,16 @@
 			<target state="translated">Aplicar cambios</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target state="translated">Cancelar</target></trans-unit>
+			<target state="final">Cancelar</target></trans-unit>
       <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target state="translated">Atrás</target></trans-unit>
+			<target state="final">Atrás</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target state="translated">Elegir</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target state="translated">Tipo de búsqueda</target><alt-trans><target>Escriba para buscar</target></alt-trans><alt-trans><target>Escribe para buscar</target></alt-trans></trans-unit>
+			<target state="translated">Tipo de búsqueda</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target state="translated">Contenido</target></trans-unit>
@@ -38,13 +38,13 @@
 			<target state="translated">Nodo</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target state="translated">Vista del contenido</target><alt-trans><target>Vista de contenido</target></alt-trans></trans-unit>
+			<target state="translated">Vista del contenido</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target state="translated">Crear después de</target><alt-trans><target>Crear después</target></alt-trans></trans-unit>
+			<target state="translated">Crear después de</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target state="translated">Crear nuevo</target><alt-trans><target>Crear nueva</target></alt-trans></trans-unit>
+			<target state="translated">Crear nuevo</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
 			<target state="translated">Cerrar</target></trans-unit>
@@ -86,10 +86,10 @@
 			<target state="translated">Ocultar</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target state="translated">Mostrar</target><alt-trans><target>Mostrar Nuevamente</target></alt-trans></trans-unit>
+			<target state="translated">Mostrar</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target state="translated">en</target><alt-trans><target>dentro</target></alt-trans></trans-unit>
+			<target state="translated">en</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
 			<target state="translated">antes</target></trans-unit>
@@ -134,13 +134,13 @@
 			<target state="translated">Contraseña</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target state="translated">Vista previa</target></trans-unit>
+			<target state="final">Vista previa</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
 			<target state="translated">Publicar</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target state="translated">Publicar a {0}</target><alt-trans><target>Publicar en {0}</target></alt-trans></trans-unit>
+			<target state="translated">Publicar a {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
 			<target state="translated">Publicar todos los cambios de la página actual</target></trans-unit>
@@ -149,7 +149,7 @@
 			<target state="translated">No puedes publicarlo, porque el espacio de trabajo de destino es de solo lectura</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target state="translated">Seleccionar espacio de trabajo de destino</target><alt-trans><target>Selecciona el espacio de trabajo de destino</target></alt-trans></trans-unit>
+			<target state="translated">Seleccionar espacio de trabajo de destino</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
 			<target state="translated">Publicando</target></trans-unit>
@@ -158,7 +158,7 @@
 			<target state="translated">Publicado</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target state="translated">Ocultar/Mostrar menú de publicación</target><alt-trans><target>Ocultar menú de publicación</target></alt-trans></trans-unit>
+			<target state="translated">Ocultar/Mostrar menú de publicación</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target state="translated">Espacio de trabajo de destino</target></trans-unit>
@@ -173,7 +173,7 @@
 			<target state="translated">Actualizar</target></trans-unit>
       <trans-unit id="save" xml:space="preserve" approved="yes">
 				<source>Save</source>
-			<target state="translated">Guardar</target></trans-unit>
+			<target state="final">Guardar</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
 			<target state="translated">Guardando...</target></trans-unit>
@@ -182,7 +182,7 @@
 			<target state="translated">Guardado</target></trans-unit>
       <trans-unit id="search" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target state="translated">Buscar</target></trans-unit>
+			<target state="final">Buscar</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target state="translated">Alternar inspector</target></trans-unit>
@@ -227,7 +227,7 @@
 			<target state="translated">Última publicación</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
-			<target state="translated">Identificador</target></trans-unit>
+			<target state="final">Identificador</target></trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
 			<target state="translated">Nombre</target></trans-unit>
@@ -287,52 +287,67 @@
 			<target state="translated">Primario</target></trans-unit>
       <trans-unit id="package" xml:space="preserve" approved="yes">
 				<source>Package</source>
-			<target state="translated">Paquete</target></trans-unit>
+			<target state="final">Paquete</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target state="translated">Desactivado</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve" approved="yes">
 				<source>Unavailable</source>
-			<target state="translated">No disponible</target></trans-unit>
+			<target state="final">No disponible</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve" approved="yes">
 				<source>Inactive</source>
-			<target state="translated">Inactivo</target></trans-unit>
+			<target state="final">Inactivo</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
-			<target state="translated">Haga clic para editar</target></trans-unit>
+			<target state="final">Haga clic para editar</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve" approved="yes">
 				<source>Click to deactivate</source>
-			<target state="translated">Haz click para desactivar</target></trans-unit>
+			<target state="final">Haz click para desactivar</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve" approved="yes">
 				<source>Click to activate</source>
-			<target state="translated">Haz click para activar</target></trans-unit>
+			<target state="final">Haz click para activar</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
-			<target state="translated">Haga clic para borrar</target></trans-unit>
+			<target state="final">Haga clic para borrar</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve" approved="yes">
 				<source>Click to create new</source>
-			<target state="translated">Haz click para crear nuevo</target></trans-unit>
+			<target state="final">Haz click para crear nuevo</target></trans-unit>
       <trans-unit id="state" xml:space="preserve" approved="yes">
 				<source>Status</source>
-			<target state="translated">Estado</target></trans-unit>
+			<target state="final">Estado</target></trans-unit>
       <trans-unit id="active" xml:space="preserve" approved="yes">
 				<source>Active</source>
-			<target state="translated">Activo</target></trans-unit>
+			<target state="final">Activo</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve" approved="yes">
 				<source>Domains</source>
-			<target state="translated">Dominios</target></trans-unit>
+			<target state="final">Dominios</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve" approved="yes">
 				<source>Domain</source>
-			<target state="translated">Dominio</target></trans-unit>
+			<target state="final">Dominio</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve" approved="yes">
 				<source>Yes, delete it!</source>
-			<target state="translated">Si, ¡Eliminalo!</target></trans-unit>
+			<target state="final">Si, ¡Eliminalo!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target state="translated">Clave de paquete</target></trans-unit>
       <trans-unit id="description" xml:space="preserve" approved="yes">
 				<source>Description</source>
-			<target state="translated">Descripción</target></trans-unit>
+			<target state="final">Descripción</target></trans-unit>
+      <trans-unit id="toggleContentTree" xml:space="preserve">
+				<source>Toggle content tree</source>
+			<target state="translated">Contenido libre de seguridad</target></trans-unit>
+      <trans-unit id="showPublishOptions" xml:space="preserve">
+				<source>Show publish options</source>
+			<target state="translated">Mostrar publicaciones opcionales</target></trans-unit>
+      <trans-unit id="activateFullscreen" xml:space="preserve">
+				<source>Activate Fullscreen edit mode</source>
+			<target state="translated">Activar modo de edición a pantalla completa</target></trans-unit>
+      <trans-unit id="deactivateFullscreen" xml:space="preserve">
+				<source>Deactivate Fullscreen edit mode</source>
+			<target state="translated">Desactivar modo de edición en pantalla completa</target></trans-unit>
+      <trans-unit id="showPreview" xml:space="preserve">
+				<source>Show preview</source>
+			<target state="translated">Mostrar vista previa</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -378,22 +393,22 @@
 			<target state="translated">Descartar todo</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target state="translated">Descartar todos los cambios</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
-				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="translated">¿Estás segirp qie deseas descartar {numberOfChanges} cambios en este espacio de trabajo?</target></trans-unit>
+			<target state="final">Descartar todos los cambios</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target state="translated">¿Está seguro de que desea descartar todos los cambios en este espacio de trabajo?</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
+			<target state="translated">¿Estás segirp qie deseas descartar {numberOfChanges} cambios en este espacio de trabajo?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target state="translated">Publicar todo</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target state="translated">Publicar todos los cambios</target></trans-unit>
+			<target state="final">Publicar todos los cambios</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target state="translated">¿Seguro que quiere publicar todos los cambios?</target><alt-trans><target>¿Seguro que quieres publicar todos los cambios?</target></alt-trans></trans-unit>
+			<target state="translated">¿Seguro que quiere publicar todos los cambios?</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
 			<target state="translated">Cambios pendientes</target></trans-unit>
@@ -445,18 +460,12 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			<target state="translated">No hay fecha fijada</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
-				<source>Today</source>
-			<target state="translated">Hoy</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
-				<source>Apply</source>
-			<target state="translated">Aplicar</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
 			<target state="translated">Editar código</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target state="translated">Pegue un enlace o escriba para buscar</target><alt-trans><target>Pega un enlace o escribe para buscar</target></alt-trans></trans-unit>
+			<target state="translated">Pegue un enlace o escriba para buscar</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
 			<target state="translated">No se pueden cargar los tipos de nodo secundario de:</target></trans-unit>
@@ -498,7 +507,7 @@
 			<target state="translated">La fecha debe estar entre {{formatEarliestDate}} y {{formatLatestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
 				<source>The given date must be after {formatEarliestDate}</source>
-			<target state="translated">La fecha debe ser posterior a {{formatEarliestDate}}</target><alt-trans><target>La fecha debe ser después de {{formatEarliestDate}}</target></alt-trans></trans-unit>
+			<target state="translated">La fecha debe ser posterior a {{formatEarliestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
 				<source>The given date must be before {formatLatestDate}</source>
 			<target state="translated">La fecha debe ser anterior a {{formatLatestDate}}</target></trans-unit>
@@ -507,7 +516,7 @@
 			<target state="translated">Especifique una dirección de correo electrónico válida.</target></trans-unit>
       <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
 				<source>A valid float number is expected.</source>
-			<target state="translated">Se esperaba un número con decimales válido.</target><alt-trans><target>Se espera un número con decimales válido.</target></alt-trans></trans-unit>
+			<target state="translated">Se esperaba un número con decimales válido.</target></trans-unit>
       <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
 				<source>A valid integer number is expected.</source>
 			<target state="translated">Se esperaba un número entero válido.</target></trans-unit>
@@ -567,7 +576,7 @@
 			<target state="translated">Activar modo menú permanente</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target state="translated">Realmente quiere borrar</target><alt-trans><target>Realmente quieres borrar</target></alt-trans></trans-unit>
+			<target state="translated">Realmente quiere borrar</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
 			<target state="translated">Se eliminará el elemento</target></trans-unit>
@@ -576,13 +585,13 @@
 			<target state="translated">y sus descendientes</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target state="translated">Esta acción se puede deshacer en el gestor de espacios de trabajo.</target><alt-trans><target>Esta acción se puede deshacer en el gestor de áreas de trabajo.</target></alt-trans></trans-unit>
+			<target state="translated">Esta acción se puede deshacer en el gestor de espacios de trabajo.</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
 			<target state="translated">Altura</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target state="translated">Realmente quiere borrar</target><alt-trans><target>Realmente quieres borrar</target></alt-trans></trans-unit>
+			<target state="translated">Realmente quiere borrar</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
 			<target state="translated">este elemento</target></trans-unit>
@@ -591,10 +600,10 @@
 			<target state="translated">Se eliminará el elemento.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target state="translated">Esta acción se puede deshacer en el gestor de espacios de trabajo.</target><alt-trans><target>Esta acción se puede deshacer en el gestor de áreas de trabajo.</target></alt-trans></trans-unit>
+			<target state="translated">Esta acción se puede deshacer en el gestor de espacios de trabajo.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target state="translated">Media</target></trans-unit>
+			<target state="final">Media</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
 			<target state="translated">Recortar</target></trans-unit>
@@ -609,7 +618,7 @@
 			<target state="translated">Espacio de Trabajo</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target state="translated">Espacios de Trabajo</target></trans-unit>
+			<target state="final">Espacios de Trabajo</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
 			<target state="translated">Se produjo un error mientras se guardaba</target></trans-unit>
@@ -644,7 +653,7 @@
 			<target state="translated">Autenticando</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target state="translated">Salir</target><alt-trans><target>Cerrar sesión</target></alt-trans></trans-unit>
+			<target state="translated">Salir</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
 			<target state="translated">El nombre de usuario o la contraseña introducido estaba mal</target></trans-unit>
@@ -652,9 +661,15 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target state="translated">Su sesión ha caducado. Por favor, inicie sesión nuevo.</target></trans-unit>
       <!-- Error handlers -->
+      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
+				<source>Welcome to Neos</source>
+			<target state="translated">Bienvenido a Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target state="translated">Ir a la configuración</target><alt-trans><target>Ir a configuración</target></alt-trans></trans-unit>
+			<target state="translated">Ir a la configuración</target></trans-unit>
+      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
+				<source>Technical Information</source>
+			<target state="translated">Información técnica</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target state="translated">Falta la página de inicio</target></trans-unit>
@@ -663,16 +678,16 @@
 			<target state="translated">No se ha definido ningún sitio, el sitio no contiene una página de inicio o el sitio activo no ha podido ser determinado.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target state="translated">Puede configurar el dominio del sitio o importar un nuevo sitio en la configuración.</target><alt-trans><target>Puedes configurar el dominio del sitio o importar un nuevo sitio en la configuración.</target></alt-trans></trans-unit>
+			<target state="translated">Puede configurar el dominio del sitio o importar un nuevo sitio en la configuración.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
 			<target state="translated">Error de base de datos</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target state="translated">Lo sentimos, hemos detectado un error con su base de datos. Revise los archivos de registro de datos, logs, etc... para obtener más información.</target></trans-unit>
+				<source>There is no database connection yet or the Neos database schema has not been created.</source>
+			<target state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target state="translated">Tal vez quiera configurar o comprobar la configuración de la base de datos en la configuración.</target><alt-trans><target>Tal vez quieras configurar o comprobar la configuración de la base de datos en la configuración.</target></alt-trans></trans-unit>
+				<source>Run the setup to configure your database.</source>
+			<target state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Página no encontrada</target></trans-unit>
@@ -724,82 +739,82 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve" approved="yes">
 				<source>Copy {source} to {target}</source>
-			<target state="translated">Copiar {source} a {target}</target></trans-unit>
+			<target state="final">Copiar {source} a {target}</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve" approved="yes">
 				<source>Move {source} to {target}</source>
-			<target state="translated">Mover {source} a {target}</target></trans-unit>
+			<target state="final">Mover {source} a {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve" approved="yes">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target state="translated">Por favor, seleccione la posición en la que desea que {source} se encuentre insertado en relación con {target}.</target><alt-trans><target>Por favor, seleccione la posición en que desea {source} insertado en relación con {target}.</target></alt-trans></trans-unit>
+			<target state="final">Por favor, seleccione la posición en la que desea que {source} se encuentre insertado en relación con {target}.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve" approved="yes">
 				<source>Insert</source>
-			<target state="translated">Insertar</target></trans-unit>
+			<target state="final">Insertar</target></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve" approved="yes">
 				<source>Insert mode</source>
-			<target state="translated">Insertar modo</target></trans-unit>
+			<target state="final">Insertar modo</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve" approved="yes">
 				<source>Choose an Aspect Ratio</source>
-			<target state="translated">Elija una proporción</target></trans-unit>
+			<target state="final">Elija una proporción</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve" approved="yes">
 				<source>Bold</source>
-			<target state="translated">Negrita</target></trans-unit>
+			<target state="final">Negrita</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve" approved="yes">
 				<source>Italic</source>
-			<target state="translated">Cursiva</target><alt-trans><target>Italica</target></alt-trans></trans-unit>
+			<target state="final">Cursiva</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve" approved="yes">
 				<source>Underline</source>
-			<target state="translated">Subrayada</target><alt-trans><target>Subrayar</target></alt-trans></trans-unit>
+			<target state="final">Subrayada</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve" approved="yes">
 				<source>Subscript</source>
-			<target state="translated">Subíndice</target><alt-trans><target>Subscript</target></alt-trans></trans-unit>
+			<target state="final">Subíndice</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve" approved="yes">
 				<source>Superscript</source>
-			<target state="translated">Superscript</target></trans-unit>
+			<target state="final">Superscript</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve" approved="yes">
 				<source>Strikethrough</source>
-			<target state="translated">Tachado</target></trans-unit>
+			<target state="final">Tachado</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
 			<target state="translated">Enlace</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve" approved="yes">
 				<source>Ordered list</source>
-			<target state="translated">Lista ordenada</target></trans-unit>
+			<target state="final">Lista ordenada</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve" approved="yes">
 				<source>Unordered list</source>
-			<target state="translated">Lista no ordenada</target><alt-trans><target>Lista desordenada</target></alt-trans></trans-unit>
+			<target state="final">Lista no ordenada</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve" approved="yes">
 				<source>Align left</source>
-			<target state="translated">Alinear a la izquierda</target><alt-trans><target>Alinear a la izq.</target></alt-trans><alt-trans><target>Alinear a la izq</target></alt-trans></trans-unit>
+			<target state="final">Alinear a la izquierda</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve" approved="yes">
 				<source>Align right</source>
-			<target state="translated">Alinear a la derecha</target><alt-trans><target>Alinear a la der.</target></alt-trans></trans-unit>
+			<target state="final">Alinear a la derecha</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve" approved="yes">
 				<source>Align center</source>
-			<target state="translated">Alinear al centro</target><alt-trans><target>Centrar</target></alt-trans></trans-unit>
+			<target state="final">Alinear al centro</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve" approved="yes">
 				<source>Align justify</source>
-			<target state="translated">Justificado</target><alt-trans><target>Justificar</target></alt-trans></trans-unit>
+			<target state="final">Justificado</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve" approved="yes">
 				<source>Table</source>
-			<target state="translated">Tabla</target></trans-unit>
+			<target state="final">Tabla</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve" approved="yes">
 				<source>Remove format</source>
-			<target state="translated">Eliminar formato</target></trans-unit>
+			<target state="final">Eliminar formato</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve" approved="yes">
 				<source>Outdent</source>
-			<target state="translated">Anular indentación</target><alt-trans><target>Anular sangría</target></alt-trans></trans-unit>
+			<target state="final">Anular indentación</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve" approved="yes">
 				<source>Indent</source>
-			<target state="translated">Indentado</target><alt-trans><target>Sangría</target></alt-trans></trans-unit>
+			<target state="final">Indentado</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target state="translated">Crear nuevo</target><alt-trans><target>Crear nueva</target></alt-trans></trans-unit>
+			<target state="translated">Crear nuevo</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve" approved="yes">
 				<source>No matches found</source>
-			<target state="translated">No se encuentran coincidencias</target></trans-unit>
+			<target state="final">No se encuentran coincidencias</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve" approved="yes">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target state="translated">Por favor introduzca ###CHARACTERS### caràcteres más</target><alt-trans><target>Introduzca ###CHARACTERS### caràcteres más</target></alt-trans></trans-unit>
+			<target state="final">Por favor introduzca ###CHARACTERS### caràcteres más</target></trans-unit>
     </body>
   </file>
 </xliff>

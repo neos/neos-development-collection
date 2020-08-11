@@ -12,6 +12,8 @@ namespace Neos\Neos\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Exception;
 use Neos\Neos\Domain\Model\Domain;
@@ -112,7 +114,7 @@ class ContentContext extends Context
             $siteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $this->currentSite->getNodeName());
             $this->currentSiteNode = $this->getNode($siteNodePath);
             if (!($this->currentSiteNode instanceof NodeInterface)) {
-                $this->systemLogger->log(sprintf('Warning: %s::getCurrentSiteNode() couldn\'t load the site node for path "%s" in workspace "%s". This is probably due to a missing baseworkspace for the workspace of the current user.', __CLASS__, $siteNodePath, $this->workspaceName), LOG_WARNING);
+                $this->systemLogger->warning(sprintf('Couldn\'t load the site node for path "%s" in workspace "%s". This is probably due to a missing baseworkspace for the workspace of the current user.', $siteNodePath, $this->workspaceName), LogEnvironment::fromMethodName(__METHOD__));
             }
         }
         return $this->currentSiteNode;
@@ -125,7 +127,7 @@ class ContentContext extends Context
      */
     public function getProperties()
     {
-        return array(
+        return [
             'workspaceName' => $this->workspaceName,
             'currentDateTime' => $this->currentDateTime,
             'dimensions' => $this->dimensions,
@@ -135,25 +137,27 @@ class ContentContext extends Context
             'inaccessibleContentShown' => $this->inaccessibleContentShown,
             'currentSite' => $this->currentSite,
             'currentDomain' => $this->currentDomain
-        );
+        ];
     }
 
     /**
-     * Returns TRUE if current context is live workspace, FALSE otherwise
+     * Returns true if current context is live workspace, false otherwise
      *
-     * @return boolean
+     * @return bool
+     * @throws IllegalObjectTypeException
      */
-    public function isLive()
+    public function isLive(): bool
     {
         return ($this->getWorkspace()->getBaseWorkspace() === null);
     }
 
     /**
-     * Returns TRUE while rendering backend (not live workspace and access to backend granted), FALSE otherwise
+     * Returns true while rendering backend (not live workspace and access to backend granted), false otherwise
      *
      * @return boolean
+     * @throws IllegalObjectTypeException
      */
-    public function isInBackend()
+    public function isInBackend(): bool
     {
         return (!$this->isLive() && $this->hasAccessToBackend());
     }
@@ -161,7 +165,7 @@ class ContentContext extends Context
     /**
      * @return UserInterfaceMode
      */
-    public function getCurrentRenderingMode()
+    public function getCurrentRenderingMode(): UserInterfaceMode
     {
         return $this->interfaceRenderModeService->findModeByCurrentUser();
     }
@@ -169,9 +173,9 @@ class ContentContext extends Context
     /**
      * Is access to the neos backend granted by current authentications.
      *
-     * @return boolean
+     * @return bool
      */
-    protected function hasAccessToBackend()
+    protected function hasAccessToBackend(): bool
     {
         try {
             return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess');

@@ -26,6 +26,9 @@
       <trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target state="translated">العنوان</target></trans-unit>
+      <trans-unit id="field.copyrightnotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target state="translated">ملحوظة حقوق الطبع والنشر</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			<target state="translated">آخر تعديل</target></trans-unit>
@@ -58,13 +61,19 @@
 			<target state="translated">تنازلي</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="translated">اتجاه الفرز تصاعدي</target><alt-trans><target>ترتيب الاتجاه تصاعدي</target></alt-trans></trans-unit>
+			<target state="translated">اتجاه الفرز تصاعدي</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="translated">اتجاه الفرز تنازلي</target><alt-trans><target>ترتيب الاتجاه تنازليا</target></alt-trans></trans-unit>
+			<target state="translated">اتجاه الفرز تنازلي</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="translated">سحب وإسقاط على العلامة أو المجموعة</target></trans-unit>
+      <trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			<target state="translated">اظهر</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
+			<target state="needs-translation">View asset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target state="translated">تعديل الأصل</target></trans-unit>
@@ -100,7 +109,7 @@
 			<target state="translated">تعويض</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="translated">استبدل مورد الأصل</target><alt-trans><target>استبدال مورد الأصول</target></alt-trans><alt-trans><target>استبدال مورد مادة العرض</target></alt-trans></trans-unit>
+			<target state="translated">استبدل مورد الأصل</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target state="translated">حفظ</target></trans-unit>
@@ -173,6 +182,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
 			<target state="needs-translation">Thumbnail view</target></trans-unit>
+      <trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			<target state="translated">خطأ فى الاتصال</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			<target state="translated">مصدر الوسائط</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			<target state="translated">مصادر الوسائط</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			<target state="needs-translation">Collections</target></trans-unit>
@@ -272,9 +290,27 @@
       <trans-unit id="metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target state="translated">رمز التعريف</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve">
+				<source>Title</source>
+			<target state="translated">العنوان</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve">
+				<source>Caption</source>
+			<target state="translated">العنوان</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target state="translated">ملحوظة حقوق الطبع والنشر</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target state="translated">معاينة</target></trans-unit>
+      <trans-unit id="download" xml:space="preserve">
+				<source>Download</source>
+			<target state="needs-translation">Download</target></trans-unit>
+      <trans-unit id="next" xml:space="preserve">
+				<source>Next</source>
+			<target state="needs-translation">Next</target></trans-unit>
+      <trans-unit id="previous" xml:space="preserve">
+				<source>Previous</source>
+			<target state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target state="translated">لا يمكن تحميل الملف</target></trans-unit>
@@ -305,11 +341,11 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target state="translated">استخدامات {0}</target>
+          <target state="needs-translation">{0} usages</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target state="translated">استعمالات {0}</target>
+          <target state="needs-translation">{0} usages</target>
         </trans-unit>
         <trans-unit id="relatedNodes[2]">
           <source>{0} usages</source>
@@ -402,13 +438,13 @@
 			<target state="translated">إنشاء إعادة توجيه من url الملف الأصلي لعنوان url الجديد</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="translated">'"الموارد من نوع "{0}" لا يمكن استبدالها إلا بمورد مماثل. حصلت على نوع "{1}" '</target><alt-trans><target>'يمكن فقط استبدال موارد نوع"{0}" بمورد مماثل. حصلت على نوع "{1}" '</target></alt-trans></trans-unit>
+			<target state="translated">'"الموارد من نوع "{0}" لا يمكن استبدالها إلا بمورد مماثل. حصلت على نوع "{1}" '</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
 			<target state="translated">لا تستطيع الوصول إلى فضاء العمل "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="translated">لم يتم العثور على أي مستند عقدي لهذه العقدة</target><alt-trans><target>لا يوجد أي مستند عقدي لهذه العقدة</target></alt-trans></trans-unit>
+			<target state="translated">لم يتم العثور على أي مستند عقدي لهذه العقدة</target></trans-unit>
     </body>
   </file>
 </xliff>

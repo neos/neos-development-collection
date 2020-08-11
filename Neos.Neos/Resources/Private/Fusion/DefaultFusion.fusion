@@ -9,6 +9,9 @@ include: Prototypes/Shortcut.fusion
 include: Prototypes/BreadcrumbMenu.fusion
 include: Prototypes/DimensionsMenu.fusion
 include: Prototypes/Menu.fusion
+include: Prototypes/MenuItems.fusion
+include: Prototypes/BreadcrumbMenuItems.fusion
+include: Prototypes/DimensionsMenuItems.fusion
 include: Prototypes/Plugin.fusion
 include: Prototypes/PluginView.fusion
 include: Prototypes/ConvertUris.fusion
@@ -19,6 +22,7 @@ include: Prototypes/ContentElementWrapping.fusion
 include: Prototypes/ContentElementEditable.fusion
 include: Prototypes/NodeUri.fusion
 include: Prototypes/ImageUri.fusion
+include: Prototypes/NodeLink.fusion
 include: Prototypes/FallbackNode.fusion
 
 # The root matcher used to start rendering in Neos
@@ -45,22 +49,23 @@ root {
 		renderPath = ${'/' + this.possibleEditPreviewModePath}
 	}
 
-	layout {
-		@position = 'end 9997'
-		layout = ${q(node).property('layout') != null && q(node).property('layout') != '' ? q(node).property('layout') : q(node).parents('[subpageLayout][subpageLayout != ""]').first().property('subpageLayout')}
-		condition = ${this.layout != null && this.layout != ''}
-		renderPath = ${'/' + this.layout}
-	}
-
 	format {
-		@position = 'end 9998'
+		@position = 'end 9997'
 		condition = ${request.format != 'html'}
 		renderPath = ${'/' + String.replace(request.format, '.', '/')}
 	}
 
+	documentType {
+		@position = 'end 9998'
+		condition = Neos.Fusion:CanRender {
+			type = ${q(documentNode).property('_nodeType.name')}
+		}
+		type = ${q(documentNode).property('_nodeType.name')}
+	}
+
 	default {
 		@position = 'end 9999'
-		condition = TRUE
+		condition = true
 		renderPath = '/page'
 	}
 
@@ -72,7 +77,7 @@ root {
 		}
 		entryTags {
 			# Whenever the node changes the matched condition could change
-			1 = ${'Node_' + documentNode.identifier}
+			1 = ${Neos.Caching.nodeTag(documentNode)}
 			# Whenever one of the parent nodes changes the layout could change
 			2 = ${Neos.Caching.nodeTag(q(documentNode).parents())}
 		}
@@ -81,6 +86,32 @@ root {
 	# Catch all unhandled exceptions at the root
 	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
 }
+
+# The error matcher used to render errors that are configured for fusion rendering
+#
+# The matcher receives the context values `exception`, `renderingOptions`, `statusCode`,
+# `statusMessage` and `referenceCode`.
+#
+# By default the standard error template is rendered, but by extending the matcher
+# custom rendering can be implemented
+#
+error = Neos.Fusion:Case {
+	default {
+	@position = 'end 9999'
+	condition = true
+	renderer = Neos.Fusion:Template {
+		templatePath = 'resource://Neos.Neos/Private/Templates/Error/Index.html'
+		layoutRootPath = 'resource://Neos.Neos/Private/Layouts/'
+
+		exception = ${exception}
+		renderingOptions = ${renderingOptions}
+		statusCode = ${statusCode}
+		statusMessage = ${statusMessage}
+		referenceCode = ${referenceCode}
+	}
+	}
+}
+
 
 # Extension of the GlobalCacheIdentifiers prototype
 #

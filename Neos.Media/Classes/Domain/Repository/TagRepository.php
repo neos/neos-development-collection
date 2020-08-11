@@ -26,7 +26,7 @@ class TagRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array('label' => QueryInterface::ORDER_ASCENDING);
+    protected $defaultOrderings = ['label' => QueryInterface::ORDER_ASCENDING];
 
     /**
      * @param string $searchTerm

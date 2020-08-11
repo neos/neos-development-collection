@@ -11,10 +11,7 @@ namespace Neos\Fusion\FusionObjects\Helpers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Exception;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
-use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
 use Neos\Fusion\Exception\UnsupportedProxyMethodException;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
 use Neos\Fusion\Exception as FusionException;
@@ -59,12 +56,6 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     protected $partialFusionTree;
 
     /**
-     * @Flow\Inject
-     * @var \Neos\Flow\Log\SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
      * Constructor.
      *
      * @param TemplateImplementation $templateImplementation
@@ -80,7 +71,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     }
 
     /**
-     * TRUE if a given subpath exists, FALSE otherwise.
+     * true if a given subpath exists, false otherwise.
      *
      * @param string $offset
      * @return boolean
@@ -163,7 +154,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      */
     public function getIterator()
     {
-        $evaluatedArray = array();
+        $evaluatedArray = [];
         foreach ($this->partialFusionTree as $key => $value) {
             if (!is_array($value)) {
                 $evaluatedArray[$key] = $value;

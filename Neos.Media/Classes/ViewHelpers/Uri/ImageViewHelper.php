@@ -13,7 +13,6 @@ namespace Neos\Media\ViewHelpers\Uri;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 
@@ -75,10 +74,11 @@ class ImageViewHelper extends AbstractViewHelper
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
      * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
      * @param string $preset Preset used to determine image configuration
-     * @param integer $quality Quality of the image
+     * @param integer $quality Image quality, from 0 to 100
+     * @param string $format Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
      * @return string the relative image path, to be used as src attribute for <img /> tags
      */
-    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null, $quality = null)
+    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null, $quality = null, $format = null)
     {
         if ($image === null) {
             return '';
@@ -87,7 +87,7 @@ class ImageViewHelper extends AbstractViewHelper
         if ($preset) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async, $quality);
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async, $quality, $format);
         }
         return $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $this->controllerContext->getRequest())['src'];
     }

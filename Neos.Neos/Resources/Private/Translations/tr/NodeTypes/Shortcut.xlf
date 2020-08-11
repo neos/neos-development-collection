@@ -25,7 +25,7 @@
 			<target state="translated">Ana düğüm</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
-			<target state="translated">Seçili hedef</target><alt-trans><target>Seçilen hedef</target></alt-trans></trans-unit>
+			<target state="translated">Seçili hedef</target></trans-unit>
     </body>
   </file>
 </xliff>

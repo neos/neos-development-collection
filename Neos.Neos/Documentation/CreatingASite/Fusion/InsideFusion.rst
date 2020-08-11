@@ -359,8 +359,8 @@ Fully qualified identifiers can be used everywhere an identifier is used::
 
 	prototype(Neos.Neos:ContentCollection) < prototype(Neos.Neos:Collection)
 
-In Neos Fusion a ``default`` namespace of ``Neos.Neos`` is set. So whenever ``Page`` is used in
-Fusion within Neos, it is a shortcut for ``Neos.Neos:Page``.
+In Fusion a ``default`` namespace of ``Neos.Fusion`` is set. So whenever ``Value`` is used in
+Fusion, it is a shortcut for ``Neos.Fusion:Value``.
 
 Custom namespace aliases can be defined using the following syntax::
 
@@ -370,7 +370,7 @@ Custom namespace aliases can be defined using the following syntax::
 	video = Acme.Demo:YouTube
 	video = Foo:YouTube
 
-.. warning:: These declarations are not scoped to the file they are in, but apply globally (at least currently, we plan to change that in the future). So you should be careful there!
+.. warning:: These declarations are scoped to the file they are in and have to be declared in every fusion file where they shall be used.
 
 Setting Properties On a Fusion Object
 =========================================
@@ -518,6 +518,72 @@ a property using the ``@if`` meta-property::
 	# considered beeing false: ``null, false, '', 0, []``
 
 Multiple conditions can be used, and if one of them doesn't return ``true`` the condition stops evaluation.
+
+Apply
+=====
+
+``@apply`` allows to override multiple properties of a fusion-prototype with a single expression. This is useful
+when complex data structures are mapped to fusion prototypes.
+
+The example shows the rendering of a ``teaserList``-array by using a Teaser-Component and passing all keys from each
+teaser to the fusion Object::
+
+	teasers = Neos.Fusion:Collection {
+		collection = ${teaserList}
+		itemName = 'teaser'
+		itemRenderer = Vendor.Site:Teaser {
+			@apply.teaser = ${teaser}
+		}
+	}
+
+The code avoids passing down each fusion-property explicitly to the child component. A similar concept with different
+syntax from the JavaScript world is known as ES6-Spreads.
+
+Another use-case is to use ``Neos.Fusion:Renderer`` to render a prototype while type and properties are based on data
+from the context::
+
+	example = Neos.Fusion:Renderer {
+		type = ${data.type}
+		element.@apply.properties = ${data.properties}
+	}
+
+That way some meta-programming can used in fusion and both prototype and properties are decided late in the rendering
+by the fusion runtime.
+
+How it works
+------------
+
+The keys below ``@apply`` are evaluated before the fusion-object and the ``@context`` and are initialized.
+Each key below ``@apply`` must return a key-value map (values other than an array it are ignored). During
+the evaluation of each fusion-path the values from ``@apply`` are always checked first.
+
+If a property is defined via ``@apply`` this value is returned without evaluating the fusionPath.
+
+The ``@process`` and ``@if``-rules of the original fusion-key are still applied even if a value from ``@apply``
+is returned.
+
+Since ``@apply`` is evaluated first the overwritten values are already present during the evaluation of ``@context``
+and will overlay the properties of ``this`` if they are accessed.
+
+``@apply`` supports the same extended syntax and ordering as fusion processors and supports multiple keys.
+The evaluation order is defined via ``@position``, the keys that are evaluated last will override previously defined keys.
+This is also similar to the rules for ``@process``::
+
+	test = Vendor.Site:Prototype {
+		@apply.contextValue {
+			@position = 'start'
+			expression = ${ arrayValueFromContext }
+		}
+		@apply.fusionObject {
+			@position = 'end'
+			expression = Neos.Fusion:RawArray {
+				value = "altered value"
+			}
+		}
+	}
+
+Other than ``@context`` ``@apply`` is only valid for a single fusion path, so when subpathes or children are
+rendered they are not affected by the parents ``@apply`` unless they are explicitly passed down.
 
 Debugging
 =========

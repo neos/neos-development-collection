@@ -1,0 +1,95 @@
+{namespace m=Neos\Media\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="EditImage"/>
+
+<f:section name="Title">Show view</f:section>
+
+<f:section name="Content">
+        <f:if condition="{variantsTabFeatureEnabled} && {assetProxy.localAssetIdentifier}">
+            <ul class="neos-nav neos-nav-tabs" role="tablist">
+                <li role="presentation" class="neos-active">
+                    <a href="#" role="tab">Overview</a>
+                </li>
+                <li role="presentation">
+                    <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier, overviewAction: 'show'}">Variants</f:link.action>
+                </li>
+            </ul>
+        </f:if>
+
+        <div class="neos-row-fluid">
+            <div class="neos-span6 neos-image-inputs">
+                <fieldset>
+                    <legend>{neos:backend.translate(id: 'basics', package: 'Neos.Media.Browser')}</legend>
+                    <label for="title">{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}</label>
+                    <input type="text" id="title" readonly="readonly" value="{assetProxy.iptcProperties.Title}"/>
+                    <label for="caption">{neos:backend.translate(id: 'field.caption', package: 'Neos.Media.Browser')}</label>
+                    <textarea id="caption" rows="2" readonly="readonly">{assetProxy.iptcProperties.CaptionAbstract}</textarea>
+                    <label for="copyrightnotice">{neos:backend.translate(id: 'field.copyrightnotice', package: 'Neos.Media.Browser')}</label>
+                    <textarea id="copyrightnotice" rows="2" readonly="readonly">{assetProxy.iptcProperties.CopyrightNotice}</textarea>
+                </fieldset>
+                <fieldset>
+                    <legend>{neos:backend.translate(id: 'metadata', package: 'Neos.Media.Browser')}</legend>
+                    <table class="neos-info-table">
+                        <tbody>
+                            <f:if condition="{assetProxy.assetSource}">
+                                <tr>
+                                    <th>{neos:backend.translate(id: 'mediaSource', package: 'Neos.Media.Browser')}</th>
+                                    <td>{assetProxy.assetSource.label}</td>
+                                </tr>
+                            </f:if>
+                            <tr>
+                                <th>{neos:backend.translate(id: 'metadata.filename', package: 'Neos.Media.Browser')}</th>
+                                <td><a href="{assetProxy.originalUri}" target="_blank">{assetProxy.filename}</a></td>
+                            </tr>
+                            <tr>
+                                <th>{neos:backend.translate(id: 'metadata.lastModified', package: 'Neos.Media.Browser')}</th>
+                                <td><span title="{assetProxy.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{assetProxy.lastModified -> m:format.relativeDate()}</span></td>
+                            </tr>
+                            <tr>
+                                <th>{neos:backend.translate(id: 'metadata.fileSize', package: 'Neos.Media.Browser')}</th>
+                                <td>{assetProxy.fileSize -> f:format.bytes()}</td>
+                            </tr>
+                            <f:if condition="{assetProxy.iptcProperties.CopyrightNotice}">
+                                <tr>
+                                    <th>{neos:backend.translate(id: 'metadata.iptcProperties.CopyrightNotice', package: 'Neos.Media.Browser')}</th>
+                                    <td>{assetProxy.iptcProperties.CopyrightNotice}</td>
+                                </tr>
+                            </f:if>
+                            <f:if condition="{assetProxy.widthInPixels}">
+                                <tr>
+                                    <th>{neos:backend.translate(id: 'metadata.dimensions', package: 'Neos.Media.Browser')}</th>
+                                    <td>{assetProxy.widthInPixels} x {assetProxy.heightInPixels}</td>
+                                </tr>
+                            </f:if>
+                            <tr>
+                                <th>{neos:backend.translate(id: 'metadata.type', package: 'Neos.Media.Browser')}</th>
+                                <td><span class="neos-label">{assetProxy.mediaType}</span></td>
+                            </tr>
+                            <tr>
+                                <th>{neos:backend.translate(id: 'metadata.identifier', package: 'Neos.Media.Browser')}</th>
+                                <td><span class="neos-label">{assetProxy.identifier}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </fieldset>
+            </div>
+            <div class="neos-span6 neos-image-example">
+                <f:render section="ContentImage" arguments="{_all}" />
+            </div>
+        </div>
+        <div class="neos-footer">
+            <f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', package: 'Neos.Neos')}</f:link.action>
+        </div>
+</f:section>
+
+<f:section name="ContentImage">
+    <label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
+    <div class="neos-preview-image">
+        <a href="{assetProxy.originalUri}" target="_blank">
+            <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
+        </a>
+    </div>
+</f:section>
+
+<f:section name="Scripts">
+</f:section>

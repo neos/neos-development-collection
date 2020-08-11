@@ -59,7 +59,7 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
      * @param array $configuration Additional configuration
      * @return string
      */
-    public function render($as, NodeInterface $parentNode = null, array $nodes = array(), $nodeTypeFilter = null, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99, 'maximumNumberOfNodes' => 0))
+    public function render($as, NodeInterface $parentNode = null, array $nodes = [], $nodeTypeFilter = null, array $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99, 'maximumNumberOfNodes' => 0])
     {
         $response = $this->initiateSubRequest();
         return $response->getContent();

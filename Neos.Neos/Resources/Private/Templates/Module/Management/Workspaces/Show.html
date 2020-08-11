@@ -49,14 +49,14 @@
 											<div class="neos-span2 neos-pull-right neos-aRight">
 												<f:if condition="{document.documentNode.removed}">
 													<f:else>
-														<neos:link.node node="{document.documentNode}" absolute="1" target="neosPreview" class="neos-button" title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', value: 'Open page in \"{0}\" workspace', arguments: {0: selectedWorkspaceLabel})}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="icon-external-link icon-white"></i></neos:link.node><button form="postHelper" formaction="{f:uri.action(action: 'rebaseAndRedirect', arguments: {targetNode: document.documentNode, targetWorkspace: selectedWorkspace})}" type="submit" class="neos-button" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'Neos.Neos', value: 'Edit')}" data-neos-toggle="tooltip"><i class="icon-pencil icon-white"></i></button>
+														<neos:link.node node="{document.documentNode}" absolute="1" target="neosPreview" class="neos-button" title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', value: 'Open page in \"{0}\" workspace', arguments: {0: selectedWorkspaceLabel})}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="fas fa-external-link-alt icon-white"></i></neos:link.node><button form="postHelper" formaction="{f:uri.action(action: 'rebaseAndRedirect', arguments: {targetNode: document.documentNode, targetWorkspace: selectedWorkspace})}" type="submit" class="neos-button" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'Neos.Neos', value: 'Edit')}" data-neos-toggle="tooltip"><i class="fas fa-pencil-alt icon-white"></i></button>
 													</f:else>
 												</f:if>
 											</div>
 										</div>
 									</td>
 									<td class="neos-action neos-folder">
-										<i class="fold-toggle icon-chevron-up icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
+										<i class="fold-toggle fas fa-chevron-up icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
 									</td>
 								</tr>
 								<f:for each="{document.changes}" key="relativePath" as="change">
@@ -70,11 +70,11 @@
 										<td class="neos-action">
 											<f:if condition="{canPublishToBaseWorkspace}">
 												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-success neos-pull-right" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip">
-													<i class="icon-ok icon-white"></i>
+													<i class="fas fa-check icon-white"></i>
 												</button>
 											</f:if>
 											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip" data-placement="bottom">
-												<i class="icon-trash icon-white"></i>
+												<i class="fas fa-trash-alt icon-white"></i>
 											</button>
 										</td>
 									</tr>
@@ -97,7 +97,7 @@
 						<div class="neos-modal-footer">
 							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'Neos.Neos')}</a>
 							<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger">
-								<i class="icon-trash icon-white"></i>
+								<i class="fas fa-trash-alt icon-white"></i>
 								{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
 							</button>
 						</div>
@@ -151,7 +151,7 @@
 					});
 
 					$('.fold-toggle').click(function() {
-						$(this).toggleClass('icon-chevron-down icon-chevron-up');
+						$(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
 						$('tr.' + $(this).data('toggle')).toggle();
 					});
 				})(jQuery);
@@ -172,10 +172,10 @@
 
 <f:section name="actions">
 	<div class="neos-footer">
-		<div class="pull-left">
+		<div class="neos-pull-left">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', source: 'Main', package: 'Neos.Neos')}</f:link.action>
 		</div>
-		<div class="pull-right">
+		<div class="neos-pull-right">
 			<f:if condition="{canPublishToBaseWorkspace}">
 				<f:then>
 					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'Neos.Neos')}</button>

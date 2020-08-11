@@ -33,7 +33,7 @@ class SetDimensions extends AbstractTransformation
      *
      * @var array
      */
-    protected $dimensionValues = array();
+    protected $dimensionValues = [];
 
     /**
      * Sets the default dimension values for all dimensions that were not given.
@@ -66,7 +66,7 @@ class SetDimensions extends AbstractTransformation
      */
     public function execute(NodeData $node)
     {
-        $dimensions = array();
+        $dimensions = [];
         foreach ($this->dimensionValues as $dimensionName => $dimensionConfiguration) {
             foreach ($dimensionConfiguration as $dimensionValues) {
                 if (is_array($dimensionValues)) {

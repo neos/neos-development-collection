@@ -13,13 +13,13 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\Audio;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\AudioRepository;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\Media\Domain\Model\Audio;
 use Neos\Media\Fixtures\AssetTypeWithoutRepository;
 
-require_once(__DIR__ . '/../../Fixtures/AssetTypeWithoutRepository.php');
+require_once __DIR__ . '/../../Fixtures/AssetTypeWithoutRepository.php';
 
 /**
  * Test case for the Asset Service
@@ -30,7 +30,7 @@ class AssetServiceTest extends UnitTestCase
     /**
      * @return array
      */
-    public function getRepositoryReturnsRepositoryForGivenAssetProvider()
+    public function getRepositoryReturnsRepositoryForGivenAssetProvider(): array
     {
         return [
             [Audio::class, AudioRepository::class],
@@ -40,17 +40,19 @@ class AssetServiceTest extends UnitTestCase
     }
 
     /**
+     * @param $modelClassName
+     * @param $expectedRepositoryClassName
      * @dataProvider getRepositoryReturnsRepositoryForGivenAssetProvider
      * @test
      */
-    public function getRepositoryReturnsRepositoryForGivenAsset($modelClassName, $expectedRepositoryClassName)
+    public function getRepositoryReturnsRepositoryForGivenAsset($modelClassName, $expectedRepositoryClassName): void
     {
         $mockAsset = $this->getMockBuilder($modelClassName)->disableOriginalConstructor()->getMock();
 
         $mockObjectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
         $mockObjectManager->expects($this->once())
             ->method('get')
-            ->will($this->returnValue($this->createMock($expectedRepositoryClassName)));
+            ->willReturn($this->createMock($expectedRepositoryClassName));
 
         $mockAssetService = $this->getAccessibleMock(AssetService::class, ['dummy'], [], '', false);
         $this->inject($mockAssetService, 'objectManager', $mockObjectManager);

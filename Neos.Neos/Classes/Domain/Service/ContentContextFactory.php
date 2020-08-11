@@ -82,17 +82,17 @@ class ContentContextFactory extends ContextFactory
     {
         $contextProperties = $this->removeDeprecatedProperties($contextProperties);
 
-        $defaultContextProperties = array(
+        $defaultContextProperties = [
             'workspaceName' => 'live',
             'currentDateTime' => $this->now,
-            'dimensions' => array(),
-            'targetDimensions' => array(),
+            'dimensions' => [],
+            'targetDimensions' => [],
             'invisibleContentShown' => false,
             'removedContentShown' => false,
             'inaccessibleContentShown' => false,
             'currentSite' => null,
             'currentDomain' => null
-        );
+        ];
 
         if (!isset($contextProperties['currentSite'])) {
             $defaultContextProperties = $this->setDefaultSiteAndDomainFromCurrentRequest($defaultContextProperties);
@@ -139,13 +139,13 @@ class ContentContextFactory extends ContextFactory
         $identifierSource = $this->contextImplementation;
         foreach ($contextProperties as $propertyName => $propertyValue) {
             if ($propertyName === 'dimensions') {
-                $stringParts = array();
+                $stringParts = [];
                 foreach ($propertyValue as $dimensionName => $dimensionValues) {
                     $stringParts[] = $dimensionName . '=' . implode(',', $dimensionValues);
                 }
                 $stringValue = implode('&', $stringParts);
             } elseif ($propertyName === 'targetDimensions') {
-                $stringParts = array();
+                $stringParts = [];
                 foreach ($propertyValue as $dimensionName => $dimensionValue) {
                     $stringParts[] = $dimensionName . '=' . $dimensionValue;
                 }

@@ -9,14 +9,14 @@
 	</f:for>
 </head>
 <body class="{settings.bodyClasses} media-browser-inspector">
-	<div class="neos-row-fluid">
-		<f:render partial="FlashMessages" />
+<div class="neos-row-fluid">
+	<f:render partial="FlashMessages" />
 
-		<f:render section="Content" />
-	</div>
-	<f:for each="{settings.scripts}" as="script">
-		<script src="{f:uri.resource(path: script)}"></script>
-	</f:for>
-	<f:render section="Scripts" optional="TRUE" />
+	<f:render section="Content" />
+</div>
+<f:for each="{settings.scripts}" as="script">
+	<script src="{f:uri.resource(path: script)}"></script>
+</f:for>
+<f:render section="Scripts" optional="TRUE" />
 </body>
 </html>

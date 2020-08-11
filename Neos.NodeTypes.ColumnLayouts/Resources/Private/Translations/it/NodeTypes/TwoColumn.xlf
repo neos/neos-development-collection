@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Two column content</source>
-			<target state="needs-translation">Two column content</target></trans-unit>
+			<target state="translated">Contenuto due colonne</target></trans-unit>
     </body>
   </file>
 </xliff>

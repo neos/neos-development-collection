@@ -1,4 +1,12 @@
 -
+  requestFilter: 'isFormat("html") && isController("Usage") && isPackage("Neos.Media.Browser")'
+  options:
+    templatePathAndFilenamePattern: '@templateRoot/@subpackage/Usage/@action.@format'
+    partialRootPaths:
+      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
+      'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
+
+-
   requestFilter: 'isFormat("html") && isPackage("Neos.Media.Browser")'
   options:
     templatePathAndFilenamePattern: '@templateRoot/@subpackage/Asset/@action.@format'

@@ -32,9 +32,9 @@ class ImageOrientationValidator extends \Neos\Flow\Validation\Validator\Abstract
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'allowedOrientations' => array(array(), 'Array of image orientations, one or two out of \'square\', \'landcape\' or \'portrait\'', 'array', true)
-    );
+    protected $supportedOptions = [
+        'allowedOrientations' => [[], 'Array of image orientations, one or two out of \'square\', \'landcape\' or \'portrait\'', 'array', true]
+    ];
 
     /**
      * The given $value is valid if it is an \Neos\Media\Domain\Model\ImageInterface of the
@@ -56,9 +56,9 @@ class ImageOrientationValidator extends \Neos\Flow\Validation\Validator\Abstract
             if (count($this->options['allowedOrientations']) === 1) {
                 reset($this->options['allowedOrientations']);
                 $allowedOrientation = current($this->options['allowedOrientations']);
-                $this->addError('The image orientation must be "%s".', 1328029406, array($allowedOrientation));
+                $this->addError('The image orientation must be "%s".', 1328029406, [$allowedOrientation]);
             } else {
-                $this->addError('The image orientation "%s" is not allowed.', 1328029362, array($image->getOrientation()));
+                $this->addError('The image orientation "%s" is not allowed.', 1328029362, [$image->getOrientation()]);
             }
         }
     }
@@ -71,7 +71,7 @@ class ImageOrientationValidator extends \Neos\Flow\Validation\Validator\Abstract
     {
         if (!isset($this->options['allowedOrientations'])) {
             throw new InvalidValidationOptionsException('The option "allowedOrientations" was not specified.', 1328028795);
-        } elseif (!is_array($this->options['allowedOrientations']) || $this->options['allowedOrientations'] === array()) {
+        } elseif (!is_array($this->options['allowedOrientations']) || $this->options['allowedOrientations'] === []) {
             throw new InvalidValidationOptionsException('The option "allowedOrientations" must be an array with at least one element of "square", "portrait" or "landscape".', 1328028798);
         }
         foreach ($this->options['allowedOrientations'] as $orientation) {

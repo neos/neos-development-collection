@@ -33,6 +33,7 @@ class FluidView extends StandaloneView implements FusionAwareViewInterface
     /**
      * @param AbstractFusionObject $fusionObject
      * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
+     * @throws \Neos\FluidAdaptor\Exception
      */
     public function __construct(AbstractFusionObject $fusionObject, ActionRequest $request = null)
     {
@@ -54,15 +55,6 @@ class FluidView extends StandaloneView implements FusionAwareViewInterface
     public function getResourcePackage()
     {
         return $this->resourcePackage;
-    }
-
-    /**
-     * @deprecated with 3.0 will be removed with 4.0
-     * @return AbstractFusionObject
-     */
-    public function getTypoScriptObject()
-    {
-        return $this->getFusionObject();
     }
 
     /**

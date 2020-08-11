@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Migration\Transformations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
@@ -37,7 +36,7 @@ class RemoveProperty extends AbstractTransformation
 
     /**
      * If the given node has property this transformation should work on, this
-     * returns TRUE.
+     * returns true.
      *
      * @param NodeData $node
      * @return boolean
@@ -52,6 +51,7 @@ class RemoveProperty extends AbstractTransformation
      *
      * @param NodeData $node
      * @return void
+     * @throws \Neos\ContentRepository\Exception\NodeException
      */
     public function execute(NodeData $node)
     {

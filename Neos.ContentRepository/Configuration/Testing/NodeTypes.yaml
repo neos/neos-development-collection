@@ -8,8 +8,8 @@
       defaultValue: 'default value 2'
   constraints:
     nodeTypes:
-      'Neos.ContentRepository.Testing:NodeType': TRUE
-      'Neos.ContentRepository.Testing:NodeTypeWithSubnodes': TRUE
+      'Neos.ContentRepository.Testing:NodeType': true
+      'Neos.ContentRepository.Testing:NodeTypeWithSubnodes': true
 
 'Neos.ContentRepository.Testing:NodeTypeWithSubnodes':
   childNodes:
@@ -17,8 +17,8 @@
       type: 'Neos.ContentRepository.Testing:NodeType'
   constraints:
     nodeTypes:
-      'Neos.ContentRepository.Testing:NodeType': TRUE
-      'Neos.ContentRepository.Testing:Document': TRUE
+      'Neos.ContentRepository.Testing:NodeType': true
+      'Neos.ContentRepository.Testing:Document': true
 
 'Neos.ContentRepository.Testing:NodeTypeWithProcessor':
   properties:
@@ -46,7 +46,7 @@
 
 'Neos.ContentRepository.Testing:Headline':
   superTypes:
-    'Neos.ContentRepository.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': true
   properties:
     title:
       type: string
@@ -65,26 +65,26 @@
 
 # Constraint behat test nodetypes
 'Neos.ContentRepository.Testing:Node':
-  abstract: TRUE
+  abstract: true
 
 'Neos.ContentRepository.Testing:ContentCollection':
   superTypes:
-    'Neos.ContentRepository.Testing:Node': TRUE
+    'Neos.ContentRepository.Testing:Node': true
   constraints:
     nodeTypes:
-      'Neos.ContentRepository.Testing:Headline': TRUE
-      'Neos.ContentRepository.Testing:TwoColumn': TRUE
-      'Neos.ContentRepository.Testing:ThreeColumn': TRUE
-      'Neos.ContentRepository.Testing:Text': TRUE
-      'Neos.ContentRepository.Testing:Html': TRUE
-      'Neos.ContentRepository.Testing:List': TRUE
+      'Neos.ContentRepository.Testing:Headline': true
+      'Neos.ContentRepository.Testing:TwoColumn': true
+      'Neos.ContentRepository.Testing:ThreeColumn': true
+      'Neos.ContentRepository.Testing:Text': true
+      'Neos.ContentRepository.Testing:Html': true
+      'Neos.ContentRepository.Testing:List': true
 
 'Neos.ContentRepository.Testing:Document':
-  aggregate: TRUE
+  aggregate: true
 
 'Neos.ContentRepository.Testing:Page':
   superTypes:
-    'Neos.ContentRepository.Testing:Document': TRUE
+    'Neos.ContentRepository.Testing:Document': true
   properties:
     title:
       type: string
@@ -93,27 +93,28 @@
       type: 'Neos.ContentRepository.Testing:ContentCollection'
   constraints:
     nodeTypes:
-      '*': TRUE
+      '*': true
 
 'Neos.ContentRepository.Testing:Chapter':
   superTypes:
-    'Neos.ContentRepository.Testing:Page': TRUE
+    'Neos.ContentRepository.Testing:Page': true
 
 'Neos.ContentRepository.Testing:PageWithConfiguredLabel':
   superTypes:
-    'Neos.ContentRepository.Testing:Page': TRUE
+    'Neos.ContentRepository.Testing:Page': true
   label: "${q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')')}"
   ui:
     label: 'Labeled Page'
 
 'Neos.ContentRepository.Testing:Column':
   superTypes:
-    'Neos.ContentRepository.Testing:Content': TRUE
-  abstract: TRUE
+    'Neos.ContentRepository.Testing:Content': true
+    'Neos.ContentRepository.Testing:ContentMixin': false
+  abstract: true
 
 'Neos.ContentRepository.Testing:TwoColumn':
   superTypes:
-    'Neos.ContentRepository.Testing:Column': TRUE
+    'Neos.ContentRepository.Testing:Column': true
   childNodes:
     column0:
       type: 'Neos.ContentRepository.Testing:ContentCollection'
@@ -122,7 +123,7 @@
 
 'Neos.ContentRepository.Testing:ThreeColumn':
   superTypes:
-    'Neos.ContentRepository.Testing:Column': TRUE
+    'Neos.ContentRepository.Testing:Column': true
   childNodes:
     column0:
       type: 'Neos.ContentRepository.Testing:ContentCollection'
@@ -132,13 +133,17 @@
       type: 'Neos.ContentRepository.Testing:ContentCollection'
 
 'Neos.ContentRepository.Testing:Content':
+  superTypes:
+    'Neos.ContentRepository.Testing:ContentMixin': true
   constraints:
     nodeTypes:
-      '*': FALSE
+      '*': false
+
+'Neos.ContentRepository.Testing:ContentMixin': []
 
 'Neos.ContentRepository.Testing:Text':
   superTypes:
-    'Neos.ContentRepository.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': true
   properties:
     text:
       type: string
@@ -149,20 +154,20 @@
       type: 'Neos.ContentRepository.Testing:NodeType'
       constraints:
         nodeTypes:
-          'Neos.ContentRepository.Testing:Headline': TRUE # allowed
+          'Neos.ContentRepository.Testing:Headline': true # allowed
 
 'Neos.ContentRepository.Testing:Image':
   superTypes:
-    'Neos.ContentRepository.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': true
 
 'Neos.ContentRepository.Testing:TextWithImage':
   superTypes:
-    'Neos.ContentRepository.Testing:Text': TRUE
-    'Neos.ContentRepository.Testing:Image': TRUE
+    'Neos.ContentRepository.Testing:Text': true
+    'Neos.ContentRepository.Testing:Image': true
 
 'Neos.ContentRepository.Testing:Html':
   superTypes:
-    'Neos.ContentRepository.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': true
   properties:
     source:
       type: string
@@ -170,18 +175,18 @@
 
 'Neos.ContentRepository.Testing:List':
   superTypes:
-    'Neos.ContentRepository.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': true
   childNodes:
     items:
       type: 'Neos.ContentRepository.Testing:ContentCollection'
       constraints:
         nodeTypes:
-          'Neos.ContentRepository.Testing:ListItem': TRUE
-          '*': FALSE
+          'Neos.ContentRepository.Testing:ListItem': true
+          '*': false
 
 'Neos.ContentRepository.Testing:ListItem':
   superTypes:
-    'Neos.ContentRepository.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': true
   properties:
     text:
       type: 'string'

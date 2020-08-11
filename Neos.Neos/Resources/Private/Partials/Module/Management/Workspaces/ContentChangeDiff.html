@@ -11,11 +11,11 @@
             </th>
             <f:if condition="{contentDimensions}">
                 <th>
-                    <f:render partial="Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: change.node.nodeData}" />
+                    <f:render partial="Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: change.node}" />
                 </th>
             </f:if>
             <th>
-                <span title="{neos:backend.translate(id: 'lastModification')}: {change.node.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip"><i class="icon-time"></i> {change.node.lastModificationDateTime -> m:format.relativeDate()}</span>
+                <span title="{neos:backend.translate(id: 'lastModification')}: {change.node.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip"><i class="fas fa-time"></i> {change.node.lastModificationDateTime -> m:format.relativeDate()}</span>
             </th>
         </tr>
         <f:for each="{change.contentChanges}" key="propertyName" as="contentChanges">

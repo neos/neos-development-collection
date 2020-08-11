@@ -4,13 +4,13 @@
 #
 prototype(Neos.Neos:DocumentMetadata) < prototype(Neos.Fusion:Tag) {
 	tagName = 'div'
-	forceClosingTag = TRUE
+	forceClosingTag = true
 	attributes {
 		id = 'neos-document-metadata'
 	}
 
 	@process.contentElementWrapping = Neos.Neos:ContentElementWrapping {
-		renderCurrentDocumentMetadata = TRUE
+		renderCurrentDocumentMetadata = true
 	}
 
 	@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}

@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "prev" operation working on ContentRepository nodes. It iterates over all
@@ -42,11 +42,11 @@ class PrevOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -58,12 +58,12 @@ class PrevOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             $prevNode = $this->getPrevForNode($contextNode);
-            if ($prevNode !== null && !isset($outputNodePaths[$prevNode->getPath()])) {
-                $outputNodePaths[$prevNode->getPath()] = true;
+            if ($prevNode !== null && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])) {
+                $outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
                 $output[] = $prevNode;
             }
         }
@@ -75,17 +75,18 @@ class PrevOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the preceding node should be found
-     * @return NodeInterface The preceding node of $contextNode or NULL
+     * @param TraversableNodeInterface $contextNode The node for which the preceding node should be found
+     * @return TraversableNodeInterface The preceding node of $contextNode or NULL
      */
-    protected function getPrevForNode($contextNode)
+    protected function getPrevForNode(TraversableNodeInterface $contextNode)
     {
-        $nodesInContext = $contextNode->getParent()->getChildNodes();
-        for ($i = 0; $i < count($nodesInContext) - 1; $i++) {
-            if ($nodesInContext[$i + 1] === $contextNode) {
-                return $nodesInContext[$i];
-            }
+        try {
+            $parentNode = $contextNode->findParentNode();
+            return $parentNode->findChildNodes()->previous($contextNode);
+        } catch (NodeException $e) {
+            return null;
+        } catch (\InvalidArgumentException $e) {
+            return null;
         }
-        return null;
     }
 }

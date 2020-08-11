@@ -12,7 +12,6 @@ namespace Neos\Fusion\Core\Cache;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\CacheAwareInterface;
 use Neos\Utility\Unicode\Functions;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;
@@ -168,7 +167,7 @@ class RuntimeContentCache
                 $evaluateContext['cacheIdentifierValues'] = $this->buildCacheIdentifierValues($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
                 $cacheDiscriminator = isset($evaluateContext['cacheDiscriminator']) ? $evaluateContext['cacheDiscriminator'] : null;
                 $self = $this;
-                $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self, $evaluateContext, $fusionObject) {
+                $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self) {
                     if (strpos($command, 'eval=') === 0) {
                         $unserializedContext = $self->unserializeContext($additionalData['context']);
                         $path = substr($command, 5);

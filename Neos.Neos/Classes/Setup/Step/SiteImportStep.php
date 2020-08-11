@@ -12,26 +12,30 @@ namespace Neos\Neos\Setup\Step;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\FlashMessageContainer;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Validation\Validator\NotEmptyValidator;
 use Neos\Form\Core\Model\FinisherContext;
 use Neos\Form\Core\Model\FormDefinition;
 use Neos\Form\Finishers\ClosureFinisher;
+use Neos\Form\FormElements\Section;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Validation\Validator\PackageKeyValidator;
 use Neos\Setup\Exception as SetupException;
-use Neos\Error\Messages\Message;
 use Neos\Setup\Exception;
 use Neos\Setup\Step\AbstractStep;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\SiteKickstarter\Service\GeneratorService;
+use Psr\Log\LoggerInterface;
 
 /**
  * @Flow\Scope("singleton")
@@ -103,16 +107,36 @@ class SiteImportStep extends AbstractStep
     protected $closureFinisher;
 
     /**
-     * @var SystemLoggerInterface
-     * @Flow\Inject
-     */
-    protected $systemLogger;
-
-    /**
      * @Flow\Inject
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * Returns the form definitions for the step
@@ -129,10 +153,12 @@ class SiteImportStep extends AbstractStep
         $introduction->setProperty('text', 'There are two ways of creating a site. Choose between the following:');
 
         $importSection = $page1->createElement('import', 'Neos.Form:Section');
+        /** @var Section $importSection */
         $importSection->setLabel('Import a site from an existing site package');
 
-        $sitePackages = array();
+        $sitePackages = [];
         foreach ($this->packageManager->getFilteredPackages('available', null, 'neos-site') as $package) {
+            /** @var PackageInterface $package */
             $sitePackages[$package->getPackageKey()] = $package->getPackageKey();
         }
 
@@ -153,11 +179,12 @@ class SiteImportStep extends AbstractStep
             $error->setProperty('elementClassAttribute', 'alert alert-warning');
         }
 
-        if ($this->packageManager->isPackageActive('Neos.SiteKickstarter')) {
+        if ($this->packageManager->isPackageAvailable('Neos.SiteKickstarter')) {
             $separator = $page1->createElement('separator', 'Neos.Form:StaticText');
             $separator->setProperty('elementClassAttribute', 'section-separator');
 
             $newPackageSection = $page1->createElement('newPackageSection', 'Neos.Form:Section');
+            /** @var Section $newPackageSection */
             $newPackageSection->setLabel('Create a new site package with a dummy site');
             $packageName = $newPackageSection->createElement('packageKey', 'Neos.Form:SingleLineText');
             $packageName->setLabel('Package Name (in form "Vendor.DomainCom")');
@@ -171,9 +198,15 @@ class SiteImportStep extends AbstractStep
             $error->setProperty('elementClassAttribute', 'alert alert-warning');
         }
 
-        $explanation = $page1->createElement('explanation', 'Neos.Form:StaticText');
-        $explanation->setProperty('text', 'Notice the difference between a site package and a site. A site package is a Flow package that can be used for creating multiple site instances.');
-        $explanation->setProperty('elementClassAttribute', 'alert alert-info');
+        $sitePackageExplanation = $page1->createElement('sitePackageExplanation', 'Neos.Form:StaticText');
+        $sitePackageExplanation->setProperty('text', 'Notice the difference between a site package and a site. A site package is a Flow package that can be used for creating multiple site instances.');
+        $sitePackageExplanation->setProperty('elementClassAttribute', 'alert alert-info');
+
+        if (count($sitePackages) > 0) {
+            $sitePackageAlreadyAvailableExplanation = $page1->createElement('sitePackageAlreadyAvailableExplanation', 'Neos.Form:StaticText');
+            $sitePackageAlreadyAvailableExplanation->setProperty('text', sprintf('There are already other site packages available (%s). Some configuration like dimensions and node type configurations are shared between all sites packages. Make sure you remove the site packages you don\'t want to interfere with your newly created package.', implode(array_keys($sitePackages))));
+            $sitePackageAlreadyAvailableExplanation->setProperty('elementClassAttribute', 'alert alert-info');
+        }
 
         $step = $this;
         $callback = function (FinisherContext $finisherContext) use ($step) {
@@ -210,47 +243,21 @@ class SiteImportStep extends AbstractStep
             $packageKey = $formValues['packageKey'];
             $siteName = $formValues['siteName'];
 
-            $generatorService = $this->objectManager->get(\Neos\SiteKickstarter\Service\GeneratorService::class);
+            $generatorService = $this->objectManager->get(GeneratorService::class);
             $generatorService->generateSitePackage($packageKey, $siteName);
         } elseif (!empty($formValues['site'])) {
             $packageKey = $formValues['site'];
         }
 
-        $this->deactivateOtherSitePackages($packageKey);
-        $this->packageManager->activatePackage($packageKey);
-
         if (!empty($packageKey)) {
             try {
-                $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
-                $this->siteImportService->importFromPackage($packageKey, $contentContext);
+                $this->siteImportService->importFromPackage($packageKey);
             } catch (\Exception $exception) {
                 $finisherContext->cancel();
-                $this->systemLogger->logException($exception);
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 throw new SetupException(sprintf('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', $packageKey, $exception->getMessage()), 1351000864);
             }
-        }
-    }
-
-    /**
-     * If Site Packages already exist and are active, we will deactivate them in order to prevent
-     * interactions with the newly created or imported package (like Content Dimensions being used).
-     *
-     * @param string $packageKey
-     * @return array
-     */
-    protected function deactivateOtherSitePackages($packageKey)
-    {
-        $sitePackagesToDeactivate = $this->packageManager->getFilteredPackages('active', null, 'neos-site');
-        $deactivatedSitePackages = array();
-        foreach ($sitePackagesToDeactivate as $sitePackageToDeactivate) {
-            if ($sitePackageToDeactivate->getPackageKey() !== $packageKey) {
-                $this->packageManager->deactivatePackage($sitePackageToDeactivate->getPackageKey());
-                $deactivatedSitePackages[] = $sitePackageToDeactivate->getPackageKey();
-            }
-        }
-
-        if (count($deactivatedSitePackages) >= 1) {
-            $this->flashMessageContainer->addMessage(new Message(sprintf('The existing Site Packages "%s" were deactivated, in order to prevent interactions with the newly created package "%s".', implode(', ', $deactivatedSitePackages), $packageKey)));
         }
     }
 }

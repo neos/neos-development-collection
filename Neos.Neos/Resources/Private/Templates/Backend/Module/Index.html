@@ -91,11 +91,11 @@
 			</f:else>
 		</f:if>
 
-		<script>
+		<script><![CDATA[
 			$(function() {
 				require(
 					{
-						baseUrl: 'resource://Neos.Neos/Public/JavaScript',
+						baseUrl: /*]]>*/'resource://Neos.Neos/Public/JavaScript'/*<![CDATA[*/,
 						paths: requirePaths,
 						context: 'neos',
 						locale: 'en'
@@ -109,6 +109,6 @@
 					}
 				)
 			});
-		</script>
+        ]]></script>
 	</body>
 </f:section>

@@ -11,15 +11,13 @@ namespace Neos\Neos\EventLog\Integrations;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\Exception;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Neos\EventLog\Domain\Model\Event;
-use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 
 /**
  * Monitors entity changes
@@ -29,16 +27,15 @@ use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 class EntityIntegrationService extends AbstractIntegrationService
 {
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
     /**
-     * @Flow\Inject(lazy=FALSE)
+     * @Flow\Inject(lazy=false)
      * @var CompilingEvaluator
      */
     protected $eelEvaluator;
@@ -48,12 +45,6 @@ class EntityIntegrationService extends AbstractIntegrationService
      * @var array
      */
     protected $monitorEntitiesSetting;
-
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $logger;
 
     /**
      * Dummy method which is called in a prePersist signal. If we remove that, this object is never instantiated and thus
@@ -92,9 +83,9 @@ class EntityIntegrationService extends AbstractIntegrationService
                 $entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
                 if (isset($entityMonitoringConfiguration['events']['created'])) {
-                    $data = array();
+                    $data = [];
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
-                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, array('entity' => $entity));
+                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, ['entity' => $entity]);
                     }
 
                     $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['created'], $data);
@@ -109,9 +100,9 @@ class EntityIntegrationService extends AbstractIntegrationService
                 $entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
                 if (isset($entityMonitoringConfiguration['events']['deleted'])) {
-                    $data = array();
+                    $data = [];
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
-                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, array('entity' => $entity));
+                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, ['entity' => $entity]);
                     }
 
                     $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['deleted'], $data);

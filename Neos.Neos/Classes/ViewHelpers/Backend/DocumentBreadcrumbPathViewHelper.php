@@ -12,7 +12,6 @@ namespace Neos\Neos\ViewHelpers\Backend;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
@@ -34,7 +33,7 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
     public function render(NodeInterface $node)
     {
         $documentNodes = [];
-        $flowQuery = new FlowQuery(array($node));
+        $flowQuery = new FlowQuery([$node]);
         $nodes = array_reverse($flowQuery->parents('[instanceof Neos.Neos:Document]')->get());
         /** @var NodeInterface $node */
         foreach ($nodes as $documentNode) {

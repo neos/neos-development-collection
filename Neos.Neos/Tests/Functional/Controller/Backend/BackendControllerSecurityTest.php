@@ -13,7 +13,6 @@ namespace Neos\Neos\Tests\Functional\Controller\Backend;
 
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Controller\Backend\BackendController;
-use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Service\BackendRedirectionService;
 
 /**

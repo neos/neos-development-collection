@@ -56,7 +56,7 @@
 			<target state="needs-translation">Title</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
-			<target state="translated">Descriere (meta description)</target><alt-trans><target>Descriere</target></alt-trans></trans-unit>
+			<target state="translated">Descriere (meta description)</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
 			<target state="needs-translation">Base workspace</target></trans-unit>

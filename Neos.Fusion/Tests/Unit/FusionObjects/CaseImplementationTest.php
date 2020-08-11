@@ -26,7 +26,7 @@ class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
     public function ignoredPropertiesShouldNotBeUsedAsMatcher()
     {
         $path = 'page/body/content/main';
-        $ignoredProperties = array('nodePath');
+        $ignoredProperties = ['nodePath'];
 
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($path, $ignoredProperties) {
@@ -43,9 +43,9 @@ class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
         $renderer->setIgnoreProperties($ignoredProperties);
 
         $renderer['nodePath'] = 'main';
-        $renderer['default'] = array(
+        $renderer['default'] = [
             'condition' => 'true'
-        );
+        ];
 
         $mockRuntime->expects($this->once())->method('render')->with('page/body/content/main/default<Neos.Fusion:Matcher>')->will($this->returnValue('rendered matcher'));
 

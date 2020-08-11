@@ -30,7 +30,7 @@ interface ParserInterface
      * @throws Exception
      * @api
      */
-    public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = array());
+    public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = []);
 
     /**
      * Sets the given alias to the specified namespace.

@@ -13,6 +13,8 @@ namespace Neos\Neos\Controller\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -50,10 +52,10 @@ class AssetsController extends ActionController
     /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
         'json' => AssetJsonView::class
-    );
+    ];
 
     /**
      * A list of IANA media types which are supported by this controller
@@ -61,10 +63,10 @@ class AssetsController extends ActionController
      * @var array
      * @see http://www.iana.org/assignments/media-types/index.html
      */
-    protected $supportedMediaTypes = array(
+    protected $supportedMediaTypes = [
         'text/html',
         'application/json'
-    );
+    ];
 
     /**
      * @param ViewInterface $view
@@ -96,6 +98,8 @@ class AssetsController extends ActionController
      *
      * @param string $identifier Specifies the asset to look up
      * @return string
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
      */
     public function showAction($identifier)
     {

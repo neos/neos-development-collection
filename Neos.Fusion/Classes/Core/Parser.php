@@ -199,7 +199,7 @@ class Parser implements ParserInterface
      *
      * @var array
      */
-    public static $reservedParseTreeKeys = array('__meta', '__prototypes', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression');
+    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
 
     /**
      * @Flow\Inject
@@ -217,7 +217,7 @@ class Parser implements ParserInterface
      * The Fusion object tree, created by this parser.
      * @var array
      */
-    protected $objectTree = array();
+    protected $objectTree = [];
 
     /**
      * The line number which is currently processed
@@ -229,13 +229,13 @@ class Parser implements ParserInterface
      * An array of strings of the source code which has
      * @var array
      */
-    protected $currentSourceCodeLines = array();
+    protected $currentSourceCodeLines = [];
 
     /**
      * The current object path context as defined by confinements.
      * @var array
      */
-    protected $currentObjectPathStack = array();
+    protected $currentObjectPathStack = [];
 
     /**
      * Determines if a block comment is currently active or not.
@@ -260,9 +260,9 @@ class Parser implements ParserInterface
      * These namespaces are _not_ used for resolution of processor class names.
      * @var array
      */
-    protected $objectTypeNamespaces = array(
+    protected $objectTypeNamespaces = [
         'default' => 'Neos.Fusion'
-    );
+    ];
 
     /**
      * Parses the given Fusion source code and returns an object tree
@@ -271,12 +271,12 @@ class Parser implements ParserInterface
      * @param string $sourceCode The Fusion source code to parse
      * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
      * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
-     * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be FALSE for includes to only do that once at the end.
+     * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be false for includes to only do that once at the end.
      * @return array A Fusion object tree, generated from the source code
      * @throws Fusion\Exception
      * @api
      */
-    public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = array(), $buildPrototypeHierarchy = true)
+    public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = [], $buildPrototypeHierarchy = true)
     {
         if (!is_string($sourceCode)) {
             throw new Fusion\Exception('Cannot parse Fusion - $sourceCode must be of type string!', 1180203775);
@@ -335,21 +335,10 @@ class Parser implements ParserInterface
     protected function initialize()
     {
         $this->currentLineNumber = 1;
-        $this->currentObjectPathStack = array();
-        $this->currentSourceCodeLines = array();
+        $this->currentObjectPathStack = [];
+        $this->currentSourceCodeLines = [];
         $this->currentBlockCommentState = false;
-        $this->objectTree = array();
-    }
-
-    /**
-     * Get the next, unparsed line of Fusion from this->currentSourceCodeLines and increase the pointer
-     *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @return string next line of Fusion to parse
-     */
-    protected function getNextTypoScriptLine()
-    {
-        return $this->getNextFusionLine();
+        $this->objectTree = [];
     }
 
     /**
@@ -363,19 +352,6 @@ class Parser implements ParserInterface
         next($this->currentSourceCodeLines);
         $this->currentLineNumber++;
         return $fusionLine;
-    }
-
-    /**
-     * Parses one line of Fusion
-     *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param string $fusionLine One line of Fusion code
-     * @return void
-     * @throws Fusion\Exception
-     */
-    protected function parseTypoScriptLine($fusionLine)
-    {
-        $this->parseFusionLine($fusionLine);
     }
 
     /**
@@ -445,7 +421,7 @@ class Parser implements ParserInterface
      * Parses a line which opens or closes a confinement
      *
      * @param string $fusionLine One line of Fusion code
-     * @param boolean $isOpeningConfinement Set to TRUE, if an opening confinement is to be parsed and FALSE if it's a closing confinement.
+     * @param boolean $isOpeningConfinement Set to true, if an opening confinement is to be parsed and false if it's a closing confinement.
      * @return void
      * @throws Fusion\Exception
      */
@@ -618,10 +594,6 @@ class Parser implements ParserInterface
     {
         $include = trim($include);
         $parser = new Parser();
-        // transfer current namespaces to new parser
-        foreach ($this->objectTypeNamespaces as $key => $objectTypeNamespace) {
-            $parser->setObjectTypeNamespace($key, $objectTypeNamespace);
-        }
 
         if (strpos($include, 'resource://') !== 0) {
             // Resolve relative paths
@@ -652,8 +624,7 @@ class Parser implements ParserInterface
         if (isset($iterator)) {
             foreach ($iterator as $fileInfo) {
                 $pathAndFilename = $fileInfo->getPathname();
-                // Only work on .fusion files and .ts2 files. The support for .ts2 is deprecated a fallback and will be dropped with 4.0
-                if ($fileInfo->getExtension() === 'fusion' || $fileInfo->getExtension() === 'ts2') {
+                if ($fileInfo->getExtension() === 'fusion') {
                     // Check if not trying to recursively include the current file via globbing
                     if (stat($pathAndFilename) !== stat($this->contextPathAndFilename)) {
                         if (!is_readable($pathAndFilename)) {
@@ -685,7 +656,7 @@ class Parser implements ParserInterface
                 $objectPath = $this->getCurrentObjectPathPrefix() . substr($objectPath, 1);
             }
 
-            $objectPathArray = array();
+            $objectPathArray = [];
             foreach (preg_split(self::SPLIT_PATTERN_OBJECTPATH, $objectPath) as $objectPathSegment) {
                 if ($objectPathSegment[0] === '@') {
                     $objectPathArray[] = '__meta';
@@ -738,11 +709,11 @@ class Parser implements ParserInterface
             $processedValue = floatval($unparsedValue);
         } elseif (preg_match(Package::EelExpressionRecognizer, $unparsedValue, $matches) === 1) {
             // Single-line Eel Expressions
-            $processedValue = array(
+            $processedValue = [
                 '__eelExpression' => $matches[1],
                 '__value' => null,
                 '__objectType' => null
-            );
+            ];
         } elseif (preg_match(self::SPLIT_PATTERN_VALUELITERAL, $unparsedValue, $matches) === 1) {
             $processedValue = stripslashes(isset($matches[2]) ? $matches[2] : $matches[1]);
         } elseif (preg_match(self::SPLIT_PATTERN_VALUEMULTILINELITERAL, $unparsedValue, $matches) === 1) {
@@ -766,11 +737,11 @@ class Parser implements ParserInterface
             } else {
                 $objectTypeNamespace = (isset($this->objectTypeNamespaces[$matches['namespace']])) ? $this->objectTypeNamespaces[$matches['namespace']] : $matches['namespace'];
             }
-            $processedValue = array(
+            $processedValue = [
                 '__objectType' => $objectTypeNamespace . ':' . $matches['unqualifiedType'],
                 '__value' => null,
                 '__eelExpression' => null
-            );
+            ];
         } else {
             // Trying to match multiline Eel expressions
             if (strpos($unparsedValue, '${') === 0) {
@@ -781,17 +752,17 @@ class Parser implements ParserInterface
 
                     if (substr($line, -1) === '}') {
                         // potential end-of-eel-expression marker
-                        $matches = array();
+                        $matches = [];
                         if (preg_match(Package::EelExpressionRecognizer, $eelExpressionSoFar, $matches) === 1) {
                             // Single-line Eel Expressions
-                            $processedValue = array('__eelExpression' => str_replace(chr(10), '', $matches[1]), '__value' => null, '__objectType' => null);
+                            $processedValue = ['__eelExpression' => str_replace(chr(10), '', $matches[1]), '__value' => null, '__objectType' => null];
                             break;
                         }
                     }
                 }
 
                 if ($line === false) {
-                    // if the last line we consumed is FALSE, we have consumed the end of the file.
+                    // if the last line we consumed is false, we have consumed the end of the file.
                     throw new Fusion\Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue . '" was not closed.', 1417616064);
                 }
             }
@@ -802,15 +773,15 @@ class Parser implements ParserInterface
                 while (true) {
                     if (substr($dslExpressionSoFar, -1) === '`') {
                         // potential end-of-dsl-expression marker
-                        $matches = array();
+                        $matches = [];
                         if (preg_match(self::SPLIT_PATTERN_DSL_EXPRESSION, $dslExpressionSoFar, $matches) === 1) {
                             $processedValue = $this->invokeAndParseDsl($matches['identifier'], $matches['code']);
                             break;
                         }
                     }
-                    $line = $this->getNextTypoScriptLine();
+                    $line = $this->getNextFusionLine();
                     if ($line === false) {
-                        // if the last line we consumed is FALSE, we have consumed the end of the file.
+                        // if the last line we consumed is false, we have consumed the end of the file.
                         throw new Fusion\Exception('Syntax error: A multi-line dsl expression starting with "' . $unparsedValue . '" was not closed.', 1490714685);
                     }
                     $dslExpressionSoFar .= chr(10) . $line;
@@ -824,8 +795,10 @@ class Parser implements ParserInterface
 
     /**
      * @param string $identifier
-     * @param strung $$code
+     * @param $code
      * @return mixed
+     * @throws Exception
+     * @throws Fusion
      */
     protected function invokeAndParseDsl($identifier, $code)
     {
@@ -880,13 +853,13 @@ class Parser implements ParserInterface
             // we still need to traverse further down
             if (isset($objectTree[$currentKey]) && !is_array($objectTree[$currentKey])) {
                 // the element one-level-down is already defined, but it is NOT an array. So we need to convert the simple type to __value
-                $objectTree[$currentKey] = array(
+                $objectTree[$currentKey] = [
                     '__value' => $objectTree[$currentKey],
                     '__eelExpression' => null,
                     '__objectType' => null
-                );
+                ];
             } elseif (!isset($objectTree[$currentKey])) {
-                $objectTree[$currentKey] = array();
+                $objectTree[$currentKey] = [];
             }
 
             $this->setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
@@ -914,7 +887,7 @@ class Parser implements ParserInterface
                 $currentKey = (int)$currentKey;
             }
             if (!isset($objectTree[$currentKey])) {
-                $objectTree[$currentKey] = array();
+                $objectTree[$currentKey] = [];
             }
             $value = &$this->getValueFromObjectTree($objectPathArray, $objectTree[$currentKey]);
         } else {
@@ -948,7 +921,7 @@ class Parser implements ParserInterface
         }
 
         foreach ($this->objectTree['__prototypes'] as $prototypeName => $prototypeConfiguration) {
-            $prototypeInheritanceHierarchy = array();
+            $prototypeInheritanceHierarchy = [];
             $currentPrototypeName = $prototypeName;
             while (isset($this->objectTree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'])) {
                 $currentPrototypeName = $this->objectTree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'];

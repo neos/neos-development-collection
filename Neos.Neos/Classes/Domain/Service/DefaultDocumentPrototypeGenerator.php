@@ -17,14 +17,9 @@ use Neos\Flow\Annotations as Flow;
  * Generate a Fusion prototype definition based on Neos.Neos:Document
  *
  * @Flow\Scope("singleton")
+ * @deprecated will be removed with Neos 5
  * @api
  */
 class DefaultDocumentPrototypeGenerator extends DefaultPrototypeGenerator
 {
-    /**
-     * The Name of the prototype that is extended
-     *
-     * @var string
-     */
-    protected $basePrototypeName = 'Neos.Neos:Document';
 }

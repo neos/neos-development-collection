@@ -53,7 +53,7 @@ class AuthorizationService
     protected $nodeTypeManager;
 
     /**
-     * Returns TRUE if the currently authenticated user is allowed to edit the given $node, otherwise FALSE
+     * Returns true if the currently authenticated user is allowed to edit the given $node, otherwise false
      *
      * @param NodeInterface $node
      * @return boolean
@@ -64,7 +64,7 @@ class AuthorizationService
     }
 
     /**
-     * Returns TRUE if the currently authenticated user is allowed to create a node of type $typeOfNewNode within the given $referenceNode
+     * Returns true if the currently authenticated user is allowed to create a node of type $typeOfNewNode within the given $referenceNode
      *
      * @param NodeInterface $referenceNode
      * @param NodeType $typeOfNewNode
@@ -87,9 +87,9 @@ class AuthorizationService
 
         $allNodeTypes = $this->nodeTypeManager->getNodeTypes();
 
-        $deniedCreationNodeTypes = array();
-        $grantedCreationNodeTypes = array();
-        $abstainedCreationNodeTypes = array();
+        $deniedCreationNodeTypes = [];
+        $grantedCreationNodeTypes = [];
+        $abstainedCreationNodeTypes = [];
         foreach ($this->securityContext->getRoles() as $role) {
             /** @var CreateNodePrivilege $createNodePrivilege */
             foreach ($role->getPrivilegesByType(CreateNodePrivilege::class) as $createNodePrivilege) {
@@ -97,7 +97,7 @@ class AuthorizationService
                     continue;
                 }
 
-                $affectedNodeTypes = ($createNodePrivilege->getCreationNodeTypes() !== array() ? $createNodePrivilege->getCreationNodeTypes() : $allNodeTypes);
+                $affectedNodeTypes = ($createNodePrivilege->getCreationNodeTypes() !== [] ? $createNodePrivilege->getCreationNodeTypes() : $allNodeTypes);
 
                 if ($createNodePrivilege->isGranted()) {
                     $grantedCreationNodeTypes = array_merge($grantedCreationNodeTypes, $affectedNodeTypes);
@@ -113,7 +113,7 @@ class AuthorizationService
     }
 
     /**
-     * Returns TRUE if the currently authenticated user is allowed to remove the given $node
+     * Returns true if the currently authenticated user is allowed to remove the given $node
      *
      * @param NodeInterface $node
      * @return boolean
@@ -154,9 +154,9 @@ class AuthorizationService
     {
         $privilegeSubject = new PropertyAwareNodePrivilegeSubject($node);
 
-        $deniedNodePropertyNames = array();
-        $grantedNodePropertyNames = array();
-        $abstainedNodePropertyNames = array();
+        $deniedNodePropertyNames = [];
+        $grantedNodePropertyNames = [];
+        $abstainedNodePropertyNames = [];
         foreach ($this->securityContext->getRoles() as $role) {
             /** @var EditNodePropertyPrivilege $editNodePropertyPrivilege */
             foreach ($role->getPrivilegesByType(EditNodePropertyPrivilege::class) as $editNodePropertyPrivilege) {

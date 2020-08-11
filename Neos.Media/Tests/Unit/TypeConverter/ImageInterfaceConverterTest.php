@@ -67,7 +67,7 @@ class ImageInterfaceConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(array('string', 'array'), $this->converter->getSupportedSourceTypes());
+        $this->assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes());
         $this->assertEquals(ImageInterface::class, $this->converter->getSupportedTargetType());
         $this->assertEquals(2, $this->converter->getPriority());
     }
@@ -78,11 +78,11 @@ class ImageInterfaceConverterTest extends UnitTestCase
     public function canConvertFromDataProvider()
     {
         $dummyResource = $this->createMock(PersistentResource::class);
-        return array(
-            array(array('resource' => $dummyResource), Image::class, true),
-            array(array('__identity' => 'foo'), Image::class, false),
-            array(array('resource' => $dummyResource), ImageInterface::class, true),
-        );
+        return [
+            [['resource' => $dummyResource], Image::class, true],
+            [['__identity' => 'foo'], Image::class, false],
+            [['resource' => $dummyResource], ImageInterface::class, true],
+        ];
     }
 
     /**
@@ -109,6 +109,6 @@ class ImageInterfaceConverterTest extends UnitTestCase
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(ImageInterfaceConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
 
-        $this->assertNull($this->converter->convertFrom(array(), Image::class, array(), $configuration));
+        $this->assertNull($this->converter->convertFrom([], Image::class, [], $configuration));
     }
 }

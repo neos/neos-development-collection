@@ -1,6 +1,7 @@
 <div class="{settings.bodyClasses}">
-	<f:render partial="FlashMessages" />
+    <f:render partial="FlashMessages"/>
 
-	<f:render section="Content" />
+    <f:render section="Content"/>
 </div>
-<f:render section="Scripts" optional="TRUE" />
+<script src="{f:uri.resource(path: 'resource://Neos.Media.Browser/Public/JavaScript/pdf.js')}"></script>
+<f:render section="Scripts" optional="TRUE"/>

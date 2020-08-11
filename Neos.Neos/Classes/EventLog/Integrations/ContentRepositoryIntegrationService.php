@@ -11,8 +11,8 @@ namespace Neos\Neos\EventLog\Integrations;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
@@ -38,7 +38,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
 
     /**
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 

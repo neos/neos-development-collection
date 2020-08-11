@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\Model\Adjustment;
 
 /*
@@ -10,9 +12,10 @@ namespace Neos\Media\Domain\Model\Adjustment;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
 use Imagine\Image\ImageInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * An adjustment for quality of an image
@@ -25,30 +28,34 @@ class QualityImageAdjustment extends AbstractImageAdjustment
      * @var integer
      */
     protected $position = 30;
+
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $quality;
+
     /**
      * Returns quality
      *
      * @return integer
      */
-    public function getQuality()
+    public function getQuality(): ?int
     {
         return $this->quality;
     }
+
     /**
      * Sets quality
      *
      * @param integer $quality
      * @return void
      */
-    public function setQuality($quality)
+    public function setQuality(int $quality = null): void
     {
         $this->quality = $quality;
     }
+
     /**
      * Applies this adjustment to the given Imagine Image object
      *
@@ -59,6 +66,7 @@ class QualityImageAdjustment extends AbstractImageAdjustment
     {
         return $image;
     }
+
     /**
      * Check if this Adjustment can or should be applied to its ImageVariant.
      *

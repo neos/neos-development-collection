@@ -97,14 +97,15 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath);
 
-        $this->mockConverterConfiguration->expects($this->any())->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN)->will($this->returnValue(true));
+        $this->mockConverterConfiguration->expects($this->at(0))->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN)->will($this->returnValue(true));
+        $this->mockConverterConfiguration->expects($this->at(1))->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN)->will($this->returnValue(true));
 
-        $result = $this->nodeConverter->convertFrom($contextPath, null, array(), $this->mockConverterConfiguration);
+        $result = $this->nodeConverter->convertFrom($contextPath, null, [], $this->mockConverterConfiguration);
         $this->assertSame($mockNode, $result);
 
         $contextProperties = $mockNode->getContext()->getProperties();
         $this->assertArrayHasKey('removedContentShown', $contextProperties, 'removedContentShown context property should be set');
-        $this->assertTrue($contextProperties['removedContentShown'], 'removedContentShown context property should be TRUE');
+        $this->assertTrue($contextProperties['removedContentShown'], 'removedContentShown context property should be true');
     }
 
     /**
@@ -114,16 +115,16 @@ class NodeConverterTest extends UnitTestCase
     {
         $contextPath = '/foo/bar@user-demo';
         $nodePath = '/foo/bar';
-        $nodeTypeProperties = array(
-            'reference' => array(
+        $nodeTypeProperties = [
+            'reference' => [
                 'type' => 'reference'
-            )
-        );
+            ]
+        ];
         $propertyValue = '8aaf4dd2-bd85-11e3-ae3d-14109fd7a2dd';
-        $source = array(
+        $source = [
             '__contextNodePath' => $contextPath,
             'reference' => $propertyValue
-        );
+        ];
 
         $convertedPropertyValue = new \stdClass();
 
@@ -133,7 +134,7 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode->expects($this->once())->method('setProperty')->with('reference', $convertedPropertyValue);
 
-        $this->nodeConverter->convertFrom($source, null, array(), $this->mockConverterConfiguration);
+        $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
 
     /**
@@ -143,18 +144,18 @@ class NodeConverterTest extends UnitTestCase
     {
         $contextPath = '/foo/bar@user-demo';
         $nodePath = '/foo/bar';
-        $nodeTypeProperties = array(
-            'references' => array(
+        $nodeTypeProperties = [
+            'references' => [
                 'type' => 'references'
-            )
-        );
-        $decodedPropertyValue = array('8aaf4dd2-bd85-11e3-ae3d-14109fd7a2dd', '8febe94a-bd85-11e3-8401-14109fd7a2dd');
-        $source = array(
+            ]
+        ];
+        $decodedPropertyValue = ['8aaf4dd2-bd85-11e3-ae3d-14109fd7a2dd', '8febe94a-bd85-11e3-8401-14109fd7a2dd'];
+        $source = [
             '__contextNodePath' => $contextPath,
             'references' => json_encode($decodedPropertyValue)
-        );
+        ];
 
-        $convertedPropertyValue = array(new \stdClass(), new \stdClass());
+        $convertedPropertyValue = [new \stdClass(), new \stdClass()];
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
 
@@ -164,7 +165,7 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode->expects($this->once())->method('setProperty')->with('references', $convertedPropertyValue);
 
-        $this->nodeConverter->convertFrom($source, null, array(), $this->mockConverterConfiguration);
+        $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
 
     /**
@@ -174,18 +175,18 @@ class NodeConverterTest extends UnitTestCase
     {
         $contextPath = '/foo/bar@user-demo';
         $nodePath = '/foo/bar';
-        $nodeTypeProperties = array(
-            'assets' => array(
+        $nodeTypeProperties = [
+            'assets' => [
                 'type' => 'array<Neos\Media\Domain\Model\Asset>'
-            )
-        );
-        $decodedPropertyValue = array('8aaf4dd2-bd85-11e3-ae3d-14109fd7a2dd', '8febe94a-bd85-11e3-8401-14109fd7a2dd');
-        $source = array(
+            ]
+        ];
+        $decodedPropertyValue = ['8aaf4dd2-bd85-11e3-ae3d-14109fd7a2dd', '8febe94a-bd85-11e3-8401-14109fd7a2dd'];
+        $source = [
             '__contextNodePath' => $contextPath,
             'assets' => json_encode($decodedPropertyValue)
-        );
+        ];
 
-        $convertedPropertyValue = array(new \stdClass(), new \stdClass());
+        $convertedPropertyValue = [new \stdClass(), new \stdClass()];
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
 
@@ -194,7 +195,7 @@ class NodeConverterTest extends UnitTestCase
         $this->mockPropertyMapper->expects($this->once())->method('convert')->with($decodedPropertyValue, $nodeTypeProperties['assets']['type'])->will($this->returnValue($convertedPropertyValue));
         $mockNode->expects($this->once())->method('setProperty')->with('assets', $convertedPropertyValue);
 
-        $this->nodeConverter->convertFrom($source, null, array(), $this->mockConverterConfiguration);
+        $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
 
     /**
@@ -204,22 +205,22 @@ class NodeConverterTest extends UnitTestCase
     {
         $contextPath = '/foo/bar@user-demo';
         $nodePath = '/foo/bar';
-        $nodeTypeProperties = array(
-            'quux' => array(
+        $nodeTypeProperties = [
+            'quux' => [
                 'type' => 'array'
-            )
-        );
-        $decodedPropertyValue = array('foo' => 'bar');
-        $source = array(
+            ]
+        ];
+        $decodedPropertyValue = ['foo' => 'bar'];
+        $source = [
             '__contextNodePath' => $contextPath,
             'quux' => json_encode($decodedPropertyValue)
-        );
+        ];
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
 
         $mockNode->expects($this->once())->method('setProperty')->with('quux', $decodedPropertyValue);
 
-        $this->nodeConverter->convertFrom($source, null, array(), $this->mockConverterConfiguration);
+        $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
 
     /**
@@ -227,7 +228,7 @@ class NodeConverterTest extends UnitTestCase
      * @param array $nodeTypeProperties
      * @return NodeInterface
      */
-    protected function setUpNodeWithNodeType($nodePath, $nodeTypeProperties = array())
+    protected function setUpNodeWithNodeType($nodePath, $nodeTypeProperties = [])
     {
         $mockLiveWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 

@@ -14,7 +14,6 @@ namespace Neos\Neos\Domain\Model;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Neos\Domain\Model\Site;
 
 /**
  * Domain Model of a Domain.
@@ -194,7 +193,7 @@ class Domain implements CacheAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         return $this->hostname;
     }

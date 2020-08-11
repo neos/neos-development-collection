@@ -61,20 +61,18 @@ class RouteCacheAspect
                 'invisibleContentShown' => true
             ]);
 
+            /** @var NodeInterface $node */
             $node = $context->getNode($contextPathPieces['nodePath']);
             if (!$node instanceof NodeInterface) {
                 return;
             }
 
             $values['node-identifier'] = $node->getIdentifier();
-            $node = $node->getParent();
 
-            $values['node-parent-identifier'] = array();
-            while ($node !== null) {
+            $values['node-parent-identifier'] = [];
+            while ($node = $node->getParent()) {
                 $values['node-parent-identifier'][] = $node->getIdentifier();
-                $node = $node->getParent();
             }
-
             $joinPoint->setMethodArgument('values', $values);
         });
     }
@@ -95,7 +93,7 @@ class RouteCacheAspect
         if (isset($values['node']) && strpos($values['node'], '@') !== false) {
             // Build context explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
-            $this->securityContext->withoutAuthorizationChecks(function () use ($joinPoint, $values, &$tags) {
+            $this->securityContext->withoutAuthorizationChecks(function () use ($values, &$tags) {
                 $contextPathPieces = NodePaths::explodeContextPath($values['node']);
                 $tags[] = $contextPathPieces['workspaceName'];
             });

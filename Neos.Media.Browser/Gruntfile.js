@@ -8,7 +8,7 @@ module.exports = function (grunt) {
 		watch: {
 			css: {
 				files: path.join(packagePath, 'Resources/Private/Styles/**/*.scss'),
-				tasks: ['compile-css'],
+				tasks: ['compass'],
 				options: {
 					spawn: false,
 					debounceDelay: 250,
@@ -50,10 +50,5 @@ module.exports = function (grunt) {
 	 * Build commands for execution in the build pipeline
 	 */
 	grunt.registerTask('build', ['compass', 'cssmin']);
-	grunt.registerTask('build-css', ['compile-css']);
-
-	/**
-	 * Watch commands
-	 */
-	grunt.registerTask('watch-css', ['watch:css']);
+	grunt.registerTask('build:css', ['build']);
 };

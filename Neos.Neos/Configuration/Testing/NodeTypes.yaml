@@ -1,6 +1,13 @@
+'Acme.Demo:Page':
+  superTypes:
+    'Neos.Neos:Document': true
+  childNodes:
+    main:
+      type: 'Neos.Neos:ContentCollection'
+
 'Acme.Demo:ThreeColumn':
   superTypes:
-    'Neos.NodeTypes:Column': TRUE
+    'Neos.NodeTypes:Column': true
   ui:
     label: 'Three column content'
     group: 'structure'
@@ -14,7 +21,7 @@
 
 'Acme.Demo:List':
   superTypes:
-    'Neos.Neos:Content': TRUE
+    'Neos.Neos:Content': true
   ui:
     label: 'List content'
     group: 'structure'
@@ -24,57 +31,103 @@
 
 'Acme.Demo:ListItem':
   superTypes:
-    'Neos.Neos:Content': TRUE
+    'Neos.Neos:Content': true
   properties:
     text:
       type: 'string'
 
+'Acme.Demo:Headline':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Headline content'
+  properties:
+    title:
+      type: string
+      ui:
+        inlineEditable: true
+
+'Acme.Demo:Text':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Text content'
+    group: 'default'
+  properties:
+    text:
+      type: string
+      ui:
+        inlineEditable: true
+
+'Acme.Demo:Html':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Html content'
+    group: 'default'
+  properties:
+    source:
+      type: string
+      ui:
+        inspector:
+          editor: 'Neos.Neos/Inspector/Editors/CodeEditor'
+
+'Acme.Demo:AssetList':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Asset List content'
+    group: 'default'
+  properties:
+    assets:
+      type: array<Neos\Media\Domain\Model\Asset>
+
 'Neos.Neos.BackendSchemaControllerTest:Node':
-  abstract: TRUE
+  abstract: true
 
 'Neos.Neos.BackendSchemaControllerTest:Document':
   superTypes:
-    'Neos.Neos.BackendSchemaControllerTest:Node': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Node': true
 
 'Neos.Neos.BackendSchemaControllerTest:Page':
   superTypes:
-    'Neos.Neos.BackendSchemaControllerTest:Document': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Document': true
   constraints:
     nodeTypes:
-      'Neos.Neos.BackendSchemaControllerTest:SubPage': TRUE
+      'Neos.Neos.BackendSchemaControllerTest:SubPage': true
 
 'Neos.Neos.BackendSchemaControllerTest:SubPage':
   superTypes:
-    'Neos.Neos.BackendSchemaControllerTest:Page': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Page': true
 
 'Neos.Neos.BackendSchemaControllerTest:Folder':
   superTypes:
-    'Neos.Neos.BackendSchemaControllerTest:Document': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Document': true
 
 'Neos.Neos.BackendSchemaControllerTest:Content':
   superTypes:
-    'Neos.Neos.BackendSchemaControllerTest:Node': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Node': true
 
 'Neos.Neos.BackendSchemaControllerTest:Text':
   superTypes:
-    'Neos.Neos.BackendSchemaControllerTest:Content': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Content': true
 
 'Neos.Neos.BackendSchemaControllerTest:TwoColumn':
   superTypes:
-    'Neos.Neos.BackendSchemaControllerTest:Content': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Content': true
   childNodes:
     column0:
       type: 'Neos.Neos:ContentCollection'
       constraints:
         nodeTypes:
-          'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType': TRUE
+          'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType': true
     column1:
       type: 'Neos.Neos:ContentCollection'
       constraints:
         nodeTypes:
-          'Neos.Neos.BackendSchemaControllerTest:Document': FALSE
-          'Neos.Neos.BackendSchemaControllerTest:SubPage': FALSE
-          '*': TRUE
+          'Neos.Neos.BackendSchemaControllerTest:Document': false
+          'Neos.Neos.BackendSchemaControllerTest:SubPage': false
+          '*': true
 
 
 'Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType':
@@ -83,19 +136,19 @@
       ui:
         aloha:
           alignment:
-            'left': TRUE
-            'center': TRUE
-            'right': TRUE
-            'justify': FALSE
+            'left': true
+            'center': true
+            'right': true
+            'justify': false
 
 'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType':
   superTypes:
-    'Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType': true
   properties:
     text:
       ui:
         aloha:
           format:
-            'h3': TRUE
-            'sup': TRUE
-            'code': FALSE
+            'h3': true
+            'sup': true
+            'code': false

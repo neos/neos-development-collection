@@ -2,13 +2,24 @@
 #
 # Override with behat.yml for local configuration.
 #
+
 default:
-  paths:
-    features: Features
-    bootstrap: %behat.paths.features%/Bootstrap
+  autoload:
+    '': "%paths.base%/Features/Bootstrap"
+  suites:
+    content:
+        paths:
+          - "%paths.base%/Features/Administration"
+          - "%paths.base%/Features/Bootstrap"
+          - "%paths.base%/Features/Content"
+          - "%paths.base%/Features/EventLog"
+          - "%paths.base%/Features/Security"
+          - "%paths.base%/Features"
+        contexts:
+            - FeatureContext
+
   extensions:
-    Behat\MinkExtension\Extension:
-      files_path: Features/Resources
+    Behat\MinkExtension:
       show_cmd: 'open %s'
       goutte: ~
       selenium2: ~

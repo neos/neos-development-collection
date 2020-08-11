@@ -1,0 +1,20 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<div class="neos-preview-image" id="neos-preview-pdf" data-asset-preview-url="{assetProxy.originalUri}">
+  <canvas id="pdf-canvas"></canvas>
+</div>
+<div class="neos-preview-actions">
+  <div class="neos-preview-action-pager">
+    <a class="neos-button" id="neos-preview-button-previous" href="{assetProxy.originalUri}" target="_blank">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <a class="neos-button" id="neos-preview-button-next" href="{assetProxy.originalUri}" target="_blank">
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+  <div class="neos-preview-page-cursor">
+    <span id="neos-preview-pdf-page"></span>/<span id="neos-preview-pdf-page-count"></span>
+  </div>
+  <a class="neos-button neos-preview-action-download" href="{assetProxy.originalUri}" target="_blank">
+    <i class="fas fa-download"></i> {neos:backend.translate(id: 'download', package: 'Neos.Media.Browser')}
+  </a>
+</div>

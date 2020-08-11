@@ -23,26 +23,29 @@
 	}
 
 	&::after {
-		@include fa-icon();
+		@extend .fas;
 		position: absolute;
 		font-size: 14px;
 		color: $blue;
 	}
 
 	&.neos-position-selector-node-into::after {
-		content: $fa-var-long-arrow-right;
+		content: fa-content($fa-var-long-arrow-alt-right);
+		font-weight: 900;
 		left: 18px;
 		bottom: 4px;
 	}
 
 	&.neos-position-selector-node-before::after {
-		content: $fa-var-level-up;
+		content: fa-content($fa-var-level-up-alt);
+		font-weight: 900;
 		left: 24px;
 		bottom: 7px;
 	}
 
 	&.neos-position-selector-node-after::after {
-		content: $fa-var-level-down;
+		content: fa-content($fa-var-level-down-alt);
+		font-weight: 900;
 		left: 24px;
 		bottom: 6px;
 	}

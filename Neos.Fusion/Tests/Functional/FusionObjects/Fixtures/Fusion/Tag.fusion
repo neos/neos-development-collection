@@ -3,13 +3,13 @@ prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\Attribu
 prototype(Neos.Fusion:Tag) {
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
 	attributes = Attributes
-	omitClosingTag = FALSE
-	selfClosingTag = FALSE
+	omitClosingTag = false
+	selfClosingTag = false
 }
 
 tag.plainAttributes = Tag {
 	tagName = 'link'
-	selfClosingTag = TRUE
+	selfClosingTag = true
 	attributes {
 		rel = 'stylesheet'
 		type = 'text/css'
@@ -18,7 +18,7 @@ tag.plainAttributes = Tag {
 
 tag.objectAttributes = Tag {
 	tagName = 'test'
-	selfClosingTag = TRUE
+	selfClosingTag = true
 	attributes {
 		sum = ${2 + 2}
 	}
@@ -48,7 +48,7 @@ tag.registeredSelfClosingTag = Tag {
 
 tag.omitClosingTag = Tag {
 	tagName = 'test'
-	omitClosingTag = TRUE
+	omitClosingTag = true
 }
 
 tag.withThis = Tag {

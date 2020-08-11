@@ -87,7 +87,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
             return $text;
         }
 
-        $unresolvedUris = array();
+        $unresolvedUris = [];
         $linkingService = $this->linkingService;
         $controllerContext = $this->runtime->getControllerContext();
 
@@ -115,8 +115,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
             return $resolvedUri;
         }, $text);
 
-        if ($unresolvedUris !== array()) {
-            $processedContent = preg_replace('/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
+        if ($unresolvedUris !== []) {
+            $processedContent = preg_replace('/<a(?: [^>]*)? href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
             $processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
         }
 
@@ -128,12 +128,14 @@ class ConvertUrisImplementation extends AbstractFusionObject
     /**
      * Replace the target attribute of link tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
+     * Additionally set rel="noopener" for links with target="_blank".
      *
      * @param string $processedContent
      * @return string
      */
     protected function replaceLinkTargets($processedContent)
     {
+        $noOpenerString = $this->fusionValue('setNoOpener') ? ' rel="noopener"' : '';
         $externalLinkTarget = trim($this->fusionValue('externalLinkTarget'));
         $resourceLinkTarget = trim($this->fusionValue('resourceLinkTarget'));
         if ($externalLinkTarget === '' && $resourceLinkTarget === '') {
@@ -142,8 +144,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
         $processedContent = preg_replace_callback(
-            '~<a.*?href="(.*?)".*?>~i',
-            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host) {
+            '~<a .*?href="(.*?)".*?>~i',
+            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $noOpenerString) {
                 list($linkText, $linkHref) = $matches;
                 $uriHost = parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
@@ -157,9 +159,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     return $linkText;
                 }
                 if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
-                    return preg_replace('/target=".*?"/', sprintf('target="%s"', $target), $linkText);
+                    return preg_replace('/target=".*?"/', sprintf('target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
                 }
-                return str_replace('<a', sprintf('<a target="%s"', $target), $linkText);
+                return str_replace('<a', sprintf('<a target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
             },
             $processedContent
         );

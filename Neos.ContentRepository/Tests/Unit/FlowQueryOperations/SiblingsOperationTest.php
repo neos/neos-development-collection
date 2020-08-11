@@ -11,16 +11,17 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Eel\FlowQueryOperations\SiblingsOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery SiblingsOperation
  */
-class SiblingsOperationTest extends UnitTestCase
+class SiblingsOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var Context
@@ -47,27 +48,28 @@ class SiblingsOperationTest extends UnitTestCase
      */
     protected $thirdNodeInLevel;
 
+    /**
+     * @throws \ReflectionException
+     * @throws \Exception
+     */
     public function setUp()
     {
-        $this->siteNode = $this->createMock(NodeInterface::class);
-        $this->firstNodeInLevel = $this->createMock(NodeInterface::class);
-        $this->secondNodeInLevel = $this->createMock(NodeInterface::class);
-        $this->thirdNodeInLevel = $this->createMock(NodeInterface::class);
+        $this->siteNode = $this->mockNode('site');
+        $this->firstNodeInLevel = $this->mockNode('first-node');
+        $this->secondNodeInLevel = $this->mockNode('second-node');
+        $this->thirdNodeInLevel = $this->mockNode('third-node');
 
-        $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
-        $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array(
+        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
-        )));
+        ])));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->firstNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->firstNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
-        $this->secondNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/second'));
-        $this->thirdNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/third'));
+        $this->siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
+        $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->secondNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->thirdNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
     }
 
     /**
@@ -75,14 +77,14 @@ class SiblingsOperationTest extends UnitTestCase
      */
     public function siblingsWillReturnEmptyResultForAllNodesInLevel()
     {
-        $context = array($this->firstNodeInLevel, $this->secondNodeInLevel, $this->thirdNodeInLevel);
+        $context = [$this->firstNodeInLevel, $this->secondNodeInLevel, $this->thirdNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new SiblingsOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array(), $output);
+        $this->assertEquals([], $output);
     }
 
     /**
@@ -90,14 +92,14 @@ class SiblingsOperationTest extends UnitTestCase
      */
     public function siblingsWillReturnFirstAndThirdNodeInLevelForSecondNodeInLevel()
     {
-        $context = array($this->secondNodeInLevel);
+        $context = [$this->secondNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new SiblingsOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->firstNodeInLevel, $this->thirdNodeInLevel), $output);
+        $this->assertEquals([$this->firstNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
     /**
@@ -105,14 +107,14 @@ class SiblingsOperationTest extends UnitTestCase
      */
     public function siblingsWillReturnFirstNodeForSecondAndThirdNodeInLevel()
     {
-        $context = array($this->secondNodeInLevel, $this->thirdNodeInLevel);
+        $context = [$this->secondNodeInLevel, $this->thirdNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new SiblingsOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->firstNodeInLevel), $output);
+        $this->assertEquals([$this->firstNodeInLevel], $output);
     }
 
     /**
@@ -120,13 +122,13 @@ class SiblingsOperationTest extends UnitTestCase
      */
     public function siblingsWillReturnEmptyArrayForSiteNode()
     {
-        $context = array($this->siteNode);
+        $context = [$this->siteNode];
         $q = new FlowQuery($context);
 
         $operation = new SiblingsOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array(), $output);
+        $this->assertEquals([], $output);
     }
 }

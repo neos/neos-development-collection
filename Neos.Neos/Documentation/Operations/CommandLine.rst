@@ -58,19 +58,19 @@ These commands allow to manage users. To create an user with administrative priv
 
   ./flow user:create john@doe.com pazzw0rd John Doe --roles Neos.Neos:Administrator
 
-=======================================  ========================================
+=======================================  ===================================================
 Command                                  Description
-=======================================  ========================================
+=======================================  ===================================================
 user:list                                List all users
 user:show                                Shows the given user
 user:create                              Create a new user
-user:delete                              Delete a user
-user:activate                            Activate a user
-user:deactivate                          Deactivate a user
+user:delete                              Delete a user (with globbing)
+user:activate                            Activate a user (with globbing)
+user:deactivate                          Deactivate a user (with globbing)
 user:setpassword                         Set a new password for the given user
-user:addrole                             Add a role to a user
-user:removerole                          Remove a role from a user
-=======================================  ========================================
+user:addrole                             Add a role to a user (with globbing)
+user:removerole                          Remove a role from a user (with globbing)
+=======================================  ===================================================
 
 Workspace Management
 ====================
@@ -81,31 +81,31 @@ create and delete workspaces as well as publish and discard changes.
 One notable difference is that rebasing a workspace is possible from the command line *even if it contains
 unpublished changes*.
 
-=======================================  ========================================
+=======================================  ===================================================
 Command                                  Description
-=======================================  ========================================
+=======================================  ===================================================
 workspace:publish                        Publish changes of a workspace
 workspace:discard                        Discard changes in workspace
 workspace:create                         Create a new workspace
 workspace:delete                         Deletes a workspace
 workspace:rebase                         Rebase a workspace
 workspace:list                           Display a list of existing workspaces
-=======================================  ========================================
+=======================================  ===================================================
 
 Site Management
 ===============
 
-=======================================  ========================================
+=======================================  ===================================================
 Command                                  Description
-=======================================  ========================================
+=======================================  ===================================================
 domain:add                               Add a domain record
 domain:list                              Display a list of available domain
                                          records
-domain:delete                            Delete a domain record
-domain:activate                          Activate a domain record
-domain:deactivate                        Deactivate a domain record
+domain:delete                            Delete a domain record (with globbing)
+domain:activate                          Activate a domain record (with globbing)
+domain:deactivate                        Deactivate a domain record (with globbing)
 site:import                              Import sites content
 site:export                              Export sites content
-site:prune                               Remove all content and related data
+site:prune                               Remove all content and related data (with globbing)
 site:list                                Display a list of available sites
-=======================================  ========================================
+=======================================  ===================================================

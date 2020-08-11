@@ -24,7 +24,7 @@ class FilterOperationTest extends AbstractNodeTest
      */
     public function noFilterReturnsAllNodesInContext()
     {
-        $q = new FlowQuery(array($this->node, $this->node->getNode('products')));
+        $q = new FlowQuery([$this->node, $this->node->getNode('products')]);
         $foundNodes = $q->filter('')->get();
         $this->assertEquals(2, count($foundNodes));
     }
@@ -34,7 +34,7 @@ class FilterOperationTest extends AbstractNodeTest
      */
     public function filterByNodeObjectIsSupported()
     {
-        $q = new FlowQuery(array($this->node, $this->node->getNode('products')));
+        $q = new FlowQuery([$this->node, $this->node->getNode('products')]);
         $foundNodes = $q->filter($this->node)->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertEquals(1, count($foundNodes));
@@ -45,7 +45,7 @@ class FilterOperationTest extends AbstractNodeTest
      */
     public function propertyNameFilterIsSupported()
     {
-        $q = new FlowQuery(array($this->node, $this->node->getNode('products')));
+        $q = new FlowQuery([$this->node, $this->node->getNode('products')]);
         $foundNodes = $q->filter('home')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertEquals(1, count($foundNodes));
@@ -59,7 +59,7 @@ class FilterOperationTest extends AbstractNodeTest
     public function multiplePropertyNameFiltersIsSupported()
     {
         $productsNode = $this->node->getNode('products');
-        $q = new FlowQuery(array($this->node, $productsNode));
+        $q = new FlowQuery([$this->node, $productsNode]);
         $foundNodes = $q->filter('home, products')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
@@ -79,7 +79,7 @@ class FilterOperationTest extends AbstractNodeTest
      */
     public function identityFilterIsSupported()
     {
-        $q = new FlowQuery(array($this->node, $this->node->getNode('products')));
+        $q = new FlowQuery([$this->node, $this->node->getNode('products')]);
         $foundNodes = $q->filter('#3239baee-3e7f-785c-0853-f4302ef32570')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertEquals(1, count($foundNodes));
@@ -93,7 +93,7 @@ class FilterOperationTest extends AbstractNodeTest
     public function multipleIdentityFiltersIsSupported()
     {
         $productsNode = $this->node->getNode('products');
-        $q = new FlowQuery(array($this->node, $productsNode));
+        $q = new FlowQuery([$this->node, $productsNode]);
         $foundNodes = $q->filter('#3239baee-3e7f-785c-0853-f4302ef32570, #25eaba22-b8ed-11e3-a8b5-c82a1441d728')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
@@ -113,7 +113,7 @@ class FilterOperationTest extends AbstractNodeTest
      */
     public function attributeFilterUsingPropertyIsSupported()
     {
-        $q = new FlowQuery(array($this->node));
+        $q = new FlowQuery([$this->node]);
         $foundNodes = $q->filter('[title *= "Home"]')->get();
         $this->assertEquals(1, count($foundNodes));
         $foundNodes = $q->filter('[title *= "x"]')->get();
@@ -126,7 +126,7 @@ class FilterOperationTest extends AbstractNodeTest
     public function attributeFilterUsingInternalPropertyIsSupported()
     {
         $productsNode = $this->node->getNode('products');
-        $q = new FlowQuery(array($this->node, $productsNode));
+        $q = new FlowQuery([$this->node, $productsNode]);
         $foundNodes = $q->filter('[_depth = 3]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertEquals(1, count($foundNodes));
@@ -145,7 +145,7 @@ class FilterOperationTest extends AbstractNodeTest
         $productsNode = $this->node->getNode('products');
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
-        $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
+        $q = new FlowQuery([$this->node, $productsNode, $teaserNode, $sidebarNode]);
         $foundNodes = $q->filter('[instanceof Neos.ContentRepository.Testing:Page]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
@@ -167,7 +167,7 @@ class FilterOperationTest extends AbstractNodeTest
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
         $dummy = $sidebarNode->getNode('dummy43');
-        $q = new FlowQuery(array($this->node, $dummy, $productsNode, $teaserNode, $sidebarNode));
+        $q = new FlowQuery([$this->node, $dummy, $productsNode, $teaserNode, $sidebarNode]);
         $foundNodes = $q->filter('[!instanceof Neos.ContentRepository.Testing:Html]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
@@ -191,7 +191,7 @@ class FilterOperationTest extends AbstractNodeTest
         $productsNode = $this->node->getNode('products');
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
-        $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
+        $q = new FlowQuery([$this->node, $productsNode, $teaserNode, $sidebarNode]);
         $foundNodes = $q->filter('[instanceof Neos.ContentRepository.Testing:Document][instanceof Neos.ContentRepository.Testing:Page]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
@@ -208,7 +208,7 @@ class FilterOperationTest extends AbstractNodeTest
         $productsNode = $this->node->getNode('products');
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
-        $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
+        $q = new FlowQuery([$this->node, $productsNode, $teaserNode, $sidebarNode]);
         $foundNodes = $q->filter('[instanceof Neos.ContentRepository.Testing:Page], [instanceof Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
@@ -225,7 +225,7 @@ class FilterOperationTest extends AbstractNodeTest
         $productsNode = $this->node->getNode('products');
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
-        $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
+        $q = new FlowQuery([$this->node, $productsNode, $teaserNode, $sidebarNode]);
         $foundNodes = $q->filter('[instanceof !Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
@@ -246,7 +246,7 @@ class FilterOperationTest extends AbstractNodeTest
         $productsNode = $this->node->getNode('products');
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
-        $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
+        $q = new FlowQuery([$this->node, $productsNode, $teaserNode, $sidebarNode]);
         $foundNodes = $q->filter('[!instanceof !Neos.ContentRepository.Testing:Page]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);

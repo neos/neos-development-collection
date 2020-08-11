@@ -11,7 +11,7 @@ function (
 	I18n
 ) {
 	return AbstractPositionSelectorButton.extend({
-		iconClass: 'icon-paste',
+		iconClass: 'fas fa-paste',
 		type: 'paste',
 		init: function() {
 			this._super();

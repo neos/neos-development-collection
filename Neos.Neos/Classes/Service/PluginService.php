@@ -211,7 +211,7 @@ class PluginService
         $context = $node->getContext();
         foreach ($this->getNodes(['Neos.Neos:PluginView'], $context) as $pluginViewNode) {
             /** @var NodeInterface $pluginViewNode */
-            if ($pluginViewNode->isRemoved()) {
+            if ($pluginViewNode === null || $pluginViewNode->isRemoved()) {
                 continue;
             }
             if ($pluginViewNode->getProperty('plugin') === $node->getIdentifier()

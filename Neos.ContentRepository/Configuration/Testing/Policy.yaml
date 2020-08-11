@@ -1,0 +1,7 @@
+#                                                                        #
+# Security policy for the ContentRepository package                                #
+#                                                                        #
+
+roles:
+  'Neos.ContentRepository:TestingAdministrator':
+    parentRoles: ['Neos.ContentRepository:Administrator']

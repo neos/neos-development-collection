@@ -42,13 +42,4 @@ class RuntimeException extends Exception
     {
         return $this->fusionPath;
     }
-
-    /**
-     * @return null|string
-     * @deprecated
-     */
-    public function getTypoScriptPath()
-    {
-        return $this->fusionPath;
-    }
 }

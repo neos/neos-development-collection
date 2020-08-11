@@ -11,7 +11,6 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Matcher object for use inside a "Case" statement
@@ -27,7 +26,7 @@ class MatcherImplementation extends RendererImplementation
     }
 
     /**
-     * The type to render if condition is TRUE
+     * The type to render if condition is true
      *
      * @return string
      */

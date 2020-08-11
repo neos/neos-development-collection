@@ -33,7 +33,7 @@ class ContextTest extends UnitTestCase
         $this->inject($this->contextFactory, 'securityContext', $this->createMock(Context::class));
 
         $mockContentDimensionRepository = $this->createMock(ContentDimensionRepository::class);
-        $mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));
+        $mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue([]));
         $this->inject($this->contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
     }
 
@@ -44,7 +44,7 @@ class ContextTest extends UnitTestCase
     {
         $now = new \DateTime();
 
-        $context = $this->contextFactory->create(array());
+        $context = $this->contextFactory->create([]);
 
         $currentTime = $context->getCurrentDateTime();
         $this->assertInstanceOf('\DateTimeInterface', $currentTime);
@@ -59,7 +59,7 @@ class ContextTest extends UnitTestCase
         $simulatedCurrentTime = new \DateTime();
         $simulatedCurrentTime->add(new \DateInterval('P1D'));
 
-        $context = $this->contextFactory->create(array('currentDateTime' => $simulatedCurrentTime));
+        $context = $this->contextFactory->create(['currentDateTime' => $simulatedCurrentTime]);
 
         $this->assertEquals($simulatedCurrentTime, $context->getCurrentDateTime());
     }

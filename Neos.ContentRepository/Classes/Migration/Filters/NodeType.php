@@ -12,14 +12,20 @@ namespace Neos\ContentRepository\Migration\Filters;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Utility\ObjectAccess;
-use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\Flow\Persistence\Doctrine\Query;
 
 /**
  * Filter nodes by node type.
  */
-class NodeType implements FilterInterface
+class NodeType implements DoctrineFilterInterface
 {
+    /**
+     * @var NodeTypeManager
+     * @Flow\Inject
+     */
+    protected $nodeTypeManager;
+
     /**
      * The node type to match on.
      *
@@ -30,14 +36,14 @@ class NodeType implements FilterInterface
     /**
      * If set to true also all subtypes of the given nodeType will match.
      *
-     * @var boolean
+     * @var bool
      */
     protected $withSubTypes = false;
 
     /**
      * If set this NodeType is actually excluded instead exclusively included.
      *
-     * @var boolean
+     * @var bool
      */
     protected $exclude = false;
 
@@ -59,7 +65,7 @@ class NodeType implements FilterInterface
      * Note: This can only be used with node types still available in the
      * system!
      *
-     * @param boolean $withSubTypes
+     * @param bool $withSubTypes
      * @return void
      */
     public function setWithSubTypes($withSubTypes)
@@ -70,33 +76,35 @@ class NodeType implements FilterInterface
     /**
      * Whether the filter should exclude the given NodeType instead of including only this node type.
      *
-     * @param boolean $exclude
+     * @param bool $exclude
      */
-    public function setExclude($exclude)
+    public function setExclude(bool $exclude)
     {
         $this->exclude = $exclude;
     }
 
     /**
-     * Returns TRUE if the given node is of the node type this filter expects.
-     *
-     * @param NodeData $node
-     * @return boolean
+     * @param Query $baseQuery
+     * @return array
+     * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
      */
-    public function matches(NodeData $node)
+    public function getFilterExpressions(Query $baseQuery): array
     {
-        if ($this->withSubTypes === true) {
-            $nodeIsMatchingNodeType = $node->getNodeType()->isOfType($this->nodeTypeName);
+        $nodeTypes = [$this->nodeTypeName];
+        if ($this->withSubTypes) {
+            foreach ($this->nodeTypeManager->getSubNodeTypes($this->nodeTypeName) as $nodeType) {
+                $nodeTypes[] = $nodeType->getName();
+            }
+        }
+
+        $filterExpressions = [];
+
+        if ($this->exclude) {
+            $filterExpressions[] = $baseQuery->logicalNot($baseQuery->in('nodeType', $nodeTypes));
         } else {
-            // This is needed to get the raw string NodeType to prevent errors for NodeTypes that no longer exist.
-            $nodeType = ObjectAccess::getProperty($node, 'nodeType', true);
-            $nodeIsMatchingNodeType = $nodeType === $this->nodeTypeName;
+            $filterExpressions[] = $baseQuery->in('nodeType', $nodeTypes);
         }
 
-        if ($this->exclude === true) {
-            return !$nodeIsMatchingNodeType;
-        }
-
-        return $nodeIsMatchingNodeType;
+        return $filterExpressions;
     }
 }

@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "~4.3.0 || 4.3.x-dev",
+        "neos/flow-development-collection": "~5.3.0 || 5.3.x-dev",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -14,22 +14,22 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
-        "doctrine/orm": "~2.5.0",
-        "gedmo/doctrine-extensions": "~2.3.0",
+        "doctrine/orm": "^2.6",
+        "gedmo/doctrine-extensions": "^2.4",
         "behat/transliterator": "~1.0",
-        "php": ">=5.5.0",
+        "php": "^7.0",
         "neos/utility-unicode": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
-        "doctrine/common": "~2.7.0",
-        "neos/imagine": "^3.0.2",
+        "doctrine/common": "^2.7",
+        "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
-        "doctrine/dbal": "~2.5.0",
+        "doctrine/dbal": "^2.8",
         "neos/party": "*",
         "neos/setup": "*",
         "neos/twitter-bootstrap": "*",
         "neos/form": "*",
-        "neos/kickstarter": "~4.3.0"
+        "neos/kickstarter": "~5.3.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -116,7 +116,7 @@
                 "Neos.Neos/Resources/Private/Installer/"
             ]
         },
-        "typo3/flow": {
+        "neos/flow": {
             "manage-resources": true
         }
     },

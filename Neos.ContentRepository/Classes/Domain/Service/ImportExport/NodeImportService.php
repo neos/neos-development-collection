@@ -11,9 +11,9 @@ namespace Neos\ContentRepository\Domain\Service\ImportExport;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -52,11 +52,10 @@ class NodeImportService
     protected $propertyMapper;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -74,12 +73,12 @@ class NodeImportService
     /**
      * @var array
      */
-    protected $nodeDataStack = array();
+    protected $nodeDataStack = [];
 
     /**
      * @var array
      */
-    protected $nodeIdentifierStack = array();
+    protected $nodeIdentifierStack = [];
 
     /**
      * @var array
@@ -96,46 +95,46 @@ class NodeImportService
      *
      * @var array
      */
-    protected $nodeDataPropertyNames = array(
-        'Persistence_Object_Identifier' => array(),
-        'identifier' => array(),
-        'nodeType' => array(),
-        'workspace' => array(),
-        'sortingIndex' => array(),
-        'version' => array(),
-        'removed' => array(
+    protected $nodeDataPropertyNames = [
+        'Persistence_Object_Identifier' => [],
+        'identifier' => [],
+        'nodeType' => [],
+        'workspace' => [],
+        'sortingIndex' => [],
+        'version' => [],
+        'removed' => [
             'columnType' => \PDO::PARAM_BOOL
-        ),
-        'hidden' => array(
+        ],
+        'hidden' => [
             'columnType' => \PDO::PARAM_BOOL
-        ),
-        'hiddenInIndex' => array(
+        ],
+        'hiddenInIndex' => [
             'columnType' => \PDO::PARAM_BOOL
-        ),
-        'path' => array(),
-        'pathHash' => array(),
-        'parentPath' => array(),
-        'parentPathHash' => array(),
-        'dimensionsHash' => array(),
-        'dimensionValues' => array(),
-        'properties' => array(),
-        'hiddenBeforeDateTime' => array(
+        ],
+        'path' => [],
+        'pathHash' => [],
+        'parentPath' => [],
+        'parentPathHash' => [],
+        'dimensionsHash' => [],
+        'dimensionValues' => [],
+        'properties' => [],
+        'hiddenBeforeDateTime' => [
             'columnType' => Type::DATETIME
-        ),
-        'hiddenAfterDateTime' => array(
+        ],
+        'hiddenAfterDateTime' => [
             'columnType' => Type::DATETIME
-        ),
-        'creationDateTime' => array(
+        ],
+        'creationDateTime' => [
             'columnType' => Type::DATETIME
-        ),
-        'lastModificationDateTime' => array(
+        ],
+        'lastModificationDateTime' => [
             'columnType' => Type::DATETIME
-        ),
-        'lastPublicationDateTime' => array(
+        ],
+        'lastPublicationDateTime' => [
             'columnType' => Type::DATETIME
-        ),
-        'accessRoles' => array()
-    );
+        ],
+        'accessRoles' => []
+    ];
 
     /**
      * Imports the sub-tree from the xml reader into the given target path.
@@ -283,7 +282,7 @@ class NodeImportService
 
                 $now = new Now();
                 $currentNodeIdentifier = $this->nodeIdentifierStack[count($this->nodeIdentifierStack) - 1];
-                $this->nodeDataStack[] = array(
+                $this->nodeDataStack[] = [
                     'Persistence_Object_Identifier' => Algorithms::generateUUID(),
                     'identifier' => $currentNodeIdentifier,
                     'nodeType' => $xmlReader->getAttribute('nodeType'),
@@ -297,12 +296,12 @@ class NodeImportService
                     'pathHash' => md5($path),
                     'parentPath' => $parentPath,
                     'parentPathHash' => md5($parentPath),
-                    'properties' => array(),
-                    'accessRoles' => array(),
+                    'properties' => [],
+                    'accessRoles' => [],
                     'creationDateTime' => $now,
                     'lastModificationDateTime' => $now,
-                    'dimensionValues' => array() // is post-processed before save in END_ELEMENT-case
-                );
+                    'dimensionValues' => [] // is post-processed before save in END_ELEMENT-case
+                ];
                 break;
             case 'dimensions':
                 $this->nodeDataStack[count($this->nodeDataStack) - 1]['dimensionValues'] = $this->parseDimensionsElement($xmlReader);
@@ -339,7 +338,7 @@ class NodeImportService
      */
     protected function parseDimensionsElement(\XMLReader $reader)
     {
-        $dimensions = array();
+        $dimensions = [];
         $currentDimension = null;
 
         while ($reader->read()) {
@@ -372,7 +371,7 @@ class NodeImportService
      */
     protected function parseArrayElements(\XMLReader $reader, $elementName, $currentNodeIdentifier)
     {
-        $values = array();
+        $values = [];
         $depth = 0;
 
         // The following silences static code analysis warnings about undefined variables.
@@ -416,7 +415,7 @@ class NodeImportService
      */
     protected function parsePropertiesElement(\XMLReader $reader, $currentNodeIdentifier)
     {
-        $properties = array();
+        $properties = [];
         $currentProperty = null;
         $currentType = null;
         $currentEncoding = null;
@@ -435,7 +434,7 @@ class NodeImportService
                     if ($reader->isEmptyElement) {
                         switch ($currentType) {
                             case 'array':
-                                $properties[$currentProperty] = array();
+                                $properties[$currentProperty] = [];
                                 break;
                             case 'string':
                                 $properties[$currentProperty] = '';
@@ -526,7 +525,7 @@ class NodeImportService
     protected function persistEntities($propertyValue)
     {
         if (!$propertyValue instanceof \Iterator && !is_array($propertyValue)) {
-            $propertyValue = array($propertyValue);
+            $propertyValue = [$propertyValue];
         }
         foreach ($propertyValue as $possibleEntity) {
             if (is_object($possibleEntity) && $possibleEntity instanceof PersistenceMagicInterface) {
@@ -648,18 +647,20 @@ class NodeImportService
         $nodeData['properties'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
         $nodeData['accessRoles'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['accessRoles'], $connection->getDatabasePlatform());
 
-        $connection->executeQuery('DELETE FROM neos_contentrepository_domain_model_nodedimension'
+        $connection->executeQuery(
+            'DELETE FROM neos_contentrepository_domain_model_nodedimension'
             . ' WHERE nodedata IN ('
             . '   SELECT persistence_object_identifier FROM neos_contentrepository_domain_model_nodedata'
             . '   WHERE identifier = :identifier'
             . '   AND workspace = :workspace'
             . '   AND dimensionshash = :dimensionsHash'
             . ' )',
-        array(
+            [
             'identifier' => $nodeData['identifier'],
             'workspace' => $nodeData['workspace'],
             'dimensionsHash' => $nodeData['dimensionsHash']
-        ));
+        ]
+        );
 
         /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -677,9 +678,9 @@ class NodeImportService
         // insert new data
         // we need to use executeUpdate to execute the INSERT -- else the data types are not taken into account.
         // That's why we build a DQL INSERT statement which is then executed.
-        $queryParts = array();
-        $queryArguments = array();
-        $queryTypes = array();
+        $queryParts = [];
+        $queryArguments = [];
+        $queryTypes = [];
         foreach ($this->nodeDataPropertyNames as $propertyName => $propertyConfig) {
             if (isset($nodeData[$propertyName])) {
                 $queryParts[$propertyName] = ':' . $propertyName;
@@ -693,12 +694,12 @@ class NodeImportService
 
         foreach ($dimensionValues as $dimension => $values) {
             foreach ($values as $value) {
-                $nodeDimension = array(
+                $nodeDimension = [
                     'persistence_object_identifier' => Algorithms::generateUUID(),
                     'nodedata' => $nodeData['Persistence_Object_Identifier'],
                     'name' => $dimension,
                     'value' => $value
-                );
+                ];
                 $connection->insert('neos_contentrepository_domain_model_nodedimension', $nodeDimension);
             }
         }

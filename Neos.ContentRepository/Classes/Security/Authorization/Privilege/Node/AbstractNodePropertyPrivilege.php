@@ -37,7 +37,7 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
      *
      * @var array
      */
-    protected $methodNameToPropertyMapping = array();
+    protected $methodNameToPropertyMapping = [];
 
     /**
      * @param PrivilegeSubjectInterface|PropertyAwareNodePrivilegeSubject|MethodPrivilegeSubject $subject
@@ -51,6 +51,7 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
         }
 
         $this->initialize();
+        $this->evaluateNodeContext();
         if ($subject instanceof MethodPrivilegeSubject) {
             if ($this->methodPrivilege->matchesSubject($subject) === false) {
                 return false;

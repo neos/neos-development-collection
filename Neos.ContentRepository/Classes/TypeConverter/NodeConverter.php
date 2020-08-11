@@ -41,14 +41,19 @@ use Neos\ContentRepository\Exception\NodeException;
 class NodeConverter extends AbstractTypeConverter
 {
     /**
-     * @var boolean
+     * @var int
      */
     const REMOVED_CONTENT_SHOWN = 1;
 
     /**
+     * @var int
+     */
+    const INVISIBLE_CONTENT_SHOWN = 2;
+
+    /**
      * @var array
      */
-    protected $sourceTypes = array('string', 'array');
+    protected $sourceTypes = ['string', 'array'];
 
     /**
      * @Flow\Inject
@@ -133,10 +138,10 @@ class NodeConverter extends AbstractTypeConverter
      * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
      * @throws NodeException
      */
-    public function convertFrom($source, $targetType, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_string($source)) {
-            $source = array('__contextNodePath' => $source);
+            $source = ['__contextNodePath' => $source];
         }
 
         if (!is_array($source) || !isset($source['__contextNodePath'])) {
@@ -207,7 +212,7 @@ class NodeConverter extends AbstractTypeConverter
                 break;
                 case 'references':
                     $nodeIdentifiers = json_decode($nodePropertyValue);
-                    $nodePropertyValue = array();
+                    $nodePropertyValue = [];
                     if (is_array($nodeIdentifiers)) {
                         foreach ($nodeIdentifiers as $nodeIdentifier) {
                             $referencedNode = $context->getNodeByIdentifier($nodeIdentifier);
@@ -260,7 +265,7 @@ class NodeConverter extends AbstractTypeConverter
                 }
             }
 
-            if (is_string($nodePropertyValue) && $this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
+            if (is_string($nodePropertyValue) && is_string($innerType) && $this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
                 $nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, true), $nodePropertyType, $configuration);
             }
             $nodeLike->setProperty($nodePropertyName, $nodePropertyValue);
@@ -277,14 +282,17 @@ class NodeConverter extends AbstractTypeConverter
      */
     protected function prepareContextProperties($workspaceName, PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => false,
             'removedContentShown' => false
-        );
+        ];
+        if ($configuration !== null && $configuration->getConfigurationValue(NodeConverter::class, self::INVISIBLE_CONTENT_SHOWN) === true) {
+            $contextProperties['invisibleContentShown'] = true;
+        }
         if ($workspaceName !== 'live') {
             $contextProperties['invisibleContentShown'] = true;
-            if ($configuration !== null && $configuration->getConfigurationValue(\Neos\ContentRepository\TypeConverter\NodeConverter::class, self::REMOVED_CONTENT_SHOWN) === true) {
+            if ($configuration !== null && $configuration->getConfigurationValue(NodeConverter::class, self::REMOVED_CONTENT_SHOWN) === true) {
                 $contextProperties['removedContentShown'] = true;
             }
         }

@@ -50,7 +50,7 @@ class MigrationStatusRepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $expectedVersionOrder = array('abc', 'mnk', 'zyx');
+        $expectedVersionOrder = ['abc', 'mnk', 'zyx'];
 
         /** @var MigrationStatus $status */
         $i = 0;

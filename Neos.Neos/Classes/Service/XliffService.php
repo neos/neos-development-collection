@@ -18,8 +18,7 @@ use Neos\Flow\I18n\Exception;
 use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
 use Neos\Flow\I18n\Xliff\Service\XliffReader;
 use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
-use Neos\Utility\Arrays;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service as LocalizationService;
@@ -77,7 +76,7 @@ class XliffService
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -168,7 +167,8 @@ class XliffService
             //remove file extension
             $source = substr($source, 0, strrpos($source, '.'));
 
-            $this->xliffReader->readFiles($filePath,
+            $this->xliffReader->readFiles(
+                $filePath,
                 function (\XMLReader $file, $offset, $version) use ($packageKey, &$sources, $source, $sourcesToBeIncluded) {
                     $targetPackageKey = $packageKey;
                     if ($version === '1.2') {
@@ -216,7 +216,7 @@ class XliffService
         // Walk/build the array to the specified key
         while ($arrayKey = array_shift($keys)) {
             if (!array_key_exists($arrayKey, $arrayPointer)) {
-                $arrayPointer[$arrayKey] = array();
+                $arrayPointer[$arrayKey] = [];
             }
             $arrayPointer = &$arrayPointer[$arrayKey];
         }

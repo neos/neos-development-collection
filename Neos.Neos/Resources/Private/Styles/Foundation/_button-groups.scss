@@ -39,11 +39,6 @@
 .neos-button-group > .neos-button + .neos-button {
   margin-left: -1px;
 }
-.neos-button-group > .neos-button,
-.neos-button-group > .neos-dropdown-menu,
-.neos-button-group > .neos-popover {
-  font-size: $baseFontSize; // redeclare as part 2 of font-size inline-block hack
-}
 
 // Reset fonts for other sizes
 .neos-button-group > .neos-button-mini {

@@ -363,7 +363,7 @@
 			<target state="translated">Křestní Jméno</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target state="translated">Prostřední jméno</target><alt-trans><target>Druhé křestní jméno</target></alt-trans></trans-unit>
+			<target state="translated">Prostřední jméno</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target state="translated">Příjmení</target></trans-unit>

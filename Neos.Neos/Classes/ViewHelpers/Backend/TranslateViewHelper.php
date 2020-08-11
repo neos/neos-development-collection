@@ -87,28 +87,35 @@ class TranslateViewHelper extends FluidTranslateViewHelper
      * @param string $source Name of file with translations
      * @param string $package Target package key. If not set, the current package key will be used
      * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-     * @param string $languageIdentifier An identifier of a language to use (NULL for using the default language)
+     * @param string $locale An identifier of a language to use (NULL for using the default language)
      * @return string Translated label or source label / ID key
      * @throws ViewHelper\Exception
      */
-    public function render($id = null, $value = null, array $arguments = array(), $source = 'Main', $package = null, $quantity = null, $languageIdentifier = null)
+    public function render()
     {
+        $id = $this->arguments['id'];
+        $value = $this->arguments['value'];
+        $locale = $this->arguments['locale'];
+
         if (preg_match(TranslationHelper::I18N_LABEL_ID_PATTERN, $id) === 1) {
             // In the longer run, this "extended ID" format should directly be resolved in the localization service
             list($package, $source, $id) = explode(':', $id, 3);
-            $source = str_replace('.', '/', $source);
+            $this->arguments['id'] = $id;
+            $this->arguments['package'] = $package;
+            $this->arguments['source'] = str_replace('.', '/', $source);
         }
 
-        if ($languageIdentifier === null) {
-            $languageIdentifier = $this->userService->getInterfaceLanguage();
+        if ($locale === null) {
+            $this->arguments['locale'] = $this->userService->getInterfaceLanguage();
         }
 
         // Catch exception in case the translation file doesn't exist, should be fixed in Flow 3.1
         try {
-            $translation = parent::render($id, $value, $arguments, $source, $package, $quantity, $languageIdentifier);
+            $translation = parent::render();
             // Fallback to english label if label was not available in specific language
-            if ($translation === $id && $languageIdentifier !== 'en') {
-                $translation = parent::render($id, $value, $arguments, $source, $package, $quantity, 'en');
+            if ($translation === $id && $locale !== 'en') {
+                $this->arguments['locale'] = 'en';
+                $translation = parent::render();
             }
             return $translation;
         } catch (Exception $exception) {

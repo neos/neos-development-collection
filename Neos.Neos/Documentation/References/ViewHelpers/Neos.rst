@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2018-08-10
+This reference was automatically generated from code on 2019-03-05
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -204,7 +204,7 @@ the Neos backend.
 neos:backend.shouldLoadMinifiedJavascript
 -----------------------------------------
 
-Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE otherwise.
+Returns true if the minified Neos JavaScript sources should be loaded, false otherwise.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ShouldLoadMinifiedJavascriptViewHelper
 
@@ -235,13 +235,13 @@ Arguments
 
 * ``arguments`` (array, *optional*): Numerically indexed array of values to be inserted into placeholders
 
-* ``source`` (string, *optional*): Name of file with translations
+* ``source`` (string, *optional*): Name of file with translations (use / as a directory separator)
 
 * ``package`` (string, *optional*): Target package key. If not set, the current package key will be used
 
 * ``quantity`` (mixed, *optional*): A number to find plural form for (float or int), NULL to not use plural forms
 
-* ``languageIdentifier`` (string, *optional*): An identifier of a language to use (NULL for using the default language)
+* ``locale`` (string, *optional*): An identifier of locale to use (NULL for use the default locale)
 
 
 
@@ -508,7 +508,7 @@ Arguments
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -607,13 +607,13 @@ Arguments
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``baseNodeName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
 
 * ``nodeVariableName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
-* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -1025,7 +1025,7 @@ Arguments
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 
 
@@ -1094,11 +1094,11 @@ Arguments
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
-* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 
 
 

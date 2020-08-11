@@ -17,7 +17,6 @@ use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Utility\Arrays;
-use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 
@@ -51,8 +50,8 @@ class UserCommandController extends CommandController
     {
         $users = $this->userService->getUsers();
 
-        $tableRows = array();
-        $headerRow = array('Name', 'Email', 'Account(s)', 'Role(s)', 'Active');
+        $tableRows = [];
+        $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
 
         foreach ($users as $user) {
             $tableRows[] = $this->getTableRowForUser($user);
@@ -79,12 +78,12 @@ class UserCommandController extends CommandController
     {
         $user = $this->userService->getUser($username, $authenticationProvider);
         if (!$user instanceof User) {
-            $this->outputLine('The username "%s" is not in use', array($username));
+            $this->outputLine('The username "%s" is not in use', [$username]);
             $this->quit(1);
         }
 
-        $headerRow = array('Name', 'Email', 'Account(s)', 'Role(s)', 'Active');
-        $tableRows = array($this->getTableRowForUser($user));
+        $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
+        $tableRows = [$this->getTableRowForUser($user)];
 
         $this->output->outputTable($tableRows, $headerRow);
     }
@@ -115,7 +114,7 @@ class UserCommandController extends CommandController
     {
         $user = $this->userService->getUser($username, $authenticationProvider);
         if ($user instanceof User) {
-            $this->outputLine('The username "%s" is already in use', array($username));
+            $this->outputLine('The username "%s" is already in use', [$username]);
             $this->quit(1);
         }
 
@@ -127,7 +126,7 @@ class UserCommandController extends CommandController
                 $user = $this->userService->createUser($username, $password, $firstName, $lastName, $roleIdentifiers, $authenticationProvider);
             }
 
-            $roleIdentifiers = array();
+            $roleIdentifiers = [];
             foreach ($user->getAccounts() as $account) {
                 /** @var Account $account */
                 foreach ($account->getRoles() as $role) {
@@ -138,10 +137,10 @@ class UserCommandController extends CommandController
             $roleIdentifiers = array_keys($roleIdentifiers);
 
             if (count($roleIdentifiers) === 0) {
-                $this->outputLine('Created user "%s".', array($username));
+                $this->outputLine('Created user "%s".', [$username]);
                 $this->outputLine('<b>Please note that this user currently does not have any roles assigned.</b>');
             } else {
-                $this->outputLine('Created user "%s" and assigned the following role%s: %s.', array($username, (count($roleIdentifiers) > 1 ? 's' : ''), implode(', ', $roleIdentifiers)));
+                $this->outputLine('Created user "%s" and assigned the following role%s: %s.', [$username, (count($roleIdentifiers) > 1 ? 's' : ''), implode(', ', $roleIdentifiers)]);
             }
         } catch (\Exception $exception) {
             $this->outputLine($exception->getMessage());
@@ -150,7 +149,7 @@ class UserCommandController extends CommandController
     }
 
     /**
-     * Delete a user
+     * Delete a user (with globbing)
      *
      * This command deletes an existing Neos user. All content and data directly related to this user, including but
      * not limited to draft workspace contents, will be removed as well.
@@ -162,29 +161,37 @@ class UserCommandController extends CommandController
      * provider is deleted! If a user was found by the combination of username and authentication provider, <b>all</b>
      * related accounts will be deleted.
      *
-     * @param string $username The username of the user to be removed
+     * @param string $username The username of the user to be removed (globbing is supported)
      * @param boolean $assumeYes Assume "yes" as the answer to the confirmation dialog
      * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return void
      */
     public function deleteCommand($username, $assumeYes = false, $authenticationProvider = null)
     {
-        $user = $this->getUserOrFail($username, $authenticationProvider);
-
-        if ($assumeYes === true) {
-            $delete = true;
-        } else {
-            $delete = $this->output->askConfirmation(sprintf('Are you sure you want to delete the user "%s" (%s) including all directly related data? (y/n) ', $username, $user->getName()));
+        $users = $this->findUsersByUsernamePattern($username, $authenticationProvider);
+        if (empty($users)) {
+            $this->outputLine('No users that match name-pattern "%s" do exist.', [$username]);
+            $this->quit(1);
         }
 
-        if ($delete) {
-            $this->userService->deleteUser($user);
-            $this->outputLine('Deleted user "%s".', array($username));
+        foreach ($users as $user) {
+            $username = $this->userService->getUsername($user, $authenticationProvider);
+
+            if ($assumeYes === true) {
+                $delete = true;
+            } else {
+                $delete = $this->output->askConfirmation(sprintf('Are you sure you want to delete the user "%s" (%s) including all directly related data? (y/n) ', $username, $user->getName()));
+            }
+
+            if ($delete) {
+                $this->userService->deleteUser($user);
+                $this->outputLine('Deleted user "%s".', [$username]);
+            }
         }
     }
 
     /**
-     * Activate a user
+     * Activate a user (with globbing)
      *
      * This command reactivates possibly expired accounts for the given user.
      *
@@ -192,20 +199,27 @@ class UserCommandController extends CommandController
      * to the given provider. Still, this command will activate <b>all</b> accounts of a user, once such a user has been
      * found.
      *
-     * @param string $username The username of the user to be activated.
+     * @param string $username The username of the user to be activated (globbing is supported)
      * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Backend"
      * @return void
      */
     public function activateCommand($username, $authenticationProvider = null)
     {
-        $user = $this->getUserOrFail($username, $authenticationProvider);
+        $users = $this->findUsersByUsernamePattern($username, $authenticationProvider);
+        if (empty($users)) {
+            $this->outputLine('No users that match name-pattern "%s" do exist.', [$username]);
+            $this->quit(1);
+        }
 
-        $this->userService->activateUser($user);
-        $this->outputLine('Activated user "%s".', array($username));
+        foreach ($users as $user) {
+            $username = $this->userService->getUsername($user, $authenticationProvider);
+            $this->userService->activateUser($user);
+            $this->outputLine('Activated user "%s".', [$username]);
+        }
     }
 
     /**
-     * Deactivate a user
+     * Deactivate a user (with globbing)
      *
      * This command deactivates a user by flagging all of its accounts as expired.
      *
@@ -213,16 +227,23 @@ class UserCommandController extends CommandController
      * to the given provider. Still, this command will deactivate <b>all</b> accounts of a user, once such a user has been
      * found.
      *
-     * @param string $username The username of the user to be deactivated.
+     * @param string $username The username of the user to be deactivated (globbing is supported)
      * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Backend"
      * @return void
      */
     public function deactivateCommand($username, $authenticationProvider = null)
     {
-        $user = $this->getUserOrFail($username, $authenticationProvider);
+        $users = $this->findUsersByUsernamePattern($username, $authenticationProvider);
+        if (empty($users)) {
+            $this->outputLine('No users that match name-pattern "%s" do exist.', [$username]);
+            $this->quit(1);
+        }
 
-        $this->userService->deactivateUser($user);
-        $this->outputLine('Deactivated user "%s".', array($username));
+        foreach ($users as $user) {
+            $username = $this->userService->getUsername($user, $authenticationProvider);
+            $this->userService->deactivateUser($user);
+            $this->outputLine('Deactivated user "%s".', [$username]);
+        }
     }
 
     /**
@@ -241,9 +262,13 @@ class UserCommandController extends CommandController
      */
     public function setPasswordCommand($username, $password, $authenticationProvider = null)
     {
-        $user = $this->getUserOrFail($username, $authenticationProvider);
+        $user = $this->userService->getUser($username, $authenticationProvider);
+        if (!$user instanceof User) {
+            $this->outputLine('The user "%s" does not exist.', [$username]);
+            $this->quit(1);
+        }
         $this->userService->setUserPassword($user, $password);
-        $this->outputLine('The new password for user "%s" was set.', array($username));
+        $this->outputLine('The new password for user "%s" was set.', [$username]);
     }
 
     /**
@@ -258,24 +283,31 @@ class UserCommandController extends CommandController
      * related to the given provider. However, once a user has been found, the new role will be added to <b>all</b>
      * existing accounts related to that user, regardless of its authentication provider.
      *
-     * @param string $username The username of the user
+     * @param string $username The username of the user (globbing is supported)
      * @param string $role Role to be added to the user, for example "Neos.Neos:Administrator" or just "Administrator"
      * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return void
      */
     public function addRoleCommand($username, $role, $authenticationProvider = null)
     {
-        $user = $this->getUserOrFail($username, $authenticationProvider);
+        $users = $this->findUsersByUsernamePattern($username, $authenticationProvider);
+        if (empty($users)) {
+            $this->outputLine('No users that match name-pattern "%s" do exist.', [$username]);
+            $this->quit(1);
+        }
 
-        try {
-            if ($this->userService->addRoleToUser($user, $role) > 0) {
-                $this->outputLine('Added role "%s" to accounts of user "%s".', array($role, $username));
-            } else {
-                $this->outputLine('User "%s" already had the role "%s" assigned.', array($username, $role));
+        foreach ($users as $user) {
+            $username = $this->userService->getUsername($user, $authenticationProvider);
+            try {
+                if ($this->userService->addRoleToUser($user, $role) > 0) {
+                    $this->outputLine('Added role "%s" to accounts of user "%s".', [$role, $username]);
+                } else {
+                    $this->outputLine('User "%s" already had the role "%s" assigned.', [$username, $role]);
+                }
+            } catch (NoSuchRoleException $exception) {
+                $this->outputLine('The role "%s" does not exist.', [$role]);
+                $this->quit(2);
             }
-        } catch (NoSuchRoleException $exception) {
-            $this->outputLine('The role "%s" does not exist.', array($role));
-            $this->quit(2);
         }
     }
 
@@ -288,43 +320,57 @@ class UserCommandController extends CommandController
      * related to the given provider. However, once a user has been found, the role will be removed from <b>all</b>
      * existing accounts related to that user, regardless of its authentication provider.
      *
-     * @param string $username The username of the user
+     * @param string $username The username of the user (globbing is supported)
      * @param string $role Role to be removed from the user, for example "Neos.Neos:Administrator" or just "Administrator"
      * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return void
      */
     public function removeRoleCommand($username, $role, $authenticationProvider = null)
     {
-        $user = $this->getUserOrFail($username, $authenticationProvider);
+        $users = $this->findUsersByUsernamePattern($username, $authenticationProvider);
+        if (empty($users)) {
+            $this->outputLine('No users that match name-pattern "%s" do exist.', [$username]);
+            $this->quit(1);
+        }
 
-        try {
-            if ($this->userService->removeRoleFromUser($user, $role) > 0) {
-                $this->outputLine('Removed role "%s" from user "%s".', array($role, $username));
-            } else {
-                $this->outputLine('User "%s" did not have the role "%s" assigned.', array($username, $role));
+        foreach ($users as $user) {
+            $username = $this->userService->getUsername($user, $authenticationProvider);
+            try {
+                if ($this->userService->removeRoleFromUser($user, $role) > 0) {
+                    $this->outputLine('Removed role "%s" from user "%s".', [$role, $username]);
+                } else {
+                    $this->outputLine('User "%s" did not have the role "%s" assigned.', [$username, $role]);
+                }
+            } catch (NoSuchRoleException $exception) {
+                $this->outputLine('The role "%s" does not exist.', [$role]);
+                $this->quit(2);
             }
-        } catch (NoSuchRoleException $exception) {
-            $this->outputLine('The role "%s" does not exist.', array($role));
-            $this->quit(2);
         }
     }
 
     /**
-     * Retrieves the given user or fails by exiting with code 1 and a message
+     * Find all users the match the given username with globbing support
      *
-     * @param string $username Username of the user to find
+     * @param string $usernamePattern pattern for the username of the users to find
      * @param string $authenticationProviderName Name of the authentication provider to use
-     * @return User The user
-     * @throws Exception
+     * @return array<User>
      */
-    protected function getUserOrFail($username, $authenticationProviderName)
+    protected function findUsersByUsernamePattern($usernamePattern, $authenticationProviderName = null)
     {
-        $user = $this->userService->getUser($username, $authenticationProviderName);
-        if (!$user instanceof User) {
-            $this->outputLine('The user "%s" does not exist.', array($username));
-            $this->quit(1);
+        if (preg_match('/[\\?\\*\\{\\[]/u', $usernamePattern)) {
+            return array_filter(
+                $this->userService->getUsers()->toArray(),
+                function ($user) use ($usernamePattern, $authenticationProviderName) {
+                    return fnmatch($usernamePattern, $this->userService->getUsername($user, $authenticationProviderName));
+                }
+            );
+        } else {
+            $user = $this->userService->getUser($usernamePattern, $authenticationProviderName);
+            if ($user instanceof User) {
+                return [$user];
+            }
         }
-        return $user;
+        return [];
     }
 
     /**
@@ -335,8 +381,8 @@ class UserCommandController extends CommandController
      */
     protected function getTableRowForUser(User $user)
     {
-        $roleNames = array();
-        $accountIdentifiers = array();
+        $roleNames = [];
+        $accountIdentifiers = [];
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
             $authenticationProviderName = $account->getAuthenticationProviderName();
@@ -351,6 +397,6 @@ class UserCommandController extends CommandController
                 $roleNames[] = $role->getIdentifier();
             }
         }
-        return array($user->getName()->getFullName(), $user->getPrimaryElectronicAddress(), implode(', ', $accountIdentifiers), implode(', ', $roleNames), ($user->isActive() ? 'yes' : 'no'));
+        return [$user->getName()->getFullName(), $user->getPrimaryElectronicAddress(), implode(', ', $accountIdentifiers), implode(', ', $roleNames), ($user->isActive() ? 'yes' : 'no')];
     }
 }

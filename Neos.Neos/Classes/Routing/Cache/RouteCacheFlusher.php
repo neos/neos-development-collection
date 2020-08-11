@@ -32,7 +32,7 @@ class RouteCacheFlusher
     /**
      * @var array
      */
-    protected $tagsToFlush = array();
+    protected $tagsToFlush = [];
 
     /**
      * Schedules flushing of the routing cache entries for the given $node
@@ -80,7 +80,7 @@ class RouteCacheFlusher
         foreach ($this->tagsToFlush as $tag) {
             $this->routeCachingService->flushCachesByTag($tag);
         }
-        $this->tagsToFlush = array();
+        $this->tagsToFlush = [];
     }
 
     /**

@@ -70,7 +70,7 @@ class UserService
     {
         $workspaceName = $this->getPersonalWorkspaceName();
         if ($workspaceName !== null) {
-            return $this->workspaceRepository->findOneByName($this->getPersonalWorkspaceName());
+            return $this->workspaceRepository->findOneByName($workspaceName);
         }
     }
 

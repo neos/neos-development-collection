@@ -11,8 +11,6 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Media\Domain\Model\Document;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Exception;
@@ -66,6 +64,15 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
             $im->setImageFormat('png');
             $im->setImageBackgroundColor('white');
             $im->setImageCompose(\Imagick::COMPOSITE_OVER);
+            
+            if (method_exists($im, 'mergeImageLayers')) {
+                // Replace flattenImages in imagick 3.3.0
+                // @see https://pecl.php.net/package/imagick/3.3.0RC2
+                $im = $im->mergeImageLayers(\Imagick::LAYERMETHOD_MERGE);
+            } else {
+                $im->flattenImages();
+            }
+
             if (defined('\Imagick::ALPHACHANNEL_OFF')) {
                 // ImageMagick >= 7.0, Imagick >= 3.4.3RC1
                 // @see https://pecl.php.net/package/imagick/3.4.3RC1
@@ -73,16 +80,8 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
             } else {
                 $im->setImageAlphaChannel(\Imagick::ALPHACHANNEL_RESET);
             }
+
             $im->thumbnailImage($width, $height, true);
-
-            if (method_exists($im, 'mergeImageLayers')) {
-                // Replace flattenImages in imagick 3.3.0
-                // @see https://pecl.php.net/package/imagick/3.3.0RC2
-                $im->mergeImageLayers(\Imagick::LAYERMETHOD_MERGE);
-            } else {
-                $im->flattenImages();
-            }
-
             $resource = $this->resourceManager->importResourceFromContent($im->getImageBlob(), $filenameWithoutExtension . '.png');
             $im->destroy();
 

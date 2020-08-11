@@ -33,15 +33,15 @@ class TagImplementationTest extends UnitTestCase
 
     public function tagExamples()
     {
-        return array(
-            'default properties' => array(array(), null, null, '<div></div>'),
-            'omit closing tag' => array(array('omitClosingTag' => true), null, null, '<div>'),
-            'force self closing tag' => array(array('selfClosingTag' => true), null, null, '<div />'),
-            'auto self closing tag' => array(array('tagName' => 'input'), ' type="text"', null, '<input type="text" />'),
-            'tag name with content' => array(array('tagName' => 'h1'), null, 'Foo', '<h1>Foo</h1>'),
-            'tag with attribute' => array(array('tagName' => 'link'), ' type="text/css" rel="stylesheet"', null, '<link type="text/css" rel="stylesheet" />'),
-            'tag with array of classes' => array(array('tagName' => 'div'), ' class="icon icon-neos"', null, '<div class="icon icon-neos"></div>')
-        );
+        return [
+            'default properties' => [[], null, null, '<div></div>'],
+            'omit closing tag' => [['omitClosingTag' => true], null, null, '<div>'],
+            'force self closing tag' => [['selfClosingTag' => true], null, null, '<div />'],
+            'auto self closing tag' => [['tagName' => 'input'], ' type="text"', null, '<input type="text" />'],
+            'tag name with content' => [['tagName' => 'h1'], null, 'Foo', '<h1>Foo</h1>'],
+            'tag with attribute' => [['tagName' => 'link'], ' type="text/css" rel="stylesheet"', null, '<link type="text/css" rel="stylesheet" />'],
+            'tag with array of classes' => [['tagName' => 'div'], ' class="icon icon-neos"', null, '<div class="icon icon-neos"></div>']
+        ];
     }
 
     /**

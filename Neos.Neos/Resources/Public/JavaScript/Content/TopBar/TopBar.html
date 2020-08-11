@@ -1,7 +1,7 @@
 {{view view.MenuButton}}
 {{#unbound if view._isContentModule}}
 	<button id="neos-navigate-button" {{bindAttr class=":neos-button view.navigatePanelController.navigatePanelMode:neos-pressed"}} {{action "toggleNavigatePanelMode" target="view.navigatePanelController"}}>
-		<i class="icon-location-arrow"></i>
+		<i class="fas fa-location-arrow"></i>
 		{{translate id="navigate" fallback="Navigate"}}
 	</button>
 	<button id="neos-edit-preview-button" {{bindAttr class=":neos-button view.editPreviewPanelController.editPreviewPanelMode:neos-pressed"}} {{action "toggleEditPreviewPanelMode" target="view.editPreviewPanelController"}}>

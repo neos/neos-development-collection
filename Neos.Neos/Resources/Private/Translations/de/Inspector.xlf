@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="groups.visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
-			<target state="translated">Sichtbarkeit</target></trans-unit>
+			<target state="final">Sichtbarkeit</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Document</source>
-			<target state="translated">Dokument</target></trans-unit>
+			<target state="final">Dokument</target></trans-unit>
     </body>
   </file>
 </xliff>

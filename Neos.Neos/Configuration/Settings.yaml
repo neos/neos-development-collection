@@ -12,7 +12,7 @@ Neos:
 
   Neos:
     fusion:
-      # if set to TRUE, Fusion is cached on a per-site basis.
+      # if set to true, Fusion is cached on a per-site basis.
       # Depending on the size of your Fusion, will improve rendering times 20-100+ ms.
       # HOWEVER, the cache is NOT FLUSHED automatically (yet), so that's why we suggest that
       # you enable this setting only:
@@ -36,7 +36,7 @@ Neos:
     defaultSiteNodeName: null
 
     routing:
-      # Setting this to TRUE allows to use an empty uriSegment for default dimensions.
+      # Setting this to true allows to use an empty uriSegment for default dimensions.
       # The only limitation is that all segments must be unique across all dimenions.
       supportEmptySegmentForDimensions: true
 
@@ -66,7 +66,7 @@ Neos:
           '@format': 'html'
 
       # should minified JavaScript be loaded? For developing the Neos
-      # Content Module, this should be set to FALSE.
+      # Content Module, this should be set to false.
       loadMinifiedJavascript: true
 
       # The number of seconds to wait before giving up on loading a script.
@@ -299,29 +299,29 @@ Neos:
         label: 'Neos.Neos:Modules:management.label'
         controller: 'Neos\Neos\Controller\Module\ManagementController'
         description: 'Neos.Neos:Modules:management.description'
-        icon: icon-briefcase
+        icon: fas fa-briefcase
         submodules:
           workspaces:
             label: 'Neos.Neos:Modules:workspaces.label'
             controller: 'Neos\Neos\Controller\Module\Management\WorkspacesController'
             description: 'Neos.Neos:Modules:workspaces.description'
-            icon: icon-th-large
+            icon: fas fa-th-large
           history:
             label: 'Neos.Neos:Modules:history.label'
             controller: 'Neos\Neos\Controller\Module\Management\HistoryController'
             description: 'Neos.Neos:Modules:history.description'
-            icon: icon-calendar
+            icon: fas fa-calendar-alt
       administration:
         label: 'Neos.Neos:Modules:administration.label'
         controller: 'Neos\Neos\Controller\Module\AdministrationController'
         description: 'Neos.Neos:Modules:administration.description'
-        icon: icon-gears
+        icon: fas fa-cogs
         submodules:
           users:
             label: 'Neos.Neos:Modules:users.label'
             controller: 'Neos\Neos\Controller\Module\Administration\UsersController'
             description: 'Neos.Neos:Modules:users.description'
-            icon: icon-group
+            icon: fas fa-users
             actions:
               new:
                 label: 'Neos.Neos:Modules:users.actions.new.label'
@@ -330,12 +330,12 @@ Neos:
             label: 'Neos.Neos:Modules:packages.label'
             controller: 'Neos\Neos\Controller\Module\Administration\PackagesController'
             description: 'Neos.Neos:Modules:packages.description'
-            icon: icon-archive
+            icon: fas fa-archive
           sites:
             label: 'Neos.Neos:Modules:sites.label'
             controller: 'Neos\Neos\Controller\Module\Administration\SitesController'
             description: 'Neos.Neos:Modules:sites.description'
-            icon: icon-globe
+            icon: fas fa-globe
             actions:
               newSite:
                 label: 'Neos.Neos:Modules:sites.actions.newSite.label'
@@ -344,12 +344,12 @@ Neos:
             label: 'Neos.Neos:Modules:configuration.label'
             controller: 'Neos\Neos\Controller\Module\Administration\ConfigurationController'
             description: 'Neos.Neos:Modules:configuration.description'
-            icon: icon-list-alt
+            icon: fas fa-list-alt
           dimensions:
             label: 'Neos.Neos:Modules:dimensions.label'
             controller: 'Neos\Neos\Controller\Module\Administration\DimensionController'
             description: 'Neos.Neos:Modules:dimensions.description'
-            icon: icon-code-fork
+            icon: fas fa-code-branch
       user:
         label: 'Neos.Neos:Modules:user.label'
         controller: \Neos\Neos\Controller\Module\UserController
@@ -359,7 +359,7 @@ Neos:
             label: 'Neos.Neos:Modules:userSettings.label'
             controller: \Neos\Neos\Controller\Module\User\UserSettingsController
             description: 'Neos.Neos:Modules:userSettings.description'
-            icon: icon-user
+            icon: fas fa-user
 
      # Settings for the Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
     eventLog:
@@ -458,31 +458,24 @@ Neos:
         renderingGroups:
           notFoundExceptions:
             matchingStatusCodes:
+              - 403
               - 404
+              - 410
             options:
-              templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Index.html'
-              layoutRootPath: 'resource://Neos.Neos/Private/Layouts/'
-              format: html
+              viewClassName: \Neos\Neos\View\FusionExceptionView
           databaseConnectionExceptions:
             matchingExceptionClassNames:
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseException
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseStructureException
-            options:
-              templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Index.html'
+            options: &welcomeTemplate
+              templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Welcome.html'
               layoutRootPath: 'resource://Neos.Neos/Private/Layouts/'
               format: html
-              variables:
-                showSetupLink: true
           noHomepageException:
             matchingExceptionClassNames:
               - Neos\Neos\Routing\Exception\NoHomepageException
-            options:
-              templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Index.html'
-              layoutRootPath: 'resource://Neos.Neos/Private/Layouts/'
-              format: html
-              variables:
-                showSetupLink: true
+            options: *welcomeTemplate
       debugger:
         ignoredClasses:
           Neos\\Neos\\Domain\\Service\\ContentContextFactory: true

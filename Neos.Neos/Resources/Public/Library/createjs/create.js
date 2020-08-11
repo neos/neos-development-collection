@@ -1057,7 +1057,7 @@ See http://createjs.org for more information
       var widget = this;
 
       var button = jQuery(_.template(this.options.templates.button, {
-        icon: 'info-sign',
+        icon: 'info-circle',
         label: this.options.localize('Metadata', this.options.language)
       }));
 

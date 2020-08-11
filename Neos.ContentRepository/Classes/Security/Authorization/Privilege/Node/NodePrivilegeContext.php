@@ -69,7 +69,7 @@ class NodePrivilegeContext
      * Example: isAncestorNodeOf('/sites/some/path') matches for the nodes "/sites", "/sites/some" and "/sites/some/path" but not for "/sites/some/other"
      *
      * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
-     * @return boolean TRUE if the given node matches otherwise false
+     * @return boolean true if the given node matches otherwise false
      */
     public function isAncestorNodeOf($nodePathOrIdentifier)
     {
@@ -87,7 +87,7 @@ class NodePrivilegeContext
      * Example: isDescendantNodeOf('/sites/some/path') matches for the nodes "/sites/some/path", "/sites/some/path/subnode" but not for "/sites/some/other"
      *
      * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
-     * @return boolean TRUE if the given node matches otherwise false
+     * @return boolean true if the given node matches otherwise false
      */
     public function isDescendantNodeOf($nodePathOrIdentifier)
     {
@@ -104,7 +104,7 @@ class NodePrivilegeContext
      * Example: isAncestorOrDescendantNodeOf('/sites/some') matches for the nodes "/sites", "/sites/some", "/sites/some/sub" but not "/sites/other"
      *
      * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
-     * @return boolean TRUE if the given node matches otherwise false
+     * @return boolean true if the given node matches otherwise false
      */
     public function isAncestorOrDescendantNodeOf($nodePathOrIdentifier)
     {
@@ -117,7 +117,7 @@ class NodePrivilegeContext
      * Example: nodeIsOfType(['Neos.ContentRepository:NodeType1', 'Neos.ContentRepository:NodeType2']) matches if the selected node is of (sub) type *Neos.ContentRepository:NodeType1* or *Neos.ContentRepository:NodeType1*
      *
      * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s), e.g. "Neos.Neos:Document"
-     * @return boolean TRUE if the selected node matches the $nodeTypes, otherwise FALSE
+     * @return boolean true if the selected node matches the $nodeTypes, otherwise false
      */
     public function nodeIsOfType($nodeTypes)
     {
@@ -125,7 +125,7 @@ class NodePrivilegeContext
             return true;
         }
         if (!is_array($nodeTypes)) {
-            $nodeTypes = array($nodeTypes);
+            $nodeTypes = [$nodeTypes];
         }
 
         foreach ($nodeTypes as $nodeType) {
@@ -142,7 +142,7 @@ class NodePrivilegeContext
      * Example: isInWorkspace(['live', 'user-admin']) matches if the selected node is in one of the workspaces "user-admin" or "live"
      *
      * @param array $workspaceNames An array of workspace names, e.g. ["live", "user-admin"]
-     * @return boolean TRUE if the selected node matches the $workspaceNames, otherwise FALSE
+     * @return boolean true if the selected node matches the $workspaceNames, otherwise false
      */
     public function isInWorkspace($workspaceNames)
     {
@@ -186,7 +186,7 @@ class NodePrivilegeContext
         $presetIdentifier = $preset['identifier'];
 
         if (!is_array($presets)) {
-            $presets = array($presets);
+            $presets = [$presets];
         }
 
         return in_array($presetIdentifier, $presets);
@@ -196,7 +196,7 @@ class NodePrivilegeContext
      * Resolves the given $nodePathOrIdentifier and returns its absolute path and or a boolean if the result directly matches the currently selected node
      *
      * @param string $nodePathOrIdentifier identifier or absolute path for the node to resolve
-     * @return bool|string TRUE if the node matches the selected node, FALSE if the corresponding node does not exist. Otherwise the resolved absolute path with trailing slash
+     * @return bool|string true if the node matches the selected node, false if the corresponding node does not exist. Otherwise the resolved absolute path with trailing slash
      */
     protected function resolveNodePath($nodePathOrIdentifier)
     {
@@ -224,7 +224,10 @@ class NodePrivilegeContext
      */
     protected function getNodeByIdentifier($nodeIdentifier)
     {
-        $context = $this->contextFactory->create();
+        $context = $this->contextFactory->create([
+            // as we are often in backend, we should take invisible nodes into account properly when resolving Node Identifiers to paths.
+            'invisibleContentShown' => true
+        ]);
         $node = null;
         $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
             $node = $context->getNodeByIdentifier($nodeIdentifier);

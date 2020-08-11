@@ -42,7 +42,7 @@ define(
 								'nodeType': nodeTypeName,
 								'label': label,
 								'helpMessage': helpMessage,
-								'icon': nodeType.ui.icon || 'icon-file',
+								'icon': nodeType.ui.icon || 'fas fa-file',
 								'position': nodeType.ui.position
 							});
 						} else {

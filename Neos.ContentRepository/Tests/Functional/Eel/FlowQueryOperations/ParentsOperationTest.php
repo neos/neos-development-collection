@@ -26,9 +26,9 @@ class ParentsOperationTest extends AbstractNodeTest
     {
         $teaserText = $this->node->getNode('teaser/dummy42');
 
-        $q = new FlowQuery(array($teaserText));
+        $q = new FlowQuery([$teaserText]);
         $actual = iterator_to_array($q->parents('[someSpecialProperty]')->first());
-        $expected = array($this->node->getNode('teaser'));
+        $expected = [$this->node->getNode('teaser')];
 
         $this->assertTrue($expected === $actual);
     }

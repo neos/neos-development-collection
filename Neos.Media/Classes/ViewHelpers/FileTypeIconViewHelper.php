@@ -18,16 +18,24 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\FileTypeIconService;
 
 /**
- * Renders an <img> HTML tag for a filetype icon for a given Neos.Media's asset instance
+ * Renders an <img> HTML tag for a file type icon for a given Neos.Media's asset instance
  *
  * = Examples =
  *
- * <code title="Rendering an asset filetype icon">
- * <typo3.media:fileTypeIcon file="{assetObject}" height="16" />
+ * <code title="Rendering an asset file type icon">
+ * <neos.media:fileTypeIcon asset="{assetObject}" height="16" />
  * </code>
  * <output>
  * (depending on the asset, no scaling applied)
- * <img src="_Resources/Static/Packages/TYPO3/Media/Icons/16px/jpg.png" height="16" alt="filetype alt text" />
+ * <img src="_Resources/Static/Packages/Neos/Media/Icons/16px/jpg.png" height="16" alt="file type alt text" />
+ * </output>
+ *
+ * <code title="Rendering a file type icon by given filename">
+ * <neos.media:fileTypeIcon filename="{someFilename}" height="16" />
+ * </code>
+ * <output>
+ * (depending on the asset, no scaling applied)
+ * <img src="_Resources/Static/Packages/Neos/Media/Icons/16px/jpg.png" height="16" alt="file type alt text" />
  * </output>
  *
  */
@@ -56,16 +64,29 @@ class FileTypeIconViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * Renders an <img> HTML tag for a filetype icon for a given Neos.Media's asset instance
+     * Renders an <img> HTML tag for a file type icon for a given Neos.Media's asset instance
      *
-     * @param AssetInterface $file
+     * @param AssetInterface|null $file The Asset object. DEPRECATED, use $asset instead!
+     * @param AssetInterface|null $asset An Asset object to determine the file type icon for. Alternatively $filename can be specified.
+     * @param string|null $filename  A filename to determine the file type icon for. Alternatively $asset can be specified.
      * @param integer|null $width
      * @param integer|null $height
      * @return string
      */
-    public function render(AssetInterface $file, $width = null, $height = null)
+    public function render(AssetInterface $file = null, AssetInterface $asset = null, string $filename = null, $width = null, $height = null)
     {
-        $icon = FileTypeIconService::getIcon($file, $width, $height);
+        if ($asset === null) {
+            $asset = $file;
+        }
+        if ($asset === null && $filename === null) {
+            throw new \InvalidArgumentException('You must either specify "asset" or "filename" for the ' . __CLASS__ . '.', 1524039575);
+        }
+
+        if ($asset instanceof AssetInterface) {
+            $filename = $asset->getResource()->getFilename();
+        }
+
+        $icon = FileTypeIconService::getIcon($filename);
         $this->tag->addAttribute('src', $this->resourceManager->getPublicPackageResourceUriByPath($icon['src']));
         $this->tag->addAttribute('alt', $icon['alt']);
 
