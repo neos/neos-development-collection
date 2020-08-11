@@ -61,21 +61,10 @@ class UsersController extends AbstractModuleController
     protected $currentUser;
 
     /**
-     * @var bool
-     */
-    protected $isAdministrator;
-
-    /**
      * @Flow\Inject
      * @var TokenAndProviderFactoryInterface
      */
     protected $tokenAndProviderFactory;
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\Flow\Security\Context
-     */
-    protected $securityContext;
 
     /**
      * @return void
@@ -98,7 +87,6 @@ class UsersController extends AbstractModuleController
             }
         }
         $this->currentUser = $this->userService->getCurrentUser();
-        $this->isAdministrator = $this->securityContext->hasRole('Neos.Neos:Administrator');
     }
 
     /**
@@ -107,7 +95,7 @@ class UsersController extends AbstractModuleController
      * @param string $searchTerm
      * @return void
      */
-    public function indexAction(string $searchTerm = '')
+    public function indexAction(string $searchTerm = ''): void
     {
         if (empty($searchTerm)) {
             $users = $this->userService->getUsers();
@@ -132,7 +120,6 @@ class UsersController extends AbstractModuleController
     {
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
-            'isEditingAllowed' => $this->isEditingAllowed($user),
             'user' => $user
         ]);
     }
@@ -189,7 +176,7 @@ class UsersController extends AbstractModuleController
     public function editAction(User $user): void
     {
         if (!$this->isEditingAllowed($user)) {
-            $this->addFlashMessage('Not allowed to edit the user "%s".', 'User editing denied', Message::SEVERITY_ERROR, [htmlspecialchars($username)], 1416225563);
+            $this->addFlashMessage('Not allowed to edit the user "%s".', 'User editing denied', Message::SEVERITY_ERROR, [htmlspecialchars($user->getName())], 1416225563);
             $this->redirect('index');
         }
 
@@ -253,10 +240,11 @@ class UsersController extends AbstractModuleController
     public function editAccountAction(Account $account): void
     {
         $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
-        if (!$this->isEditingAllowed($user)) {
+        if (!$user instanceof User || !$this->isEditingAllowed($user)) {
             $this->addFlashMessage('Not allowed to edit the account for the user "%s".', 'User account editing denied', Message::SEVERITY_ERROR, [$user->getName()->getFullName()], 1416225565);
             $this->redirect('index');
         }
+
         $this->view->assignMultiple([
             'account' => $account,
             'user' => $user,
@@ -403,7 +391,7 @@ class UsersController extends AbstractModuleController
     protected function getAllowedRoles(): array
     {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
-        return $this->isAdministrator ? $this->policyService->getRoles() : $currentUserRoles;
+        return $this->userService->currentUserIsAdministrator() ? $this->policyService->getRoles() : $currentUserRoles;
     }
 
     /**
@@ -414,9 +402,10 @@ class UsersController extends AbstractModuleController
      */
     protected function isEditingAllowed(User $user): bool
     {
-        if ($this->isAdministrator) {
+        if ($this->userService->currentUserIsAdministrator()) {
             return true;
         }
+
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
         $userRoles = $this->userService->getAllRoles($user);
         return count(array_diff($userRoles, $currentUserRoles)) === 0;
