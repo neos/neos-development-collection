@@ -93,7 +93,7 @@
 
 	<div class="neos-footer">
 		<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', value: 'Back')}</f:link.action>
-		<f:if condition="{currentUser} === {user} || !{isEditingAllowed}">
+		<f:if condition="{currentUser} === {user} || !{neos:backend.isAllowedToEditUser(user: user)}">
 			<f:then>
 				<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.show.cannotDeleteYourself', value: 'You are logged in as this user and you cannot delete yourself.', source: 'Modules', package: 'Neos.Neos')}">
 					<i class="fas fa-trash-alt icon-white"></i> {neos:backend.translate(id: 'users.show.deleteUser', value: 'Delete User', source: 'Modules', package: 'Neos.Neos')}
@@ -105,7 +105,7 @@
 				</button>
 			</f:else>
 		</f:if>
-		<f:if condition="{isEditingAllowed}">
+		<f:if condition="{neos:backend.isAllowedToEditUser(user: user)}">
 			<f:link.action action="edit" arguments="{user: user}" class="neos-button">
 				<i class="fas fa-pencil-alt icon-white"></i> {neos:backend.translate(id: 'users.show.editUser', value: 'Edit User', source: 'Modules', package: 'Neos.Neos')}
 			</f:link.action>
