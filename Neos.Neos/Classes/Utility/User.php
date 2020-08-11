@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Utility;
 
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -14,7 +15,7 @@ class User
      * @param string $username
      * @return string
      */
-    public static function getPersonalWorkspaceNameForUsername($username)
+    public static function getPersonalWorkspaceNameForUsername($username): string
     {
         return Workspace::PERSONAL_WORKSPACE_PREFIX . static::slugifyUsername($username);
     }
@@ -25,7 +26,7 @@ class User
      * @param string $username
      * @return string
      */
-    public static function slugifyUsername($username)
+    public static function slugifyUsername($username): string
     {
         return preg_replace('/[^a-z0-9]/i', '', $username);
     }
