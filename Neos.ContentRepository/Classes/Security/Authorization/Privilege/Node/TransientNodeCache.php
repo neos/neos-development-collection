@@ -35,7 +35,7 @@ class TransientNodeCache
         }
 
         $node = $getter();
-        if ($node) {
+        if ($node instanceof NodeInterface) {
             $this->nodes[$nodeIdentifier] = $node;
         }
         return $node;
