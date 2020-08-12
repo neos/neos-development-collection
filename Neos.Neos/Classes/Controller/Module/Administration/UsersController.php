@@ -148,21 +148,24 @@ class UsersController extends AbstractModuleController
      * @param User $user The user to create
      * @param array $roleIdentifiers A list of roles (role identifiers) to assign to the new user
      * @param string $authenticationProviderName Optional name of the authentication provider. If not provided the user server uses the default authentication provider
+     * @return void
+     * @throws NoSuchRoleException
+     * @throws StopActionException
+     * @throws \Neos\Flow\Security\Exception
+     *
      * @Flow\Validate(argumentName="username", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
      * @Flow\Validate(argumentName="username", type="\Neos\Neos\Validation\Validator\UserDoesNotExistValidator")
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
-     * @return void
-     * @throws StopActionException
      */
     public function createAction(string $username, array $password, User $user, array $roleIdentifiers, string $authenticationProviderName = null): void
     {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
-        $isCreationAllowed = count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
+        $isCreationAllowed = $this->userService->currentUserIsAdministrator() || count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
         if ($isCreationAllowed) {
             $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
             $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, [htmlspecialchars($username)], 1416225561);
         } else {
-            $this->addFlashMessage('Not allowed to create a user with roles "%s".', 'User creation denied', Message::SEVERITY_ERROR, [implode(', ', $roleIdentifiers)], 1416225562);
+            $this->addFlashMessage('You are not allowed to create a user with roles "%s".', 'User creation denied', Message::SEVERITY_ERROR, [implode(', ', $roleIdentifiers)], 1416225562);
         }
         $this->redirect('index');
     }
