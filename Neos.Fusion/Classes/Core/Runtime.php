@@ -259,7 +259,8 @@ class Runtime
         try {
             $output = $this->evaluate($fusionPath, null, self::BEHAVIOR_EXCEPTION);
             if ($this->debugMode) {
-                $output = sprintf('%1$s<!-- Beginning to render TS path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render TS path "%2$s" (Context: %3$s) -->',
+                $output = sprintf(
+                    '%1$s<!-- Beginning to render TS path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render TS path "%2$s" (Context: %3$s) -->',
                     chr(10),
                     $fusionPath,
                     implode(', ', array_keys($this->currentContext)),
@@ -621,7 +622,9 @@ class Runtime
             throw new Exception(sprintf(
                 'The implementation class `%s` defined for Fusion object of type `%s` does not exist.
 				Maybe a typo in the `@class` property.',
-                $fusionObjectClassName, $fusionObjectType), 1347952109);
+                $fusionObjectClassName,
+                $fusionObjectType
+            ), 1347952109);
         }
 
         /** @var $fusionObject AbstractFusionObject */
@@ -909,13 +912,16 @@ class Runtime
 					a missing `@class` annotation for prototypes without parent.
 					It is also possible your Fusion file is not read because 
 					of a missing `include:` statement.",
-                $objectType, $objectType), 1332493995);
+                $objectType,
+                $objectType
+            ), 1332493995);
         }
 
         if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
             throw new Exceptions\MissingFusionObjectException(sprintf(
                 'No Fusion object found in path "%s"
-					Please make sure to define one in your Fusion configuration.', $fusionPath
+					Please make sure to define one in your Fusion configuration.',
+                $fusionPath
             ), 1332493990);
         }
     }
