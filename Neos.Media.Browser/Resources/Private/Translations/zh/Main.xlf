@@ -316,7 +316,7 @@
 			<target state="translated">不能上传文件</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target state="translated">没有选择文件</target></trans-unit>
+			<target state="translated">未选择文件</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="translated">文件大小不能超过{1}, 当前大小{0}</target></trans-unit>
