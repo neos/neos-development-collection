@@ -391,6 +391,8 @@ class UsersController extends AbstractModuleController
      * Administrator can assign any roles, other users can only assign their own roles
      *
      * @return array
+     * @throws NoSuchRoleException
+     * @throws \Neos\Flow\Security\Exception
      */
     protected function getAllowedRoles(): array
     {
@@ -398,7 +400,10 @@ class UsersController extends AbstractModuleController
         $currentUserRoles = array_filter($currentUserRoles, static function (Role $role) {
             return $role->isAbstract() !== true;
         });
-        return $this->userService->currentUserIsAdministrator() ? $this->policyService->getRoles() : $currentUserRoles;
+
+        $roles = $this->userService->currentUserIsAdministrator() ? $this->policyService->getRoles() : $currentUserRoles;
+        sort($roles);
+        return $roles;
     }
 
     /**
