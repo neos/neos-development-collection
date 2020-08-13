@@ -99,7 +99,9 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
                     ModulePrivilegeSubject::class,
                     MethodPrivilegeSubject::class,
                     get_class($subject)
-                ), 1493130646);
+                ),
+                1493130646
+            );
         }
         $this->initialize();
         if ($subject instanceof MethodPrivilegeSubject) {
