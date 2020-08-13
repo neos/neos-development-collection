@@ -394,6 +394,9 @@ class UsersController extends AbstractModuleController
     protected function getAllowedRoles(): array
     {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
+        $currentUserRoles = array_filter($currentUserRoles, static function (Role $role) {
+            return $role->isAbstract() !== true;
+        });
         return $this->userService->currentUserIsAdministrator() ? $this->policyService->getRoles() : $currentUserRoles;
     }
 
