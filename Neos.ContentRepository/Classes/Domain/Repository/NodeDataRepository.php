@@ -1235,13 +1235,10 @@ class NodeDataRepository extends Repository
      */
     public function persistEntities()
     {
-        foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
-            if ($className === $this->entityClassName) {
-                $this->entityManager->flush($entities);
-                $this->emitRepositoryObjectsPersisted();
-                break;
-            }
-        }
+        // Flush all entities to circumvent an issue in Doctrine 2.x which reevaluates all changes
+        // for each change again when called individually leading to n^2 changeset calculations.
+        $this->entityManager->flush();
+        $this->emitRepositoryObjectsPersisted();
     }
 
     /**

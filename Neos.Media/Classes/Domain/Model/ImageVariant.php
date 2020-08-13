@@ -418,6 +418,6 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
         $this->resource = $processedImageInfo['resource'];
         $this->width = $processedImageInfo['width'];
         $this->height = $processedImageInfo['height'];
-        $this->persistenceManager->whitelistObject($this->resource);
+        $this->persistenceManager->allowObject($this->resource);
     }
 }

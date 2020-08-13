@@ -152,10 +152,7 @@ class ThumbnailService
             $asset->addThumbnail($thumbnail);
 
             // Allow thumbnails to be persisted even if this is a "safe" HTTP request:
-            $this->persistenceManager->whitelistObject($thumbnail);
-            $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
-
-            $this->persistenceManager->whitelistObject($thumbnail);
+            $this->persistenceManager->allowObject($thumbnail);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
         } elseif ($async === false && $thumbnail->getResource() === null) {
             $this->refreshThumbnail($thumbnail);
@@ -234,7 +231,7 @@ class ThumbnailService
     public function refreshThumbnail(Thumbnail $thumbnail): void
     {
         $thumbnail->refresh();
-        $this->persistenceManager->whitelistObject($thumbnail);
+        $this->persistenceManager->allowObject($thumbnail);
         if (!$this->persistenceManager->isNewObject($thumbnail)) {
             $this->thumbnailRepository->update($thumbnail);
         }

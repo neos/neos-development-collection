@@ -256,10 +256,10 @@ class ApplyTest extends AbstractFusionObjectTest
         $view->setFusionPath('apply/renderRawArrayWithSpread');
         self::assertEquals(
             [
-            'key' => 'original value',
-            'alter' => 'altered value',
-            'add' => 'added value'
-        ],
+                'key' => 'original value',
+                'alter' => 'altered value',
+                'add' => 'added value'
+            ],
             $view->render()
         );
     }
