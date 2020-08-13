@@ -168,7 +168,8 @@ class XliffService
             //remove file extension
             $source = substr($source, 0, strrpos($source, '.'));
 
-            $this->xliffReader->readFiles($filePath,
+            $this->xliffReader->readFiles(
+                $filePath,
                 function (\XMLReader $file, $offset, $version) use ($packageKey, &$sources, $source, $sourcesToBeIncluded) {
                     $targetPackageKey = $packageKey;
                     if ($version === '1.2') {
