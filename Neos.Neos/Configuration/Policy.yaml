@@ -259,6 +259,9 @@ roles:
   'Neos.Neos:UserManager':
     privileges:
       -
+        privilegeTarget: 'Neos.Neos:Backend.GeneralAccess'
+        permission: GRANT
+      -
         privilegeTarget: 'Neos.Neos:Backend.Module.Administration'
         permission: GRANT
       -
