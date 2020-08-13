@@ -326,7 +326,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param NodeInterface $nodeToMove
      * @return array NodeVariant and old and new path
      */
-    protected function moveVariantOrChild(string $aggregateOriginalPath, string $aggregateDestinationPath, NodeInterface $nodeToMove = null): array
+    protected function moveVariantOrChild(string $aggregateOriginalPath, string $aggregateDestinationPath, NodeInterface $nodeToMove = null): ?array
     {
         if ($nodeToMove === null) {
             return null;
@@ -611,7 +611,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
         if ($referenceNode->getParentPath() !== $this->getParentPath()) {
             $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $name));
-            $this->nodeDataRepository->persistEntities();
         } else {
             if (!$this->isNodeDataMatchingContext()) {
                 $this->materializeNodeData();
@@ -659,7 +658,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
         if ($referenceNode->getParentPath() !== $this->getParentPath()) {
             $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $name));
-            $this->nodeDataRepository->persistEntities();
         } else {
             if (!$this->isNodeDataMatchingContext()) {
                 $this->materializeNodeData();
@@ -705,7 +703,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
 
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
         $this->setPath(NodePaths::addNodePathSegment($referenceNode->getPath(), $name));
-        $this->nodeDataRepository->persistEntities();
 
         $this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
         $this->context->getFirstLevelNodeCache()->flush();

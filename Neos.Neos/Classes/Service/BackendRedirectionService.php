@@ -199,13 +199,13 @@ class BackendRedirectionService
             $owner = $this->userService->getBackendUser();
             $workspace = new Workspace($workspaceName, $liveWorkspace, $owner);
             $this->workspaceRepository->add($workspace);
-            $this->persistenceManager->whitelistObject($workspace);
+            $this->persistenceManager->allowObject($workspace);
         }
 
         $contentContext = $this->createContext($workspaceName);
         $rootNode = $contentContext->getRootNode();
-        $this->persistenceManager->whitelistObject($rootNode);
-        $this->persistenceManager->whitelistObject($rootNode->getNodeData());
+        $this->persistenceManager->allowObject($rootNode);
+        $this->persistenceManager->allowObject($rootNode->getNodeData());
         $this->persistenceManager->persistAll(true);
     }
 }

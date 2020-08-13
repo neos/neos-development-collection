@@ -135,8 +135,12 @@ class ContentCacheTest extends UnitTestCase
 
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
 
-        $mockCache->expects(self::once())->method('set')->with($this->anything(), $this->anything(), $this->anything(),
-            60);
+        $mockCache->expects(self::once())->method('set')->with(
+            $this->anything(),
+            $this->anything(),
+            $this->anything(),
+            60
+        );
 
         $contentCache->processCacheSegments($segement);
     }
@@ -155,18 +159,35 @@ class ContentCacheTest extends UnitTestCase
 
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your content.';
 
-        $content = $contentCache->createCacheSegment($invalidContent, 'some.fusionh.path', ['node' => 'foo'],
-            ['mytag1', 'mytag2']);
+        $content = $contentCache->createCacheSegment(
+            $invalidContent,
+            'some.fusionh.path',
+            ['node' => 'foo'],
+            ['mytag1', 'mytag2']
+        );
 
         $validContent = 'But the cache should not fail because of it.';
 
-        $content .= $contentCache->createCacheSegment($validContent, 'another.fusionh.path', ['node' => 'bar'],
-            ['mytag2'], 86400);
+        $content .= $contentCache->createCacheSegment(
+            $validContent,
+            'another.fusionh.path',
+            ['node' => 'bar'],
+            ['mytag2'],
+            86400
+        );
 
-        $mockCache->expects($this->at(0))->method('set')->with($this->anything(), $invalidContent,
-            ['mytag1', 'mytag2'], null);
-        $mockCache->expects($this->at(1))->method('set')->with($this->anything(), $validContent, ['mytag2'],
-            86400);
+        $mockCache->expects($this->at(0))->method('set')->with(
+            $this->anything(),
+            $invalidContent,
+            ['mytag1', 'mytag2'],
+            null
+        );
+        $mockCache->expects($this->at(1))->method('set')->with(
+            $this->anything(),
+            $validContent,
+            ['mytag2'],
+            86400
+        );
 
         $output = $contentCache->processCacheSegments($content);
 
@@ -189,8 +210,11 @@ class ContentCacheTest extends UnitTestCase
 
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your uncached content.';
 
-        $content = $contentCache->createUncachedSegment($invalidContent, 'uncached.fusion.path',
-            ['node' => 'A node identifier']);
+        $content = $contentCache->createUncachedSegment(
+            $invalidContent,
+            'uncached.fusion.path',
+            ['node' => 'A node identifier']
+        );
 
         $output = $contentCache->processCacheSegments($content);
 
@@ -219,12 +243,19 @@ class ContentCacheTest extends UnitTestCase
 
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your content.';
 
-        $innerCachedContent = $contentCache->createCacheSegment($invalidContent, 'some.fusionh.path.innerCached',
-            ['node' => 'foo'], ['mytag1', 'mytag2']);
+        $innerCachedContent = $contentCache->createCacheSegment(
+            $invalidContent,
+            'some.fusionh.path.innerCached',
+            ['node' => 'foo'],
+            ['mytag1', 'mytag2']
+        );
 
         $uncachedCommandOutput = 'This content is highly dynamic with ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' and ' . ContentCache::CACHE_SEGMENT_END_TOKEN;
-        $innerUncachedContent = $contentCache->createUncachedSegment($uncachedCommandOutput,
-            'some.fusionh.path.innerUncached', ['node' => 'A node identifier']);
+        $innerUncachedContent = $contentCache->createUncachedSegment(
+            $uncachedCommandOutput,
+            'some.fusionh.path.innerUncached',
+            ['node' => 'A node identifier']
+        );
 
         $outerContentStart = 'You can nest cached segments like <';
         $outerContentMiddle = '> or uncached segments like <';
@@ -232,8 +263,13 @@ class ContentCacheTest extends UnitTestCase
 
         $outerContent = $outerContentStart . $innerCachedContent . $outerContentMiddle . $innerUncachedContent . $outerContentEnd;
 
-        $content = $contentCache->createCacheSegment($outerContent, 'some.fusionh.path', ['node' => 'bar'],
-            ['mytag2'], 86400);
+        $content = $contentCache->createCacheSegment(
+            $outerContent,
+            'some.fusionh.path',
+            ['node' => 'bar'],
+            ['mytag2'],
+            86400
+        );
         $output = $contentCache->processCacheSegments($content);
 
         $expectedOutput = $outerContentStart . $invalidContent . $outerContentMiddle . $uncachedCommandOutput . $outerContentEnd;

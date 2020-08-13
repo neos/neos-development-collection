@@ -120,7 +120,8 @@ class FusionServiceTest extends FunctionalTestCase
     protected function invokeGenerateFusionForNodeType($nodeTypeName)
     {
         $method = new ReflectionMethod(
-            FusionService::class, 'generateFusionForNodeType'
+            FusionService::class,
+            'generateFusionForNodeType'
         );
 
         $method->setAccessible(true);
