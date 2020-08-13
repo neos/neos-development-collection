@@ -21,7 +21,7 @@
         <script id="variants-information" type="application/json">{variantsInformation -> f:format.json() -> f:format.raw()}</script>
         <script id="original-information" type="application/json">{originalInformation -> f:format.json() -> f:format.raw()}</script>
     </div>
-    <f:form action="update" controller="ImageVariant" package="Neos.Media.Browser" format="json" id="postHelper" method="post" useParentRequest="true"></f:form>
+    <f:form action="update" controller="ImageVariant" package="Neos.Media.Browser" format="json" id="postHelper" method="post" useParentRequest="{isSubRequest}"></f:form>
 </f:section>
 
 <f:section name="Scripts">
