@@ -1056,7 +1056,8 @@ class NodeDataRepository extends Repository
                 $queryBuilder->expr()->orx()
                     ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
                     ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
+            )
                 ->setParameter('parentPathHash', md5($pathStartingPoint))
                 ->setParameter('pathHash', md5($pathStartingPoint))
                 ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
@@ -1234,13 +1235,10 @@ class NodeDataRepository extends Repository
      */
     public function persistEntities()
     {
-        foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
-            if ($className === $this->entityClassName) {
-                $this->entityManager->flush($entities);
-                $this->emitRepositoryObjectsPersisted();
-                break;
-            }
-        }
+        // Flush all entities to circumvent an issue in Doctrine 2.x which reevaluates all changes
+        // for each change again when called individually leading to n^2 changeset calculations.
+        $this->entityManager->flush();
+        $this->emitRepositoryObjectsPersisted();
     }
 
     /**
@@ -1323,12 +1321,16 @@ class NodeDataRepository extends Repository
                         if ($position === false) {
                             $position = PHP_INT_MAX;
                         }
-                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            $position) : $position;
+                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min(
+                            $dimensionPositions[$dimensionName],
+                            $position
+                        ) : $position;
                     }
                 } else {
-                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            PHP_INT_MAX) : PHP_INT_MAX;
+                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min(
+                        $dimensionPositions[$dimensionName],
+                        PHP_INT_MAX
+                    ) : PHP_INT_MAX;
                 }
             }
             $dimensionPositions[] = $workspacePosition;
@@ -1565,7 +1567,8 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX()
                     ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
+            )
                 ->setParameter('parentPathHash', md5($parentPath))
                 ->setParameter('parentPath', rtrim($parentPath, '/') . '/%');
         }
@@ -1586,7 +1589,8 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX()
                     ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
-                    ->add($queryBuilder->expr()->like('n.path', ':path')))
+                    ->add($queryBuilder->expr()->like('n.path', ':path'))
+            )
                 ->setParameter('pathHash', md5($path))
                 ->setParameter('path', rtrim($path, '/') . '/%');
         }
