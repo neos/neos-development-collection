@@ -23,6 +23,13 @@ use Neos\ContentRepository\Domain\Service\ContextFactory;
  */
 class NodePrivilegeContext
 {
+
+    /**
+     * @Flow\Inject
+     * @var TransientNodeCache
+     */
+    protected $transientNodeCache;
+
     /**
      * @Flow\Inject
      * @var ContextFactory
@@ -224,15 +231,17 @@ class NodePrivilegeContext
      */
     protected function getNodeByIdentifier($nodeIdentifier)
     {
-        $context = $this->contextFactory->create([
-            // as we are often in backend, we should take invisible nodes into account properly when resolving Node Identifiers to paths.
-            'invisibleContentShown' => true
-        ]);
-        $node = null;
-        $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
-            $node = $context->getNodeByIdentifier($nodeIdentifier);
+        return $this->transientNodeCache->cache($nodeIdentifier, function () use ($nodeIdentifier) {
+            $context = $this->contextFactory->create([
+                // as we are often in backend, we should take invisible nodes into account properly when resolving Node Identifiers to paths.
+                'invisibleContentShown' => true
+            ]);
+            $node = null;
+            $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
+                $node = $context->getNodeByIdentifier($nodeIdentifier);
+            });
+            $context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, null);
+            return $node;
         });
-        $context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, null);
-        return $node;
     }
 }
