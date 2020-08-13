@@ -134,8 +134,12 @@ final class RuntimeConfiguration
         }
 
         if (isset($configuration['__prototypes'])) {
-            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions,
-                $configuration['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
+            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback(
+                $currentPrototypeDefinitions,
+                $configuration['__prototypes'],
+                $this->simpleTypeToArrayClosure,
+                $this->shouldOverrideFirstClosure
+            );
         }
 
         $currentPathSegmentType = null;
@@ -148,8 +152,10 @@ final class RuntimeConfiguration
 
         if ($currentPathSegmentType !== null) {
             $configuration['__objectType'] = $currentPathSegmentType;
-            $configuration = $this->mergePrototypesWithConfigurationForPathSegment($configuration,
-                $currentPrototypeDefinitions);
+            $configuration = $this->mergePrototypesWithConfigurationForPathSegment(
+                $configuration,
+                $currentPrototypeDefinitions
+            );
         }
 
         if (is_array($configuration) && !isset($configuration['__value']) && !isset($configuration['__eelExpression']) && !isset($configuration['__meta']['class']) && !isset($configuration['__objectType']) && isset($configuration['__meta']['process'])) {
@@ -186,7 +192,9 @@ final class RuntimeConfiguration
                 if (!array_key_exists($prototypeName, $currentPrototypeDefinitions)) {
                     throw new Exception(sprintf(
                         'The Fusion object `%s` which you tried to inherit from does not exist. Maybe you have a typo on the right hand side of your inheritance statement for `%s`.',
-                        $prototypeName, $currentPathSegmentType), 1427134340);
+                        $prototypeName,
+                        $currentPathSegmentType
+                    ), 1427134340);
                 }
 
                 $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback(
