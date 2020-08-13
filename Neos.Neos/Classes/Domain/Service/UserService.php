@@ -178,7 +178,7 @@ class UserService
      *
      * @param string $username The username
      * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Neos.Neos:Backend"
-     * @return User The user, or null if the user does not exist
+     * @return User|null The user, or null if the user does not exist
      * @throws Exception
      * @api
      */
@@ -701,6 +701,16 @@ class UserService
     }
 
     /**
+     * @return bool
+     * @throws NoSuchRoleException
+     * @throws \Neos\Flow\Security\Exception
+     */
+    public function currentUserIsAdministrator(): bool
+    {
+        return $this->securityContext->hasRole('Neos.Neos:Administrator');
+    }
+
+    /**
      * Returns the default authentication provider name
      *
      * @return string
@@ -763,8 +773,9 @@ class UserService
      *
      * @param User $user The user
      * @return array
+     * @throws NoSuchRoleException
      */
-    protected function getAllRoles(User $user)
+    public function getAllRoles(User $user): array
     {
         $roles = [
             'Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody'),
@@ -790,6 +801,7 @@ class UserService
 
         return $roles;
     }
+
 
     /**
      * Creates a personal workspace for the given user's account if it does not exist already.
