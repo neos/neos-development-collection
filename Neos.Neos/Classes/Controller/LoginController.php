@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Controller;
 
 /*
@@ -19,7 +20,6 @@ use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\View\JsonView;
-use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Session\SessionInterface;
@@ -229,7 +229,7 @@ class LoginController extends AbstractAuthenticationController
         switch ($this->request->getFormat()) {
             case 'json':
                 $this->view->assign('value', ['success' => true]);
-            break;
+                break;
             default:
                 if ($possibleRedirectionUri !== null) {
                     $this->redirectToUri($possibleRedirectionUri);
@@ -259,21 +259,5 @@ class LoginController extends AbstractAuthenticationController
     {
         $sessionCookie = new Cookie($this->sessionName, $sessionIdentifier);
         $this->response->setCookie($sessionCookie);
-    }
-
-    /**
-     * Simply sets the Fusion path pattern on the view.
-     *
-     * @param ViewInterface $view
-     * @return void
-     */
-    protected function initializeView(ViewInterface $view)
-    {
-        parent::initializeView($view);
-
-        if ($view instanceof FusionView) {
-            /** @var FusionView $view */
-            $view->setFusionPathPattern('resource://Neos.Neos/Private/Fusion/Backend');
-        }
     }
 }
