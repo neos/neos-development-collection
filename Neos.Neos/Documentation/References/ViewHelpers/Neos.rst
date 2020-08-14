@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2020-07-06
+This reference was automatically generated from code on 2020-08-14
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -198,6 +198,26 @@ ViewHelper for rendering the current backend users interface language.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Backend\\InterfaceLanguageViewHelper
 
+
+
+
+
+.. _`Neos ViewHelper Reference: neos:backend.isAllowedToEditUser`:
+
+neos:backend.isAllowedToEditUser
+--------------------------------
+
+Returns true, if the current user is allowed to edit the given user, false otherwise.
+
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\IsAllowedToEditUserViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``user`` (Neos\Neos\Domain\Model\User): The user subject
 
 
 
