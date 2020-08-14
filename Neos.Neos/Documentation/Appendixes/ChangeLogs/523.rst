@@ -1,0 +1,167 @@
+`5.2.3 (2020-08-14) <https://github.com/neos/neos-development-collection/releases/tag/5.2.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Repair icon rendering for flash messages <https://github.com/neos/neos-development-collection/pull/3083>`_
+-------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Changed the font-family to the correct value `Font Awesome 5 Free`
+
+**How to verify it**
+Change a user in the backend for instance and check the flashmessage.
+
+Fixes: #3069 
+
+* Packages: ``Neos``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3076>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/e74pRP).
+
+* Packages: ``Fusion``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3075>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/4xRDKe).
+
+* Packages: ``Browser`` ``ContentRepository`` ``Fusion`` ``Media`` ``Neos``
+
+`TASK: Improve wording of include/exclude concepts where possible <https://github.com/neos/neos-development-collection/pull/2992>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Matching change with https://github.com/neos/flow-development-collection/pull/2024
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Prevent refetching nodes for policy checks <https://github.com/neos/neos-development-collection/pull/2302>`_
+---------------------------------------------------------------------------------------------------------------------
+
+When defining a policy targeting a static node the static node was
+refetched for every subject, slowing down policy information retrieval.
+
+This adds a simple caching mechanism to `NodePrivilegeContext::getNodeByIdentifier`
+that prevents nodes from being refetched for static policy comparisons.
+
+Resolves #2301
+
+* Packages: ``Browser`` ``ContentRepository``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3059>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/OMdgkW).
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3060>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/lKyEJV).
+
+* Packages: ``Browser`` ``ContentRepository`` ``Diff`` ``Fusion`` ``Media`` ``Neos``
+
+`BUGFIX: Variants tab does not use mainRequest in form when opened from inspector <https://github.com/neos/neos-development-collection/pull/3008>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+This adds a condition for using the parentRequest only if it is not the mainRequest already.
+
+Fixes #3005
+
+* Packages: ``Browser``
+
+`BUGFIX: Make child nodes of hidden parents inaccessible <https://github.com/neos/neos-development-collection/pull/2998>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Since a couple of months child nodes of hidden nodes are accessible (outside the Neos backend). This change restores the initial behavior and makes sure that accessing child nodes from hidden nodes will lead to a 404 response.
+
+resolves: https://github.com/neos/neos-development-collection/issues/2983
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`!!! BUGFIX: Speed up node move actions <https://github.com/neos/neos-development-collection/pull/3015>`_
+---------------------------------------------------------------------------------------------------------
+
+Due to an issue in how Doctrine 2.x handles the computation of changesets when given
+entities to commit it recomputed the changesets for all entities for every entity.
+Leading to n^2 change computations.
+
+In a large project this improved the moving of ~750 nodes from 1.7m to 8.5s.
+In the demo site moving the "features" page from 4s to 1.65s. 
+Publishing seems to be only slightly (~10%) faster to its different behaviour in the CR.
+
+**What I did**
+
+Which this change this behaviour is circumvented by commiting all
+entities at once. Including entities which might not have been included
+with the previous code but would have been persisted at the end of the request
+anyway.
+
+**What is breaking**
+This change leads to all entities scheduled for persistence to actually persist when a node is changed, see following comparison timelines:
+
+Old:
+1. Create Entity, mark for insertion
+2. change node
+3. controller call is done / persistAll was called -> entity from step one is now persisted
+
+New:
+1. Create Entity, mark for insertion
+2. change node (entity will be persisted at this point)
+3. controller call is done / persistAll was called -> nothing happens anymore.
+
+**How I did it**
+
+Replace the repeated flush calls to the entity manager with a single one.
+
+This should only lead to a behavioural change if custom code would modify a node
+then move other nodes and expect the the first node was not persisted yet.
+
+**How to verify it**
+
+1. Move a large set of pages with subpages and nodes in the Neos backend. 
+2. Check the request time of the `change` xhr request.
+3. Apply this patch
+4. Repeat steps 1 + 2 and compare
+
+Example screenshots:
+
+Before:
+
+<img width="600" alt="before-change" src="https://user-images.githubusercontent.com/596967/87766599-b4b94600-c819-11ea-9777-0bbe11f84d3a.png">
+
+After:
+
+<img width="600" alt="after-change" src="https://user-images.githubusercontent.com/596967/87766608-b7b43680-c819-11ea-83f9-2fbf1993cda7.png">
+
+
+* Packages: ``ContentRepository``
+
+`TASK: Remove curly brace string offset access for PHP 7.4 compatibility <https://github.com/neos/neos-development-collection/pull/3011>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+I changed string offset access from curly-braces to brackets
+
+* Packages: ``Diff`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.2.2...5.2.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
