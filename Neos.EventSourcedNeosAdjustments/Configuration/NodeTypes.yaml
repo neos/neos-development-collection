@@ -25,5 +25,8 @@
 'Neos.Neos:Content':
   options:
     nodeCreationHandlers:
+      # ⚠️ This should actually be "contentTitle", but it's "documentTitle" in Neos.Neos.Ui (see https://github.com/neos/neos-ui/pull/2563/files)
+      documentTitle:
+        nodeCreationHandler: 'Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\ContentTitleNodeCreationHandler'
       creationDialogProperties:
         nodeCreationHandler: 'Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\CreationDialogPropertiesCreationHandler'
