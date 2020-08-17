@@ -192,7 +192,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
         foreach ($nodeType->getOptions()['nodeCreationHandlers'] as $nodeCreationHandlerConfiguration) {
             $nodeCreationHandler = new $nodeCreationHandlerConfiguration['nodeCreationHandler']();
             if (!$nodeCreationHandler instanceof NodeCreationHandlerInterface) {
-                throw new InvalidNodeCreationHandlerException(sprintf('Expected NodeCreationHandlerInterface but got "%s"', get_class($nodeCreationHandler)), 1364759956);
+                throw new InvalidNodeCreationHandlerException(sprintf('Expected %s but got "%s"', NodeCreationHandlerInterface::class, get_class($nodeCreationHandler)), 1364759956);
             }
             $command = $nodeCreationHandler->handle($command, $data);
         }
