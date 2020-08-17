@@ -24,8 +24,12 @@ use Neos\Neos\Service\TransliterationService;
 
 /**
  * Node creation handler that
- * * sets the "title" property according to the incoming title from a creation dialog
- * * sets the "uriPathSegment" property according to the specified title or node name
+ *
+ * - sets the "title" property according to the incoming title from a creation dialog
+ * - sets the "uriPathSegment" property according to the specified title or node name
+ *
+ * Note: This is not actually a Command Handler in the sense of CQRS but rather some kind of
+ *       "command enricher"
  */
 class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 {
