@@ -18,7 +18,7 @@
         "doctrine/orm": "^2.6",
         "gedmo/doctrine-extensions": "^2.4",
         "behat/transliterator": "~1.0",
-        "php": "^7.0",
+        "php": "^7.2",
         "neos/utility-unicode": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
