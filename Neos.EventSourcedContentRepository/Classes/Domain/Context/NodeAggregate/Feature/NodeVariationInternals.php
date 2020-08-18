@@ -43,10 +43,10 @@ trait NodeVariationInternals
         switch ($this->getInterDimensionalVariationGraph()->getVariantType($targetOrigin, $sourceOrigin)->getType()) {
             case DimensionSpace\VariantType::TYPE_SPECIALIZATION:
                 $events = $this->handleCreateNodeSpecializationVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate);
-                break;
+            break;
             case DimensionSpace\VariantType::TYPE_GENERALIZATION:
                 $events = $this->handleCreateNodeGeneralizationVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate);
-                break;
+            break;
             case DimensionSpace\VariantType::TYPE_PEER:
             default:
                 $events = $this->handleCreateNodePeerVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate);
@@ -84,8 +84,7 @@ trait NodeVariationInternals
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $specializationVisibility,
         array $events
-    ): array
-    {
+    ): array {
         $events[] = DecoratedEvent::addIdentifier(
             new NodeSpecializationVariantWasCreated(
                 $contentStreamIdentifier,
@@ -134,8 +133,7 @@ trait NodeVariationInternals
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $generalizationVisibility,
         array $events
-    ): array
-    {
+    ): array {
         $events[] = DecoratedEvent::addIdentifier(
             new NodeGeneralizationVariantWasCreated(
                 $contentStreamIdentifier,
@@ -184,8 +182,7 @@ trait NodeVariationInternals
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $peerVisibility,
         array $events
-    ): array
-    {
+    ): array {
         $events[] = DecoratedEvent::addIdentifier(
             new NodePeerVariantWasCreated(
                 $contentStreamIdentifier,
