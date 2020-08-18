@@ -1,0 +1,7 @@
+{
+  "patches": {
+    "neos/neos-development-collection": {
+      "neos_neos-development-collection_ReadMe": "Packages/CR/Neos.EventSourcedNeosAdjustments/Patches/neos_neos-development-collection_ReadMe.patch"
+    }
+  }
+}
