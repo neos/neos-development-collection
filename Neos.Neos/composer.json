@@ -6,18 +6,18 @@
     ],
     "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
     "require": {
-        "neos/diff": "~5.2.0",
-        "neos/flow": "~6.2.0",
-        "neos/media-browser": "~5.2.0",
+        "neos/diff": "~5.3.0",
+        "neos/flow": "~6.3.0",
+        "neos/media-browser": "~5.3.0",
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
-        "neos/content-repository": "~5.2.0",
-        "neos/fusion": "~5.2.0",
+        "neos/content-repository": "~5.3.0",
+        "neos/fusion": "~5.3.0",
         "neos/fusion-afx": "^1.4",
         "neos/fusion-form": "^1.0",
-        "neos/fluid-adaptor": "~6.2.0",
+        "neos/fluid-adaptor": "~6.3.0",
         "behat/transliterator": "~1.0",
-        "neos/media": "~5.2.0"
+        "neos/media": "~5.3.0"
     },
     "suggest": {
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
