@@ -6,7 +6,6 @@
   ],
   "type": "neos-package-collection",
   "require": {
-    "cweagans/composer-patches": "dev-master#a18d1ca38ae09d16aa21846f60649d99d6775639"
   },
   "replace": {
   },
