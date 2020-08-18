@@ -1,17 +1,20 @@
 {
-    "name": "neos/contentrepository-development-collection",
-    "description": "Event sourced Content Repository Neos packages in a joined repository for easier development.",
-    "license": ["GPL-3.0-or-later"],
-    "type": "neos-package-collection",
-    "require": {
-    },
-    "replace": {
-    },
-    "suggest": {
-    },
-    "autoload": {
-    },
-    "extra": {
-        "installer-name": "CR"
-    }
+  "name": "neos/contentrepository-development-collection",
+  "description": "Event sourced Content Repository Neos packages in a joined repository for easier development.",
+  "license": [
+    "GPL-3.0-or-later"
+  ],
+  "type": "neos-package-collection",
+  "require": {
+    "cweagans/composer-patches": "dev-master#a18d1ca38ae09d16aa21846f60649d99d6775639"
+  },
+  "replace": {
+  },
+  "suggest": {
+  },
+  "autoload": {
+  },
+  "extra": {
+    "installer-name": "CR"
+  }
 }
