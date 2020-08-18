@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "6.2.x-dev",
+        "neos/flow-development-collection": "6.3.x-dev",
         "neos/neos-setup": "^1.0",
         "neos/flow": "*",
         "neos/cache": "*",
