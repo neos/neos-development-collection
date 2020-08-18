@@ -446,6 +446,16 @@ final class ContentGraph implements ContentGraphInterface
         }, $rows);
     }
 
+    public function findProjectedNodeTypes(): iterable
+    {
+        $connection = $this->client->getConnection();
+
+        $rows = $connection->executeQuery('SELECT DISTINCT nodetypename FROM neos_contentgraph_node')->fetchAll();
+        return array_map(function (array $row) {
+            return NodeTypeName::fromString($row['nodetypename']);
+        }, $rows);
+    }
+
     public function enableCache(): void
     {
         if (is_array($this->subgraphs)) {

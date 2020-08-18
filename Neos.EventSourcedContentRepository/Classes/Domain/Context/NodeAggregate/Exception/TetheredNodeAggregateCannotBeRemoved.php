@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violation;
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,9 +14,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violation;
  */
 
 /**
- * An integrity violation (e.g. missing tethered node)
+ * The exception to be thrown if a tethered node aggregate is attempted to be removed
  */
-interface ViolationInterface
+final class TetheredNodeAggregateCannotBeRemoved extends \DomainException
 {
-    public function getParameters(): array;
 }

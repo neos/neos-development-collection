@@ -1599,6 +1599,7 @@ trait EventSourcedTrait
      */
     public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
     {
+        Assert::assertNotNull($this->currentNode, 'current node not found');
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());

@@ -152,6 +152,7 @@ final class NodeFactory
         }
 
         return new ContentProjection\NodeAggregate(
+            current($nodesByOccupiedDimensionSpacePoints)->getContentStreamIdentifier(), // this line is safe because a nodeAggregate only exists if it at least contains one node.
             NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
             NodeAggregateClassification::fromString($rawNodeAggregateClassification),
             NodeTypeName::fromString($rawNodeTypeName),
@@ -222,6 +223,7 @@ final class NodeFactory
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateIdentifier => $nodes) {
             $nodeAggregates[$rawNodeAggregateIdentifier] = new ContentProjection\NodeAggregate(
+                current($nodes)->getContentStreamIdentifier(), // this line is safe because a nodeAggregate only exists if it at least contains one node.
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
                 $classificationByNodeAggregate[$rawNodeAggregateIdentifier],
                 $nodeTypeNames[$rawNodeAggregateIdentifier],
