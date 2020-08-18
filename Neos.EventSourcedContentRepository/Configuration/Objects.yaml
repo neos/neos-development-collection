@@ -108,3 +108,12 @@ Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult:
         arguments:
           1:
             value: 'ContentRepository'
+
+Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\TetheredNodeAdjustments:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'

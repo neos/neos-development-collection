@@ -21,7 +21,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccu
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\TetheredNodeAggregateCannotBeRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -52,6 +54,7 @@ trait NodeRemoval
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
         $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
         $this->requireDimensionSpacePointToExist($command->getCoveredDimensionSpacePoint());
+        $this->requireNodeAggregateNotToBeTethered($nodeAggregate);
         $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getCoveredDimensionSpacePoint());
 
         $events = null;
@@ -85,5 +88,12 @@ trait NodeRemoval
         });
 
         return CommandResult::fromPublishedEvents($events);
+    }
+
+    protected function requireNodeAggregateNotToBeTethered(NodeAggregate $nodeAggregate)
+    {
+        if ($nodeAggregate->isTethered()) {
+            throw new TetheredNodeAggregateCannotBeRemoved('The node aggregate "' . $nodeAggregate->getIdentifier() . '" is tethered, and thus cannot be removed.', 1597753832);
+        }
     }
 }
