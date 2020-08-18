@@ -61,9 +61,9 @@ interface ReadableNodeAggregateInterface
     public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): OriginDimensionSpacePoint;
 
     /**
-     * @return array|NodeInterface[]
+     * @return iterable|NodeInterface[]
      */
-    public function getNodesByOccupiedDimensionSpacePoint(): array;
+    public function getNodes(): iterable;
 
     public function getNodeByOccupiedDimensionSpacePoint(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface;
 

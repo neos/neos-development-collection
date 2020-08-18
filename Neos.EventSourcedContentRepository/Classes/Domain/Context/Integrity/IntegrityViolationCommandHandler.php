@@ -80,7 +80,7 @@ final class IntegrityViolationCommandHandler
         $initialTetheredNodePropertyValues = $this->getDefaultPropertyValues($tetheredNodeNodeType);
         foreach ($this->nodesOfType($nodeTypeName) as $contentStreamIdentifier => $nodeAggregate) {
             $tetheredNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($tetheredNodeName, $nodeAggregate->getIdentifier());
-            foreach ($nodeAggregate->getNodesByOccupiedDimensionSpacePoint() as $node) {
+            foreach ($nodeAggregate->getNodes() as $node) {
                 if ($this->tetheredNodeExists($contentStreamIdentifier, $node->getNodeAggregateIdentifier(), $tetheredNodeName)) {
                     continue;
                 }

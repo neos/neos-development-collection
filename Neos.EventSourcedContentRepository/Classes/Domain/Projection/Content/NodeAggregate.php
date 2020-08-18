@@ -165,20 +165,22 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     }
 
     /**
+     * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
+     *
      * @return NodeInterface[]
      */
-    public function getNodesByOccupiedDimensionSpacePoint(): array
+    public function getNodes(): iterable
     {
-        return $this->nodesByOccupiedDimensionSpacePoint;
+        return array_values($this->nodesByOccupiedDimensionSpacePoint);
     }
 
     public function getNodeByOccupiedDimensionSpacePoint(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface
     {
-        if (!isset($this->occupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->getHash()])) {
+        if (!$this->occupiedDimensionSpacePoints->contains($occupiedDimensionSpacePoint)) {
             throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint('Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint, 1554902613);
         }
 
-        return $this->occupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->getHash()];
+        return $this->nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->getHash()];
     }
 
     public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
