@@ -113,10 +113,10 @@ class ChangeProjector implements ProjectorInterface
                 [
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
                     'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                    'affectedDimensionSpacePointHashes' => $event->getAffectedOccupiedDimensionSpacePoints()
+                    'affectedDimensionSpacePointHashes' => $event->getAffectedOccupiedDimensionSpacePoints()->getPointHashes()
                 ],
                 [
-                    'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+                    'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
             );
 
