@@ -93,7 +93,7 @@ class ProjectionContentGraph
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint $coveredDimensionSpacePoint
      * @return NodeRecord|null
      * @throws DBALException
      * @throws \Exception
@@ -101,7 +101,7 @@ class ProjectionContentGraph
     public function findNodeInAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $coveredDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.*, h.name FROM neos_contentgraph_node n
@@ -112,7 +112,7 @@ class ProjectionContentGraph
             [
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
+                'dimensionSpacePointHash' => $coveredDimensionSpacePoint->getHash()
             ]
         )->fetch();
 

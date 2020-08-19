@@ -20,6 +20,8 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
  * This is used in structural operations like node move to assign a new node within the same content stream
  * as a new parent, sibling etc.
  *
+ * In case of move, this is the "target node" underneath which or next to which we want to move our source.
+ *
  * @Flow\Proxy(false)
  */
 final class NodeVariantAssignment implements \JsonSerializable
