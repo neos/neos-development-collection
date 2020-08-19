@@ -68,3 +68,43 @@ Feature: Properties
     Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
     And I expect this node to have no properties
 
+  Scenario: a new property default value is set
+    When I have the following additional NodeTypes configuration:
+    """
+    'Neos.ContentRepository.Testing:Document':
+      properties:
+        otherProp:
+          type: string
+          defaultValue: "foo"
+    """
+    Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
+      | Type                  | nodeAggregateIdentifier |
+      | MISSING_DEFAULT_VALUE | sir-david-nodenborough  |
+
+    When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
+    Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
+    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    And I expect this node to have the properties:
+      | Key       | Value |
+      | myProp    | Foo   |
+      | otherProp | foo   |
+
+  Scenario: a new property default value is not set if the value already contains the empty string
+    When I have the following additional NodeTypes configuration:
+    """
+    'Neos.ContentRepository.Testing:Document':
+      properties:
+        otherProp:
+          type: string
+          defaultValue: "foo"
+    """
+    And the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                    |
+      | contentStreamIdentifier   | "cs-identifier"          |
+      | nodeAggregateIdentifier   | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {}                       |
+      | propertyValues            | {"otherProp": ""}        |
+    And the graph projection is fully up to date
+    Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"

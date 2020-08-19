@@ -25,6 +25,7 @@ class StructureAdjustment extends Message
     const NODE_TYPE_MISSING = 'NODE_TYPE_MISSING';
     const DISALLOWED_CHILD_NODE = 'DISALLOWED_CHILD_NODE';
     const OBSOLETE_PROPERTY = 'OBSOLETE_PROPERTY';
+    const MISSING_DEFAULT_VALUE = 'MISSING_DEFAULT_VALUE';
 
     /**
      * Constructs this error
