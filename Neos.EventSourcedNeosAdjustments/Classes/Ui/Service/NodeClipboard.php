@@ -28,7 +28,7 @@ class NodeClipboard
     /**
      * @var string
      */
-    protected $serializedNodeAddress = '';
+    protected $serializedNodeAddresses = '';
 
     /**
      * @var string one of the NodeClipboard::MODE_*  constants
@@ -38,28 +38,28 @@ class NodeClipboard
     /**
      * Save copied node to clipboard.
      *
-     * @param NodeAddress $nodeAddress
+     * @param NodeAddress[] $nodeAddresses
      * @return void
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      * @Flow\Session(autoStart=true)
      */
-    public function copyNode(NodeAddress $nodeAddress)
+    public function copyNodes($nodeAddresses)
     {
-        $this->serializedNodeAddress = $nodeAddress->serializeForUri();
+        $this->serializedNodeAddresses = array_map(fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(), $nodeAddresses);
         $this->mode = self::MODE_COPY;
     }
 
     /**
      * Save cut node to clipboard.
      *
-     * @param NodeAddress $nodeAddress
+     * @param NodeAddress[] $nodeAddresses
      * @return void
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      * @Flow\Session(autoStart=true)
      */
-    public function cutNode(NodeAddress $nodeAddress)
+    public function cutNodes($nodeAddresses)
     {
-        $this->serializedNodeAddress = $nodeAddress->serializeForUri();
+        $this->serializedNodeAddresses = array_map(fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(), $nodeAddresses);
         $this->mode = self::MODE_MOVE;
     }
 
@@ -71,7 +71,7 @@ class NodeClipboard
      */
     public function clear()
     {
-        $this->serializedNodeAddress = '';
+        $this->serializedNodeAddresses = [];
         $this->mode = '';
     }
 
@@ -80,9 +80,9 @@ class NodeClipboard
      *
      * @return string $nodeContextPath
      */
-    public function getSerializedNodeAddress()
+    public function getSerializedNodeAddresses()
     {
-        return $this->serializedNodeAddress ? $this->serializedNodeAddress : '';
+        return $this->serializedNodeAddresses ? $this->serializedNodeAddresses : [];
     }
 
     /**

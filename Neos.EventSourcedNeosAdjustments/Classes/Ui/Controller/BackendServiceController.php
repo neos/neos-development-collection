@@ -33,6 +33,7 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\JsonView;
+use Neos\Flow\Property\PropertyMapper;
 use Neos\Neos\Ui\Fusion\Helper\WorkspaceHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -134,6 +135,12 @@ class BackendServiceController extends ActionController
      * @var NodeClipboard
      */
     protected $clipboard;
+
+    /**
+     * @Flow\Inject
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
 
     /**
      * Set the controller context on the feedback collection after the controller
@@ -345,13 +352,17 @@ class BackendServiceController extends ActionController
     /**
      * Persists the clipboard node on copy
      *
-     * @param NodeAddress $node
+     * @param array $nodes
      * @return void
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    public function copyNodeAction(NodeAddress $node)
+    public function copyNodesAction($nodes)
     {
-        $this->clipboard->copyNode($node);
+        // TODO @christianm want's to have a property mapper for this
+        $nodeAddresses = array_map(function ($serializedNodeAddress) {
+            return $this->propertyMapper->convert($serializedNodeAddress, NodeAddress::class);
+        }, $nodes);
+        $this->clipboard->copyNodes($nodeAddresses);
     }
 
     /**
@@ -367,13 +378,17 @@ class BackendServiceController extends ActionController
     /**
      * Persists the clipboard node on cut
      *
-     * @param NodeAddress $node
+     * @param array $nodes
      * @return void
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    public function cutNodeAction(NodeAddress $node)
+    public function cutNodesAction($nodes)
     {
-        $this->clipboard->cutNode($node);
+        // TODO @christianm want's to have a property mapper for this
+        $nodeAddresses = array_map(function ($serializedNodeAddress) {
+            return $this->propertyMapper->convert($serializedNodeAddress, NodeAddress::class);
+        }, $nodes);
+        $this->clipboard->cutNodes($nodeAddresses);
     }
 
     public function getWorkspaceInfoAction()

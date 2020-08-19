@@ -18,8 +18,8 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Create/ Edit / Delete Nodes |     ✅     |        ✅        |
 | Shortcut Handling           |     ✅     |        ⏩        |
 | Query Nodes                 |     ✅     |        ✅        |
-| Cut / Copy / Paste          |     ✅     |        ⏩        |
-| Move Nodes                  |     ✅     |        ✅⏩      |
+| Cut / Copy / Paste          |     ✅     |        ✅        |
+| Move Nodes                  |     ✅     |        ✅        |
 | Hide Nodes                  |     ✅     |        ✅        |
 | History                     |    (✅)    |                  |
 | Basic Workspaces            |     ✅     |        ✅        |
