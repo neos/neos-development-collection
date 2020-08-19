@@ -126,3 +126,12 @@ Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\UnknownNod
         arguments:
           1:
             value: 'ContentRepository'
+
+Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\DisallowedChildNodeAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'

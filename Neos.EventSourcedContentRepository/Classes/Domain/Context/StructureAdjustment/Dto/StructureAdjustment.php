@@ -23,6 +23,7 @@ class StructureAdjustment extends Message
     const TETHERED_NODE_TYPE_WRONG = 'TETHERED_NODE_TYPE_WRONG';
     const DISALLOWED_TETHERED_NODE = 'DISALLOWED_TETHERED_NODE';
     const NODE_TYPE_MISSING = 'NODE_TYPE_MISSING';
+    const DISALLOWED_CHILD_NODE = 'DISALLOWED_CHILD_NODE';
 
     /**
      * Constructs this error
