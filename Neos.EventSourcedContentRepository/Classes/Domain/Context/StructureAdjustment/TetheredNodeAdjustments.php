@@ -3,11 +3,12 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
+use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -38,6 +39,7 @@ class TetheredNodeAdjustments
 {
     use NodeVariationInternals;
     use RemoveNodeAggregateTrait;
+    use LoadNodeTypeTrait;
 
     protected EventStore $eventStore;
     protected ProjectedNodeIterator $projectedNodeIterator;
@@ -45,8 +47,9 @@ class TetheredNodeAdjustments
     protected DimensionSpace\InterDimensionalVariationGraph  $interDimensionalVariationGraph;
     protected ContentGraphInterface $contentGraph;
     protected PropertyConversionService $propertyConversionService;
+    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph, ContentGraphInterface $contentGraph, PropertyConversionService $propertyConversionService)
+    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph, ContentGraphInterface $contentGraph, PropertyConversionService $propertyConversionService, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
     {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
@@ -54,16 +57,17 @@ class TetheredNodeAdjustments
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->contentGraph = $contentGraph;
         $this->propertyConversionService = $propertyConversionService;
+        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        try {
-            $expectedTetheredNodes = $this->nodeTypeManager->getNodeType((string)$nodeTypeName)->getAutoCreatedChildNodes();
-        } catch (NodeTypeNotFoundException $e) {
+        $nodeType = $this->loadNodeType($nodeTypeName);
+        if ($nodeType === null) {
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
+        $expectedTetheredNodes = $nodeType->getAutoCreatedChildNodes();
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {
@@ -75,6 +79,7 @@ class TetheredNodeAdjustments
                     if ($tetheredNode === null) {
                         // $nestedNode not found - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
                         yield StructureAdjustment::createForNode($node, StructureAdjustment::TETHERED_NODE_MISSING, 'The tethered child node "' . $tetheredNodeName . '" is missing.', function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
+                            $this->readSideMemoryCacheManager->disableCache();
                             return $this->createMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType);
                         });
                     } else {
@@ -182,5 +187,10 @@ class TetheredNodeAdjustments
     protected function getEventStore(): EventStore
     {
         return $this->eventStore;
+    }
+
+    protected function getNodeTypeManager(): NodeTypeManager
+    {
+        return $this->nodeTypeManager;
     }
 }

@@ -24,6 +24,7 @@ class StructureAdjustment extends Message
     const DISALLOWED_TETHERED_NODE = 'DISALLOWED_TETHERED_NODE';
     const NODE_TYPE_MISSING = 'NODE_TYPE_MISSING';
     const DISALLOWED_CHILD_NODE = 'DISALLOWED_CHILD_NODE';
+    const OBSOLETE_PROPERTY = 'OBSOLETE_PROPERTY';
 
     /**
      * Constructs this error

@@ -1616,6 +1616,17 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^I expect this node to have no properties$/
+     */
+    public function iExpectThisNodeToHaveNoProperties()
+    {
+        Assert::assertNotNull($this->currentNode, 'current node not found');
+        $properties = $this->currentNode->getProperties();
+        $properties = iterator_to_array($properties);
+        Assert::assertCount(0, $properties, 'I expect no properties');
+    }
+
+    /**
      * @Then /^I expect the node aggregate "([^"]*)" to have the references:$/
      * @param string $nodeAggregateIdentifier
      * @param TableNode $expectedReferences

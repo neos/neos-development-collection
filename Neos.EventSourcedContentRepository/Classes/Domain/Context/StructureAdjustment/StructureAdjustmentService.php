@@ -17,13 +17,15 @@ class StructureAdjustmentService
     protected TetheredNodeAdjustments $tetheredNodeAdjustments;
     protected UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment;
     protected DisallowedChildNodeAdjustment $disallowedChildNodeAdjustment;
+    protected PropertyAdjustment $propertyAdjustment;
 
-    public function __construct(ContentGraphInterface $contentGraph, TetheredNodeAdjustments $tetheredNodeAdjustments, UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment, DisallowedChildNodeAdjustment $disallowedChildNodeAdjustment)
+    public function __construct(ContentGraphInterface $contentGraph, TetheredNodeAdjustments $tetheredNodeAdjustments, UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment, DisallowedChildNodeAdjustment $disallowedChildNodeAdjustment, PropertyAdjustment $propertyAdjustment)
     {
         $this->contentGraph = $contentGraph;
         $this->tetheredNodeAdjustments = $tetheredNodeAdjustments;
         $this->unknownNodeTypeAdjustment = $unknownNodeTypeAdjustment;
         $this->disallowedChildNodeAdjustment = $disallowedChildNodeAdjustment;
+        $this->propertyAdjustment = $propertyAdjustment;
     }
 
     /**
@@ -45,5 +47,6 @@ class StructureAdjustmentService
         yield from $this->tetheredNodeAdjustments->findAdjustmentsForNodeType($nodeTypeName);
         yield from $this->unknownNodeTypeAdjustment->findAdjustmentsForNodeType($nodeTypeName);
         yield from $this->disallowedChildNodeAdjustment->findAdjustmentsForNodeType($nodeTypeName);
+        yield from $this->propertyAdjustment->findAdjustmentsForNodeType($nodeTypeName);
     }
 }

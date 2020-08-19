@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -17,30 +18,26 @@ use Neos\EventSourcing\EventStore\EventStore;
 class UnknownNodeTypeAdjustment
 {
     use RemoveNodeAggregateTrait;
+    use LoadNodeTypeTrait;
 
     protected EventStore $eventStore;
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected NodeTypeManager $nodeTypeManager;
+    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager)
+    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
     {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
+        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        try {
-            $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
-            if ($nodeType->getName() !== $nodeTypeName->jsonSerialize()) {
-                // the $nodeTypeName was different than the fetched node type; so that means
-                // that the FallbackNodeType has been returned.
-                yield from $this->removeAllNodesOfType($nodeTypeName);
-            }
-        } catch (NodeTypeNotFoundException $e) {
-            // the $nodeTypeName was not found; so we need to remove all nodes of this type.
-            // This case applies if the fallbackNodeType is not configured.
+        $nodeType = $this->loadNodeType($nodeTypeName);
+        if ($nodeType === null) {
+            // node type is not existing right now.
             yield from $this->removeAllNodesOfType($nodeTypeName);
         }
     }
@@ -54,8 +51,14 @@ class UnknownNodeTypeAdjustment
     {
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             yield StructureAdjustment::createForNodeAggregate($nodeAggregate, StructureAdjustment::NODE_TYPE_MISSING, 'The node type "' . $nodeTypeName->jsonSerialize() . '" is not found; so the node should be removed (or converted)', function() use ($nodeAggregate) {
+                $this->readSideMemoryCacheManager->disableCache();
                 return $this->removeNodeAggregate($nodeAggregate);
             });
         }
+    }
+
+    protected function getNodeTypeManager(): NodeTypeManager
+    {
+        return $this->nodeTypeManager;
     }
 }
