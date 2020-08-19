@@ -81,6 +81,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -435,6 +436,7 @@ trait EventSourcedTrait
         $event = $this->eventNormalizer->denormalize($eventPayload, $eventType);
         $event = DecoratedEvent::addIdentifier($event, Uuid::uuid4()->toString());
         $events = DomainEvents::withSingleEvent($event);
+        $this->getObjectManager()->get(ReadSideMemoryCacheManager::class)->disableCache();
         $this->eventStore->commit($streamName, $events);
         $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events);
     }

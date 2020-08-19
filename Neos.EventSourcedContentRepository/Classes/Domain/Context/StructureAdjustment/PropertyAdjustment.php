@@ -56,11 +56,23 @@ class PropertyAdjustment
             foreach ($nodeAggregate->getNodes() as $node) {
                 $propertyKeysInNode = [];
 
-                // detect obsolete properties
                 foreach ($node->getProperties() as $propertyKey => $property) {
                     $propertyKeysInNode[$propertyKey] = $propertyKey;
+
+                    // detect obsolete properties
                     if (!array_key_exists($propertyKey, $expectedPropertiesFromNodeType)) {
                         yield StructureAdjustment::createForNode($node, StructureAdjustment::OBSOLETE_PROPERTY, 'The property "' . $propertyKey . '" is not defined anymore in the current NodeType schema. Suggesting to remove it.', function () use ($node, $propertyKey) {
+                            $this->readSideMemoryCacheManager->disableCache();
+                            return $this->removeProperty($node, $propertyKey);
+                        });
+                    }
+
+                    // detect non-deserializable properties
+                    try {
+                        $node->getProperties()->offsetGet($propertyKey);
+                    } catch (\Exception $e) {
+                        $message = sprintf('The property "%s" was not deserializable. Error was: %s %s. Remove the property?', $propertyKey, get_class($e), $e->getMessage());
+                        yield StructureAdjustment::createForNode($node, StructureAdjustment::NON_DESERIALIZABLE_PROPERTY, $message, function () use ($node, $propertyKey) {
                             $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeProperty($node, $propertyKey);
                         });

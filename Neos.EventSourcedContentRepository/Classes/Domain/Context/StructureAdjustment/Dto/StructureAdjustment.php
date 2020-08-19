@@ -26,6 +26,7 @@ class StructureAdjustment extends Message
     const DISALLOWED_CHILD_NODE = 'DISALLOWED_CHILD_NODE';
     const OBSOLETE_PROPERTY = 'OBSOLETE_PROPERTY';
     const MISSING_DEFAULT_VALUE = 'MISSING_DEFAULT_VALUE';
+    const NON_DESERIALIZABLE_PROPERTY = 'NON_DESERIALIZABLE_PROPERTY';
 
     /**
      * Constructs this error
