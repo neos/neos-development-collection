@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedCoveredDimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccupiedDimensionSpacePointSet;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
+use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
@@ -38,6 +37,7 @@ use Ramsey\Uuid\Uuid;
 class TetheredNodeAdjustments
 {
     use NodeVariationInternals;
+    use RemoveNodeAggregateTrait;
 
     protected EventStore $eventStore;
     protected ProjectedNodeIterator $projectedNodeIterator;
@@ -58,7 +58,12 @@ class TetheredNodeAdjustments
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        $expectedTetheredNodes = $this->nodeTypeManager->getNodeType((string)$nodeTypeName)->getAutoCreatedChildNodes();
+        try {
+            $expectedTetheredNodes = $this->nodeTypeManager->getNodeType((string)$nodeTypeName)->getAutoCreatedChildNodes();
+        } catch (NodeTypeNotFoundException $e) {
+            // In case we cannot find the expected tethered nodes, this fix cannot do anything.
+            return;
+        }
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {
@@ -83,7 +88,7 @@ class TetheredNodeAdjustments
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->getNodeName()])) {
                     yield StructureAdjustment::createForNodeAggregate($tetheredNodeAggregate, StructureAdjustment::DISALLOWED_TETHERED_NODE, 'The tethered child node "' . $tetheredNodeAggregate->getNodeName()->jsonSerialize() . '" should be removed.', function () use ($tetheredNodeAggregate) {
-                        return $this->removeTetheredNodeAggregate($tetheredNodeAggregate);
+                        return $this->removeNodeAggregate($tetheredNodeAggregate);
                     });
                 }
             }
@@ -168,32 +173,14 @@ class TetheredNodeAdjustments
         return CommandResult::fromPublishedEvents($events);
     }
 
-    private function removeTetheredNodeAggregate(ReadableNodeAggregateInterface $tetheredNodeAggregate): CommandResult
-    {
-        $events = DomainEvents::withSingleEvent(
-            DecoratedEvent::addIdentifier(
-                new NodeAggregateWasRemoved(
-                    $tetheredNodeAggregate->getContentStreamIdentifier(),
-                    $tetheredNodeAggregate->getIdentifier(),
-                    AffectedOccupiedDimensionSpacePointSet::allVariants(
-                        $tetheredNodeAggregate
-                    ),
-                    AffectedCoveredDimensionSpacePointSet::allVariants(
-                        $tetheredNodeAggregate
-                    )
-                ),
-                Uuid::uuid4()->toString()
-            )
-        );
-
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($tetheredNodeAggregate->getContentStreamIdentifier());
-        $this->eventStore->commit($streamName->getEventStreamName(), $events);
-        return CommandResult::fromPublishedEvents($events);
-    }
-
     private function getDefaultPropertyValues(NodeType $nodeType): SerializedPropertyValues
     {
         $rawDefaultPropertyValues = PropertyValuesToWrite::fromArray($nodeType->getDefaultValuesForProperties());
         return $this->propertyConversionService->serializePropertyValues($rawDefaultPropertyValues, $nodeType);
+    }
+
+    protected function getEventStore(): EventStore
+    {
+        return $this->eventStore;
     }
 }
