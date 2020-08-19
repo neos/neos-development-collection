@@ -37,9 +37,10 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Multiple Sites              |     ✅     |        ✅        |
 | Permissions / Policy        |     ✅     |                  |
 | **Maintenance**             |            |                  |
-| Export / Import             |     ✅     |        EASY      |
+| Export / Import             |     ✅     |       ✅⏩      |
 | Node Migrations             |     ✅     |        ⏩ (MEDIUM)|
-| Node Repair                 |     ✅     |        ⏩        |
+| Node Repair                 |     ✅     |        ✅        |
+| Integrity Checks            |     🚫     |        ⏩        |
 | **API**                     |            |                  |
 | Separate Read and Write API |     🚫     |        ✅        |
 | More convenient write API   |            |                  |
