@@ -28,6 +28,7 @@ class StructureAdjustment extends Message
     const MISSING_DEFAULT_VALUE = 'MISSING_DEFAULT_VALUE';
     const NON_DESERIALIZABLE_PROPERTY = 'NON_DESERIALIZABLE_PROPERTY';
     const TETHERED_NODE_WRONGLY_ORDERED = 'TETHERED_NODE_WRONGLY_ORDERED';
+    const NODE_COVERS_GENERALIZATION_OR_PEERS = 'NODE_COVERS_GENERALIZATION_OR_PEERS';
 
     /**
      * Constructs this error
@@ -66,6 +67,10 @@ class StructureAdjustment extends Message
 
     public function fix(): CommandResult
     {
+        if ($this->adjustment === null) {
+            return CommandResult::createEmpty();
+        }
+
         $adjustment = $this->adjustment;
         $commandResult = $adjustment();
         assert($commandResult instanceof CommandResult);
