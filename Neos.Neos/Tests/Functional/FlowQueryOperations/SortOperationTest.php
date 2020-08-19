@@ -208,10 +208,10 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), [])
         ];
         $correctOrder = [
-            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), []),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addc', $this->context->getWorkspace(true), []),
-            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), []),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addb', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), []),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), [])
         ];
         $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
