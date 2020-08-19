@@ -22,6 +22,7 @@ class StructureAdjustment extends Message
     const NODE_IS_NOT_TETHERED_BUT_SHOULD_BE = 'NODE_IS_NOT_TETHERED_BUT_SHOULD_BE';
     const TETHERED_NODE_TYPE_WRONG = 'TETHERED_NODE_TYPE_WRONG';
     const DISALLOWED_TETHERED_NODE = 'DISALLOWED_TETHERED_NODE';
+    const NODE_TYPE_MISSING = 'NODE_TYPE_MISSING';
 
     /**
      * Constructs this error

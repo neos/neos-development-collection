@@ -117,3 +117,12 @@ Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\TetheredNo
         arguments:
           1:
             value: 'ContentRepository'
+
+Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\UnknownNodeTypeAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'

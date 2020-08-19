@@ -15,11 +15,13 @@ class StructureAdjustmentService
 {
     protected ContentGraphInterface $contentGraph;
     protected TetheredNodeAdjustments $tetheredNodeAdjustments;
+    protected UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment;
 
-    public function __construct(ContentGraphInterface $contentGraph, TetheredNodeAdjustments $tetheredNodeAdjustments)
+    public function __construct(ContentGraphInterface $contentGraph, TetheredNodeAdjustments $tetheredNodeAdjustments, UnknownNodeTypeAdjustment $unknownNodeTypeAdjustment)
     {
         $this->contentGraph = $contentGraph;
         $this->tetheredNodeAdjustments = $tetheredNodeAdjustments;
+        $this->unknownNodeTypeAdjustment = $unknownNodeTypeAdjustment;
     }
 
     /**
@@ -39,5 +41,6 @@ class StructureAdjustmentService
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
         yield from $this->tetheredNodeAdjustments->findAdjustmentsForNodeType($nodeTypeName);
+        yield from $this->unknownNodeTypeAdjustment->findAdjustmentsForNodeType($nodeTypeName);
     }
 }
