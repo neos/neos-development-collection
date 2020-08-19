@@ -39,12 +39,18 @@
       "mikey179/vfsstream": "~1.6",
       "phpunit/phpunit": "~7.1.0",
       "symfony/css-selector": "~2.0",
-      "neos/behat": "dev-master"
+      "neos/behat": "dev-master",
+
+      "cweagans/composer-patches": "dev-master#a18d1ca38ae09d16aa21846f60649d99d6775639"
   },
   "scripts": {
       "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
       "post-install-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
       "post-package-update": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall",
       "post-package-install": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall"
+  },
+
+  "extra": {
+    "patches-file": "Packages/CR/Neos.EventSourcedNeosAdjustments/composer.patches.json"
   }
 }

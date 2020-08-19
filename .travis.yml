@@ -11,7 +11,7 @@ before_install:
   - export NEOS_TARGET_VERSION=master
   - cd ..
   - git clone https://github.com/neos/neos-development-distribution.git -b ${NEOS_TARGET_VERSION}
-  - cp contentrepository-development-collection/.travis_composer_json.json neos-development-distribution/composer.json
+  - cp contentrepository-development-collection/.travis_composer.json neos-development-distribution/composer.json
   - cd neos-development-distribution
   - cat composer.json
 install:
