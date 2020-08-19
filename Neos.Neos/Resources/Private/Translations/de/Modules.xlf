@@ -539,9 +539,9 @@
       <trans-unit id="sites.add" xml:space="preserve" approved="yes">
 				<source>Add new site</source>
 			<target state="final">Neue Seite hinzufügen</target></trans-unit>
-      <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
+      <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
-			<target state="translated">Website erstellen</target></trans-unit>
+			<target state="final">Website erstellen</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
 			<target state="final">Neue Website erstellen</target></trans-unit>
@@ -605,15 +605,15 @@
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve" approved="yes">
 				<source>VendorName.MyPackageKey</source>
 			<target state="final">Herstellername.MeinPaketschlüssel</target></trans-unit>
-      <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
+      <trans-unit id="sites.noSitesAvailable" xml:space="preserve" approved="yes">
 				<source>No sites available</source>
-			<target state="translated">Keine Seiten verfügbar</target></trans-unit>
+			<target state="final">Keine Seiten verfügbar</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="final">Das &lt;em&gt;Neos Kickstarter&lt;/em&gt;-Paket ist nicht installiert, installieren Sie es, um eine neue Seite zu erstellen.</target></trans-unit>
-      <trans-unit id="sites.new" xml:space="preserve">
+      <trans-unit id="sites.new" xml:space="preserve" approved="yes">
 				<source>New site</source>
-			<target state="translated">Neue Seite</target></trans-unit>
+			<target state="final">Neue Seite</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="final">Möchten Sie wirklich "{0}" löschen? Diese Aktion kann nicht rückgängig gemacht werden.</target></trans-unit>
@@ -623,18 +623,18 @@
       <trans-unit id="domain.edit" xml:space="preserve" approved="yes">
 				<source>Edit domain</source>
 			<target state="final">Domain bearbeiten</target></trans-unit>
-      <trans-unit id="domainform.domainData" xml:space="preserve">
+      <trans-unit id="domainform.domainData" xml:space="preserve" approved="yes">
 				<source>Domain data</source>
-			<target state="translated">Domain Daten</target></trans-unit>
-      <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
+			<target state="final">Domain Daten</target></trans-unit>
+      <trans-unit id="domainform.hostPlaceholder" xml:space="preserve" approved="yes">
 				<source>e.g. www.neos.io</source>
-			<target state="translated">z.B. www.neos.io</target></trans-unit>
-      <trans-unit id="domainform.state" xml:space="preserve">
+			<target state="final">z.B. www.neos.io</target></trans-unit>
+      <trans-unit id="domainform.state" xml:space="preserve" approved="yes">
 				<source>State</source>
-			<target state="translated">Zustand</target></trans-unit>
-      <trans-unit id="domainform.create" xml:space="preserve">
+			<target state="final">Zustand</target></trans-unit>
+      <trans-unit id="domainform.create" xml:space="preserve" approved="yes">
 				<source>Create</source>
-			<target state="translated">Erstellen</target></trans-unit>
+			<target state="final">Erstellen</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target state="final">Konfiguration</target></trans-unit>
