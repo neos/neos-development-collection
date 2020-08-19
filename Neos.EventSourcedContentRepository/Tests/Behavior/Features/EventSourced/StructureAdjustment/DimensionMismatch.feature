@@ -25,13 +25,13 @@ Feature: Dimension mismatch
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "system-user"        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                  |
-      | contentStreamIdentifier     | "cs-identifier"                        |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
-      | nodeTypeName                | "Neos.ContentRepository:Root"          |
-      | coveredDimensionSpacePoints | [{"language": "de", "language": "en"}] |
-      | initiatingUserIdentifier    | "system-user"                          |
-      | nodeAggregateClassification | "root"                                 |
+      | Key                         | Value                                    |
+      | contentStreamIdentifier     | "cs-identifier"                          |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                 |
+      | nodeTypeName                | "Neos.ContentRepository:Root"            |
+      | coveredDimensionSpacePoints | [{"language": "de"}, {"language": "en"}] |
+      | initiatingUserIdentifier    | "system-user"                            |
+      | nodeAggregateClassification | "root"                                   |
     And the graph projection is fully up to date
 
   Scenario: Generalization detection
