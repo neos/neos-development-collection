@@ -12,21 +12,19 @@ declare(strict_types=1);
  */
 
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/NodeOperationsTrait.php');
-require_once(__DIR__ . '/NodeAuthorizationTrait.php');
-require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
-require_once(__DIR__ . '/StructureAdjustmentsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
+require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
 
 use Neos\Behat\Tests\Behat\FlowContextTrait;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
+use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait as BaseDetectionTrait;
+use Neos\EventSourcedContentRepository\Tests\Functional\Command\BehatTestHelper;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 
 /**
@@ -36,17 +34,12 @@ class FeatureContext implements \Behat\Behat\Context\Context
 {
     use FlowContextTrait;
     use NodeOperationsTrait;
-    use NodeAuthorizationTrait;
-    use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
-    use EventSourcedTrait;
     use ProjectionIntegrityViolationDetectionTrait;
-    use StructureAdjustmentsTrait;
+    use BaseDetectionTrait;
+    use EventSourcedTrait;
 
-    /**
-     * @var string
-     */
-    protected $behatTestHelperObjectName = \Neos\EventSourcedContentRepository\Tests\Functional\Command\BehatTestHelper::class;
+    protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     public function __construct()
     {
@@ -54,11 +47,9 @@ class FeatureContext implements \Behat\Behat\Context\Context
             self::$bootstrap = $this->initializeFlow();
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
-
-        $this->setupSecurity();
         $this->setupEventSourcedTrait();
-        $this->setupIntegrityViolationTrait();
         $this->setupProjectionIntegrityViolationDetectionTrait();
+        $this->setupDbalGraphAdapterIntegrityViolationTrait();
     }
 
     /**
