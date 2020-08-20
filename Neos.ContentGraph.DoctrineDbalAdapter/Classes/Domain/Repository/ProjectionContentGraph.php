@@ -28,7 +28,10 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The read only content graph for projection support
+ * The read only content graph for use by the {@see GraphProjector}. This is the class for low-level operations
+ * within the projector, where implementation details of the graph structure are known.
+ *
+ * This is NO PUBLIC API in any way.
  *
  * @Flow\Scope("singleton")
  */
@@ -184,6 +187,29 @@ class ProjectionContentGraph
         }
     }
 
+    /**
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @return NodeRelationAnchorPoint[]
+     * @throws DBALException
+     */
+    public function getAnchorPointsForNodeAggregateInContentStream(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifier
+    ): iterable {
+        $rows = $this->getDatabaseConnection()->executeQuery(
+            'SELECT DISTINCT n.relationanchorpoint FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier',
+            [
+                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            ]
+        )->fetchAll();
+
+        return array_map(fn($row) => NodeRelationAnchorPoint::fromString($row['relationanchorpoint']), $rows);
+    }
 
     /**
      * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint

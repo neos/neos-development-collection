@@ -773,7 +773,7 @@ trait EventSourcedTrait
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
-        $commandHandler->handleChangeNodeAggregateType($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleChangeNodeAggregateType($command);
     }
 
     /**
@@ -1541,9 +1541,11 @@ trait EventSourcedTrait
             $expectedNodeName = NodeName::fromString($row['Name']);
             $actualNodeName = $nodes[$index]->getNodeName();
             Assert::assertEquals($expectedNodeName, $actualNodeName, 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName . '" Actual: "' . $actualNodeName . '"');
-            $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($row['NodeDiscriminator'], true));
-            $actualNodeDiscriminator = NodeDiscriminator::fromNode($nodes[$index]);
-            Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
+            if (isset($row['NodeDiscriminator'])) {
+                $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($row['NodeDiscriminator'], true));
+                $actualNodeDiscriminator = NodeDiscriminator::fromNode($nodes[$index]);
+                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
+            }
         }
     }
 
@@ -1581,6 +1583,7 @@ trait EventSourcedTrait
             ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
     }
+
 
     /**
      * @Then /^I expect the Node Aggregate "([^"]*)" to have the properties:$/
@@ -1627,6 +1630,16 @@ trait EventSourcedTrait
         $properties = iterator_to_array($properties);
         Assert::assertCount(0, $properties, 'I expect no properties');
     }
+
+    /**
+     * @Then /^I expect this node to be of type "([^"]*)"$/
+     * @param string $nodeTypeName
+     */
+    public function iExpectTheNodeToBeOfType(string $nodeTypeName)
+    {
+        Assert::assertEquals($nodeTypeName, $this->currentNode->getNodeTypeName()->jsonSerialize());
+    }
+
 
     /**
      * @Then /^I expect the node aggregate "([^"]*)" to have the references:$/
