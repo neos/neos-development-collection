@@ -159,7 +159,7 @@ class TetheredNodeAdjustments
 
     protected function getContentGraph(): ContentGraphInterface
     {
-        $this->contentGraph;
+        return $this->contentGraph;
     }
 
 
