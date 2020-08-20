@@ -82,7 +82,7 @@ final class IntegrityViolationDetector
      */
     private function nodesOfType(NodeTypeName $nodeTypeName): \Iterator
     {
-        $contentStreamIdentifiers = $this->contentGraph->findContentStreamIdentifiers();
+        $contentStreamIdentifiers = $this->contentGraph->findProjectedContentStreamIdentifiers();
         foreach ($contentStreamIdentifiers as $contentStreamIdentifier) {
             $nodeAggregates = $this->contentGraph->findNodeAggregatesByType($contentStreamIdentifier, $nodeTypeName);
             foreach ($nodeAggregates as $nodeAggregate) {

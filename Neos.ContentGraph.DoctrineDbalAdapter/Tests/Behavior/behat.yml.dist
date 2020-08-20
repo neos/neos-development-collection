@@ -1,0 +1,15 @@
+# Behat distribution configuration
+#
+# Override with behat.yml for local configuration.
+#
+
+default:
+  autoload:
+    '': "%paths.base%/Features/Bootstrap"
+  suites:
+    cr:
+      paths:
+        - "%paths.base%/Features/Projection/"
+      contexts:
+        - FeatureContext:
+

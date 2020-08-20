@@ -436,7 +436,7 @@ final class ContentGraph implements ContentGraphInterface
      *
      * @return ContentStreamIdentifier[]
      */
-    public function findContentStreamIdentifiers(): array
+    public function findProjectedContentStreamIdentifiers(): array
     {
         $connection = $this->client->getConnection();
 
@@ -445,6 +445,31 @@ final class ContentGraph implements ContentGraphInterface
             return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
         }, $rows);
     }
+
+    public function findProjectedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        $records = $this->client->getConnection()->executeQuery(
+            'SELECT DISTINCT dimensionspacepoint FROM neos_contentgraph_hierarchyrelation'
+        )->fetchAll();
+
+        $records = array_map(function (array $record) {
+            return DimensionSpacePoint::fromJsonString($record['dimensionspacepoint']);
+        }, $records);
+
+        return new DimensionSpacePointSet($records);
+    }
+
+    public function findProjectedNodeAggregateIdentifiersInContentStream(ContentStreamIdentifier $contentStreamIdentifier): array
+    {
+        $records = $this->client->getConnection()->executeQuery(
+            'SELECT DISTINCT nodeaggregateidentifier FROM neos_contentgraph_node'
+        )->fetchAll();
+
+        return array_map(function (array $record) {
+            return NodeAggregateIdentifier::fromString($record['nodeaggregateidentifier']);
+        }, $records);
+    }
+
 
     public function enableCache(): void
     {
