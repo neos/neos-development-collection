@@ -20,7 +20,13 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Node property was set event
+ * When a node property is changed, this event is triggered.
+ *
+ * The projectors need to MERGE all the SerializedPropertyValues in these events (per node)
+ * to get an up to date view of all the properties of a node.
+ *
+ * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
+ * because we treat NULL and "not set" the same from an API perspective.
  *
  * @Flow\Proxy(false)
  */

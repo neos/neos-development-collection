@@ -13,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -91,7 +92,7 @@ class CopyInto extends AbstractStructuralChange
 
             $command = CopyNodesRecursively::create(
                 $subject,
-                $subject->getDimensionSpacePoint(),
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($subject->getDimensionSpacePoint()),
                 UserIdentifier::forSystemUser(), // TODO
                 $this->getParentNode()->getNodeAggregateIdentifier(),
                 null,

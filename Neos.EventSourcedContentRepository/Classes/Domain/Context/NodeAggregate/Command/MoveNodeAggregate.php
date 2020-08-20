@@ -30,6 +30,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * between `newPrecedingSiblingNodeAggregateIdentifier`
  * and `newSucceedingSiblingNodeAggregateIdentifier` (or as last of all siblings)
  * using `relationDistributionStrategy`
+ *
+ * Why can you specify **both** newPrecedingSiblingNodeAggregateIdentifier and newSucceedingSiblingNodeAggregateIdentifier?
+ * - it can happen that in one subgraph, only one of these match.
+ * - See the PHPDoc of the attributes (a few lines down) for the exact behavior.
  */
 final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {

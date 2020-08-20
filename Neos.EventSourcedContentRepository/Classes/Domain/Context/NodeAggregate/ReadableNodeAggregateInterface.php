@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
@@ -42,6 +43,8 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
  */
 interface ReadableNodeAggregateInterface
 {
+    public function getContentStreamIdentifier(): ContentStreamIdentifier;
+
     public function getIdentifier(): NodeAggregateIdentifier;
 
     public function getNodeTypeName(): NodeTypeName;
@@ -61,9 +64,9 @@ interface ReadableNodeAggregateInterface
     public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): OriginDimensionSpacePoint;
 
     /**
-     * @return array|NodeInterface[]
+     * @return iterable|NodeInterface[]
      */
-    public function getNodesByOccupiedDimensionSpacePoint(): array;
+    public function getNodes(): iterable;
 
     public function getNodeByOccupiedDimensionSpacePoint(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface;
 
