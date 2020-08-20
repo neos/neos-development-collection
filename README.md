@@ -31,6 +31,7 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Menu Rendering              |    ✅      |       ✅         |
 | Dimension Menu Rendering    |    ✅      |       ✅         |
 | Supporting "not in menu"    |    ✅      |       ✅         |
+| Change node type            |    ✅      |       ✅         |
 | **Advanced**                |            |                  |
 | Dimensions                  |     ✅     |        ✅        |
 | Dimension Fallback          |     ✅     |        ✅        |

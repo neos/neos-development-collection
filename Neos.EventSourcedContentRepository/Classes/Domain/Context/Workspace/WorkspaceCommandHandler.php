@@ -22,6 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\Conten
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RebasableToOtherContentStreamsInterface;
@@ -526,6 +527,9 @@ final class WorkspaceCommandHandler
             case RemoveNodeAggregate::class:
                 return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command);
                 break;
+            case ChangeNodeAggregateType::class:
+                return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType($command);
+                break;
             case CopyNodesRecursively::class:
                 return $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command);
                 break;
@@ -570,7 +574,6 @@ final class WorkspaceCommandHandler
         $remainingCommands = [];
 
         foreach ($originalCommands as $originalCommand) {
-            // TODO: the Node Address Bounded Context MUST be moved to the CR core. This is the smoking gun why we need this ;)
             if ($this->commandMatchesNodeAddresses($originalCommand, $command->getNodeAddresses())) {
                 $matchingCommands[] = $originalCommand;
             } else {
