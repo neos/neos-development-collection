@@ -66,7 +66,7 @@ final class ContentGraphIntegrityCommandController extends CommandController
             $outputMode = $this->output->ask('Please specify the output mode: (c)onsole or (l)og: ');
             if ($outputMode === 'c') {
                 $outputMode = self::OUTPUT_MODE_CONSOLE;
-            } elseif($outputMode === 'l') {
+            } elseif ($outputMode === 'l') {
                 $outputMode = self::OUTPUT_MODE_LOG;
             }
         }

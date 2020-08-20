@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
 
 /*
@@ -11,12 +10,6 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
 /**
  * The testing node aggregate identifier value object

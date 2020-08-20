@@ -110,7 +110,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             )->fetchAll();
 
             $result->addError(new Error(
-                'Siblings ' . implode(', ', array_map(function (array $record) {return $record['nodeaggregateidentifier'];}, $ambiguouslySortedNodeRecords))
+                'Siblings ' . implode(', ', array_map(function (array $record) {
+                    return $record['nodeaggregateidentifier'];
+                }, $ambiguouslySortedNodeRecords))
                 . ' are ambiguously sorted in content stream ' . $hierarchyRelationRecord['contentstreamidentifier']
                 . ' and dimension space point ' . $hierarchyRelationRecord['dimensionspacepoint'],
                 self::ERROR_CODE_SIBLINGS_ARE_AMBIGUOUSLY_SORTED
@@ -156,7 +158,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
         $nodeRecordsWithMissingRestrictions = $this->client->getConnection()->executeQuery(
-        'SELECT c.nodeaggregateidentifier, h.contentstreamidentifier, h.dimensionspacepoint
+            'SELECT c.nodeaggregateidentifier, h.contentstreamidentifier, h.dimensionspacepoint
             FROM neos_contentgraph_hierarchyrelation h
             INNER JOIN neos_contentgraph_node p
                 ON p.relationanchorpoint = h.parentnodeanchor
@@ -171,7 +173,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 AND cr.contentstreamidentifier = h.contentstreamidentifier
                 AND cr.dimensionspacepointhash = h.dimensionspacepointhash
             WHERE cr.affectednodeaggregateidentifier IS NULL'
-    )->fetchAll();
+        )->fetchAll();
 
         foreach ($nodeRecordsWithMissingRestrictions as $nodeRecord) {
             $result->addError(new Error(
@@ -453,8 +455,8 @@ WHERE
                         'Node aggregate ' . $nodeAggregateIdentifier
                         . ' in content stream ' . $contentStreamIdentifier
                         . ' is of ambiguous type ("' . implode('","', array_map(function (array $record) {
-                                return $record['nodetypename'];
-                            }, $nodeAggregateRecords)) . '")',
+                            return $record['nodetypename'];
+                        }, $nodeAggregateRecords)) . '")',
                         self::ERROR_CODE_NODE_AGGREGATE_IS_AMBIGUOUSLY_TYPED
                     ));
                 }
