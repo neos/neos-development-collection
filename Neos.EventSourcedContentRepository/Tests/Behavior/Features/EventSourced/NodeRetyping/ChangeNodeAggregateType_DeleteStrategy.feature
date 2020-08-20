@@ -201,3 +201,55 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     Then I expect the node aggregate "nodea-identifier-de" to have the following child nodes:
       | Name         |
       | childOfTypeB |
+
+
+  Scenario: When changing node type, a non-allowed tethered node should stay (Tethered nodes are not taken into account when checking constraints)
+    And I have the following additional NodeTypes configuration:
+    """
+    'Neos.ContentRepository.Testing:NodeTypeB':
+      childNodes:
+        # !! NodeTypeB has BOTH childOfTypeA AND childOfTypeB as tethered child nodes...
+        childOfTypeA:
+          type: 'Neos.ContentRepository.Testing:ChildOfNodeTypeA'
+      constraints:
+        nodeTypes:
+          # both of these types are forbidden.
+          'Neos.ContentRepository.Testing:ChildOfNodeTypeA': false
+          'Neos.ContentRepository.Testing:ChildOfNodeTypeB': false
+    """
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                           | Value                                      |
+      | contentStreamIdentifier       | "cs-identifier"                            |
+      | nodeAggregateIdentifier       | "nodea-identifier-de"                      |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
+      | originDimensionSpacePoint     | {"language":"de"}                          |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                   |
+      | initialPropertyValues         | {}                                         |
+    And the graph projection is fully up to date
+
+    When the command CreateNodeVariant is executed with payload:
+      | Key                     | Value                 |
+      | contentStreamIdentifier | "cs-identifier"       |
+      | nodeAggregateIdentifier | "nodea-identifier-de" |
+      | sourceOrigin            | {"language":"de"}     |
+      | targetOrigin            | {"language":"gsw"}    |
+    And the graph projection is fully up to date
+
+    When the command ChangeNodeAggregateType was published with payload:
+      | Key                     | Value                                      |
+      | contentStreamIdentifier | "cs-identifier"                            |
+      | nodeAggregateIdentifier | "nodea-identifier-de"                      |
+      | newNodeTypeName         | "Neos.ContentRepository.Testing:NodeTypeB" |
+      | strategy                | "delete"                                   |
+    And the graph projection is fully up to date
+
+    # the type has changed
+    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"de"}
+    Then I expect a node identified by aggregate identifier "nodea-identifier-de" to exist in the subgraph
+    And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
+
+    # BOTH tethered child nodes still need to exist
+    Then I expect the node aggregate "nodea-identifier-de" to have the following child nodes:
+      | Name         |
+      | childOfTypeA |
+      | childOfTypeB |

@@ -219,7 +219,7 @@ trait NodeRetyping
         $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregates($nodeAggregate->getContentStreamIdentifier(), $nodeAggregate->getIdentifier());
         foreach ($childNodeAggregates as $childNodeAggregate) {
             // the "parent" of the $childNode is $node; so we use $newNodeType (the target node type of $node after the operation) here.
-            if (!$this->areNodeTypeConstraintsImposedByParentValid($newNodeType, $childNodeAggregate->getNodeName(), $this->requireNodeType($childNodeAggregate->getNodeTypeName()))) {
+            if (!$childNodeAggregate->isTethered() && !$this->areNodeTypeConstraintsImposedByParentValid($newNodeType, $childNodeAggregate->getNodeName(), $this->requireNodeType($childNodeAggregate->getNodeTypeName()))) {
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints. We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate($nodeAggregate, $childNodeAggregate);
                 // AND REMOVE THEM
@@ -257,6 +257,7 @@ trait NodeRetyping
         $events = DomainEvents::createEmpty();
         // find disallowed tethered nodes
         $tetheredNodeAggregates = $this->getContentGraph()->findTetheredChildNodeAggregates($nodeAggregate->getContentStreamIdentifier(), $nodeAggregate->getIdentifier());
+
         foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
             if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->getNodeName()])) {
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints. We now need to find out which edges we need to remove,
