@@ -26,6 +26,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
@@ -168,7 +169,8 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
-    ) {
+    )
+    {
         // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
                 INSERT IGNORE INTO neos_contentgraph_restrictionrelation (
@@ -221,7 +223,8 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         NodeAggregateClassification $nodeAggregateClassification,
         NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
         NodeName $nodeName = null
-    ): void {
+    ): void
+    {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
@@ -287,7 +290,8 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         DimensionSpacePointSet $dimensionSpacePointSet,
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
         NodeName $relationName = null
-    ): void {
+    ): void
+    {
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
                 $parentNodeAnchorPoint,
@@ -326,7 +330,8 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int {
+    ): int
+    {
         $position = $this->projectionContentGraph->determineHierarchyRelationPosition($parentAnchorPoint, $childAnchorPoint, $succeedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
@@ -351,7 +356,8 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int {
+    ): int
+    {
         if (!$childAnchorPoint && !$parentAnchorPoint) {
             throw new \InvalidArgumentException('You must either specify a parent or child node anchor to get relation positions after recalculation.', 1519847858);
         }
@@ -588,8 +594,8 @@ insert ignore into neos_contentgraph_restrictionrelation
                     'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
                 ],
                 [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]
+                    'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+                ]
             );
         });
     }
@@ -599,7 +605,8 @@ insert ignore into neos_contentgraph_restrictionrelation
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): void {
+    ): void
+    {
         $this->getDatabaseConnection()->executeUpdate(
             '
             -- GraphProjector::cascadeRestrictionRelations
@@ -751,10 +758,10 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             if (count($unassignedIngoingDimensionSpacePoints) > 0) {
                 $ingoingSourceHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
-                    $sourceNode->relationAnchorPoint,
-                    $event->getContentStreamIdentifier(),
-                    new DimensionSpacePointSet([$event->getSourceOrigin()])
-                )[$event->getSourceOrigin()->getHash()] ?? null;
+                        $sourceNode->relationAnchorPoint,
+                        $event->getContentStreamIdentifier(),
+                        new DimensionSpacePointSet([$event->getSourceOrigin()])
+                    )[$event->getSourceOrigin()->getHash()] ?? null;
                 // the null case is caught by the NodeAggregate or its command handler
                 foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
@@ -844,7 +851,8 @@ insert ignore into neos_contentgraph_restrictionrelation
         DimensionSpacePoint $dimensionSpacePoint,
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
-    ): HierarchyRelation {
+    ): HierarchyRelation
+    {
         $copy = new HierarchyRelation(
             $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
             $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
@@ -889,6 +897,19 @@ insert ignore into neos_contentgraph_restrictionrelation
         return $copy;
     }
 
+    public function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event)
+    {
+        $this->transactional(function () use ($event) {
+            $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier());
+
+            foreach ($anchorPoints as $anchorPoint) {
+                $this->updateNodeRecordWithCopyOnWrite($event->getContentStreamIdentifier(), $anchorPoint, function (NodeRecord $node) use ($event) {
+                    $node->nodeTypeName = $event->getNewNodeTypeName();
+                });
+            }
+        });
+    }
+
     /**
      * @param $event
      * @param callable $operations
@@ -901,7 +922,7 @@ insert ignore into neos_contentgraph_restrictionrelation
         switch (get_class($event)) {
             case NodeReferencesWereSet::class:
                 /** @var NodeReferencesWereSet $event */
-                $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                $anchorPoint = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                     $event->getSourceNodeAggregateIdentifier(),
                     $event->getSourceOriginDimensionSpacePoint(),
                     $event->getContentStreamIdentifier()
@@ -909,7 +930,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                 break;
             default:
                 if (method_exists($event, 'getNodeAggregateIdentifier')) {
-                    $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                    $anchorPoint = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                         $event->getNodeAggregateIdentifier(),
                         $event->getOriginDimensionSpacePoint(),
                         $event->getContentStreamIdentifier()
@@ -917,13 +938,18 @@ insert ignore into neos_contentgraph_restrictionrelation
                 }
         }
 
-        $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
+        return $this->updateNodeRecordWithCopyOnWrite($event->getContentStreamIdentifier(), $anchorPoint, $operations);
+    }
+
+    protected function updateNodeRecordWithCopyOnWrite(ContentStreamIdentifier $contentStreamIdentifierWhereWriteOccurs, NodeRelationAnchorPoint $anchorPoint, callable $operations)
+    {
+        $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPoint);
         if (count($contentStreamIdentifiers) > 1) {
             // Copy on Write needed!
             // Copy on Write is a purely "Content Stream" related concept; thus we do not care about different DimensionSpacePoints here (but we copy all edges)
 
             // 1) fetch node, adjust properties, assign new Relation Anchor Point
-            $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPointForNode);
+            $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPoint);
             $copiedNode->relationAnchorPoint = NodeRelationAnchorPoint::create();
             $result = $operations($copiedNode);
             $copiedNode->addToDatabase($this->getDatabaseConnection());
@@ -944,17 +970,16 @@ insert ignore into neos_contentgraph_restrictionrelation
                       AND h.contentstreamidentifier = :contentStreamIdentifier',
                 [
                     'newNodeAnchor' => (string)$copiedNode->relationAnchorPoint,
-                    'originalNodeAnchor' => (string)$anchorPointForNode,
-                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                    'originalNodeAnchor' => (string)$anchorPoint,
+                    'contentStreamIdentifier' => (string)$contentStreamIdentifierWhereWriteOccurs
                 ]
             );
         } else {
             // No copy on write needed :)
 
-            $node = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPointForNode);
+            $node = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPoint);
             if (!$node) {
-                // TODO: ignore the ShowNode (if all other logic is correct)
-                throw new \Exception("TODO NODE NOT FOUND");
+                throw new \Exception("TODO NODE NOT FOUND - shall never happen");
             }
 
             $result = $operations($node);

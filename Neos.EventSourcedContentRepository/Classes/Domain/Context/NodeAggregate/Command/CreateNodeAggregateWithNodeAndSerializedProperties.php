@@ -139,10 +139,10 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifierIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new self(
-            $targetContentStreamIdentifierIdentifier,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
