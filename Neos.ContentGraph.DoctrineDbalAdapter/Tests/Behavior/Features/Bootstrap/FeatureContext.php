@@ -48,7 +48,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->setupEventSourcedTrait();
-        $this->setupInvariantChecksTrait();
+        $this->setupProjectionIntegrityViolationDetectionTrait();
         $this->setupDbalGraphAdapterIntegrityViolationTrait();
     }
 

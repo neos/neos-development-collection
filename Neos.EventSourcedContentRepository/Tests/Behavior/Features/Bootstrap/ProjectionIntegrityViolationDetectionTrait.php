@@ -19,7 +19,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
 /**
- * Custom context trait for "Invariant checks" related concerns
+ * Custom context trait for projection integrity violation detection related concerns
  */
 trait ProjectionIntegrityViolationDetectionTrait
 {
@@ -29,7 +29,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     abstract protected function getObjectManager(): ObjectManagerInterface;
 
-    protected function setupInvariantChecksTrait(): void
+    protected function setupProjectionIntegrityViolationDetectionTrait(): void
     {
         $this->projectionIntegrityViolationDetectionRunner = $this->getObjectManager()->get(ProjectionIntegrityViolationDetectionRunner::class);
     }
@@ -46,7 +46,7 @@ trait ProjectionIntegrityViolationDetectionTrait
      * @Then /^I expect the integrity violation detection result to contain exactly (\d+) errors?$/
      * @param int $expectedNumberOfErrors
      */
-    public function iExpectTheInvariantCheckResultToContainExactlyNErrors(int $expectedNumberOfErrors): void
+    public function iExpectTheIntegrityViolationDetectionResultToContainExactlyNErrors(int $expectedNumberOfErrors): void
     {
         Assert::assertSame(
             $expectedNumberOfErrors,
@@ -59,7 +59,7 @@ trait ProjectionIntegrityViolationDetectionTrait
      * @param int $errorNumber
      * @param int $expectedErrorCode
      */
-    public function iExpectInvariantCheckErrorNumberNToHaveCodeX(int $errorNumber, int $expectedErrorCode): void
+    public function iExpectIntegrityViolationDetectionResultErrorNumberNToHaveCodeX(int $errorNumber, int $expectedErrorCode): void
     {
         /** @var Error $error */
         $error = $this->lastIntegrityViolationDetectionResult->getErrors()[$errorNumber-1];
