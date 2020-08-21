@@ -27,6 +27,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -300,6 +302,12 @@ class Property extends AbstractChange
                     }
                 }
             }
+
+            // !!! REMEMBER: we are not allowed to use $node anymore, because it may have been modified by the commands above.
+            // Thus, we need to re-fetch it (as a workaround; until we do not need this anymore)
+            $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $node = $subgraph->findNodeByNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
+            $node = new TraversableNode($node, $subgraph);
 
             $this->updateWorkspaceInfo();
 
