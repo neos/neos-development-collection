@@ -5,19 +5,19 @@
 # If you want to understand how this page rendering works, have a look at
 # http://neos.readthedocs.io/en/stable/CreatingASite/RenderingCustomMarkup/PageRendering.html
 prototype({packageKey}:Page) < prototype({packageKey}:DefaultPage) {
-    body {
-        // These are your content areas, you can define as many as you want, just name them and define the nodePath.
-        content {
-            // The default content collection
-            main = Neos.Neos:PrimaryContent {
-                nodePath = 'main'
-            }
-            // An optional, additional "Sidebar" content collection. Uncomment the part below if you want a second
-            // content area in your page template, e.g. for a sidebar (the name can be chosen freely of course)
-            // Also make sure you've commented in the "sidebar" part in "Configuration/NodeTypes.Document.Page.yaml".
-            // sidebar = Neos.Neos:ContentCollection {
-            //     nodePath = 'main'
-            // }
-        }
+  body {
+    // These are your content areas, you can define as many as you want, just name them and define the nodePath.
+    content {
+      // The default content collection
+      main = Neos.Neos:PrimaryContent {
+          nodePath = 'main'
+      }
+      // An optional, additional "Sidebar" content collection. Uncomment the part below if you want a second
+      // content area in your page template, e.g. for a sidebar (the name can be chosen freely of course)
+      // Also make sure you've commented in the "sidebar" part in "Configuration/NodeTypes.Document.Page.yaml".
+      // sidebar = Neos.Neos:ContentCollection {
+      //     nodePath = 'main'
+      // }
     }
+  }
 }

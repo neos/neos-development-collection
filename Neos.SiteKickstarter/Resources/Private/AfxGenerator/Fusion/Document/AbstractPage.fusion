@@ -1,17 +1,58 @@
 prototype({packageKey}:Document.AbstractPage) < prototype(Neos.Neos:Page) {
-    head {
-        headTags = Neos.Fusion:Component {
-            renderer = afx`
-                <meta http-equiv="x-ua-compatible" content="ie=edge" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            `
-        }
-
-        titleTag = Neos.Fusion:Tag {
-            tagName = 'title'
-            content = ${q(node).property('title')}
-        }
+  head {
+    headTags = Neos.Fusion:Component {
+      renderer = afx`
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      `
     }
 
-    body = 'Hello World!'
+    titleTag = Neos.Fusion:Tag {
+      tagName = 'title'
+      content = ${q(node).property('title')}
+    }
+
+    # Add stylesheets to your page
+    stylesheets.site = Neos.Fusion:Tag {
+      tagName = 'link'
+      attributes.rel = 'stylesheet'
+      attributes.href = Neos.Fusion:ResourceUri {
+        # Change to your file path
+        path = 'resource://{packageKey}/Public/site.css'
+      }
+    }
+
+    # Add header javascripts to your page
+    javascripts.site = Neos.Fusion:Tag {
+      tagName = 'script'
+      attributes.type = 'text/javascript'
+      attributes.src = Neos.Fusion:ResourceUri {
+        # Change to your file path
+        path = 'resource://{packageKey}/Public/site.js'
+      }
+    }
+  }
+
+  body = {packageKey}:Component.Template.Default {
+    @context.node = ${this.node}
+
+    # Define template properties
+    menu = Neos.Neos:Menu
+    content = Neos.Fusion:Component {
+      main = Neos.Neos:PrimaryContent {
+        nodePath = 'main'
+      }
+
+      renderer = afx`
+        {props.main}
+      `
+    }
+
+    # Script includes before the closing body tag should go here
+		javascripts = Neos.Fusion:Array
+    # This processor appends the rendered javascripts Array to the rendered template
+		@process.appendJavaScripts = ${value + this.javascripts}
+  }
+
+  bodyJavaScripts = Neos.Fusion:Array
 }
