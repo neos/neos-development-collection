@@ -1,20 +1,13 @@
 <?php
-namespace Neos\SiteKickstarter\Command;
 
-/*
- * This file is part of the Neos.SiteKickstarter package.
- *
- * (c) Contributors of the Neos Project - www.neos.io
- *
- * This package is Open Source Software. For the full copyright and license
- * information, please view the LICENSE file which was distributed with this
- * source code.
- */
+namespace Neos\SiteKickstarter\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManager;
-use Neos\SiteKickstarter\Service\GeneratorService;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\SiteKickstarter\Annotation\SitePackageGenerator;
+use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
 
 /**
  * Command controller for the Kickstart generator
@@ -28,10 +21,10 @@ class KickstartCommandController extends CommandController
     protected $packageManager;
 
     /**
-     * @var GeneratorService
+     * @var ReflectionService
      * @Flow\Inject
      */
-    protected $generatorService;
+    protected $reflectionService;
 
     /**
      * Kickstart a new site package
@@ -54,7 +47,34 @@ class KickstartCommandController extends CommandController
             $this->quit(1);
         }
 
-        $generatedFiles = $this->generatorService->generateSitePackage($packageKey, $siteName);
+        $generatorClasses = $this->reflectionService->getAllSubClassNamesForClass(AbstractSitePackageGenerator::class);
+
+        $selection = [];
+        $nameToClassMap = [];
+        foreach ($generatorClasses as $generatorClass) {
+            $classAnnotation = $this->reflectionService->getClassAnnotation($generatorClass, SitePackageGenerator::class);
+            if ($classAnnotation instanceof SitePackageGenerator) {
+                /**
+                 * @var SitePackageGenerator $classAnnotation
+                 */
+                $name = $classAnnotation->generatorName;
+            } else {
+                $name = $generatorClass;
+            }
+
+            $selection[] = $name;
+            $nameToClassMap[$name] = $generatorClass;
+        }
+
+        $generatorName = $this->output->select('What generator do you want to use?',
+            $selection
+        );
+
+        $generatorClass = $nameToClassMap[$generatorName];
+
+        $generatorService = $this->objectManager->get($generatorClass);
+
+        $generatedFiles = $generatorService->generateSitePackage($packageKey, $siteName);
         $this->outputLine(implode(PHP_EOL, $generatedFiles));
     }
 }
