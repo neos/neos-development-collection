@@ -1,0 +1,11 @@
+# This is a custom document node type which has been auto-generated for your site package
+# by Neos. You can customize this to your needs.
+'{packageKey}:Document.Page':
+  superTypes:
+    'Neos.Neos:Document': true
+  ui:
+    icon: 'icon-file'
+    label: '{packageKey} Page'
+  childNodes:
+    main:
+      type: 'Neos.Neos:ContentCollection'
