@@ -1,0 +1,17 @@
+prototype({packageKey}:Document.AbstractPage) < prototype(Neos.Neos:Page) {
+    head {
+        headTags = Neos.Fusion:Component {
+            renderer = afx`
+                <meta http-equiv="x-ua-compatible" content="ie=edge" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            `
+        }
+
+        titleTag = Neos.Fusion:Tag {
+            tagName = 'title'
+            content = ${q(node).property('title')}
+        }
+    }
+
+    body = 'Hello World!'
+}
