@@ -5,6 +5,13 @@
   options:
     fusion:
       prototypeGenerator: ~
+  postprocessors:
+    'IconNameMappingPostprocessor':
+      position: 'end'
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\IconNameMappingPostprocessor'
+    'DefaultPropertyEditorPostprocessor':
+      position: 'end'
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor'
   ui:
     inspector:
       tabs:
