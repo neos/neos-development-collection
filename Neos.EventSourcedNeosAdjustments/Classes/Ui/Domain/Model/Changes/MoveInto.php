@@ -13,13 +13,14 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveNode;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
-class MoveInto extends AbstractMove
+class MoveInto extends AbstractStructuralChange
 {
     /**
      * @Flow\Inject
@@ -110,6 +111,9 @@ class MoveInto extends AbstractMove
             $updateParentNodeInfo->setNode($this->getParentNode());
 
             $this->feedbackCollection->add($updateParentNodeInfo);
+
+            $removeNode = new RemoveNode($subject, $this->getParentNode());
+            $this->feedbackCollection->add($removeNode);
 
             $this->finish($subject);
         }
