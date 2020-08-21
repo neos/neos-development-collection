@@ -14,9 +14,7 @@ namespace Neos\Neos\Aspects;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
-use Neos\Neos\Exception;
 
 /**
  * @Flow\Scope("singleton")
@@ -50,30 +48,6 @@ class NodeTypeConfigurationEnrichmentAspect
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
-     * @var IconNameMappingService
-     */
-    protected $iconNameMappingService;
-
-    /**
-     * @Flow\Around("method(Neos\ContentRepository\Domain\Model\NodeType->setFullConfiguration())")
-     * @param JoinPointInterface $joinPoint
-     * @return void
-     * @throws Exception
-     */
-    public function enrichNodeTypeConfiguration(JoinPointInterface $joinPoint)
-    {
-        $configuration = $joinPoint->getMethodArgument('fullConfiguration');
-        $nodeTypeName = $joinPoint->getProxy()->getName();
-
-        $this->addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, $configuration);
-        $this->mapIconNames($configuration);
-
-        $joinPoint->setMethodArgument('fullConfiguration', $configuration);
-        $joinPoint->getAdviceChain()->proceed($joinPoint);
-    }
-
-    /**
      * @Flow\Around("method(Neos\ContentRepository\Domain\Model\NodeType->__construct())")
      * @param JoinPointInterface $joinPoint
      * @return void
@@ -102,84 +76,6 @@ class NodeTypeConfigurationEnrichmentAspect
 
         if (isset($configuration['properties'])) {
             $this->setPropertyLabels($nodeTypeName, $configuration);
-        }
-    }
-
-    /**
-     * Map all icon- prefixed icon names to the corresponding
-     * names in the used icon implementation
-     *
-     * @param array $configuration
-     */
-    protected function mapIconNames(array &$configuration)
-    {
-        if (isset($configuration['ui']['icon'])) {
-            $configuration['ui']['icon'] = $this->iconNameMappingService->convert($configuration['ui']['icon']);
-        }
-
-        $inspectorConfiguration = Arrays::getValueByPath($configuration, 'ui.inspector');
-        if (is_array($inspectorConfiguration)) {
-            foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
-                foreach ($elementTypeItems as $elementName => $elementConfiguration) {
-                    if (isset($inspectorConfiguration[$elementTypeName][$elementName]['icon'])) {
-                        $configuration['ui']['inspector'][$elementTypeName][$elementName]['icon'] = $this->iconNameMappingService->convert($inspectorConfiguration[$elementTypeName][$elementName]['icon']);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * @param string $nodeTypeName
-     * @param array $configuration
-     * @throws Exception
-     * @return void
-     */
-    protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
-    {
-        if (isset($configuration['properties']) && is_array($configuration['properties'])) {
-            foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
-                if (!isset($propertyConfiguration['type'])) {
-                    continue;
-                }
-
-                $type = $propertyConfiguration['type'];
-
-                if (!isset($this->dataTypesDefaultConfiguration[$type])) {
-                    continue;
-                }
-
-                if (!isset($propertyConfiguration['ui']['inspector'])) {
-                    continue;
-                }
-
-                $defaultConfigurationFromDataType = $this->dataTypesDefaultConfiguration[$type];
-
-                // FIRST STEP: Figure out which editor should be used
-                // - Default: editor as configured from the data type
-                // - Override: editor as configured from the property configuration.
-                if (isset($propertyConfiguration['ui']['inspector']['editor'])) {
-                    $editor = $propertyConfiguration['ui']['inspector']['editor'];
-                } elseif (isset($defaultConfigurationFromDataType['editor'])) {
-                    $editor = $defaultConfigurationFromDataType['editor'];
-                } else {
-                    throw new Exception('Could not find editor for ' . $propertyName . ' in node type ' . $nodeTypeName, 1436809123);
-                }
-
-                // SECOND STEP: Build up the full inspector configuration by merging:
-                // - take configuration from editor defaults
-                // - take configuration from dataType
-                // - take configuration from properties (NodeTypes)
-                $mergedInspectorConfiguration = [];
-                if (isset($this->editorDefaultConfiguration[$editor])) {
-                    $mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor];
-                }
-
-                $mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $defaultConfigurationFromDataType);
-                $mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $propertyConfiguration['ui']['inspector']);
-                $propertyConfiguration['ui']['inspector'] = $mergedInspectorConfiguration;
-                $propertyConfiguration['ui']['inspector']['editor'] = $editor;
-            }
         }
     }
 
