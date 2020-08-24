@@ -52,14 +52,14 @@ class KickstartCommandController extends CommandController
         $selection = [];
         $nameToClassMap = [];
         foreach ($generatorClasses as $generatorClass) {
+            $name = $generatorClass;
+
             $classAnnotation = $this->reflectionService->getClassAnnotation($generatorClass, SitePackageGenerator::class);
             if ($classAnnotation instanceof SitePackageGenerator) {
                 /**
                  * @var SitePackageGenerator $classAnnotation
                  */
                 $name = $classAnnotation->generatorName;
-            } else {
-                $name = $generatorClass;
             }
 
             $selection[] = $name;
