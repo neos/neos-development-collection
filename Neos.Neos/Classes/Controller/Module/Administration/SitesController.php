@@ -34,6 +34,8 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\NodeService;
+use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
+use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
 /**
  * The Neos Sites Management module controller
@@ -217,11 +219,29 @@ class SitesController extends AbstractModuleController
     {
         $sitePackages = $this->packageManager->getFilteredPackages('available', null, 'neos-site');
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false);
+
+        $generatorServiceIsAvailable = $this->packageManager->isPackageAvailable('Neos.SiteKickstarter');
+
+        $generatorServices = [];
+
+        if ($generatorServiceIsAvailable) {
+            $generatorClasses = $this->reflectionService->getAllSubClassNamesForClass(AbstractSitePackageGenerator::class);
+            /**
+             * @var SitePackageGeneratorNameService $sitePackageGeneratorNameService
+             */
+            $sitePackageGeneratorNameService = $this->objectManager->get(SitePackageGeneratorNameService::class);
+            foreach ($generatorClasses as $generatorClass) {
+                $name = $sitePackageGeneratorNameService->getNameOfSitePackageGenerator($generatorClass);
+                $generatorServices[$generatorClass] = $name;
+            }
+        }
+
         $this->view->assignMultiple([
             'sitePackages' => $sitePackages,
             'documentNodeTypes' => $documentNodeTypes,
             'site' => $site,
-            'generatorServiceIsAvailable' => $this->packageManager->isPackageAvailable('Neos.SiteKickstarter')
+            'generatorServiceIsAvailable' => $generatorServiceIsAvailable,
+            'generatorServices' => $generatorServices
         ]);
     }
 
@@ -229,11 +249,12 @@ class SitesController extends AbstractModuleController
      * Create a new site-package and directly import it.
      *
      * @param string $packageKey Package Name to create
+     * @param string $generatorClass Generator Class to generate the site package
      * @param string $siteName Site Name to create
      * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
      * @return void
      */
-    public function createSitePackageAction($packageKey, $siteName)
+    public function createSitePackageAction($packageKey, $generatorClass, $siteName)
     {
         if ($this->packageManager->isPackageAvailable('Neos.SiteKickstarter') === false) {
             $this->addFlashMessage('The package "%s" is required to create new site packages.', 'Missing Package', Message::SEVERITY_ERROR, ['Neos.SiteKickstarter'], 1475736232);
@@ -244,8 +265,13 @@ class SitesController extends AbstractModuleController
             $this->addFlashMessage('The package key "%s" already exists.', 'Invalid package key', Message::SEVERITY_ERROR, [htmlspecialchars($packageKey)], 1412372021);
             $this->redirect('index');
         }
+        // this should never happen, but if somebody posts unexpected data to the form, it should stop here and return some readable error message
+        if ($this->objectManager->has($generatorClass) === false) {
+            $this->addFlashMessage('The generator class "%s" is not present.', 'Missing generator class', Message::SEVERITY_ERROR, [$generatorClass]);
+            $this->redirect('index');
+        }
 
-        $generatorService = $this->objectManager->get(GeneratorService::class);
+        $generatorService = $this->objectManager->get($generatorClass);
         $generatorService->generateSitePackage($packageKey, $siteName);
 
         $this->controllerContext->getFlashMessageContainer()->addMessage(new Message(sprintf('Site Packages "%s" was created.', htmlspecialchars($packageKey))));
