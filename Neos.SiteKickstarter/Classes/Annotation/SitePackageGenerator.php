@@ -2,7 +2,6 @@
 
 namespace Neos\SiteKickstarter\Annotation;
 
-
 /**
  * Class SitePackageGenerator
  * @package Neos\SiteKickstarter\Annotation
@@ -21,7 +20,8 @@ class SitePackageGenerator
     /**
      * @param array $values
      */
-    public function __construct(array $values) {
+    public function __construct(array $values)
+    {
         if (!isset($values['value']) && !isset($values['generatorName'])) {
             throw new \InvalidArgumentException('A SitePackageGenerator annotation must specify a generatorName.', 1234567890);
         }
