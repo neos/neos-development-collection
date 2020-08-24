@@ -13,9 +13,9 @@ use Neos\SiteKickstarter\Annotation as SiteKickstarter;
  */
 class AnnotatedSitePackageGenerator extends AbstractSitePackageGenerator
 {
-
     public function generateSitePackage($packageKey, $siteName)
     {
         // just a dummy
     }
+
 }
