@@ -26,7 +26,7 @@ class FusionRecursiveDirectoryRenderer
                     \Neos\Utility\Files::createDirectoryRecursively(dirname($targetPath));
                 }
                 file_put_contents($targetPath, $compiledFile);
-            } else if ($value != "." && $value != "..") {
+            } elseif ($value != "." && $value != "..") {
                 $this->renderDirectory($path, $targetPath, $variables);
             }
         }

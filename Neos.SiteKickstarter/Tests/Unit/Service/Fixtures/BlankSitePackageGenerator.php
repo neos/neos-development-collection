@@ -11,9 +11,9 @@ use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
  */
 class BlankSitePackageGenerator extends AbstractSitePackageGenerator
 {
-
     public function generateSitePackage($packageKey, $siteName)
     {
         // just a dummy
     }
+
 }

@@ -3,7 +3,6 @@
 namespace Neos\SiteKickstarter\Tests\Service;
 
 use Doctrine\Common\Annotations\Reader;
-use Neos\Flow\Exception;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\SiteKickstarter\Annotation\SitePackageGenerator;
@@ -48,7 +47,8 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
 
         $this->assertEquals(
             $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator(AnnotatedSitePackageGenerator::class),
-            'AnnotatedSitePackageGenerator');
+            'AnnotatedSitePackageGenerator'
+        );
     }
 
     /**
@@ -58,6 +58,7 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
     {
         $this->assertEquals(
             $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator(BlankSitePackageGenerator::class),
-            BlankSitePackageGenerator::class);
+            BlankSitePackageGenerator::class
+        );
     }
 }

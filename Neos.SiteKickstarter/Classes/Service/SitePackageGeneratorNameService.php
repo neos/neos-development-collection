@@ -23,7 +23,8 @@ class SitePackageGeneratorNameService
 
         $classAnnotation = $this->reflectionService->getClassAnnotation(
             $generatorClass,
-            SitePackageGenerator::class);
+            SitePackageGenerator::class
+        );
         if ($classAnnotation instanceof SitePackageGenerator) {
             /**
              * @var SitePackageGenerator $classAnnotation
@@ -33,4 +34,5 @@ class SitePackageGeneratorNameService
 
         return $name;
     }
+
 }
