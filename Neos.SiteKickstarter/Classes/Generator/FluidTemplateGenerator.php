@@ -91,7 +91,6 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
      */
     protected function generateSitesFusionDirectory($packageKey, $siteName)
     {
-
         $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['siteName'] = $siteName;

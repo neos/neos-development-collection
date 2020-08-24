@@ -64,7 +64,8 @@ class KickstartCommandController extends CommandController
             $nameToClassMap[$name] = $generatorClass;
         }
 
-        $generatorName = $this->output->select('What generator do you want to use?',
+        $generatorName = $this->output->select(
+            'What generator do you want to use?',
             $selection
         );
 

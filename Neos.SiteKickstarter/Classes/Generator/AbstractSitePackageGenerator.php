@@ -4,5 +4,5 @@ namespace Neos\SiteKickstarter\Generator;
 
 abstract class AbstractSitePackageGenerator extends \Neos\Kickstarter\Service\GeneratorService
 {
-    public abstract function generateSitePackage($packageKey, $siteName);
+    abstract public function generateSitePackage($packageKey, $siteName);
 }
