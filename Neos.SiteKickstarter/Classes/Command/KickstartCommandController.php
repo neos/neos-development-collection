@@ -6,8 +6,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\SiteKickstarter\Annotation\SitePackageGenerator;
 use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
+use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
 /**
  * Command controller for the Kickstart generator
@@ -25,6 +25,12 @@ class KickstartCommandController extends CommandController
      * @Flow\Inject
      */
     protected $reflectionService;
+
+    /**
+     * @var SitePackageGeneratorNameService
+     * @Flow\Inject
+     */
+    protected $sitePackageGeneratorNameService;
 
     /**
      * Kickstart a new site package
@@ -52,15 +58,7 @@ class KickstartCommandController extends CommandController
         $selection = [];
         $nameToClassMap = [];
         foreach ($generatorClasses as $generatorClass) {
-            $name = $generatorClass;
-
-            $classAnnotation = $this->reflectionService->getClassAnnotation($generatorClass, SitePackageGenerator::class);
-            if ($classAnnotation instanceof SitePackageGenerator) {
-                /**
-                 * @var SitePackageGenerator $classAnnotation
-                 */
-                $name = $classAnnotation->generatorName;
-            }
+            $name = $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator($generatorClass);
 
             $selection[] = $name;
             $nameToClassMap[$name] = $generatorClass;
