@@ -17,5 +17,4 @@ class AnnotatedSitePackageGenerator extends AbstractSitePackageGenerator
     {
         // just a dummy
     }
-
 }
