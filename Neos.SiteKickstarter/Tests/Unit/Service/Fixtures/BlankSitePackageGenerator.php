@@ -15,5 +15,4 @@ class BlankSitePackageGenerator extends AbstractSitePackageGenerator
     {
         // just a dummy
     }
-
 }

@@ -47,5 +47,4 @@ class FusionRecursiveDirectoryRenderer
         }
         return $content;
     }
-
 }

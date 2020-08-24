@@ -34,5 +34,4 @@ class SitePackageGeneratorNameService
 
         return $name;
     }
-
 }
