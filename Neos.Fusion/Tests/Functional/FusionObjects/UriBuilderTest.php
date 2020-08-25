@@ -30,7 +30,8 @@ class UriBuilderTest extends AbstractFusionObjectTest
                 '@controller' => 'Foo',
                 '@action' => 'index',
                 '@format' => 'html'
-            ));
+            )
+        );
 
         $view = $this->buildView();
         $view->setFusionPath('uriBuilder/foo');

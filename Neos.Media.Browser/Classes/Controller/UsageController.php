@@ -175,7 +175,8 @@ class UsageController extends ActionController
      */
     private function getNodeFrom(AssetUsageInNodeProperties $assetUsage)
     {
-        $context = $this->_contextFactory->create([
+        $context = $this->_contextFactory->create(
+            [
             'workspaceName' => $assetUsage->getWorkspaceName(),
             'dimensions' => $assetUsage->getDimensionValues(),
             'invisibleContentShown' => true,

@@ -1111,10 +1111,12 @@ HELPTEXT;
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
-            ->add('where', $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->notIn('n.workspace', $workspaceNames),
-                    $queryBuilder->expr()->isNull('n.workspace')
-                )
+            ->add(
+                'where',
+                $queryBuilder->expr()->orX(
+                $queryBuilder->expr()->notIn('n.workspace', $workspaceNames),
+                $queryBuilder->expr()->isNull('n.workspace')
+            )
             );
 
         foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
