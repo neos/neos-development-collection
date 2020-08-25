@@ -56,7 +56,7 @@ class Version20200823164701 extends AbstractMigration
 
         foreach (self::TYPES as $type) {
             $this->addSql(sprintf(
-                'UPDATE neos_media_domain_model_thumbnail SET staticresource = "resource://Neos.Media/Public/IconSets/vivid/%s.png" WHERE (staticresource = "resource://Neos.Media/Public/Icons/512px/%s.svg")',
+                "UPDATE neos_media_domain_model_thumbnail SET staticresource = 'resource://Neos.Media/Public/IconSets/vivid/%s.png' WHERE (staticresource = 'resource://Neos.Media/Public/Icons/512px/%s.svg')",
                 $type,
                 $type
             ));
