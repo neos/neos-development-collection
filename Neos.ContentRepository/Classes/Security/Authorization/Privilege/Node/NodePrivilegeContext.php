@@ -25,10 +25,9 @@ class NodePrivilegeContext
 {
 
     /**
-     * @Flow\Inject
-     * @var TransientNodeCache
+     * @var NodeInterface[]
      */
-    protected $transientNodeCache;
+    private static $nodeRuntimeCache = [];
 
     /**
      * @Flow\Inject
@@ -228,20 +227,22 @@ class NodePrivilegeContext
      *
      * @param string $nodeIdentifier
      * @return NodeInterface
+     * @throws \Exception
      */
     protected function getNodeByIdentifier($nodeIdentifier)
     {
-        return $this->transientNodeCache->cache($nodeIdentifier, function () use ($nodeIdentifier) {
+        if (!\array_key_exists($nodeIdentifier, self::$nodeRuntimeCache)) {
             $context = $this->contextFactory->create([
                 // as we are often in backend, we should take invisible nodes into account properly when resolving Node Identifiers to paths.
                 'invisibleContentShown' => true
             ]);
             $node = null;
-            $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
+            $this->securityContext->withoutAuthorizationChecks(static function () use ($nodeIdentifier, $context, &$node) {
                 $node = $context->getNodeByIdentifier($nodeIdentifier);
             });
             $context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, null);
-            return $node;
-        });
+            self::$nodeRuntimeCache[$nodeIdentifier] = $node;
+        }
+        return self::$nodeRuntimeCache[$nodeIdentifier];
     }
 }
