@@ -70,6 +70,19 @@ class SortOperation extends AbstractOperation
             throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
         }
 
+        // Check sort options
+        $sortOptions = [];
+        if (isset($arguments[2]) && !empty($arguments[2])) {
+            $args = is_array($arguments[2]) ? $arguments[2] : [$arguments[2]];
+            foreach ($args as $arg) {
+                if (!in_array(strtoupper($arg), ['SORT_REGULAR', 'SORT_NUMERIC', 'SORT_STRING', 'SORT_LOCALE_STRING', 'SORT_NATURAL', 'SORT_FLAG_CASE'], true)) {
+                    throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort option (see https://www.php.net/manual/en/function.sort)', 1591107722);
+                } else {
+                    $sortOptions[] = $arg;
+                }
+            }
+        }
+
         $sortedNodes = [];
         $sortSequence = [];
         $nodesByIdentifier = [];
@@ -91,10 +104,12 @@ class SortOperation extends AbstractOperation
         }
 
         // Create the sort sequence
+        $sortFlags = array_sum(array_map('constant', $sortOptions));
+        $sortFlags = $sortFlags === 0 ? SORT_REGULAR : $sortFlags;
         if ($sortOrder === 'DESC') {
-            arsort($sortSequence);
+            arsort($sortSequence, $sortFlags);
         } elseif ($sortOrder === 'ASC') {
-            asort($sortSequence);
+            asort($sortSequence, $sortFlags);
         }
 
         // Build the sorted context that is returned
