@@ -162,6 +162,30 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy     | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
+  Scenario: Move a node that has no name
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                                 |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
+      | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
+      | coveredDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
+      | nodeAggregateClassification   | "regular"                                                                                                                                          |
+    And the graph projection is fully up to date
+
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                              | Value                              |
+      | contentStreamIdentifier          | "cs-identifier"                    |
+      | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier          | "nody-mc-nodeface"                 |
+      | newParentNodeAggregateIdentifier | "lady-eleonode-rootford"           |
+      | relationDistributionStrategy     | "scatter"                          |
+    And the graph projection is fully up to date
+    When I am in content stream "cs-identifier" and Dimension Space Point {"market": "DE", "language": "de"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node {"contentStreamIdentifier":"cs-identifier","nodeAggregateIdentifier":"nody-mc-nodeface","originDimensionSpacePoint":{"market":"DE","language":"de"}}
+
+
   Scenario: Try to move a node to a parent whose node type does not allow child nodes of the node's type
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
