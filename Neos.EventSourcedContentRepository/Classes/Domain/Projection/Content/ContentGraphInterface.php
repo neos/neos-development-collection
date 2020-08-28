@@ -139,11 +139,20 @@ interface ContentGraphInterface
     public function countNodes(): int;
 
     /**
-     * Returns all content stream identifiers
+     * Returns all projected content stream identifiers
      *
      * @return ContentStreamIdentifier[]
      */
-    public function findContentStreamIdentifiers(): array;
+    public function findProjectedContentStreamIdentifiers(): array;
+
+    /**
+     * Returns all projected dimension space points
+     *
+     * @return DimensionSpacePointSet
+     */
+    public function findProjectedDimensionSpacePoints(): DimensionSpacePointSet;
+
+    public function findProjectedNodeAggregateIdentifiersInContentStream(ContentStreamIdentifier $contentStreamIdentifier): array;
 
     /**
      * Returns all node types in use, from the graph projection

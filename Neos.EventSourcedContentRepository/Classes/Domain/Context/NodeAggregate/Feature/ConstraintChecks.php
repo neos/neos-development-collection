@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
 
 /*
@@ -142,33 +143,26 @@ trait ConstraintChecks
     }
 
     /**
+     * NodeType and NodeName must belong together to the same node, which is the to-be-checked one.
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeType $nodeType
-     * @param NodeName $nodeName
+     * @param NodeName|null $nodeName
      * @param array|NodeAggregateIdentifier[] $parentNodeAggregateIdentifiers
      * @throws NodeConstraintException
-     * @throws NodeTypeNotFoundException
-     * @throws NodeAggregatesTypeIsAmbiguous
      */
     protected function requireConstraintsImposedByAncestorsAreMet(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeType $nodeType,
         ?NodeName $nodeName,
         array $parentNodeAggregateIdentifiers
-    ) : void {
+    ): void
+    {
         foreach ($parentNodeAggregateIdentifiers as $parentNodeAggregateIdentifier) {
             $parentAggregate = $this->requireProjectedNodeAggregate($contentStreamIdentifier, $parentNodeAggregateIdentifier);
             try {
                 $parentsNodeType = $this->requireNodeType($parentAggregate->getNodeTypeName());
-                if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
-                    throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed for child nodes of type ' . $parentsNodeType->getName());
-                }
-                if ($nodeName
-                    &&$parentsNodeType->hasAutoCreatedChildNode($nodeName)
-                    && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)->getName() !== $nodeType->getName()) {
-                    throw new NodeConstraintException('Node type "' . $nodeType . '" does not match configured "' . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)->getName()
-                        . '" for auto created child nodes for parent type "' . $parentsNodeType . '" with name "' . $nodeName . '"');
-                }
+                $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeName, $nodeType);
             } catch (NodeTypeNotFound $e) {
                 // skip constraint check; Once the parent is changed to be of an available type,
                 // the constraint checks are executed again. See handleChangeNodeAggregateType
@@ -177,18 +171,60 @@ trait ConstraintChecks
             foreach ($this->getContentGraph()->findParentNodeAggregates($contentStreamIdentifier, $parentNodeAggregateIdentifier) as $grandParentNodeAggregate) {
                 try {
                     $grandParentsNodeType = $this->requireNodeType($grandParentNodeAggregate->getNodeTypeName());
-                    if ($parentAggregate->getNodeName()
-                        && $grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->getNodeName())
-                        && !$grandParentsNodeType->allowsGrandchildNodeType((string)$parentAggregate->getNodeName(), $nodeType)) {
-                        throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentAggregate->getNodeName()
-                            . '" of nodes of type "' . $grandParentNodeAggregate->getNodeTypeName() . '"', 1520011791);
-                    }
+                    $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet($grandParentsNodeType, $parentAggregate->getNodeName(), $nodeType);
+
                 } catch (NodeTypeNotFound $e) {
                     // skip constraint check; Once the grand parent is changed to be of an available type,
                     // the constraint checks are executed again. See handleChangeNodeAggregateType
                 }
             }
         }
+    }
+
+    protected function requireNodeTypeConstraintsImposedByParentToBeMet(NodeType $parentsNodeType, ?NodeName $nodeName, NodeType $nodeType): void
+    {
+        // !!! IF YOU ADJUST THIS METHOD, also adjust the method below.
+        if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
+            throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed for child nodes of type ' . $parentsNodeType->getName());
+        }
+        if ($nodeName
+            && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
+            && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)->getName() !== $nodeType->getName()) {
+            throw new NodeConstraintException('Node type "' . $nodeType . '" does not match configured "' . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)->getName()
+                . '" for auto created child nodes for parent type "' . $parentsNodeType . '" with name "' . $nodeName . '"');
+        }
+    }
+
+    protected function areNodeTypeConstraintsImposedByParentValid(NodeType $parentsNodeType, ?NodeName $nodeName, NodeType $nodeType): bool
+    {
+        // !!! IF YOU ADJUST THIS METHOD, also adjust the method above.
+        if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
+            return false;
+        }
+        if ($nodeName
+            && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
+            && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)->getName() !== $nodeType->getName()) {
+            return false;
+        }
+        return true;
+    }
+
+    protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): void
+    {
+        if (!$this->areNodeTypeConstraintsImposedByGrandparentValid($grandParentsNodeType, $parentNodeName, $nodeType)) {
+            throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentNodeName
+                . '" of nodes of type "' . $grandParentsNodeType->getName() . '"', 1520011791);
+        }
+    }
+
+    protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): bool
+    {
+        if ($parentNodeName
+            && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
+            && !$grandParentsNodeType->allowsGrandchildNodeType((string)$parentNodeName, $nodeType)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -201,7 +237,8 @@ trait ConstraintChecks
     protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): ReadableNodeAggregateInterface {
+    ): ReadableNodeAggregateInterface
+    {
         $nodeAggregate = $this->getContentGraph()->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         if (!$nodeAggregate) {
@@ -220,7 +257,8 @@ trait ConstraintChecks
     protected function requireProjectedNodeAggregateToNotExist(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): void {
+    ): void
+    {
         $nodeAggregate = $this->getContentGraph()->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         if ($nodeAggregate) {
@@ -236,7 +274,8 @@ trait ConstraintChecks
     protected function requireNodeAggregateToCoverDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): void {
+    ): void
+    {
         if (!$nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" does currently not cover dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1541678877);
         }
@@ -250,7 +289,8 @@ trait ConstraintChecks
     protected function requireNodeAggregateToCoverDimensionSpacePoints(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $dimensionSpacePointSet
-    ): void {
+    ): void
+    {
         if (!$nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes() === $dimensionSpacePointSet->getPointHashes()) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
                 $nodeAggregate->getIdentifier(),
@@ -292,7 +332,8 @@ trait ConstraintChecks
         ContentStreamIdentifier $contentStreamIdentifier,
         ReadableNodeAggregateInterface $nodeAggregate,
         ReadableNodeAggregateInterface $referenceNodeAggregate
-    ) {
+    )
+    {
         if ($nodeAggregate->getIdentifier()->equals($referenceNodeAggregate->getIdentifier())) {
             throw new NodeAggregateIsDescendant('Node aggregate "' . $nodeAggregate->getIdentifier() . '" is descendant of node aggregate "' . $referenceNodeAggregate->getIdentifier() . '"', 1554971124);
         }
@@ -315,7 +356,8 @@ trait ConstraintChecks
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePoints
-    ): void {
+    ): void
+    {
         $dimensionSpacePointsOccupiedByChildNodeName = $this->getContentGraph()->getDimensionSpacePointsOccupiedByChildNodeName(
             $contentStreamIdentifier,
             $nodeName,
@@ -340,7 +382,8 @@ trait ConstraintChecks
         NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointsToBeCovered
-    ): void {
+    ): void
+    {
         $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName($contentStreamIdentifier, $parentNodeAggregateIdentifier, $nodeName);
         foreach ($childNodeAggregates as $childNodeAggregate) {
             $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($dimensionSpacePointsToBeCovered);
@@ -382,7 +425,8 @@ trait ConstraintChecks
     protected function requireNodeAggregateToDisableDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): void {
+    ): void
+    {
         if (!$nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" currently does not disable dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1557735431);
         }
@@ -396,7 +440,8 @@ trait ConstraintChecks
     protected function requireNodeAggregateToNotDisableDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): void {
+    ): void
+    {
         if ($nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDisablesDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" currently disables dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1555179563);
         }

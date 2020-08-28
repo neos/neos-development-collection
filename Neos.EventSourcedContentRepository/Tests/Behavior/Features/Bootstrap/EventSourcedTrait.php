@@ -81,6 +81,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -435,6 +436,7 @@ trait EventSourcedTrait
         $event = $this->eventNormalizer->denormalize($eventPayload, $eventType);
         $event = DecoratedEvent::addIdentifier($event, Uuid::uuid4()->toString());
         $events = DomainEvents::withSingleEvent($event);
+        $this->getObjectManager()->get(ReadSideMemoryCacheManager::class)->disableCache();
         $this->eventStore->commit($streamName, $events);
         $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events);
     }
@@ -771,7 +773,7 @@ trait EventSourcedTrait
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
-        $commandHandler->handleChangeNodeAggregateType($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleChangeNodeAggregateType($command);
     }
 
     /**
@@ -1539,9 +1541,11 @@ trait EventSourcedTrait
             $expectedNodeName = NodeName::fromString($row['Name']);
             $actualNodeName = $nodes[$index]->getNodeName();
             Assert::assertEquals($expectedNodeName, $actualNodeName, 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName . '" Actual: "' . $actualNodeName . '"');
-            $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($row['NodeDiscriminator'], true));
-            $actualNodeDiscriminator = NodeDiscriminator::fromNode($nodes[$index]);
-            Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
+            if (isset($row['NodeDiscriminator'])) {
+                $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($row['NodeDiscriminator'], true));
+                $actualNodeDiscriminator = NodeDiscriminator::fromNode($nodes[$index]);
+                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
+            }
         }
     }
 
@@ -1580,6 +1584,7 @@ trait EventSourcedTrait
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
     }
 
+
     /**
      * @Then /^I expect the Node Aggregate "([^"]*)" to have the properties:$/
      * @param $nodeAggregateIdentifier
@@ -1614,6 +1619,27 @@ trait EventSourcedTrait
             Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
         }
     }
+
+    /**
+     * @Then /^I expect this node to have no properties$/
+     */
+    public function iExpectThisNodeToHaveNoProperties()
+    {
+        Assert::assertNotNull($this->currentNode, 'current node not found');
+        $properties = $this->currentNode->getProperties();
+        $properties = iterator_to_array($properties);
+        Assert::assertCount(0, $properties, 'I expect no properties');
+    }
+
+    /**
+     * @Then /^I expect this node to be of type "([^"]*)"$/
+     * @param string $nodeTypeName
+     */
+    public function iExpectTheNodeToBeOfType(string $nodeTypeName)
+    {
+        Assert::assertEquals($nodeTypeName, $this->currentNode->getNodeTypeName()->jsonSerialize());
+    }
+
 
     /**
      * @Then /^I expect the node aggregate "([^"]*)" to have the references:$/

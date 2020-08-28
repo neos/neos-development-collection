@@ -38,7 +38,7 @@ trait NodeVariationInternals
      * @param ReadableNodeAggregateInterface $nodeAggregate
      * @return DomainEvents
      */
-    private function createEventsForVariations(ContentStreamIdentifier $contentStreamIdentifier, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin, ReadableNodeAggregateInterface $nodeAggregate): DomainEvents
+    protected function createEventsForVariations(ContentStreamIdentifier $contentStreamIdentifier, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin, ReadableNodeAggregateInterface $nodeAggregate): DomainEvents
     {
         switch ($this->getInterDimensionalVariationGraph()->getVariantType($targetOrigin, $sourceOrigin)->getType()) {
             case DimensionSpace\VariantType::TYPE_SPECIALIZATION:

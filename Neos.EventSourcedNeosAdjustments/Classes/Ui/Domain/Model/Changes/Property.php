@@ -13,11 +13,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
@@ -25,7 +25,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Enab
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -254,7 +257,6 @@ class Property extends AbstractChange
 
                 // TODO: Make changing the node type a separated, specific/defined change operation.
                 if ($propertyName[0] !== '_' || $propertyName === '_hiddenInIndex') {
-                    $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
                     $command = new SetNodeProperties(
                         $node->getContentStreamIdentifier(),
                         $node->getNodeAggregateIdentifier(),
@@ -269,9 +271,13 @@ class Property extends AbstractChange
                 } else {
                     // property starts with "_"
                     if ($propertyName === '_nodeType') {
-                        throw new \Exception("TODO FIX");
-                        $nodeType = $this->nodeTypeManager->getNodeType($value);
-                        $node = $this->changeNodeType($node, $nodeType);
+                        $command = new ChangeNodeAggregateType(
+                            $node->getContentStreamIdentifier(),
+                            $node->getNodeAggregateIdentifier(),
+                            NodeTypeName::fromString($value),
+                            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete()
+                        );
+                        $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType($command)->blockUntilProjectionsAreUpToDate();
                     } elseif ($propertyName === '_hidden') {
                         if ($value === true) {
                             $command = new DisableNodeAggregate(
@@ -297,6 +303,12 @@ class Property extends AbstractChange
                 }
             }
 
+            // !!! REMEMBER: we are not allowed to use $node anymore, because it may have been modified by the commands above.
+            // Thus, we need to re-fetch it (as a workaround; until we do not need this anymore)
+            $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $node = $subgraph->findNodeByNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
+            $node = new TraversableNode($node, $subgraph);
+
             $this->updateWorkspaceInfo();
 
             $reloadIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadIfChanged', $propertyName);
@@ -321,21 +333,5 @@ class Property extends AbstractChange
             $updateNodeInfo->setNode($node);
             $this->feedbackCollection->add($updateNodeInfo);
         }
-    }
-
-    /**
-     * @param TraversableNodeInterface $node
-     * @param NodeType $nodeType
-     * @return TraversableNodeInterface
-     */
-    protected function changeNodeType(TraversableNodeInterface $node, NodeType $nodeType)
-    {
-        $oldNodeType = $node->getNodeType();
-        ObjectAccess::setProperty($node, 'nodeType', $nodeType);
-        $this->nodeService->cleanUpProperties($node);
-        $this->nodeService->cleanUpAutoCreatedChildNodes($node, $oldNodeType);
-        $this->nodeService->createChildNodes($node);
-
-        return $node;
     }
 }

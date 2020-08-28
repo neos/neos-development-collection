@@ -4,17 +4,17 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedCoveredDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccupiedDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
@@ -30,18 +30,21 @@ use Ramsey\Uuid\Uuid;
 class DisallowedChildNodeAdjustment
 {
     use RemoveNodeAggregateTrait;
+    use LoadNodeTypeTrait;
 
     protected EventStore $eventStore;
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected NodeTypeManager $nodeTypeManager;
     protected ContentGraphInterface $contentGraph;
+    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, ContentGraphInterface $contentGraph)
+    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, ContentGraphInterface $contentGraph, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
     {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->contentGraph = $contentGraph;
+        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
@@ -102,27 +105,11 @@ class DisallowedChildNodeAdjustment
                     );
 
                     yield StructureAdjustment::createForNode($node, StructureAdjustment::DISALLOWED_CHILD_NODE, $message, function() use ($nodeAggregate, $coveredDimensionSpacePoint) {
+                        $this->readSideMemoryCacheManager->disableCache();
                         return $this->removeNodeInSingleDimensionSpacePoint($nodeAggregate, $coveredDimensionSpacePoint);
                     });
                 }
             }
-        }
-    }
-
-    protected function loadNodeType(NodeTypeName $nodeTypeName): ?NodeType
-    {
-        try {
-            $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
-            if ($nodeType->getName() !== $nodeTypeName->jsonSerialize()) {
-                // the $nodeTypeName was different than the fetched node type; so that means
-                // that the FallbackNodeType has been returned.
-                return null;
-            }
-            return $nodeType;
-        } catch (NodeTypeNotFoundException $e) {
-            // the $nodeTypeName was not found; so we need to remove all nodes of this type.
-            // This case applies if the fallbackNodeType is not configured.
-            return null;
         }
     }
 
@@ -153,5 +140,10 @@ class DisallowedChildNodeAdjustment
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($nodeAggregate->getContentStreamIdentifier());
         $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
         return CommandResult::fromPublishedEvents($events);
+    }
+
+    protected function getNodeTypeManager(): NodeTypeManager
+    {
+        return $this->nodeTypeManager;
     }
 }

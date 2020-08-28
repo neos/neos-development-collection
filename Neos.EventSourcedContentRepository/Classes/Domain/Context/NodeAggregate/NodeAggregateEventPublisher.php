@@ -112,6 +112,7 @@ final class NodeAggregateEventPublisher
             throw new \RuntimeException('TODO: publishMany() must be called with at least one event');
         }
         $processedEvents = DomainEvents::createEmpty();
+        $causationIdentifier = null;
         foreach ($events as $event) {
             if ($event instanceof DecoratedEvent) {
                 $undecoratedEvent = $event->getWrappedEvent();
@@ -134,7 +135,14 @@ final class NodeAggregateEventPublisher
                     'commandPayload' => $commandPayload
                 ];
                 $event = DecoratedEvent::addMetadata($event, $metadata);
+                // we remember the 1st event's identifier as causation identifier for all the others
+                $causationIdentifier = $event->getIdentifier();
                 $this->command = null;
+            } else {
+                // event 2,3,4,...n get a causation identifier set, as they all originate from the 1st event.
+                if ($causationIdentifier !== null) {
+                    $event = DecoratedEvent::addCausationIdentifier($event, $causationIdentifier);
+                }
             }
             $processedEvents = $processedEvents->appendEvent($event);
         }

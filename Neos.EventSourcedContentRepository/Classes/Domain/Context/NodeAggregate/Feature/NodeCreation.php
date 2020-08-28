@@ -380,8 +380,11 @@ trait NodeCreation
      * @param NodePath|null $childPath
      * @return NodeAggregateIdentifiersByNodePaths
      */
-    private static function populateNodeAggregateIdentifiers(NodeType $nodeType, NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths
+    protected static function populateNodeAggregateIdentifiers(NodeType $nodeType, ?NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths
     {
+        if ($nodeAggregateIdentifiers === null) {
+            $nodeAggregateIdentifiers = NodeAggregateIdentifiersByNodePaths::createEmpty();
+        }
         // TODO: handle Multiple levels of autocreated child nodes
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawChildName => $childNodeType) {
             $childName = NodeName::fromString($rawChildName);

@@ -21,6 +21,9 @@ use Neos\Flow\Annotations as Flow;
  *
  * This means: each "value" must be a simple PHP data type.
  *
+ * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
+ * because we treat NULL and "not set" the same from an API perspective.
+ *
  * @Flow\Proxy(false)
  */
 final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
@@ -43,7 +46,8 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
 
     public function merge(SerializedPropertyValues $other): SerializedPropertyValues
     {
-        return new SerializedPropertyValues(array_merge($this->values, $other->getValues()));
+        // here, we skip null values
+        return new SerializedPropertyValues(array_filter(array_merge($this->values, $other->getValues()), fn($value) => $value !== null));
     }
 
     public function propertyExists($propertyName): bool
@@ -73,7 +77,10 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     {
         $values = [];
         foreach ($propertyValues as $propertyName => $propertyValue) {
-            if (is_array($propertyValue)) {
+            if ($propertyValue === null) {
+                // this case means we want to un-set a property.
+                $values[$propertyName] = null;
+            } elseif (is_array($propertyValue)) {
                 $values[$propertyName] = SerializedPropertyValue::fromArray($propertyValue);
             } elseif ($propertyValue instanceof SerializedPropertyValue) {
                 $values[$propertyName] = $propertyValue;

@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown;
 
 /**
@@ -19,10 +20,19 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
  * when changing a node aggregate's type.
  *
  * - delete will delete all newly disallowed child nodes
+ * @Flow\Proxy(false)
  */
 final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy implements \JsonSerializable
 {
+    /**
+     * This strategy means "we remove all children / grandchildren nodes which do not match the constraint"
+     */
     const STRATEGY_DELETE = 'delete';
+
+    /**
+     * This strategy means "we only change the NodeAggregateType if all constraints of parents AND children and grandchildren are still respected."
+     */
+    const STRATEGY_HAPPYPATH = 'happypath';
 
     /**
      * @var string
@@ -41,7 +51,7 @@ final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy imp
      */
     public static function fromString(string $strategy): self
     {
-        if ($strategy !== self::STRATEGY_DELETE) {
+        if (!in_array($strategy, [self::STRATEGY_DELETE, self::STRATEGY_HAPPYPATH])) {
             throw new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown(
                 'Given strategy "' . $strategy . '" is not known for resolving child node type constraint conflicts when changing a node type.',
                 15200134492
@@ -53,6 +63,11 @@ final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy imp
     public static function delete(): NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
     {
         return new self(self::STRATEGY_DELETE);
+    }
+
+    public static function happypath(): NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+    {
+        return new self(self::STRATEGY_HAPPYPATH);
     }
 
     /**

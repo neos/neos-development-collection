@@ -68,7 +68,7 @@ trait StructureAdjustmentsTrait
     {
         $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         $errors = iterator_to_array($errors);
-        Assert::assertEmpty($errors);
+        Assert::assertEmpty($errors, implode(', ', array_map(fn(StructureAdjustment $adjustment) => $adjustment->render(), $errors)));
     }
 
     /**

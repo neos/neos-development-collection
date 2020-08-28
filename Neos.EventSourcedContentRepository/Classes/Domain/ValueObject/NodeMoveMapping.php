@@ -11,7 +11,7 @@ use Neos\Flow\Annotations as Flow;
  * A move mapping for a single node
  *
  * It declares:
- * * The moved node's origin dimension space point. With this the node can be uniquely identified
+ * * The moved node's origin dimension space point. With this the node can be uniquely identified (as we are moving a single NodeAggregate)
  * * The new parent assignments if given - the node might be assigned to different parents, depending on covered dimension space point
  * * The new succeeding siblings' assignments if given - the node might be assigned to different succeeding siblings, depending on covered dimension space point
  * @Flow\Proxy(false)

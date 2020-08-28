@@ -1,0 +1,76 @@
+<?php declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Command;
+
+/*
+ * This file is part of the Neos.ContentRepository package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Result;
+use Neos\EventSourcedContentRepository\Domain\Projection\Integrity\ProjectionIntegrityViolationDetectionRunner;
+use Neos\Flow\Cli\CommandController;
+
+final class ContentGraphIntegrityCommandController extends CommandController
+{
+    const OUTPUT_MODE_CONSOLE = 'console';
+    const OUTPUT_MODE_LOG = 'log';
+
+    private ProjectionIntegrityViolationDetectionRunner $detectionRunner;
+
+
+    public function __construct(ProjectionIntegrityViolationDetectionRunner $detectionRunner)
+    {
+        $this->detectionRunner = $detectionRunner;
+        parent::__construct();
+    }
+
+    public function runViolationDetectionCommand(string $outputMode = null): void
+    {
+        $outputMode = $this->resolveOutputMode($outputMode);
+        /** @var Result|Error[] $result */
+        $result = $this->detectionRunner->run();
+        switch ($outputMode) {
+            case self::OUTPUT_MODE_CONSOLE:
+                foreach ($result as $error) {
+                    $this->outputLine($error->getMessage());
+                }
+                break;
+            case self::OUTPUT_MODE_LOG:
+                $now = new \DateTimeImmutable();
+                $fileName = FLOW_PATH_DATA . 'Logs/ContentGraphIntegrityReport_' . $now->format('YmdHis') . '.log';
+                touch($fileName);
+                $fileContent = '';
+                if (empty($result->getErrors())) {
+                    $fileContent = 'The content graph showed no integrity violations.';
+                } else {
+                    foreach ($result as $error) {
+                        $fileContent .= $error->getMessage() . "\n";
+                    }
+                }
+
+                file_put_contents($fileName, $fileContent);
+                break;
+            default:
+        }
+    }
+
+    private function resolveOutputMode(?string $outputMode): string
+    {
+        while ($outputMode !== self::OUTPUT_MODE_CONSOLE && $outputMode !== self::OUTPUT_MODE_LOG) {
+            $outputMode = $this->output->ask('Please specify the output mode: (c)onsole or (l)og: ');
+            if ($outputMode === 'c') {
+                $outputMode = self::OUTPUT_MODE_CONSOLE;
+            } elseif ($outputMode === 'l') {
+                $outputMode = self::OUTPUT_MODE_LOG;
+            }
+        }
+
+        return $outputMode;
+    }
+}

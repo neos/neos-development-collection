@@ -14,11 +14,13 @@ declare(strict_types=1);
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/NodeOperationsTrait.php');
 require_once(__DIR__ . '/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
 require_once(__DIR__ . '/StructureAdjustmentsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -38,6 +40,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
     use EventSourcedTrait;
+    use ProjectionIntegrityViolationDetectionTrait;
     use StructureAdjustmentsTrait;
 
     /**
@@ -55,6 +58,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $this->setupSecurity();
         $this->setupEventSourcedTrait();
         $this->setupIntegrityViolationTrait();
+        $this->setupProjectionIntegrityViolationDetectionTrait();
     }
 
     /**
