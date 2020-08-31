@@ -193,7 +193,13 @@ class LoginController extends AbstractAuthenticationController
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', ['success' => false]);
         } else {
-            $this->addFlashMessage($this->translator->translateById('login.wrongCredentials.body', [], null, null, 'Main', 'Neos.Neos'),$this->translator->translateById('login.wrongCredentials.title', [], null, null, 'Main', 'Neos.Neos'), Message::SEVERITY_ERROR, [], ($exception === null ? 1347016771 : $exception->getCode()));
+            $this->addFlashMessage(
+                $this->translator->translateById('login.wrongCredentials.body', [], null, null, 'Main', 'Neos.Neos'),
+                $this->translator->translateById('login.wrongCredentials.title', [], null, null, 'Main', 'Neos.Neos'),
+                Message::SEVERITY_ERROR,
+                [],
+                $exception === null ? 1347016771 : $exception->getCode()
+                );
         }
     }
 
@@ -241,7 +247,13 @@ class LoginController extends AbstractAuthenticationController
                 if ($possibleRedirectionUri !== null) {
                     $this->redirectToUri($possibleRedirectionUri);
                 }
-                $this->addFlashMessage($this->translator->translateById('login.loggedOut.body', [], null, null, 'Main', 'Neos.Neos'),$this->translator->translateById('login.loggedOut.title', [], null, null, 'Main', 'Neos.Neos'), Message::SEVERITY_NOTICE, [], 1318421560);
+                $this->addFlashMessage(
+                    $this->translator->translateById('login.loggedOut.body', [], null, null, 'Main', 'Neos.Neos'),
+                    $this->translator->translateById('login.loggedOut.title', [], null, null, 'Main', 'Neos.Neos'),
+                    Message::SEVERITY_NOTICE,
+                    [],
+                    1318421560
+                );
                 $this->redirect('index');
         }
     }
