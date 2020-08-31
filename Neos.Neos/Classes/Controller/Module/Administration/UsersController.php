@@ -368,7 +368,8 @@ class UsersController extends AbstractModuleController
         $this->addFlashMessage(
             $this->translator->translateById('users.accountUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
             $this->translator->translateById('users.accountUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
-            Message::SEVERITY_OK);
+            Message::SEVERITY_OK
+        );
         $this->redirect('edit', null, null, ['user' => $user]);
     }
 
