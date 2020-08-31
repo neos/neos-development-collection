@@ -744,6 +744,230 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<trans-unit id="userSettings.editUser" xml:space="preserve">
 				<source>Edit User</source>
 			</trans-unit>
+
+
+			<trans-unit id="configuration.anErrorOccurredDuringValidationOfTheConfiguration.title" xml:space="preserve">
+				<source>An error occurred during validation of the configuration.</source>
+			</trans-unit>
+			<trans-unit id="configuration.configurationTypeNotFound.body" xml:space="preserve">
+				<source>Configuration type not found.</source>
+			</trans-unit>
+
+			<trans-unit id="sites.sitePackageNotFound.title" xml:space="preserve">
+				<source>Site package not found</source>
+			</trans-unit>
+			<trans-unit id="sites.sitePackageNotFound.body" xml:space="preserve">
+				<source>The site package with key "{0}" was not found.</source>
+			</trans-unit>
+			<trans-unit id="sites.update.title" xml:space="preserve">
+				<source>Update</source>
+			</trans-unit>
+			<trans-unit id="sites.update.body" xml:space="preserve">
+				<source>The site "{0}" has been updated.</source>
+			</trans-unit>
+			<trans-unit id="sites.missingPackage.title" xml:space="preserve">
+				<source>Missing Package</source>
+			</trans-unit>
+			<trans-unit id="sites.missingPackage.body" xml:space="preserve">
+				<source>The package "{0}" is required to create new site packages.</source>
+			</trans-unit>
+			<trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
+				<source>Invalid package key</source>
+			</trans-unit>
+			<trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
+				<source>Site Packages {0} was created.</source>
+			</trans-unit>
+			<trans-unit id="sites.sitePackagesWasCreated.body" xml:space="preserve">
+				<source>The package key "{0}" already exists.</source>
+			</trans-unit>
+			<trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
+				<source>The site has been imported.</source>
+			</trans-unit>
+			<trans-unit id="sites.importError.title" xml:space="preserve">
+				<source>Import error</source>
+			</trans-unit>
+			<trans-unit id="sites.importError.body" xml:space="preserve">
+				<source>Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</source>
+			</trans-unit>
+			<trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
+				<source>Site creation error</source>
+			</trans-unit>
+			<trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.body" xml:space="preserve">
+				<source>Error: A site with siteNodeName "{0}" already exists</source>
+			</trans-unit>
+			<trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.title" xml:space="preserve">
+				<source>Site creation error</source>
+			</trans-unit>
+			<trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.body" xml:space="preserve">
+				<source>Error: The given node type "{0}" was not found</source>
+			</trans-unit>
+			<trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title" xml:space="preserve">
+				<source>Site creation error</source>
+			</trans-unit>
+			<trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body" xml:space="preserve">
+				<source>Error: The given node type "%s" is not based on the superType "{0}"</source>
+			</trans-unit>
+			<trans-unit id="sites.successfullyCreatedSite.body" xml:space="preserve">
+				<source>Successfully created site "{0}" with siteNode "{1}", type "{2}" and packageKey "{3}"</source>
+			</trans-unit>
+			<trans-unit id="sites.siteDeleted.title" xml:space="preserve">
+				<source>Site deleted</source>
+			</trans-unit>
+			<trans-unit id="sites.siteDeleted.body" xml:space="preserve">
+				<source>The site "{0}" has been deleted.</source>
+			</trans-unit>
+			<trans-unit id="sites.siteActivated.title" xml:space="preserve">
+				<source>Site activated</source>
+			</trans-unit>
+			<trans-unit id="sites.siteActivated.body" xml:space="preserve">
+				<source>The site "{0}" has been activated.</source>
+			</trans-unit>
+			<trans-unit id="sites.siteDeactivated.title" xml:space="preserve">
+				<source>Site deactivated</source>
+			</trans-unit>
+			<trans-unit id="sites.siteDeactivated.body" xml:space="preserve">
+				<source>The site "{0}" has been deactivated.</source>
+			</trans-unit>
+			<trans-unit id="sites.domainUpdated.title" xml:space="preserve">
+				<source>Domain updated</source>
+			</trans-unit>
+			<trans-unit id="sites.domainUpdated.body" xml:space="preserve">
+				<source>The domain "{0}" has been updated.</source>
+			</trans-unit>
+			<trans-unit id="sites.domainCreated.title" xml:space="preserve">
+				<source>Domain created</source>
+			</trans-unit>
+			<trans-unit id="sites.domainCreated.body" xml:space="preserve">
+				<source>'The domain "{0}" has been created.'</source>
+			</trans-unit>
+			<trans-unit id="sites.domainDeleted.title" xml:space="preserve">
+				<source>Domain deleted</source>
+			</trans-unit>
+			<trans-unit id="sites.domainDeleted.body" xml:space="preserve">
+				<source>The domain "{0}" has been deleted.</source>
+			</trans-unit>
+			<trans-unit id="sites.domainActivated.title" xml:space="preserve">
+				<source>Domain activated</source>
+			</trans-unit>
+			<trans-unit id="sites.domainActivated.body" xml:space="preserve">
+				<source>The domain "{0}" has been activated.</source>
+			</trans-unit>
+			<trans-unit id="sites.domainDeactivated.title" xml:space="preserve">
+				<source>Domain deactivated</source>
+			</trans-unit>
+			<trans-unit id="sites.domainDeactivated.body" xml:space="preserve">
+				<source>The domain "{0}" has been deactivated.</source>
+			</trans-unit>
+
+			<trans-unit id="users.userCreated.title" xml:space="preserve">
+				<source>User created</source>
+			</trans-unit>
+			<trans-unit id="users.userCreated.body" xml:space="preserve">
+				<source>The user "{0}" has been created.</source>
+			</trans-unit>
+			<trans-unit id="users.userCreationDenied.title" xml:space="preserve">
+				<source>User creation denied</source>
+			</trans-unit>
+			<trans-unit id="users.userCreationDenied.body" xml:space="preserve">
+				<source>You are not allowed to create a user with roles "{0}".</source>
+			</trans-unit>
+			<trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
+				<source>User editing denied</source>
+			</trans-unit>
+			<trans-unit id="users.userEditingDenied.editing.body" xml:space="preserve">
+				<source>Not allowed to edit the user "{0}".</source>
+			</trans-unit>
+			<trans-unit id="users.userUpdated.title" xml:space="preserve">
+				<source>User updated</source>
+			</trans-unit>
+			<trans-unit id="users.userUpdated.body" xml:space="preserve">
+				<source>The user "{0}" has been updated.</source>
+			</trans-unit>
+			<trans-unit id="users.userEditingDenied.deletion.title" xml:space="preserve">
+				<source>User editing denied</source>
+			</trans-unit>
+			<trans-unit id="users.userEditingDenied.deletion.body" xml:space="preserve">
+				<source>Not allowed to delete the user "{0}".</source>
+			</trans-unit>
+			<trans-unit id="users.currentUserCannotBeDeleted.title" xml:space="preserve">
+				<source>Current user cannot be deleted</source>
+			</trans-unit>
+			<trans-unit id="users.currentUserCannotBeDeleted.body" xml:space="preserve">
+				<source>You cannot delete the currently logged in user</source>
+			</trans-unit>
+			<trans-unit id="users.userDeleted.title" xml:space="preserve">
+				<source>User deleted</source>
+			</trans-unit>
+			<trans-unit id="users.userDeleted.body" xml:space="preserve">
+				<source>The user "{0}" has been deleted.</source>
+			</trans-unit>
+			<trans-unit id="users.userAccountEditingDenied.title" xml:space="preserve">
+				<source>User account editing denied</source>
+			</trans-unit>
+			<trans-unit id="users.userAccountEditingDenied.body" xml:space="preserve">
+				<source>Not allowed to edit the account for the user "{0}".</source>
+			</trans-unit>
+			<trans-unit id="users.doNotLockYourselfOut.title" xml:space="preserve">
+				<source>Don\'t lock yourself out</source>
+			</trans-unit>
+			<trans-unit id="users.doNotLockYourselfOut.body" xml:space="preserve">
+				<source>With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!</source>
+			</trans-unit>
+			<trans-unit id="users.accountUpdated.title" xml:space="preserve">
+				<source>Account updated</source>
+			</trans-unit>
+			<trans-unit id="users.accountUpdated.body" xml:space="preserve">
+				<source>The account has been updated.</source>
+			</trans-unit>
+			<trans-unit id="users.userEmailEditingDenied.title" xml:space="preserve">
+				<source>User email editing denied</source>
+			</trans-unit>
+			<trans-unit id="users.userEmailEditingDenied.body" xml:space="preserve">
+				<source>Not allowed to create an electronic address for the user "{0}".</source>
+			</trans-unit>
+			<trans-unit id="users.electronicAddressAdded.title" xml:space="preserve">
+				<source>Electronic address added</source>
+			</trans-unit>
+			<trans-unit id="users.electronicAddressAdded.body" xml:space="preserve">
+				<source>An electronic address "{0}" ({1}) has been added.</source>
+			</trans-unit>
+			<trans-unit id="users.userEmailDeletionDenied.title" xml:space="preserve">
+				<source>User email deletion denied</source>
+			</trans-unit>
+			<trans-unit id="users.userEmailDeletionDenied.body" xml:space="preserve">
+				<source>Not allowed to delete an electronic address for the user "{0}".</source>
+			</trans-unit>
+			<trans-unit id="users.electronicAddressRemoved.title" xml:space="preserve">
+				<source>Electronic address removed</source>
+			</trans-unit>
+			<trans-unit id="users.electronicAddressRemoved.body" xml:space="preserve">
+				<source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
+			</trans-unit>
+
+			<trans-unit id="userSettings.UserUpdated.title" xml:space="preserve">
+				<source>User updated</source>
+			</trans-unit>
+			<trans-unit id="userSettings.UserUpdated.body" xml:space="preserve">
+				<source>Your user has been updated.</source>
+			</trans-unit>
+			<trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
+				<source>Password updated</source>
+			</trans-unit>
+			<trans-unit id="userSettings.passwordUpdated.body" xml:space="preserve">
+				<source>The password has been updated.</source>
+			</trans-unit>
+			<trans-unit id="userSettings.electronicAddressAdded.title" xml:space="preserve">
+				<source>Edit User</source>
+			</trans-unit>
+			<trans-unit id="userSettings.electronicAddressAdded.body" xml:space="preserve">
+				<source>An electronic address "{0}" ({1}) has been added.</source>
+			</trans-unit>
+			<trans-unit id="userSettings.electronicAddressRemoved.title" xml:space="preserve">
+				<source>Electronic address removed</source>
+			</trans-unit>
+			<trans-unit id="userSettings.electronicAddressRemoved.body" xml:space="preserve">
+				<source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

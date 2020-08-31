@@ -17,6 +17,7 @@ use Neos\Cache\Frontend\StringFrontend;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Http\Cookie;
+use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\View\JsonView;
@@ -87,6 +88,12 @@ class LoginController extends AbstractAuthenticationController
      * @var FlashMessageService
      */
     protected $flashMessageService;
+
+    /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
 
     /**
      * @var array
@@ -186,7 +193,7 @@ class LoginController extends AbstractAuthenticationController
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', ['success' => false]);
         } else {
-            $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, [], ($exception === null ? 1347016771 : $exception->getCode()));
+            $this->addFlashMessage($this->translator->translateById('login.wrongCredentials.body', [], null, null, 'Main', 'Neos.Neos'),$this->translator->translateById('login.wrongCredentials.title', [], null, null, 'Main', 'Neos.Neos'), Message::SEVERITY_ERROR, [], ($exception === null ? 1347016771 : $exception->getCode()));
         }
     }
 
@@ -234,7 +241,7 @@ class LoginController extends AbstractAuthenticationController
                 if ($possibleRedirectionUri !== null) {
                     $this->redirectToUri($possibleRedirectionUri);
                 }
-                $this->addFlashMessage('Successfully logged out', 'Logged out', Message::SEVERITY_NOTICE, [], 1318421560);
+                $this->addFlashMessage($this->translator->translateById('login.loggedOut.body', [], null, null, 'Main', 'Neos.Neos'),$this->translator->translateById('login.loggedOut.title', [], null, null, 'Main', 'Neos.Neos'), Message::SEVERITY_NOTICE, [], 1318421560);
                 $this->redirect('index');
         }
     }
