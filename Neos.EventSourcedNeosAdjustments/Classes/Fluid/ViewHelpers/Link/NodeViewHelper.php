@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
@@ -218,14 +219,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 ->setAddQueryString($this->arguments['addQueryString'])
                 ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
 
-            $uri = $uriBuilder->uriFor(
-                'show',
-                [
-                    'node' => $nodeAddress->serializeForUri()
-                ],
-                'Frontend\Node',
-                'Neos.Neos'
-            );
+            $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
         }
 
         $this->tag->addAttribute('href', $uri);

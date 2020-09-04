@@ -78,6 +78,7 @@ trait NodeOperationsTrait
 
     /**
      * @Given /^I have the following content dimensions:$/
+     * @throws \JsonException
      */
     public function iHaveTheFollowingContentDimensions($table)
     {
@@ -101,10 +102,23 @@ trait NodeOperationsTrait
                     }
                 }
 
+                $resolutionValues = [];
+                if (isset($row['ResolutionValues'])) {
+                    foreach (Arrays::trimExplode(',', $row['ResolutionValues']) as $resolutionValueMap) {
+                        [$key, $value] = Arrays::trimExplode(':', $resolutionValueMap);
+                        $resolutionValues[$key] = $value;
+                    }
+                }
                 foreach (Arrays::trimExplode(',', $row['Values']) as $rawDimensionValue) {
+                    $dimensionValueConfiguration = [];
+                    if (isset($resolutionValues[$rawDimensionValue])) {
+                        $dimensionValueConfiguration['resolution']['value'] = $resolutionValues[$rawDimensionValue];
+                    }
                     $dimensionValues[$rawDimensionValue] = new ContentDimensionValue(
                         $rawDimensionValue,
-                        new ContentDimensionValueSpecializationDepth($specializationDepths[$rawDimensionValue] ?? 0)
+                        new ContentDimensionValueSpecializationDepth($specializationDepths[$rawDimensionValue] ?? 0),
+                        [],
+                        $dimensionValueConfiguration
                     );
                 }
 
@@ -112,11 +126,16 @@ trait NodeOperationsTrait
                     $variationEdges[] = new ContentDimensionValueVariationEdge($dimensionValues[$rawSpecializationValue], $dimensionValues[$rawGeneralizationValue]);
                 }
 
+                $dimensionConfiguration = [];
+                if (!empty($row['ResolutionMode'])) {
+                    $dimensionConfiguration['resolution']['mode'] = $row['ResolutionMode'];
+                }
                 $dimensions[$row['Identifier']] = new ContentDimension(
                     new ContentDimensionIdentifier($row['Identifier']),
                     $dimensionValues,
                     $dimensionValues[$row['Default']],
-                    $variationEdges
+                    $variationEdges,
+                    $dimensionConfiguration
                 );
             }
 

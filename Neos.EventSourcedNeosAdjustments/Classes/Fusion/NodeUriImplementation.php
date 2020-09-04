@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
@@ -160,13 +161,6 @@ class NodeUriImplementation extends AbstractFusionObject
             ->setFormat($this->getFormat())
             ->setSection($this->getSection());
 
-        return $uriBuilder->uriFor(
-            'show',
-            [
-                'node' => $nodeAddress
-            ],
-            'Frontend\\Node',
-            'Neos.Neos'
-        );
+        return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
     }
 }

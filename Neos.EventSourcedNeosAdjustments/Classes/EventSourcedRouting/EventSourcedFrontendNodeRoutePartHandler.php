@@ -14,13 +14,15 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\AbstractRoutePart;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
-use Neos\Flow\Mvc\Routing\Dto\RouteTags;
-use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Flow\Mvc\Routing\DynamicRoutePart;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
+use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface;
 
 /**
@@ -28,7 +30,7 @@ use Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface;
  *
  * @Flow\Scope("singleton")
  */
-class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendNodeRoutePartHandlerInterface
+final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart implements DynamicRoutePartInterface, ParameterAwareRoutePartInterface, FrontendNodeRoutePartHandlerInterface
 {
     /**
      * @Flow\Inject
@@ -36,50 +38,102 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      */
     protected $documentUriPathFinder;
 
-    protected function findValueToMatch($requestPath): string
+    /**
+     * @var string
+     */
+    private $splitString = '';
+
+    /**
+     * @param string $requestPath
+     * @param RouteParameters $parameters
+     * @return bool|MatchResult
+     */
+    public function matchWithParameters(&$requestPath, RouteParameters $parameters)
     {
-        if ($this->splitString !== '') {
-            $splitStringPosition = strpos($requestPath, $this->splitString);
-            if ($splitStringPosition !== false) {
-                return substr($requestPath, 0, $splitStringPosition);
-            }
+        if (!is_string($requestPath)) {
+            return false;
         }
-
-        return $requestPath;
-    }
-
-    protected function matchValue($requestPath)
-    {
-        if (!$this->parameters->has('dimensionSpacePoint')) {
+        // TODO verify parameters / use "host" parameter
+        if (!$parameters->has('dimensionSpacePoint')) {
             return false;
         }
 
-        $uriPathSegmentOffset = $this->parameters->getValue('uriPathSegmentOffset') ?? 0;
-        $stripedRequestPath = implode('/', array_slice(explode('/', $requestPath), $uriPathSegmentOffset));
+        $uriPathSegmentOffset = $parameters->getValue('uriPathSegmentOffset') ?? 0;
+        $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $uriPathSegmentOffset);
         /** @var DimensionSpacePoint $dimensionSpacePoint */
-        $dimensionSpacePoint = $this->parameters->getValue('dimensionSpacePoint');
-        $nodeAddress = $this->documentUriPathFinder->findNodeAddressForRequestPathAndDimensionSpacePoint($stripedRequestPath, $dimensionSpacePoint);
-        if ($nodeAddress === null) {
+        $dimensionSpacePoint = $parameters->getValue('dimensionSpacePoint');
+
+        try {
+            $matchResult = $this->documentUriPathFinder->matchUriPath($requestPath, $dimensionSpacePoint);
+        } catch (InvalidShortcutException $exception) {
+            throw $exception;
+        } catch (\Exception $exception) {
+            // TODO log exception
+            return false;
+        }
+        $requestPath = $remainingRequestPath;
+        return $matchResult;
+    }
+
+    /**
+     * @param array $routeValues
+     * @return ResolveResult|bool
+     */
+    public function resolve(array &$routeValues)
+    {
+        if ($this->name === null || $this->name === '' || !\array_key_exists($this->name, $routeValues)) {
             return false;
         }
 
-        // todo populate $tagArray
-        $tagArray = [];
-
-        return new MatchResult($nodeAddress->serializeForUri(), RouteTags::createFromArray($tagArray));
-    }
-
-    protected function resolveValue($nodeAddress)
-    {
+        $nodeAddress = $routeValues[$this->name];
         if (!$nodeAddress instanceof NodeAddress) {
             return false;
         }
-        $uriPath = $this->documentUriPathFinder->findUriPathForNodeAddress($nodeAddress);
-        if ($uriPath === null) {
+
+        try {
+            $resolveResult = $this->documentUriPathFinder->resolveNodeAddress($nodeAddress, $this->options['uriSuffix'] ?? '');
+        } catch (InvalidShortcutException $exception) {
+            throw $exception;
+        } catch (\Exception $exception) {
+            // TODO log exception
             return false;
         }
-        // TODO populate UriConstraints
 
-        return new ResolveResult($uriPath, UriConstraints::create());
+        unset($routeValues[$this->name]);
+        return $resolveResult;
+    }
+
+    private function truncateRequestPathAndReturnRemainder(string &$requestPath, int $uriPathSegmentOffset): string
+    {
+        $uriPathSegments = array_slice(explode('/', $requestPath), $uriPathSegmentOffset);
+        $requestPath = implode('/', $uriPathSegments);
+        if (!empty($this->options['uriSuffix'])) {
+            $suffixPosition = strpos($requestPath, $this->options['uriSuffix']);
+            if ($suffixPosition === false) {
+                return '';
+            }
+            $requestPath = substr($requestPath, 0, $suffixPosition);
+        }
+        if ($this->splitString === '' || $this->splitString === '/') {
+            return '';
+        }
+        $splitStringPosition = strpos($requestPath, $this->splitString);
+        if ($splitStringPosition === false) {
+            return '';
+        }
+        $fullRequestPath = $requestPath;
+        $requestPath = substr($requestPath, 0, $splitStringPosition);
+
+        return substr($fullRequestPath, $splitStringPosition);
+    }
+
+    public function setSplitString($splitString): void
+    {
+        $this->splitString = $splitString;
+    }
+
+    public function match(&$routePath)
+    {
+        throw new \BadMethodCallException('match() is not supported by this Route Part Handler, use "matchWithParameters" instead', 1568287772);
     }
 }

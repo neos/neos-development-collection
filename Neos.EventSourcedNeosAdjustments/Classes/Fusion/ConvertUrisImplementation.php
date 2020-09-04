@@ -15,6 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Domain\Exception;
@@ -110,15 +111,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
                     $uriBuilder->setCreateAbsoluteUri($absolute);
 
-                    $resolvedUri = $uriBuilder->uriFor(
-                        'show',
-                        [
-                            'node' => $nodeAddress
-                        ],
-                        'Frontend\Node',
-                        'Neos.Neos'
-                    );
-
+                    $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
                     $this->runtime->addCacheTag('node', $matches[2]);
                     break;
                 case 'asset':
