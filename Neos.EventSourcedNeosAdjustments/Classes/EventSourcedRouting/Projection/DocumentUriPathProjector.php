@@ -6,6 +6,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
@@ -77,6 +78,9 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+            return;
+        }
         foreach ($event->getCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
             $this->dbal->insert(self::TABLE_NAME_DOCUMENT_URIS, [
                 'uriPath' => '',
@@ -89,7 +93,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
-        if ((string)$event->getContentStreamIdentifier() !== $this->getLiveContentStreamIdentifier()) {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
 
@@ -187,21 +191,33 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
     {
-        // TODO handle Document => Shortcut, Shortcut => Document once node aggregate retyping is supported (see NodeRetyping::handleChangeNodeAggregateType())
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+            return;
+        }
+        // TODO implement!
     }
 
     public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+            return;
+        }
         $this->copyVariants($event->getNodeAggregateIdentifier(), $event->getSourceOrigin(), $event->getPeerOrigin(), $event->getPeerCoverage());
     }
 
     public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+            return;
+        }
         $this->copyVariants($event->getNodeAggregateIdentifier(), $event->getSourceOrigin(), $event->getGeneralizationOrigin(), $event->getGeneralizationCoverage());
     }
 
     public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
+            return;
+        }
         $this->copyVariants($event->getNodeAggregateIdentifier(), $event->getSourceOrigin(), $event->getSpecializationOrigin(), $event->getSpecializationCoverage());
     }
 
@@ -239,7 +255,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
-        if ((string)$event->getContentStreamIdentifier() !== $this->getLiveContentStreamIdentifier()) {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
@@ -262,7 +278,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
-        if ((string)$event->getContentStreamIdentifier() !== $this->getLiveContentStreamIdentifier()) {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
@@ -285,7 +301,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        if ((string)$event->getContentStreamIdentifier() !== $this->getLiveContentStreamIdentifier()) {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
         foreach ($event->getAffectedCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
@@ -322,10 +338,9 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
-        if ((string)$event->getContentStreamIdentifier() !== $this->getLiveContentStreamIdentifier()) {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
-
         $newPropertyValues = $event->getPropertyValues()->getPlainValues();
         if (!isset($newPropertyValues['uriPathSegment']) && !isset($newPropertyValues['targetMode']) && !isset($newPropertyValues['target'])) {
             return;
@@ -382,7 +397,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        if ((string)$event->getContentStreamIdentifier() !== $this->getLiveContentStreamIdentifier()) {
+        if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
         foreach ($event->getNodeMoveMappings() as $moveMapping) {
@@ -518,11 +533,11 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME_LIVE_CONTENT_STREAMS);
     }
 
-    private function getLiveContentStreamIdentifier(): string
+    private function isLiveContentStream(ContentStreamIdentifier $contentStreamIdentifier)
     {
         if ($this->liveContentStreamIdentifierRuntimeCache === null) {
             $this->liveContentStreamIdentifierRuntimeCache = $this->dbal->fetchColumn('SELECT contentStreamIdentifier FROM ' . self::TABLE_NAME_LIVE_CONTENT_STREAMS);
         }
-        return $this->liveContentStreamIdentifierRuntimeCache;
+        return (string)$contentStreamIdentifier === $this->liveContentStreamIdentifierRuntimeCache;
     }
 }
