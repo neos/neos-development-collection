@@ -184,8 +184,8 @@ trait RoutingTrait
         $dbal = $this->getObjectManager()->get(EntityManagerInterface::class)->getConnection();
         $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
         $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM neos_neos_projection_document_uri');
-        $expectedResult = array_map(static function(array $row) {
-            return array_map(static function(string $cell) {
+        $expectedResult = array_map(static function (array $row) {
+            return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
             }, $row);
         }, $expectedRows->getHash());
