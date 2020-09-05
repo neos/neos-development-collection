@@ -24,10 +24,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorksp
 use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
-use org\bovigo\vfs\vfsStreamDirectory;
 
 /**
  * @Flow\Scope("singleton")
@@ -384,7 +382,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
         $newUriPath = implode('/', $uriPathSegments);
 
-        $this->dbal->executeUpdate('UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1)) WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodePath = :nodePath OR nodePath LIKE :childNodePathPrefix)',
+        $this->dbal->executeUpdate(
+            'UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1)) WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodePath = :nodePath OR nodePath LIKE :childNodePathPrefix)',
             [
                 'newUriPath' => $newUriPath,
                 'oldUriPath' => $oldUriPath,
@@ -406,7 +405,6 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
             ]);
             foreach ($sourceNodeDatas as $sourceNodeData) {
-
                 $dimensionSpacePointHash = $sourceNodeData['dimensionspacepointhash'];
 
                 // cut out node from old position

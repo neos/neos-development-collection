@@ -5,7 +5,6 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ValueObject;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Psr\Http\Message\UriInterface;
@@ -120,6 +119,4 @@ final class DocumentNodeInfo
         }
         return $this->shortcutTarget;
     }
-
-
 }

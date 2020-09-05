@@ -7,5 +7,4 @@ use Neos\Neos\Routing\Exception as RoutingException;
 
 final class InvalidShortcutException extends RoutingException
 {
-
 }

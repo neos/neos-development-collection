@@ -75,38 +75,6 @@ final class DocumentUriPathFinder
         $this->dbal = $entityManager->getConnection();
     }
 
-
-    public function findHomepageNodeAddressForSiteAndDimensionSpacePoint(Site $site, DimensionSpacePoint $dimensionSpacePoint): ?NodeAddress
-    {
-        $nodeAggregateIdentifier = $this->dbal->fetchColumn('SELECT nodeAggregateIdentifier FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodePath = :nodePath AND disabled = 0',
-            [
-                'dimensionSpacepointHash' => $dimensionSpacePoint->getHash(),
-                'nodePath' => '/' . $site->getNodeName(),
-            ]);
-        if ($nodeAggregateIdentifier === false) {
-            return null;
-        }
-        return new NodeAddress(
-            $this->getLiveContentStreamIdentifier(),
-            $dimensionSpacePoint,
-            NodeAggregateIdentifier::fromString($nodeAggregateIdentifier),
-            WorkspaceName::forLive()
-        );
-    }
-
-
-    public function findUriPathForNodeAddress(NodeAddress $nodeAddress): ?string
-    {
-        $uriPath = $this->dbal->fetchColumn('SELECT uriPath FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier', [
-            'dimensionSpacepointHash' => $nodeAddress->getDimensionSpacePoint()->getHash(),
-            'nodeAggregateIdentifier' => $nodeAddress->getNodeAggregateIdentifier(),
-        ]);
-        if ($uriPath === false) {
-            return null;
-        }
-        return $uriPath;
-    }
-
     public function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint): MatchResult
     {
         $nodeInfo = $this->getNodeInfoForSiteNodeNameAndUriPath($this->getCurrentSiteNodeName(), $uriPath, $dimensionSpacePoint);
