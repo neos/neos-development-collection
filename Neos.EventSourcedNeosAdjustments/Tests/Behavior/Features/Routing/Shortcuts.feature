@@ -136,18 +136,27 @@ Feature: Routing behavior of shortcut nodes
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node.html"
 
+  Scenario: Regular document node gets turned into a shortcut node
+    When the command ChangeNodeAggregateType was published with payload:
+      | Key                     | Value                       |
+      | contentStreamIdentifier | "cs-identifier"             |
+      | nodeAggregateIdentifier | "sir-david-nodenborough-ii" |
+      | newNodeTypeName         | "Neos.Neos:Shortcut"        |
+      | strategy                | "happypath"                 |
+    And The documenturipath projection is up to date
+    When I am on URL "/"
+    Then the node "sir-david-nodenborough-ii" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3.html"
 
-#  TODO: Uncomment once node aggregate retyping is supported (see NodeRetyping::handleChangeNodeAggregateType())
-#
-#  Scenario: Regular node gets turned into a shortcut node
-#    When the command ChangeNodeAggregateType was published with payload:
-#      | Key                     | Value                       |
-#      | contentStreamIdentifier | "cs-identifier"             |
-#      | nodeAggregateIdentifier | "sir-david-nodenborough-ii" |
-#      | newNodeTypeName         | "Neos.Neos:Shortcut"        |
-#    And The documenturipath projection is up to date
-#    When I am on URL "/"
-#    Then the node "sir-david-nodenborough-ii" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/david-nodenborough-2/nodeward-3.html"
+  Scenario: Shortcut node gets turned into a regular document node
+    When the command ChangeNodeAggregateType was published with payload:
+      | Key                     | Value                                                |
+      | contentStreamIdentifier | "cs-identifier"                                      |
+      | nodeAggregateIdentifier | "shortcut-first-child-node"                          |
+      | newNodeTypeName         | "Neos.EventSourcedNeosAdjustments:Test.Routing.Page" |
+      | strategy                | "happypath"                                          |
+    And The documenturipath projection is up to date
+    When I am on URL "/"
+    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child.html"
 
   Scenario: Change shortcut targetMode from "firstChildNode" to "parentNode"
     When the command "SetNodeProperties" is executed with payload:

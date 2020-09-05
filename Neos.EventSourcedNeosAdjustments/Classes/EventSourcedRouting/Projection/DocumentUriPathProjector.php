@@ -8,6 +8,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
@@ -94,10 +95,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
-
-        // HACK: We consider the currently configured node type of the given node. This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($event->getNodeTypeName()->getValue());
-        if (!$nodeType->isOfType('Neos.Neos:Document')) {
+        if (!$this->isDocumentNodeType($event->getNodeTypeName())) {
             return;
         }
 
@@ -105,7 +103,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         $uriPathSegment = $propertyValues['uriPathSegment'] ?? '';
 
         $shortcutTarget = null;
-        if ($this->nodeTypeManager->getNodeType($event->getNodeTypeName()->getValue())->isOfType('Neos.Neos:Shortcut')) {
+        if ($this->isShortcutNodeType($event->getNodeTypeName())) {
             $shortcutTarget = [
                 'mode' => $propertyValues['targetMode'] ?? 'firstChildNode',
                 'target' => $propertyValues['target'] ?? null,
@@ -192,7 +190,15 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
         }
-        // TODO implement!
+        if ($this->isShortcutNodeType($event->getNewNodeTypeName())) {
+            $this->dbal->executeUpdate('UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET shortcuttarget = \'{"mode":"firstChildNode","target":null}\' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND shortcuttarget IS NULL', [
+                'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
+            ]);
+        } elseif ($this->isDocumentNodeType($event->getNewNodeTypeName())) {
+            $this->dbal->executeUpdate('UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET shortcuttarget = NULL WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND shortcuttarget IS NOT NULL', [
+                'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
+            ]);
+        }
     }
 
     public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
@@ -537,5 +543,19 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             $this->liveContentStreamIdentifierRuntimeCache = $this->dbal->fetchColumn('SELECT contentStreamIdentifier FROM ' . self::TABLE_NAME_LIVE_CONTENT_STREAMS);
         }
         return (string)$contentStreamIdentifier === $this->liveContentStreamIdentifierRuntimeCache;
+    }
+
+    private function isDocumentNodeType(NodeTypeName $nodeTypeName): bool
+    {
+        // HACK: We consider the currently configured node type of the given node. This is a deliberate side effect of this projector!
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
+        return $nodeType->isOfType('Neos.Neos:Document');
+    }
+
+    private function isShortcutNodeType(NodeTypeName $nodeTypeName): bool
+    {
+        // HACK: We consider the currently configured node type of the given node. This is a deliberate side effect of this projector!
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
+        return $nodeType->isOfType('Neos.Neos:Shortcut');
     }
 }
