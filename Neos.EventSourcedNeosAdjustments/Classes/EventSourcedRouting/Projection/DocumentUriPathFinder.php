@@ -183,7 +183,7 @@ final class DocumentUriPathFinder
     private function getLiveContentStreamIdentifier(): ContentStreamIdentifier
     {
         if ($this->liveContentStreamIdentifierRuntimeCache === null) {
-            $this->liveContentStreamIdentifierRuntimeCache = ContentStreamIdentifier::fromString($this->dbal->fetchColumn('SELECT contentStreamIdentifier FROM ' . DocumentUriPathProjector::TABLE_NAME_LIVE_CONTENT_STREAMS . ''));
+            $this->liveContentStreamIdentifierRuntimeCache = ContentStreamIdentifier::fromString($this->dbal->fetchColumn('SELECT contentStreamIdentifier FROM ' . DocumentUriPathProjector::TABLE_NAME_LIVE_CONTENT_STREAMS));
         }
         return $this->liveContentStreamIdentifierRuntimeCache;
     }
@@ -199,18 +199,18 @@ final class DocumentUriPathFinder
 
     private function getParentNodeInfo(DocumentNodeInfo $nodeInfo): DocumentNodeInfo
     {
-        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodePath = :parentNodePath', [
+        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier', [
             'dimensionSpacepointHash' => $nodeInfo->getDimensionSpacePointHash(),
-            'parentNodePath' => $this->parentNodePath($nodeInfo->getNodePath()),
+            'nodeAggregateIdentifier' => $nodeInfo->getParentNodeAggregateIdentifier(),
         ]);
         return $this->databaseRowToDocumentNodeInfo($row);
     }
 
     private function getFirstChildNodeInfo(DocumentNodeInfo $nodeInfo): DocumentNodeInfo
     {
-        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodePath REGEXP CONCAT("^", :parentNodePath, "/[^\/]+$") AND precedingNodeAggregateIdentifier IS NULL', [
+        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier AND precedingNodeAggregateIdentifier IS NULL', [
             'dimensionSpacepointHash' => $nodeInfo->getDimensionSpacePointHash(),
-            'parentNodePath' => $nodeInfo->getNodePath(),
+            'parentNodeAggregateIdentifier' => $nodeInfo->getNodeAggregateIdentifier(),
         ]);
         return $this->databaseRowToDocumentNodeInfo($row);
     }
@@ -236,13 +236,6 @@ final class DocumentUriPathFinder
             throw new \InvalidArgumentException('TODO');
         }
         return DocumentNodeInfo::fromDatabaseRow($row);
-    }
-
-    private function parentNodePath(string $nodePath): string
-    {
-        $nodePathSegments = explode('/', $nodePath);
-        array_pop($nodePathSegments);
-        return implode('/', $nodePathSegments);
     }
 
     private function uriConstraintsFromUri(UriInterface $uri): UriConstraints

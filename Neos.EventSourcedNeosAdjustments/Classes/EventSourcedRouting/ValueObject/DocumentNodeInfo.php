@@ -49,6 +49,11 @@ final class DocumentNodeInfo
         return NodeAggregateIdentifier::fromString($this->source['nodeaggregateidentifier']);
     }
 
+    public function getParentNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        return NodeAggregateIdentifier::fromString($this->source['parentnodeaggregateidentifier']);
+    }
+
     public function getDimensionSpacePointHash(): string
     {
         return $this->source['dimensionspacepointhash'];
