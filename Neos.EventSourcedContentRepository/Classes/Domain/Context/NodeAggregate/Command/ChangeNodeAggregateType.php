@@ -162,7 +162,7 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
      * Is needed to make this command fully deterministic before storing it at the events.
      *
      * @param NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
-     * @return CreateNodeAggregateWithNode
+     * @return self
      */
     public function withTetheredDescendantNodeAggregateIdentifiers(NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers): self
     {
