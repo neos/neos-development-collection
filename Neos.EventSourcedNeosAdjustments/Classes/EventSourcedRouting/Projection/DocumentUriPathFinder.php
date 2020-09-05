@@ -143,7 +143,6 @@ final class DocumentUriPathFinder
                     break;
                 }
             }
-
         }
 
         if (!empty($uriSuffix) && $nodeInfo->hasUriPath()) {
