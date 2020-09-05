@@ -213,34 +213,4 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
             $routeParameters->getValue('dimensionSpacePoint')
         );
     }
-
-    /**
-     * @test
-     * @throws InvalidContentDimensionValueDetectorException
-     */
-    public function handleAddsCorrectSubgraphIdentityToComponentContextWithDimensionValuesGivenButOverriddenViaContextPath()
-    {
-        $uri = new Uri('https://de.domain.com/sellerA_channelA/home@user-me;language=en&market=GB&seller=default&channel=default.html');
-        $request = new ServerRequest('GET', $uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Response());
-
-        $detectSubgraphComponent = new DetectContentSubgraphComponent();
-        $detectSubgraphComponent->handle($componentContext);
-        /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
-
-        $this->assertEquals(new WorkspaceName('user-me'), $routeParameters->getValue('workspaceName'));
-        $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
-
-        $expectedDimensionSpacePoint = new DimensionSpacePoint([
-            'market' => 'GB',
-            'seller' => 'default',
-            'channel' => 'default',
-            'language' => 'en'
-        ]);
-        $this->assertEquals(
-            $expectedDimensionSpacePoint,
-            $routeParameters->getValue('dimensionSpacePoint')
-        );
-    }
 }
