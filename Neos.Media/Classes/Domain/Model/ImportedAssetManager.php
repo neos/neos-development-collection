@@ -72,7 +72,8 @@ class ImportedAssetManager
             $variantImportedAsset = new ImportedAsset(
                 $originalImportedAsset->getAssetSourceIdentifier(),
                 $originalImportedAsset->getRemoteAssetIdentifier(),
-                $variantAssetIdentifier, new \DateTimeImmutable(),
+                $variantAssetIdentifier,
+                new \DateTimeImmutable(),
                 $originalAssetIdentifier
             );
 

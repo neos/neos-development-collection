@@ -387,7 +387,7 @@ class ContentController extends ActionController
                     ['nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()), 'pageLabel' => $page->getLabel()],
                     'Main',
                     'Neos.Neos'
-               );
+                );
             }
         }
         return json_encode((object) $masterPlugins);
