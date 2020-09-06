@@ -287,8 +287,10 @@ class SequenceMatcher
         }
 
         while ($bestI + $bestSize < $ahi && ($bestJ + $bestSize) < $bhi &&
-            !$this->isBJunk($b[$bestJ + $bestSize]) && !$this->linesAreDifferent($bestI + $bestSize,
-                $bestJ + $bestSize)) {
+            !$this->isBJunk($b[$bestJ + $bestSize]) && !$this->linesAreDifferent(
+                $bestI + $bestSize,
+                $bestJ + $bestSize
+            )) {
             ++$bestSize;
         }
 
@@ -300,8 +302,10 @@ class SequenceMatcher
         }
 
         while ($bestI + $bestSize < $ahi && $bestJ + $bestSize < $bhi &&
-            $this->isBJunk($b[$bestJ + $bestSize]) && !$this->linesAreDifferent($bestI + $bestSize,
-                $bestJ + $bestSize)) {
+            $this->isBJunk($b[$bestJ + $bestSize]) && !$this->linesAreDifferent(
+                $bestI + $bestSize,
+                $bestJ + $bestSize
+            )) {
             ++$bestSize;
         }
 
