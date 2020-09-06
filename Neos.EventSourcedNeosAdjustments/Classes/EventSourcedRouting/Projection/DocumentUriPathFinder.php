@@ -5,6 +5,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -20,6 +21,8 @@ use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -63,6 +66,18 @@ final class DocumentUriPathFinder
      * @var DomainRepository
      */
     protected $domainRepository;
+
+    /**
+     * @Flow\Inject
+     * @var AssetRepository
+     */
+    protected $assetRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
 
     /**
      * @Flow\Inject
@@ -120,6 +135,17 @@ final class DocumentUriPathFinder
                             throw new InvalidShortcutException(sprintf('Failed to load selectedTarget node in Node "%s": %s', $nodeAddress, $e->getMessage()), 1599043803, $e);
                         }
                         continue 2;
+                    }
+                    if ($targetUri->getScheme() === 'asset') {
+                        $asset = $this->assetRepository->findByIdentifier($targetUri->getHost());
+                        if ($asset === null) {
+                            throw new InvalidShortcutException(sprintf('Failed to load selectedTarget asset in Node "%s", probably it was deleted', $nodeAddress), 1599314109);
+                        }
+                        $assetUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+                        if (!$assetUri) {
+                            throw new InvalidShortcutException(sprintf('Failed to resolve asset URI in Node "%s", probably it was deleted', $nodeAddress), 1599314203);
+                        }
+                        return new ResolveResult($assetUri);
                     }
                     // TODO support shortcuts to assets (asset://<id>)
                     // shortcut to (external) URI

@@ -39,10 +39,14 @@ use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
@@ -91,6 +95,27 @@ trait RoutingTrait
             $domainRepository->add($domainModel);
         }
 
+        $persistenceManager->persistAll();
+        $persistenceManager->clearState();
+    }
+
+    /**
+     * @Given an asset with id :assetIdentifier and file name :fileName exists with the content :content
+     */
+    public function anAssetExists(string $assetIdentifier, string $fileName, string $content): void
+    {
+        /** @var ResourceManager $resourceManager */
+        $resourceManager = $this->getObjectManager()->get(ResourceManager::class);
+        /** @var AssetRepository $assetRepository */
+        $assetRepository = $this->getObjectManager()->get(AssetRepository::class);
+
+        $resource = $resourceManager->importResourceFromContent($content, $fileName);
+        $asset = new Asset($resource);
+        ObjectAccess::setProperty($asset, 'Persistence_Object_Identifier', $assetIdentifier, true);
+        $assetRepository->add($asset);
+
+        /** @var PersistenceManagerInterface $persistenceManager */
+        $persistenceManager = $this->getObjectManager()->get(PersistenceManagerInterface::class);
         $persistenceManager->persistAll();
         $persistenceManager->clearState();
     }

@@ -42,9 +42,10 @@ Feature: Routing behavior of shortcut nodes
       | second-child-node          | shortcut-first-child-node     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "second-child-node"}                                                                                     | node6    |
       | shortcut-parent-node       | shortcuts                     | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-parent-node", "targetMode": "parentNode"}                                                      | node7    |
       | shortcut-selected-node     | shortcuts                     | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-selected-node", "targetMode": "selectedTarget", "target": "node://sir-nodeward-nodington-iii"} | node8    |
-      | shortcut-external-url      | shortcuts                     | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-external-url", "targetMode": "selectedTarget", "target": "https://neos.io"}                    | node9    |
-      | sir-david-nodenborough-ii  | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough-2"}                                                                                  | node10   |
-      | sir-nodeward-nodington-iii | sir-david-nodenborough-ii     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nodeward-3"}                                                                                            | node11   |
+      | shortcut-selected-asset    | shortcuts                     | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-selected-asset", "targetMode": "selectedTarget", "target": "asset://some-asset"}               | node9    |
+      | shortcut-external-url      | shortcuts                     | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-external-url", "targetMode": "selectedTarget", "target": "https://neos.io"}                    | node10   |
+      | sir-david-nodenborough-ii  | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough-2"}                                                                                  | node11   |
+      | sir-nodeward-nodington-iii | sir-david-nodenborough-ii     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nodeward-3"}                                                                                            | node12   |
     And A site exists for node name "node1"
     And The documenturipath projection is up to date
 
@@ -55,6 +56,11 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut selected target node
     When I am on URL "/"
     Then the node "shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3.html"
+
+  Scenario: Shortcut selected target asset
+    Given an asset with id "some-asset" and file name "asset.txt" exists with the content "do we need asset shortcut nodes?"
+    When I am on URL "/"
+    Then the node "shortcut-selected-asset" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/_Resources/Testing/Persistent/23dae371d1664f1d9cc7dd029b299ea717298103/asset.txt"
 
   Scenario: Shortcut selected target URL
     When I am on URL "/"
