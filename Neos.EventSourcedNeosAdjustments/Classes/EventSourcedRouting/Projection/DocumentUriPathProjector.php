@@ -272,12 +272,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 // Probably not a document node
                 continue;
             }
-            $parentDisabledLevel = (int)$this->dbal->fetchColumn('SELECT disabled FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :parentNodeAggregateIdentifier AND dimensionSpacePointHash = :dimensionSpacePointHash', [
-                'parentNodeAggregateIdentifier' => $sourceData['parentnodeaggregateidentifier'] ,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
-            ]);
             # node is already explicitly disabled
-            if ((int)$sourceData['disabled'] - $parentDisabledLevel !== 0) {
+            if ($this->isNodeExplicitlyDisabled($sourceData)) {
                 return;
             }
             $this->dbal->executeUpdate('UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET disabled = disabled + 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodePath LIKE :childNodePathPrefix)', [
@@ -303,12 +299,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 // Probably not a document node
                 continue;
             }
-            $parentDisabledLevel = (int)$this->dbal->fetchColumn('SELECT disabled FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :parentNodeAggregateIdentifier AND dimensionSpacePointHash = :dimensionSpacePointHash', [
-                'parentNodeAggregateIdentifier' => $sourceData['parentnodeaggregateidentifier'] ,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
-            ]);
             # node is not explicitly disabled
-            if ((int)$sourceData['disabled'] - $parentDisabledLevel === 0) {
+            if (!$this->isNodeExplicitlyDisabled($sourceData)) {
                 return;
             }
             $this->dbal->executeUpdate('UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET disabled = disabled - 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodePath = :nodePath OR nodePath LIKE :childNodePathPrefix)', [
@@ -493,8 +485,6 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                     ]);
                 }
 
-                // TODO update disabled flag!
-
                 if ($parentAssignment !== null) {
                     /** @var array $newParentNodeData */
                     $newParentNodeData = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND dimensionSpacePointHash = :sourceDimensionSpacePointHash', [
@@ -506,6 +496,10 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                         continue;
                     }
 
+                    $disabledDelta = (int)$newParentNodeData['disabled'] - (int)$sourceNodeData['disabled'];
+                    if ($this->isNodeExplicitlyDisabled($sourceNodeData)) {
+                        $disabledDelta++;
+                    }
                     $sourceUriPathOffset = (int)strrpos($sourceNodeData['uripath'], '/');
                     $sourceNodePathOffset = (int)strrpos($sourceNodeData['nodepath'], '/');
                     $this->dbal->update(self::TABLE_NAME_DOCUMENT_URIS, [
@@ -514,6 +508,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                         'uriPath' => trim($newParentNodeData['uripath'] . '/' . ltrim(substr($sourceNodeData['uripath'], $sourceUriPathOffset), '\/'), '\/'),
                         'succeedingNodeAggregateIdentifier' => $succeedingSiblingAssignment !== null ? $succeedingSiblingAssignment->getNodeAggregateIdentifier() : null,
                         'precedingNodeAggregateIdentifier' => $newPrecedingNodeData['nodeaggregateidentifier'] ?? null,
+                        'disabled' => (int)$sourceNodeData['disabled'] + $disabledDelta,
                     ], [
                         'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
                         'dimensionSpacePointHash' => $dimensionSpacePointHash,
@@ -522,7 +517,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                         ' . self::TABLE_NAME_DOCUMENT_URIS . '
                         SET
                             nodePath = ' . (empty($newParentNodeData['nodepath']) ? 'SUBSTRING(nodePath, :sourceNodePathOffset)' : 'TRIM(TRAILING "/" FROM CONCAT(:newParentNodePath, "/", TRIM(LEADING "/" FROM SUBSTRING(nodePath, :sourceNodePathOffset + 1))))') . ',
-                            uriPath = ' . (empty($newParentNodeData['uripath']) ? 'SUBSTRING(uriPath, :sourceUriPathOffset)' : 'TRIM("/" FROM CONCAT(:newParentUriPath, "/", TRIM(LEADING "/" FROM SUBSTRING(uriPath, :sourceUriPathOffset + 1))))') . '
+                            uriPath = ' . (empty($newParentNodeData['uripath']) ? 'SUBSTRING(uriPath, :sourceUriPathOffset)' : 'TRIM("/" FROM CONCAT(:newParentUriPath, "/", TRIM(LEADING "/" FROM SUBSTRING(uriPath, :sourceUriPathOffset + 1))))') . ',
+                            disabled = disabled + ' . $disabledDelta . '
                         WHERE
                             dimensionSpacePointHash = :dimensionSpacePointHash
                             AND nodePath LIKE :sourceNodePathPrefix
@@ -551,6 +547,19 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
     {
         $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME_DOCUMENT_URIS);
         $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME_LIVE_CONTENT_STREAMS);
+    }
+
+    private function isNodeExplicitlyDisabled(array $nodeData): bool
+    {
+        $disabledLevel = (int)$nodeData['disabled'];
+        if ($disabledLevel === 0) {
+            return false;
+        }
+        $parentDisabledLevel = (int)$this->dbal->fetchColumn('SELECT disabled FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :parentNodeAggregateIdentifier AND dimensionSpacePointHash = :dimensionSpacePointHash', [
+            'parentNodeAggregateIdentifier' => $nodeData['parentnodeaggregateidentifier'] ,
+            'dimensionSpacePointHash' => $nodeData['dimensionspacepointhash'],
+        ]);
+        return (int)$nodeData['disabled'] - $parentDisabledLevel !== 0;
     }
 
     private function isLiveContentStream(ContentStreamIdentifier $contentStreamIdentifier)

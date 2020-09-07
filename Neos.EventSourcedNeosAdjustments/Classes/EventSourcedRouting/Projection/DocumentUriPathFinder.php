@@ -216,7 +216,7 @@ final class DocumentUriPathFinder
 
     private function getNodeInfoForNodeAddress(NodeAddress  $nodeAddress): DocumentNodeInfo
     {
-        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier', [
+        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier AND disabled = 0', [
             'dimensionSpacepointHash' => $nodeAddress->getDimensionSpacePoint()->getHash(),
             'nodeAggregateIdentifier' => $nodeAddress->getNodeAggregateIdentifier(),
         ]);
@@ -225,7 +225,7 @@ final class DocumentUriPathFinder
 
     private function getParentNodeInfo(DocumentNodeInfo $nodeInfo): DocumentNodeInfo
     {
-        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier', [
+        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier AND disabled = 0', [
             'dimensionSpacepointHash' => $nodeInfo->getDimensionSpacePointHash(),
             'nodeAggregateIdentifier' => $nodeInfo->getParentNodeAggregateIdentifier(),
         ]);
@@ -234,7 +234,7 @@ final class DocumentUriPathFinder
 
     private function getFirstChildNodeInfo(DocumentNodeInfo $nodeInfo): DocumentNodeInfo
     {
-        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier AND precedingNodeAggregateIdentifier IS NULL', [
+        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacepointHash = :dimensionSpacepointHash AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier AND precedingNodeAggregateIdentifier IS NULL AND disabled = 0', [
             'dimensionSpacepointHash' => $nodeInfo->getDimensionSpacePointHash(),
             'parentNodeAggregateIdentifier' => $nodeInfo->getNodeAggregateIdentifier(),
         ]);
