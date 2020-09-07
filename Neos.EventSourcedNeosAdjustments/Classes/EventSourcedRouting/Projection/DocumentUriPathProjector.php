@@ -264,13 +264,21 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         }
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
             /** @var array $sourceData */
-            $sourceData = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND dimensionSpacePointHash = :sourceDimensionSpacePointHash', [
+            $sourceData = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND dimensionSpacePointHash = :dimensionSpacePointHash', [
                 'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
-                'sourceDimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
             ]);
             if ($sourceData === false) {
                 // Probably not a document node
                 continue;
+            }
+            $parentDisabledLevel = (int)$this->dbal->fetchColumn('SELECT disabled FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :parentNodeAggregateIdentifier AND dimensionSpacePointHash = :dimensionSpacePointHash', [
+                'parentNodeAggregateIdentifier' => $sourceData['parentnodeaggregateidentifier'] ,
+                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            ]);
+            # node is already explicitly disabled
+            if ((int)$sourceData['disabled'] - $parentDisabledLevel !== 0) {
+                return;
             }
             $this->dbal->executeUpdate('UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET disabled = disabled + 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodePath LIKE :childNodePathPrefix)', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
@@ -294,6 +302,14 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             if ($sourceData === false) {
                 // Probably not a document node
                 continue;
+            }
+            $parentDisabledLevel = (int)$this->dbal->fetchColumn('SELECT disabled FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :parentNodeAggregateIdentifier AND dimensionSpacePointHash = :dimensionSpacePointHash', [
+                'parentNodeAggregateIdentifier' => $sourceData['parentnodeaggregateidentifier'] ,
+                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            ]);
+            # node is not explicitly disabled
+            if ((int)$sourceData['disabled'] - $parentDisabledLevel === 0) {
+                return;
             }
             $this->dbal->executeUpdate('UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET disabled = disabled - 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodePath = :nodePath OR nodePath LIKE :childNodePathPrefix)', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
