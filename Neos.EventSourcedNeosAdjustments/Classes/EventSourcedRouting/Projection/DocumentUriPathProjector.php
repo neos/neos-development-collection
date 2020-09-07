@@ -115,39 +115,39 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
 
             /** @var array $parentNodePathInfo */
-            $parentNodePathInfo = $this->dbal->fetchAssoc('SELECT nodeAggregateIdentifier, uriPath, nodePath, siteNodeName FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier LIMIT 1', [
+            $parentNodePathInfo = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND nodeAggregateIdentifier = :nodeAggregateIdentifier LIMIT 1', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                 'nodeAggregateIdentifier' => $event->getParentNodeAggregateIdentifier(),
             ]);
 
             if ($event->getSucceedingNodeAggregateIdentifier() === null) {
                 /** @var array $precedingNodePathInfo */
-                $precedingNodePathInfo = $this->dbal->fetchAssoc('SELECT nodeAggregateIdentifier FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND nodePath REGEXP :nodePathPattern AND succeedingNodeAggregateIdentifier IS NULL', [
+                $precedingNodePathInfo = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier AND succeedingNodeAggregateIdentifier IS NULL', [
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
-                    'nodePathPattern' => $parentNodePathInfo['nodePath'] . '/[^\/]+$',
+                    'parentNodeAggregateIdentifier' => $parentNodePathInfo['nodeaggregateidentifier'],
                 ]);
                 if ($precedingNodePathInfo !== false) {
-                    $precedingNodeAggregateIdentifier = $precedingNodePathInfo['nodeAggregateIdentifier'];
+                    $precedingNodeAggregateIdentifier = $precedingNodePathInfo['nodeaggregateidentifier'];
                     $this->dbal->update(self::TABLE_NAME_DOCUMENT_URIS, [
                         'succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
                     ], [
-                        'nodeAggregateIdentifier' => $precedingNodePathInfo['nodeAggregateIdentifier'],
+                        'nodeAggregateIdentifier' => $precedingNodePathInfo['nodeaggregateidentifier'],
                         'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                     ]);
                 }
             } else {
                 /** @var array $precedingNodePathInfo */
-                $precedingNodePathInfo = $this->dbal->fetchAssoc('SELECT nodeAggregateIdentifier FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND nodePath REGEXP :nodePathPattern AND succeedingNodeAggregateIdentifier = :succeedingNodeAggregateIdentifier', [
+                $precedingNodePathInfo = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier AND succeedingNodeAggregateIdentifier = :succeedingNodeAggregateIdentifier', [
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
-                    'nodePathPattern' => $parentNodePathInfo['nodePath'] . '/[^\/]+$',
+                    'parentNodeAggregateIdentifier' => $parentNodePathInfo['nodeaggregateidentifier'],
                     'succeedingNodeAggregateIdentifier' => $event->getSucceedingNodeAggregateIdentifier(),
                 ]);
                 if ($precedingNodePathInfo !== false) {
-                    $precedingNodeAggregateIdentifier = $precedingNodePathInfo['nodeAggregateIdentifier'];
+                    $precedingNodeAggregateIdentifier = $precedingNodePathInfo['nodeaggregateidentifier'];
                     $this->dbal->update(self::TABLE_NAME_DOCUMENT_URIS, [
                         'succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
                     ], [
-                        'nodeAggregateIdentifier' => $precedingNodePathInfo['nodeAggregateIdentifier'],
+                        'nodeAggregateIdentifier' => $precedingNodePathInfo['nodeaggregateidentifier'],
                         'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                     ]);
                 }
@@ -162,13 +162,13 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
             // TODO reset uri path if parent node === root node
 
-            $nodePath = ($parentNodePathInfo !== false ? $parentNodePathInfo['nodePath'] . '/' : '') . $event->getNodeAggregateIdentifier();
-            if ($parentNodePathInfo === false || $parentNodePathInfo['nodePath'] === '') {
+            $nodePath = ($parentNodePathInfo !== false ? $parentNodePathInfo['nodepath'] . '/' : '') . $event->getNodeAggregateIdentifier();
+            if ($parentNodePathInfo === false || $parentNodePathInfo['nodepath'] === '') {
                 $uriPath = '';
                 $siteNodeName = (string)$event->getNodeName();
             } else {
-                $uriPath = $parentNodePathInfo['uriPath'] === '' ? $uriPathSegment : $parentNodePathInfo['uriPath'] . '/' . $uriPathSegment;
-                $siteNodeName = $parentNodePathInfo['siteNodeName'];
+                $uriPath = $parentNodePathInfo['uripath'] === '' ? $uriPathSegment : $parentNodePathInfo['uripath'] . '/' . $uriPathSegment;
+                $siteNodeName = $parentNodePathInfo['sitenodename'];
             }
             $this->dbal->insert(self::TABLE_NAME_DOCUMENT_URIS, [
                 'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
@@ -177,7 +177,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 'siteNodeName' => $siteNodeName,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                 'originDimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->getHash(),
-                'parentNodeAggregateIdentifier' => $parentNodePathInfo['nodeAggregateIdentifier'] ?? null,
+                'parentNodeAggregateIdentifier' => $parentNodePathInfo['nodeaggregateidentifier'] ?? null,
                 'precedingNodeAggregateIdentifier' => $precedingNodeAggregateIdentifier,
                 'succeedingNodeAggregateIdentifier' => $event->getSucceedingNodeAggregateIdentifier(),
                 'shortcutTarget' => $shortcutTarget !== null ? json_encode($shortcutTarget, JSON_THROW_ON_ERROR) : null,
