@@ -272,9 +272,9 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 // Probably not a document node
                 continue;
             }
-            $this->dbal->executeUpdate('UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET disabled = disabled + 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodePath = :nodePath OR nodePath LIKE :childNodePathPrefix)', [
+            $this->dbal->executeUpdate('UPDATE ' . self::TABLE_NAME_DOCUMENT_URIS . ' SET disabled = disabled + 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodePath LIKE :childNodePathPrefix)', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
-                'nodePath' => $sourceData['nodepath'],
+                'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
                 'childNodePathPrefix' => $sourceData['nodepath'] . '/%',
             ]);
         }
@@ -463,7 +463,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                             'dimensionSpacePointHash' => $dimensionSpacePointHash,
                         ]);
                     }
-                } else {
+                } elseif ($parentAssignment === null) {
                     /** @var array $newPrecedingNodeData */
                     $newPrecedingNodeData = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier AND dimensionSpacePointHash = :dimensionSpacePointHash AND succeedingNodeAggregateIdentifier IS NULL', [
                         'parentNodeAggregateIdentifier' => $sourceNodeData['parentnodeaggregateidentifier'],
@@ -505,16 +505,16 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                     $this->dbal->executeUpdate('UPDATE
                         ' . self::TABLE_NAME_DOCUMENT_URIS . '
                         SET
-                            nodePath = ' . (empty($newParentNodeData['nodepath']) ? 'SUBSTRING(nodePath, :sourceNodePathOffset)' : 'CONCAT(:newParentNodePath, \'/\', SUBSTRING(nodePath, :sourceNodePathOffset))') . ',
-                            uriPath = ' . (empty($newParentNodeData['uripath']) ? 'SUBSTRING(uriPath, :sourceUriPathOffset)' : 'CONCAT(:newUriPath, \'/\', SUBSTRING(uriPath, :sourceUriPathOffset))') . '
+                            nodePath = ' . (empty($newParentNodeData['nodepath']) ? 'SUBSTRING(nodePath, :sourceNodePathOffset)' : 'TRIM(TRAILING "/" FROM CONCAT(:newParentNodePath, "/", TRIM(LEADING "/" FROM SUBSTRING(nodePath, :sourceNodePathOffset + 1))))') . ',
+                            uriPath = ' . (empty($newParentNodeData['uripath']) ? 'SUBSTRING(uriPath, :sourceUriPathOffset)' : 'TRIM("/" FROM CONCAT(:newParentUriPath, "/", TRIM(LEADING "/" FROM SUBSTRING(uriPath, :sourceUriPathOffset + 1))))') . '
                         WHERE
                             dimensionSpacePointHash = :dimensionSpacePointHash
                             AND nodePath LIKE :sourceNodePathPrefix
                         ', [
                         'newParentNodePath' => $newParentNodeData['nodepath'],
-                        'sourceNodePathOffset' => $sourceNodePathOffset + 1,
-                        'newUriPath' => $newParentNodeData['uripath'],
-                        'sourceUriPathOffset' => $sourceUriPathOffset + 1,
+                        'sourceNodePathOffset' => $sourceNodePathOffset,
+                        'newParentUriPath' => $newParentNodeData['uripath'],
+                        'sourceUriPathOffset' => $sourceUriPathOffset,
                         'dimensionSpacePointHash' => $dimensionSpacePointHash,
                         'sourceNodePathPrefix' => $sourceNodeData['nodepath'] . '/%',
                     ]);
