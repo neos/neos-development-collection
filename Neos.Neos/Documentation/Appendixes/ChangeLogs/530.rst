@@ -1,0 +1,562 @@
+`5.3.0 (2020-09-08) <https://github.com/neos/neos-development-collection/releases/tag/5.3.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3106>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/RvbyGK>`_.
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3107>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/4xEKGe>`_.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Diff`` ``Fusion`` ``Media`` ``Neos``
+
+`FEATURE: Use breadcrumb for URL preview <https://github.com/neos/neos-development-collection/pull/3100>`_
+----------------------------------------------------------------------------------------------------------
+
+This replaces the (preview) URL by a "breadcrumb" to the homepage node.
+
+Essentially applies https://github.com/neos/neos-development-collection/pull/2966
+to the 4.3 branch, since the breadcrumb is a lot more user-friendly than the
+URL.
+
+* Packages: ``Neos``
+
+`BUGFIX: Migrate icons from TYPO3.Media to Neos.Media <https://github.com/neos/neos-development-collection/pull/3101>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2341 <https://github.com/neos/neos-development-collection/issues/2341>`_
+* Packages: ``Media``
+
+`TASK: Add new login wallpaper for Neos 5.3 <https://github.com/neos/neos-development-collection/pull/3105>`_
+-------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Correctly set apply values for instantiated array objects <https://github.com/neos/neos-development-collection/pull/3103>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+With the introduction of lazy evaluation the apply values are stored as
+an array of (absolute) paths and popped accordingly to the evaluation
+stack. When an object is instantiated only the effective apply values
+for this object must be set (and not all currently set apply values).
+
+* Fixes: `#3003 <https://github.com/neos/neos-development-collection/issues/3003>`_
+
+**What I did**
+
+Adjusted the code in Runtime to only set applicable (stored) apply values when instantiating an object.
+
+**How I did it**
+
+- Reproduced the error
+- Analyzed the rendering of the broken case with some added debugging output
+- Found the case where `Case` will be instantiated with wrong props and spotted the issue introduced with `0642115d529237bd30ae1502a78409e7739c4718 <https://github.com/neos/neos-development-collection/commit/0642115d529237bd30ae1502a78409e7739c4718>`_
+- Implemented a minimal functional test case that reproduces the error
+- Implemented the fix by only setting the actual apply values for the Fusion object (we already remember these for popping them after leaving the evaluation stack) and not _everything_ ever `@apply`'d
+
+**How to verify it**
+
+- Check the new functional test without the change to Runtime, it exposes the error from #3003
+- Add a NodeType like described in #3003 and check the rendering
+
+* Packages: ``Fusion`` ``Media`` ``Neos``
+
+`BUGFIX: TransientNodeCache must be able to return null <https://github.com/neos/neos-development-collection/pull/3097>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This is an important bugfix because right now non existing nodes will result in a fatal error 
+due to the type hint, when the $getter() actually doesn't resolve a node but null, which can happen.
+The current behavior is therefore broken for many installations.
+
+Relate #2301
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`BUGFIX: Migrate media browser icons <https://github.com/neos/neos-development-collection/pull/3091>`_
+------------------------------------------------------------------------------------------------------
+
+In Neos prior to 4.1, the media browser uses PNG resources to show thumbnails for non graphical documents from `…/Public/Icons/`, like `ppt.png`. In 4.1 the PNG ressources were removed and replaced by SVG resources from `…/Resources/Public/IconSets/vivid/`. When you add new files after the upgrade, the valid SVG resources are used, but old assets still refer to their old resources, which are missing. As a result, the media browser shows the rotating “loading” icon for these old documents.
+
+This adds Doctrine migrations to replace the old with the  new icons in the database.
+
+* Fixes: `#2341 <https://github.com/neos/neos-development-collection/issues/2341>`_
+* Packages: ``Media``
+
+`TASK: Remove deprecated code use from ContentCollectionRenderer <https://github.com/neos/neos-development-collection/pull/2772>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This replaces the use of `Neos.Fusion:Collection` with `Neos.Fusion:Loop`
+and `Neos.Fusion:Array` with `Neos.Fusion:Join`.
+
+To ensure backwards compatibility there is a processor which overrides
+`items` if the property `collection` is set.
+
+* Packages: ``Neos``
+
+`Bump lodash from 4.17.15 to 4.17.19 in /Neos.Neos <https://github.com/neos/neos-development-collection/pull/3016>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Bumps `lodash <https://github.com/lodash/lodash>`_ from 4.17.15 to 4.17.19.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a href="https://github.com/lodash/lodash/releases">lodash's releases</a>.</em></p>
+<blockquote>
+<h2>4.17.16</h2>
+</blockquote>
+</details>
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a href="https://github.com/lodash/lodash/commit/`d7fbc52ee0466a6d248f047b5d5c3e6d1e099056 <https://github.com/neos/neos-development-collection/commit/d7fbc52ee0466a6d248f047b5d5c3e6d1e099056>`_"><code>d7fbc52</code></a> Bump to v4.17.19</li>
+<li><a href="https://github.com/lodash/lodash/commit/`2e1c0f22f425e9c013815b2cd7c2ebd51f49a8d6 <https://github.com/neos/neos-development-collection/commit/2e1c0f22f425e9c013815b2cd7c2ebd51f49a8d6>`_"><code>2e1c0f2</code></a> Add npm-package</li>
+<li><a href="https://github.com/lodash/lodash/commit/`1b6c282299f4e0271f932b466c67f0f822aa308e <https://github.com/neos/neos-development-collection/commit/1b6c282299f4e0271f932b466c67f0f822aa308e>`_"><code>1b6c282</code></a> Bump to v4.17.18</li>
+<li><a href="https://github.com/lodash/lodash/commit/`a370ac81408de2da77a82b3c4b61a01a3b9c2fac <https://github.com/neos/neos-development-collection/commit/a370ac81408de2da77a82b3c4b61a01a3b9c2fac>`_"><code>a370ac8</code></a> Bump to v4.17.17</li>
+<li><a href="https://github.com/lodash/lodash/commit/`1144918f3578a84fcc4986da9b806e63a6175cbb <https://github.com/neos/neos-development-collection/commit/1144918f3578a84fcc4986da9b806e63a6175cbb>`_"><code>1144918</code></a> Rebuild lodash and docs</li>
+<li><a href="https://github.com/lodash/lodash/commit/`3a3b0fd339c2109563f7e8167dc95265ed82ef3e <https://github.com/neos/neos-development-collection/commit/3a3b0fd339c2109563f7e8167dc95265ed82ef3e>`_"><code>3a3b0fd</code></a> Bump to v4.17.16</li>
+<li><a href="https://github.com/lodash/lodash/commit/`c84fe82760fb2d3e03a63379b297a1cc1a2fce12 <https://github.com/neos/neos-development-collection/commit/c84fe82760fb2d3e03a63379b297a1cc1a2fce12>`_"><code>c84fe82</code></a> fix(zipObjectDeep): prototype pollution (<a href="https://github-redirect.dependabot.com/lodash/lodash/issues/4759">#4759</a>)</li>
+<li><a href="https://github.com/lodash/lodash/commit/`e7b28ea6cb17b4ca021e7c9d66218c8c89782f32 <https://github.com/neos/neos-development-collection/commit/e7b28ea6cb17b4ca021e7c9d66218c8c89782f32>`_"><code>e7b28ea</code></a> Sanitize sourceURL so it cannot affect evaled code (<a href="https://github-redirect.dependabot.com/lodash/lodash/issues/4518">#4518</a>)</li>
+<li><a href="https://github.com/lodash/lodash/commit/`0cec225778d4ac26c2bac95031ecc92a94f08bbb <https://github.com/neos/neos-development-collection/commit/0cec225778d4ac26c2bac95031ecc92a94f08bbb>`_"><code>0cec225</code></a> Fix lodash.isEqual for circular references (<a href="https://github-redirect.dependabot.com/lodash/lodash/issues/4320">#4320</a>) (<a href="https://github-redirect.dependabot.com/lodash/lodash/issues/4515">#4515</a>)</li>
+<li><a href="https://github.com/lodash/lodash/commit/`94c3a8133cb4fcdb50db72b4fd14dd884b195cd5 <https://github.com/neos/neos-development-collection/commit/94c3a8133cb4fcdb50db72b4fd14dd884b195cd5>`_"><code>94c3a81</code></a> Document matches* shorthands for over* methods (<a href="https://github-redirect.dependabot.com/lodash/lodash/issues/4510">#4510</a>) (<a href="https://github-redirect.dependabot.com/lodash/lodash/issues/4514">#4514</a>)</li>
+<li>Additional commits viewable in <a href="https://github.com/lodash/lodash/compare/4.17.15...4.17.19">compare view</a></li>
+</ul>
+</details>
+<details>
+<summary>Maintainer changes</summary>
+<p>This version was pushed to npm by <a href="https://www.npmjs.com/~mathias">mathias</a>, a new releaser for lodash since your current version.</p>
+</details>
+<br />
+
+`![Dependabot compatibility score <https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=lodash&package-manager=npm_and_yarn&previous-version=4.17.15&new-version=4.17.19>`_](https://help.github.com/articles/configuring-automated-security-fixes)
+
+Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.
+
+[//]: # (dependabot-automerge-start)
+[//]: # (dependabot-automerge-end)
+
+---
+
+<details>
+<summary>Dependabot commands and options</summary>
+<br />
+
+You can trigger Dependabot actions by commenting on this PR:
+- `@dependabot rebase` will rebase this PR
+- `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it
+- `@dependabot merge` will merge this PR after your CI passes on it
+- `@dependabot squash and merge` will squash and merge this PR after your CI passes on it
+- `@dependabot cancel merge` will cancel a previously requested merge and block automerging
+- `@dependabot reopen` will reopen this PR if it is closed
+- `@dependabot close` will close this PR and stop Dependabot recreating it. You can achieve the same result by closing it manually
+- `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot use these labels` will set the current labels as the default for future PRs for this repo and language
+- `@dependabot use these reviewers` will set the current reviewers as the default for future PRs for this repo and language
+- `@dependabot use these assignees` will set the current assignees as the default for future PRs for this repo and language
+- `@dependabot use this milestone` will set the current milestone as the default for future PRs for this repo and language
+
+You can disable automated security fix PRs for this repo from the `Security Alerts page <https://github.com/neos/neos-development-collection/network/alerts>`_.
+
+</details>
+
+* Packages: ``Neos``
+
+`FEATURE: User management for non-admins <https://github.com/neos/neos-development-collection/pull/2322>`_
+----------------------------------------------------------------------------------------------------------
+
+This introduces a new role `Neos.Neos:UserManager`. When an editor has that role, he is able to manage users with roles not exceeding his own, without being an Administrator.
+
+!`peek 2018-12-15 23-40 <https://user-images.githubusercontent.com/837032/50047249-cf1dc180-00c2-11e9-85d0-2fe681f70e26.gif>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Repair icon rendering for flash messages <https://github.com/neos/neos-development-collection/pull/3083>`_
+-------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Changed the font-family to the correct value `Font Awesome 5 Free`
+
+**How to verify it**
+Change a user in the backend for instance and check the flashmessage.
+
+* Fixes: `#3069 <https://github.com/neos/neos-development-collection/issues/3069>`_ 
+* Packages: ``Neos``
+
+`TASK: Bump websocket-extensions from 0.1.3 to 0.1.4 in /Neos.Media.Browser <https://github.com/neos/neos-development-collection/pull/3032>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Bumps `websocket-extensions <https://github.com/faye/websocket-extensions-node>`_ from 0.1.3 to 0.1.4.
+
+* Packages: ``Browser``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3076>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/e74pRP>`_.
+
+* Packages: ``Fusion``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3075>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/4xRDKe>`_.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Fusion`` ``Media`` ``Neos``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3072>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/aj4pmk>`_.
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3073>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/KZx4WV>`_.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Diff`` ``Fusion`` ``Media`` ``Neos``
+
+`FEATURE: Make login controller view configurable using Views.yaml <https://github.com/neos/neos-development-collection/pull/3009>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+The login controller view was not configurable using a `Views.yaml` (as was the case for Neos 3 & 4.)
+This is fixed by adding a `Views.yaml` and removing `initializeView()` from `LoginController`.
+
+Now the Login screen can be customized again by creating custom Fusion for rendering it (see
+`Neos.Neos/Resources/Private/Fusion/Backend` for inspiration) and adjusting the path used
+through `Views.yaml`, e.g.
+
+    -
+      requestFilter: 'isPackage("Neos.Neos") && isController("Login") && isAction("index") && isFormat("html")'
+      options:
+        fusionPathPatterns:
+          - 'resource://Acme.Com/Private/Fusion/NeosLogin'
+
+* Resolves: `#3041 <https://github.com/neos/neos-development-collection/issues/3041>`_
+* Packages: ``Browser``
+
+`TASK: Improve wording of include/exclude concepts where possible <https://github.com/neos/neos-development-collection/pull/2992>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Matching change with https://github.com/neos/flow-development-collection/pull/2024
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Prevent refetching nodes for policy checks <https://github.com/neos/neos-development-collection/pull/2302>`_
+---------------------------------------------------------------------------------------------------------------------
+
+When defining a policy targeting a static node the static node was
+refetched for every subject, slowing down policy information retrieval.
+
+This adds a simple caching mechanism to `NodePrivilegeContext::getNodeByIdentifier`
+that prevents nodes from being refetched for static policy comparisons.
+
+* Resolves: `#2301 <https://github.com/neos/neos-development-collection/issues/2301>`_
+* Packages: ``Browser`` ``ContentRepository``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3059>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/OMdgkW>`_.
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3060>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/lKyEJV>`_.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Diff`` ``Fusion`` ``Media`` ``Neos``
+
+`BUGFIX: Variants tab does not use mainRequest in form when opened from inspector <https://github.com/neos/neos-development-collection/pull/3008>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+This adds a condition for using the parentRequest only if it is not the mainRequest already.
+
+* Fixes: `#3005 <https://github.com/neos/neos-development-collection/issues/3005>`_
+* Packages: ``Browser``
+
+`BUGFIX: Make child nodes of hidden parents inaccessible <https://github.com/neos/neos-development-collection/pull/2998>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Since a couple of months child nodes of hidden nodes are accessible (outside the Neos backend). This change restores the initial behavior and makes sure that accessing child nodes from hidden nodes will lead to a 404 response.
+
+resolves: https://github.com/neos/neos-development-collection/issues/2983
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`TASK: Add types to workspace model <https://github.com/neos/neos-development-collection/pull/2921>`_
+-----------------------------------------------------------------------------------------------------
+
+* Packages: ``BaseMixins`` ``ContentRepository`` ``Neos``
+
+`!!! BUGFIX: Speed up node move actions <https://github.com/neos/neos-development-collection/pull/3015>`_
+---------------------------------------------------------------------------------------------------------
+
+Due to an issue in how Doctrine 2.x handles the computation of changesets when given
+entities to commit it recomputed the changesets for all entities for every entity.
+Leading to n^2 change computations.
+
+In a large project this improved the moving of ~750 nodes from 1.7m to 8.5s.
+In the demo site moving the "features" page from 4s to 1.65s. 
+Publishing seems to be only slightly (~10%) faster to its different behaviour in the CR.
+
+**What I did**
+
+Which this change this behaviour is circumvented by commiting all
+entities at once. Including entities which might not have been included
+with the previous code but would have been persisted at the end of the request
+anyway.
+
+**What is breaking**
+This change leads to all entities scheduled for persistence to actually persist when a node is changed, see following comparison timelines:
+
+Old:
+1. Create Entity, mark for insertion
+2. change node
+3. controller call is done / persistAll was called -> entity from step one is now persisted
+
+New:
+1. Create Entity, mark for insertion
+2. change node (entity will be persisted at this point)
+3. controller call is done / persistAll was called -> nothing happens anymore.
+
+**How I did it**
+
+Replace the repeated flush calls to the entity manager with a single one.
+
+This should only lead to a behavioural change if custom code would modify a node
+then move other nodes and expect the the first node was not persisted yet.
+
+**How to verify it**
+
+1. Move a large set of pages with subpages and nodes in the Neos backend. 
+2. Check the request time of the `change` xhr request.
+3. Apply this patch
+4. Repeat steps 1 + 2 and compare
+
+Example screenshots:
+
+Before:
+
+<img width="600" alt="before-change" src="https://user-images.githubusercontent.com/596967/87766599-b4b94600-c819-11ea-9777-0bbe11f84d3a.png">
+
+After:
+
+<img width="600" alt="after-change" src="https://user-images.githubusercontent.com/596967/87766608-b7b43680-c819-11ea-83f9-2fbf1993cda7.png">
+
+
+* Packages: ``ContentRepository``
+
+`FEATURE: Configurable Asset Constraints <https://github.com/neos/neos-development-collection/pull/3013>`_
+----------------------------------------------------------------------------------------------------------
+
+Extends the Media Browser and Asset proxy search endpoint so
+that it supports *constraints* that filter the asset lists
+(on top of the user-specified filters).
+
+This makes it possible to constraint asset source(s) and
+media type(s) per node type property.
+
+Example:
+
+    'Some.Node:Type':
+      properties:
+        'asset':
+          type: 'Neos\\Media\\Domain\\Model\\Asset'
+          ui:
+            inspector:
+              group: 'asset'
+              editorOptions:
+                constraints:
+                  mediaTypes: ['audio/*']
+                  assetSources: ['neos', 'wikipedia_de']
+
+(restricts the asset editor to only allow audio files of the `neos` or `wikipedia_de`
+asset source when using the media browser modal, searchbox or file upload).
+
+* Resolves: `#2984 <https://github.com/neos/neos-development-collection/issues/2984>`_
+* Packages: ``BaseMixins`` ``Browser``
+
+`TASK: Remove curly brace string offset access for PHP 7.4 compatibility <https://github.com/neos/neos-development-collection/pull/3011>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+I changed string offset access from curly-braces to brackets
+
+* Packages: ``Diff`` ``Neos``
+
+`BUGFIX: Fix login screen if no background image is set <https://github.com/neos/neos-development-collection/pull/3007>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This will fix issue #3004 
+
+* Packages: ``Neos``
+
+`TASK: Update code documentation for TraversableNodeInterface <https://github.com/neos/neos-development-collection/pull/2999>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Also improves deprecation warning for NodeInterface#getParent
+
+1. The NodeInterface#getParent method is not fully equivalent to its deprecation replacement TraversableNodeInterface#findParentNode -> it should be at least mentioned on the deprecation waring, that those behaviors differ from each other
+2. The comment on findParentNode was telling "two truths" about root node handling
+
+* Packages: ``BaseMixins`` ``ContentRepository``
+
+`BUGFIX: pass copied node to emitAfterNodeCopy signal <https://github.com/neos/neos-development-collection/pull/2995>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Pass copied node instead of current node instance to `emitAfterNodeCopy` signal.
+
+This fixes #2994 
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`BUGFIX: Resolve error when backend session times out <https://github.com/neos/neos-development-collection/pull/3002>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Check view type before setting fusion paths
+
+**How I did it**
+
+See above
+
+**How to verify it**
+
+Close #2990 
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Fix path to Styles/<Lite.css> <https://github.com/neos/neos-development-collection/pull/2997>`_
+--------------------------------------------------------------------------------------------------------
+
+**What I did**
+Remove the `/` in front of the Path for the resource.
+
+**How to verify it**
+Open Neos backend, e.g. User Manager and inspect the path in the HTML head for Lite.css
+
+Closes #2996
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Add missing pagination styles for media browser <https://github.com/neos/neos-development-collection/pull/2993>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+They got lost in the style split for 5.2 in #2874
+
+* Packages: ``Browser`` ``Neos``
+
+`FEATURE: Add option to disable the creation of redirects for assets <https://github.com/neos/neos-development-collection/pull/2964>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This feature adds a config parameter for the media browser to disable the option to create redirects for replaced assets resources. Might be useful for some projects, where these kind of redirects don't make any sense and therefore should be disabled by default.
+
+<img width="987" alt="createAssetRedirectsOption" src="https://user-images.githubusercontent.com/36864084/79948497-46602400-8474-11ea-8859-46ef0a391eb2.png">
+
+* Packages: ``BaseMixins`` ``Browser``
+
+`BUGFIX: Passing glue string after array is deprecated <https://github.com/neos/neos-development-collection/pull/2982>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Wrong parameter order leads to deprecation warning and to an exception
+in PHP 7.4
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`BUGFIX: Respect fallback rule "strictness" in FusionView <https://github.com/neos/neos-development-collection/pull/2976>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+When Neos finds a content dimension named "language" it uses that
+dimension to set the locale fallback order for rendering in the
+`FusionView`.
+
+In Neos 5.0 that rule was switched to "strict" mode, meaning the order
+was used without falling back to implicit parents in locales. This
+broke translations in case the "language" dimension was configured with
+e.g. `de_DE` or `en_US` - for those cases translations were never used if
+the respective XLIFF files were in `de` (or `en`) folders.
+
+This change makes the `FusionView` use the strict flag from the settings,
+giving back control to the user (in case non-strict is really needed).
+At the same time it makes translations work as would be expected in
+most cases, by using e.g. `de_DE` first, but falling back to `de` later.
+
+* Fixes: `#2963 <https://github.com/neos/neos-development-collection/issues/2963>`_
+* Packages: ``Neos``
+
+`BUGFIX: Revert ContentCollection constraint change <https://github.com/neos/neos-development-collection/pull/2978>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This reverts commit `b48660b28c1de596e74d4a95b8547d743b5199f1 <https://github.com/neos/neos-development-collection/commit/b48660b28c1de596e74d4a95b8547d743b5199f1>`_ as it’s breaking the „constraint“ best practices for node types and allows to many NodeTypes in existing projects suddenly.
+
+As the previous fix is still necessary I will create a new PR for a next Neos version 5.3 or 6.0 depending on the final solution.
+
+Without the fix the actual constraint to only allow Content NodeTypes is done by the Neos.Ui and NOT by our NodeType definition which causes an inconsistency when working with the CR via its API or when analysing the NodeType definitions.
+
+* Packages: ``BaseMixins`` ``Neos``
+
+`FEATURE: Add keyRenderer to render the key in the result map <https://github.com/neos/neos-development-collection/pull/2977>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This adds a new fusionPath `keyRenderer` to render
+the key of the resulting collection of `Neos.Fusion:Map`
+
+Example:
+
+```
+keyRenderer = Neos.Fusion:Map {
+  items = ${items}
+  itemName = 'element'
+  itemRenderer = ${'value-' + element}
+  keyRenderer = ${'key-' + element}
+}
+```
+
+will render:
+
+```
+['key-element1' => 'value-element1', 'key-element2' => 'value-element2']
+```
+
+* Packages: ``Fusion`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.2.0...5.3.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
