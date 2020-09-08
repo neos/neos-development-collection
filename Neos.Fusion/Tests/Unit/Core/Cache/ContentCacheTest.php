@@ -253,7 +253,7 @@ class ContentCacheTest extends UnitTestCase
         $innerUncachedContent = $contentCache->createUncachedSegment(
             $uncachedCommandOutput,
             'some.fusionh.path.innerUncached',
-            array('node' => 'A node identifier')
+            ['node' => 'A node identifier']
         );
 
         $outerContentStart = 'You can nest cached segments like <';
