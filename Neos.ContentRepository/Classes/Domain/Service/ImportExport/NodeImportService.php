@@ -656,10 +656,10 @@ class NodeImportService
             . '   AND dimensionshash = :dimensionsHash'
             . ' )',
             [
-            'identifier' => $nodeData['identifier'],
-            'workspace' => $nodeData['workspace'],
-            'dimensionsHash' => $nodeData['dimensionsHash']
-        ]
+                'identifier' => $nodeData['identifier'],
+                'workspace' => $nodeData['workspace'],
+                'dimensionsHash' => $nodeData['dimensionsHash']
+            ]
         );
 
         /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
