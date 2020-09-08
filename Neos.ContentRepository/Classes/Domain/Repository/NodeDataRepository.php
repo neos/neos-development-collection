@@ -1055,7 +1055,8 @@ class NodeDataRepository extends Repository
                 $queryBuilder->expr()->orx()
                     ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
                     ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
+            )
                 ->setParameter('parentPathHash', md5($pathStartingPoint))
                 ->setParameter('pathHash', md5($pathStartingPoint))
                 ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
@@ -1317,12 +1318,16 @@ class NodeDataRepository extends Repository
                 if (isset($nodeDimensions[$dimensionName])) {
                     foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
                         $position = array_search($nodeDimensionValue, $dimensionValues);
-                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            $position) : $position;
+                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min(
+                            $dimensionPositions[$dimensionName],
+                            $position
+                        ) : $position;
                     }
                 } else {
-                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            PHP_INT_MAX) : PHP_INT_MAX;
+                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min(
+                        $dimensionPositions[$dimensionName],
+                        PHP_INT_MAX
+                    ) : PHP_INT_MAX;
                 }
             }
             $dimensionPositions[] = $workspacePosition;
@@ -1559,7 +1564,8 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX()
                     ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
+            )
                 ->setParameter('parentPathHash', md5($parentPath))
                 ->setParameter('parentPath', rtrim($parentPath, '/') . '/%');
         }
@@ -1580,7 +1586,8 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX()
                     ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
-                    ->add($queryBuilder->expr()->like('n.path', ':path')))
+                    ->add($queryBuilder->expr()->like('n.path', ':path'))
+            )
                 ->setParameter('pathHash', md5($path))
                 ->setParameter('path', rtrim($path, '/') . '/%');
         }
