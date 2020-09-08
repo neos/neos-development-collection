@@ -422,7 +422,7 @@ class Runtime
         $applyPathsToPop = [];
         try {
             $applyPathsToPop = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
-            $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration);
+            $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration, $applyPathsToPop);
             $needToPopContext = $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
             $output = $this->evaluateObjectOrRetrieveFromCache($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
         } catch (StopActionException $stopActionException) {
@@ -605,10 +605,11 @@ class Runtime
      *
      * @param string $fusionPath Path to the configuration for this object instance
      * @param array $fusionConfiguration Configuration at the given path
+     * @param array $applyValuePaths Apply value paths for this object
      * @return AbstractFusionObject
      * @throws Exception
      */
-    protected function instantiateFusionObject($fusionPath, $fusionConfiguration)
+    protected function instantiateFusionObject($fusionPath, $fusionConfiguration, array $applyValuePaths)
     {
         $fusionObjectType = $fusionConfiguration['__objectType'];
 
@@ -635,7 +636,7 @@ class Runtime
                 $evaluatedIgnores = $this->evaluate($fusionPath . '/__meta/ignoreProperties', $fusionObject);
                 $fusionObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : []);
             }
-            $this->setPropertiesOnFusionObject($fusionObject, $fusionConfiguration);
+            $this->setPropertiesOnFusionObject($fusionObject, $fusionConfiguration, $applyValuePaths);
         }
         return $fusionObject;
     }
@@ -656,9 +657,10 @@ class Runtime
      *
      * @param AbstractArrayFusionObject $fusionObject
      * @param array $fusionConfiguration
+     * @param array $applyValuePaths
      * @return void
      */
-    protected function setPropertiesOnFusionObject(AbstractArrayFusionObject $fusionObject, array $fusionConfiguration)
+    protected function setPropertiesOnFusionObject(AbstractArrayFusionObject $fusionObject, array $fusionConfiguration, array $applyValuePaths)
     {
         foreach ($fusionConfiguration as $key => $value) {
             // skip keys which start with __, as they are purely internal.
@@ -669,10 +671,11 @@ class Runtime
             ObjectAccess::setProperty($fusionObject, $key, $value);
         }
 
-        if (is_array($this->currentApplyValues)) {
-            foreach ($this->currentApplyValues as $path => $property) {
-                $key = $property['key'];
-                if (isset($property['lazy'])) {
+        if ($applyValuePaths !== []) {
+            foreach ($applyValuePaths as $path) {
+                $entry = $this->currentApplyValues[$path];
+                $key = $entry['key'];
+                if (isset($entry['lazy'])) {
                     $valueAst = [
                         '__eelExpression' => null,
                         // Mark this property as not having a simple value in the AST -
@@ -684,7 +687,7 @@ class Runtime
                     $valueAst = [
                         '__eelExpression' => null,
                         '__objectType' => null,
-                        '__value' => $property['value']
+                        '__value' => $entry['value']
                     ];
                 }
 
@@ -694,7 +697,7 @@ class Runtime
                     $valueAst['__meta'] = $meta;
                 }
 
-                ObjectAccess::setProperty($fusionObject, $property['key'], $valueAst);
+                ObjectAccess::setProperty($fusionObject, $entry['key'], $valueAst);
             }
         }
     }
