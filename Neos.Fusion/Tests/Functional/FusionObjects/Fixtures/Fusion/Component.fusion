@@ -48,3 +48,24 @@ component.lazyRenderer = Neos.Fusion:Component {
 
   renderer = ${props.a}
 }
+
+component.wrapperRenderer = Neos.Fusion:Component {
+  title = 'Hello'
+
+  content = Neos.Fusion:Component {
+    renderer = Neos.Fusion:Case {
+      default {
+        @position = 'end'
+        condition = ${true}
+        renderer = 'Default content'
+      }
+    }
+  }
+
+  renderer = Neos.Fusion:Component {
+    // The wrapper pattern passes all props down to another component
+    @apply.props = ${props}
+
+    renderer = ${props.content}
+  }
+}
