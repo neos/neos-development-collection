@@ -28,7 +28,7 @@ class TransientNodeCache
      * @param callable $getter
      * @return NodeInterface
      */
-    public function cache(string $nodeIdentifier, callable $getter): NodeInterface
+    public function cache(string $nodeIdentifier, callable $getter): ?NodeInterface
     {
         if (array_key_exists($nodeIdentifier, $this->nodes)) {
             return $this->nodes[$nodeIdentifier];
