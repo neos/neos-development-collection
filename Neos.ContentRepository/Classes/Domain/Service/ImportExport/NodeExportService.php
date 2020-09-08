@@ -207,7 +207,8 @@ class NodeExportService
         // Sort nodeDataList by path, replacing "/" with "!" (the first visible ASCII character)
         // because there may be characters like "-" in the node path
         // that would break the sorting order
-        usort($nodeDataList,
+        usort(
+            $nodeDataList,
             function ($node1, $node2) {
                 return strcmp(
                     str_replace("/", "!", $node1['path']),
