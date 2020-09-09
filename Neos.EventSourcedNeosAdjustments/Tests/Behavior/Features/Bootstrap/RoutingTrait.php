@@ -33,6 +33,7 @@ use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RouterInterface;
@@ -153,9 +154,33 @@ trait RoutingTrait
      */
     public function theMatchedNodeShouldBeInContentStreamAndOriginDimension(string $nodeAggregateIdentifier, string $contentStreamIdentifier, string $dimensionSpacePoint): void
     {
+        $nodeAddress = $this->match($this->requestUrl);
+        Assert::assertTrue($nodeAddress->isInLiveWorkspace());
+        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->getNodeAggregateIdentifier());
+        Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->getContentStreamIdentifier());
+        Assert::assertTrue($nodeAddress->getDimensionSpacePoint()->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), sprintf('Dimension space point "%s" did not match the expected "%s"', json_encode($nodeAddress->getDimensionSpacePoint()), $dimensionSpacePoint));
+    }
+
+    /**
+     * @Then No node should match URL :url
+     */
+    public function noNodeShouldMatchUrl(string $url): void
+    {
+        $matchedNodeAddress = null;
+        $exception = false;
+        try {
+            $matchedNodeAddress = $this->match(new Uri($url));
+        } catch (NoMatchingRouteException $exception) {
+            $exception = true;
+        }
+        Assert::assertTrue($exception, 'Expected an NoMatchingRouteException to be thrown but instead the following node address was matched: ' . $matchedNodeAddress ?? '- none -');
+    }
+
+    private function match(UriInterface $uri): NodeAddress
+    {
         $router = $this->getObjectManager()->get(RouterInterface::class);
         $serverRequestFactory = $this->getObjectManager()->get(ServerRequestFactoryInterface::class);
-        $httpRequest = $serverRequestFactory->createServerRequest('GET', $this->requestUrl);
+        $httpRequest = $serverRequestFactory->createServerRequest('GET', $uri);
 
         $componentContext = new ComponentContext($httpRequest, new Response());
         $component = new DetectContentSubgraphComponent();
@@ -168,12 +193,9 @@ trait RoutingTrait
         $routeValues = $router->route($routeContext);
 
         $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
-        $nodeAddress = $nodeAddressFactory->createFromUriString($routeValues['node']);
-        Assert::assertTrue($nodeAddress->isInLiveWorkspace());
-        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->getNodeAggregateIdentifier());
-        Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->getContentStreamIdentifier());
-        Assert::assertTrue($nodeAddress->getDimensionSpacePoint()->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), sprintf('Dimension space point "%s" did not match the expected "%s"', json_encode($nodeAddress->getDimensionSpacePoint()), $dimensionSpacePoint));
+        return $nodeAddressFactory->createFromUriString($routeValues['node']);
     }
+
 
     /**
      * @Then The node :nodeAggregateIdentifier in content stream :contentStreamIdentifier and dimension :dimensionSpacePoint should resolve to URL :url
@@ -194,21 +216,21 @@ trait RoutingTrait
         $exception = false;
         try {
             $resolvedUrl = $this->resolveUrl($nodeAggregateIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
-        } catch (InvalidShortcutException $exception) {
+        } catch (NoMatchingRouteException $exception) {
             $exception = true;
         }
-        Assert::assertTrue($exception, 'Expected an InvalidShortcutException to be thrown but instead the following URL is resolved: ' . $resolvedUrl ?? '- none -');
+        Assert::assertTrue($exception, 'Expected an NoMatchingRouteException to be thrown but instead the following URL is resolved: ' . $resolvedUrl ?? '- none -');
     }
 
     /**
      * @Then I expect the documenturipath table to contain exactly:
      */
-    public function nodesUnderneathNode(TableNode $expectedRows): void
+    public function tableContainsExactly(TableNode $expectedRows): void
     {
         /** @var Connection $dbal */
         $dbal = $this->getObjectManager()->get(EntityManagerInterface::class)->getConnection();
         $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
-        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM neos_neos_projection_document_uri');
+        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM neos_neos_projection_document_uri ORDER BY nodepath');
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
@@ -219,6 +241,9 @@ trait RoutingTrait
 
     private function resolveUrl(string $nodeAggregateIdentifier, string $contentStreamIdentifier, string $dimensionSpacePoint): UriInterface
     {
+        if ($this->requestUrl === null) {
+            $this->iAmOnUrl('/');
+        }
         putenv('FLOW_REWRITEURLS=1');
         $nodeAddress = new NodeAddress(
             ContentStreamIdentifier::fromString($contentStreamIdentifier),
