@@ -29,24 +29,26 @@ use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\Projection\ProjectorInterface;
+use Neos\Neos\Controller\Exception\NodeNotFoundException;
 
 final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvokeInterface, AfterInvokeInterface
 {
     public const TABLE_NAME_DOCUMENT_URIS = 'neos_neos_projection_document_uri';
     public const TABLE_NAME_LIVE_CONTENT_STREAMS = 'neos_neos_projection_document_uri_livecontentstreams';
-    private const COLUMN_TYPES_DOCUMENT_URIS = [
+    public const COLUMN_TYPES_DOCUMENT_URIS = [
         'shortcutTarget' => Types::JSON,
     ];
 
     private NodeTypeManager $nodeTypeManager;
 
+    private DocumentUriPathFinder $documentUriPathFinder;
+
     private Connection $dbal;
 
-    private ?string $liveContentStreamIdentifierRuntimeCache = null;
-
-    public function __construct(NodeTypeManager $nodeTypeManager, Connection $dbal)
+    public function __construct(NodeTypeManager $nodeTypeManager, DocumentUriPathFinder $documentUriPathFinder, Connection $dbal)
     {
         $this->nodeTypeManager = $nodeTypeManager;
+        $this->documentUriPathFinder = $documentUriPathFinder;
         $this->dbal = $dbal;
     }
 
@@ -112,17 +114,21 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         }
 
         foreach ($event->getCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
-            $parentNode = $this->getNodeById($event->getParentNodeAggregateIdentifier(), $dimensionSpacePoint->getHash());
+            $parentNode = $this->tryGetNode(fn() =>$this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($event->getParentNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+            if ($parentNode === null) {
+                // this should not happen
+                continue;
+            }
             /** @var DocumentNodeInfo|null $precedingNode */
             $precedingNode = null;
 
             if ($event->getSucceedingNodeAggregateIdentifier() === null) {
-                $precedingNode = $this->tryGetNode(fn() => $this->getLastNode($parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+                $precedingNode = $this->tryGetNode(fn() => $this->documentUriPathFinder->getLastChildNode($parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
                 if ($precedingNode !== null) {
                     $this->updateNode($precedingNode, ['succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
                 }
             } else {
-                $precedingNode = $this->tryGetNode(fn() => $this->getPrecedingNode($event->getSucceedingNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+                $precedingNode = $this->tryGetNode(fn() => $this->documentUriPathFinder->getPrecedingNode($event->getSucceedingNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
                 if ($precedingNode !== null) {
                     $this->updateNode($precedingNode, ['succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
                 }
@@ -194,7 +200,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     private function copyVariants(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $sourceOrigin, DimensionSpacePoint $targetOrigin, DimensionSpacePointSet $coveredSpacePoints): void
     {
-        $sourceNode = $this->tryGetNode(fn() => $this->getNodeById($nodeAggregateIdentifier, $sourceOrigin->getHash()));
+        $sourceNode = $this->tryGetNode(fn() => $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($nodeAggregateIdentifier, $sourceOrigin->getHash()));
         if ($sourceNode === null) {
             // Probably not a document node
             return;
@@ -217,7 +223,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             return;
         }
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn() => $this->getNodeById($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+            $node = $this->tryGetNode(fn() => $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -240,7 +246,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             return;
         }
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn() => $this->getNodeById($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+            $node = $this->tryGetNode(fn() => $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -263,7 +269,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             return;
         }
         foreach ($event->getAffectedCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn() => $this->getNodeById($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+            $node = $this->tryGetNode(fn() => $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -291,7 +297,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
         // TODO Can there be more affected dimension space points and how to determine them? see https://github.com/neos/contentrepository-development-collection/issues/163
 
-        $node = $this->tryGetNode(fn() => $this->getNodeById($event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint()->getHash()));
+        $node = $this->tryGetNode(fn() => $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint()->getHash()));
 
         if ($node === null) {
             // probably not a document node
@@ -333,7 +339,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             return;
         }
         foreach ($event->getNodeMoveMappings() as $moveMapping) {
-            foreach ($this->getNodesById($event->getNodeAggregateIdentifier()) as $node) {
+            foreach ($this->documentUriPathFinder->getNodeVariantsById($event->getNodeAggregateIdentifier()) as $node) {
                 $parentAssignment = $moveMapping->getNewParentAssignments()->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
                 $newParentNodeAggregateIdentifier = $parentAssignment !== null ? $parentAssignment->getNodeAggregateIdentifier() : $node->getParentNodeAggregateIdentifier();
 
@@ -354,7 +360,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         if ($newParentNodeAggregateIdentifier->equals($node->getParentNodeAggregateIdentifier())) {
             return;
         }
-        $newParentNode = $this->tryGetNode(fn() => $this->getNodeById($newParentNodeAggregateIdentifier, $node->getDimensionSpacePointHash()));
+        $newParentNode = $this->tryGetNode(fn() => $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($newParentNodeAggregateIdentifier, $node->getDimensionSpacePointHash()));
         if ($newParentNode === null) {
             // This should never happen really..
             return;
@@ -398,21 +404,9 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         if (!$node->isDisabled()) {
             return false;
         }
-        $parentNode = $this->tryGetNode(fn() => $this->getNodeById($node->getParentNodeAggregateIdentifier(), $node->getDimensionSpacePointHash()));
+        $parentNode = $this->tryGetNode(fn() => $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($node->getParentNodeAggregateIdentifier(), $node->getDimensionSpacePointHash()));
         $parentDisabledLevel = $parentNode !== null ? $parentNode->getDisableLevel() : 0;
         return $node->getDisableLevel() - $parentDisabledLevel !== 0;
-    }
-
-    private function isLiveContentStream(ContentStreamIdentifier $contentStreamIdentifier): bool
-    {
-        if ($this->liveContentStreamIdentifierRuntimeCache === null) {
-            try {
-                $this->liveContentStreamIdentifierRuntimeCache = $this->dbal->fetchColumn('SELECT contentStreamIdentifier FROM ' . self::TABLE_NAME_LIVE_CONTENT_STREAMS);
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to load live workspace contentStreamIdentifier: %s', $e->getMessage()), 1599655590, $e);
-            }
-        }
-        return (string)$contentStreamIdentifier === $this->liveContentStreamIdentifierRuntimeCache;
     }
 
     private function isDocumentNodeType(NodeTypeName $nodeTypeName): bool
@@ -429,68 +423,18 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         return $nodeType->isOfType('Neos.Neos:Shortcut');
     }
 
-    private function getNodeById(NodeAggregateIdentifier $nodeAggregateIdentifier, string $dimensionSpacePointHash): DocumentNodeInfo
+    private function isLiveContentStream(ContentStreamIdentifier $contentStreamIdentifier): bool
     {
-        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND dimensionSpacePointHash = :dimensionSpacePointHash LIMIT 1', [
-            'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePointHash,
-        ]);
-        return $this->databaseRowToDocumentNodeInfo($row);
-    }
-
-    private function getPrecedingNode(NodeAggregateIdentifier $succeedingNodeAggregateIdentifier, NodeAggregateIdentifier $parentNodeAggregateIdentifier, string $dimensionSpacePointHash): DocumentNodeInfo
-    {
-        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier AND succeedingNodeAggregateIdentifier = :nodeAggregateIdentifier LIMIT 1', [
-            'dimensionSpacePointHash' => $dimensionSpacePointHash,
-            'parentNodeAggregateIdentifier' => $parentNodeAggregateIdentifier,
-            'nodeAggregateIdentifier' => $succeedingNodeAggregateIdentifier,
-        ]);
-        return $this->databaseRowToDocumentNodeInfo($row);
-    }
-
-    private function getLastNode(NodeAggregateIdentifier $parentNodeAggregateIdentifier, string $dimensionSpacePointHash): DocumentNodeInfo
-    {
-        $row = $this->dbal->fetchAssoc('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier AND succeedingNodeAggregateIdentifier IS NULL LIMIT 1', [
-            'dimensionSpacePointHash' => $dimensionSpacePointHash,
-            'parentNodeAggregateIdentifier' => $parentNodeAggregateIdentifier,
-        ]);
-        return $this->databaseRowToDocumentNodeInfo($row);
-    }
-
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return DocumentNodeInfo[]|\Iterator
-     */
-    private function getNodesById(NodeAggregateIdentifier $nodeAggregateIdentifier): \Iterator
-    {
-        $iterator = $this->dbal->executeQuery('SELECT * FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier', [
-            'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
-        ]);
-        foreach ($iterator as $nodeSource) {
-            yield DocumentNodeInfo::fromDatabaseRow($nodeSource);
-        }
+        return $contentStreamIdentifier->equals($this->documentUriPathFinder->getLiveContentStreamIdentifier());
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo
     {
         try {
             return $closure();
-        } catch (\InvalidArgumentException $_) {
+        } /** @noinspection BadExceptionsProcessingInspection @noinspection PhpRedundantCatchClauseInspection */ catch (NodeNotFoundException $_) {
             return null;
         }
-    }
-
-    /**
-     * @param array|false|null $row
-     * @return DocumentNodeInfo
-     */
-    private function databaseRowToDocumentNodeInfo($row): DocumentNodeInfo
-    {
-        if (!is_array($row)) {
-            // TODO
-            throw new \InvalidArgumentException('TODO');
-        }
-        return DocumentNodeInfo::fromDatabaseRow($row);
     }
 
     private function insertNode(array $data): void
@@ -510,10 +454,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
     private function updateNodeByIdAndDimensionSpacePointHash(NodeAggregateIdentifier $nodeAggregateIdentifier, string $dimensionSpacePointHash, array $data): void
     {
         try {
-            $this->dbal->update(self::TABLE_NAME_DOCUMENT_URIS, $data, [
-                'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
-                'dimensionSpacePointHash' => $dimensionSpacePointHash,
-            ], self::COLUMN_TYPES_DOCUMENT_URIS);
+            $this->dbal->update(self::TABLE_NAME_DOCUMENT_URIS, $data, compact('nodeAggregateIdentifier', 'dimensionSpacePointHash'), self::COLUMN_TYPES_DOCUMENT_URIS);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to update node "%s": %s', $nodeAggregateIdentifier, $e->getMessage()), 1599646777, $e);
         }
@@ -531,10 +472,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
     private function deleteNodeByIdAndDimensionSpacePointHash(NodeAggregateIdentifier $nodeAggregateIdentifier, string $dimensionSpacePointHash): void
     {
         try {
-            $this->dbal->delete(self::TABLE_NAME_DOCUMENT_URIS, [
-                'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
-                'dimensionSpacePointHash' => $dimensionSpacePointHash,
-            ], self::COLUMN_TYPES_DOCUMENT_URIS);
+            $this->dbal->delete(self::TABLE_NAME_DOCUMENT_URIS, compact('nodeAggregateIdentifier', 'dimensionSpacePointHash'), self::COLUMN_TYPES_DOCUMENT_URIS);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to delete node "%s": %s', $nodeAggregateIdentifier, $e->getMessage()), 1599655284, $e);
         }
@@ -563,12 +501,12 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
     {
         $newPrecedingNode = null;
         if ($newSucceedingNodeAggregateIdentifier !== null) {
-            $newPrecedingNode = $this->tryGetNode(fn() => $this->getPrecedingNode($newSucceedingNodeAggregateIdentifier, $parentNodeAggregateIdentifier, $node->getDimensionSpacePointHash()));
+            $newPrecedingNode = $this->tryGetNode(fn() => $this->documentUriPathFinder->getPrecedingNode($newSucceedingNodeAggregateIdentifier, $parentNodeAggregateIdentifier, $node->getDimensionSpacePointHash()));
 
             // update new succeeding node
             $this->updateNodeByIdAndDimensionSpacePointHash($newSucceedingNodeAggregateIdentifier, $node->getDimensionSpacePointHash(), ['precedingNodeAggregateIdentifier' => $node->getNodeAggregateIdentifier()]);
         } else {
-            $newPrecedingNode = $this->tryGetNode(fn() => $this->getLastNode($parentNodeAggregateIdentifier, $node->getDimensionSpacePointHash()));
+            $newPrecedingNode = $this->tryGetNode(fn() => $this->documentUriPathFinder->getLastChildNode($parentNodeAggregateIdentifier, $node->getDimensionSpacePointHash()));
         }
         if ($newPrecedingNode !== null) {
 

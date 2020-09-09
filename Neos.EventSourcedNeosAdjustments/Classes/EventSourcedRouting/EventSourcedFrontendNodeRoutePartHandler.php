@@ -15,6 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
@@ -32,6 +33,7 @@ use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -117,7 +119,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         try {
             $matchResult = $this->matchUriPath($requestPath, $dimensionSpacePoint);
-        } catch (\Exception $exception) {
+        } catch (NodeNotFoundException $exception) {
             // TODO log exception
             return false;
         }
@@ -142,7 +144,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         try {
             $resolveResult = $this->resolveNodeAddress($nodeAddress);
-        } catch (\Exception $exception) {
+        } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
         }
@@ -155,11 +157,14 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * @param NodeAddress $nodeAddress
      * @return ResolveResult
      * @throws Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException
-     * @throws InvalidShortcutException
+     * @throws NodeNotFoundException | InvalidShortcutException
      */
     private function resolveNodeAddress(NodeAddress $nodeAddress): ResolveResult
     {
-        $nodeInfo = $this->documentUriPathFinder->getNodeInfoForNodeAddress($nodeAddress);
+        $nodeInfo = $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($nodeAddress->getNodeAggregateIdentifier(), $nodeAddress->getDimensionSpacePoint()->getHash());
+        if ($nodeInfo->isDisabled()) {
+            throw new NodeNotFoundException(sprintf('The resolved node for address %s is disabled', $nodeAddress), 1599668357);
+        }
         $shortcutRecursionLevel = 0;
         while ($nodeInfo->isShortcut()) {
             if (++ $shortcutRecursionLevel > 50) {
@@ -167,11 +172,14 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             }
             switch ($nodeInfo->getShortcutMode()) {
                 case 'parentNode':
-                    $nodeInfo = $this->documentUriPathFinder->getParentNodeInfo($nodeInfo);
+                    $nodeInfo = $this->documentUriPathFinder->getParentNode($nodeInfo);
+                    if ($nodeInfo->isDisabled()) {
+                        throw new InvalidShortcutException(sprintf('Shortcut Node "%s" points to disabled parent node "%s"', $nodeAddress, $nodeInfo->getNodeAggregateIdentifier()), 1599664517);
+                    }
                     continue 2;
                 case 'firstChildNode':
                     try {
-                        $nodeInfo = $this->documentUriPathFinder->getFirstChildNodeInfo($nodeInfo);
+                        $nodeInfo = $this->documentUriPathFinder->getFirstEnabledChildNode($nodeInfo->getNodeAggregateIdentifier(), $nodeInfo->getDimensionSpacePointHash());
                     } catch (\Exception $e) {
                         throw new InvalidShortcutException(sprintf('Failed to fetch firstChildNode in Node "%s": %s', $nodeAddress, $e->getMessage()), 1599043861, $e);
                     }
@@ -185,9 +193,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
                     if ($targetUri->getScheme() === 'node') {
                         $targetNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($targetUri->getHost());
                         try {
-                            $nodeInfo = $this->documentUriPathFinder->getNodeInfoForNodeAddress($nodeAddress->withNodeAggregateIdentifier($targetNodeAggregateIdentifier));
+                            $nodeInfo = $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($targetNodeAggregateIdentifier, $nodeAddress->getDimensionSpacePoint()->getHash());
                         } catch (\Exception $e) {
                             throw new InvalidShortcutException(sprintf('Failed to load selectedTarget node in Node "%s": %s', $nodeAddress, $e->getMessage()), 1599043803, $e);
+                        }
+                        if ($nodeInfo->isDisabled()) {
+                            throw new InvalidShortcutException(sprintf('Shortcut target in Node "%s" points to disabled node "%s"', $nodeAddress, $nodeInfo->getNodeAggregateIdentifier()), 1599664423);
                         }
                         continue 2;
                     }
@@ -232,9 +243,15 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
 
+    /**
+     * @param string $uriPath
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return MatchResult
+     * @throws NodeNotFoundException | NodeAddressCannotBeSerializedException
+     */
     private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint): MatchResult
     {
-        $nodeInfo = $this->documentUriPathFinder->getNodeInfoForSiteNodeNameAndUriPath($this->getCurrentSiteNodeName(), $uriPath, $dimensionSpacePoint);
+        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash($this->getCurrentSiteNodeName(), $uriPath, $dimensionSpacePoint->getHash());
         $nodeAddress = new NodeAddress(
             $this->documentUriPathFinder->getLiveContentStreamIdentifier(),
             $dimensionSpacePoint,

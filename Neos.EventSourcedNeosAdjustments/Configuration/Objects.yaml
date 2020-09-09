@@ -32,7 +32,7 @@ Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ContentRepositor
 
 Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathProjector:
   arguments:
-    2:
+    3:
       object:
         factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
         factoryMethodName: 'getConnection'
