@@ -36,3 +36,10 @@ Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathP
       object:
         factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
         factoryMethodName: 'getConnection'
+
+Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathFinder:
+  arguments:
+    1:
+      object:
+        factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
+        factoryMethodName: 'getConnection'
