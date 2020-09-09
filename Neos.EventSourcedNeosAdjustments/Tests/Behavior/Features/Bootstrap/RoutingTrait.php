@@ -208,7 +208,7 @@ trait RoutingTrait
 
 
     /**
-     * @Then Trying to resolve node :nodeAggregateIdentifier in content stream :contentStreamIdentifier and dimension :dimensionSpacePoint should throw an exception
+     * @Then The node :nodeAggregateIdentifier in content stream :contentStreamIdentifier and dimension :dimensionSpacePoint should not resolve to an URL
      */
     public function theNodeShouldNotResolve(string $nodeAggregateIdentifier, string $contentStreamIdentifier, string $dimensionSpacePoint): void
     {

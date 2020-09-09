@@ -47,7 +47,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"   |
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough/earl-document/leaf.html"
-    And Trying to resolve node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Disable node with child nodes
     When the command "DisableNodeAggregate" is executed with payload:
@@ -59,8 +59,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough.html"
     And No node should match URL "/david-nodenborough/earl-document.html"
-    And Trying to resolve node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should throw an exception
-    And Trying to resolve node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
+    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Disable two nodes, re-enable the higher one
     When the command "DisableNodeAggregate" is executed with payload:
@@ -79,8 +79,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough.html"
     And No node should match URL "/david-nodenborough/earl-document.html"
-    And Trying to resolve node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should throw an exception
-    And Trying to resolve node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
+    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     When the command "EnableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
@@ -92,7 +92,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
     And No node should match URL "/david-nodenborough/earl-document.html"
     And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough.html"
-    And Trying to resolve node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Disable two nodes, re-enable the lower one
     When the command "DisableNodeAggregate" is executed with payload:
@@ -111,8 +111,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough.html"
     And No node should match URL "/david-nodenborough/earl-document.html"
-    And Trying to resolve node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should throw an exception
-    And Trying to resolve node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
+    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     When the command "EnableNodeAggregate" is executed with payload:
       | Key                          | Value                   |
       | contentStreamIdentifier      | "cs-identifier"         |
@@ -122,8 +122,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And the graph projection is fully up to date
     Then No node should match URL "/david-nodenborough.html"
     And No node should match URL "/david-nodenborough/earl-document.html"
-    And Trying to resolve node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should throw an exception
-    And Trying to resolve node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
+    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Disable the same node twice
     When the command "DisableNodeAggregate" is executed with payload:
@@ -142,8 +142,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough.html"
     And No node should match URL "/david-nodenborough/earl-document.html"
-    And Trying to resolve node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should throw an exception
-    And Trying to resolve node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
+    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     When the command "EnableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
@@ -173,8 +173,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough.html"
     And No node should match URL "/david-nodenborough/earl-document.html"
-    And Trying to resolve node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should throw an exception
-    And Trying to resolve node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
+    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     When the command "EnableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
@@ -191,7 +191,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When I am on URL "/david-nodenborough.html"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
     And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough.html"
-    And Trying to resolve node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Move implicit disabled node
     When the command "DisableNodeAggregate" is executed with payload:
@@ -229,4 +229,4 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | newSucceedingSiblingNodeAggregateIdentifier | null                    |
     And The documenturipath projection is up to date
     Then No node should match URL "/nody/earl-document.html"
-    And Trying to resolve node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL

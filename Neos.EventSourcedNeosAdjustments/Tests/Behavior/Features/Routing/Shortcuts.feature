@@ -223,7 +223,7 @@ Feature: Routing behavior of shortcut nodes
       | nodeName                      | "some-node-name"                                                       |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then trying to resolve node "invalid-target-mode" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    Then The node "invalid-target-mode" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node with targetMode "selectedTarget" but without target
     Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
@@ -237,7 +237,7 @@ Feature: Routing behavior of shortcut nodes
       | nodeName                      | "some-node-name"                                                             |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then trying to resolve node "invalid-missing-target" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    Then The node "invalid-missing-target" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node without child nodes and targetMode "firstChildNode"
     Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
@@ -251,7 +251,7 @@ Feature: Routing behavior of shortcut nodes
       | nodeName                      | "some-node-name"                                                                   |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then trying to resolve node "invalid-shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    Then The node "invalid-shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node with targetMode "selectedTarget" and a non-existing target node
     Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
@@ -265,7 +265,7 @@ Feature: Routing behavior of shortcut nodes
       | nodeName                      | "some-node-name"                                                                                                           |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then trying to resolve node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    Then The node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node with targetMode "selectedTarget" and a empty target node
     Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
@@ -279,7 +279,7 @@ Feature: Routing behavior of shortcut nodes
       | nodeName                      | "some-node-name"                                                                                          |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then trying to resolve node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    Then The node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Recursive shortcuts
     Given the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
@@ -298,4 +298,4 @@ Feature: Routing behavior of shortcut nodes
       | node-b                  | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "b", "targetMode": "selectedTarget", "target": "node://node-a"} | node-b   |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then trying to resolve node "node-a" in content stream "cs-identifier" and dimension "{}" should throw an exception
+    Then The node "node-a" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL

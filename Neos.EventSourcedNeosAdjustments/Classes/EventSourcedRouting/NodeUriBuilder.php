@@ -15,22 +15,24 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
 use GuzzleHttp\Psr7\Uri;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Psr\Http\Message\UriInterface;
 
 final class NodeUriBuilder
 {
 
-    /**
-     * @var UriBuilder
-     */
-    private $uriBuilder;
+    private UriBuilder $uriBuilder;
 
     protected function __construct(UriBuilder $uriBuilder)
     {
         $this->uriBuilder = $uriBuilder;
     }
 
+    /**
+     * @param ActionRequest $request
+     * @return self
+     */
     public static function fromRequest(ActionRequest $request): self
     {
         $uriBuilder = new UriBuilder();
@@ -43,6 +45,11 @@ final class NodeUriBuilder
         return new static($uriBuilder);
     }
 
+    /**
+     * @param NodeAddress $nodeAddress
+     * @return UriInterface
+     * @throws NoMatchingRouteException
+     */
     public function uriFor(NodeAddress $nodeAddress): UriInterface
     {
         if (!$nodeAddress->isInLiveWorkspace()) {
@@ -51,6 +58,11 @@ final class NodeUriBuilder
         return new Uri($this->uriBuilder->uriFor('show', ['node' => $nodeAddress], 'Frontend\Node', 'Neos.Neos'));
     }
 
+    /**
+     * @param NodeAddress $nodeAddress
+     * @return UriInterface
+     * @throws NoMatchingRouteException
+     */
     public function previewUriFor(NodeAddress $nodeAddress): UriInterface
     {
         return new Uri($this->uriBuilder->uriFor('preview', ['node' => $nodeAddress->serializeForUri()], 'Frontend\Node', 'Neos.Neos'));

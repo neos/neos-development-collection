@@ -65,8 +65,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         try {
             $matchResult = $this->documentUriPathFinder->matchUriPath($requestPath, $dimensionSpacePoint);
-        } catch (InvalidShortcutException $exception) {
-            throw $exception;
         } catch (\Exception $exception) {
             // TODO log exception
             return false;
@@ -92,8 +90,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         try {
             $resolveResult = $this->documentUriPathFinder->resolveNodeAddress($nodeAddress, $this->options['uriSuffix'] ?? '');
-        } catch (InvalidShortcutException $exception) {
-            throw $exception;
         } catch (\Exception $exception) {
             // TODO log exception
             return false;
