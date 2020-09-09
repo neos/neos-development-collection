@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ValueObject;
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Flow\Annotations as Flow;
@@ -44,14 +45,53 @@ final class DocumentNodeInfo
         return new static($row);
     }
 
+    public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
+    {
+        $source = $this->source;
+        $source['dimensionspacepointhash'] = $dimensionSpacePoint->getHash();
+        return new static($source);
+    }
+
+    public function withOriginDimensionSpacePoint(DimensionSpacePoint $originDimensionSpacePoint): self
+    {
+        $source = $this->source;
+        $source['origindimensionspacepointhash'] = $originDimensionSpacePoint->getHash();
+        return new static($source);
+    }
+
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return NodeAggregateIdentifier::fromString($this->source['nodeaggregateidentifier']);
     }
 
+    public function isRoot(): bool
+    {
+        return $this->source['parentnodeaggregateidentifier'] === null;
+    }
+
     public function getParentNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return NodeAggregateIdentifier::fromString($this->source['parentnodeaggregateidentifier']);
+    }
+
+    public function hasPrecedingNodeAggregateIdentifier(): bool
+    {
+        return $this->source['precedingnodeaggregateidentifier'] !== null;
+    }
+
+    public function getPrecedingNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        return NodeAggregateIdentifier::fromString($this->source['precedingnodeaggregateidentifier']);
+    }
+
+    public function hasSucceedingNodeAggregateIdentifier(): bool
+    {
+        return $this->source['succeedingnodeaggregateidentifier'] !== null;
+    }
+
+    public function getSucceedingNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        return NodeAggregateIdentifier::fromString($this->source['succeedingnodeaggregateidentifier']);
     }
 
     public function getDimensionSpacePointHash(): string
@@ -79,23 +119,33 @@ final class DocumentNodeInfo
         return isset($this->source['shortcuttarget']);
     }
 
+    public function isDisabled(): bool
+    {
+        return $this->getDisableLevel() > 0;
+    }
+
+    public function getDisableLevel(): int
+    {
+        return (int)$this->source['disabled'];
+    }
+
     public function getShortcutMode(): string
     {
         if (!$this->isShortcut()) {
             throw new \RuntimeException('Not a shortcut', 1599036543);
         }
-        return $this->shortcutTarget()['mode'] ?? 'none';
+        return $this->getShortcutTarget()['mode'] ?? 'none';
     }
 
-    public function getShortcutTarget(): UriInterface
+    public function getShortcutTargetUri(): UriInterface
     {
         if (!$this->isShortcut()) {
             throw new \RuntimeException('Not a shortcut', 1599036551);
         }
-        if (empty($this->shortcutTarget()['target'])) {
+        if (empty($this->getShortcutTarget()['target'])) {
             throw new \RuntimeException('Missing/empty shortcut target', 1599043374);
         }
-        return new Uri($this->shortcutTarget()['target']);
+        return new Uri($this->getShortcutTarget()['target']);
     }
 
     public function getRouteTags(): RouteTags
@@ -110,7 +160,7 @@ final class DocumentNodeInfo
         return NodeName::fromString($this->source['sitenodename']);
     }
 
-    private function shortcutTarget(): array
+    public function getShortcutTarget(): array
     {
         if ($this->shortcutTarget === null) {
             try {
@@ -119,9 +169,14 @@ final class DocumentNodeInfo
                 throw new \RuntimeException(sprintf('Invalid shortcut target "%s": %s', $this->source['shortcuttarget'], $e->getMessage()), 1599036735, $e);
             }
             if ($this->shortcutTarget === null) {
-                $this->shortcutTarget = ['mode' => 'none', 'target' => ''];
+                $this->shortcutTarget = ['mode' => 'none', 'target' => null];
             }
         }
         return $this->shortcutTarget;
+    }
+
+    public function toArray(): array
+    {
+        return $this->source;
     }
 }

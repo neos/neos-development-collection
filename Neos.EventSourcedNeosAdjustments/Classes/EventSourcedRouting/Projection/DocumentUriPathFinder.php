@@ -5,7 +5,6 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -123,7 +122,7 @@ final class DocumentUriPathFinder
                     continue 2;
                 case 'selectedTarget':
                     try {
-                        $targetUri = $nodeInfo->getShortcutTarget();
+                        $targetUri = $nodeInfo->getShortcutTargetUri();
                     } catch (\Exception $e) {
                         throw new InvalidShortcutException(sprintf('Invalid shortcut target in Node "%s": %s', $nodeAddress, $e->getMessage()), 1599043489, $e);
                     }
@@ -147,7 +146,6 @@ final class DocumentUriPathFinder
                         }
                         return new ResolveResult($assetUri);
                     }
-                    // TODO support shortcuts to assets (asset://<id>)
                     // shortcut to (external) URI
                     $uriConstraints = $this->uriConstraintsFromUri($targetUri);
                     return new ResolveResult('', $uriConstraints);

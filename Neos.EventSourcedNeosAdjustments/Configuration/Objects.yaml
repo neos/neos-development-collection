@@ -29,3 +29,10 @@ Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ContentRepositor
         arguments:
           1:
             value: 'ContentRepository'
+
+Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathProjector:
+  arguments:
+    2:
+      object:
+        factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
+        factoryMethodName: 'getConnection'
