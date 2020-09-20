@@ -231,13 +231,15 @@ class UserService
     /**
      * Returns the currently logged in user, if any
      *
+     * @param string $authenticationProviderName
      * @return User The currently logged in user, or null
      * @api
      */
-    public function getCurrentUser()
+    public function getCurrentUser($authenticationProviderName = null)
     {
         if ($this->securityContext->canBeInitialized() === true) {
-            $account = $this->securityContext->getAccount();
+            $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
+            $account = $this->securityContext->getAccountByAuthenticationProviderName($authenticationProviderName);
             if ($account !== null) {
                 return $this->getUser(
                     $account->getAccountIdentifier(),
