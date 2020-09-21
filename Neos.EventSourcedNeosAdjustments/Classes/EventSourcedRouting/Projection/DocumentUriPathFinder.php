@@ -113,7 +113,7 @@ final class DocumentUriPathFinder
     {
         if ($this->liveContentStreamIdentifierRuntimeCache === null) {
             try {
-                $contentStreamIdentifier = $this->dbal->fetchColumn('SELECT contentStreamIdentifier FROM ' . DocumentUriPathProjector::TABLE_NAME_LIVE_CONTENT_STREAMS);
+                $contentStreamIdentifier = $this->dbal->fetchColumn('SELECT contentStreamIdentifier FROM ' . DocumentUriPathProjector::TABLE_NAME_LIVE_CONTENT_STREAMS . ' LIMIT 1');
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to fetch contentStreamIdentifier for live workspace: %s', $e->getMessage()), 1599666764, $e);
             }
