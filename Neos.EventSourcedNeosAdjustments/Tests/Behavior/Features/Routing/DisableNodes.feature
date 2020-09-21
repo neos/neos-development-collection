@@ -46,7 +46,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}              |
       | nodeVariantSelectionStrategy | "allVariants"   |
     And The documenturipath projection is up to date
-    Then No node should match URL "/david-nodenborough/earl-document/leaf.html"
+    Then No node should match URL "/david-nodenborough/earl-document/leaf"
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Disable node with child nodes
@@ -57,8 +57,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And The documenturipath projection is up to date
-    Then No node should match URL "/david-nodenborough.html"
-    And No node should match URL "/david-nodenborough/earl-document.html"
+    Then No node should match URL "/david-nodenborough"
+    And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
@@ -77,8 +77,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"           |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
-    Then No node should match URL "/david-nodenborough.html"
-    And No node should match URL "/david-nodenborough/earl-document.html"
+    Then No node should match URL "/david-nodenborough"
+    And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     When the command "EnableNodeAggregate" is executed with payload:
@@ -88,10 +88,10 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
-    When I am on URL "/david-nodenborough.html"
+    When I am on URL "/david-nodenborough"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
-    And No node should match URL "/david-nodenborough/earl-document.html"
-    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough.html"
+    And No node should match URL "/david-nodenborough/earl-document"
+    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Disable two nodes, re-enable the lower one
@@ -109,8 +109,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"           |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
-    Then No node should match URL "/david-nodenborough.html"
-    And No node should match URL "/david-nodenborough/earl-document.html"
+    Then No node should match URL "/david-nodenborough"
+    And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     When the command "EnableNodeAggregate" is executed with payload:
@@ -120,8 +120,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
     And the graph projection is fully up to date
-    Then No node should match URL "/david-nodenborough.html"
-    And No node should match URL "/david-nodenborough/earl-document.html"
+    Then No node should match URL "/david-nodenborough"
+    And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
@@ -140,8 +140,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
-    Then No node should match URL "/david-nodenborough.html"
-    And No node should match URL "/david-nodenborough/earl-document.html"
+    Then No node should match URL "/david-nodenborough"
+    And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     When the command "EnableNodeAggregate" is executed with payload:
@@ -151,10 +151,10 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
-    When I am on URL "/david-nodenborough.html"
+    When I am on URL "/david-nodenborough"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
-    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough.html"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document.html"
+    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
+    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Re-enable the same node twice
     When the command "DisableNodeAggregate" is executed with payload:
@@ -171,8 +171,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"           |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
-    Then No node should match URL "/david-nodenborough.html"
-    And No node should match URL "/david-nodenborough/earl-document.html"
+    Then No node should match URL "/david-nodenborough"
+    And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
     When the command "EnableNodeAggregate" is executed with payload:
@@ -188,9 +188,9 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
-    When I am on URL "/david-nodenborough.html"
+    When I am on URL "/david-nodenborough"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
-    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough.html"
+    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Move implicit disabled node
@@ -209,7 +209,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | newParentNodeAggregateIdentifier            | "nody-mc-nodeface"      |
       | newSucceedingSiblingNodeAggregateIdentifier | null                    |
     And The documenturipath projection is up to date
-    When I am on URL "/nody/earl-document.html"
+    When I am on URL "/nody/earl-document"
     Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
 
   Scenario: Move explicit disabled node
@@ -228,5 +228,5 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | newParentNodeAggregateIdentifier            | "nody-mc-nodeface"      |
       | newSucceedingSiblingNodeAggregateIdentifier | null                    |
     And The documenturipath projection is up to date
-    Then No node should match URL "/nody/earl-document.html"
+    Then No node should match URL "/nody/earl-document"
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL

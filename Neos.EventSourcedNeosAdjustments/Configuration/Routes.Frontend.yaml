@@ -15,6 +15,7 @@
   routeParts:
     'node':
       handler:     'Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface'
-      options:
-        uriSuffix: '<defaultUriSuffix>'
+# TODO uncomment the following lines once https://github.com/neos/flow-development-collection/issues/2142 is resolved
+#      options:
+#        uriSuffix: '<defaultUriSuffix>'
   appendExceedingArguments: true

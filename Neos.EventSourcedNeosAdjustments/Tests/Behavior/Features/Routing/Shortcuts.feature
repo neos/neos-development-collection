@@ -51,24 +51,47 @@ Feature: Routing behavior of shortcut nodes
 
   Scenario: Shortcut parent node
     When I am on URL "/"
-    Then the node "shortcut-parent-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts.html"
+    Then the node "shortcut-parent-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts"
 
   Scenario: Shortcut selected target node
     When I am on URL "/"
-    Then the node "shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3.html"
+    Then the node "shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3"
 
   Scenario: Shortcut selected target asset
     Given an asset with id "some-asset" and file name "asset.txt" exists with the content "do we need asset shortcut nodes?"
     When I am on URL "/"
-    Then the node "shortcut-selected-asset" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/_Resources/Testing/Persistent/23dae371d1664f1d9cc7dd029b299ea717298103/asset.txt"
+    Then the node "shortcut-selected-asset" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://localhost/_Resources/Testing/Persistent/23dae371d1664f1d9cc7dd029b299ea717298103/asset.txt"
 
   Scenario: Shortcut selected target URL
     When I am on URL "/"
     Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "https://neos.io/"
 
+  Scenario: Shortcut selected target relative URL
+    When the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                            |
+      | contentStreamIdentifier   | "cs-identifier"                  |
+      | nodeAggregateIdentifier   | "shortcut-external-url"          |
+      | originDimensionSpacePoint | {}                               |
+      | propertyValues            | {"target": "/some/relative/url"} |
+    And The documenturipath projection is up to date
+    When I am on URL "https://current.host/"
+    Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/some/relative/url"
+
+# TODO: Re-activate the following test once https://github.com/neos/flow-development-collection/issues/2140 is resolved
+#  Scenario: Shortcut selected target URL keeps schema, port, query and fragment of absolute target URLs
+#    When the command "SetNodeProperties" is executed with payload:
+#      | Key                       | Value                                                                            |
+#      | contentStreamIdentifier   | "cs-identifier"                                                                  |
+#      | nodeAggregateIdentifier   | "shortcut-external-url"                                                          |
+#      | originDimensionSpacePoint | {}                                                                               |
+#      | propertyValues            | {"target": "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"} |
+#    And The documenturipath projection is up to date
+#    When I am on URL "http://current.host/"
+#    Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"
+
   Scenario: Shortcut first child node
     When I am on URL "/"
-    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node.html"
+    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Shortcut first child node is updated when a new first child node aggregate is created
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -82,7 +105,7 @@ Feature: Routing behavior of shortcut nodes
       | succeedingSiblingNodeAggregateIdentifier | "first-child-node"                                   |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/new-child-node.html"
+    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/new-child-node"
 
   Scenario: Shortcut first child node is updated when a node aggregate gets moved to be the new first child node
     When the command MoveNodeAggregate is executed with payload:
@@ -94,7 +117,7 @@ Feature: Routing behavior of shortcut nodes
       | newSucceedingSiblingNodeAggregateIdentifier | "first-child-node"           |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/nodeward-3.html"
+    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/nodeward-3"
 
   Scenario: Shortcut first child node is updated when a node aggregate gets moved to be the new first child node on the same leve
     When the command MoveNodeAggregate is executed with payload:
@@ -106,7 +129,7 @@ Feature: Routing behavior of shortcut nodes
       | newSucceedingSiblingNodeAggregateIdentifier | "first-child-node"  |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/second-child-node.html"
+    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/second-child-node"
 
   Scenario: Shortcut first child node is not updated when a node aggregate gets moved behind an existing first child node
     When the command MoveNodeAggregate is executed with payload:
@@ -118,7 +141,7 @@ Feature: Routing behavior of shortcut nodes
       | newSucceedingSiblingNodeAggregateIdentifier | "second-child-node"          |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node.html"
+    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Shortcut first child node is not updated when a node aggregate gets moved behind an existing first child node on the same leve
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -140,7 +163,7 @@ Feature: Routing behavior of shortcut nodes
       | newSucceedingSiblingNodeAggregateIdentifier | null              |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node.html"
+    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Regular document node gets turned into a shortcut node
     When the command ChangeNodeAggregateType was published with payload:
@@ -151,7 +174,7 @@ Feature: Routing behavior of shortcut nodes
       | strategy                | "happypath"                 |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "sir-david-nodenborough-ii" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3.html"
+    Then the node "sir-david-nodenborough-ii" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3"
 
   Scenario: Shortcut node gets turned into a regular document node
     When the command ChangeNodeAggregateType was published with payload:
@@ -162,7 +185,7 @@ Feature: Routing behavior of shortcut nodes
       | strategy                | "happypath"                                          |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child.html"
+    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child"
 
   Scenario: Change shortcut targetMode from "firstChildNode" to "parentNode"
     When the command "SetNodeProperties" is executed with payload:
@@ -173,7 +196,7 @@ Feature: Routing behavior of shortcut nodes
       | propertyValues            | {"targetMode": "parentNode"} |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts.html"
+    Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts"
 
   Scenario: Change shortcut targetMode from "firstChildNode" to "selectedTarget" (URL)
     When the command "SetNodeProperties" is executed with payload:
@@ -198,7 +221,7 @@ Feature: Routing behavior of shortcut nodes
       | propertyValues            | {"targetMode": "firstChildNode"} |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "shortcut-parent-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-parent-node/new-child.html"
+    Then the node "shortcut-parent-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-parent-node/new-child"
 
   Scenario: Change shortcut targetMode from "parentNode" to "selectedTarget" (URL)
     When the command "SetNodeProperties" is executed with payload:
@@ -288,8 +311,8 @@ Feature: Routing behavior of shortcut nodes
       | level-2                 | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "level2", "targetMode": "selectedTarget", "target": "node://shortcut-first-child-node"} | level2   |
     And The documenturipath projection is up to date
     When I am on URL "/"
-    Then the node "level-1" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node.html"
-    Then the node "level-2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node.html"
+    Then the node "level-1" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
+    Then the node "level-2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Unlimited recursive shortcuts
     Given the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":

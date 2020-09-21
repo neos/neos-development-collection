@@ -13,12 +13,13 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
@@ -31,8 +32,6 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
-use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
@@ -81,26 +80,21 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @Flow\Inject
-     * @var AssetRepository
-     */
-    protected $assetRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ResourceManager
-     */
-    protected $resourceManager;
-
-    /**
-     * @Flow\Inject
      * @var ContentSubgraphUriProcessor
      */
     protected $contentSubgraphUriProcessor;
 
     /**
+     * @Flow\Inject
+     * @var NodeShortcutResolver
+     */
+    protected $nodeShortcutResolver;
+
+    /**
      * @param mixed $requestPath
      * @param RouteParameters $parameters
      * @return bool|MatchResult
+     * @throws NodeAddressCannotBeSerializedException
      */
     public function matchWithParameters(&$requestPath, RouteParameters $parameters)
     {
@@ -130,6 +124,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     /**
      * @param array $routeValues
      * @return ResolveResult|bool
+     * @throws InvalidContentDimensionValueUriProcessorException
      */
     public function resolve(array &$routeValues)
     {
@@ -165,65 +160,13 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if ($nodeInfo->isDisabled()) {
             throw new NodeNotFoundException(sprintf('The resolved node for address %s is disabled', $nodeAddress), 1599668357);
         }
-        $shortcutRecursionLevel = 0;
-        while ($nodeInfo->isShortcut()) {
-            if (++ $shortcutRecursionLevel > 50) {
-                throw new InvalidShortcutException(sprintf('Shortcut recursion level reached after %d levels', $shortcutRecursionLevel), 1599035282);
+        if ($nodeInfo->isShortcut()) {
+            $nodeInfo = $this->nodeShortcutResolver->resolveNode($nodeInfo);
+            if ($nodeInfo instanceof UriInterface) {
+                return $this->buildResolverResultFromUri($nodeInfo);
             }
-            switch ($nodeInfo->getShortcutMode()) {
-                case 'parentNode':
-                    $nodeInfo = $this->documentUriPathFinder->getParentNode($nodeInfo);
-                    if ($nodeInfo->isDisabled()) {
-                        throw new InvalidShortcutException(sprintf('Shortcut Node "%s" points to disabled parent node "%s"', $nodeAddress, $nodeInfo->getNodeAggregateIdentifier()), 1599664517);
-                    }
-                    continue 2;
-                case 'firstChildNode':
-                    try {
-                        $nodeInfo = $this->documentUriPathFinder->getFirstEnabledChildNode($nodeInfo->getNodeAggregateIdentifier(), $nodeInfo->getDimensionSpacePointHash());
-                    } catch (\Exception $e) {
-                        throw new InvalidShortcutException(sprintf('Failed to fetch firstChildNode in Node "%s": %s', $nodeAddress, $e->getMessage()), 1599043861, $e);
-                    }
-                    continue 2;
-                case 'selectedTarget':
-                    try {
-                        $targetUri = $nodeInfo->getShortcutTargetUri();
-                    } catch (\Exception $e) {
-                        throw new InvalidShortcutException(sprintf('Invalid shortcut target in Node "%s": %s', $nodeAddress, $e->getMessage()), 1599043489, $e);
-                    }
-                    if ($targetUri->getScheme() === 'node') {
-                        $targetNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($targetUri->getHost());
-                        try {
-                            $nodeInfo = $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($targetNodeAggregateIdentifier, $nodeAddress->getDimensionSpacePoint()->getHash());
-                        } catch (\Exception $e) {
-                            throw new InvalidShortcutException(sprintf('Failed to load selectedTarget node in Node "%s": %s', $nodeAddress, $e->getMessage()), 1599043803, $e);
-                        }
-                        if ($nodeInfo->isDisabled()) {
-                            throw new InvalidShortcutException(sprintf('Shortcut target in Node "%s" points to disabled node "%s"', $nodeAddress, $nodeInfo->getNodeAggregateIdentifier()), 1599664423);
-                        }
-                        continue 2;
-                    }
-                    if ($targetUri->getScheme() === 'asset') {
-                        $asset = $this->assetRepository->findByIdentifier($targetUri->getHost());
-                        if ($asset === null) {
-                            throw new InvalidShortcutException(sprintf('Failed to load selectedTarget asset in Node "%s", probably it was deleted', $nodeAddress), 1599314109);
-                        }
-                        $assetUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
-                        if (!$assetUri) {
-                            throw new InvalidShortcutException(sprintf('Failed to resolve asset URI in Node "%s", probably it was deleted', $nodeAddress), 1599314203);
-                        }
-                        return new ResolveResult($assetUri);
-                    }
-                    // shortcut to (external) URI
-                    $uriConstraints = $this->uriConstraintsFromUri($targetUri);
-                    return new ResolveResult('', $uriConstraints);
-                default:
-                    throw new InvalidShortcutException(sprintf('Unsupported shortcut mode "%s" in Node "%s"', $nodeInfo->getShortcutMode(), $nodeAddress), 1598194032);
-            }
-        }
-        if (!$nodeAddress->getNodeAggregateIdentifier()->equals($nodeInfo->getNodeAggregateIdentifier())) {
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($nodeInfo->getNodeAggregateIdentifier());
         }
-
         $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($nodeAddress);
 
         if ((string)$nodeInfo->getSiteNodeName() !== (string)$this->getCurrentSiteNodeName()) {
@@ -263,7 +206,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     private function getCurrentSiteNodeName(): NodeName
     {
-        // TODO pass in host (only possible for RoutePart:matchWithParameters() right now)
+        // TODO pass in host (only possible for RoutePart:matchWithParameters() right now, see https://github.com/neos/flow-development-collection/issues/2141)
         $host = $this->getCurrentHost();
         if (!isset($this->siteNodeNameRuntimeCache[$host])) {
             $site = null;
@@ -315,23 +258,24 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
 
-    private function uriConstraintsFromUri(UriInterface $uri): UriConstraints
+    private function buildResolverResultFromUri(UriInterface $uri): ResolveResult
     {
-        $uriConstraints = UriConstraints::create()
-            ->withScheme($uri->getScheme())
-            ->withHost($uri->getHost());
-        if (!empty($uri->getPath())) {
-            $uriConstraints = $uriConstraints->withPath($uri->getPath());
+        $uriConstraints = UriConstraints::create();
+        if (!empty($uri->getScheme())) {
+            $uriConstraints = $uriConstraints->withScheme($uri->getScheme());
+        }
+        if (!empty($uri->getHost())) {
+            $uriConstraints = $uriConstraints->withHost($uri->getHost());
         }
         if ($uri->getPort() !== null) {
             $uriConstraints = $uriConstraints->withPort($uri->getPort());
-        } else {
+        } elseif (!empty($uri->getScheme())) {
             $uriConstraints = $uriConstraints->withPort($uri->getScheme() === 'https' ? 443 : 80);
         }
         if (!empty($uri->getQuery())) {
             $uriConstraints = $uriConstraints->withQueryString($uri->getQuery());
         }
-        return $uriConstraints;
+        return new ResolveResult($uri->getPath(), $uriConstraints);
     }
 
     private function applyDomainToUriConstraints(UriConstraints $uriConstraints, ?Domain $domain): UriConstraints

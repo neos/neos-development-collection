@@ -143,6 +143,9 @@ trait RoutingTrait
     public function iAmOnUrl(string $url): void
     {
         $this->requestUrl = new Uri($url);
+        if (empty($this->requestUrl->getHost())) {
+            $this->requestUrl = $this->requestUrl->withScheme('http')->withHost('localhost');
+        }
         /** @var HttpRequestHandlerInterface $activeRequestHandler */
         $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
         $componentContext = $activeRequestHandler->getComponentContext();

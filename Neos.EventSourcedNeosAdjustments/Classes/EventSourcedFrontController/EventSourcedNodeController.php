@@ -26,10 +26,13 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
@@ -209,7 +212,7 @@ class EventSourcedNodeController extends ActionController
         }
 
         if ($nodeInstance->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
-            $this->handleShortcutNode($subgraph, $nodeInstance, $nodeAddress);
+            $this->handleShortcutNode($nodeAddress);
         }
 
         $traversableNode = new TraversableNode($nodeInstance, $subgraph);
@@ -253,23 +256,31 @@ class EventSourcedNodeController extends ActionController
     /**
      * Handles redirects to shortcut targets in live rendering.
      *
-     * @param ContentSubgraphInterface $subgraph
-     * @param NodeInterface $node
      * @param NodeAddress $nodeAddress
-     * @return void
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
-    protected function handleShortcutNode(ContentSubgraphInterface $subgraph, NodeInterface $node, NodeAddress $nodeAddress): void
+    protected function handleShortcutNode(NodeAddress $nodeAddress): void
     {
-        $resolvedUri = $this->nodeShortcutResolver->resolveShortcutTarget($subgraph, $node, $nodeAddress, $this->uriBuilder, $this->request->getFormat());
-        if (!is_null($resolvedUri)) {
-            $this->redirectToUri($resolvedUri);
-        } else {
-            throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved', $node->getNodeAggregateIdentifier()), 1430218730);
+        try {
+            $resolvedTarget = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress);
+        } catch (InvalidShortcutException $e) {
+            throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved: %s', $nodeAddress, $e->getMessage()), 1430218730, $e);
         }
+        if ($resolvedTarget instanceof NodeAddress) {
+            if ($resolvedTarget === $nodeAddress) {
+                return;
+            }
+            try {
+                $resolvedUri = NodeUriBuilder::fromRequest($this->request)->uriFor($nodeAddress);
+            } catch (NoMatchingRouteException $e) {
+                throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved: %s', $nodeAddress, $e->getMessage()), 1599670695, $e);
+            }
+        } else {
+            $resolvedUri = $resolvedTarget;
+        }
+        $this->redirectToUri($resolvedUri);
     }
 
     private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress)

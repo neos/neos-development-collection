@@ -51,9 +51,9 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Resolve node URLs in multiple dimensions
     When I am on URL "/"
-    Then the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"en"}' should resolve to URL "/nody/carl.html"
-    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"de"}' should resolve to URL "/de/nody/carl.html"
-    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de.html"
+    Then the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"en"}' should resolve to URL "/nody/carl"
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"de"}' should resolve to URL "/de/nody/carl"
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
 
   Scenario: Match homepage node in default dimension
     When I am on URL "/"
@@ -64,9 +64,9 @@ Feature: Routing functionality with multiple content dimensions
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}'
 
   Scenario: Match node in default dimension
-    When I am on URL "/nody/carl.html"
+    When I am on URL "/nody/carl"
     Then the matched node should be "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}'
 
   Scenario: Match node in specific dimension
-    When I am on URL "/de/nody/karl-de.html"
+    When I am on URL "/de/nody/karl-de"
     Then the matched node should be "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}'

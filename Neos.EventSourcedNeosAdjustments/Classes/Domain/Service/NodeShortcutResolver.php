@@ -12,15 +12,17 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Neos\Controller\Exception\NodeNotFoundException;
-use Neos\Neos\Service\LinkingService;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathFinder;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ValueObject\DocumentNodeInfo;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\Controller\Exception\NodeNotFoundException;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Can resolve the target for a given shortcut.
@@ -29,72 +31,102 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeShortcutResolver
 {
-    /**
-     * @Flow\Inject
-     * @var LinkingService
-     */
-    protected $linkingService;
+    private DocumentUriPathFinder $documentUriPathFinder;
 
-    /**
-     * @Flow\Inject
-     * @var NodeTypeConstraintFactory
-     */
-    protected $nodeTypeConstraintFactory;
+    private AssetRepository $assetRepository;
 
-    /**
-     * Resolves a shortcut node to the target. The return value can be
-     *
-     * * string (in case the target is a plain text URI, a node:// URI, an asset:// URI or a node)
-     * * NULL in case the shortcut cannot be resolved
-     *
-     * @param ContentSubgraphInterface $subgraph
-     * @param NodeInterface $shortcut
-     * @param NodeAddress $nodeAddress
-     * @param UriBuilder $uriBuilder
-     * @param string $format
-     * @return string|null
-     * @throws NodeNotFoundException
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
-     */
-    public function resolveShortcutTarget(ContentSubgraphInterface $subgraph, NodeInterface $shortcut, NodeAddress $nodeAddress, UriBuilder $uriBuilder, string $format): ?string
+    private ResourceManager $resourceManager;
+
+    public function __construct(DocumentUriPathFinder $documentUriPathFinder, AssetRepository $assetRepository, ResourceManager $resourceManager)
     {
-        $infiniteLoopPrevention = 0;
-        $resolvedNode = $shortcut;
-        while ($resolvedNode && $resolvedNode->getNodeType()->isOfType('Neos.Neos:Shortcut') && $infiniteLoopPrevention < 50) {
-            $infiniteLoopPrevention++;
-            switch ($resolvedNode->getProperty('targetMode')) {
-                case 'selectedTarget':
-                    $target = $resolvedNode->getProperty('target');
-                    if ($this->linkingService->hasSupportedScheme($target)) {
-                        $targetObject = $this->linkingService->convertUriToObject($target, $resolvedNode);
-                        if ($targetObject instanceof NodeInterface) {
-                            $resolvedNode = $targetObject;
-                        } elseif ($targetObject instanceof AssetInterface) {
-                            return $this->linkingService->resolveAssetUri($target);
-                        }
-                    } else {
-                        return $target;
-                    }
-                    break;
+        $this->documentUriPathFinder = $documentUriPathFinder;
+        $this->assetRepository = $assetRepository;
+        $this->resourceManager = $resourceManager;
+    }
+
+    /**
+     * @param NodeAddress $nodeAddress
+     * @return NodeAddress|UriInterface
+     * @throws InvalidShortcutException
+     * @throws NodeNotFoundException
+     */
+    public function resolveShortcutTarget(NodeAddress $nodeAddress)
+    {
+        $node = $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($nodeAddress->getNodeAggregateIdentifier(), $nodeAddress->getDimensionSpacePoint()->getHash());
+        $resolvedTarget = $this->resolveNode($node);
+        if ($resolvedTarget instanceof UriInterface) {
+            return $resolvedTarget;
+        }
+        if ($resolvedTarget === $node) {
+            return $nodeAddress;
+        }
+        return $nodeAddress->withNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
+    }
+
+    /**
+     * @param DocumentNodeInfo $node
+     * @return DocumentNodeInfo|UriInterface
+     * @throws InvalidShortcutException
+     */
+    public function resolveNode(DocumentNodeInfo $node)
+    {
+        $shortcutRecursionLevel = 0;
+        while ($node->isShortcut()) {
+            if (++ $shortcutRecursionLevel > 50) {
+                throw new InvalidShortcutException(sprintf('Shortcut recursion level reached after %d levels', $shortcutRecursionLevel), 1599035282);
+            }
+            switch ($node->getShortcutMode()) {
                 case 'parentNode':
-                    $resolvedNode = $subgraph->findParentNode($resolvedNode->getNodeAggregateIdentifier());
-                    break;
+                    try {
+                        $node = $this->documentUriPathFinder->getParentNode($node);
+                    } catch (NodeNotFoundException $e) {
+                        throw new InvalidShortcutException(sprintf('Shortcut Node "%s" points to a non-existing parent node "%s"', $node, $node->getNodeAggregateIdentifier()), 1599669406, $e);
+                    }
+                    if ($node->isDisabled()) {
+                        throw new InvalidShortcutException(sprintf('Shortcut Node "%s" points to disabled parent node "%s"', $node, $node->getNodeAggregateIdentifier()), 1599664517);
+                    }
+                    continue 2;
                 case 'firstChildNode':
+                    try {
+                        $node = $this->documentUriPathFinder->getFirstEnabledChildNode($node->getNodeAggregateIdentifier(), $node->getDimensionSpacePointHash());
+                    } catch (\Exception $e) {
+                        throw new InvalidShortcutException(sprintf('Failed to fetch firstChildNode in Node "%s": %s', $node, $e->getMessage()), 1599043861, $e);
+                    }
+                    continue 2;
+                case 'selectedTarget':
+                    try {
+                        $targetUri = $node->getShortcutTargetUri();
+                    } catch (\Exception $e) {
+                        throw new InvalidShortcutException(sprintf('Invalid shortcut target in Node "%s": %s', $node, $e->getMessage()), 1599043489, $e);
+                    }
+                    if ($targetUri->getScheme() === 'node') {
+                        $targetNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($targetUri->getHost());
+                        try {
+                            $node = $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($targetNodeAggregateIdentifier, $node->getDimensionSpacePointHash());
+                        } catch (\Exception $e) {
+                            throw new InvalidShortcutException(sprintf('Failed to load selectedTarget node in Node "%s": %s', $node, $e->getMessage()), 1599043803, $e);
+                        }
+                        if ($node->isDisabled()) {
+                            throw new InvalidShortcutException(sprintf('Shortcut target in Node "%s" points to disabled node "%s"', $node, $node->getNodeAggregateIdentifier()), 1599664423);
+                        }
+                        continue 2;
+                    }
+                    if ($targetUri->getScheme() === 'asset') {
+                        $asset = $this->assetRepository->findByIdentifier($targetUri->getHost());
+                        if ($asset === null) {
+                            throw new InvalidShortcutException(sprintf('Failed to load selectedTarget asset in Node "%s", probably it was deleted', $node), 1599314109);
+                        }
+                        $assetUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+                        if (!$assetUri) {
+                            throw new InvalidShortcutException(sprintf('Failed to resolve asset URI in Node "%s", probably it was deleted', $node), 1599314203);
+                        }
+                        return new Uri($assetUri);
+                    }
+                    return $targetUri;
                 default:
-                    $childNodes = $subgraph->findChildNodes($resolvedNode->getNodeAggregateIdentifier(), $this->nodeTypeConstraintFactory->parseFilterString('Neos.Neos:Document'), 1);
-                    $resolvedNode = reset($childNodes) ?? null;
+                    throw new InvalidShortcutException(sprintf('Unsupported shortcut mode "%s" in Node "%s"', $node->getShortcutMode(), $node), 1598194032);
             }
         }
-
-        if ($resolvedNode === $shortcut) {
-            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1502793585);
-        }
-
-        $newNodeAddress = $nodeAddress->withNodeAggregateIdentifier($resolvedNode->getNodeAggregateIdentifier());
-        $uriBuilder->reset();
-        $uriBuilder->setFormat($format);
-
-        return $uriBuilder->setCreateAbsoluteUri(true)
-            ->uriFor('show', ['node' => $newNodeAddress], 'Frontend\Node', 'Neos.Neos');
+        return $node;
     }
 }

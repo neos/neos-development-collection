@@ -43,18 +43,18 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
   Scenario: Resolve nodes correctly from homepage
     When I am on URL "/"
     Then the node "shernode-homes" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/"
-    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough.html"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document.html"
+    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
+    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Match node lower in the tree
-    When I am on URL "/david-nodenborough/earl-document.html"
+    When I am on URL "/david-nodenborough/earl-document"
     Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
 
   Scenario: Resolve from node lower in the tree
-    When I am on URL "/david-nodenborough/earl-document.html"
+    When I am on URL "/david-nodenborough/earl-document"
     Then the node "shernode-homes" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/"
-    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough.html"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document.html"
+    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
+    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Change uri path segment
     When the command "SetNodeProperties" is executed with payload:
@@ -65,8 +65,8 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
     And The documenturipath projection is up to date
     And I am on URL "/"
-    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated.html"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-document.html"
+    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated"
+    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-document"
 
   Scenario: Move node upwards in the tree
     When the command MoveNodeAggregate is executed with payload:
@@ -77,9 +77,9 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | newParentNodeAggregateIdentifier            | "shernode-homes"        |
       | newSucceedingSiblingNodeAggregateIdentifier | null                    |
     And The documenturipath projection is up to date
-    And I am on URL "/earl-document.html"
+    And I am on URL "/earl-document"
     Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
-    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/earl-document.html"
+    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/earl-document"
 
   Scenario: Move node downwards in the tree
     When the command MoveNodeAggregate is executed with payload:
@@ -90,6 +90,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | newParentNodeAggregateIdentifier            | "earl-o-documentbourgh" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                    |
     And The documenturipath projection is up to date
-    And I am on URL "/david-nodenborough/earl-document/nody.html"
+    And I am on URL "/david-nodenborough/earl-document/nody"
     Then the matched node should be "nody-mc-nodeface" in content stream "cs-identifier" and dimension "{}"
-    And the node "nody-mc-nodeface" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document/nody.html"
+    And the node "nody-mc-nodeface" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document/nody"

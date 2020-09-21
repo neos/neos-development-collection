@@ -20,7 +20,6 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
-use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
 /**
@@ -119,12 +118,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeShortcutResolver
-     */
-    protected $nodeShortcutResolver;
-
-    /**
-     * @Flow\Inject
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
@@ -160,7 +153,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
         $this->registerArgument('baseNodeName', 'string', 'The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths', false, 'documentNode');
         $this->registerArgument('nodeVariableName', 'string', 'The variable the node will be assigned to for the rendered child content', false, 'linkedNode');
-        $this->registerArgument('resolveShortcuts', 'boolean', 'INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself', false, true);
     }
 
     /**
@@ -179,16 +171,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
         $resolvedNode = null;
         if ($node instanceof TraversableNodeInterface) {
-            // the latter case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
-            // a link towards the *shortcut itself*, and not to its target.
-            // TODO: fix shortcuts!
-            //$resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
-            $resolvedNode = $node;
-            if ($resolvedNode instanceof TraversableNodeInterface) {
-                $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
-            } else {
-                $uri = $resolvedNode;
-            }
+            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
         } elseif ($node === '~') {
             /* @var TraversableNodeInterface $documentNode */
             $documentNode = $this->getContextVariable('documentNode');
