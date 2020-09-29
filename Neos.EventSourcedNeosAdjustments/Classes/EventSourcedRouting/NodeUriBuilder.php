@@ -13,12 +13,18 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Psr\Http\Message\UriInterface;
 
+/**
+ * Builds URIs to nodes, taking workspace (live / shared / user) and shortcut nodes into account
+ */
 final class NodeUriBuilder
 {
 
@@ -29,10 +35,6 @@ final class NodeUriBuilder
         $this->uriBuilder = $uriBuilder;
     }
 
-    /**
-     * @param ActionRequest $request
-     * @return self
-     */
     public static function fromRequest(ActionRequest $request): self
     {
         $uriBuilder = new UriBuilder();
@@ -46,9 +48,13 @@ final class NodeUriBuilder
     }
 
     /**
+     * Renders an URI for the given $nodeAddress
+     * If the node belongs to the live workspace, the public URL is generated
+     * Otherwise a preview URI is rendered (@see previewUriFor())
+     *
      * @param NodeAddress $nodeAddress
      * @return UriInterface
-     * @throws NoMatchingRouteException
+     * @throws NoMatchingRouteException | MissingActionNameException | HttpException | NodeAddressCannotBeSerializedException
      */
     public function uriFor(NodeAddress $nodeAddress): UriInterface
     {
@@ -59,9 +65,12 @@ final class NodeUriBuilder
     }
 
     /**
+     * Renders a stable "preview" URI for the given $nodeAddress
+     * A preview URI is used to display a node that is not public yet (i.e. not in a live workspace).
+     *
      * @param NodeAddress $nodeAddress
      * @return UriInterface
-     * @throws NoMatchingRouteException
+     * @throws NoMatchingRouteException | MissingActionNameException | HttpException| NodeAddressCannotBeSerializedException
      */
     public function previewUriFor(NodeAddress $nodeAddress): UriInterface
     {
