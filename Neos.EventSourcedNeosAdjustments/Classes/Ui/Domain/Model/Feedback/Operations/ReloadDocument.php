@@ -17,7 +17,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
@@ -27,12 +26,6 @@ class ReloadDocument extends AbstractFeedback
      * @var TraversableNodeInterface
      */
     protected $node;
-
-    /**
-     * @Flow\Inject
-     * @var LinkingService
-     */
-    protected $linkingService;
 
     /**
      * @Flow\Inject
