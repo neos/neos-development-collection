@@ -14,14 +14,8 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Command\AddMissingTetheredNodes;
-use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationDetector;
-use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Violations;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\StructureAdjustmentService;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -32,7 +26,6 @@ use PHPUnit\Framework\Assert;
  */
 trait StructureAdjustmentsTrait
 {
-
     protected StructureAdjustmentService $structureAdjustmentService;
 
     /**
@@ -68,7 +61,7 @@ trait StructureAdjustmentsTrait
     {
         $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         $errors = iterator_to_array($errors);
-        Assert::assertEmpty($errors, implode(', ', array_map(fn(StructureAdjustment $adjustment) => $adjustment->render(), $errors)));
+        Assert::assertEmpty($errors, implode(', ', array_map(fn (StructureAdjustment $adjustment) => $adjustment->render(), $errors)));
     }
 
     /**

@@ -16,7 +16,6 @@ use Ramsey\Uuid\Uuid;
 
 trait RemoveNodeAggregateTrait
 {
-
     abstract protected function getEventStore(): EventStore;
 
     private function removeNodeAggregate(ReadableNodeAggregateInterface $tetheredNodeAggregate): CommandResult

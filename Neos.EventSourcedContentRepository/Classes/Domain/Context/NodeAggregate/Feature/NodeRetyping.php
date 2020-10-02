@@ -55,10 +55,12 @@ trait NodeRetyping
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ReadableNodeAggregateInterface;
 
-    abstract protected function requireConstraintsImposedByAncestorsAreMet(ContentStreamIdentifier $contentStreamIdentifier,
-                                                                           NodeType $nodeType,
-                                                                           ?NodeName $nodeName,
-                                                                           array $parentNodeAggregateIdentifiers): void;
+    abstract protected function requireConstraintsImposedByAncestorsAreMet(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeType $nodeType,
+        ?NodeName $nodeName,
+        array $parentNodeAggregateIdentifiers
+    ): void;
 
     abstract protected function requireNodeTypeConstraintsImposedByParentToBeMet(NodeType $parentsNodeType, ?NodeName $nodeName, NodeType $nodeType): void;
 
@@ -142,7 +144,6 @@ trait NodeRetyping
             if ($command->getStrategy()->getStrategy() === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
                 $events = $events->appendEvents($this->deleteDisallowedNodesWhenChangingNodeType($nodeAggregate, $newNodeType));
                 $events = $events->appendEvents($this->deleteObsoleteTetheredNodesWhenChangingNodeType($nodeAggregate, $newNodeType));
-
             }
 
             // new tethered child nodes

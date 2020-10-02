@@ -93,7 +93,8 @@ class DisallowedChildNodeAdjustment
                 if (!$allowedByParent && !$allowedByGrandparent) {
                     $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregate->getIdentifier());
 
-                    $message = sprintf('
+                    $message = sprintf(
+                        '
                         The parent node type "%s" is not allowing children of type "%s",
                         and the grandparent node type "%s" is not allowing grandchildren of type "%s".
                         Thus, the node is invalid at this location and should be removed.
@@ -104,7 +105,7 @@ class DisallowedChildNodeAdjustment
                         $node->getNodeTypeName()->jsonSerialize(),
                     );
 
-                    yield StructureAdjustment::createForNode($node, StructureAdjustment::DISALLOWED_CHILD_NODE, $message, function() use ($nodeAggregate, $coveredDimensionSpacePoint) {
+                    yield StructureAdjustment::createForNode($node, StructureAdjustment::DISALLOWED_CHILD_NODE, $message, function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
                         $this->readSideMemoryCacheManager->disableCache();
                         return $this->removeNodeInSingleDimensionSpacePoint($nodeAggregate, $coveredDimensionSpacePoint);
                     });
