@@ -122,7 +122,7 @@ trait NodeMove
                         // this is the actual move
                         $ingoingHierarchyRelation->assignNewPosition($newPosition, $this->getDatabaseConnection());
 
-                        // NOTE: we do not need to re-build restriction relations because the hierarchy does not change.
+                    // NOTE: we do not need to re-build restriction relations because the hierarchy does not change.
                     } elseif ($event->getRepositionNodesWithoutAssignments()->contains($coveredDimensionSpacePoint)) {
                         // CASE: we move to the end of all its siblings.
 

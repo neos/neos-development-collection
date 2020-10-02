@@ -156,8 +156,7 @@ trait ConstraintChecks
         NodeType $nodeType,
         ?NodeName $nodeName,
         array $parentNodeAggregateIdentifiers
-    ): void
-    {
+    ): void {
         foreach ($parentNodeAggregateIdentifiers as $parentNodeAggregateIdentifier) {
             $parentAggregate = $this->requireProjectedNodeAggregate($contentStreamIdentifier, $parentNodeAggregateIdentifier);
             try {
@@ -172,7 +171,6 @@ trait ConstraintChecks
                 try {
                     $grandParentsNodeType = $this->requireNodeType($grandParentNodeAggregate->getNodeTypeName());
                     $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet($grandParentsNodeType, $parentAggregate->getNodeName(), $nodeType);
-
                 } catch (NodeTypeNotFound $e) {
                     // skip constraint check; Once the grand parent is changed to be of an available type,
                     // the constraint checks are executed again. See handleChangeNodeAggregateType
@@ -237,8 +235,7 @@ trait ConstraintChecks
     protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): ReadableNodeAggregateInterface
-    {
+    ): ReadableNodeAggregateInterface {
         $nodeAggregate = $this->getContentGraph()->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         if (!$nodeAggregate) {
@@ -257,8 +254,7 @@ trait ConstraintChecks
     protected function requireProjectedNodeAggregateToNotExist(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): void
-    {
+    ): void {
         $nodeAggregate = $this->getContentGraph()->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         if ($nodeAggregate) {
@@ -274,8 +270,7 @@ trait ConstraintChecks
     protected function requireNodeAggregateToCoverDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): void
-    {
+    ): void {
         if (!$nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" does currently not cover dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1541678877);
         }
@@ -289,8 +284,7 @@ trait ConstraintChecks
     protected function requireNodeAggregateToCoverDimensionSpacePoints(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $dimensionSpacePointSet
-    ): void
-    {
+    ): void {
         if (!$nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes() === $dimensionSpacePointSet->getPointHashes()) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
                 $nodeAggregate->getIdentifier(),
@@ -332,8 +326,7 @@ trait ConstraintChecks
         ContentStreamIdentifier $contentStreamIdentifier,
         ReadableNodeAggregateInterface $nodeAggregate,
         ReadableNodeAggregateInterface $referenceNodeAggregate
-    )
-    {
+    ) {
         if ($nodeAggregate->getIdentifier()->equals($referenceNodeAggregate->getIdentifier())) {
             throw new NodeAggregateIsDescendant('Node aggregate "' . $nodeAggregate->getIdentifier() . '" is descendant of node aggregate "' . $referenceNodeAggregate->getIdentifier() . '"', 1554971124);
         }
@@ -356,8 +349,7 @@ trait ConstraintChecks
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePoints
-    ): void
-    {
+    ): void {
         if ($nodeName === null) {
             return;
         }
@@ -385,8 +377,7 @@ trait ConstraintChecks
         ?NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointsToBeCovered
-    ): void
-    {
+    ): void {
         if ($nodeName === null) {
             return;
         }
@@ -431,8 +422,7 @@ trait ConstraintChecks
     protected function requireNodeAggregateToDisableDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): void
-    {
+    ): void {
         if (!$nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" currently does not disable dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1557735431);
         }
@@ -446,8 +436,7 @@ trait ConstraintChecks
     protected function requireNodeAggregateToNotDisableDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): void
-    {
+    ): void {
         if ($nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDisablesDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" currently disables dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1555179563);
         }

@@ -169,8 +169,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
-    )
-    {
+    ) {
         // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
                 INSERT IGNORE INTO neos_contentgraph_restrictionrelation (
@@ -223,8 +222,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         NodeAggregateClassification $nodeAggregateClassification,
         NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
         NodeName $nodeName = null
-    ): void
-    {
+    ): void {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
@@ -290,8 +288,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         DimensionSpacePointSet $dimensionSpacePointSet,
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
         NodeName $relationName = null
-    ): void
-    {
+    ): void {
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
                 $parentNodeAnchorPoint,
@@ -330,8 +327,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         $position = $this->projectionContentGraph->determineHierarchyRelationPosition($parentAnchorPoint, $childAnchorPoint, $succeedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
@@ -356,8 +352,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         if (!$childAnchorPoint && !$parentAnchorPoint) {
             throw new \InvalidArgumentException('You must either specify a parent or child node anchor to get relation positions after recalculation.', 1519847858);
         }
@@ -605,8 +600,7 @@ insert ignore into neos_contentgraph_restrictionrelation
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): void
-    {
+    ): void {
         $this->getDatabaseConnection()->executeUpdate(
             '
             -- GraphProjector::cascadeRestrictionRelations
@@ -758,10 +752,10 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             if (count($unassignedIngoingDimensionSpacePoints) > 0) {
                 $ingoingSourceHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
-                        $sourceNode->relationAnchorPoint,
-                        $event->getContentStreamIdentifier(),
-                        new DimensionSpacePointSet([$event->getSourceOrigin()])
-                    )[$event->getSourceOrigin()->getHash()] ?? null;
+                    $sourceNode->relationAnchorPoint,
+                    $event->getContentStreamIdentifier(),
+                    new DimensionSpacePointSet([$event->getSourceOrigin()])
+                )[$event->getSourceOrigin()->getHash()] ?? null;
                 // the null case is caught by the NodeAggregate or its command handler
                 foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
@@ -851,8 +845,7 @@ insert ignore into neos_contentgraph_restrictionrelation
         DimensionSpacePoint $dimensionSpacePoint,
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
-    ): HierarchyRelation
-    {
+    ): HierarchyRelation {
         $copy = new HierarchyRelation(
             $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
             $newChild ?: $sourceHierarchyRelation->childNodeAnchor,

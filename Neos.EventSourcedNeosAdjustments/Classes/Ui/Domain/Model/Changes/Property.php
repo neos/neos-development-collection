@@ -38,7 +38,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePropertyConversionService;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
-use Neos\Utility\ObjectAccess;
 
 /**
  * Changes a property on a node

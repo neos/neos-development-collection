@@ -208,7 +208,7 @@ class ProjectionContentGraph
             ]
         )->fetchAll();
 
-        return array_map(fn($row) => NodeRelationAnchorPoint::fromString($row['relationanchorpoint']), $rows);
+        return array_map(fn ($row) => NodeRelationAnchorPoint::fromString($row['relationanchorpoint']), $rows);
     }
 
     /**
