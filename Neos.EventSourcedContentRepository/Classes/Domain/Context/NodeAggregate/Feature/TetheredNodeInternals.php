@@ -76,7 +76,6 @@ trait TetheredNodeInternals
                     Uuid::uuid4()->toString()
                 )
             );
-
         } elseif (count($childNodeAggregates) === 1) {
             $childNodeAggregate = current($childNodeAggregates);
             if (!$childNodeAggregate->isTethered()) {

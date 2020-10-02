@@ -129,7 +129,6 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
             (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
             && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
         );
-
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
@@ -141,7 +140,6 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
             $this->strategy,
             $this->tetheredDescendantNodeAggregateIdentifiers
         );
-
     }
 
     public function jsonSerialize()
@@ -174,5 +172,4 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
             $tetheredDescendantNodeAggregateIdentifiers
         );
     }
-
 }

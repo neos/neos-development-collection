@@ -47,7 +47,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     public function merge(SerializedPropertyValues $other): SerializedPropertyValues
     {
         // here, we skip null values
-        return new SerializedPropertyValues(array_filter(array_merge($this->values, $other->getValues()), fn($value) => $value !== null));
+        return new SerializedPropertyValues(array_filter(array_merge($this->values, $other->getValues()), fn ($value) => $value !== null));
     }
 
     public function propertyExists($propertyName): bool

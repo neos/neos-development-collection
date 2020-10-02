@@ -10,7 +10,6 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 
 trait LoadNodeTypeTrait
 {
-
     abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     /**

@@ -46,7 +46,7 @@ class StructureAdjustment extends Message
         $this->type = $type;
     }
 
-    static function createForNode(NodeInterface $node, string $type, string $errorMessage, ?\Closure $remediation = null): self
+    public static function createForNode(NodeInterface $node, string $type, string $errorMessage, ?\Closure $remediation = null): self
     {
         return new self('Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- ' . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage, null, [
             'contentStream' => $node->getContentStreamIdentifier()->jsonSerialize(),
@@ -56,7 +56,7 @@ class StructureAdjustment extends Message
         ], $type, $remediation);
     }
 
-    static function createForNodeAggregate(ReadableNodeAggregateInterface $nodeAggregate, string $type, string $errorMessage, ?\Closure $remediation = null): self
+    public static function createForNodeAggregate(ReadableNodeAggregateInterface $nodeAggregate, string $type, string $errorMessage, ?\Closure $remediation = null): self
     {
         return new self('Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- ' . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage, null, [
             'contentStream' => $nodeAggregate->getContentStreamIdentifier()->jsonSerialize(),
@@ -81,5 +81,4 @@ class StructureAdjustment extends Message
     {
         return $this->type;
     }
-
 }
