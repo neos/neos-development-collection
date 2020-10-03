@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Controller\Backend;
 
 /*
@@ -11,11 +13,19 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Http\Component\SetHeaderComponent;
+use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
+use Neos\Flow\Package\Exception\UnknownPackageException;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Neos\Domain\Model\Site;
@@ -65,11 +75,13 @@ class BackendController extends ActionController
      * Default action of the backend controller.
      *
      * @return void
-     * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws MissingActionNameException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     * @throws \Neos\Flow\Http\Exception
+     * @throws IllegalObjectTypeException
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
         if ($redirectionUri === null) {
@@ -84,14 +96,15 @@ class BackendController extends ActionController
      * @param Site $site
      * @return void
      * @throws \Neos\Cache\Exception
-     * @throws \Neos\Cache\Exception\InvalidDataException
-     * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
-     * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
+     * @throws InvalidDataException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     * @throws MissingActionNameException
+     * @throws SessionNotStartedException
      * @throws \Neos\Neos\Exception
+     * @throws \Exception
      */
-    public function switchSiteAction($site)
+    public function switchSiteAction($site): void
     {
         $token = Algorithms::generateRandomToken(32);
         $this->loginTokenCache->set($token, $this->currentSession->getId());
@@ -108,10 +121,11 @@ class BackendController extends ActionController
      *
      * @param string $locale
      * @return string
-     * @throws \Neos\Flow\I18n\Exception
-     * @throws \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
+     * @throws InvalidLocaleIdentifierException
+     * @throws \Neos\Cache\Exception
+     * @throws UnknownPackageException
      */
-    public function xliffAsJsonAction($locale)
+    public function xliffAsJsonAction(string $locale): string
     {
         $this->response->setContentType('application/json');
         $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'max-age=' . (3600 * 24 * 7));
