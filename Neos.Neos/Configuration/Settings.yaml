@@ -309,6 +309,9 @@ Neos:
       # Use `Lite` for a reduced variant with a less aggressive reset and other non essential styles removed.
       # Use `Minimal` when your module provides its own styles and Neos only needs to show the top and bottom bar.
       mainStylesheet: 'Main'
+
+      preferredStartModules: [ 'content','user/usersettings' ]
+
     modules:
       management:
         label: 'Neos.Neos:Modules:management.label'

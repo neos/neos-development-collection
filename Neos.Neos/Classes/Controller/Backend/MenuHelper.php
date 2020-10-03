@@ -116,7 +116,7 @@ class MenuHelper
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function buildModuleList(ControllerContext $controllerContext)
+    public function buildModuleList(ControllerContext $controllerContext): array
     {
         $modules = [];
         foreach ($this->settings['modules'] as $moduleName => $moduleConfiguration) {
@@ -144,14 +144,15 @@ class MenuHelper
                     if (isset($submoduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($submoduleConfiguration['privilegeTarget'])) {
                         continue;
                     }
-                    $submodules[] = $this->collectModuleData($controllerContext, $submoduleName, $submoduleConfiguration, $moduleName . '/' . $submoduleName);
+                    $submodules[$submoduleName] = $this->collectModuleData($controllerContext, $submoduleName, $submoduleConfiguration, $moduleName . '/' . $submoduleName);
                 }
             }
-            $modules[] = array_merge(
+            $modules[$moduleName] = array_merge(
                 $this->collectModuleData($controllerContext, $moduleName, $moduleConfiguration, $moduleName),
                 ['group' => $moduleName, 'submodules' => $submodules]
             );
         }
+
         return $modules;
     }
 
