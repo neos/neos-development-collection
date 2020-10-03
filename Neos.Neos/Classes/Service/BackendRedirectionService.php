@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Service;
 
 /*
@@ -14,7 +16,9 @@ namespace Neos\Neos\Service;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Session\SessionInterface;
@@ -97,8 +101,11 @@ class BackendRedirectionService
      *
      * @param ActionRequest $actionRequest
      * @return string
+     * @throws \Neos\Flow\Http\Exception
+     * @throws MissingActionNameException
+     * @throws IllegalObjectTypeException
      */
-    public function getAfterLoginRedirectionUri(ActionRequest $actionRequest)
+    public function getAfterLoginRedirectionUri(ActionRequest $actionRequest): ?string
     {
         $user = $this->userService->getBackendUser();
         if ($user === null) {
@@ -130,8 +137,10 @@ class BackendRedirectionService
      *
      * @param ActionRequest $actionRequest
      * @return string A possible redirection URI, if any
+     * @throws \Neos\Flow\Http\Exception
+     * @throws MissingActionNameException
      */
-    public function getAfterLogoutRedirectionUri(ActionRequest $actionRequest)
+    public function getAfterLogoutRedirectionUri(ActionRequest $actionRequest): ?string
     {
         $lastVisitedNode = $this->getLastVisitedNode('live');
         if ($lastVisitedNode === null) {
@@ -145,11 +154,10 @@ class BackendRedirectionService
     }
 
     /**
-     *
      * @param string $workspaceName
      * @return NodeInterface
      */
-    protected function getLastVisitedNode($workspaceName)
+    protected function getLastVisitedNode(string $workspaceName): ?NodeInterface
     {
         if (!$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
             return null;
@@ -157,8 +165,7 @@ class BackendRedirectionService
         try {
             $lastVisitedNode = $this->propertyMapper->convert($this->session->getData('lastVisitedNode'), NodeInterface::class);
             $q = new FlowQuery([$lastVisitedNode]);
-            $lastVisitedNodeUserWorkspace = $q->context(['workspaceName' => $workspaceName])->get(0);
-            return $lastVisitedNodeUserWorkspace;
+            return $q->context(['workspaceName' => $workspaceName])->get(0);
         } catch (\Exception $exception) {
             return null;
         }
@@ -170,7 +177,7 @@ class BackendRedirectionService
      * @param string $workspaceName
      * @return ContentContext
      */
-    protected function createContext($workspaceName)
+    protected function createContext(string $workspaceName): ContentContext
     {
         $contextProperties = [
             'workspaceName' => $workspaceName,
@@ -190,8 +197,9 @@ class BackendRedirectionService
      *
      * @param string $workspaceName Name of the workspace
      * @return void
+     * @throws IllegalObjectTypeException
      */
-    protected function createWorkspaceAndRootNodeIfNecessary($workspaceName)
+    protected function createWorkspaceAndRootNodeIfNecessary(string $workspaceName): void
     {
         $workspace = $this->workspaceRepository->findOneByName($workspaceName);
         if ($workspace === null) {

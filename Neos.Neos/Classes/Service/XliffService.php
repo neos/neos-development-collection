@@ -86,10 +86,11 @@ class XliffService
      * The json will be cached.
      *
      * @param Locale $locale The locale
-     * @return Result
-     * @throws Exception
+     * @return string
+     * @throws \Neos\Cache\Exception
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    public function getCachedJson(Locale $locale)
+    public function getCachedJson(Locale $locale): string
     {
         $cacheIdentifier = md5($locale);
 
