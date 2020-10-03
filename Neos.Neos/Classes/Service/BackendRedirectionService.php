@@ -16,12 +16,15 @@ namespace Neos\Neos\Service;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
+use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
@@ -30,6 +33,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Utility\Arrays;
 
 /**
  * @Flow\Scope("singleton")
@@ -91,32 +95,93 @@ class BackendRedirectionService
     protected $propertyMapper;
 
     /**
+     * @Flow\Inject
+     * @var MenuHelper
+     */
+    protected $menuHelper;
+
+    /**
+     * @var PrivilegeManagerInterface
+     * @Flow\Inject
+     */
+    protected $privilegeManager;
+
+    /**
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.routeAfterLogin.values")
      * @var bool
      */
     protected $routingValuesAfterLogin;
 
     /**
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="moduleConfiguration.preferredStartModules")
+     * @var string[]
+     */
+    protected $preferedStartModules;
+
+    /**
      * Returns a specific URI string to redirect to after the login; or NULL if there is none.
      *
-     * @param ActionRequest $actionRequest
+     * @param ControllerContext $controllerContext
      * @return string
-     * @throws \Neos\Flow\Http\Exception
-     * @throws MissingActionNameException
      * @throws IllegalObjectTypeException
+     * @throws MissingActionNameException
+     * @throws \Neos\Flow\Http\Exception
      */
-    public function getAfterLoginRedirectionUri(ActionRequest $actionRequest): ?string
+    public function getAfterLoginRedirectionUri(ControllerContext $controllerContext): ?string
     {
         $user = $this->userService->getBackendUser();
         if ($user === null) {
             return null;
         }
 
+        $availableModules = $this->menuHelper->buildModuleList($controllerContext);
+        $availableModules = $this->addContentModuleDefinitionIfAccessible($availableModules, $controllerContext);
+
+        $startModule = $this->determineStartModule($availableModules);
+
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $this->createWorkspaceAndRootNodeIfNecessary($workspaceName);
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($actionRequest);
+        return $startModule['uri'];
+    }
+
+    /**
+     * @param array $availableModules
+     * @return array|null
+     */
+    protected function determineStartModule(array $availableModules): ?array
+    {
+        foreach ($this->preferedStartModules as $startModule) {
+            $subModulePath = str_replace('/', '.submodules.', $startModule);
+            if (Arrays::getValueByPath($availableModules, $subModulePath) !== null) {
+                return Arrays::getValueByPath($availableModules, $subModulePath);
+            }
+        }
+
+        $firstModule = current($availableModules);
+        if (array_key_exists('submodules', $firstModule) && is_array($firstModule['submodules'])) {
+            return current($firstModule['submodules']);
+        }
+
+        return $firstModule;
+    }
+
+    /**
+     * @param array $modules
+     * @param ControllerContext $controllerContext
+     * @return array
+     * @throws MissingActionNameException
+     * @throws \Neos\Flow\Http\Exception
+     */
+    protected function addContentModuleDefinitionIfAccessible(array $modules, ControllerContext $controllerContext): array
+    {
+        if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Content')) {
+            return $modules;
+        }
+
+        $workspaceName = $this->userService->getPersonalWorkspaceName();
+
+        $uriBuilder = $controllerContext->getUriBuilder();
         $uriBuilder->setFormat('html');
         $uriBuilder->setCreateAbsoluteUri(true);
 
@@ -127,7 +192,9 @@ class BackendRedirectionService
         }
 
         $arguments = array_merge(['node' => $nodeToEdit], $this->routingValuesAfterLogin);
-        return $uriBuilder->uriFor($this->routingValuesAfterLogin['@action'], $arguments, $this->routingValuesAfterLogin['@controller'], $this->routingValuesAfterLogin['@package']);
+
+        $modules['content'] = ['uri' => $uriBuilder->uriFor($this->routingValuesAfterLogin['@action'], $arguments, $this->routingValuesAfterLogin['@controller'], $this->routingValuesAfterLogin['@package'])];
+        return $modules;
     }
 
     /**
