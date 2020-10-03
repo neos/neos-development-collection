@@ -14,8 +14,6 @@ namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Error\Messages\Result;
-use Neos\Flow\I18n\Exception;
 use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
 use Neos\Flow\I18n\Xliff\Service\XliffReader;
 use Neos\Flow\Package\PackageInterface;
