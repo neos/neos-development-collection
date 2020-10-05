@@ -26,6 +26,7 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * Can resolve the target for a given shortcut.
+ * Used for Neos Routing ({@see EventSourcedFrontendNodeRoutePartHandler}), and redirects to a shortcut target when visiting the shortcut itself.
  *
  * @Flow\Scope("singleton")
  */
@@ -45,8 +46,10 @@ class NodeShortcutResolver
     }
 
     /**
+     * "adapter" for {@see resolveNode} when working with NodeAddresses.
+     *
      * @param NodeAddress $nodeAddress
-     * @return NodeAddress|UriInterface
+     * @return NodeAddress|UriInterface NodeAddress is returned if we want to link to another node (i.e. node is NOT a shortcut node; or target is a node); or UriInterface for links to fixed URLs (Asset URLs or external URLs)
      * @throws InvalidShortcutException
      * @throws NodeNotFoundException
      */
@@ -64,8 +67,11 @@ class NodeShortcutResolver
     }
 
     /**
+     * This method is used during routing (when creating URLs), to directly generate URLs to the shortcut TARGET,
+     * if linking to a shortcut.
+     *
      * @param DocumentNodeInfo $node
-     * @return DocumentNodeInfo|UriInterface
+     * @return DocumentNodeInfo|UriInterface DocumentNodeInfo is returned if we want to link to another node (i.e. node is NOT a shortcut node; or target is a node); or UriInterface for links to fixed URLs (Asset URLs or external URLs)
      * @throws InvalidShortcutException
      */
     public function resolveNode(DocumentNodeInfo $node)

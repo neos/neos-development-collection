@@ -99,6 +99,11 @@ final class DocumentNodeInfo
         return $this->source['dimensionspacepointhash'];
     }
 
+    /**
+     * This is NOT the node path; but the "nodeAggregateIdentifiers on the hierarchy; separated by /"
+     *
+     * @return string
+     */
     public function getNodePath(): string
     {
         return $this->source['nodepath'];
@@ -148,10 +153,17 @@ final class DocumentNodeInfo
         return new Uri($this->getShortcutTarget()['target']);
     }
 
+
+    /**
+     * As the route tags are based on the node aggregate identifiers of the node and its parents up to the site,
+     * we can extract this from the "nodePath", which contains these identifiers.
+     *
+     * @return RouteTags
+     */
     public function getRouteTags(): RouteTags
     {
         $nodeAggregateIdentifiers = explode('/', $this->getNodePath());
-        array_shift($nodeAggregateIdentifiers);
+        array_shift($nodeAggregateIdentifiers); // remove the root node from the list
         return RouteTags::createFromArray($nodeAggregateIdentifiers);
     }
 

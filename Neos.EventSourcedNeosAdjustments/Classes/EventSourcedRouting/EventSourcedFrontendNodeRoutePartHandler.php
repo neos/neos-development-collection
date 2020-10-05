@@ -41,7 +41,8 @@ use Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * A route part handler for finding nodes specifically in the website's frontend.
+ * A route part handler for finding nodes in the website's frontend.
+ * Uses a special projection {@see DocumentUriPathFinder}, and does NOT use the graph projection in any way.
  *
  * @Flow\Scope("singleton")
  */
@@ -101,7 +102,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!is_string($requestPath)) {
             return false;
         }
-        // TODO verify parameters / use "host" parameter
+        // TODO verify parameters / use "host" parameter (see https://github.com/neos/flow-development-collection/issues/2141)
         if (!$parameters->has('dimensionSpacePoint')) {
             return false;
         }
@@ -114,7 +115,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         try {
             $matchResult = $this->matchUriPath($requestPath, $dimensionSpacePoint);
         } catch (NodeNotFoundException $exception) {
-            // TODO log exception
+            // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
+            // (and other routes could still handle this).
             return false;
         }
         $requestPath = $remainingRequestPath;

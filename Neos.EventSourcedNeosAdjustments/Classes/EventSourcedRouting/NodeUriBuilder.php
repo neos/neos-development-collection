@@ -23,7 +23,8 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Builds URIs to nodes, taking workspace (live / shared / user) and shortcut nodes into account
+ * Builds URIs to nodes, taking workspace (live / shared / user) into account.
+ * Shortcut nodes will be resolved and the resulting URI will point to the shortcut target (node, asset or external URI)
  */
 final class NodeUriBuilder
 {
