@@ -86,7 +86,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         foreach ($event->getCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
             $this->insertNode([
                 'uriPath' => '',
-                'nodePath' => $event->getNodeAggregateIdentifier(),
+                'nodeAggregateIdentifierPath' => $event->getNodeAggregateIdentifier(),
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                 'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
             ]);
@@ -135,7 +135,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 $this->updateNodeByIdAndDimensionSpacePointHash($event->getSucceedingNodeAggregateIdentifier(), $dimensionSpacePoint->getHash(), ['precedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
             }
 
-            $nodePath = $parentNode->getNodePath() . '/' . $event->getNodeAggregateIdentifier();
+            $nodeAggregateIdentifierPath = $parentNode->getNodeAggregateIdentifierPath() . '/' . $event->getNodeAggregateIdentifier();
             if ($parentNode->isRoot()) {
                 $uriPath = '';
                 $siteNodeName = $event->getNodeName();
@@ -146,7 +146,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             $this->insertNode([
                 'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
                 'uriPath' => $uriPath,
-                'nodePath' => $nodePath,
+                'nodeAggregateIdentifierPath' => $nodeAggregateIdentifierPath,
                 'siteNodeName' => $siteNodeName,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                 'originDimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->getHash(),
@@ -232,10 +232,10 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             if ($this->isNodeExplicitlyDisabled($node)) {
                 return;
             }
-            $this->updateNodeQuery('SET disabled = disabled + 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodePath LIKE :childNodePathPrefix)', [
+            $this->updateNodeQuery('SET disabled = disabled + 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                 'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
-                'childNodePathPrefix' => $node->getNodePath() . '/%',
+                'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]);
         }
     }
@@ -255,10 +255,10 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             if (!$this->isNodeExplicitlyDisabled($node)) {
                 return;
             }
-            $this->updateNodeQuery('SET disabled = disabled - 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodePath LIKE :childNodePathPrefix)', [
+            $this->updateNodeQuery('SET disabled = disabled - 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
-                'childNodePathPrefix' => $node->getNodePath() . '/%',
+                'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]);
         }
     }
@@ -277,10 +277,10 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
             $this->disconnectNodeFromSiblings($node);
 
-            $this->deleteNodeQuery('WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodePath LIKE :childNodePathPrefix)', [
+            $this->deleteNodeQuery('WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
-                'childNodePathPrefix' => $node->getNodePath() . '/%',
+                'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]);
         }
     }
@@ -324,12 +324,12 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
         $newUriPath = implode('/', $uriPathSegments);
 
-        $this->updateNodeQuery('SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1)) WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodePath LIKE :childNodePathPrefix)', [
+        $this->updateNodeQuery('SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1)) WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)', [
             'newUriPath' => $newUriPath,
             'oldUriPath' => $oldUriPath,
             'dimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->getHash(),
             'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
-            'childNodePathPrefix' => $node->getNodePath() . '/%',
+            'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
         ]);
     }
 
@@ -371,20 +371,20 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             $disabledDelta++;
         }
         $this->updateNodeQuery('SET
-                nodePath = TRIM(TRAILING "/" FROM CONCAT(:newParentNodePath, "/", TRIM(LEADING "/" FROM SUBSTRING(nodePath, :sourceNodePathOffset)))),
+                nodeAggregateIdentifierPath = TRIM(TRAILING "/" FROM CONCAT(:newParentNodeAggregateIdentifierPath, "/", TRIM(LEADING "/" FROM SUBSTRING(nodeAggregateIdentifierPath, :sourceNodeAggregateIdentifierPathOffset)))),
                 uriPath = TRIM("/" FROM CONCAT(:newParentUriPath, "/", TRIM(LEADING "/" FROM SUBSTRING(uriPath, :sourceUriPathOffset)))),
                 disabled = disabled + ' . $disabledDelta . '
             WHERE
                 dimensionSpacePointHash = :dimensionSpacePointHash
-                AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodePath LIKE :childNodePathPrefix)
+                AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)
             ', [
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
-                'newParentNodePath' => $newParentNode->getNodePath(),
-                'sourceNodePathOffset' => (int)strrpos($node->getNodePath(), '/') + 1,
+                'newParentNodeAggregateIdentifierPath' => $newParentNode->getNodeAggregateIdentifierPath(),
+                'sourceNodeAggregateIdentifierPathOffset' => (int)strrpos($node->getNodeAggregateIdentifierPath(), '/') + 1,
                 'newParentUriPath' => $newParentNode->getUriPath(),
                 'sourceUriPathOffset' => (int)strrpos($node->getUriPath(), '/') + 1,
                 'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),
-                'childNodePathPrefix' => $node->getNodePath() . '/%',
+                'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]
         );
     }

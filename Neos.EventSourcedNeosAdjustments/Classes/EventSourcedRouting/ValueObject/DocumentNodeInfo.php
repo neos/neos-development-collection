@@ -104,9 +104,9 @@ final class DocumentNodeInfo
      *
      * @return string
      */
-    public function getNodePath(): string
+    public function getNodeAggregateIdentifierPath(): string
     {
-        return $this->source['nodepath'];
+        return $this->source['nodeaggregateidentifierpath'];
     }
 
     public function getUriPath(): string
@@ -156,14 +156,14 @@ final class DocumentNodeInfo
 
     /**
      * As the route tags are based on the node aggregate identifiers of the node and its parents up to the site,
-     * we can extract this from the "nodePath", which contains these identifiers.
+     * we can extract this from the "nodeAggregateIdentifierPath", which contains these identifiers.
      *
      * @return RouteTags
      */
     public function getRouteTags(): RouteTags
     {
-        $nodeAggregateIdentifiers = explode('/', $this->getNodePath());
-        array_shift($nodeAggregateIdentifiers); // remove the root node from the list
+        $nodeAggregateIdentifiers = explode('/', $this->getNodeAggregateIdentifierPath());
+        array_shift($nodeAggregateIdentifiers); // remove the root node identifier from the list
         return RouteTags::createFromArray($nodeAggregateIdentifiers);
     }
 
