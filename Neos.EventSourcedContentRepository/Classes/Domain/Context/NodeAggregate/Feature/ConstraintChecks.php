@@ -207,7 +207,7 @@ trait ConstraintChecks
         return true;
     }
 
-    protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): void
+    protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(NodeType $grandParentsNodeType, ?NodeName $parentNodeName, NodeType $nodeType): void
     {
         if (!$this->areNodeTypeConstraintsImposedByGrandparentValid($grandParentsNodeType, $parentNodeName, $nodeType)) {
             throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentNodeName
@@ -215,7 +215,7 @@ trait ConstraintChecks
         }
     }
 
-    protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): bool
+    protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, ?NodeName $parentNodeName, NodeType $nodeType): bool
     {
         if ($parentNodeName
             && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
@@ -337,7 +337,7 @@ trait ConstraintChecks
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeName $nodeName
+     * @param NodeName|null $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param OriginDimensionSpacePoint $parentOriginDimensionSpacePoint
      * @param DimensionSpacePointSet $dimensionSpacePoints
@@ -345,11 +345,14 @@ trait ConstraintChecks
      */
     protected function requireNodeNameToBeUnoccupied(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeName $nodeName,
+        ?NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePoints
     ): void {
+        if ($nodeName === null) {
+            return;
+        }
         $dimensionSpacePointsOccupiedByChildNodeName = $this->getContentGraph()->getDimensionSpacePointsOccupiedByChildNodeName(
             $contentStreamIdentifier,
             $nodeName,
@@ -364,17 +367,20 @@ trait ConstraintChecks
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeName $nodeName
+     * @param NodeName|null $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointsToBeCovered
      * @throws NodeNameIsAlreadyCovered
      */
     protected function requireNodeNameToBeUncovered(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeName $nodeName,
+        ?NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointsToBeCovered
     ): void {
+        if ($nodeName === null) {
+            return;
+        }
         $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName($contentStreamIdentifier, $parentNodeAggregateIdentifier, $nodeName);
         foreach ($childNodeAggregates as $childNodeAggregate) {
             $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($dimensionSpacePointsToBeCovered);

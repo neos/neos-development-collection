@@ -61,7 +61,7 @@ class HierarchyRelation
     /**
      * @param NodeRelationAnchorPoint $parentNodeAnchor
      * @param NodeRelationAnchorPoint $childNodeAnchor
-     * @param NodeName $name
+     * @param NodeName|null $name
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param string $dimensionSpacePointHash

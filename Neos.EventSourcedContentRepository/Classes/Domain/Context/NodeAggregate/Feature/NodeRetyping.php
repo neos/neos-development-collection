@@ -66,9 +66,9 @@ trait NodeRetyping
 
     abstract protected function areNodeTypeConstraintsImposedByParentValid(NodeType $parentsNodeType, ?NodeName $nodeName, NodeType $nodeType): bool;
 
-    abstract protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): void;
+    abstract protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(NodeType $grandParentsNodeType, ?NodeName $parentNodeName, NodeType $nodeType): void;
 
-    abstract protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): bool;
+    abstract protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, ?NodeName $parentNodeName, NodeType $nodeType): bool;
 
     abstract protected static function populateNodeAggregateIdentifiers(NodeType $nodeType, NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths;
 

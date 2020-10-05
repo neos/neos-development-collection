@@ -73,7 +73,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
      * NodeToInsert constructor.
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
-     * @param NodeName $nodeName
+     * @param NodeName|null $nodeName
      * @param NodeAggregateClassification $nodeAggregateClassification
      * @param SerializedPropertyValues $propertyValues
      * @param NodeReferences $nodeReferences

@@ -208,7 +208,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
      * @param SerializedPropertyValues $propertyDefaultValuesAndTypes
      * @param NodeAggregateClassification $nodeAggregateClassification
      * @param NodeAggregateIdentifier|null $succeedingSiblingNodeAggregateIdentifier
-     * @param NodeName $nodeName
+     * @param NodeName|null $nodeName
      * @throws \Doctrine\DBAL\DBALException
      */
     private function createNodeWithHierarchy(
