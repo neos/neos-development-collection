@@ -22,7 +22,8 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
  *
  * @Flow\Scope("singleton")
  */
-class ProjectedNodeIterator {
+class ProjectedNodeIterator
+{
     protected WorkspaceFinder $workspaceFinder;
     protected ContentGraphInterface $contentGraph;
 

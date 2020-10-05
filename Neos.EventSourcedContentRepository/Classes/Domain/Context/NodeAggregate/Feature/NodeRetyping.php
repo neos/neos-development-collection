@@ -55,18 +55,20 @@ trait NodeRetyping
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ReadableNodeAggregateInterface;
 
-    abstract protected function requireConstraintsImposedByAncestorsAreMet(ContentStreamIdentifier $contentStreamIdentifier,
-                                                                           NodeType $nodeType,
-                                                                           ?NodeName $nodeName,
-                                                                           array $parentNodeAggregateIdentifiers): void;
+    abstract protected function requireConstraintsImposedByAncestorsAreMet(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeType $nodeType,
+        ?NodeName $nodeName,
+        array $parentNodeAggregateIdentifiers
+    ): void;
 
     abstract protected function requireNodeTypeConstraintsImposedByParentToBeMet(NodeType $parentsNodeType, ?NodeName $nodeName, NodeType $nodeType): void;
 
     abstract protected function areNodeTypeConstraintsImposedByParentValid(NodeType $parentsNodeType, ?NodeName $nodeName, NodeType $nodeType): bool;
 
-    abstract protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): void;
+    abstract protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(NodeType $grandParentsNodeType, ?NodeName $parentNodeName, NodeType $nodeType): void;
 
-    abstract protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): bool;
+    abstract protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, ?NodeName $parentNodeName, NodeType $nodeType): bool;
 
     abstract protected static function populateNodeAggregateIdentifiers(NodeType $nodeType, NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths;
 
@@ -142,7 +144,6 @@ trait NodeRetyping
             if ($command->getStrategy()->getStrategy() === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
                 $events = $events->appendEvents($this->deleteDisallowedNodesWhenChangingNodeType($nodeAggregate, $newNodeType));
                 $events = $events->appendEvents($this->deleteObsoleteTetheredNodesWhenChangingNodeType($nodeAggregate, $newNodeType));
-
             }
 
             // new tethered child nodes

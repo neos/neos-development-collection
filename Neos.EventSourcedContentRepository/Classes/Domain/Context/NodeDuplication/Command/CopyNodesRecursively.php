@@ -100,8 +100,8 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
      * @param OriginDimensionSpacePoint $targetDimensionSpacePoint
      * @param UserIdentifier $initiatingUserIdentifier
      * @param NodeAggregateIdentifier $targetParentNodeAggregateIdentifier
-     * @param NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier
-     * @param NodeName $targetNodeName
+     * @param NodeAggregateIdentifier|null $targetSucceedingSiblingNodeAggregateIdentifier
+     * @param NodeName|null $targetNodeName
      * @param NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
      */
     private function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeSubtreeSnapshot $nodeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, UserIdentifier $initiatingUserIdentifier, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier, ?NodeName $targetNodeName, NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping)

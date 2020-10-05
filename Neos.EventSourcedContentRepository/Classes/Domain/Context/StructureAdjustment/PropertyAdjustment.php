@@ -50,7 +50,7 @@ class PropertyAdjustment
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
-        $expectedPropertiesFromNodeType = array_filter($nodeType->getProperties(), fn($value) => $value !== null);
+        $expectedPropertiesFromNodeType = array_filter($nodeType->getProperties(), fn ($value) => $value !== null);
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {

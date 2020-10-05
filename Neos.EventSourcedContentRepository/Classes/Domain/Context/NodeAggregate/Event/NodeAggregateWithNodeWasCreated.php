@@ -107,7 +107,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeName $nodeName
+     * @param NodeName|null $nodeName
      * @param SerializedPropertyValues $initialPropertyValues
      * @param NodeAggregateClassification $nodeAggregateClassification
      * @param NodeAggregateIdentifier|null $succeedingNodeAggregateIdentifier

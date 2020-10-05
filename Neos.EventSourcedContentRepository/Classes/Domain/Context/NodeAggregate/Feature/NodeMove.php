@@ -96,14 +96,12 @@ trait NodeMove
                     [$command->getNewParentNodeAggregateIdentifier()]
                 );
 
-                if ($nodeAggregate->getNodeName() !== null) {
-                    $this->requireNodeNameToBeUncovered(
-                        $command->getContentStreamIdentifier(),
-                        $nodeAggregate->getNodeName(),
-                        $command->getNewParentNodeAggregateIdentifier(),
-                        $affectedDimensionSpacePoints
-                    );
-                }
+                $this->requireNodeNameToBeUncovered(
+                    $command->getContentStreamIdentifier(),
+                    $nodeAggregate->getNodeName(),
+                    $command->getNewParentNodeAggregateIdentifier(),
+                    $affectedDimensionSpacePoints
+                );
 
                 $newParentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewParentNodeAggregateIdentifier());
 

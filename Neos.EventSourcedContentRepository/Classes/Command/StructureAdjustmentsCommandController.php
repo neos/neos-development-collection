@@ -12,19 +12,11 @@ namespace Neos\EventSourcedContentRepository\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\EventSourcedContentRepository\Domain\Context\Integrity\Command\AddMissingTetheredNodes;
-use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationDetector;
-use Neos\EventSourcedContentRepository\Domain\Context\Integrity\IntegrityViolationCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\StructureAdjustmentService;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Exception\StopActionException;
 
 final class StructureAdjustmentsCommandController extends CommandController
 {

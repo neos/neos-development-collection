@@ -30,7 +30,8 @@ class DimensionAdjustment
                 foreach ($nodeAggregate->getCoverageByOccupant($node->getOriginDimensionSpacePoint()) as $coveredDimensionSpacePoint) {
                     $variantType = $this->interDimensionalVariationGraph->getVariantType($coveredDimensionSpacePoint, $node->getOriginDimensionSpacePoint())->getType();
                     if ($node->getOriginDimensionSpacePoint()->getHash() !== $coveredDimensionSpacePoint->getHash() && $variantType !== VariantType::TYPE_SPECIALIZATION) {
-                        $message = sprintf('
+                        $message = sprintf(
+                            '
                                 The node has an Origin Dimension Space Point of %s,
                                 and a covered dimension space point (i.e. an incoming edge) in %s.
 
