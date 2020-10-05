@@ -29,7 +29,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Scenario: initial state
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodepath                                  | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath | nodeaggregateidentifierpath               | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"              | null                             | "b"                               |
@@ -46,7 +46,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodepath                                  | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath | nodeaggregateidentifierpath               | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"              | null                             | "c"                               |
@@ -63,7 +63,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | "b"             |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodepath                                  | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath | nodeaggregateidentifierpath               | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"              | null                             | "c"                               |
@@ -80,7 +80,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | "a"             |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodepath                                  | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath | nodeaggregateidentifierpath               | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"              | "b"                              | "c"                               |
@@ -97,7 +97,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | "c"             |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodepath                                  | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath | nodeaggregateidentifierpath               | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"              | "b"                              | "c"                               |
@@ -114,7 +114,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodepath                                  | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath | nodeaggregateidentifierpath               | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"              | "c"                              | null                              |
@@ -139,7 +139,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | "a"             |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodepath                                  | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath | nodeaggregateidentifierpath               | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"              | "c"                              | null                              |
@@ -156,7 +156,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodepath                                    | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath | nodeaggregateidentifierpath                 | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""      | "lady-eleonode-rootford"                    | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""      | "lady-eleonode-rootford/shernode-homes"     | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"     | "lady-eleonode-rootford/shernode-homes/a"   | "a"                      | "shernode-homes"              | null                             | "c"                               |
@@ -183,7 +183,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath  | nodepath                                       | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath  | nodeaggregateidentifierpath                    | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""       | "lady-eleonode-rootford"                       | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""       | "lady-eleonode-rootford/shernode-homes"        | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"      | "lady-eleonode-rootford/shernode-homes/a"      | "a"                      | "shernode-homes"              | null                             | "c"                               |
@@ -211,7 +211,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodepath                                     | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath | nodeaggregateidentifierpath                  | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""      | "lady-eleonode-rootford"                     | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""      | "lady-eleonode-rootford/shernode-homes"      | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"     | "lady-eleonode-rootford/shernode-homes/a"    | "a"                      | "shernode-homes"              | null                             | "b"                               |
@@ -234,7 +234,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath    | nodepath                                         | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath    | nodeaggregateidentifierpath                      | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""         | "lady-eleonode-rootford/shernode-homes"          | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "a"        | "lady-eleonode-rootford/shernode-homes/a"        | "a"                      | "shernode-homes"              | null                             | "b"                               |
@@ -259,7 +259,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateIdentifier | "b2"            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath    | nodepath                                         | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
+      | uripath    | nodeaggregateidentifierpath                      | nodeaggregateidentifier  | parentnodeaggregateidentifier | precedingnodeaggregateidentifier | succeedingnodeaggregateidentifier |
       | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                          | null                             | null                              |
       | ""         | "lady-eleonode-rootford/shernode-homes"          | "shernode-homes"         | "lady-eleonode-rootford"      | null                             | null                              |
       | "b"        | "lady-eleonode-rootford/shernode-homes/b"        | "b"                      | "shernode-homes"              | null                             | "c"                               |

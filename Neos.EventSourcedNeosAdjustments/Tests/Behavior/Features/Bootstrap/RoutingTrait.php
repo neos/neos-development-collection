@@ -232,7 +232,7 @@ trait RoutingTrait
         /** @var Connection $dbal */
         $dbal = $this->getObjectManager()->get(EntityManagerInterface::class)->getConnection();
         $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
-        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM neos_neos_projection_document_uri ORDER BY nodepath');
+        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM neos_neos_projection_document_uri ORDER BY nodeaggregateidentifierpath');
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
