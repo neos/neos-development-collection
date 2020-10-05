@@ -28,7 +28,6 @@ use Psr\Http\Message\UriInterface;
  */
 final class NodeUriBuilder
 {
-
     private UriBuilder $uriBuilder;
 
     protected function __construct(UriBuilder $uriBuilder)
