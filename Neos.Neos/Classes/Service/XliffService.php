@@ -14,8 +14,6 @@ namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Error\Messages\Result;
-use Neos\Flow\I18n\Exception;
 use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
 use Neos\Flow\I18n\Xliff\Service\XliffReader;
 use Neos\Flow\Package\PackageInterface;
@@ -86,10 +84,11 @@ class XliffService
      * The json will be cached.
      *
      * @param Locale $locale The locale
-     * @return Result
-     * @throws Exception
+     * @return string
+     * @throws \Neos\Cache\Exception
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    public function getCachedJson(Locale $locale)
+    public function getCachedJson(Locale $locale): string
     {
         $cacheIdentifier = md5($locale);
 
@@ -130,6 +129,7 @@ class XliffService
 
     /**
      * @return string The current cache version identifier
+     * @throws \Neos\Cache\Exception
      */
     public function getCacheVersion(): string
     {
