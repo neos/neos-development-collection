@@ -106,9 +106,6 @@ privilegeTargets:
 
   'Neos\Neos\Security\Authorization\Privilege\ModulePrivilege':
 
-    'Neos.Neos:Backend.Module.Content':
-      matcher: 'content'
-
     'Neos.Neos:Backend.Module.User':
       matcher: 'user'
 
@@ -179,10 +176,6 @@ roles:
 
       -
         privilegeTarget: 'Neos.Neos:ContentPreview'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Content'
         permission: GRANT
 
       -
