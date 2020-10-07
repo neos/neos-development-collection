@@ -13,6 +13,7 @@ namespace Neos\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
@@ -20,6 +21,7 @@ use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * A helper class for menu generation in backend controllers / view helpers
@@ -115,11 +117,15 @@ class MenuHelper
     /**
      * @param ControllerContext $controllerContext
      * @return array
+     * @throws \Neos\Flow\Http\Exception
+     * @throws MissingActionNameException
      */
     public function buildModuleList(ControllerContext $controllerContext): array
     {
+        $moduleSettings = (new PositionalArraySorter($this->settings['modules']))->toArray();
         $modules = [];
-        foreach ($this->settings['modules'] as $moduleName => $moduleConfiguration) {
+
+        foreach ($moduleSettings as $moduleName => $moduleConfiguration) {
             if (!$this->isModuleEnabled($moduleName)) {
                 continue;
             }
@@ -131,8 +137,9 @@ class MenuHelper
                 continue;
             }
             $submodules = [];
-            if (isset($moduleConfiguration['submodules'])) {
-                foreach ($moduleConfiguration['submodules'] as $submoduleName => $submoduleConfiguration) {
+            if (isset($moduleConfiguration['submodules']) && is_array($moduleConfiguration['submodules'])) {
+                $submoduleSettings = (new PositionalArraySorter($moduleConfiguration['submodules']))->toArray();
+                foreach ($submoduleSettings as $submoduleName => $submoduleConfiguration) {
                     $modulePath = $moduleName . '/' . $submoduleName;
                     if (!$this->isModuleEnabled($modulePath)) {
                         continue;
