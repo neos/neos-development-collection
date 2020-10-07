@@ -31,6 +31,11 @@ use Neos\Utility\PositionalArraySorter;
 class MenuHelper
 {
     /**
+     * @var array
+     */
+    protected $moduleListFirstLevelCache = null;
+
+    /**
      * @var SiteRepository
      * @Flow\Inject
      */
@@ -67,9 +72,14 @@ class MenuHelper
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function buildSiteList(ControllerContext $controllerContext)
+    public function buildSiteList(ControllerContext $controllerContext): array
     {
         $requestUriHost = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
+        $contentModule = $this->buildModuleList($controllerContext)['content'] ?? null;
+
+        if ($contentModule === null) {
+            return [];
+        }
 
         $domainsFound = false;
         $sites = [];
@@ -78,20 +88,18 @@ class MenuHelper
             $active = false;
             /** @var $site Site */
             if ($site->hasActiveDomains()) {
-                $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+                $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
                     return $domain->getHostname();
                 })->toArray();
+
                 $active = in_array($requestUriHost, $activeHostPatterns, true);
+
                 if ($active) {
-                    $uri = $controllerContext->getUriBuilder()
-                        ->reset()
-                        ->setCreateAbsoluteUri(true)
-                        ->uriFor('index', [], 'Backend\Backend', 'Neos.Neos');
+                    $uri = $contentModule['uri'];
                 } else {
-                    $uri = $controllerContext->getUriBuilder()
-                        ->reset()
-                        ->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
+                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
                 }
+
                 $domainsFound = true;
             }
 
@@ -104,11 +112,7 @@ class MenuHelper
         }
 
         if ($domainsFound === false) {
-            $uri = $controllerContext->getUriBuilder()
-                ->reset()
-                ->setCreateAbsoluteUri(true)
-                ->uriFor('index', [], 'Backend\Backend', 'Neos.Neos');
-            $sites[0]['uri'] = $uri;
+            $sites[0]['uri'] = $contentModule['uri'];
         }
 
         return $sites;
@@ -122,8 +126,12 @@ class MenuHelper
      */
     public function buildModuleList(ControllerContext $controllerContext): array
     {
+        if ($this->moduleListFirstLevelCache !== null) {
+            return $this->moduleListFirstLevelCache;
+        }
+
         $moduleSettings = (new PositionalArraySorter($this->settings['modules']))->toArray();
-        $modules = [];
+        $this->moduleListFirstLevelCache = [];
 
         foreach ($moduleSettings as $moduleName => $moduleConfiguration) {
             if (!$this->isModuleEnabled($moduleName)) {
@@ -154,22 +162,22 @@ class MenuHelper
                     $submodules[$submoduleName] = $this->collectModuleData($controllerContext, $submoduleName, $submoduleConfiguration, $moduleName . '/' . $submoduleName);
                 }
             }
-            $modules[$moduleName] = array_merge(
+            $this->moduleListFirstLevelCache[$moduleName] = array_merge(
                 $this->collectModuleData($controllerContext, $moduleName, $moduleConfiguration, $moduleName),
                 ['group' => $moduleName, 'submodules' => $submodules]
             );
         }
 
-        return $modules;
+        return $this->moduleListFirstLevelCache;
     }
 
     /**
      * Checks whether a module is enabled or disabled in the configuration
      *
      * @param string $modulePath name of the module including parent modules ("mainModule/subModule/subSubModule")
-     * @return boolean true if module is enabled (default), false otherwise
+     * @return bool true if module is enabled (default), false otherwise
      */
-    public function isModuleEnabled($modulePath)
+    public function isModuleEnabled(string $modulePath): bool
     {
         $modulePathSegments = explode('/', $modulePath);
         $moduleConfiguration = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modulePathSegments));
@@ -177,9 +185,11 @@ class MenuHelper
             return false;
         }
         array_pop($modulePathSegments);
+
         if ($modulePathSegments === []) {
             return true;
         }
+
         return $this->isModuleEnabled(implode('/', $modulePathSegments));
     }
 
@@ -189,8 +199,10 @@ class MenuHelper
      * @param array $moduleConfiguration
      * @param string $modulePath
      * @return array
+     * @throws \Neos\Flow\Http\Exception
+     * @throws MissingActionNameException
      */
-    protected function collectModuleData(ControllerContext $controllerContext, $module, $moduleConfiguration, $modulePath)
+    protected function collectModuleData(ControllerContext $controllerContext, string $module, array $moduleConfiguration, string $modulePath): array
     {
         $moduleUri = $controllerContext->getUriBuilder()
             ->reset()
@@ -202,10 +214,10 @@ class MenuHelper
             'module' => $module,
             'modulePath' => $modulePath,
             'uri' => $moduleUri,
-            'label' => isset($moduleConfiguration['label']) ? $moduleConfiguration['label'] : '',
-            'description' => isset($moduleConfiguration['description']) ? $moduleConfiguration['description'] : '',
+            'label' => $moduleConfiguration['label'] ?? '',
+            'description' => $moduleConfiguration['description'] ?? '',
             'icon' => $icon,
-            'hideInMenu' => isset($moduleConfiguration['hideInMenu']) ? (boolean)$moduleConfiguration['hideInMenu'] : false
+            'hideInMenu' => (bool)($moduleConfiguration['hideInMenu'] ?? false)
         ];
     }
 }

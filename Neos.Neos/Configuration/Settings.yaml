@@ -66,15 +66,6 @@ Neos:
           collapsed: true
 
     userInterface:
-      # Sets the route after login. There will be one argument "node" set with the lastVisited or site node (and correct context)
-      # The below configuration sets this to the "old" UI route.
-      routeAfterLogin:
-        values:
-          '@package': 'Neos.Neos'
-          '@controller': 'Frontend\Node'
-          '@action': 'show'
-          '@format': 'html'
-
       # should minified JavaScript be loaded? For developing the Neos
       # Content Module, this should be set to false.
       loadMinifiedJavascript: true
