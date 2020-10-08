@@ -107,12 +107,6 @@ class BackendRedirectionService
     protected $privilegeManager;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.routeAfterLogin.values")
-     * @var bool
-     */
-    protected $routingValuesAfterLogin;
-
-    /**
      * @Flow\InjectConfiguration(package="Neos.Neos", path="moduleConfiguration.preferredStartModules")
      * @var string[]
      */
@@ -135,8 +129,6 @@ class BackendRedirectionService
         }
 
         $availableModules = $this->menuHelper->buildModuleList($controllerContext);
-        $availableModules = $this->addContentModuleDefinitionIfAccessible($availableModules, $controllerContext);
-
         $startModule = $this->determineStartModule($availableModules);
 
         $workspaceName = $this->userService->getPersonalWorkspaceName();
@@ -164,37 +156,6 @@ class BackendRedirectionService
         }
 
         return $firstModule;
-    }
-
-    /**
-     * @param array $modules
-     * @param ControllerContext $controllerContext
-     * @return array
-     * @throws MissingActionNameException
-     * @throws \Neos\Flow\Http\Exception
-     */
-    protected function addContentModuleDefinitionIfAccessible(array $modules, ControllerContext $controllerContext): array
-    {
-        if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Content')) {
-            return $modules;
-        }
-
-        $workspaceName = $this->userService->getPersonalWorkspaceName();
-
-        $uriBuilder = $controllerContext->getUriBuilder();
-        $uriBuilder->setFormat('html');
-        $uriBuilder->setCreateAbsoluteUri(true);
-
-        $nodeToEdit = $this->getLastVisitedNode($workspaceName);
-        if ($nodeToEdit === null) {
-            $contentContext = $this->createContext($workspaceName);
-            $nodeToEdit = $contentContext->getCurrentSiteNode();
-        }
-
-        $arguments = array_merge(['node' => $nodeToEdit], $this->routingValuesAfterLogin);
-
-        $modules['content'] = ['uri' => $uriBuilder->uriFor($this->routingValuesAfterLogin['@action'], $arguments, $this->routingValuesAfterLogin['@controller'], $this->routingValuesAfterLogin['@package'])];
-        return $modules;
     }
 
     /**
