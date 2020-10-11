@@ -17,7 +17,7 @@
 			<target state="translated">يحتوي على وحدات متعددة تتعلق بإدارة المحتوى</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target state="needs-translation">Workspaces</target></trans-unit>
+			<target state="translated">مساحات العمل</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
 			<target state="translated">تفاصيل عن "{0}"</target></trans-unit>
