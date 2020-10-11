@@ -10,7 +10,7 @@
 			<target state="translated">إحتفاظ باسم الملف "{0}"</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve">
 				<source>Media</source>
-			<target state="needs-translation">Media</target></trans-unit>
+			<target state="translated">وسائط</target></trans-unit>
       <trans-unit id="module.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target state="translated">هذا الوحدة تسمح بإدارة أصول وسائل الإعلام بما في ذلك الصور وأشرطة الفيديو، والصوت والمستندات.</target></trans-unit>
@@ -160,28 +160,28 @@
 			<target state="needs-translation">Only display audio assets</target></trans-unit>
       <trans-unit id="filter.all" xml:space="preserve">
 				<source>All</source>
-			<target state="needs-translation">All</target></trans-unit>
+			<target state="translated">الكل</target></trans-unit>
       <trans-unit id="filter.images" xml:space="preserve">
 				<source>Images</source>
-			<target state="needs-translation">Images</target></trans-unit>
+			<target state="translated">الصور</target></trans-unit>
       <trans-unit id="filter.documents" xml:space="preserve">
 				<source>Documents</source>
-			<target state="needs-translation">Documents</target></trans-unit>
+			<target state="translated">المستندات</target></trans-unit>
       <trans-unit id="filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target state="needs-translation">Video</target></trans-unit>
+			<target state="translated">فيديو</target></trans-unit>
       <trans-unit id="filter.audio" xml:space="preserve">
 				<source>Audio</source>
-			<target state="needs-translation">Audio</target></trans-unit>
+			<target state="translated">الصوت</target></trans-unit>
       <trans-unit id="tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
-			<target state="needs-translation">Sort options</target></trans-unit>
+			<target state="translated">خيارات الترتيب</target></trans-unit>
       <trans-unit id="tooltip.listView" xml:space="preserve">
 				<source>List view</source>
-			<target state="needs-translation">List view</target></trans-unit>
+			<target state="translated">عرض كقائمة</target></trans-unit>
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
-			<target state="needs-translation">Thumbnail view</target></trans-unit>
+			<target state="translated">عرض كصور مصغرة</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
 			<target state="translated">خطأ فى الاتصال</target></trans-unit>
@@ -193,25 +193,25 @@
 			<target state="translated">مصادر الوسائط</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
-			<target state="needs-translation">Collections</target></trans-unit>
+			<target state="translated">المجموعات</target></trans-unit>
       <trans-unit id="editCollections" xml:space="preserve">
 				<source>Edit collections</source>
-			<target state="needs-translation">Edit collections</target></trans-unit>
+			<target state="translated">تعديل المجموعات</target></trans-unit>
       <trans-unit id="editCollection" xml:space="preserve">
 				<source>Edit collection</source>
-			<target state="needs-translation">Edit collection</target></trans-unit>
+			<target state="translated">تعديل المجموعة</target></trans-unit>
       <trans-unit id="deleteCollection" xml:space="preserve">
 				<source>Delete collection</source>
-			<target state="needs-translation">Delete collection</target></trans-unit>
+			<target state="translated">حذف المجموعة</target></trans-unit>
       <trans-unit id="createCollection" xml:space="preserve">
 				<source>Create collection</source>
-			<target state="needs-translation">Create collection</target></trans-unit>
+			<target state="translated">إنشاء مجموعة</target></trans-unit>
       <trans-unit id="newCollection.placeholder" xml:space="preserve">
 				<source>Enter collection title</source>
-			<target state="needs-translation">Enter collection title</target></trans-unit>
+			<target state="translated">أدخل اسم المجموعة</target></trans-unit>
       <trans-unit id="allCollections" xml:space="preserve">
 				<source>All collections</source>
-			<target state="needs-translation">All collections</target></trans-unit>
+			<target state="translated">جميع المجموعات</target></trans-unit>
       <trans-unit id="tags" xml:space="preserve">
 				<source>Tags</source>
 			<target state="translated">العلامات</target></trans-unit>
@@ -235,7 +235,7 @@
 			<target state="needs-translation">All assets</target></trans-unit>
       <trans-unit id="tags.all" xml:space="preserve">
 				<source>All</source>
-			<target state="needs-translation">All</target></trans-unit>
+			<target state="translated">الكل</target></trans-unit>
       <trans-unit id="untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
 			<target state="needs-translation">Untagged assets</target></trans-unit>
@@ -244,28 +244,28 @@
 			<target state="needs-translation">Untagged</target></trans-unit>
       <trans-unit id="maxUploadSize" xml:space="preserve">
 				<source>Max. upload size {0} per file</source>
-			<target state="needs-translation">Max. upload size {0} per file</target></trans-unit>
+			<target state="translated">الحد الأقصى للتحميل {0} لكل ملف</target></trans-unit>
       <trans-unit id="dropFiles" xml:space="preserve">
 				<source>Drop files here</source>
-			<target state="needs-translation">Drop files here</target></trans-unit>
+			<target state="translated">ضع الملفات هنا</target></trans-unit>
       <trans-unit id="clickToUpload" xml:space="preserve">
 				<source>or click to upload</source>
-			<target state="needs-translation">or click to upload</target></trans-unit>
+			<target state="translated">أو اضغط للتحميل</target></trans-unit>
       <trans-unit id="chooseFile" xml:space="preserve">
 				<source>Choose file</source>
-			<target state="needs-translation">Choose file</target></trans-unit>
+			<target state="translated">إختر ملف</target></trans-unit>
       <trans-unit id="noAssetsFound" xml:space="preserve">
 				<source>No Assets found.</source>
 			<target state="needs-translation">No Assets found.</target></trans-unit>
       <trans-unit id="basics" xml:space="preserve">
 				<source>Basics</source>
-			<target state="needs-translation">Basics</target></trans-unit>
+			<target state="translated">الأساسيات</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
 			<target state="translated">حذف</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target state="needs-translation">Click to delete</target></trans-unit>
+			<target state="translated">إضغط للحذف</target></trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
 			<target state="translated">حفظ</target></trans-unit>
@@ -304,13 +304,13 @@
 			<target state="translated">معاينة</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">تنزيل</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">التالي</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">السابق</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target state="translated">لا يمكن تحميل الملف</target></trans-unit>
@@ -319,10 +319,10 @@
 			<target state="translated">لم يتم اختيار أي ملف</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
+			<target state="translated">حجم الملف {0} يتجاوز الحد المسموح به {1}</target></trans-unit>
       <trans-unit id="forTheFile" xml:space="preserve">
 				<source>for the file</source>
-			<target state="needs-translation">for the file</target></trans-unit>
+			<target state="translated">للملف</target></trans-unit>
       <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
 			<target state="needs-translation">Only some of the files were successfully uploaded. Refresh the page to see the those.</target></trans-unit>
@@ -334,7 +334,7 @@
 			<target state="needs-translation">Adding the asset to the collection failed.</target></trans-unit>
       <trans-unit id="creating" xml:space="preserve">
 				<source>Creating</source>
-			<target state="needs-translation">Creating</target></trans-unit>
+			<target state="translated">إنشاء</target></trans-unit>
       <trans-unit id="deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
@@ -366,16 +366,16 @@
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
-			<target state="needs-translation">References to "{asset}"</target></trans-unit>
+			<target state="translated">إشارات إلى"{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target state="needs-translation">Replace "{filename}"</target></trans-unit>
+			<target state="translated">استبدال "{filename}"</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
 			<target state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
 				<source>Note</source>
-			<target state="needs-translation">Note</target></trans-unit>
+			<target state="translated">ملاحظة</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
 			<target state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
