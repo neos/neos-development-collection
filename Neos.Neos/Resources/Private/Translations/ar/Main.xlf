@@ -233,7 +233,7 @@
 			<target state="translated">الاسم</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target state="needs-translation">Workspace</target></trans-unit>
+			<target state="translated">مساحة العمل</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
 			<target state="translated">تركيب</target></trans-unit>
@@ -308,7 +308,7 @@
 			<target state="translated">انقر للتفعيل</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target state="needs-translation">Click to delete</target></trans-unit>
+			<target state="translated">إضغط للحذف</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
 			<target state="translated">انقر لإنشاء جديد</target></trans-unit>
@@ -357,7 +357,7 @@
 			<target state="translated">تركيب</target></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
-			<target state="needs-translation">Plugins</target></trans-unit>
+			<target state="translated">إضافات</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
@@ -384,7 +384,7 @@
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
         <note>Deprecated, replaced by previewShortcutButton.title</note>
-			<target state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target state="translated">افتح الصفحة في مساحة العمل</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
 				<source>Open page in target workspace</source>
 			<target state="translated">افتح الصفحة فى مساحة العمل المستهدفة</target></trans-unit>
@@ -423,7 +423,7 @@
 			<target state="translated">اوضاع التحرير</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target state="needs-translation">Preview Central</target></trans-unit>
+			<target state="translated">المعاينة في المركز</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
 			<target state="translated">لا يزال لديك تغييرات. ماذا تريد أن تفعل معهم؟</target></trans-unit>
@@ -441,7 +441,7 @@
 			<target state="translated">اكمل التعديل</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target state="needs-translation">Throw away</target></trans-unit>
+			<target state="translated">تخلص منه</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
 			<target state="translated">تطبيق</target></trans-unit>
@@ -465,7 +465,7 @@
 			<target state="translated">تعديل الرمز</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target state="needs-translation">Paste a link, or type to search</target></trans-unit>
+			<target state="translated">ألصق رابطًا أو اكتب للبحث</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
 			<target state="needs-translation">Unable to load sub node types of:</target></trans-unit>
@@ -522,7 +522,7 @@
 			<target state="needs-translation">A valid integer number is expected.</target></trans-unit>
       <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target state="needs-translation">Only letters, numbers, spaces and certain punctuation marks are expected.</target></trans-unit>
+			<target state="translated">يُسمح ببعض الحروف، والأرقام، والفراغات، وعلامات الترقيم.</target></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
 				<source>This property is required.</source>
 			<target state="translated">هذه الخاصية مطلوبة.</target></trans-unit>
@@ -603,51 +603,51 @@
 			<target state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target state="needs-translation">Media</target></trans-unit>
+			<target state="translated">وسائط</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
-			<target state="needs-translation">Crop</target></trans-unit>
+			<target state="translated">قص</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target state="needs-translation">Width</target></trans-unit>
+			<target state="translated">عرض</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target state="needs-translation">Missing required property: </target></trans-unit>
+			<target state="translated">خاصية إجباربة مفقودة: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target state="needs-translation">Workspace</target></trans-unit>
+			<target state="translated">مساحة العمل</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target state="needs-translation">Workspaces</target></trans-unit>
+			<target state="translated">مساحات العمل</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target state="needs-translation">An error occurred during saving</target></trans-unit>
+			<target state="translated">حدث خطأ أثناء الحفظ</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+			<target state="translated">قم بإعادة تحميل الصفحة لمحاولة حل المشكلة.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
 			<target state="needs-translation">Reload the backend</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target state="needs-translation">Reload</target></trans-unit>
+			<target state="translated">إعادة تحميل</target></trans-unit>
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
 				<source>In-Place</source>
 			<target state="needs-translation">In-Place</target></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
-			<target state="needs-translation">Raw Content</target></trans-unit>
+			<target state="translated">المحتوى الأصلي</target></trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
 				<source>Raw Content Mode</source>
 			<target state="needs-translation">Raw Content Mode</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
-			<target state="needs-translation">Desktop</target></trans-unit>
+			<target state="translated">سطح المكتب</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
-			<target state="needs-translation">Login to</target></trans-unit>
+			<target state="translated">تسجيل الدخول إلى</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target state="needs-translation">Authenticating</target></trans-unit>
@@ -666,13 +666,13 @@
 			<target state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target state="needs-translation">Go to setup</target></trans-unit>
+			<target state="translated">اذهب للإعداد</target></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
 			<target state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target state="needs-translation">Missing Homepage</target></trans-unit>
+			<target state="translated">الصفحة الرئيسية مفقودة</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
 			<target state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
@@ -754,7 +754,7 @@
 			<target state="translated">إدراج رمز</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
+			<target state="translated">اختر نسبة الأبعاد</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
 			<target state="translated">عريض</target></trans-unit>
