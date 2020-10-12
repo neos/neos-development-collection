@@ -69,9 +69,11 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === current.userInformation.backendUser))'
 
     'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces':
+      label: Manage internal workspaces
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === null))'
 
     'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces':
+      label: Manage all private wokspaces
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === false)'
 
     'Neos.Neos:Backend.Service.Workspaces.Index':
@@ -122,15 +124,19 @@ privilegeTargets:
       matcher: 'management/history'
 
     'Neos.Neos:Backend.Module.Administration':
+      label: Access the administration module
       matcher: 'administration'
 
     'Neos.Neos:Backend.Module.Administration.Users':
+      label: Access the user administration module
       matcher: 'administration/users'
 
     'Neos.Neos:Backend.Module.Administration.Packages':
+      label: Access the user packages module
       matcher: 'administration/packages'
 
     'Neos.Neos:Backend.Module.Administration.Sites':
+      label: Access the sites module
       matcher: 'administration/sites'
 
     'Neos.Neos:Backend.Module.Administration.Configuration':
@@ -258,6 +264,8 @@ roles:
     parentRoles: ['Neos.Neos:AbstractEditor', 'Neos.Neos:LivePublisher']
 
   'Neos.Neos:UserManager':
+    label: Neos User Manager
+    description: A user with this role is able to create, edit and delete users which has the same or a subset of his own roles.
     privileges:
       -
         privilegeTarget: 'Neos.Neos:Backend.GeneralAccess'
@@ -270,6 +278,9 @@ roles:
         permission: GRANT
 
   'Neos.Neos:Administrator':
+    label: Neos Administrator
+    description: Grants access to all modules and functionalities of the Neos backend.
+
     parentRoles: ['Neos.Neos:Editor']
     privileges:
       -

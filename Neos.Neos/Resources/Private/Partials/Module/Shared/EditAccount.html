@@ -1,41 +1,111 @@
 {namespace neos=Neos\Neos\ViewHelpers}
 <div class="neos-row-fluid neos-module-container">
-	<fieldset class="neos-span5">
+
+	<fieldset class="neos-span6">
 		<legend>{neos:backend.translate(source: 'Modules', id: 'users.account')}</legend>
 		<div class="neos-control-group">
 			<label class="neos-control-label">{neos:backend.translate(source: 'Modules', id: 'users.username')}</label>
 			<div class="neos-controls">
-				<span class="neos-span12 neos-uneditable-input" title="{neos:backend.translate(source: 'Modules', id: 'users.usernameCannotBeChanged')}">{account.accountIdentifier}</span>
+					<span class="neos-span12 neos-uneditable-input"
+								title="{neos:backend.translate(source: 'Modules', id: 'users.usernameCannotBeChanged')}">{account.accountIdentifier}</span>
 			</div>
 		</div>
 
 		<div class="neos-control-group{f:validation.ifHasErrors(for: 'password', then: ' neos-error')}">
 			<label class="neos-control-label" for="password[0]">{neos:backend.translate(id: 'password')}</label>
 			<div class="neos-controls">
-				<f:form.password name="password[0]" id="password[0]" class="neos-span12" />
+				<f:form.password name="password[0]" id="password[0]" class="neos-span12"/>
 			</div>
 		</div>
 
 		<div class="neos-control-group{f:validation.ifHasErrors(for: 'password', then: ' neos-error')}">
-			<label class="neos-control-label" for="password[1]">{neos:backend.translate(source: 'Modules', id: 'users.repeatPassword')}</label>
+			<label class="neos-control-label" for="password[1]">{neos:backend.translate(source: 'Modules', id:
+				'users.repeatPassword')}</label>
 			<div class="neos-controls">
-				<f:form.password name="password[1]" id="password[1]" class="neos-span12" />
+				<f:form.password name="password[1]" id="password[1]" class="neos-span12"/>
 				<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'password'}"/>
 			</div>
 		</div>
-
-		<f:if condition="{showRoles}">
-			<div class="neos-control-group">
-				<label class="neos-control-label">{neos:backend.translate(source: 'Modules', id: 'users.roles')}</label>
-				<f:for each="{availableRoles}" as="role" iteration="rolesIteration">
-					<div class="neos-controls">
-						<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.packageKey}" data-neos-toggle="tooltip" data-placement="right">
-							<f:form.checkbox name="roleIdentifiers" multiple="true" value="{role.identifier}" id="roles-{rolesIteration.cycle}" checked="{f:security.ifHasRole(role: role, account: account, then: true, else: false)}"/><span></span>
-							{role.name}
-						</label>
-					</div>
-				</f:for>
-			</div>
-		</f:if>
 	</fieldset>
+
+	<f:if condition="{showRoles}">
+		<fieldset class="neos-span6">
+			<label class="neos-control-label">{neos:backend.translate(source: 'Modules', id: 'users.roles')}</label>
+			<table class="neos-table">
+				<thead>
+				<tr>
+					<th></th>
+					<th>Label</th>
+					<th>Description</th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+				<f:for each="{availableRoles}" as="role" iteration="rolesIteration">
+					<tr>
+						<td>
+							<div class="neos-controls">
+								<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.packageKey}"
+											 data-neos-toggle="tooltip" data-placement="right">
+									<f:form.checkbox name="roleIdentifiers" multiple="true" value="{role.identifier}" id="roles-{rolesIteration.cycle}" checked="{f:security.ifHasRole(role: role, account: account, then: true, else: false)}"/>
+									<span></span>
+								</label>
+							</div>
+						</td>
+						<td>
+							<div class="neos-controls">
+								<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.packageKey}" data-neos-toggle="tooltip" data-placement="right">
+									{role.label}
+								</label>
+							</div>
+						</td>
+						<td>
+							<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.label}" data-neos-toggle="tooltip" data-placement="right">{role.description}</label>
+						</td>
+						<td class="neos-action">
+							<div class="neos-pull-right">
+								<a data-neos-toggle="tooltip" class="neos-button"data-neos-toggle="dropdown" title="{role.identifier}" href="#"><i class="fas fa-info-circle icon-white"></i></a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td colspan="2">
+							<h2>{neos:backend.translate(source: 'Modules', id: 'users.roles.directlyAssignedPrivileges')}</h2>
+							<ul>
+								<f:render section="privileges" arguments="{role:role}"/>
+								<f:render section="parentRoles" arguments="{role:role}"/>
+							</ul>
+						</td>
+						<td></td>
+					</tr>
+				</f:for>
+				</tbody>
+			</table>
+		</fieldset>
+	</f:if>
 </div>
+
+<f:section name="parentRoles">
+	<f:for each="{role.allParentRoles}" as="role">
+		<f:if condition="{role.privileges->f:count()} > 0">
+			<h2><neos:backend.translate id="users.roles.fromParentRole" arguments="{role:role.label}" source="Modules" package="Neos.Neos"/></h2>
+			<f:render section="privileges" arguments="{role:role}"/>
+		</f:if>
+	</f:for>
+</f:section>
+
+<f:section name="privileges">
+	<f:for each="{role.privileges}" as="privilege">
+		<li>
+			<label>
+				<f:switch expression="{privilege.permission}">
+					<f:case value="grant"><span class="neos-badge neos-badge-success">Grant</span></f:case>
+					<f:case value="deny"><span class="neos-badge neos-badge-important">Denied</span></f:case>
+					<f:case value="abstain"><span class="neos-badge neos-badge-inverse">Abstain</span></f:case>
+				</f:switch>
+				{privilege.privilegeTarget.label}
+			</label>
+		</li>
+	</f:for>
+</f:section>
