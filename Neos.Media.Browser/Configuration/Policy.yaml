@@ -16,6 +16,7 @@ privilegeTargets:
       matcher: 'method(Neos\Media\Browser\Controller\AssetProxyController->(index|import)Action())'
 
     'Neos.Media.Browser:ManageAssetCollections':
+      label: Manage Asset Collections
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action()) || method(Neos\Media\Browser\Controller\AssetCollectionController->(create|edit|update|delete)Action())'
 
     'Neos.Media.Browser:ReplaceAssetResource':
