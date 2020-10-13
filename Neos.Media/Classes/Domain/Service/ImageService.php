@@ -78,7 +78,7 @@ class ImageService
     /**
      * @var array<string>
      */
-    protected static $allowedFormats = ['jpg', 'jpeg', 'gif', 'png', 'wbmp', 'xbm', 'webp', 'bmp'];
+    protected static $allowedFormats = ['jpg', 'jpeg', 'gif', 'png', 'wbmp', 'xbm', 'webp', 'bmp', 'avif'];
 
     /**
      * @param array $settings
@@ -169,7 +169,7 @@ class ImageService
                 $adjustmentsApplied = true;
             }
         }
-        
+
         $additionalOptions = $this->getOptionsMergedWithDefaults($additionalOptions);
 
         if ($adjustmentsApplied === true) {
