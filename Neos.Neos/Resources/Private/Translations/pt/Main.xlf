@@ -492,7 +492,8 @@
 			<target state="needs-translation">This text may not exceed {maximum} characters.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target state="translated">
+Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target state="needs-translation">The given subject was not countable.</target></trans-unit>
