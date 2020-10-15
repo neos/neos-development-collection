@@ -398,7 +398,7 @@
 			<target state="needs-translation">Asset could not be deleted.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target state="needs-translation">Tag "{0}" already exists and was added to collection.</target></trans-unit>
+			<target state="translated">A tag "{0}" já existe e foi adicionada à coleção.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
 			<target state="needs-translation">Tag "{0}" has been created.</target></trans-unit>
