@@ -399,7 +399,7 @@
 			<target state="translated">¿Está seguro de que desea descartar todos los cambios en este espacio de trabajo?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="translated">¿Estás segirp qie deseas descartar {numberOfChanges} cambios en este espacio de trabajo?</target></trans-unit>
+			<target state="translated">¿Estás seguro que deseas descartar {numberOfChanges} cambios en este espacio de trabajo?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target state="translated">Publicar todo</target></trans-unit>
