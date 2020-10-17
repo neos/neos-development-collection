@@ -42,12 +42,12 @@ Neos development collection
 This repository is a collection of packages for the Neos content application platform (learn more on https://www.neos.io/).
 The repository is used for development and all pull requests should go into it.
 
-If you want to install Neos, please have a look at the documentation: https://neos.readthedocs.org/en/latest/
+If you want to install Neos software, please have a look at the documentation: https://neos.readthedocs.org/en/latest/
 
 Contributing
 ============
 
-If you want to contribute to Neos and want to set up a development environment, then follow these steps:
+If you want to contribute to Neos and want to set up a development environment, then follow these simple steps:
 
 ``composer create-project neos/neos-development-distribution neos-development dev-master --keep-vcs``
 
@@ -65,6 +65,6 @@ To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.x
 To switch the branch you intend to work on:
 ``git checkout 3.3 && composer update``
 
-.. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 3.3 currently), or master for new features.
+.. note:We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 3.3 currently), or master for new features.
 
-For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
+For more detailed info, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
