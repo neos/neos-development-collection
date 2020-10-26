@@ -13,6 +13,7 @@ namespace Neos\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
@@ -20,6 +21,7 @@ use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * A helper class for menu generation in backend controllers / view helpers
@@ -28,6 +30,11 @@ use Neos\Neos\Domain\Repository\SiteRepository;
  */
 class MenuHelper
 {
+    /**
+     * @var array
+     */
+    protected $moduleListFirstLevelCache = null;
+
     /**
      * @var SiteRepository
      * @Flow\Inject
@@ -65,9 +72,14 @@ class MenuHelper
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function buildSiteList(ControllerContext $controllerContext)
+    public function buildSiteList(ControllerContext $controllerContext): array
     {
         $requestUriHost = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
+        $contentModule = $this->buildModuleList($controllerContext)['content'] ?? null;
+
+        if ($contentModule === null) {
+            return [];
+        }
 
         $domainsFound = false;
         $sites = [];
@@ -76,20 +88,18 @@ class MenuHelper
             $active = false;
             /** @var $site Site */
             if ($site->hasActiveDomains()) {
-                $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+                $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
                     return $domain->getHostname();
                 })->toArray();
+
                 $active = in_array($requestUriHost, $activeHostPatterns, true);
+
                 if ($active) {
-                    $uri = $controllerContext->getUriBuilder()
-                        ->reset()
-                        ->setCreateAbsoluteUri(true)
-                        ->uriFor('index', [], 'Backend\Backend', 'Neos.Neos');
+                    $uri = $contentModule['uri'];
                 } else {
-                    $uri = $controllerContext->getUriBuilder()
-                        ->reset()
-                        ->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
+                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
                 }
+
                 $domainsFound = true;
             }
 
@@ -102,11 +112,7 @@ class MenuHelper
         }
 
         if ($domainsFound === false) {
-            $uri = $controllerContext->getUriBuilder()
-                ->reset()
-                ->setCreateAbsoluteUri(true)
-                ->uriFor('index', [], 'Backend\Backend', 'Neos.Neos');
-            $sites[0]['uri'] = $uri;
+            $sites[0]['uri'] = $contentModule['uri'];
         }
 
         return $sites;
@@ -115,11 +121,19 @@ class MenuHelper
     /**
      * @param ControllerContext $controllerContext
      * @return array
+     * @throws \Neos\Flow\Http\Exception
+     * @throws MissingActionNameException
      */
-    public function buildModuleList(ControllerContext $controllerContext)
+    public function buildModuleList(ControllerContext $controllerContext): array
     {
-        $modules = [];
-        foreach ($this->settings['modules'] as $moduleName => $moduleConfiguration) {
+        if ($this->moduleListFirstLevelCache !== null) {
+            return $this->moduleListFirstLevelCache;
+        }
+
+        $moduleSettings = (new PositionalArraySorter($this->settings['modules']))->toArray();
+        $this->moduleListFirstLevelCache = [];
+
+        foreach ($moduleSettings as $moduleName => $moduleConfiguration) {
             if (!$this->isModuleEnabled($moduleName)) {
                 continue;
             }
@@ -131,8 +145,9 @@ class MenuHelper
                 continue;
             }
             $submodules = [];
-            if (isset($moduleConfiguration['submodules'])) {
-                foreach ($moduleConfiguration['submodules'] as $submoduleName => $submoduleConfiguration) {
+            if (isset($moduleConfiguration['submodules']) && is_array($moduleConfiguration['submodules'])) {
+                $submoduleSettings = (new PositionalArraySorter($moduleConfiguration['submodules']))->toArray();
+                foreach ($submoduleSettings as $submoduleName => $submoduleConfiguration) {
                     $modulePath = $moduleName . '/' . $submoduleName;
                     if (!$this->isModuleEnabled($modulePath)) {
                         continue;
@@ -144,24 +159,25 @@ class MenuHelper
                     if (isset($submoduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($submoduleConfiguration['privilegeTarget'])) {
                         continue;
                     }
-                    $submodules[] = $this->collectModuleData($controllerContext, $submoduleName, $submoduleConfiguration, $moduleName . '/' . $submoduleName);
+                    $submodules[$submoduleName] = $this->collectModuleData($controllerContext, $submoduleName, $submoduleConfiguration, $moduleName . '/' . $submoduleName);
                 }
             }
-            $modules[] = array_merge(
+            $this->moduleListFirstLevelCache[$moduleName] = array_merge(
                 $this->collectModuleData($controllerContext, $moduleName, $moduleConfiguration, $moduleName),
                 ['group' => $moduleName, 'submodules' => $submodules]
             );
         }
-        return $modules;
+
+        return $this->moduleListFirstLevelCache;
     }
 
     /**
      * Checks whether a module is enabled or disabled in the configuration
      *
      * @param string $modulePath name of the module including parent modules ("mainModule/subModule/subSubModule")
-     * @return boolean true if module is enabled (default), false otherwise
+     * @return bool true if module is enabled (default), false otherwise
      */
-    public function isModuleEnabled($modulePath)
+    public function isModuleEnabled(string $modulePath): bool
     {
         $modulePathSegments = explode('/', $modulePath);
         $moduleConfiguration = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modulePathSegments));
@@ -169,9 +185,11 @@ class MenuHelper
             return false;
         }
         array_pop($modulePathSegments);
+
         if ($modulePathSegments === []) {
             return true;
         }
+
         return $this->isModuleEnabled(implode('/', $modulePathSegments));
     }
 
@@ -181,8 +199,10 @@ class MenuHelper
      * @param array $moduleConfiguration
      * @param string $modulePath
      * @return array
+     * @throws \Neos\Flow\Http\Exception
+     * @throws MissingActionNameException
      */
-    protected function collectModuleData(ControllerContext $controllerContext, $module, $moduleConfiguration, $modulePath)
+    protected function collectModuleData(ControllerContext $controllerContext, string $module, array $moduleConfiguration, string $modulePath): array
     {
         $moduleUri = $controllerContext->getUriBuilder()
             ->reset()
@@ -194,10 +214,10 @@ class MenuHelper
             'module' => $module,
             'modulePath' => $modulePath,
             'uri' => $moduleUri,
-            'label' => isset($moduleConfiguration['label']) ? $moduleConfiguration['label'] : '',
-            'description' => isset($moduleConfiguration['description']) ? $moduleConfiguration['description'] : '',
+            'label' => $moduleConfiguration['label'] ?? '',
+            'description' => $moduleConfiguration['description'] ?? '',
             'icon' => $icon,
-            'hideInMenu' => isset($moduleConfiguration['hideInMenu']) ? (boolean)$moduleConfiguration['hideInMenu'] : false
+            'hideInMenu' => (bool)($moduleConfiguration['hideInMenu'] ?? false)
         ];
     }
 }
