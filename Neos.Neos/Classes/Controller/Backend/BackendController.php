@@ -83,7 +83,7 @@ class BackendController extends ActionController
      */
     public function indexAction(): void
     {
-        $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
+        $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->controllerContext);
         if ($redirectionUri === null) {
             $redirectionUri = $this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos');
         }
