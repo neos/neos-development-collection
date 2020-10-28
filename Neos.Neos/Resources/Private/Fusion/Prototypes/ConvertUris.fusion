@@ -3,12 +3,18 @@
 # replaces all occurrences of "node://<UUID>" by proper URIs.
 #
 prototype(Neos.Neos:ConvertUris) {
-	@class = 'Neos\\Neos\\Fusion\\ConvertUrisImplementation'
-	value = ${value}
-	node = ${node}
-	externalLinkTarget = '_blank'
-	resourceLinkTarget = '_blank'
-	absolute = false
-	# Sets the rel="noopener" attribute to external links, which is good practice.
-	setNoOpener = true
+  @class = 'Neos\\Neos\\Fusion\\ConvertUrisImplementation'
+  value = ${value}
+  node = ${node}
+  externalLinkTarget = '_blank'
+  resourceLinkTarget = '_blank'
+  absolute = false
+
+  # Set the rel attribute to to external links, which is good practice.
+  setRelAttribute = true
+  # The value of the rel attribute for external links
+  relAttributeValue = 'noopener'
+
+  # Deprectated with Neos 6.0 and will be removed with Neos 7.0
+  setNoOpener = true
 }

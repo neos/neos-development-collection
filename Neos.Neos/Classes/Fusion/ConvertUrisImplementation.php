@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Fusion;
 
 /*
@@ -65,7 +66,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
      * @return string
      * @throws Exception
      */
-    public function evaluate()
+    public function evaluate(): string
     {
         $text = $this->fusionValue('value');
 
@@ -133,38 +134,72 @@ class ConvertUrisImplementation extends AbstractFusionObject
      * @param string $processedContent
      * @return string
      */
-    protected function replaceLinkTargets($processedContent)
+    protected function replaceLinkTargets(string $processedContent): string
     {
-        $noOpenerString = $this->fusionValue('setNoOpener') ? ' rel="noopener"' : '';
+        // The fusion value setNoOpener is deprecated with Neos 6.0 and will be removed with Neos 7.0
+        $setRelAttribute = $this->fusionValue('setNoOpener') && $this->fusionValue('setRelAttribute');
+        $relAttributeValue = $setRelAttribute ? trim($this->fusionValue('relAttributeValue')) : false;
         $externalLinkTarget = trim($this->fusionValue('externalLinkTarget'));
         $resourceLinkTarget = trim($this->fusionValue('resourceLinkTarget'));
-        if ($externalLinkTarget === '' && $resourceLinkTarget === '') {
-            return $processedContent;
-        }
+
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
+
         $processedContent = preg_replace_callback(
             '~<a .*?href="(.*?)".*?>~i',
-            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $noOpenerString) {
+            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $relAttributeValue, $linkType) {
                 list($linkText, $linkHref) = $matches;
                 $uriHost = parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
-                if ($externalLinkTarget !== '' && is_string($uriHost) && $uriHost !== $host) {
+                $isExternalLink = is_string($uriHost) && $uriHost !== $host;
+                if ($externalLinkTarget !== '' && $isExternalLink) {
                     $target = $externalLinkTarget;
                 }
                 if ($resourceLinkTarget !== '' && strpos($linkHref, '_Resources') !== false) {
                     $target = $resourceLinkTarget;
                 }
+                if ($isExternalLink && $relAttributeValue) {
+                    $linkText = $this->setRelAttribute($linkText, $relAttributeValue);
+                }
+
                 if ($target === null) {
                     return $linkText;
                 }
-                if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
-                    return preg_replace('/target=".*?"/', sprintf('target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
-                }
-                return str_replace('<a', sprintf('<a target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
+                return $this->setTargetAttribute($linkText, $target);
             },
             $processedContent
         );
+
         return $processedContent;
+    }
+
+    /**
+     * Set or add value to the rel attribute
+     *
+     * @param string $content
+     * @param string $relAttributeValue
+     * @return string
+     */
+    protected function setRelAttribute(string $content, string $relAttributeValue): string
+    {
+        if (preg_match_all('~rel="(.*?)~i', $content, $matches)) {
+            return preg_replace('/rel="(.*?)"/', sprintf('rel="$1 %s"', $relAttributeValue), $content);
+        }
+        return str_replace('<a', sprintf('<a rel="%s"', $relAttributeValue), $content);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param string $content
+     * @param string $targetAttributeValue
+     * @return string
+     */
+    protected function setTargetAttribute(string $content, string $targetAttributeValue): string
+    {
+        if (preg_match_all('~target="(.*?)~i', $content, $matches)) {
+            return preg_replace('/target=".*?"/', sprintf('target="%s"', $targetAttributeValue), $content);
+        }
+        return str_replace('<a', sprintf('<a target="%s"', $targetAttributeValue), $content);
     }
 }
