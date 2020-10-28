@@ -147,7 +147,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         $processedContent = preg_replace_callback(
             '~<a .*?href="(.*?)".*?>~i',
-            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $relAttributeValue, $linkType) {
+            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $relAttributeValue) {
                 list($linkText, $linkHref) = $matches;
                 $uriHost = parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
