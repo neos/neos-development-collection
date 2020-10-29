@@ -128,43 +128,68 @@ class ConvertUrisImplementation extends AbstractFusionObject
     /**
      * Replace the target attribute of link tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
-     * Additionally set rel="noopener" for links with target="_blank".
+     * Additionally set rel="noopener" for external links.
      *
      * @param string $processedContent
      * @return string
      */
     protected function replaceLinkTargets($processedContent)
     {
-        $noOpenerString = $this->fusionValue('setNoOpener') ? ' rel="noopener"' : '';
-        $externalLinkTarget = trim($this->fusionValue('externalLinkTarget'));
-        $resourceLinkTarget = trim($this->fusionValue('resourceLinkTarget'));
-        if ($externalLinkTarget === '' && $resourceLinkTarget === '') {
-            return $processedContent;
-        }
+        $setNoOpener = $this->fusionValue('setNoOpener');
+        $externalLinkTarget = \trim($this->fusionValue('externalLinkTarget'));
+        $resourceLinkTarget = \trim($this->fusionValue('resourceLinkTarget'));
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
-        $processedContent = preg_replace_callback(
+        $processedContent = \preg_replace_callback(
             '~<a .*?href="(.*?)".*?>~i',
-            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $noOpenerString) {
-                list($linkText, $linkHref) = $matches;
-                $uriHost = parse_url($linkHref, PHP_URL_HOST);
+            static function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $setNoOpener) {
+                [$linkText, $linkHref] = $matches;
+                $uriHost = \parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
-                if ($externalLinkTarget !== '' && is_string($uriHost) && $uriHost !== $host) {
+                $isExternalLink = \is_string($uriHost) && $uriHost !== $host;
+
+                if ($externalLinkTarget && $externalLinkTarget !== '' && $isExternalLink) {
                     $target = $externalLinkTarget;
                 }
-                if ($resourceLinkTarget !== '' && strpos($linkHref, '_Resources') !== false) {
+                if ($resourceLinkTarget && $resourceLinkTarget !== '' && \strpos($linkHref, '_Resources') !== false) {
                     $target = $resourceLinkTarget;
                 }
-                if ($target === null) {
-                    return $linkText;
+                if ($isExternalLink && $setNoOpener) {
+                    $linkText = ConvertUrisImplementation::setAttribute('rel', 'noopener', $linkText, true);
                 }
-                if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
-                    return preg_replace('/target=".*?"/', sprintf('target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
+                if ($target && is_string($target)) {
+                    return ConvertUrisImplementation::setAttribute('target', $target, $linkText);
                 }
-                return str_replace('<a', sprintf('<a target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
+                return $linkText;
             },
             $processedContent
         );
         return $processedContent;
+    }
+
+
+    /**
+     * Set or add value to the a attribute
+     *
+     * @param string $attribute
+     * @param string $value
+     * @param string $content
+     * @param boolean $multipleArguments
+     * @return string
+     */
+    static function setAttribute(string $attribute, string $value, string $content, bool $multipleArguments = false): string
+    {
+        // The attribute is already set
+        if (\preg_match_all('~' . $attribute . '="(.*?)~i', $content, $matches)) {
+            // If multiple arguments are not allowed or the value is already set, leave the attribute as it is
+            if (!$multipleArguments || \preg_match('~' . $attribute . '=".*?' . $value . '.*?"~i', $content)) {
+                return $content;
+            }
+            // Add the attribute to the list
+            return \preg_replace('/' . $attribute . '="(.*?)"/', sprintf('%s="$1 %s"', $attribute, $value), $content);
+        }
+
+        // Add the missing attribute with the value
+        return \str_replace('<a', sprintf('<a %s="%s"', $attribute, $value), $content);
     }
 }
