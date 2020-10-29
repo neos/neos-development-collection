@@ -15,6 +15,6 @@ prototype(Neos.Neos:ConvertUris) {
   # The value of the rel attribute for external links
   relAttributeValue = 'noopener'
 
-  # Deprectated with Neos 6.0 and will be removed with Neos 7.0
+  # Deprecated with Neos 6.0 and will be removed with Neos 7.0
   setNoOpener = true
 }
