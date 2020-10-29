@@ -155,10 +155,10 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     $target = $resourceLinkTarget;
                 }
                 if ($isExternalLink && $setNoOpener) {
-                    $linkText = ConvertUrisImplementation::setAttribute('rel', 'noopener', $linkText, true);
+                    $linkText = ConvertUrisImplementation::_setAttribute('rel', 'noopener', $linkText, true);
                 }
                 if ($target && is_string($target)) {
-                    return ConvertUrisImplementation::setAttribute('target', $target, $linkText);
+                    return ConvertUrisImplementation::_setAttribute('target', $target, $linkText);
                 }
                 return $linkText;
             },
@@ -177,7 +177,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
      * @param boolean $multipleArguments
      * @return string
      */
-    static function setAttribute(string $attribute, string $value, string $content, bool $multipleArguments = false): string
+    private static function _setAttribute(string $attribute, string $value, string $content, bool $multipleArguments = false): string
     {
         // The attribute is already set
         if (\preg_match_all('~' . $attribute . '="(.*?)~i', $content, $matches)) {
