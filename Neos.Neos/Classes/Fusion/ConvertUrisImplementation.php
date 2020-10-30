@@ -117,7 +117,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         }, $text);
 
         if ($unresolvedUris !== []) {
-            $processedContent = preg_replace('/<a(?: [^>]*)? href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
+            $processedContent = preg_replace('/<a(?:\s+[^>]*)?\s+href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
             $processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
         }
 
@@ -142,7 +142,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
         $processedContent = \preg_replace_callback(
-            '~<a .*?href="(.*?)".*?>~i',
+            '~<a\s+.*?href="(.*?)".*?>~i',
             static function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $setNoOpener) {
                 [$linkText, $linkHref] = $matches;
                 $uriHost = \parse_url($linkHref, PHP_URL_HOST);
