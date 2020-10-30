@@ -156,7 +156,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     $target = $resourceLinkTarget;
                 }
                 if ($isExternalLink && $setNoOpener) {
-                    $linkText = self::setAttribute('rel', 'noopener', $linkText, true);
+                    $linkText = self::setAttribute('rel', 'noopener', $linkText);
                 }
                 if (is_string($target) && strlen($target) !== 0) {
                     return self::setAttribute('target', $target, $linkText);
@@ -172,18 +172,17 @@ class ConvertUrisImplementation extends AbstractFusionObject
     /**
      * Set or add value to the a attribute
      *
-     * @param string $attribute
-     * @param string $value
-     * @param string $content
-     * @param boolean $multipleArguments
+     * @param string $attribute The attribute, ('target' or 'rel')
+     * @param string $value The value of the attribute to add
+     * @param string $content The content to parse
      * @return string
      */
-    private static function setAttribute(string $attribute, string $value, string $content, bool $multipleArguments = false): string
+    private static function setAttribute(string $attribute, string $value, string $content): string
     {
         // The attribute is already set
         if (\preg_match_all('~\s+' . $attribute . '="(.*?)~i', $content, $matches)) {
-            // If multiple arguments are not allowed or the value is already set, leave the attribute as it is
-            if (!$multipleArguments || \preg_match('~' . $attribute . '=".*?' . $value . '.*?"~i', $content)) {
+            // If the attribute is target or the value is already set, leave the attribute as it is
+            if ($attribute === 'target' || \preg_match('~' . $attribute . '=".*?' . $value . '.*?"~i', $content)) {
                 return $content;
             }
             // Add the attribute to the list
