@@ -158,7 +158,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 if ($isExternalLink && $setNoOpener) {
                     $linkText = ConvertUrisImplementation::_setAttribute('rel', 'noopener', $linkText, true);
                 }
-                if ($target && is_string($target)) {
+                if (is_string($target) && strlen($target) !== 0) {
                     return ConvertUrisImplementation::_setAttribute('target', $target, $linkText);
                 }
                 return $linkText;
