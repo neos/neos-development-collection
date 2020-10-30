@@ -181,7 +181,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
     private static function _setAttribute(string $attribute, string $value, string $content, bool $multipleArguments = false): string
     {
         // The attribute is already set
-        if (\preg_match_all('~ ' . $attribute . '="(.*?)~i', $content, $matches)) {
+        if (\preg_match_all('~\s+' . $attribute . '="(.*?)~i', $content, $matches)) {
             // If multiple arguments are not allowed or the value is already set, leave the attribute as it is
             if (!$multipleArguments || \preg_match('~' . $attribute . '=".*?' . $value . '.*?"~i', $content)) {
                 return $content;
