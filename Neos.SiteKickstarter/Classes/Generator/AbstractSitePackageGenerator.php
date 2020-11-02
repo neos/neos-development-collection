@@ -16,12 +16,15 @@ use Neos\Kickstarter\Service\GeneratorService;
 
 abstract class AbstractSitePackageGenerator extends GeneratorService
 {
-    abstract public function generateSitePackage(string $packageKey,string $siteName);
+    abstract public function generateSitePackage(string $packageKey, string $siteName);
 
     /**
-     * returns the human readable name of the generator
+     * returns the human readable name of the generator, by default it returns the class name of the sub-class
      *
      * @return string
      */
-    abstract public function getGeneratorName() : string;
+    public function getGeneratorName(): string
+    {
+        return get_class($this);
+    }
 }
