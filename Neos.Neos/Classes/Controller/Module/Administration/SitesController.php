@@ -253,7 +253,7 @@ class SitesController extends AbstractModuleController
      * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
      * @return void
      */
-    public function createSitePackageAction($packageKey, $generatorClass, $siteName)
+    public function createSitePackageAction(string $packageKey, string $generatorClass, string $siteName) : void
     {
         if ($this->packageManager->isPackageAvailable('Neos.SiteKickstarter') === false) {
             $this->addFlashMessage('The package "%s" is required to create new site packages.', 'Missing Package', Message::SEVERITY_ERROR, ['Neos.SiteKickstarter'], 1475736232);

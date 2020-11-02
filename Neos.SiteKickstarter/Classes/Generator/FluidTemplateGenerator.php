@@ -2,18 +2,27 @@
 
 namespace Neos\SiteKickstarter\Generator;
 
+/*
+ * This file is part of the Neos.SiteKickstarter package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
 use Neos\SiteKickstarter\Service\FusionRecursiveDirectoryRenderer;
+use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
 use Neos\Utility\Files;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Utility;
-use Neos\SiteKickstarter\Annotation as SiteKickstarter;
 
 /**
  * Service to generate site packages
  *
- * @SiteKickstarter\SitePackageGenerator("Fluid Basic")
  */
 class FluidTemplateGenerator extends AbstractSitePackageGenerator
 {
@@ -22,6 +31,12 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
      * @var PackageManager
      */
     protected $packageManager;
+
+    /**
+     * @Flow\Inject
+     * @var SimpleTemplateRenderer
+     */
+    protected $simpleTemplateRenderer;
 
     /**
      * @Flow\Inject
@@ -35,14 +50,21 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
      * @param string $packageKey
      * @param string $siteName
      * @return array
+     * @throws \Neos\Flow\Composer\Exception\InvalidConfigurationException
+     * @throws \Neos\Flow\Package\Exception
+     * @throws \Neos\Flow\Package\Exception\CorruptPackageException
+     * @throws \Neos\Flow\Package\Exception\InvalidPackageKeyException
+     * @throws \Neos\Flow\Package\Exception\PackageKeyAlreadyExistsException
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
+     * @throws \Neos\FluidAdaptor\Core\Exception
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    public function generateSitePackage($packageKey, $siteName)
+    public function generateSitePackage(string $packageKey, string $siteName) : array
     {
         $this->packageManager->createPackage($packageKey, [
             'type' => 'neos-site',
             "require" => [
-                "neos/neos" => "*",
-                "neos/nodetypes" => "*"
+                "neos/neos" => "*"
             ],
             "suggest" => [
                 "neos/seo" => "*"
@@ -63,9 +85,10 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
      *
      * @param string $packageKey
      * @param string $siteName
-     * @return void
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
+     * @throws \Neos\FluidAdaptor\Core\Exception
      */
-    protected function generateSitesXml($packageKey, $siteName)
+    protected function generateSitesXml(string $packageKey, string $siteName) : void
     {
         $templatePathAndFilename = $this->getResourcePathForFile('Content/Sites.xml');
 
@@ -89,7 +112,7 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
      * @param $siteName
      * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    protected function generateSitesFusionDirectory($packageKey, $siteName)
+    protected function generateSitesFusionDirectory(string $packageKey, string $siteName) : void
     {
         $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
@@ -113,9 +136,10 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
      *
      * @param string $packageKey
      * @param string $siteName
-     * @return void
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
+     * @throws \Neos\FluidAdaptor\Core\Exception
      */
-    protected function generateDefaultTemplate($packageKey, $siteName)
+    protected function generateDefaultTemplate(string $packageKey, string $siteName) : void
     {
         $templatePathAndFilename = $this->getResourcePathForFile('Template/SiteTemplate.html');
 
@@ -138,7 +162,7 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
      * @param string $packageKey
      * @return string
      */
-    protected function generateSiteNodeName($packageKey)
+    protected function generateSiteNodeName(string $packageKey) : string
     {
         return Utility::renderValidNodeName($packageKey);
     }
@@ -147,9 +171,10 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
      * Generate a example NodeTypes.yaml
      *
      * @param string $packageKey
-     * @throws \Neos\FluidAdaptor\Core\Exception
+     * @return string
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    protected function generateNodeTypesConfiguration($packageKey)
+    protected function generateNodeTypesConfiguration(string $packageKey) : string
     {
         $templatePathAndFilename = $this->getResourcePathForFile('Configuration/NodeTypes.Document.Page.yaml');
 
@@ -157,7 +182,7 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
             'packageKey' => $packageKey
         ];
 
-        $fileContent = $this->renderSimpleTemplate($templatePathAndFilename, $contextVariables);
+        $fileContent = $this->simpleTemplateRenderer->render($templatePathAndFilename, $contextVariables);
 
         $sitesNodeTypesPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.Document.Page.yaml';
         $this->generateFile($sitesNodeTypesPathAndFilename, $fileContent);
@@ -167,8 +192,11 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
      * Generate additional folders for site packages.
      *
      * @param string $packageKey
+     * @return string
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    protected function generateAdditionalFolders($packageKey)
+    protected function generateAdditionalFolders(string $packageKey) : void
     {
         $resourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();
         $publicResourcesPath = Files::concatenatePaths([$resourcesPath, 'Public']);
@@ -179,29 +207,18 @@ class FluidTemplateGenerator extends AbstractSitePackageGenerator
     }
 
     /**
-     * Simplified template rendering
-     *
-     * @param string $templatePathAndFilename
-     * @param array $contextVariables
-     * @return string
-     */
-    protected function renderSimpleTemplate($templatePathAndFilename, array $contextVariables)
-    {
-        $content = file_get_contents($templatePathAndFilename);
-        foreach ($contextVariables as $key => $value) {
-            $content = str_replace('{' . $key . '}', $value, $content);
-        }
-        return $content;
-    }
-
-    /**
      * returns resource path for the generator
      *
      * @param $pathToFile
      * @return string
      */
-    protected function getResourcePathForFile($pathToFile)
+    protected function getResourcePathForFile(string $pathToFile) : string
     {
         return 'resource://Neos.SiteKickstarter/Private/FluidGenerator/' . $pathToFile;
+    }
+
+    public function getGeneratorName(): string
+    {
+        return 'Fluid Basic';
     }
 }
