@@ -13,7 +13,6 @@ namespace Neos\SiteKickstarter\Service;
  */
 
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Annotations as Flow;
 use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
 

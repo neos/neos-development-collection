@@ -1,48 +1,55 @@
 <?php
 
-namespace Neos\SiteKickstarter\Tests\Service;
+namespace Neos\SiteKickstarter\Tests\Unit\Service;
+
+/*
+ * This file is part of the Neos.SiteKickstarter package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\Common\Annotations\Reader;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\SiteKickstarter\Annotation\SitePackageGenerator;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
-use Neos\SiteKickstarter\Tests\Fixtures\AnnotatedSitePackageGenerator;
-use Neos\SiteKickstarter\Tests\Fixtures\BlankSitePackageGenerator;
+use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\AnnotatedSitePackageGenerator;
+use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\BlankSitePackageGenerator;
+
+require_once __DIR__ . '/Fixtures/AnnotatedSitePackageGenerator.php';
+require_once __DIR__ . '/Fixtures/BlankSitePackageGenerator.php';
 
 class SitePackageGeneratorNameServiceTest extends UnitTestCase
 {
-    /**
-     * @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockReflectionService;
-
-    /**
-     * @var Reader|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockAnnotationReader;
-
     /**
      * @var SitePackageGeneratorNameService
      */
     protected $sitePackageGeneratorNameService;
 
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $mockObjectManager;
+
     protected function setUp(): void
     {
-        $this->sitePackageGeneratorNameService = new SitePackageGeneratorNameService();
-        $this->mockReflectionService = $this->createMock(ReflectionService::class);
-        $this->inject($this->sitePackageGeneratorNameService, 'reflectionService', $this->mockReflectionService);
+        $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
+
+        $this->sitePackageGeneratorNameService = new  SitePackageGeneratorNameService();
+        $this->inject($this->sitePackageGeneratorNameService, 'objectManager', $this->mockObjectManager);
     }
 
     /**
      * @test
      */
-    public function getNameOfSitePackageGeneratorByAnnotation()
+    public function getNameOfSitePackageGeneratorByImplementedGetFunction()
     {
-        $this->mockReflectionService->expects(self::any())->method('getClassAnnotation')->will(self::returnCallback(function ($generatorClass, $annotationClass) {
-            return new SitePackageGenerator([
-                'generatorName' => 'AnnotatedSitePackageGenerator'
-            ]);
+        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
+            return new AnnotatedSitePackageGenerator();
         }));
 
         $this->assertEquals(
@@ -56,6 +63,10 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
      */
     public function getNameOfSitePackageGeneratorByDefault()
     {
+        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
+            return new BlankSitePackageGenerator();
+        }));
+
         $this->assertEquals(
             $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator(BlankSitePackageGenerator::class),
             BlankSitePackageGenerator::class
