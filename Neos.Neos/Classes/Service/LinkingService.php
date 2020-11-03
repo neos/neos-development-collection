@@ -322,7 +322,7 @@ class LinkingService
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
-        $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
+        $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($request->getHttpRequest());
         if ($site->hasActiveDomains()) {
             $requestUriHost = $baseUri->getHost();
             $activeHostPatterns = $site->getActiveDomains()->map(static function (Domain $domain) {
@@ -355,9 +355,10 @@ class LinkingService
         if ($primaryDomain === null) {
             throw new NeosException(sprintf('Cannot link to a site "%s" since it has no active domains.', $site->getName()), 1460443524);
         }
-        $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
+        $httpRequest = $controllerContext->getRequest()->getHttpRequest();
+        $requestUri = $httpRequest->getUri();
         // TODO: Should probably directly use \Neos\Flow\Http\Helper\RequestInformationHelper::getRelativeRequestPath() and even that is tricky.
-        $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
+        $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest);
         $port = $primaryDomain->getPort() ?: $requestUri->getPort();
         return sprintf(
             '%s://%s%s%s',
