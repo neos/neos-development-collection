@@ -12,15 +12,13 @@ namespace Neos\SiteKickstarter\Tests\Unit\Service;
  * source code.
  */
 
-use Doctrine\Common\Annotations\Reader;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
-use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\AnnotatedSitePackageGenerator;
+use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\NamedSitePackageGenerator;
 use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\BlankSitePackageGenerator;
 
-require_once __DIR__ . '/Fixtures/AnnotatedSitePackageGenerator.php';
+require_once __DIR__ . '/Fixtures/NamedSitePackageGenerator.php';
 require_once __DIR__ . '/Fixtures/BlankSitePackageGenerator.php';
 
 class SitePackageGeneratorNameServiceTest extends UnitTestCase
@@ -49,11 +47,11 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
     public function getNameOfSitePackageGeneratorByImplementedGetFunction()
     {
         $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
-            return new AnnotatedSitePackageGenerator();
+            return new NamedSitePackageGenerator();
         }));
 
         $this->assertEquals(
-            $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator(AnnotatedSitePackageGenerator::class),
+            $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator(NamedSitePackageGenerator::class),
             'AnnotatedSitePackageGenerator'
         );
     }

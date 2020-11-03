@@ -14,7 +14,7 @@ namespace Neos\SiteKickstarter\Tests\Unit\Service\Fixtures;
 
 use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
 
-class AnnotatedSitePackageGenerator extends AbstractSitePackageGenerator
+class NamedSitePackageGenerator extends AbstractSitePackageGenerator
 {
     public function generateSitePackage($packageKey, $siteName)
     {
