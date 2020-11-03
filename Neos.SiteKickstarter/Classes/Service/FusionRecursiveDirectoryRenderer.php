@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\SiteKickstarter\Service;
 
@@ -12,16 +13,25 @@ namespace Neos\SiteKickstarter\Service;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 class FusionRecursiveDirectoryRenderer
 {
     /**
-     * Renders whole directory recursivly instead of one file
-     *
-     * @param $srcDirectory
-     * @param $targetDirectory
-     * @param $variables
+     * @Flow\Inject
+     * @var SimpleTemplateRenderer
      */
-    public function renderDirectory($srcDirectory, $targetDirectory, $variables)
+    protected $simpleTemplateRenderer;
+
+    /**
+     * Renders whole directory recursivly
+     *
+     * @param string $srcDirectory
+     * @param string $targetDirectory
+     * @param array $variables
+     * @throws \Neos\Utility\Exception\FilesException
+     */
+    public function renderDirectory(string $srcDirectory, string $targetDirectory, array $variables)
     {
         $files = scandir($srcDirectory);
 
@@ -31,7 +41,7 @@ class FusionRecursiveDirectoryRenderer
             $targetPath = $targetDirectory . DIRECTORY_SEPARATOR . $value;
 
             if (!is_dir($path)) {
-                $compiledFile = $this->renderSimpleTemplate($path, $variables);
+                $compiledFile = $this->simpleTemplateRenderer->render($path, $variables);
                 if (!is_dir(dirname($targetPath))) {
                     \Neos\Utility\Files::createDirectoryRecursively(dirname($targetPath));
                 }
@@ -40,21 +50,5 @@ class FusionRecursiveDirectoryRenderer
                 $this->renderDirectory($path, $targetPath, $variables);
             }
         }
-    }
-
-    /**
-     * Simplified template rendering
-     *
-     * @param string $templatePathAndFilename
-     * @param array $contextVariables
-     * @return string
-     */
-    protected function renderSimpleTemplate($templatePathAndFilename, array $contextVariables)
-    {
-        $content = file_get_contents($templatePathAndFilename);
-        foreach ($contextVariables as $key => $value) {
-            $content = str_replace('{' . $key . '}', $value, $content);
-        }
-        return $content;
     }
 }

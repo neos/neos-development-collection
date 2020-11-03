@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\SiteKickstarter\Service;
 
@@ -27,7 +28,7 @@ class SitePackageGeneratorNameService
     /**
      * @param string $generatorClass fully qualified namespace
      */
-    public function getNameOfSitePackageGenerator($generatorClass)
+    public function getNameOfSitePackageGenerator(string $generatorClass) : string
     {
         /**
          * @var $generator AbstractSitePackageGenerator
