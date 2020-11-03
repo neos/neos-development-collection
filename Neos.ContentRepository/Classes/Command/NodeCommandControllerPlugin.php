@@ -504,7 +504,7 @@ HELPTEXT;
                     }
 
                     $taskDescription = sprintf('Set default value for property named "<i>%s</i>" in "<i>%s</i>" (<i>%s</i>)', $propertyName, $node->getPath(), $node->getNodeType()->getName());
-                    $taskClosure = function () use ($node, $propertyName ,$defaultValue) {
+                    $taskClosure = function () use ($node, $propertyName, $defaultValue) {
                         $node->setProperty($propertyName, $defaultValue);
                     };
                     $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
