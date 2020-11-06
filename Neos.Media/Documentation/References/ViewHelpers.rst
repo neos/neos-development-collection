@@ -236,6 +236,8 @@ Arguments
 
 * ``alt`` (string): Specifies an alternate text for an image
 
+* ``loading`` (string, *optional*): Specifies the loading attribute for an image, defaults to ``lazy``
+
 * ``ismap`` (string, *optional*): Specifies an image as a server-side image-map. Rarely used. Look at usemap instead
 
 * ``usemap`` (string, *optional*): Specifies an image as a client-side image-map
