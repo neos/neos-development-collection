@@ -80,9 +80,9 @@
               </div>
             </div>
             <div class="neos-control-group{f:validation.ifHasErrors(for: 'generatorClass', then: ' neos-error')}">
-              <label class="neos-control-label" for="node-type">{neos:backend.translate(id: 'sites.documentType', value: 'Select a site generator', source: 'Modules')}</label>
+              <label class="neos-control-label" for="node-type">{neos:backend.translate(id: 'sites.generatorClass', value: 'Select a site generator', source: 'Modules')}</label>
               <div class="neos-controls neos-select">
-                <f:form.select name="generatorClass" options="{generatorServices}" optionLabelField="name" optionValueField="name" id="generator-class" class="neos-span12" />
+                <f:form.select name="generatorClass" options="{generatorServices}" id="generator-class" class="neos-span12" />
               </div>
             </div>
             <f:form.submit value="{neos:backend.translate(id: 'sites.createPackage', value: 'Create Site-Package', source: 'Modules')}" class="neos-button neos-button-primary" />
