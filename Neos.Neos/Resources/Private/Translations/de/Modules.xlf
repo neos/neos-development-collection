@@ -599,6 +599,9 @@
       <trans-unit id="sites.documentType" xml:space="preserve" approved="yes">
 				<source>Select a document nodeType</source>
 			<target state="final">Wählen Sie einen Dokument-Knotentyp</target></trans-unit>
+      <trans-unit id="sites.generatorClass" xml:space="preserve" approved="yes">
+	  		    <source>Select a site generator</source>
+			<target state="final">Wählen Sie einen Seiten-Generator</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve" approved="yes">
 				<source>Site name</source>
 			<target state="final">Seitenname</target></trans-unit>
