@@ -13,19 +13,21 @@ namespace Neos\SiteKickstarter\Generator;
  * source code.
  */
 
-use Neos\Kickstarter\Service\GeneratorService;
-
-abstract class AbstractSitePackageGenerator extends GeneratorService
+interface SitePackageGeneratorInterface
 {
-    abstract public function generateSitePackage(string $packageKey, string $siteName);
+    /**
+     * returns generated files as an array
+     *
+     * @param string $packageKey
+     * @param string $siteName
+     * @return array
+     */
+    public function generateSitePackage(string $packageKey, string $siteName): array;
 
     /**
-     * returns the human readable name of the generator, by default it returns the class name of the sub-class
+     * returns the human readable name of the generator
      *
      * @return string
      */
-    public function getGeneratorName(): string
-    {
-        return get_class($this);
-    }
+    public function getGeneratorName(): string;
 }

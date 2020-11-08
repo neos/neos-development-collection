@@ -17,6 +17,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
+use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
 /**
@@ -63,7 +64,7 @@ class KickstartCommandController extends CommandController
             $this->quit(1);
         }
 
-        $generatorClasses = $this->reflectionService->getAllSubClassNamesForClass(AbstractSitePackageGenerator::class);
+        $generatorClasses = $this->reflectionService->getAllImplementationClassNamesForInterface(SitePackageGeneratorInterface::class);
 
         $selection = [];
         $nameToClassMap = [];

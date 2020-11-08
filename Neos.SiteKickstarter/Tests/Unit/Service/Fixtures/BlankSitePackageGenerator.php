@@ -12,17 +12,22 @@ namespace Neos\SiteKickstarter\Tests\Unit\Service\Fixtures;
  * source code.
  */
 
-use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
+use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 
 /**
  * Class AnnotatedSitePackageGenerator
  * @package Neos\SiteKickstarter\Tests\Fixtures
  *
  */
-class BlankSitePackageGenerator extends AbstractSitePackageGenerator
+class BlankSitePackageGenerator implements SitePackageGeneratorInterface
 {
-    public function generateSitePackage($packageKey, $siteName)
+    public function generateSitePackage(string $packageKey, string $siteName): array
     {
         // just a dummy
+    }
+
+    public function getGeneratorName(): string
+    {
+        return get_class($this);
     }
 }

@@ -15,6 +15,7 @@ namespace Neos\SiteKickstarter\Generator;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
+use Neos\Kickstarter\Service\GeneratorService;
 use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
 use Neos\Utility\Files;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
@@ -25,7 +26,7 @@ use Neos\SiteKickstarter\Service\FusionRecursiveDirectoryRenderer;
  * Service to generate site packages
  *
  */
-class AfxTemplateGenerator extends AbstractSitePackageGenerator
+class AfxTemplateGenerator extends GeneratorService implements SitePackageGeneratorInterface
 {
     /**
      * @Flow\Inject
