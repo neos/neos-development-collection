@@ -15,7 +15,6 @@ namespace Neos\SiteKickstarter\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManager;
-use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
