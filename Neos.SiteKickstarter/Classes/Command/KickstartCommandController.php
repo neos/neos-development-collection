@@ -15,9 +15,8 @@ namespace Neos\SiteKickstarter\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Reflection\ReflectionService;
-use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
 use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
+use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
 /**
@@ -32,10 +31,10 @@ class KickstartCommandController extends CommandController
     protected $packageManager;
 
     /**
-     * @var ReflectionService
+     * @var SiteGeneratorCollectingService
      * @Flow\Inject
      */
-    protected $reflectionService;
+    protected $siteGeneratorCollectingService;
 
     /**
      * @var SitePackageGeneratorNameService
@@ -64,7 +63,7 @@ class KickstartCommandController extends CommandController
             $this->quit(1);
         }
 
-        $generatorClasses = $this->reflectionService->getAllImplementationClassNamesForInterface(SitePackageGeneratorInterface::class);
+        $generatorClasses = $this->siteGeneratorCollectingService->getAllGenerators();
 
         $selection = [];
         $nameToClassMap = [];

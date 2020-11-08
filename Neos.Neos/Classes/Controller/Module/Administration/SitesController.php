@@ -34,6 +34,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
+use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
 /**
@@ -220,15 +221,14 @@ class SitesController extends AbstractModuleController
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false);
 
         $generatorServiceIsAvailable = $this->packageManager->isPackageAvailable('Neos.SiteKickstarter');
-
         $generatorServices = [];
 
         if ($generatorServiceIsAvailable) {
-            $generatorClasses = $this->reflectionService->getAllSubClassNamesForClass(AbstractSitePackageGenerator::class);
-            /**
-             * @var SitePackageGeneratorNameService $sitePackageGeneratorNameService
-             */
+            $siteGeneratorCollectingService = $this->objectManager->get(SiteGeneratorCollectingService::class);
             $sitePackageGeneratorNameService = $this->objectManager->get(SitePackageGeneratorNameService::class);
+
+            $generatorClasses = $siteGeneratorCollectingService->getAllGenerators();
+
             foreach ($generatorClasses as $generatorClass) {
                 $name = $sitePackageGeneratorNameService->getNameOfSitePackageGenerator($generatorClass);
                 $generatorServices[$generatorClass] = $name;
