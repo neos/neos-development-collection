@@ -44,7 +44,7 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
     /**
      * @test
      */
-    public function getNameOfSitePackageGeneratorByImplementedGetFunction()
+    public function getNameOfSitePackageGeneratorWithName()
     {
         $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
             return new NamedSitePackageGenerator();
@@ -59,7 +59,7 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
     /**
      * @test
      */
-    public function getNameOfSitePackageGeneratorByDefault()
+    public function getClassNameOfSitePackageGenerator()
     {
         $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
             return new BlankSitePackageGenerator();

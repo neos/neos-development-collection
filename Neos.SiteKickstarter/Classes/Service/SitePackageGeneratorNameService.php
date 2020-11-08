@@ -15,7 +15,7 @@ namespace Neos\SiteKickstarter\Service;
 
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\SiteKickstarter\Generator\AbstractSitePackageGenerator;
+use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 
 class SitePackageGeneratorNameService
 {
@@ -31,7 +31,7 @@ class SitePackageGeneratorNameService
     public function getNameOfSitePackageGenerator(string $generatorClass) : string
     {
         /**
-         * @var $generator AbstractSitePackageGenerator
+         * @var $generator SitePackageGeneratorInterface
          */
         $generator = $this->objectManager->get($generatorClass);
 
