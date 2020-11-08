@@ -49,31 +49,16 @@ class NodeSearchService implements NodeSearchServiceInterface
      *
      * TODO: Implement a better search when Flow offer the possibility
      *
-     * @param string|array $term search term
+     * @param string|array $term search '%term%' (string) OR '%"property": "value"%' (array) in properties
      * @param array $searchNodeTypes
      * @param Context $context
      * @param NodeInterface $startingPoint
      * @return array <\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
-    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
+    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null): array
     {
-        if (empty($term)) {
-            throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
-        }
-
         $searchResult = [];
         $nodeTypeFilter = implode(',', $searchNodeTypes);
-
-        $searchTerm = is_string($term) ? [$term] : $term;
-
-        foreach ($searchTerm as $term) {
-            if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $term) !== 0) {
-                $nodeByIdentifier = $context->getNodeByIdentifier($term);
-                if ($nodeByIdentifier !== null && $this->nodeSatisfiesSearchNodeTypes($nodeByIdentifier, $searchNodeTypes)) {
-                    $searchResult[$nodeByIdentifier->getPath()] = $nodeByIdentifier;
-                }
-            }
-        }
 
         $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
         foreach ($nodeDataRecords as $nodeData) {
