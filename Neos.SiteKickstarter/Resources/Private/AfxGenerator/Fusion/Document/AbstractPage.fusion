@@ -18,14 +18,9 @@ prototype({packageKey}:Document.AbstractPage) < prototype(Neos.Neos:Page) {
     `
 
     # Add header javascripts to your page
-    javascripts.site = Neos.Fusion:Tag {
-      tagName = 'script'
-      attributes.type = 'text/javascript'
-      attributes.src = Neos.Fusion:ResourceUri {
-        # Change to your file path
-        path = 'resource://{packageKey}/Public/site.js'
-      }
-    }
+    javascripts.site = afx`
+        <link type="text/javascript" defer href={StaticResource.uri('{packageKey}', 'Public/site.js')} />
+    `
   }
 
   body = {packageKey}:Component.Template.Default {
