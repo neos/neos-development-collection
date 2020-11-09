@@ -41,7 +41,7 @@ prototype({packageKey}:Document.AbstractPage) < prototype(Neos.Neos:Page) {
     # Script includes before the closing body tag should go here
     javascripts = Neos.Fusion:Join
     # This processor appends the rendered javascripts Array to the rendered template
-		@process.appendJavaScripts = ${value + this.javascripts}
+    @process.appendJavaScripts = ${value + this.javascripts}
   }
 
   bodyJavaScripts = Neos.Fusion:Join
