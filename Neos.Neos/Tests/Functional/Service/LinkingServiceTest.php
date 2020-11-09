@@ -12,7 +12,9 @@ namespace Neos\Neos\Tests\Functional\Service;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Mvc\ActionRequest;
@@ -121,6 +123,7 @@ class LinkingServiceTest extends FunctionalTestCase
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $httpRequest = $requestHandler->getComponentContext()->getHttpRequest();
         $httpRequest = $httpRequest->withUri(new Uri('http://neos.test/'));
+        $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, RouteParameters::createEmpty()->withParameter('requestUriHost', 'neos.test'));
         $requestHandler->getComponentContext()->replaceHttpRequest($httpRequest);
 
 
