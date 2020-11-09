@@ -12,6 +12,8 @@ namespace Neos\Neos\Routing;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
@@ -19,7 +21,6 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Security\Context;
-use Neos\Neos\Domain\Exception as ExceptionAlias;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -33,8 +34,6 @@ use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use Neos\Neos\Routing\Exception\InvalidRequestPathException;
 use Neos\Neos\Routing\Exception\NoSuchDimensionValueException;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
