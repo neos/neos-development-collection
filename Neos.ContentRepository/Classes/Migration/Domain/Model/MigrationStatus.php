@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Migration status to keep track of applied migrations.
  *
- * @Flow\ValueObject
+ * @Flow\ValueObject(embedded=false)
  */
 class MigrationStatus
 {
