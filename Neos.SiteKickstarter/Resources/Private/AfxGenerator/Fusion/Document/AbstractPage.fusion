@@ -44,5 +44,5 @@ prototype({packageKey}:Document.AbstractPage) < prototype(Neos.Neos:Page) {
 		@process.appendJavaScripts = ${value + this.javascripts}
   }
 
-  bodyJavaScripts = Neos.Fusion:Array
+  bodyJavaScripts = Neos.Fusion:Join
 }
