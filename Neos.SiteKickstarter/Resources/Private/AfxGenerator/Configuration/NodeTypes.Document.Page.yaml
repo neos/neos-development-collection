@@ -4,7 +4,7 @@
   superTypes:
     'Neos.Neos:Document': true
   ui:
-    icon: 'icon-file'
+    icon: file
     label: '{packageKey} Page'
   childNodes:
     main:
