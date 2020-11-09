@@ -133,7 +133,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * in time the route part handler is invoked, the security framework is not yet fully initialized.
      *
      * @param string $requestPath The request path (without leading "/", relative to the current Site Node)
-     * @return bool|MatchResult
+     * @return bool|MatchResult An instance of MatchResult if the route matches the $requestPath, otherwise FALSE. @see DynamicRoutePart::matchValue()
      * @throws \Exception
      * @throws Exception\NoHomepageException if no node could be found on the homepage (empty $requestPath)
      */
@@ -201,13 +201,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if ($requestPathWithoutContext === '') {
             $node = $siteNode;
         } else {
-            if (!empty($this->options['uriPathSuffix'])) {
-                $suffixLength = strlen($this->options['uriPathSuffix']);
-                if (substr($requestPathWithoutContext, -$suffixLength) !== $this->options['uriPathSuffix']) {
-                    throw new Exception\InvalidRequestPathException(sprintf('The request path "%s" doesn\'t contain the configured uriPathSuffix "%s"', $requestPath, $this->options['uriPathSuffix']), 1604912439);
-                }
-                $requestPathWithoutContext = substr($requestPathWithoutContext, 0, -$suffixLength);
-            }
+            $requestPathWithoutContext = $this->truncateUriPathSuffix($requestPathWithoutContext);
             $relativeNodePath = $this->getRelativeNodePathByUriPathSegmentProperties($siteNode, $requestPathWithoutContext);
             $node = ($relativeNodePath !== false) ? $siteNode->getNode($relativeNodePath) : null;
         }
@@ -232,7 +226,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * $this->value:       homepage/about@user-admin
      *
      * @param mixed $node Either a Node object or an absolute context node path
-     * @return bool|ResolveResult
+     * @return bool|ResolveResult An instance of ResolveResult if the route coulr resolve the $node, otherwise FALSE. @see DynamicRoutePart::resolveValue()
      * @throws Exception\NoSiteException | InvalidRequestPathException | NeosException | IllegalObjectTypeException
      */
     protected function resolveValue($node)
@@ -285,6 +279,26 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     }
 
     /**
+     * Removes the configured suffix from the given $uriPath
+     * If the "uriPathSuffix" option is not set (or set to an empty string) the unaltered $uriPath is returned
+     *
+     * @param string $uriPath
+     * @return false|string|null
+     * @throws Exception\InvalidRequestPathException
+     */
+    protected function truncateUriPathSuffix(string $uriPath)
+    {
+        if (empty($this->options['uriPathSuffix'])) {
+            return $uriPath;
+        }
+        $suffixLength = strlen($this->options['uriPathSuffix']);
+        if (substr($uriPath, -$suffixLength) !== $this->options['uriPathSuffix']) {
+            throw new Exception\InvalidRequestPathException(sprintf('The request path "%s" doesn\'t contain the configured uriPathSuffix "%s"', $uriPath, $this->options['uriPathSuffix']), 1604912439);
+        }
+        return substr($uriPath, 0, -$suffixLength);
+    }
+
+    /**
      * @param NodeInterface $node
      * @return NodeInterface|Uri The original, unaltered $node if it's not a shortcut node. Otherwise the nodes shortcut target (a node or an URI for external & asset shortcuts)
      * @throws NeosException
@@ -309,7 +323,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param NodeInterface $node
      * @return UriConstraints
-     * @throws Exception\NoSiteException
+     * @throws Exception\NoSiteException This exception will be caught in resolveValue()
      */
     protected function buildUriConstraintsForResolvedNode(NodeInterface $node): UriConstraints
     {
@@ -710,21 +724,33 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             throw new Exception\NoSiteException('Failed to determine current site because the "requestUriHost" Routing parameter is not set', 1604860219);
         }
         if (!array_key_exists($requestUriHost, $this->siteByHostRuntimeCache)) {
-            $domain = $this->domainRepository->findOneByHost($requestUriHost, true);
-            if ($domain === null) {
-                try {
-                    $this->siteByHostRuntimeCache[$requestUriHost] = $this->siteRepository->findDefault();
-                    if ($this->siteByHostRuntimeCache[$requestUriHost] === null) {
-                        throw new Exception\NoSiteException('Failed to determine current site because', 1604929674);
-                    }
-                } catch (NeosException $exception) {
-                    throw new Exception\NoSiteException(sprintf('Failed to determine current site because no domain is specified matching requestUriHost of "%s" and no default site could be found: %s', $requestUriHost, $exception->getMessage()), 1604860219, $exception);
-                }
-            } else {
-                $this->siteByHostRuntimeCache[$requestUriHost] = $domain->getSite();
-            }
+            $this->siteByHostRuntimeCache[$requestUriHost] = $this->getSiteByHostName($requestUriHost);
         }
         return $this->siteByHostRuntimeCache[$requestUriHost];
+    }
+
+    /**
+     * Returns a site matching the given $hostName
+     *
+     * @param string $hostName
+     * @return Site
+     * @throws Exception\NoSiteException
+     */
+    protected function getSiteByHostName(string $hostName): Site
+    {
+        $domain = $this->domainRepository->findOneByHost($hostName, true);
+        if ($domain !== null) {
+            return $domain->getSite();
+        }
+        try {
+            $defaultSite = $this->siteRepository->findDefault();
+            if ($defaultSite === null) {
+                throw new Exception\NoSiteException('Failed to determine current site because no default site is configured', 1604929674);
+            }
+        } catch (NeosException $exception) {
+            throw new Exception\NoSiteException(sprintf('Failed to determine current site because no domain is specified matching host of "%s" and no default site could be found: %s', $hostName, $exception->getMessage()), 1604860219, $exception);
+        }
+        return $defaultSite;
     }
 
     /**
