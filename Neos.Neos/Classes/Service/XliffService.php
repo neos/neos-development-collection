@@ -240,6 +240,6 @@ class XliffService
         }
 
         // Set the final key
-        $arrayPointer[$lastKey] = is_array($value) ? array_values($value) : $value;
+        $arrayPointer[$lastKey] = $value;
     }
 }
