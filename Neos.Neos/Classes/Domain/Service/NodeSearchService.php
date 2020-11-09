@@ -11,7 +11,6 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
