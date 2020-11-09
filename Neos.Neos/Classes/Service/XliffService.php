@@ -118,7 +118,7 @@ class XliffService
                 }
             }
 
-            $json = json_encode($labels, true);
+            $json = json_encode($labels);
             $this->xliffToJsonTranslationsCache->set($cacheIdentifier, $json);
         }
 
