@@ -13,24 +13,14 @@ prototype({packageKey}:Document.AbstractPage) < prototype(Neos.Neos:Page) {
     }
 
     # Add stylesheets to your page
-    stylesheets.site = Neos.Fusion:Tag {
-      tagName = 'link'
-      attributes.rel = 'stylesheet'
-      attributes.href = Neos.Fusion:ResourceUri {
-        # Change to your file path
-        path = 'resource://{packageKey}/Public/site.css'
-      }
-    }
+     stylesheets.site = afx`
+        <link rel="stylesheet" href={StaticResource.uri('{packageKey}', 'Public/site.css')} />
+    `
 
     # Add header javascripts to your page
-    javascripts.site = Neos.Fusion:Tag {
-      tagName = 'script'
-      attributes.type = 'text/javascript'
-      attributes.src = Neos.Fusion:ResourceUri {
-        # Change to your file path
-        path = 'resource://{packageKey}/Public/site.js'
-      }
-    }
+    javascripts.site = afx`
+        <link type="text/javascript" defer href={StaticResource.uri('{packageKey}', 'Public/site.js')} />
+    `
   }
 
   body = {packageKey}:Component.Template.Default {
@@ -49,10 +39,10 @@ prototype({packageKey}:Document.AbstractPage) < prototype(Neos.Neos:Page) {
     }
 
     # Script includes before the closing body tag should go here
-		javascripts = Neos.Fusion:Array
+    javascripts = Neos.Fusion:Join
     # This processor appends the rendered javascripts Array to the rendered template
-		@process.appendJavaScripts = ${value + this.javascripts}
+    @process.appendJavaScripts = ${value + this.javascripts}
   }
 
-  bodyJavaScripts = Neos.Fusion:Array
+  bodyJavaScripts = Neos.Fusion:Join
 }
