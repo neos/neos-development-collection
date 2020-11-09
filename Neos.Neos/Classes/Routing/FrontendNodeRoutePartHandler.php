@@ -11,20 +11,31 @@ namespace Neos\Neos\Routing;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Security\Context;
+use Neos\Neos\Domain\Exception as ExceptionAlias;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use Neos\Neos\Routing\Exception\InvalidRequestPathException;
 use Neos\Neos\Routing\Exception\NoSuchDimensionValueException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -75,6 +86,17 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected $contentDimensionPresetSource;
 
+    /**
+     * @Flow\Inject
+     * @var NodeShortcutResolver
+     */
+    protected $nodeShortcutResolver;
+
+    /**
+     * @var Site[] indexed by the corresponding host name
+     */
+    protected $siteByHostRuntimeCache = [];
+
     const DIMENSION_REQUEST_PATH_MATCHER = '|^
         (?<firstUriPart>[^/@]+)                    # the first part of the URI, before the first slash, may contain the encoded dimension preset
         (?:                                        # start of non-capturing submatch for the remaining URL
@@ -112,7 +134,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * in time the route part handler is invoked, the security framework is not yet fully initialized.
      *
      * @param string $requestPath The request path (without leading "/", relative to the current Site Node)
-     * @return boolean true if the $requestPath could be matched, otherwise false
+     * @return bool|MatchResult
      * @throws \Exception
      * @throws Exception\NoHomepageException if no node could be found on the homepage (empty $requestPath)
      */
@@ -139,9 +161,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
 
-        $this->value = $node->getContextPath();
-
-        return true;
+        return new MatchResult($node->getContextPath());
     }
 
     /**
@@ -182,6 +202,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if ($requestPathWithoutContext === '') {
             $node = $siteNode;
         } else {
+            if (!empty($this->options['uriPathSuffix'])) {
+                $suffixLength = strlen($this->options['uriPathSuffix']);
+                if (substr($requestPathWithoutContext, -$suffixLength) !== $this->options['uriPathSuffix']) {
+                    throw new Exception\InvalidRequestPathException(sprintf('The request path "%s" doesn\'t contain the configured uriPathSuffix "%s"', $requestPath, $this->options['uriPathSuffix']), 1604912439);
+                }
+                $requestPathWithoutContext = substr($requestPathWithoutContext, 0, -$suffixLength);
+            }
             $relativeNodePath = $this->getRelativeNodePathByUriPathSegmentProperties($siteNode, $requestPathWithoutContext);
             $node = ($relativeNodePath !== false) ? $siteNode->getNode($relativeNodePath) : null;
         }
@@ -206,7 +233,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * $this->value:       homepage/about@user-admin
      *
      * @param mixed $node Either a Node object or an absolute context node path
-     * @return boolean true if value could be resolved successfully, otherwise false.
+     * @return bool|ResolveResult
+     * @throws Exception\NoSiteException | InvalidRequestPathException | NeosException | IllegalObjectTypeException
      */
     protected function resolveValue($node)
     {
@@ -238,11 +266,92 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if ($this->onlyMatchSiteNodes() && $node !== $siteNode) {
             return false;
         }
+        $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
+        if ($resolvedNode === null) {
+            throw new NeosException(sprintf('Could not resolve shortcut target for node "%s"', $node->getPath()), 1414771137);
+        }
 
-        $routePath = $this->resolveRoutePathForNode($node);
-        $this->value = $routePath;
+        $node = $this->resolveShortcutNode($node);
+        if ($node instanceof UriInterface) {
+            return new ResolveResult('', UriConstraints::fromUri($node), null);
+        }
 
-        return true;
+        try {
+            $uriConstraints = $this->buildUriConstraintsForResolvedNode($node);
+        } catch (Exception\NoSiteException $exception) {
+            $this->systemLogger->debug('FrontendNodeRoutePartHandler resolveValue(): ' . $exception->getMessage());
+            return false;
+        }
+        return new ResolveResult('', $uriConstraints);
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @return NodeInterface|Uri The original, unaltered $node if it's not a shortcut node. Otherwise the nodes shortcut target (a node or an URI for external & asset shortcuts)
+     * @throws NeosException
+     */
+    protected function resolveShortcutNode(NodeInterface $node)
+    {
+        $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
+        if (is_string($resolvedNode)) {
+            return new Uri($resolvedNode);
+        }
+        if (!$resolvedNode instanceof NodeInterface) {
+            throw new NeosException(sprintf('Could not resolve shortcut target for node "%s"', $node->getPath()), 1414771137);
+        }
+        return $resolvedNode;
+    }
+
+    /**
+     * Builds UriConstraints for the given $node with:
+     * * a path constraint equal to the resolved URI path
+     * * domain specific constraints for nodes in a different Neos site
+     * * a path suffix corresponding to the configured "uriPathSuffix"
+     *
+     * @param NodeInterface $node
+     * @return UriConstraints
+     * @throws Exception\NoSiteException
+     */
+    protected function buildUriConstraintsForResolvedNode(NodeInterface $node): UriConstraints
+    {
+        $uriPath = $this->resolveRoutePathForNode($node);
+        $uriConstraints = UriConstraints::create()->withPath($uriPath);
+        $requestSite = $this->getCurrentSite();
+        if (!NodePaths::isSubPathOf(SiteService::SITES_ROOT_PATH, $node->getPath())) {
+            throw new Exception\NoSiteException(sprintf('The node at path "%s" is not located underneath the sites root path "%s"', $node->getPath(), SiteService::SITES_ROOT_PATH), 1604922914);
+        }
+        $resolvedSiteNodeName = strtok(NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $node->getPath()), '/');
+        if ($resolvedSiteNodeName !== $requestSite->getNodeName()) {
+            $resolvedSite = $this->siteRepository->findOneByNodeName($resolvedSiteNodeName);
+            if ($resolvedSite === null || $resolvedSite->isOffline()) {
+                throw new Exception\NoSiteException(sprintf('No online site found for request path "%s" and resolved site node name of "%s"', $uriPath, $resolvedSiteNodeName), 1604505599);
+            }
+            $uriConstraints = $this->applyDomainToUriConstraints($uriConstraints, $resolvedSite->getPrimaryDomain());
+        }
+        if (!empty($this->options['uriPathSuffix']) && $node->getParentPath() !== SiteService::SITES_ROOT_PATH) {
+            $uriConstraints = $uriConstraints->withPathSuffix($this->options['uriPathSuffix']);
+        }
+        return $uriConstraints;
+    }
+
+    /**
+     * @param UriConstraints $uriConstraints
+     * @param Domain|null $domain
+     * @return UriConstraints
+     */
+    protected function applyDomainToUriConstraints(UriConstraints $uriConstraints, ?Domain $domain): UriConstraints
+    {
+        if ($domain === null) {
+            return $uriConstraints;
+        }
+        $uriConstraints = $uriConstraints->withHost($domain->getHostname());
+        if (!empty($domain->getScheme())) {
+            $uriConstraints = $uriConstraints->withScheme($domain->getScheme());
+        }
+        if (!empty($domain->getPort())) {
+            $uriConstraints = $uriConstraints->withPort($domain->getPort());
+        }
+        return $uriConstraints;
     }
 
     /**
@@ -297,15 +406,15 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
     /**
      * @param string $workspaceName
-     * @param array $dimensions
+     * @param array|null $dimensions
      * @return ContentContext
+     * @throws Exception\NoSiteException
      */
     protected function buildContextFromWorkspaceName($workspaceName, array $dimensions = null)
     {
         $contextProperties = [
             'workspaceName' => $workspaceName,
-            'invisibleContentShown' => true,
-            'inaccessibleContentShown' => true
+            'currentSite' => $this->getCurrentSite(),
         ];
 
         if ($dimensions !== null) {
@@ -574,6 +683,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @param string $workspaceName Name of the workspace to use in the context
      * @param array $dimensionsAndDimensionValues An array of dimension names (index) and their values (array of strings). See also: ContextFactory
      * @return ContentContext
+     * @throws Exception\NoSiteException
      */
     protected function buildContextFromWorkspaceNameAndDimensions($workspaceName, array $dimensionsAndDimensionValues)
     {
@@ -581,10 +691,41 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => ($workspaceName !== 'live'),
             'inaccessibleContentShown' => ($workspaceName !== 'live'),
-            'dimensions' => $dimensionsAndDimensionValues
+            'dimensions' => $dimensionsAndDimensionValues,
+            'currentSite' => $this->getCurrentSite(),
         ];
 
         return $this->contextFactory->create($contextProperties);
+    }
+
+    /**
+     * Determines the currently active site based on the "requestUriHost" parameter (that has to be set via HTTP middleware)
+     *
+     * @return Site
+     * @throws Exception\NoSiteException
+     */
+    protected function getCurrentSite(): Site
+    {
+        $requestUriHost = $this->parameters->getValue('requestUriHost');
+        if (!is_string($requestUriHost)) {
+            throw new Exception\NoSiteException('Failed to determine current site because the "requestUriHost" Routing parameter is not set', 1604860219);
+        }
+        if (!array_key_exists($requestUriHost, $this->siteByHostRuntimeCache)) {
+            $domain = $this->domainRepository->findOneByHost($requestUriHost, true);
+            if ($domain === null) {
+                try {
+                    $this->siteByHostRuntimeCache[$requestUriHost] = $this->siteRepository->findDefault();
+                    if ($this->siteByHostRuntimeCache[$requestUriHost] === null) {
+                        throw new Exception\NoSiteException('Failed to determine current site because', 1604929674);
+                    }
+                } catch (NeosException $exception) {
+                    throw new Exception\NoSiteException(sprintf('Failed to determine current site because no domain is specified matching requestUriHost of "%s" and no default site could be found: %s', $requestUriHost, $exception->getMessage()), 1604860219, $exception);
+                }
+            } else {
+                $this->siteByHostRuntimeCache[$requestUriHost] = $domain->getSite();
+            }
+        }
+        return $this->siteByHostRuntimeCache[$requestUriHost];
     }
 
     /**
