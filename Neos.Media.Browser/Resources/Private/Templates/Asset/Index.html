@@ -126,7 +126,7 @@
                 </li>
                 <f:for each="{assetCollections}" as="assetCollection">
                     <li>
-                        <f:link.action action="index" title="{assetCollection.object.title}" class="droppable-assetcollection{f:if(condition: '{assetCollection.object} === {activeAssetCollection}', then: ' neos-active')}" arguments="{view: view, assetCollection: assetCollection.object}" addQueryString="true" data="{assetcollection-identifier: '{assetCollection.object -> f:format.identifier()}'}">
+                        <f:link.action action="index" title="{assetCollection.object.title}" class="droppable-assetcollection{f:if(condition: '{assetCollection.object} === {activeAssetCollection}', then: ' neos-active')}" arguments="{view: view, assetCollection: assetCollection.object, collectionMode: 0}" addQueryString="true" data="{assetcollection-identifier: '{assetCollection.object -> f:format.identifier()}'}">
                             {assetCollection.object.title}
                             <span class="count">{assetCollection.count}</span>
                         </f:link.action>
