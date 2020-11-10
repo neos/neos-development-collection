@@ -201,7 +201,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if ($requestPathWithoutContext === '') {
             $node = $siteNode;
         } else {
-            $requestPathWithoutContext = $this->truncateUriPathSuffix($requestPathWithoutContext);
+            $requestPathWithoutContext = $this->truncateUriPathSuffix((string)$requestPathWithoutContext);
             $relativeNodePath = $this->getRelativeNodePathByUriPathSegmentProperties($siteNode, $requestPathWithoutContext);
             $node = ($relativeNodePath !== false) ? $siteNode->getNode($relativeNodePath) : null;
         }
