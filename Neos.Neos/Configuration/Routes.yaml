@@ -58,9 +58,6 @@
     '@controller': 'Frontend\Node'
     '@action':     'show'
     '@format':     'html'
-  routeParts:
-    'node':
-      handler:     'Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface'
   subRoutes:
     'FrontendSubRoutes':
       package: 'Neos.Neos'
