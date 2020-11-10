@@ -80,7 +80,7 @@ define(
 		 * @param {string} context
 		 * @returns {string}
 		 */
-		translate: function(id, fallback, packageKey, source, parameters, context) {
+		translate: function(id, fallback, packageKey, source, parameters, context, quantity) {
 			// Prevent caching missing keys when used too early
 			if (this.get('initialized') === false) {
 				console.error('Labels not initialized when trying to translate "' + id + '"');
@@ -96,9 +96,14 @@ define(
 				return fallback;
 			}
 
-			translationParts = this._splitIdentifier(id, packageKey, source);
+			translationParts = this._splitIdentifier(id, packageKey, source, quantity);
 			Ember.Logger.mute = true; // Mute logging in case the specific label translation is not found
-			translatedValue = Ember.I18n.translate(translationParts.getJoinedIdentifier(), context);
+			try {
+				translatedValue = Ember.I18n.translate(translationParts.getJoinedIdentifier(), context);
+			} catch (e) {
+				translationParts = this._splitIdentifier(id, packageKey, source, 0);
+				translatedValue = Ember.I18n.translate(translationParts.getJoinedIdentifier(), context);
+			}
 			Ember.Logger.mute = false;
 			if (translatedValue.indexOf('Missing translation:') !== -1) {
 				return fallback;
@@ -117,7 +122,7 @@ define(
 		 * @param {string} fallbackSource
 		 * @private
 		 */
-		_splitIdentifier: function(id, fallbackPackage, fallbackSource) {
+		_splitIdentifier: function(id, fallbackPackage, fallbackSource, quantity) {
 			id = id.trim();
 			var translationParts = {
 				id: id,
@@ -149,6 +154,14 @@ define(
 				translationParts.id = translationParts.id.toLowerCase();
 			} else {
 				translationParts.id = translationParts.id.substring(0, 1).toLowerCase() + translationParts.id.substring(1);
+			}
+
+			if (quantity <= 1) {
+				translationParts.id += '.0';
+			}
+
+			if (quantity > 1) {
+				translationParts.id += '.1';
 			}
 
 			translationParts.packageKey = translationParts.packageKey.replace(/\./g, '_');
