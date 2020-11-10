@@ -3,7 +3,7 @@
  <site name="{siteName}" state="1" siteResourcesPackageKey="{packageKey}" siteNodeName="{siteNodeName}">
   <nodes formatVersion="2.0">
    <node nodeName="{siteNodeName}">
-    <variant workspace="live" nodeType="{packageKey}:Page" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
+    <variant workspace="live" nodeType="{packageKey}:Document.Page" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
      <dimensions>
      <f:for each="{dimensions}" as="dimension">
       <{dimension.identifier}>{dimension.default}</{dimension.identifier}>
