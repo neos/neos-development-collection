@@ -11,6 +11,9 @@ namespace Neos\Neos\Tests\Unit\Routing;
  * source code.
  */
 
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Algorithms;
@@ -19,6 +22,7 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Routing\Exception\NoHomepageException;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -65,6 +69,11 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     protected $mockSiteRepository;
 
     /**
+     * @var Site|MockObject
+     */
+    protected $mockSite;
+
+    /**
      * @var ConfigurationContentDimensionPresetSource
      */
     protected $contentDimensionPresetSource;
@@ -73,6 +82,11 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @var FrontendNodeRoutePartHandler
      */
     protected $routePartHandler;
+
+    /**
+     * @var NodeShortcutResolver|MockObject
+     */
+    protected $mockNodeShortcutResolver;
 
     /**
      * Setup the most commonly used mocks and a real FrontendRoutePartHandler. The mock objects created by this function
@@ -115,12 +129,20 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->inject($this->routePartHandler, 'domainRepository', $this->mockDomainRepository);
 
         $this->mockSiteRepository = $this->getMockBuilder(SiteRepository::class)->disableOriginalConstructor()->getMock();
-        $this->mockSiteRepository->expects(self::any())->method('findFirstOnline')->will(self::returnValue(null));
+        $this->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
+        $this->mockSite->method('getNodeName')->willReturn('examplecom');
+        $this->mockSiteRepository->method('findDefault')->willReturn($this->mockSite);
         $this->inject($this->routePartHandler, 'siteRepository', $this->mockSiteRepository);
 
         $this->contentDimensionPresetSource = new ConfigurationContentDimensionPresetSource();
         $this->contentDimensionPresetSource->setConfiguration([]);
         $this->inject($this->routePartHandler, 'contentDimensionPresetSource', $this->contentDimensionPresetSource);
+
+        $this->mockNodeShortcutResolver = $this->getMockBuilder(NodeShortcutResolver::class)->disableOriginalConstructor()->getMock();
+        $this->mockNodeShortcutResolver->method('resolveShortcutTarget')->willReturnCallback(static function (NodeInterface $node) {
+            return $node;
+        });
+        $this->inject($this->routePartHandler, 'nodeShortcutResolver', $this->mockNodeShortcutResolver);
     }
 
     /**
@@ -134,20 +156,20 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function contextPathsAndRequestPathsDataProvider()
     {
         return [
-            ['/sites/examplecom@live;language=en_US', '', true],
-            ['/sites/examplecom@live;language=en_US', 'en_global', false],
-            ['/sites/examplecom@user-robert;language=de_DE,en_US', 'de_global', false],
-            ['/sites/examplecom/features@user-robert;language=de_DE,en_US', 'de_global/features', false],
-            ['/sites/examplecom/features@user-robert;language=en_US', 'en_global/features', false],
-            ['/sites/examplecom/features@user-robert;language=de_DE,en_US&country=global', 'de_global/features', false],
-            ['/sites/examplecom/features@user-robert;country=de', 'en_de/features', false]
+            ['/sites/examplecom@live;language=en_US', '/', true],
+            ['/sites/examplecom@live;language=en_US', '/en_global', false],
+            ['/sites/examplecom@user-robert;language=de_DE,en_US', '/de_global', false],
+            ['/sites/examplecom/features@user-robert;language=de_DE,en_US', '/de_global/features', false],
+            ['/sites/examplecom/features@user-robert;language=en_US', '/en_global/features', false],
+            ['/sites/examplecom/features@user-robert;language=de_DE,en_US&country=global', '/de_global/features', false],
+            ['/sites/examplecom/features@user-robert;country=de', '/en_de/features', false]
         ];
     }
 
     /**
      * @test
      */
-    public function matchReturnsTrueIfTheNodeExists()
+    public function matchWithParametersReturnsMatchResultIfTheNodeExists()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -160,8 +182,10 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue($expectedContextPath));
 
         $routePath = 'home';
-        self::assertTrue($this->routePartHandler->match($routePath));
-        self::assertSame($expectedContextPath, $this->routePartHandler->getValue());
+        $matchResult = $this->matchForHost($routePath, 'localhost');
+
+        self::assertInstanceOf(MatchResult::class, $matchResult);
+        self::assertSame($expectedContextPath, $matchResult->getMatchedValue());
     }
 
     /**
@@ -169,29 +193,30 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @test
      */
-    public function matchThrowsAnExceptionIfNoHomepageExists()
+    public function matchWithParametersThrowsAnExceptionIfNoHomepageExists()
     {
         $this->expectException(NoHomepageException::class);
         $this->buildMockContext(['workspaceName' => 'live']);
         $routePath = '';
-        $this->routePartHandler->match($routePath);
+        $this->matchForHost($routePath, 'localhost');
     }
+
     /**
      * @test
      */
-    public function matchReturnsFalseIfASiteExistsButNoSiteNodeExists()
+    public function matchWithParametersReturnsFalseIfASiteExistsButNoSiteNodeExists()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
         $routePath = 'home';
-        self::assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->matchForHost($routePath, 'localhost'));
     }
 
     /**
      * @test
      */
-    public function matchReturnsFalseIfTheNodeCouldNotBeFound()
+    public function matchWithParametersReturnsFalseIfTheNodeCouldNotBeFound()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -201,7 +226,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $routePath = 'home/about-us';
-        self::assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->matchForHost($routePath, 'localhost'));
     }
 
     /**
@@ -209,7 +234,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @test
      */
-    public function matchReturnsFalseIfTheWorkspaceCouldNotBeFound()
+    public function matchWithParametersReturnsFalseIfTheWorkspaceCouldNotBeFound()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -222,7 +247,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockWorkspace = null;
 
         $routePath = 'home';
-        self::assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->matchForHost($routePath, 'localhost'));
     }
 
     /**
@@ -241,8 +266,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/examplecom/features@user-robert'));
 
         $routePath = 'features';
-        self::assertTrue($this->routePartHandler->match($routePath));
-        self::assertEquals('/sites/examplecom/features@user-robert', $this->routePartHandler->getValue());
+        $matchResult = $this->matchForHost($routePath, 'localhost');
+        self::assertInstanceOf(MatchResult::class, $matchResult);
+        self::assertSame('/sites/examplecom/features@user-robert', $matchResult->getMatchedValue());
     }
 
     /**
@@ -254,7 +280,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @test
      */
-    public function matchReturnsFalseOnNotMatchingSiteNodes()
+    public function matchWithParametersReturnsFalseOnNotMatchingSiteNodes()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -264,23 +290,23 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
         $routePath = 'features';
-        self::assertTrue($this->routePartHandler->match($routePath));
+        self::assertInstanceOf(MatchResult::class, $this->matchForHost($routePath, 'localhost'));
         $routePath = '';
-        self::assertTrue($this->routePartHandler->match($routePath));
+        self::assertInstanceOf(MatchResult::class, $this->matchForHost($routePath, 'localhost'));
 
         $this->routePartHandler->setOptions(['onlyMatchSiteNodes' => true]);
 
         $routePath = 'features';
-        self::assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->matchForHost($routePath, 'localhost'));
         $routePath = '';
-        self::assertTrue($this->routePartHandler->match($routePath));
+        self::assertInstanceOf(MatchResult::class, $this->matchForHost($routePath, 'localhost'));
     }
 
 
     /**
      * @test
      */
-    public function matchCreatesContextForLiveWorkspaceByDefault()
+    public function matchWithParametersCreatesContextForLiveWorkspaceByDefault()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -296,13 +322,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routePath = 'home';
-        $this->routePartHandler->match($routePath);
+        $this->matchForHost($routePath, 'localhost');
     }
 
     /**
      * @test
      */
-    public function matchCreatesContextForCustomWorkspaceIfSpecifiedInNodeContextPath()
+    public function matchWithParametersCreatesContextForCustomWorkspaceIfSpecifiedInNodeContextPath()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -318,14 +344,14 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routePath = 'home@user-john';
-        $this->routePartHandler->match($routePath);
+        $this->matchForHost($routePath, 'localhost');
     }
 
     /**
      * @test
      * @dataProvider contextPathsAndRequestPathsDataProvider
      */
-    public function matchConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext($expectedContextPath, $requestPath, $supportEmptySegmentForDimensions)
+    public function matchWithParametersConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext($expectedContextPath, $requestPath, $supportEmptySegmentForDimensions)
     {
         $this->contentDimensionPresetSource->setConfiguration([
             'language' => [
@@ -375,8 +401,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
         $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
-        self::assertTrue($this->routePartHandler->match($requestPath));
-        $value = $this->routePartHandler->getValue();
+        $requestPath = ltrim($requestPath, '/');
+        self::assertInstanceOf(MatchResult::class, $this->matchForHost($requestPath, 'localhost'));
     }
 
     /**
@@ -384,7 +410,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @test
      */
-    public function matchReturnsFalseIfContextPathIsInvalid()
+    public function matchWithParametersReturnsFalseIfContextPathIsInvalid()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -394,13 +420,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $routePath = 'home@user-robert.html';
-        self::assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->matchForHost($routePath, 'localhost'));
     }
 
     /**
      * @test
      */
-    public function matchStripsOffSuffixIfSplitStringIsSpecified()
+    public function matchWithParametersStripsOffSuffixIfSplitStringIsSpecified()
     {
         $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -412,7 +438,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->routePartHandler->setOptions(['splitString' => '.']);
 
         $routePath = 'home@user-robert.html';
-        self::assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->matchForHost($routePath, 'localhost'));
     }
 
     /**
@@ -431,10 +457,12 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubSubNode = $this->buildSubNode($mockSubNode, 'ae178bc9184');
         $mockSubSubNode->mockProperties['uriPathSegment'] = 'coffee-brands';
         $mockSubSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/examplecom/home/ae178bc9184@user-robert'));
+        $mockSubSubNode->method('getPath')->willReturn('/sites/examplecom/home/ae178bc9184');
 
         $routeValues = ['node' => $mockSubSubNode];
-        self::assertTrue($this->routePartHandler->resolve($routeValues));
-        self::assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
+        $resolveResult = $this->resolveForHost($routeValues, 'localhost');
+        self::assertInstanceOf(ResolveResult::class, $resolveResult);
+        self::assertSame('/home/coffee-brands@user-robert', (string)$resolveResult->getUriConstraints()->toUri());
     }
 
     /**
@@ -454,9 +482,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubSubNode->mockProperties['uriPathSegment'] = 'coffee-brands';
         $mockSubSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/otherdotcom/home/ae178bc9184@user-robert'));
 
+        $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
+        $this->mockSiteRepository->method('findOneByNodeName')->with('otherdotcom')->willReturn($mockSite);
+
         $routeValues = ['node' => $mockSubSubNode];
-        self::assertTrue($this->routePartHandler->resolve($routeValues));
-        self::assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
+        $resolveResult = $this->resolveForHost($routeValues, 'localhost');
+        self::assertInstanceOf(ResolveResult::class, $resolveResult);
+        self::assertSame('/home/coffee-brands@user-robert', (string)$resolveResult->getUriConstraints()->toUri());
     }
 
     /**
@@ -472,10 +504,10 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $routeValues = ['node' => null];
-        self::assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
 
         $routeValues = ['node' => 42];
-        self::assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
     /**
@@ -503,7 +535,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = ['node' => '/sites/examplecom/home'];
-        self::assertTrue($this->routePartHandler->resolve($routeValues));
+        $resolveResult = $this->resolveForHost($routeValues, 'localhost');
+        self::assertInstanceOf(ResolveResult::class, $resolveResult);
     }
 
     /**
@@ -531,7 +564,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = ['node' => '/sites/examplecom/home@user-johndoe'];
-        self::assertTrue($this->routePartHandler->resolve($routeValues));
+        $resolveResult = $this->resolveForHost($routeValues, 'localhost');
+        self::assertInstanceOf(ResolveResult::class, $resolveResult);
     }
 
     /**
@@ -552,7 +586,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockWorkspace = null;
 
         $routeValues = ['node' => '/sites/examplecom@user-johndoe'];
-        self::assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
     /**
@@ -566,7 +600,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSiteNode = $mockSiteNode;
 
         $routeValues = ['node' => '/sites/examplecom/not-found'];
-        self::assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
     /**
@@ -587,7 +621,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = ['node' => '/sites/examplecom/some-content'];
-        self::assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
     /**
@@ -609,7 +643,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = ['node' => '/sites/examplecom/features'];
-        self::assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
     }
 
     /**
@@ -682,8 +716,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $routeValues = ['node' => $contextPath];
         $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
-        self::assertTrue($this->routePartHandler->resolve($routeValues));
-        self::assertSame($expectedUriPath, $this->routePartHandler->getValue());
+        $resolveResult = $this->resolveForHost($routeValues, 'localhost');
+        self::assertSame($expectedUriPath, (string)$resolveResult->getUriConstraints()->toUri());
     }
 
     /**
@@ -941,6 +975,17 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockNode->expects(self::any())->method('getChildNodes')->will(self::returnCallback(function ($nodeTypeFilter) use ($mockNode) {
             return $mockNode->mockChildNodes;
         }));
+        $mockNode->method('getPath')->willReturn($mockParentNode->getPath() . '/' . $nodeName);
         return $mockNode;
+    }
+
+    protected function matchForHost(string &$requestPath, string $requestUriHost)
+    {
+        return $this->routePartHandler->matchWithParameters($requestPath, RouteParameters::createEmpty()->withParameter('requestUriHost', $requestUriHost));
+    }
+
+    protected function resolveForHost(array &$routeValues, string $requestUriHost)
+    {
+        return $this->routePartHandler->resolveWithParameters($routeValues, RouteParameters::createEmpty()->withParameter('requestUriHost', $requestUriHost));
     }
 }
