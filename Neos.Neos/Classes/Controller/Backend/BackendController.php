@@ -16,7 +16,6 @@ namespace Neos\Neos\Controller\Backend;
 use Neos\Cache\Exception\InvalidDataException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
-use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -128,7 +127,7 @@ class BackendController extends ActionController
     public function xliffAsJsonAction(string $locale): string
     {
         $this->response->setContentType('application/json');
-        $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'max-age=' . (3600 * 24 * 7));
+        $this->response->setHttpHeader('Cache-Control', 'max-age=' . (3600 * 24 * 7));
 
         return $this->xliffService->getCachedJson(new Locale($locale));
     }
