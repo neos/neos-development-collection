@@ -121,10 +121,10 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->linkingService = $this->objectManager->get(LinkingService::class);
         /** @var $requestHandler FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $httpRequest = $requestHandler->getComponentContext()->getHttpRequest();
+        $httpRequest = $requestHandler->getHttpRequest();
         $httpRequest = $httpRequest->withUri(new Uri('http://neos.test/'));
         $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, RouteParameters::createEmpty()->withParameter('requestUriHost', 'neos.test'));
-        $requestHandler->getComponentContext()->replaceHttpRequest($httpRequest);
+        $requestHandler->setHttpRequest($httpRequest);
 
 
         $this->controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder());
