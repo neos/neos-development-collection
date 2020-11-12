@@ -6,6 +6,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
+        "php": "^7.3",
         "neos/flow": "*",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
