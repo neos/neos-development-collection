@@ -94,7 +94,7 @@ class EventRepository extends Repository
      *
      * @return void
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $classMetaData = $this->entityManager->getClassMetadata($this->getEntityClassName());
         $connection = $this->entityManager->getConnection();
