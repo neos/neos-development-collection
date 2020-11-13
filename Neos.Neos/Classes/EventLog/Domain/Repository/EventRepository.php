@@ -100,6 +100,6 @@ class EventRepository extends Repository
         $connection = $this->entityManager->getConnection();
         $databasePlatform = $connection->getDatabasePlatform();
         $truncateTableQuery = $databasePlatform->getTruncateTableSql($classMetaData->getTableName());
-        $connection->executeUpdate($truncateTableQuery);
+        $connection->executeStatement($truncateTableQuery);
     }
 }
