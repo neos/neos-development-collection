@@ -37,7 +37,7 @@ class Version20201108113821 extends AbstractMigration
 
                     // transform constraints of nodes derived from Neos.Neos:ContentCollection
                     if (isset($nodeType['superTypes'])
-                        && in_array('Neos.Neos:ContentCollection', $nodeType['superTypes'])
+                        && array_key_exists('Neos.Neos:ContentCollection', $nodeType['superTypes'])
                         && isset($nodeType['constraints'])
                     ) {
                         $this->transformContentCollectionConstraints($nodeType['constraints']);
