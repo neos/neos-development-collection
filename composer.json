@@ -24,7 +24,7 @@
         "doctrine/orm": "^2.6",
         "doctrine/common": "^2.7",
         "doctrine/dbal": "^2.8",
-        "gedmo/doctrine-extensions": "^2.4",
+        "gedmo/doctrine-extensions": "^3.0",
 
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
