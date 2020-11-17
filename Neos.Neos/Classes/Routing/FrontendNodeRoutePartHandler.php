@@ -225,19 +225,22 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * absolute node path: /sites/neostypo3org/homepage/about@user-admin
      * $this->value:       homepage/about@user-admin
      *
-     * @param NodeInterface|string[] $node Either a Node object or an absolute context node path wrapped in an array
+     * @param NodeInterface|string|string[] $node Either a Node object or an absolute context node path (potentially wrapped in an array as ['__contextNodePath' => '<value>'])
      * @return bool|ResolveResult An instance of ResolveResult if the route coulr resolve the $node, otherwise FALSE. @see DynamicRoutePart::resolveValue()
      * @throws Exception\NoSiteException | InvalidRequestPathException | NeosException | IllegalObjectTypeException
      * @see NodeIdentityConverterAspect
      */
     protected function resolveValue($node)
     {
-        if (!$node instanceof NodeInterface && !is_array($node)) {
+        if (is_array($node) && isset($node['__contextNodePath'])) {
+            $node = $node['__contextNodePath'];
+        }
+        if (!$node instanceof NodeInterface && !is_string($node)) {
             return false;
         }
 
-        if (is_array($node) && isset($node['__contextNodePath'])) {
-            $nodeContextPath = $node['__contextNodePath'];
+        if (is_string($node)) {
+            $nodeContextPath = $node;
             $contentContext = $this->buildContextFromPath($nodeContextPath, true);
             if ($contentContext->getWorkspace() === null) {
                 return false;
