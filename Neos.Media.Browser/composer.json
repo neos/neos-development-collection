@@ -6,6 +6,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
+        "php": "^7.3",
         "neos/media": "self.version",
         "neos/content-repository": "self.version",
         "neos/neos": "self.version",
