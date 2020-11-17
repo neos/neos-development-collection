@@ -38,7 +38,7 @@ class NodeIdentityConverterAspect
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {
-            return ['__identity' => $objectArgument->getContextPath()];
+            return ['__contextNodePath' => $objectArgument->getContextPath()];
         }
 
         return $joinPoint->getAdviceChain()->proceed($joinPoint);

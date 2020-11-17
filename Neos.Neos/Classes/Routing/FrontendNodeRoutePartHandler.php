@@ -236,8 +236,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
 
-        if (is_array($node) && isset($node['__identity'])) {
-            $nodeContextPath = $node['__identity'];
+        if (is_array($node) && isset($node['__contextNodePath'])) {
+            $nodeContextPath = $node['__contextNodePath'];
             $contentContext = $this->buildContextFromPath($nodeContextPath, true);
             if ($contentContext->getWorkspace() === null) {
                 return false;
