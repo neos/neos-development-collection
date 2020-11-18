@@ -16,7 +16,6 @@ namespace Neos\Neos\Controller;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Error\Messages\Message;
-use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\InvalidFlashMessageConfigurationException;
@@ -138,7 +137,7 @@ class LoginController extends AbstractAuthenticationController
     public function indexAction(?string $username = null, bool $unauthorized = false): void
     {
         if ($unauthorized || $this->securityContext->getInterceptedRequest()) {
-            $this->response->setComponentParameter(SetHeaderComponent::class, 'X-Authentication-Required', '1');
+            $this->response->setHttpHeader('X-Authentication-Required', '1');
         }
         if ($this->authenticationManager->isAuthenticated()) {
             $this->redirect('index', 'Backend\Backend');

@@ -109,10 +109,10 @@ class NodeViewHelperTest extends FunctionalTestCase
 
         /** @var $requestHandler \Neos\Flow\Tests\FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $httpRequest = $requestHandler->getComponentContext()->getHttpRequest();
+        $httpRequest = $requestHandler->getHttpRequest();
         $httpRequest = $httpRequest->withUri(new Uri('http://neos.test/'));
         $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, RouteParameters::createEmpty()->withParameter('requestUriHost', 'neos.test'));
-        $requestHandler->getComponentContext()->replaceHttpRequest($httpRequest);
+        $requestHandler->setHttpRequest($httpRequest);
         $controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder());
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
