@@ -25,7 +25,7 @@ use Neos\Utility\TypeHandling;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\Context as TYPO3CRContext;
+use Neos\ContentRepository\Domain\Service\Context as ContentRepositoryContext;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -192,12 +192,12 @@ class NodeConverter extends AbstractTypeConverter
      * @param object $nodeLike
      * @param NodeType $nodeType
      * @param array $properties
-     * @param TYPO3CRContext $context
+     * @param ContentRepositoryContext $context
      * @param PropertyMappingConfigurationInterface $configuration
      * @return void
      * @throws TypeConverterException
      */
-    protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, TYPO3CRContext $context, PropertyMappingConfigurationInterface $configuration = null)
+    protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, ContentRepositoryContext $context, PropertyMappingConfigurationInterface $configuration = null)
     {
         $nodeTypeProperties = $nodeType->getProperties();
         unset($properties['_lastPublicationDateTime']);
