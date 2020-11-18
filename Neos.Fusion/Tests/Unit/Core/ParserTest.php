@@ -680,7 +680,7 @@ class ParserTest extends UnitTestCase
                                 '__objectType' => null
                             ],
                             'multiline2' => [
-                                '__eelExpression' => "my.expression(    Foo.bar(\"foo\")    )",
+                                '__eelExpression' => "my.expression(    Foo.bar(\"foo\")  )",
                                 '__value' => null,
                                 '__objectType' => null
                             ],
