@@ -3,28 +3,28 @@ prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImpleme
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
 prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 prototype(Neos.Fusion:Tag) {
-	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
-	attributes = Attributes
-	omitClosingTag = false
-	selfClosingTag = false
+  @class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
+  attributes = Attributes
+  omitClosingTag = false
+  selfClosingTag = false
 }
 
 
 prototype(Neos.Fusion:SpecialTag) < prototype(Neos.Fusion:Tag) {
-	attributes.class = Neos.Fusion:TestRenderer {
-		test = 'class'
-	}
-	attributes.tea = ${'green'}
+  attributes.class = Neos.Fusion:TestRenderer {
+    test = 'class'
+  }
+  attributes.tea = ${'green'}
 }
 
 nestedOverwritesAndProcessors.deepProcessorAppliesToSimpleValue = Neos.Fusion:SpecialTag {
-	attributes.class.test.@process.addProcessed = ${value + ' processed'}
+  attributes.class.test.@process.addProcessed = ${value + ' processed'}
 }
 
 nestedOverwritesAndProcessors.deepProcessorAppliesToEel = Neos.Fusion:SpecialTag {
-	attributes.tea.@process.addProcessed = ${value + ' infused'}
+  attributes.tea.@process.addProcessed = ${value + ' infused'}
 }
 
 nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:SpecialTag {
-	attributes.coffee.@process.addProcessed = ${String.trim(value + ' harvey')}
+  attributes.coffee.@process.addProcessed = ${String.trim(value + ' harvey')}
 }

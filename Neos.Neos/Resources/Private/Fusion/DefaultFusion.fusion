@@ -32,59 +32,59 @@ include: Prototypes/FallbackNode.fusion
 #
 root = Neos.Fusion:Case
 root {
-	shortcut {
-		prototype(Neos.Neos:Page) {
-			body = Neos.Neos:Shortcut
-		}
+  shortcut {
+    prototype(Neos.Neos:Page) {
+      body = Neos.Neos:Shortcut
+    }
 
-		@position = 'start'
-		condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
-		type = 'Neos.Neos:Page'
-	}
+    @position = 'start'
+    condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
+    type = 'Neos.Neos:Page'
+  }
 
-	editPreviewMode {
-		@position = 'end 9996'
-		possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.fusionPath}
-		condition = ${documentNode.context.inBackend && this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
-		renderPath = ${'/' + this.possibleEditPreviewModePath}
-	}
+  editPreviewMode {
+    @position = 'end 9996'
+    possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.fusionPath}
+    condition = ${documentNode.context.inBackend && this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
+    renderPath = ${'/' + this.possibleEditPreviewModePath}
+  }
 
-	format {
-		@position = 'end 9997'
-		condition = ${request.format != 'html'}
-		renderPath = ${'/' + String.replace(request.format, '.', '/')}
-	}
+  format {
+    @position = 'end 9997'
+    condition = ${request.format != 'html'}
+    renderPath = ${'/' + String.replace(request.format, '.', '/')}
+  }
 
-	documentType {
-		@position = 'end 9998'
-		condition = Neos.Fusion:CanRender {
-			type = ${q(documentNode).property('_nodeType.name')}
-		}
-		type = ${q(documentNode).property('_nodeType.name')}
-	}
+  documentType {
+    @position = 'end 9998'
+    condition = Neos.Fusion:CanRender {
+      type = ${q(documentNode).property('_nodeType.name')}
+    }
+    type = ${q(documentNode).property('_nodeType.name')}
+  }
 
-	default {
-		@position = 'end 9999'
-		condition = true
-		renderPath = '/page'
-	}
+  default {
+    @position = 'end 9999'
+    condition = true
+    renderPath = '/page'
+  }
 
-	@cache {
-		mode = 'cached'
+  @cache {
+    mode = 'cached'
 
-		entryIdentifier {
-			node = ${node}
-		}
-		entryTags {
-			# Whenever the node changes the matched condition could change
-			1 = ${Neos.Caching.nodeTag(documentNode)}
-			# Whenever one of the parent nodes changes the layout could change
-			2 = ${Neos.Caching.nodeTag(q(documentNode).parents())}
-		}
-	}
+    entryIdentifier {
+      node = ${node}
+    }
+    entryTags {
+      # Whenever the node changes the matched condition could change
+      1 = ${Neos.Caching.nodeTag(documentNode)}
+      # Whenever one of the parent nodes changes the layout could change
+      2 = ${Neos.Caching.nodeTag(q(documentNode).parents())}
+    }
+  }
 
-	# Catch all unhandled exceptions at the root
-	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
+  # Catch all unhandled exceptions at the root
+  @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
 }
 
 # The error matcher used to render errors that are configured for fusion rendering
@@ -96,20 +96,20 @@ root {
 # custom rendering can be implemented
 #
 error = Neos.Fusion:Case {
-	default {
-	@position = 'end 9999'
-	condition = true
-	renderer = Neos.Fusion:Template {
-		templatePath = 'resource://Neos.Neos/Private/Templates/Error/Index.html'
-		layoutRootPath = 'resource://Neos.Neos/Private/Layouts/'
+  default {
+  @position = 'end 9999'
+  condition = true
+  renderer = Neos.Fusion:Template {
+    templatePath = 'resource://Neos.Neos/Private/Templates/Error/Index.html'
+    layoutRootPath = 'resource://Neos.Neos/Private/Layouts/'
 
-		exception = ${exception}
-		renderingOptions = ${renderingOptions}
-		statusCode = ${statusCode}
-		statusMessage = ${statusMessage}
-		referenceCode = ${referenceCode}
-	}
-	}
+    exception = ${exception}
+    renderingOptions = ${renderingOptions}
+    statusCode = ${statusCode}
+    statusMessage = ${statusMessage}
+    referenceCode = ${referenceCode}
+  }
+  }
 }
 
 
@@ -119,6 +119,6 @@ error = Neos.Fusion:Case {
 # of entry identifier pieces in order to make sure that a specific combination of workspaces has its own content cache entry.
 #
 prototype(Neos.Fusion:GlobalCacheIdentifiers) {
-	workspaceChain = ${documentNode.context.workspace.name + ',' + Array.join(Array.keys(documentNode.context.workspace.baseWorkspaces), ',')}
-	editPreviewMode = ${documentNode.context.currentRenderingMode.name}
+  workspaceChain = ${documentNode.context.workspace.name + ',' + Array.join(Array.keys(documentNode.context.workspace.baseWorkspaces), ',')}
+  editPreviewMode = ${documentNode.context.currentRenderingMode.name}
 }

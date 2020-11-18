@@ -10,7 +10,7 @@ renderer.renderPathRenderer = Neos.Fusion:Renderer.Test
 renderer.renderPathRenderer.value = 'result_of_path_with_override'
 
 renderer.default = Neos.Fusion:Renderer {
-	renderer = Neos.Fusion:Renderer.Test
+  renderer = Neos.Fusion:Renderer.Test
 }
 
 renderer.withType = Neos.Fusion:Renderer {

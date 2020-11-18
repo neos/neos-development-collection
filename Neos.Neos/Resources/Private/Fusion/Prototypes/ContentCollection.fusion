@@ -1,42 +1,42 @@
 # This is a helper Fusion object which is used to render all of the child elements
 # of a current node.
 prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Loop) {
-	@context.nodeAvailable = ${node && String.length(node.context.workspace.name)}
-	# Set context removedContentShown to get removed nodes too.
-	# Needed for publish function to be able to publish removed nodes.
-	items = ${nodeAvailable ? q(node).children() : []}
-	# To ensure backwards compatibility override items if collection is set
-	items.@processor.collectionLegacy {
-		expression = ${this.collection}
-		@if.hasCollectionProp = ${this.collection != null && Array.length(this.collection) > 0}
-	}
-	# Render every item by its own Fusion object
-	itemRenderer = Neos.Neos:ContentCase
-	itemName = 'node'
-	iterationName = 'iterator'
+  @context.nodeAvailable = ${node && String.length(node.context.workspace.name)}
+  # Set context removedContentShown to get removed nodes too.
+  # Needed for publish function to be able to publish removed nodes.
+  items = ${nodeAvailable ? q(node).children() : []}
+  # To ensure backwards compatibility override items if collection is set
+  items.@processor.collectionLegacy {
+    expression = ${this.collection}
+    @if.hasCollectionProp = ${this.collection != null && Array.length(this.collection) > 0}
+  }
+  # Render every item by its own Fusion object
+  itemRenderer = Neos.Neos:ContentCase
+  itemName = 'node'
+  iterationName = 'iterator'
 
-	# Using a processor here and not an Array as ContentCollectionRenderer to not push important userland properties further down.
-	@process.appendRemovedContentForBackend = Neos.Fusion:Join {
-		visibleContent = ${value}
+  # Using a processor here and not an Array as ContentCollectionRenderer to not push important userland properties further down.
+  @process.appendRemovedContentForBackend = Neos.Fusion:Join {
+    visibleContent = ${value}
 
-		removedContent = Neos.Fusion:Loop {
-			items = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
-			# Render every item by its own Fusion object
-			itemRenderer = Neos.Neos:ContentElementWrapping
-			itemName = 'node'
-			iterationName = 'iterator'
-		}
+    removedContent = Neos.Fusion:Loop {
+      items = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
+      # Render every item by its own Fusion object
+      itemRenderer = Neos.Neos:ContentElementWrapping
+      itemName = 'node'
+      iterationName = 'iterator'
+    }
 
-		@if.onlyInBackend = ${nodeAvailable && node.context.inBackend}
-	}
+    @if.onlyInBackend = ${nodeAvailable && node.context.inBackend}
+  }
 
-	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\BubblingHandler'
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\BubblingHandler'
 }
 
 prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
-	tagName = 'div'
+  tagName = 'div'
 
-	attributes = Neos.Fusion:DataStructure
+  attributes = Neos.Fusion:DataStructure
 
   # The following is used to automatically append class and data attribute needed for editing.
   # You can disable the following line with:
@@ -63,42 +63,42 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
     data-__neos-insertion-anchor.@if.onlyRenderInBackend = ${node.context.inBackend && node.context.currentRenderingMode.edit}
   }
 
-	nodePath = 'to-be-set-by-user'
+  nodePath = 'to-be-set-by-user'
 
-	# You may override this to get your content collection from a different place than the current node.
-	# The Eel helper is used to provide a better error message if no content collection could be found.
-	@context.node = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
+  # You may override this to get your content collection from a different place than the current node.
+  # The Eel helper is used to provide a better error message if no content collection could be found.
+  @context.node = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
 
-	content = Neos.Neos:ContentCollectionRenderer
+  content = Neos.Neos:ContentCollectionRenderer
 
-	# We have to define contentElementWrapping, because we do not inherit from Neos.Neos:Content
-	@process.contentElementWrapping = Neos.Neos:ContentElementWrapping
+  # We have to define contentElementWrapping, because we do not inherit from Neos.Neos:Content
+  @process.contentElementWrapping = Neos.Neos:ContentElementWrapping
 
-	@cache {
-		mode = 'cached'
+  @cache {
+    mode = 'cached'
 
-		entryIdentifier {
-			collection = ${node}
-		}
+    entryIdentifier {
+      collection = ${node}
+    }
 
-		entryTags {
-			1 = ${Neos.Caching.descendantOfTag(node)}
-			2 = ${Neos.Caching.nodeTag(node)}
-		}
+    entryTags {
+      1 = ${Neos.Caching.descendantOfTag(node)}
+      2 = ${Neos.Caching.nodeTag(node)}
+    }
 
-		maximumLifetime = ${q(node).context({'invisibleContentShown': true}).children().cacheLifetime()}
-	}
+    maximumLifetime = ${q(node).context({'invisibleContentShown': true}).children().cacheLifetime()}
+  }
 
-	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
+  @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }
 
 prototype(Neos.Neos:ContentCollection) {
-	prototype(Neos.Neos:ContentCollection) {
-		# Make nested ContentCollections be embedded by default.
-		# Usually there's no need for a separate cache entry for nested ContentCollections, but depending on the use-case
-		# the mode can safely be switched to 'cached'.
-		@cache {
-			mode = 'embed'
-		}
-	}
+  prototype(Neos.Neos:ContentCollection) {
+    # Make nested ContentCollections be embedded by default.
+    # Usually there's no need for a separate cache entry for nested ContentCollections, but depending on the use-case
+    # the mode can safely be switched to 'cached'.
+    @cache {
+      mode = 'embed'
+    }
+  }
 }
