@@ -416,6 +416,12 @@ Neos:
       applicationPackageKey: Neos.Neos
       applicationName: Neos
 
+    http:
+      middlewares:
+        'requestUriHostParameter':
+          position: 'before routing'
+          middleware: 'Neos\Neos\Routing\RequestUriHostMiddleware'
+
     mvc:
       routes:
         'Neos.Neos':

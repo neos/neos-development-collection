@@ -94,6 +94,14 @@
     assets:
       type: array<Neos\Media\Domain\Model\Asset>
 
+'Acme.Demo:TeaserGroup':
+  superTypes:
+    'Neos.Neos:Content': true
+    'Neos.Neos:ContentCollection': true
+  ui:
+    label: 'Teaser Group'
+    group: 'default'
+
 'Neos.Neos.BackendSchemaControllerTest:Node':
   abstract: true
 

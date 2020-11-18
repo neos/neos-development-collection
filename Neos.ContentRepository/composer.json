@@ -6,6 +6,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
+        "php": "^7.3",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -14,7 +15,7 @@
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
         "doctrine/orm": "^2.6",
-        "gedmo/doctrine-extensions": "^2.4",
+        "gedmo/doctrine-extensions": "^3.0",
         "behat/transliterator": "^1.0"
     },
     "replace": {
@@ -112,7 +113,17 @@
             "Neos.Seo-20170127154600",
             "Neos.Flow-20170127183102",
             "Neos.Fusion-20180211175500",
-            "Neos.Fusion-20180211184832"
+            "Neos.Fusion-20180211184832",
+            "Neos.Neos-20180907103800",
+            "Neos.Neos.Ui-20190319094900",
+            "Neos.Flow-20190425144900",
+            "Neos.Flow-20190515215000",
+            "Neos.NodeTypes-20190917101945",
+            "Neos.NodeTypes-20200120114136",
+            "Neos.Flow-20200813181400",
+            "Neos.Flow-20201003165200",
+            "Neos.Neos-20201108113821",
+            "Neos.Flow-20201109224100"
         ]
     }
 }

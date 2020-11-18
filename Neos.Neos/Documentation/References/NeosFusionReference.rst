@@ -1278,6 +1278,9 @@ Render an image tag for an asset.
 :\*: All :ref:`Neos_Neos__ImageUri` properties
 :attributes: (:ref:`Neos_Fusion__Attributes`) Image tag attributes
 
+Per default, the attribute loading is set to ``'lazy'``. To fetch a resource immediately, you can set ``attributes.loading``
+to ``null``, ``false`` or ``'eager'``.
+
 Example::
 
 	logoImage = Neos.Neos:ImageTag {

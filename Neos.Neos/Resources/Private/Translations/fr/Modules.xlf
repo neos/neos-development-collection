@@ -599,6 +599,9 @@
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
 			<target state="translated">Selectionnez un document nodeType</target></trans-unit>
+      <trans-unit id="sites.generatorClass" xml:space="preserve">
+	  		    <source>Select a site generator</source>
+			<target state="needs-translation">Select a site generator</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
 			<target state="translated">Nom du site</target></trans-unit>
