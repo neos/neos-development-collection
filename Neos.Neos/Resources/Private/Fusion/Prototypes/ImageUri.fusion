@@ -1,56 +1,56 @@
 # ImageUri object works exactly the same way as the uri.image ViewHelper in the Neos.Media package
 prototype(Neos.Neos:ImageUri) {
-	@class = 'Neos\\Neos\\Fusion\\ImageUriImplementation'
-	maximumWidth = 2560
-	width = NULL
-	maximumHeight = 2560
-	height = NULL
-	allowCropping = false
-	allowUpScaling = false
-	async = false
-	quality = NULL
-	format = NULL
-	preset = NULL
-	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
+  @class = 'Neos\\Neos\\Fusion\\ImageUriImplementation'
+  maximumWidth = 2560
+  width = NULL
+  maximumHeight = 2560
+  height = NULL
+  allowCropping = false
+  allowUpScaling = false
+  async = false
+  quality = NULL
+  format = NULL
+  preset = NULL
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
 # ImageTag object works exactly the same way as image ViewHelper in the Neos.Media package
 prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
-	asset = 'pass-the-media-asset'
-	maximumWidth = 2560
-	width = NULL
-	maximumHeight = 2560
-	height = NULL
-	allowCropping = false
-	allowUpScaling = false
-	async = false
-	preset = NULL
-	@context.asset = ${this.asset}
-	@context.width = ${this.width}
-	@context.maximumWidth = ${this.maximumWidth}
-	@context.height = ${this.height}
-	@context.maximumHeight = ${this.maximumHeight}
-	@context.allowCropping = ${this.allowCropping}
-	@context.allowUpScaling = ${this.allowUpScaling}
-	@context.async = ${this.async}
-	@context.quality = ${this.quality}
-	@context.format = ${this.format}
-	@context.preset = ${this.preset}
+  asset = 'pass-the-media-asset'
+  maximumWidth = 2560
+  width = NULL
+  maximumHeight = 2560
+  height = NULL
+  allowCropping = false
+  allowUpScaling = false
+  async = false
+  preset = NULL
+  @context.asset = ${this.asset}
+  @context.width = ${this.width}
+  @context.maximumWidth = ${this.maximumWidth}
+  @context.height = ${this.height}
+  @context.maximumHeight = ${this.maximumHeight}
+  @context.allowCropping = ${this.allowCropping}
+  @context.allowUpScaling = ${this.allowUpScaling}
+  @context.async = ${this.async}
+  @context.quality = ${this.quality}
+  @context.format = ${this.format}
+  @context.preset = ${this.preset}
 
-	tagName = 'img'
-	attributes {
-		src = Neos.Neos:ImageUri {
-			asset = ${asset}
-			width = ${width}
-			maximumWidth = ${maximumWidth}
-			height = ${height}
-			maximumHeight = ${maximumHeight}
-			allowCropping = ${allowCropping}
-			allowUpScaling = ${allowUpScaling}
-			async = ${async}
-			quality = ${quality}
-			format = ${format}
-			preset = ${preset}
-		}
-	}
+  tagName = 'img'
+  attributes {
+    src = Neos.Neos:ImageUri {
+      asset = ${asset}
+      width = ${width}
+      maximumWidth = ${maximumWidth}
+      height = ${height}
+      maximumHeight = ${maximumHeight}
+      allowCropping = ${allowCropping}
+      allowUpScaling = ${allowUpScaling}
+      async = ${async}
+      quality = ${quality}
+      format = ${format}
+      preset = ${preset}
+    }
+  }
 }

@@ -2,14 +2,14 @@
 
 // First, set up a base object...
 prototype(Neos.Fusion:PrototypeInheritance.Base) {
-	@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
+  @class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 
-	value = 'BaseNotModified'
+  value = 'BaseNotModified'
 }
 
 // Then subclass it. changes to the subclass should only be visible in the subclass.
 prototype(Neos.Fusion:PrototypeInheritance.SubWithOverride) < prototype(Neos.Fusion:PrototypeInheritance.Base) {
-	value = 'Sub'
+  value = 'Sub'
 }
 
 // subclass it again, without modification...
@@ -20,9 +20,9 @@ prototype(Neos.Fusion:PrototypeInheritance.SubWithoutOverride) < prototype(Neos.
 prototype(Neos.Fusion:PrototypeInheritance.Base).value = 'BaseModified'
 
 prototypeInheritance {
-	base = PrototypeInheritance.Base
-	subWithOverride = PrototypeInheritance.SubWithOverride
-	subWithoutOverride = PrototypeInheritance.SubWithoutOverride
+  base = PrototypeInheritance.Base
+  subWithOverride = PrototypeInheritance.SubWithOverride
+  subWithoutOverride = PrototypeInheritance.SubWithoutOverride
 }
 
 ///////// ADVANCED PROTOTYPE INHERITANCE
@@ -32,37 +32,37 @@ prototypeInheritance {
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base).@class = 'Neos\\Fusion\\Tests\\Functional\\FusionObjects\\Fixtures\\WrappedNestedObjectRenderer'
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base) {
-	prototype(PrototypeInheritance.Advanced.Value).value = '|value_from_base_NEVER_TO_BE_SHOWN|'
-	prepend = 'prepend_beforeOverride'
-	append = 'append_beforeOverride'
-	value = PrototypeInheritance.Advanced.Value
+  prototype(PrototypeInheritance.Advanced.Value).value = '|value_from_base_NEVER_TO_BE_SHOWN|'
+  prepend = 'prepend_beforeOverride'
+  append = 'append_beforeOverride'
+  value = PrototypeInheritance.Advanced.Value
 }
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.SubWithOverride) < prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base) {
-	prepend = 'prepend_inSub'
+  prepend = 'prepend_inSub'
 }
 
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.SubWithoutOverride) < prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base)
 
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base) {
-	append = 'append_afterOverride'
-	prototype(PrototypeInheritance.Advanced.Value).value = '|value_from_nested_prototype|'
+  append = 'append_afterOverride'
+  prototype(PrototypeInheritance.Advanced.Value).value = '|value_from_nested_prototype|'
 }
 
 prototypeInheritanceAdvanced {
-	// when evaluating "base", the following should happen:
-	// - prepend_beforeOverride
-	// - value_from_nested_prototype
-	// - append_afterOverride
-	base = PrototypeInheritance.Advanced.WrappedNested.Base
+  // when evaluating "base", the following should happen:
+  // - prepend_beforeOverride
+  // - value_from_nested_prototype
+  // - append_afterOverride
+  base = PrototypeInheritance.Advanced.WrappedNested.Base
 
-	// same as "base"; as nothing has changed. THIS IS WHERE PROTOTYPE INHERITANCE SHOWS
-	subWithoutOverride = PrototypeInheritance.Advanced.WrappedNested.SubWithoutOverride
+  // same as "base"; as nothing has changed. THIS IS WHERE PROTOTYPE INHERITANCE SHOWS
+  subWithoutOverride = PrototypeInheritance.Advanced.WrappedNested.SubWithoutOverride
 
-	// when evaluating this, the following should happen:
-	// - prepend_inSub
-	// - value_from_nested_prototype
-	// - append_afterOverride
-	subWithOverride = PrototypeInheritance.Advanced.WrappedNested.SubWithOverride
+  // when evaluating this, the following should happen:
+  // - prepend_inSub
+  // - value_from_nested_prototype
+  // - append_afterOverride
+  subWithOverride = PrototypeInheritance.Advanced.WrappedNested.SubWithOverride
 }
 
 
@@ -73,14 +73,14 @@ prototypeInheritanceAdvanced {
 // - do a context specific override for the *Value* prototype; setting its value to a different element.
 // - render the "SubclassedValue"; expect that the *overridden* value from the base class applies
 prototype(Neos.Fusion:PrototypeInheritance.ContextDependent.Value) {
-	value = "should never be shown"
-	@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
+  value = "should never be shown"
+  @class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 }
 
 prototype(Neos.Fusion:PrototypeInheritance.ContextDependent.SubclassedValue) < prototype(Neos.Fusion:PrototypeInheritance.ContextDependent.Value)
 
 prototypeInheritanceContentDependent {
-	prototype(Neos.Fusion:PrototypeInheritance.ContextDependent.Value).value = "NEW VALUE in base class"
+  prototype(Neos.Fusion:PrototypeInheritance.ContextDependent.Value).value = "NEW VALUE in base class"
 
-	element = Neos.Fusion:PrototypeInheritance.ContextDependent.SubclassedValue
+  element = Neos.Fusion:PrototypeInheritance.ContextDependent.SubclassedValue
 }

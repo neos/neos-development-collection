@@ -2,53 +2,53 @@ prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\V
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 
 basicRendering.test = Neos.Fusion:TestRenderer {
-	test = 'Hello World'
+  test = 'Hello World'
 }
 
 basicRendering.reuseFusionVariables = Neos.Fusion:TestRenderer {
-	test2 = 'orld'
-	test = ${'Hello W' + this.test2}
+  test2 = 'orld'
+  test = ${'Hello W' + this.test2}
 }
 
 basicRendering.crashing = Neos.Fusion:Template {
-	templatePath = 'no.such.file.here.so.crash.please'
+  templatePath = 'no.such.file.here.so.crash.please'
 }
 
 basicRendering.reuseFusionVariablesWithEel = Neos.Fusion:TestRenderer {
-	test2 = ${'or' + 'ld'}
-	test = ${'Hello W' + this.test2}
+  test2 = ${'or' + 'ld'}
+  test = ${'Hello W' + this.test2}
 }
 
 prototype(Neos.Fusion:FooValue) < prototype(Neos.Fusion:Value) {
-	value = ${'my eel expression'}
+  value = ${'my eel expression'}
 }
 basicRendering.complexExample {
-	toRender = Neos.Fusion:FooValue
+  toRender = Neos.Fusion:FooValue
 
-	prototype(Neos.Fusion:FooValue) {
-		value = 'Static string'
-		value.@process.1 = ${value + ' post'}
-	}
+  prototype(Neos.Fusion:FooValue) {
+    value = 'Static string'
+    value.@process.1 = ${value + ' post'}
+  }
 }
 
 
 prototype(Neos.Fusion:FooValue2) < prototype(Neos.Fusion:Value) {
-	value = Neos.Fusion:Value {
-		value = 'my nested value'
-	}
+  value = Neos.Fusion:Value {
+    value = 'my nested value'
+  }
 }
 
 basicRendering.complexExample2 {
-	toRender = Neos.Fusion:FooValue2
+  toRender = Neos.Fusion:FooValue2
 
-	prototype(Neos.Fusion:FooValue2) {
-		value = 'Static string'
-		value.@process.1 = ${value + ' post'}
-	}
+  prototype(Neos.Fusion:FooValue2) {
+    value = 'Static string'
+    value.@process.1 = ${value + ' post'}
+  }
 }
 
 basicRendering.contentIsNotTrimmed = Neos.Fusion:TestRenderer {
-	test = ' I want to have some space after me '
+  test = ' I want to have some space after me '
 }
 
 basicRendering.overridePlainValueWithEel = 'Test'
@@ -56,7 +56,7 @@ basicRendering.overridePlainValueWithEel = ${'overridden'}
 
 basicRendering.overridePlainValueWithFusion = 'Test'
 basicRendering.overridePlainValueWithFusion = Neos.Fusion:Value {
-	value = 'overridden'
+  value = 'overridden'
 }
 
 basicRendering.overridePlainValueWithPlainValue = 'Test'
@@ -71,7 +71,7 @@ basicRendering.overrideEelWithPlainValue = 'overridden'
 
 basicRendering.overrideEelWithFusion = ${'Test'}
 basicRendering.overrideEelWithFusion = Neos.Fusion:Value {
-	value = 'overridden'
+  value = 'overridden'
 }
 basicRendering.overrideEelWithEel = ${'Test'}
 basicRendering.overrideEelWithEel = ${'overridden'}
@@ -81,17 +81,17 @@ basicRendering.overrideEelWithEel = ${'overridden'}
 
 
 basicRendering.overrideFusionWithPlainValue = Neos.Fusion:Value {
-	value = 'Test'
+  value = 'Test'
 }
 basicRendering.overrideFusionWithPlainValue = 'overridden'
 
 basicRendering.overrideFusionWithFusion = Neos.Fusion:Value {
-	value = 'Test'
+  value = 'Test'
 }
 basicRendering.overrideFusionWithFusion = Neos.Fusion:Value {
-	value = 'overridden'
+  value = 'overridden'
 }
 basicRendering.overrideFusionWithEel = Neos.Fusion:Value {
-	value = 'Test'
+  value = 'Test'
 }
 basicRendering.overrideFusionWithEel = ${'overridden'}

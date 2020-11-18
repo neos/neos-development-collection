@@ -1,35 +1,35 @@
 # Neos.Neos:DimensionsMenu provides dimension (e.g. language) menu rendering
 prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
-	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/DimensionsMenu.html'
+  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/DimensionsMenu.html'
 
-	# the "absent" state is assigned to items for dimension (combinations) for which no node variant exists
-	absent.attributes = Neos.Fusion:Attributes {
-		class = 'normal'
-	}
+  # the "absent" state is assigned to items for dimension (combinations) for which no node variant exists
+  absent.attributes = Neos.Fusion:Attributes {
+    class = 'normal'
+  }
 
   # if documents which are hidden in index should be rendered or not
   renderHiddenInIndex = true
 
-	# name of the dimension to use (optional)
-	dimension = null
+  # name of the dimension to use (optional)
+  dimension = null
 
-	# list of presets, if the default order should be overridden, only used with "dimension" set
-	presets = null
+  # list of presets, if the default order should be overridden, only used with "dimension" set
+  presets = null
 
-	# if true, items for all presets will be included, ignoring dimension constraints
-	includeAllPresets = false
+  # if true, items for all presets will be included, ignoring dimension constraints
+  includeAllPresets = false
 
-	@context {
-		dimension = ${this.dimension}
-		presets = ${this.presets}
-		includeAllPresets = ${this.includeAllPresets}
-	}
+  @context {
+    dimension = ${this.dimension}
+    presets = ${this.presets}
+    includeAllPresets = ${this.includeAllPresets}
+  }
 
-	items = Neos.Neos:DimensionsMenuItems {
-		includeAllPresets = ${includeAllPresets}
-		dimension = ${dimension}
-		presets = ${presets}
-	}
+  items = Neos.Neos:DimensionsMenuItems {
+    includeAllPresets = ${includeAllPresets}
+    dimension = ${dimension}
+    presets = ${presets}
+  }
 }
 
 # included for backwards-compatibility only

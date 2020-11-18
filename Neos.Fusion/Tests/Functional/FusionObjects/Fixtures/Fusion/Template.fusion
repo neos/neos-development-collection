@@ -1,40 +1,40 @@
 prototype(Neos.Fusion:Template).@class = 'Neos\\Fusion\\FusionObjects\\TemplateImplementation'
 
 template.basicTemplate = Neos.Fusion:Template {
-	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
-	myVariable = 'foo'
+  templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
+  myVariable = 'foo'
 }
 
 template.basicTemplateWithEelVariable = Neos.Fusion:Template {
-	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
-	bar = ${'b' + 'a' + 'r'}
-	myVariable = ${'foo' + this.bar}
+  templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
+  bar = ${'b' + 'a' + 'r'}
+  myVariable = ${'foo' + this.bar}
 }
 
 template.partial = Neos.Fusion:Template {
-	templatePath = ${fixtureDirectory + 'Templates/PartialTemplate.html'}
-	partialRootPath = ${fixtureDirectory + 'Partials/'}
+  templatePath = ${fixtureDirectory + 'Templates/PartialTemplate.html'}
+  partialRootPath = ${fixtureDirectory + 'Partials/'}
 }
 
 template.layout = Neos.Fusion:Template {
-	templatePath = ${fixtureDirectory + 'Templates/LayoutTemplate.html'}
-	layoutRootPath = ${fixtureDirectory + 'Layouts'}
+  templatePath = ${fixtureDirectory + 'Templates/LayoutTemplate.html'}
+  layoutRootPath = ${fixtureDirectory + 'Layouts'}
 }
 
 # This fixture sets up a Fusion object that will throw an exception during rendering
 # (a Collection needs an itemName property to be set)
 template.offsetAccessException = Neos.Fusion:Template {
-	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
+  templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
 
-	myVariable = Neos.Fusion:Collection {
-		collection = ${['foo', 'bar']}
-		@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
-	}
+  myVariable = Neos.Fusion:Collection {
+    collection = ${['foo', 'bar']}
+    @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
+  }
 }
 
 template.overrideWithSimpleValueInTemplate = Neos.Fusion:Template {
-	templatePath = ${fixtureDirectory + 'Templates/JsonEncodedValueTemplate.html'}
-	value = ${1 + 1}
+  templatePath = ${fixtureDirectory + 'Templates/JsonEncodedValueTemplate.html'}
+  value = ${1 + 1}
 }
 // Overriding the expression with a simple value should still yield a number in the template
 template.overrideWithSimpleValueInTemplate.value = 3

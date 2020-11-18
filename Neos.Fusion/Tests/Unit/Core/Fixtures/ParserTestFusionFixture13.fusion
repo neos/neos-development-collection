@@ -7,31 +7,31 @@
 
 object1 = Text
 object1.value = '
-	Some text.
+  Some text.
 '
 
 object2 = Text
 object2.value = "
-	Some text.
+  Some text.
 "
 
 object3 = Text
 object3.value = "The text might start
-	at some line' and
-	end at some other line"
+  at some line' and
+  end at some other line"
 
 object4 = Text
 object4.value = 'The text might start
-	at some line "and
-	end at some other line'
+  at some line "and
+  end at some other line'
 
 object5 = Text
 object5.value = "The text might start
-	at \"some\" line and
-	end at some other line"
+  at \"some\" line and
+  end at some other line"
 
 object6 = Text
 object6.value = 'The text might start
-	at \'some\' line and
-	end at some other line'
+  at \'some\' line and
+  end at some other line'
 

@@ -1,27 +1,27 @@
 include: resource://Neos.Fusion/Private/Fusion/Root.fusion
 
 Neos.Neos.Module.Management.HistoryController.index = Template {
-	templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
-	eventsByDate = ${eventsByDate}
-	nextPage = ${nextPage}
+  templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
+  eventsByDate = ${eventsByDate}
+  nextPage = ${nextPage}
 
-	eventRenderer = Neos.Neos:History.EventRenderer
+  eventRenderer = Neos.Neos:History.EventRenderer
 }
 
 prototype(Neos.Neos:History.EventRenderer) < prototype(Case) {
-	nodeEvent {
-		condition = ${event.eventType == 'Node.Published'}
-		type = 'Neos.Neos:History.NodeEventRenderer'
-	}
+  nodeEvent {
+    condition = ${event.eventType == 'Node.Published'}
+    type = 'Neos.Neos:History.NodeEventRenderer'
+  }
 
-	accountCreatedEvent {
-		condition = ${event.eventType == 'Account.Created'}
-		type = 'Neos.Neos:History.AccountCreatedEvent'
-	}
-	accountDeletedEvent {
-		condition = ${event.eventType == 'Account.Deleted'}
-		type = 'Neos.Neos:History.AccountDeletedEvent'
-	}
+  accountCreatedEvent {
+    condition = ${event.eventType == 'Account.Created'}
+    type = 'Neos.Neos:History.AccountCreatedEvent'
+  }
+  accountDeletedEvent {
+    condition = ${event.eventType == 'Account.Deleted'}
+    type = 'Neos.Neos:History.AccountDeletedEvent'
+  }
 }
 
 #
@@ -29,88 +29,88 @@ prototype(Neos.Neos:History.EventRenderer) < prototype(Case) {
 #
 
 prototype(Neos.Neos:History.NodeEventRenderer) < prototype(Array) {
-	@context.documentEventsByType = ${Neos.Array.groupBy(Neos.Array.filter(event.childEvents, 'documentEvent'), 'eventType')}
-	@context.contentEventsByType = ${Neos.Array.groupBy(Neos.Array.filterNegated(event.childEvents, 'documentEvent'), 'eventType')}
+  @context.documentEventsByType = ${Neos.Array.groupBy(Neos.Array.filter(event.childEvents, 'documentEvent'), 'eventType')}
+  @context.contentEventsByType = ${Neos.Array.groupBy(Neos.Array.filterNegated(event.childEvents, 'documentEvent'), 'eventType')}
 
-	documentEvents = Collection {
-		collection = ${documentEventsByType}
-		itemName = 'eventsOfMatchedType'
+  documentEvents = Collection {
+    collection = ${documentEventsByType}
+    itemName = 'eventsOfMatchedType'
 
-		itemRenderer = Case {
-			default {
-				condition = true
-				type = ${'Neos.Neos:History.PublishedNode.' + Array.first(eventsOfMatchedType).eventType}
-			}
-		}
-	}
+    itemRenderer = Case {
+      default {
+        condition = true
+        type = ${'Neos.Neos:History.PublishedNode.' + Array.first(eventsOfMatchedType).eventType}
+      }
+    }
+  }
 
-	contentEvents = Neos.Neos:History.PublishedNode.ContentChanged {
-		subEventType = ${Array.first(Array.first(contentEventsByType)).eventType}
-		@if.hasContentEvents = ${Array.length(contentEventsByType) > 0}
-	}
+  contentEvents = Neos.Neos:History.PublishedNode.ContentChanged {
+    subEventType = ${Array.first(Array.first(contentEventsByType)).eventType}
+    @if.hasContentEvents = ${Array.length(contentEventsByType) > 0}
+  }
 }
 
 prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) < prototype(Template) {
-	templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
-	sectionName = 'eventElement'
+  templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
+  sectionName = 'eventElement'
 
-	subEventType = ${Array.first(eventsOfMatchedType).eventType}
-	event = ${event}
-	linkedNode = Template {
-		templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/NodeLink.html'
-		event = ${event}
-		@process.trim = ${String.trim(value)}
-	}
-	user = Template {
-		templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/User.html'
-		event = ${event}
-		@process.trim = ${String.trim(value)}
-	}
+  subEventType = ${Array.first(eventsOfMatchedType).eventType}
+  event = ${event}
+  linkedNode = Template {
+    templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/NodeLink.html'
+    event = ${event}
+    @process.trim = ${String.trim(value)}
+  }
+  user = Template {
+    templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/User.html'
+    event = ${event}
+    @process.trim = ${String.trim(value)}
+  }
 
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Adopt) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
-	descriptionTranslationId = 'history.eventDescription.node.adopted'
-	descriptionTranslationArguments = ${[this.user, Neos.Rendering.renderDimensions(Array.first(eventsOfMatchedType).data.targetDimensions), I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
+  descriptionTranslationId = 'history.eventDescription.node.adopted'
+  descriptionTranslationArguments = ${[this.user, Neos.Rendering.renderDimensions(Array.first(eventsOfMatchedType).data.targetDimensions), I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.LabelChanged) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
-	descriptionTranslationId = 'history.eventDescription.node.renamed'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), Array.first(eventsOfMatchedType).data.oldLabel, this.linkedNode]}
+  descriptionTranslationId = 'history.eventDescription.node.renamed'
+  descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), Array.first(eventsOfMatchedType).data.oldLabel, this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Added) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
-	descriptionTranslationId = 'history.eventDescription.node.added'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
+  descriptionTranslationId = 'history.eventDescription.node.added'
+  descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Removed) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
-	descriptionTranslationId = 'history.eventDescription.node.removed'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
+  descriptionTranslationId = 'history.eventDescription.node.removed'
+  descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Copy) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
-	descriptionTranslationId = 'history.eventDescription.node.copied'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
+  descriptionTranslationId = 'history.eventDescription.node.copied'
+  descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Move) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
-	descriptionTranslationId = 'history.eventDescription.node.moved'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
+  descriptionTranslationId = 'history.eventDescription.node.moved'
+  descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Updated) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
-	descriptionTranslationId = 'history.eventDescription.node.changed'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
+  descriptionTranslationId = 'history.eventDescription.node.changed'
+  descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.ContentChanged) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
-	descriptionTranslationId = 'history.eventDescription.node.changedContent'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
+  descriptionTranslationId = 'history.eventDescription.node.changedContent'
+  descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.MissingEvent) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
-	descriptionTranslationArguments = ${[this.user]}
+  descriptionTranslationArguments = ${[this.user]}
 }
 
 #
@@ -118,23 +118,23 @@ prototype(Neos.Neos:History.PublishedNode.MissingEvent) < prototype(Neos.Neos:Hi
 #
 
 prototype(Neos.Neos:History.AbstractAccountEvent) < prototype(Template) {
-	templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
-	sectionName = 'eventElement'
+  templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
+  sectionName = 'eventElement'
 
-	user = Template {
-		templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/User.html'
-		event = ${event}
-	}
+  user = Template {
+    templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/User.html'
+    event = ${event}
+  }
 
-	event = ${event}
-	descriptionTranslationArguments = ${[this.user, event.data.accountIdentifier, event.data.name]}
+  event = ${event}
+  descriptionTranslationArguments = ${[this.user, event.data.accountIdentifier, event.data.name]}
 }
 
 prototype(Neos.Neos:History.AccountCreatedEvent) < prototype(Neos.Neos:History.AbstractAccountEvent) {
-	descriptionTranslationId = 'history.eventDescription.account.created'
+  descriptionTranslationId = 'history.eventDescription.account.created'
 }
 
 prototype(Neos.Neos:History.AccountDeletedEvent) < prototype(Neos.Neos:History.AbstractAccountEvent) {
-	descriptionTranslationId = 'history.eventDescription.account.deleted'
+  descriptionTranslationId = 'history.eventDescription.account.deleted'
 }
 

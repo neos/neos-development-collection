@@ -1,12 +1,12 @@
 prototype(Neos.Neos:MenuItems) {
-	@class = 'Neos\\Neos\\Fusion\\MenuItemsImplementation'
+  @class = 'Neos\\Neos\\Fusion\\MenuItemsImplementation'
 
-	node = ${node}
-	entryLevel = ${this.startingPoint ? 0 : 1}
-	maximumLevels = 2
-	startingPoint = null
-	lastLevel = null
-	filter = 'Neos.Neos:Document'
-	renderHiddenInIndex = false
-	itemCollection = null
+  node = ${node}
+  entryLevel = ${this.startingPoint ? 0 : 1}
+  maximumLevels = 2
+  startingPoint = null
+  lastLevel = null
+  filter = 'Neos.Neos:Document'
+  renderHiddenInIndex = false
+  itemCollection = null
 }

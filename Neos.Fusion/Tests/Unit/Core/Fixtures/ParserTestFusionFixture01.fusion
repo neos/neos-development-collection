@@ -5,7 +5,7 @@
 #  - value assignments: object type and literal
 
 test = Neos.Fusion:Text
- 	test.value= "Hello world!"
+   test.value= "Hello world!"
 
 secondTest = Text
 secondTest.value = 23
