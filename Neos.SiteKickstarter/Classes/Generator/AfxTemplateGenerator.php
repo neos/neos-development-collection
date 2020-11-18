@@ -1,8 +1,10 @@
 <?php
-namespace Neos\SiteKickstarter\Service;
+declare(strict_types=1);
+
+namespace Neos\SiteKickstarter\Generator;
 
 /*
- * This file is part of the Neos.Kickstarterer package.
+ * This file is part of the Neos.SiteKickstarter package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,20 +15,30 @@ namespace Neos\SiteKickstarter\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
+use Neos\Kickstarter\Service\GeneratorService;
+use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
 use Neos\Utility\Files;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Utility;
+use Neos\SiteKickstarter\Service\FusionRecursiveDirectoryRenderer;
 
 /**
  * Service to generate site packages
+ *
  */
-class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
+class AfxTemplateGenerator extends GeneratorService implements SitePackageGeneratorInterface
 {
     /**
      * @Flow\Inject
      * @var PackageManager
      */
     protected $packageManager;
+
+    /**
+     * @Flow\Inject
+     * @var SimpleTemplateRenderer
+     */
+    protected $simpleTemplateRenderer;
 
     /**
      * @Flow\Inject
@@ -40,14 +52,21 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * @param string $packageKey
      * @param string $siteName
      * @return array
+     * @throws \Neos\Flow\Composer\Exception\InvalidConfigurationException
+     * @throws \Neos\Flow\Package\Exception
+     * @throws \Neos\Flow\Package\Exception\CorruptPackageException
+     * @throws \Neos\Flow\Package\Exception\InvalidPackageKeyException
+     * @throws \Neos\Flow\Package\Exception\PackageKeyAlreadyExistsException
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
+     * @throws \Neos\FluidAdaptor\Core\Exception
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    public function generateSitePackage($packageKey, $siteName)
+    public function generateSitePackage(string $packageKey, string $siteName) : array
     {
         $this->packageManager->createPackage($packageKey, [
             'type' => 'neos-site',
             "require" => [
-                "neos/neos" => "*",
-                "neos/nodetypes" => "*"
+                "neos/neos" => "*"
             ],
             "suggest" => [
                 "neos/seo" => "*"
@@ -55,9 +74,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
         ]);
 
         $this->generateSitesXml($packageKey, $siteName);
-        $this->generateSitesRootFusion($packageKey, $siteName);
-        $this->generateSitesPageFusion($packageKey, $siteName);
-        $this->generateDefaultTemplate($packageKey, $siteName);
+        $this->generateSitesFusionDirectory($packageKey, $siteName);
         $this->generateNodeTypesConfiguration($packageKey);
         $this->generateAdditionalFolders($packageKey);
 
@@ -69,11 +86,12 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      *
      * @param string $packageKey
      * @param string $siteName
-     * @return void
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
+     * @throws \Neos\FluidAdaptor\Core\Exception
      */
-    protected function generateSitesXml($packageKey, $siteName)
+    protected function generateSitesXml(string $packageKey, string $siteName) : void
     {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Content/Sites.xml';
+        $templatePathAndFilename = $this->getResourcePathForFile('Content/Sites.xml');
 
         $contextVariables = [
             'packageKey' => $packageKey,
@@ -93,11 +111,11 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      *
      * @param string $packageKey
      * @param string $siteName
-     * @return void
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    protected function generateSitesRootFusion($packageKey, $siteName)
+    protected function generateSitesRootFusion(string $packageKey, string $siteName) : void
     {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/Root.fusion';
+        $templatePathAndFilename = $this->getResourcePathForFile('Fusion/Root.fusion');
 
         $contextVariables = [
             'packageKey' => $packageKey,
@@ -105,57 +123,36 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
             'siteNodeName' => $this->generateSiteNodeName($packageKey)
         ];
 
-        $fileContent = $this->renderSimpleTemplate($templatePathAndFilename, $contextVariables);
+        $fileContent = $this->simpleTemplateRenderer->render($templatePathAndFilename, $contextVariables);
 
         $sitesRootFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/Root.fusion';
         $this->generateFile($sitesRootFusionPathAndFilename, $fileContent);
     }
 
     /**
-     * Generate basic Fusion documentNode file.
+     * Render the whole directory of the fusion part
      *
-     * @param string $packageKey
-     * @param string $siteName
-     * @return void
+     * @param $packageKey
+     * @param $siteName
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    protected function generateSitesPageFusion($packageKey, $siteName)
+    protected function generateSitesFusionDirectory(string $packageKey, string $siteName) : void
     {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/NodeTypes/Pages/Page.fusion';
-
         $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['siteName'] = $siteName;
         $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
         $contextVariables['siteNodeName'] = $packageKeyDomainPart;
 
-        $fileContent = $this->renderSimpleTemplate($templatePathAndFilename, $contextVariables);
+        $fusionRecursiveDirectoryRenderer = new FusionRecursiveDirectoryRenderer();
 
-        $sitesPageFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/NodeTypes/Page.fusion';
-        $this->generateFile($sitesPageFusionPathAndFilename, $fileContent);
-    }
+        $packageDirectory = $this->packageManager->getPackage('Neos.SiteKickstarter')->getResourcesPath();
 
-    /**
-     * Generate basic template file.
-     *
-     * @param string $packageKey
-     * @param string $siteName
-     * @return void
-     */
-    protected function generateDefaultTemplate($packageKey, $siteName)
-    {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Template/SiteTemplate.html';
-
-        $contextVariables = [
-            'siteName' => $siteName,
-            'neosViewHelper' => '{namespace neos=Neos\Neos\ViewHelpers}',
-            'fusionViewHelper' => '{namespace fusion=Neos\Fusion\ViewHelpers}',
-            'siteNodeName' => $this->generateSiteNodeName($packageKey)
-        ];
-
-        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
-
-        $defaultTemplatePathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/Page/Default.html';
-        $this->generateFile($defaultTemplatePathAndFilename, $fileContent);
+        $fusionRecursiveDirectoryRenderer->renderDirectory(
+            $packageDirectory . 'Private/AfxGenerator/Fusion',
+            $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion',
+            $contextVariables
+        );
     }
 
     /**
@@ -164,7 +161,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * @param string $packageKey
      * @return string
      */
-    protected function generateSiteNodeName($packageKey)
+    protected function generateSiteNodeName(string $packageKey) : string
     {
         return Utility::renderValidNodeName($packageKey);
     }
@@ -173,17 +170,17 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * Generate a example NodeTypes.yaml
      *
      * @param string $packageKey
-     * @throws \Neos\FluidAdaptor\Core\Exception
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    protected function generateNodeTypesConfiguration($packageKey)
+    protected function generateNodeTypesConfiguration(string $packageKey) : void
     {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Configuration/NodeTypes.Document.Page.yaml';
+        $templatePathAndFilename = $this->getResourcePathForFile('Configuration/NodeTypes.Document.Page.yaml');
 
         $contextVariables = [
             'packageKey' => $packageKey
         ];
 
-        $fileContent = $this->renderSimpleTemplate($templatePathAndFilename, $contextVariables);
+        $fileContent = $this->simpleTemplateRenderer->render($templatePathAndFilename, $contextVariables);
 
         $sitesNodeTypesPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.Document.Page.yaml';
         $this->generateFile($sitesNodeTypesPathAndFilename, $fileContent);
@@ -193,8 +190,10 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * Generate additional folders for site packages.
      *
      * @param string $packageKey
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    protected function generateAdditionalFolders($packageKey)
+    protected function generateAdditionalFolders(string $packageKey) : void
     {
         $resourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();
         $publicResourcesPath = Files::concatenatePaths([$resourcesPath, 'Public']);
@@ -205,18 +204,18 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     }
 
     /**
-     * Simplified template rendering
+     * returns resource path for the generator
      *
-     * @param string $templatePathAndFilename
-     * @param array $contextVariables
+     * @param $pathToFile
      * @return string
      */
-    protected function renderSimpleTemplate($templatePathAndFilename, array $contextVariables)
+    protected function getResourcePathForFile(string $pathToFile) : string
     {
-        $content = file_get_contents($templatePathAndFilename);
-        foreach ($contextVariables as $key => $value) {
-            $content = str_replace('{' . $key . '}', $value, $content);
-        }
-        return $content;
+        return 'resource://Neos.SiteKickstarter/Private/AfxGenerator/' . $pathToFile;
+    }
+
+    public function getGeneratorName(): string
+    {
+        return 'Afx Basic';
     }
 }

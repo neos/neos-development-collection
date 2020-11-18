@@ -7,14 +7,6 @@ branches:
 jobs:
   fast_finish: true
   include:
-    - php: 7.2
-      env: DB=mysql
-      addons:
-        mariadb: '10.2'
-    - php: 7.2
-      env: DB=mysql BEHAT=true
-      addons:
-        mariadb: '10.2'
     - php: 7.3
       env: DB=mysql
       addons:

@@ -43,6 +43,7 @@ Neos:
       Json: 'Neos\Eel\Helper\JsonHelper'
       Security: 'Neos\Eel\Helper\SecurityHelper'
       Translation: 'Neos\Flow\I18n\EelHelper\TranslationHelper'
+      StaticResource: 'Neos\Flow\ResourceManagement\EelHelper\StaticResourceHelper'
       Type: 'Neos\Eel\Helper\TypeHelper'
       I18n: 'Neos\Flow\I18n\EelHelper\TranslationHelper'
       File: 'Neos\Eel\Helper\FileHelper'

@@ -12,7 +12,6 @@ namespace Neos\Media\Tests\Functional\Fixtures\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
@@ -72,7 +71,7 @@ class ImageController extends ActionController
         $this->assetRepository->add($image);
         $this->assetRepository->add($imageVariant);
 
-        $this->response->setComponentParameter(SetHeaderComponent::class, 'X-ImageVariantUuid', $this->persistenceManager->getIdentifierByObject($imageVariant));
+        $this->response->setHttpHeader('X-ImageVariantUuid', $this->persistenceManager->getIdentifierByObject($imageVariant));
         return 'ok';
     }
 

@@ -11,26 +11,22 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
-use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -237,7 +233,7 @@ class LinkingService
      * @param string $section
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
-     * @param boolean $resolveShortcuts INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+     * @param boolean $resolveShortcuts @deprecated With Neos 6.0 this argument is no longer evaluated and log a message if set to FALSE
      * @return string The rendered URI
      * @throws NeosException if no URI could be resolved for the given node
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
@@ -249,6 +245,9 @@ class LinkingService
     public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
     {
         $this->lastLinkedNode = null;
+        if ($resolveShortcuts === false) {
+            $this->systemLogger->info(sprintf('%s() was called with the "resolveShortCuts" argument set to FALSE. This is no longer supported, the argument was ignored', __METHOD__));
+        }
         if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
             throw new \InvalidArgumentException('Expected an instance of NodeInterface or a string for the node argument, or alternatively a baseNode argument.', 1373101025);
         }
@@ -282,64 +281,19 @@ class LinkingService
         }
         $this->lastLinkedNode = $node;
 
-        if ($resolveShortcuts === true) {
-            $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
-        } else {
-            // this case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
-            // a link towards the *shortcut itself*, and not to its target.
-            $resolvedNode = $node;
-        }
-
-        if (is_string($resolvedNode)) {
-            return $resolvedNode;
-        }
-        if (!$resolvedNode instanceof NodeInterface) {
-            throw new NeosException(sprintf('Could not resolve shortcut target for node "%s"', $node->getPath()), 1414771137);
-        }
-
-        /** @var ActionRequest $request */
         $request = $controllerContext->getRequest()->getMainRequest();
-
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
-        $action = $resolvedNode->getContext()->getWorkspace()->isPublicWorkspace() && !$resolvedNode->isHidden() ? 'show' : 'preview';
-        $uri = $uriBuilder
+        $action = $node->getContext()->getWorkspace()->isPublicWorkspace() && !$node->isHidden() ? 'show' : 'preview';
+        return $uriBuilder
             ->reset()
             ->setSection($section)
             ->setArguments($arguments)
             ->setAddQueryString($addQueryString)
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
             ->setFormat($format ?: $request->getFormat())
-            ->uriFor($action, ['node' => $resolvedNode], 'Frontend\Node', 'Neos.Neos');
-
-        $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
-        if ($siteNode instanceof NodeInterface && NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
-            /** @var Site $site */
-            $site = $resolvedNode->getContext()->getCurrentSite();
-        } else {
-            $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $resolvedNode->getPath());
-            list($siteNodeName) = explode('/', $nodePath);
-            $site = $this->siteRepository->findOneByNodeName($siteNodeName);
-        }
-
-        $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
-        if ($site->hasActiveDomains()) {
-            $requestUriHost = $baseUri->getHost();
-            $activeHostPatterns = $site->getActiveDomains()->map(static function (Domain $domain) {
-                return $domain->getHostname();
-            })->toArray();
-            if (!in_array($requestUriHost, $activeHostPatterns, true)) {
-                $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
-            } elseif ($absolute === true) {
-                $uri = $baseUri . ltrim($uri, '/');
-            }
-        } elseif ($absolute === true) {
-            if (strncmp($uri, 'http://', 7) !== 0 && strncmp($uri, 'https://', 8) !== 0) {
-                $uri = $baseUri . ltrim($uri, '/');
-            }
-        }
-
-        return $uri;
+            ->setCreateAbsoluteUri($absolute)
+            ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos');
     }
 
     /**
@@ -355,9 +309,10 @@ class LinkingService
         if ($primaryDomain === null) {
             throw new NeosException(sprintf('Cannot link to a site "%s" since it has no active domains.', $site->getName()), 1460443524);
         }
-        $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
+        $httpRequest = $controllerContext->getRequest()->getHttpRequest();
+        $requestUri = $httpRequest->getUri();
         // TODO: Should probably directly use \Neos\Flow\Http\Helper\RequestInformationHelper::getRelativeRequestPath() and even that is tricky.
-        $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
+        $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest);
         $port = $primaryDomain->getPort() ?: $requestUri->getPort();
         return sprintf(
             '%s://%s%s%s',

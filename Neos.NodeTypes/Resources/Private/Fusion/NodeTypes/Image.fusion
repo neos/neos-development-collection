@@ -10,6 +10,7 @@ prototype(Neos.NodeTypes:Image) < prototype(Neos.Neos:Content) {
   image = ${q(node).property("image")}
   alternativeText = ${q(node).property("alternativeText")}
   link = ${q(node).property("link")}
+  loading = 'lazy'
   link.@process.convertUris = Neos.Neos:ConvertUris {
     forceConversion = true
   }

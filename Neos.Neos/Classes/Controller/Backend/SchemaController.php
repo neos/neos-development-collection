@@ -15,7 +15,6 @@ namespace Neos\Neos\Controller\Backend;
 
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;
 use Neos\Neos\Service\VieSchemaBuilder;
@@ -55,7 +54,7 @@ class SchemaController extends ActionController
         $cacheIdentifier = 'vieSchema_' . $version;
 
         $this->response->setContentType('application/json');
-        $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'max-age=' . (3600 * 24 * 7));
+        $this->response->setHttpHeader('Cache-Control', 'max-age=' . (3600 * 24 * 7));
 
         $vieSchema = $this->nodeTypeSchemaCache->get($cacheIdentifier);
         if (!$vieSchema) {
@@ -77,7 +76,7 @@ class SchemaController extends ActionController
         $cacheIdentifier = 'nodeTypeSchema_' . $version;
 
         $this->response->setContentType('application/json');
-        $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'max-age=' . (3600 * 24 * 7));
+        $this->response->setHttpHeader('Cache-Control', 'max-age=' . (3600 * 24 * 7));
 
         $nodeTypeSchema = $this->nodeTypeSchemaCache->get($cacheIdentifier);
         if (!$nodeTypeSchema) {

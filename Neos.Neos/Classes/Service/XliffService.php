@@ -111,10 +111,8 @@ class XliffService
                     $file = $this->xliffFileProvider->getFile($fileId, $locale);
 
                     foreach ($file->getTranslationUnits() as $key => $value) {
-                        $valueToStore = !empty($value[0]['target']) ? $value[0]['target'] : $value[0]['source'];
-                        if ($this->scrambleTranslatedLabels) {
-                            $valueToStore = str_repeat('#', UnicodeFunctions::strlen($valueToStore));
-                        }
+                        $valueToStore = $this->getTranslationUnitValue($value);
+                        $valueToStore = count($valueToStore) > 1 ? $valueToStore : array_shift($valueToStore);
                         $this->setArrayDataValue($labels, str_replace('.', '_', $packageKey) . '.' . str_replace('/', '_', $sourceName) . '.' . str_replace('.', '_', $key), $valueToStore);
                     }
                 }
@@ -125,6 +123,25 @@ class XliffService
         }
 
         return $json;
+    }
+
+    /**
+     * @param array $labelValue
+     * @return array
+     */
+    protected function getTranslationUnitValue(array $labelValue)
+    {
+        $xliffValue = [];
+
+        foreach ($labelValue as $key => $value) {
+            $valueToStore = !empty($value['target']) ? $value['target'] : $value['source'];
+            if ($this->scrambleTranslatedLabels) {
+                $valueToStore = str_repeat('#', UnicodeFunctions::strlen($valueToStore));
+            }
+            $xliffValue[$key] = $valueToStore;
+        }
+
+        return $xliffValue;
     }
 
     /**
@@ -204,7 +221,7 @@ class XliffService
      *
      * @param array $arrayPointer
      * @param string $key
-     * @param string $value
+     * @param string|array $value
      * @return void
      */
     protected function setArrayDataValue(array &$arrayPointer, $key, $value)
