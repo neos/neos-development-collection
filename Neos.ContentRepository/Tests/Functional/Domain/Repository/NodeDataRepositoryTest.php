@@ -116,7 +116,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     public function findNodesByRelatedEntitiesFindsExistingNodeWithMatchingAssetLink()
     {
         $rootNode = $this->context->getRootNode();
-        $newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Text'));
+        $newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Text'));
 
         $testImage = new Image();
         $this->persistenceManager->add($testImage);
