@@ -22,21 +22,21 @@ use Neos\ContentRepository\ViewHelpers\Widget\Controller\PaginateController;
  * = Examples =
  *
  * <code title="specifying the parent node">
- * <typo3cr:widget.paginate parentNode="{parentNode}" as="paginatedNodes" configuration="{itemsPerPage: 5}">
+ * <cr:widget.paginate parentNode="{parentNode}" as="paginatedNodes" configuration="{itemsPerPage: 5}">
  *   // use {paginatedNodes} inside a <f:for> loop.
- * </typo3cr:widget.paginate>
+ * </cr:widget.paginate>
  * </code>
  *
  * <code title="specifying the nodes explicitly">
- * <typo3cr:widget.paginate nodes="{myNodes}" as="paginatedNodes" configuration="{itemsPerPage: 5}">
+ * <cr:widget.paginate nodes="{myNodes}" as="paginatedNodes" configuration="{itemsPerPage: 5}">
  *   // use {paginatedNodes} inside a <f:for> loop.
- * </typo3cr:widget.paginate>
+ * </cr:widget.paginate>
  * </code>
  *
  * <code title="full configuration">
- * <typo3cr:widget.paginate parentNode="{parentNode}" as="paginatedNodes" nodeTypeFilter="Neos.Neos:Page" configuration="{itemsPerPage: 5, insertAbove: 1, insertBelow: 0, maximumNumberOfLinks: 10, maximumNumberOfNodes: 350}">
+ * <cr:widget.paginate parentNode="{parentNode}" as="paginatedNodes" nodeTypeFilter="Neos.Neos:Page" configuration="{itemsPerPage: 5, insertAbove: 1, insertBelow: 0, maximumNumberOfLinks: 10, maximumNumberOfNodes: 350}">
  *   // use {paginatedNodes} inside a <f:for> loop.
- * </typo3cr:widget.paginate>
+ * </cr:widget.paginate>
  * </code>
  *
  * @api
