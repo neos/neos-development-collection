@@ -1,5 +1,5 @@
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
 
 reservedKeys = Neos.Fusion:RawArray {
-	__custom = 1
+  __custom = 1
 }

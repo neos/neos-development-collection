@@ -2,39 +2,39 @@ prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImpleme
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 array.basicOrdering = Neos.Fusion:Array {
-	100 = Neos.Fusion:TestRenderer
-	100.test = 'test100'
+  100 = Neos.Fusion:TestRenderer
+  100.test = 'test100'
 
-	10 = Neos.Fusion:TestRenderer
-	10.test = 'test10'
+  10 = Neos.Fusion:TestRenderer
+  10.test = 'test10'
 }
 
 array.positionalOrdering = Neos.Fusion:Array {
-	c = Neos.Fusion:TestRenderer
-	c.test = 'before'
-	c.@position = '10'
+  c = Neos.Fusion:TestRenderer
+  c.test = 'before'
+  c.@position = '10'
 
-	a = Neos.Fusion:TestRenderer
-	a.test = 'after'
-	a.@position = '100'
+  a = Neos.Fusion:TestRenderer
+  a.test = 'after'
+  a.@position = '100'
 
-	f = Neos.Fusion:TestRenderer
-	f.test = 'middle'
-	f.@position = '50'
+  f = Neos.Fusion:TestRenderer
+  f.test = 'middle'
+  f.@position = '50'
 }
 
 array.startEndOrdering = Neos.Fusion:Array {
-	a = Neos.Fusion:TestRenderer
-	a.test = 'after'
-	a.@position = 'end'
+  a = Neos.Fusion:TestRenderer
+  a.test = 'after'
+  a.@position = 'end'
 
-	c = Neos.Fusion:TestRenderer
-	c.test = 'before'
-	c.@position = 'start'
+  c = Neos.Fusion:TestRenderer
+  c.test = 'before'
+  c.@position = 'start'
 
-	f = Neos.Fusion:TestRenderer
-	f.test = 'middle'
-	f.@position = '50'
+  f = Neos.Fusion:TestRenderer
+  f.test = 'middle'
+  f.@position = '50'
 }
 
 # expected ordering:
@@ -48,41 +48,41 @@ array.startEndOrdering = Neos.Fusion:Array {
 # - a
 # - c
 array.advancedStartEndOrdering = Neos.Fusion:Array {
-	a = Neos.Fusion:TestRenderer
-	a.test = 'a'
-	a.@position = 'end 10'
+  a = Neos.Fusion:TestRenderer
+  a.test = 'a'
+  a.@position = 'end 10'
 
-	b = Neos.Fusion:TestRenderer
-	b.test = 'b'
-	b.@position = 'end'
+  b = Neos.Fusion:TestRenderer
+  b.test = 'b'
+  b.@position = 'end'
 
-	c = Neos.Fusion:TestRenderer
-	c.test = 'c'
-	c.@position = 'end 20'
+  c = Neos.Fusion:TestRenderer
+  c.test = 'c'
+  c.@position = 'end 20'
 
-	d = Neos.Fusion:TestRenderer
-	d.test = 'd'
-	d.@position = 'start'
+  d = Neos.Fusion:TestRenderer
+  d.test = 'd'
+  d.@position = 'start'
 
-	e = Neos.Fusion:TestRenderer
-	e.test = 'e'
-	e.@position = 'start 10'
+  e = Neos.Fusion:TestRenderer
+  e.test = 'e'
+  e.@position = 'start 10'
 
-	f = Neos.Fusion:TestRenderer
-	f.test = 'f'
-	f.@position = '50'
+  f = Neos.Fusion:TestRenderer
+  f.test = 'f'
+  f.@position = '50'
 
-	100 = Neos.Fusion:TestRenderer
-	100.test = '100'
+  100 = Neos.Fusion:TestRenderer
+  100.test = '100'
 
-	foobar = Neos.Fusion:TestRenderer
-	foobar.test = 'foobar'
+  foobar = Neos.Fusion:TestRenderer
+  foobar.test = 'foobar'
 
-	g = Neos.Fusion:TestRenderer
-	g.test = 'g'
-	g.@position = '90'
+  g = Neos.Fusion:TestRenderer
+  g.test = 'g'
+  g.@position = '90'
 }
 
 array.ignoreProperties < array.positionalOrdering {
-	@ignoreProperties = ${['f']}
+  @ignoreProperties = ${['f']}
 }

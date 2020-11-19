@@ -3,15 +3,15 @@
 # Renders a meta tag with attributes about the current document node
 #
 prototype(Neos.Neos:DocumentMetadata) < prototype(Neos.Fusion:Tag) {
-	tagName = 'div'
-	forceClosingTag = true
-	attributes {
-		id = 'neos-document-metadata'
-	}
+  tagName = 'div'
+  forceClosingTag = true
+  attributes {
+    id = 'neos-document-metadata'
+  }
 
-	@process.contentElementWrapping = Neos.Neos:ContentElementWrapping {
-		renderCurrentDocumentMetadata = true
-	}
+  @process.contentElementWrapping = Neos.Neos:ContentElementWrapping {
+    renderCurrentDocumentMetadata = true
+  }
 
-	@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
+  @if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 }

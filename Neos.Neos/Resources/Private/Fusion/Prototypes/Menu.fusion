@@ -1,59 +1,59 @@
 # Neos.Neos:Menu provides basic menu rendering
 #
 prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
-	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Menu.html'
+  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Menu.html'
 
-	entryLevel = ${this.startingPoint ? 0 : 1}
-	maximumLevels = 2
-	startingPoint = null
-	lastLevel = null
-	filter = 'Neos.Neos:Document'
-	renderHiddenInIndex = false
-	itemCollection = null
+  entryLevel = ${this.startingPoint ? 0 : 1}
+  maximumLevels = 2
+  startingPoint = null
+  lastLevel = null
+  filter = 'Neos.Neos:Document'
+  renderHiddenInIndex = false
+  itemCollection = null
 
-	node = ${node}
+  node = ${node}
 
-	attributes = Neos.Fusion:Attributes
+  attributes = Neos.Fusion:Attributes
 
-	active.attributes = Neos.Fusion:Attributes {
-		class = 'active'
-	}
-	current.attributes = Neos.Fusion:Attributes {
-		class = 'current'
-	}
-	normal.attributes = Neos.Fusion:Attributes {
-		class = 'normal'
-	}
+  active.attributes = Neos.Fusion:Attributes {
+    class = 'active'
+  }
+  current.attributes = Neos.Fusion:Attributes {
+    class = 'current'
+  }
+  normal.attributes = Neos.Fusion:Attributes {
+    class = 'normal'
+  }
 
   @context {
-		entryLevel = ${this.entryLevel}
-		maximumLevels = ${this.maximumLevels}
-		startingPoint = ${this.startingPoint}
-		lastLevel = ${this.lastLevel}
-		filter = ${this.filter}
-		renderHiddenInIndex = ${this.renderHiddenInIndex}
-		itemCollection = ${this.itemCollection}
-	}
+    entryLevel = ${this.entryLevel}
+    maximumLevels = ${this.maximumLevels}
+    startingPoint = ${this.startingPoint}
+    lastLevel = ${this.lastLevel}
+    filter = ${this.filter}
+    renderHiddenInIndex = ${this.renderHiddenInIndex}
+    itemCollection = ${this.itemCollection}
+  }
 
-	items = Neos.Neos:MenuItems {
-		entryLevel = ${entryLevel}
-		maximumLevels = ${maximumLevels}
-		startingPoint = ${startingPoint}
-		lastLevel = ${lastLevel}
-		filter = ${filter}
-		renderHiddenInIndex = ${renderHiddenInIndex}
-		itemCollection = ${itemCollection}
-	}
+  items = Neos.Neos:MenuItems {
+    entryLevel = ${entryLevel}
+    maximumLevels = ${maximumLevels}
+    startingPoint = ${startingPoint}
+    lastLevel = ${lastLevel}
+    filter = ${filter}
+    renderHiddenInIndex = ${renderHiddenInIndex}
+    itemCollection = ${itemCollection}
+  }
 
-	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
 
-	@cache {
-		mode = 'cached'
-		entryIdentifier {
-			documentNode = ${documentNode}
-		}
-		entryTags {
-			1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', documentNode)}
-		}
-	}
+  @cache {
+    mode = 'cached'
+    entryIdentifier {
+      documentNode = ${documentNode}
+    }
+    entryTags {
+      1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', documentNode)}
+    }
+  }
 }
