@@ -3,119 +3,119 @@
 prototype(Neos.Neos:Page) >
 prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 
-	doctype = '<!DOCTYPE html>'
-	doctype.@position = 'start 100'
+  doctype = '<!DOCTYPE html>'
+  doctype.@position = 'start 100'
 
-	# Only the opening html tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
-	htmlTag = Neos.Fusion:Tag {
-		@position = 'start'
-		tagName = 'html'
-		omitClosingTag = true
-	}
+  # Only the opening html tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
+  htmlTag = Neos.Fusion:Tag {
+    @position = 'start'
+    tagName = 'html'
+    omitClosingTag = true
+  }
 
   headerComment = ${Configuration.setting('Neos.Neos.headerComment')}
   headerComment.@position = 'before headTag'
 
-	# The opening head tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
-	headTag = Neos.Fusion:Tag {
-		@position = 'after htmlTag'
-		tagName = 'head'
-		omitClosingTag = true
-	}
+  # The opening head tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
+  headTag = Neos.Fusion:Tag {
+    @position = 'after htmlTag'
+    tagName = 'head'
+    omitClosingTag = true
+  }
 
-	# The content of the head tag, integrators can add their own head content in this array.
-	head = Neos.Fusion:Array {
-		@position = 'after headTag'
+  # The content of the head tag, integrators can add their own head content in this array.
+  head = Neos.Fusion:Array {
+    @position = 'after headTag'
 
-		characterSetMetaTag = Neos.Fusion:Tag {
-			@position = 'start 10'
-			tagName = 'meta'
-			attributes {
-				charset = 'UTF-8'
-			}
-		}
+    characterSetMetaTag = Neos.Fusion:Tag {
+      @position = 'start 10'
+      tagName = 'meta'
+      attributes {
+        charset = 'UTF-8'
+      }
+    }
 
-		titleTag = Neos.Fusion:Tag {
-			tagName = 'title'
-			content = ${q(node).property('title')}
-		}
+    titleTag = Neos.Fusion:Tag {
+      tagName = 'title'
+      content = ${q(node).property('title')}
+    }
 
-		# Link tags for stylesheets in the head should go here
-		stylesheets = Neos.Fusion:Array
+    # Link tags for stylesheets in the head should go here
+    stylesheets = Neos.Fusion:Array
 
-		# Script includes in the head should go here
-		javascripts = Neos.Fusion:Array {
-			@position = 'after stylesheets'
-		}
-	}
+    # Script includes in the head should go here
+    javascripts = Neos.Fusion:Array {
+      @position = 'after stylesheets'
+    }
+  }
 
-	closingHeadTag = '</head>'
-	closingHeadTag.@position = 'after head'
+  closingHeadTag = '</head>'
+  closingHeadTag.@position = 'after head'
 
-	# The opening body tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
-	bodyTag = Neos.Fusion:Tag {
-		@position = '20'
-		tagName = 'body'
-		omitClosingTag = true
-		attributes.class.@process.addNeosBackendClass = Neos.Fusion:Case {
-			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
+  # The opening body tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
+  bodyTag = Neos.Fusion:Tag {
+    @position = '20'
+    tagName = 'body'
+    omitClosingTag = true
+    attributes.class.@process.addNeosBackendClass = Neos.Fusion:Case {
+      @if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 
-			classIsString {
-				condition = ${Type.isString(value)}
-				renderer = ${String.trim(value + ' neos-backend')}
-			}
+      classIsString {
+        condition = ${Type.isString(value)}
+        renderer = ${String.trim(value + ' neos-backend')}
+      }
 
-			classIsArray {
-				condition = ${Type.isArray(value)}
-				renderer = ${Array.push(value, 'neos-backend')}
-			}
-		}
-	}
+      classIsArray {
+        condition = ${Type.isArray(value)}
+        renderer = ${Array.push(value, 'neos-backend')}
+      }
+    }
+  }
 
-	# Content of the body tag. To be defined by the integrator.
-	body = Neos.Fusion:Template {
-		@position = 'after bodyTag'
-		node = ${node}
-		site = ${site}
+  # Content of the body tag. To be defined by the integrator.
+  body = Neos.Fusion:Template {
+    @position = 'after bodyTag'
+    node = ${node}
+    site = ${site}
 
-		# Script includes before the closing body tag should go here
-		javascripts = Neos.Fusion:Array
-		# This processor appends the rendered javascripts Array to the rendered template
-		@process.appendJavaScripts = ${value + this.javascripts}
-	}
+    # Script includes before the closing body tag should go here
+    javascripts = Neos.Fusion:Array
+    # This processor appends the rendered javascripts Array to the rendered template
+    @process.appendJavaScripts = ${value + this.javascripts}
+  }
 
-	# This enables redirecting to the last visited page after login
-	lastVisitedNodeScript = Neos.Fusion:Tag {
-		@position = 'before closingBodyTag'
+  # This enables redirecting to the last visited page after login
+  lastVisitedNodeScript = Neos.Fusion:Tag {
+    @position = 'before closingBodyTag'
 
-		tagName = 'script'
-		attributes {
-			data-neos-node = ${node.contextPath}
-			src = Neos.Fusion:ResourceUri {
-				path = 'resource://Neos.Neos/Public/JavaScript/LastVisitedNode.js'
-			}
-			async = true
-		}
-	}
+    tagName = 'script'
+    attributes {
+      data-neos-node = ${node.contextPath}
+      src = Neos.Fusion:ResourceUri {
+        path = 'resource://Neos.Neos/Public/JavaScript/LastVisitedNode.js'
+      }
+      async = true
+    }
+  }
 
-	closingBodyTag = '</body>'
-	closingBodyTag.@position = 'end 100'
+  closingBodyTag = '</body>'
+  closingBodyTag.@position = 'end 100'
 
-	closingHtmlTag = '</html>'
-	closingHtmlTag.@position = 'end 200'
+  closingHtmlTag = '</html>'
+  closingHtmlTag.@position = 'end 200'
 
 
-	@cache {
-		mode = 'cached'
-		entryIdentifier {
-			documentNode = ${node}
-		}
-		entryTags {
-			1 = ${Neos.Caching.nodeTag(node)}
-		}
-	}
+  @cache {
+    mode = 'cached'
+    entryIdentifier {
+      documentNode = ${node}
+    }
+    entryTags {
+      1 = ${Neos.Caching.nodeTag(node)}
+    }
+  }
 
   @process.debugDump = Neos.Fusion:DebugDump
 
-	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
+  @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
 }

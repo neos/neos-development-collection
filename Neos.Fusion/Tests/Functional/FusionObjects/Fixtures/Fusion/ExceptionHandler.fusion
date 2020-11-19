@@ -1,31 +1,31 @@
 prototype(Neos.Fusion:Testing.Throwing).@class = 'Neos\\Fusion\\Tests\\Functional\\FusionObjects\\Fixtures\\FusionObjects\\ThrowingImplementation'
 
 exceptionHandler.eelExpressionInProperty = Neos.Fusion:Array {
-	start = 'Start'
-	error = Neos.Fusion:Collection {
-		collection = ${Testing.Utility.throwException()}
+  start = 'Start'
+  error = Neos.Fusion:Collection {
+    collection = ${Testing.Utility.throwException()}
 
-		@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
-	}
-	end = 'End'
+    @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
+  }
+  end = 'End'
 }
 
 exceptionHandler.eelExpressionInOverride = Neos.Fusion:Array {
-	start = 'Start'
-	error = Neos.Fusion:Collection {
-		@context.myCollection = ${Testing.Utility.throwException()}
-		collection = ${myCollection}
-		itemName = 'item'
+  start = 'Start'
+  error = Neos.Fusion:Collection {
+    @context.myCollection = ${Testing.Utility.throwException()}
+    collection = ${myCollection}
+    itemName = 'item'
 
-		@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
-	}
-	end = 'End'
+    @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
+  }
+  end = 'End'
 }
 
 
 exceptionHandler.nestedHandlerIsEvaluated = Neos.Fusion:Value {
-	value = Neos.Fusion:Testing.Throwing {
-		shouldThrow = true
-		@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
-	}
+  value = Neos.Fusion:Testing.Throwing {
+    shouldThrow = true
+    @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
+  }
 }

@@ -17,13 +17,13 @@ conditions.expressionFalse.@if.cond1 = false
 
 conditions.expressionAtLeastOneFalse < conditions.expressionTrue
 conditions.expressionAtLeastOneFalse.@if.cond2 = Neos.Fusion:Value {
-	value = false
+  value = false
 }
 
 conditions.objectTrue = Neos.Fusion:Value {
-	@if.cond1 = true
+  @if.cond1 = true
 
-	value = 'Foo'
+  value = 'Foo'
 }
 conditions.objectFalse < conditions.objectTrue
 conditions.objectFalse.@if.cond1 = false
@@ -32,90 +32,90 @@ conditions.objectAtLeastOneFalse < conditions.objectTrue
 conditions.objectAtLeastOneFalse.@if.cond2 = ${2 < 1}
 
 conditions.objectThis = Neos.Fusion:Value {
-	@if.cond1 = ${this.someValue}
+  @if.cond1 = ${this.someValue}
 
-	someValue = false
+  someValue = false
 
-	value = 'Foo'
+  value = 'Foo'
 }
 
 conditions.variableCondition = 'Rendered'
 conditions.variableCondition.@if.cond1 = ${condition}
 
 conditions.rawArray = Neos.Fusion:RawArray {
-	key = 'foo'
-	nullValue = ${null}
-	keyNotSet = 'bar'
-	keyNotSet.@if.cond = false
+  key = 'foo'
+  nullValue = ${null}
+  keyNotSet = 'bar'
+  keyNotSet.@if.cond = false
 }
 
 conditions.attributes = Neos.Fusion:Attributes {
-	key = 'foo'
-	keyNotSet = 'bar'
-	keyNotSet.@if.cond = false
+  key = 'foo'
+  keyNotSet = 'bar'
+  keyNotSet.@if.cond = false
 }
 
 conditions.supportForConditionInProcess = Neos.Fusion:Value {
-	value = 'originalValue'
-	@process.wrap {
-		expression = 'wrappedValue'
-		@if.doIfTrue = true
-	}
+  value = 'originalValue'
+  @process.wrap {
+    expression = 'wrappedValue'
+    @if.doIfTrue = true
+  }
 }
 
 conditions.supportForConditionInProcessFalse = Neos.Fusion:Value {
-	value = 'originalValue'
-	@process.wrap {
-		expression = 'wrappedValue'
-		@if.skipIfFalse = false
-	}
-	@process.wrap2 = ${'wrappedValue2'}
-	@process.wrap2.@if.skipIfFalse = false
+  value = 'originalValue'
+  @process.wrap {
+    expression = 'wrappedValue'
+    @if.skipIfFalse = false
+  }
+  @process.wrap2 = ${'wrappedValue2'}
+  @process.wrap2.@if.skipIfFalse = false
 }
 
 conditions.supportForConditionInProcessWithAdvancedProcess = Neos.Fusion:Value {
-	value = 'originalValue'
-	@process.wrap = Neos.Fusion:Value {
-		value = 'wrappedValue'
-		@if.doIfTrue = true
-	}
+  value = 'originalValue'
+  @process.wrap = Neos.Fusion:Value {
+    value = 'wrappedValue'
+    @if.doIfTrue = true
+  }
 }
 
 conditions.supportForConditionInProcessWithAdvancedProcessFalse = Neos.Fusion:Value {
-	value = 'originalValue'
-	@process.wrap = Neos.Fusion:Value {
-		value = 'wrappedValue'
-		@if.skipIfFalse = false
-	}
+  value = 'originalValue'
+  @process.wrap = Neos.Fusion:Value {
+    value = 'wrappedValue'
+    @if.skipIfFalse = false
+  }
 }
 
 conditions.supportForFusionObjectWithSubEvaluationUsedInProcessor = Value {
-	value = 'basic'
+  value = 'basic'
 
-	theArray = Array {
-		something = ' appended'
-		another = Value {
-			value = ' more'
-			@if.thisIsNotAppended = ${false}
-		}
-	}
+  theArray = Array {
+    something = ' appended'
+    another = Value {
+      value = ' more'
+      @if.thisIsNotAppended = ${false}
+    }
+  }
 
-	@process.appendArray = ${value + this.theArray}
+  @process.appendArray = ${value + this.theArray}
 }
 
 conditions.processorOnSimpleValueWithCondition = 'originalValue' {
-	@if.cond1 = false
-	@process.wrap = ${'<wrap>' + value + '</wrap>'}
+  @if.cond1 = false
+  @process.wrap = ${'<wrap>' + value + '</wrap>'}
 }
 
 conditions.processorOnExpressionWithCondition = ${'expressionValue'} {
-	@if.cond1 = false
-	@process.wrap = ${'<wrap>' + value + '</wrap>'}
+  @if.cond1 = false
+  @process.wrap = ${'<wrap>' + value + '</wrap>'}
 }
 
 conditions.processorOnObjectWithCondition = Neos.Fusion:Value {
-	value = 'originalValue'
-	@if.cond1 = false
+  value = 'originalValue'
+  @if.cond1 = false
 
-	@process.wrap = ${'<wrap>' + value + '</wrap>'}
+  @process.wrap = ${'<wrap>' + value + '</wrap>'}
 }

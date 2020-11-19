@@ -3,9 +3,9 @@
 # the name of the current nodes' node type
 #
 prototype(Neos.Neos:ContentCase) < prototype(Neos.Fusion:Case) {
-	default {
-		@position = 'end'
-		condition = true
-		type = ${q(node).property('_nodeType.name')}
-	}
+  default {
+    @position = 'end'
+    condition = true
+    type = ${q(node).property('_nodeType.name')}
+  }
 }
