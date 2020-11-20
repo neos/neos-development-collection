@@ -11,9 +11,12 @@ namespace Neos\Neos\Aspects;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
  * @Flow\Scope("singleton")
@@ -28,6 +31,12 @@ class FusionCachingAspect
     protected $fusionCache;
 
     /**
+     * @Flow\Inject
+     * @var SiteRepository
+     */
+    protected $siteRepository;
+
+    /**
      * @Flow\Around("setting(Neos.Neos.fusion.enableObjectTreeCache) && method(Neos\Neos\Domain\Service\FusionService->getMergedFusionObjectTree())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
@@ -35,7 +44,8 @@ class FusionCachingAspect
     public function cacheGetMergedFusionObjectTree(JoinPointInterface $joinPoint)
     {
         $currentSiteNode = $joinPoint->getMethodArgument('startNode');
-        $cacheIdentifier = str_replace('.', '_', $currentSiteNode->getContext()->getCurrentSite()->getSiteResourcesPackageKey());
+        $siteResourcesPackageKey = $this->getSiteForSiteNode($currentSiteNode)->getSiteResourcesPackageKey();
+        $cacheIdentifier = str_replace('.', '_', $siteResourcesPackageKey);
 
         if ($this->fusionCache->has($cacheIdentifier)) {
             $fusionObjectTree = $this->fusionCache->get($cacheIdentifier);
@@ -45,5 +55,18 @@ class FusionCachingAspect
         }
 
         return $fusionObjectTree;
+    }
+
+    /**
+     * Get a site for the given site node.
+     *
+     * See same method in the FusionService
+     *
+     * @param TraversableNodeInterface $siteNode
+     * @return Site
+     */
+    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode)
+    {
+        return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
     }
 }
