@@ -92,21 +92,6 @@ class FusionCachingAspectTest extends UnitTestCase
     /**
      * @test
      */
-    public function cacheGetMergedFusionObjectTreeThrowsExceptionIfSiteCantBeResolved()
-    {
-        $this->expectException(\RuntimeException::class);
-
-        $mockSiteRepository = $this->getMockBuilder(SiteRepository::class)->setMethods(['findOneByNodeName'])->disableOriginalConstructor()->getMock();
-        $mockSiteRepository->method('findOneByNodeName')->willReturn(null);
-
-        $this->inject($this->fusionCachingAspect, 'siteRepository', $mockSiteRepository);
-
-        $this->fusionCachingAspect->cacheGetMergedFusionObjectTree($this->mockJoinPoint);
-    }
-
-    /**
-     * @test
-     */
     public function cacheGetMergedFusionObjectTreeNormalizesCacheIdentifier()
     {
         $mockSiteRepository = $this->getMockBuilder(SiteRepository::class)->setMethods(['findOneByNodeName'])->disableOriginalConstructor()->getMock();
