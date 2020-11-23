@@ -81,7 +81,7 @@ interface NodeInterface
      * Returns the name of this node
      *
      * @return string
-     * @deprecated with version 4.3, use TraversableNode::getNodeName() instead.
+     * @deprecated with version 4.3, use TraversableNodeInterface::getNodeName() instead.
      */
     public function getName();
 
@@ -294,7 +294,7 @@ interface NodeInterface
      * Example: /sites/mysitecom/homepage/about
      *
      * @return string The absolute node path
-     * @deprecated with version 4.3, use TraversableNode::findNodePath() instead.
+     * @deprecated with version 4.3, use TraversableNodeInterface::findNodePath() instead.
      */
     public function getPath();
 
