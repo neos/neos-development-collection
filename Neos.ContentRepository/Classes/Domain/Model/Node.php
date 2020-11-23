@@ -408,7 +408,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the path of this node
      *
      * @return string
-     * @deprecated with version 4.3, use TraversableNode::findNodePath() instead.
+     * @deprecated with version 4.3, use TraversableNodeInterface::findNodePath() instead.
      */
     public function getPath()
     {
@@ -431,7 +431,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the name of this node
      *
      * @return string
-     * @deprecated with version 4.3, use TraversableNode::getNodeName() instead.
+     * @deprecated with version 4.3, use TraversableNodeInterface::getNodeName() instead.
      */
     public function getName()
     {
