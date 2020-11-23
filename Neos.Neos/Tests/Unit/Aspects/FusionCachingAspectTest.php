@@ -169,7 +169,7 @@ class FusionCachingAspectTest extends UnitTestCase
 
         $this->mockStartNode = $this->getMockBuilder(NodeInterface::class)->getMock();
 
-        $this->mockFusionCache->method('set')->willReturnCallback(static function(string $cacheIdentifier) {
+        $this->mockFusionCache->method('set')->willReturnCallback(static function (string $cacheIdentifier) {
             self::assertSame('Some_ResourcePackage', $cacheIdentifier);
         });
 
