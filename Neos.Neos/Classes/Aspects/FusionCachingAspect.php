@@ -62,18 +62,13 @@ class FusionCachingAspect
     /**
      * Get a site for the given site node.
      *
-     * See same method in the FusionService
+     * @see \Neos\Neos\Domain\Service\FusionService::getSiteForSiteNode()
      *
      * @param TraversableNodeInterface $siteNode
      * @return Site
      */
-    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode): Site
+    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode)
     {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $site = $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
-        if ($site === null) {
-            throw new \RuntimeException(sprintf('Failed to fetch site for node "%s"', (string)$siteNode->getNodeName()), 1606132610);
-        }
-        return $site;
+        return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
     }
 }
