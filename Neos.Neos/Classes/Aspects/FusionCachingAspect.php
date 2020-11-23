@@ -11,6 +11,7 @@ namespace Neos\Neos\Aspects;
  * source code.
  */
 
+use Neos\Cache\Exception as CacheException;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
@@ -40,6 +41,7 @@ class FusionCachingAspect
      * @Flow\Around("setting(Neos.Neos.fusion.enableObjectTreeCache) && method(Neos\Neos\Domain\Service\FusionService->getMergedFusionObjectTree())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
+     * @throws CacheException
      */
     public function cacheGetMergedFusionObjectTree(JoinPointInterface $joinPoint)
     {
@@ -65,8 +67,13 @@ class FusionCachingAspect
      * @param TraversableNodeInterface $siteNode
      * @return Site
      */
-    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode)
+    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode): Site
     {
-        return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
+        /** @noinspection PhpUndefinedMethodInspection */
+        $site = $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
+        if ($site === null) {
+            throw new \RuntimeException(sprintf('Failed to fetch site for node "%s"', (string)$siteNode->getNodeName()), 1606132610);
+        }
+        return $site;
     }
 }
