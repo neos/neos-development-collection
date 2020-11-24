@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 /*
