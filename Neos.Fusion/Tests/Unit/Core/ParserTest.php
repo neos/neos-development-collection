@@ -15,7 +15,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Exception;
-use Neos\Fusion\FusionObjects\ArrayImplementation;
+use Neos\Fusion\FusionObjects\JoinImplementation;
 
 /**
  * Testcase for the Fusion Parser
@@ -802,22 +802,22 @@ class ParserTest extends UnitTestCase
             '__prototypes' => [
                 'Neos.Neos:Foo' => [
                     '__meta' => [
-                        'class' => ArrayImplementation::class
+                        'class' => JoinImplementation::class
                     ]
                 ],
                 'Neos.Neos:Bar' => [
                     '__meta' => [
-                        'class' => ArrayImplementation::class
+                        'class' => JoinImplementation::class
                     ]
                 ],
                 'Neos.Schirmchen:Baz' => [
                     '__meta' => [
-                        'class' => ArrayImplementation::class
+                        'class' => JoinImplementation::class
                     ]
                 ],
                 'Neos.Future:Quux' => [
                     '__meta' => [
-                        'class' => ArrayImplementation::class
+                        'class' => JoinImplementation::class
                     ]
                 ]
             ]
