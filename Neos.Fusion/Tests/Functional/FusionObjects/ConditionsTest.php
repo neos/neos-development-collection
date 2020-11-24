@@ -29,7 +29,7 @@ class ConditionsTest extends AbstractFusionObjectTest
             ['conditions/objectFalse', null],
             ['conditions/objectAtLeastOneFalse', null],
             ['conditions/objectThis', null],
-            ['conditions/rawArray', ['key' => 'foo', 'nullValue' => null]],
+            ['conditions/dataStructure', ['key' => 'foo', 'nullValue' => null]],
             ['conditions/attributes', ' key="foo"'],
             ['conditions/supportForConditionInProcess', 'wrappedValue'],
             ['conditions/supportForConditionInProcessFalse', 'originalValue'],

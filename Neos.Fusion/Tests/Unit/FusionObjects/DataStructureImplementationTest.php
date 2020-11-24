@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 /*
@@ -26,7 +27,7 @@ class DataStructureImplementationTest extends UnitTestCase
     public function evaluateWithEmptyArrayRendersEmptyArray()
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $path = 'array/test';
+        $path = 'datastructure/test';
         $fusionObjectName = 'Neos.Fusion:DataStructure';
         $renderer = new DataStructureImplementation($mockRuntime, $path, $fusionObjectName);
         $result = $renderer->evaluate();

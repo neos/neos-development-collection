@@ -2,7 +2,7 @@
 # This example modifies the rendering inside the teaser and sidebar section, adding a class to headline elements
 #
 page1.body.content.teaser.prototype(Acme.Demo:Headline) {
-  attributes.class = Neos.Fusion:RawArray
+  attributes.class = Neos.Fusion:DataStructure
   attributes.class.test = 'test'
 }
 
