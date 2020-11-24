@@ -23,7 +23,7 @@ use Neos\Fusion\Exception\UnsupportedObjectTypeAtPathException;
  * object; and all its children are by-default interpreted as "Matcher" Fusion
  * objects if no others are specified.
  */
-class CaseImplementation extends ArrayImplementation
+class CaseImplementation extends JoinImplementation
 {
     /**
      * This constant should be returned by individual matchers if the matcher
