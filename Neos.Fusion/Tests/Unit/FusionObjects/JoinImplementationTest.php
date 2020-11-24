@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 /*
@@ -13,22 +14,22 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
-use Neos\Fusion\FusionObjects\ArrayImplementation;
+use Neos\Fusion\FusionObjects\JoinImplementation;
 
 /**
- * Testcase for the Fusion Array object
+ * Testcase for the Fusion Join object
  */
-class ArrayImplementationTest extends UnitTestCase
+class JoinImplementationTest extends UnitTestCase
 {
     /**
      * @test
      */
-    public function evaluateWithEmptyArrayRendersNull()
+    public function evaluateWithEmptyJoinRendersNull()
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $path = 'array/test';
-        $fusionObjectName = 'Neos.Fusion:Array';
-        $renderer = new ArrayImplementation($mockRuntime, $path, $fusionObjectName);
+        $path = 'join/test';
+        $fusionObjectName = 'Neos.Fusion:Join';
+        $renderer = new JoinImplementation($mockRuntime, $path, $fusionObjectName);
         $result = $renderer->evaluate();
         self::assertNull($result);
     }
@@ -124,8 +125,8 @@ class ArrayImplementationTest extends UnitTestCase
         }));
 
         $path = '';
-        $fusionObjectName = 'Neos.Fusion:Array';
-        $renderer = new ArrayImplementation($mockRuntime, $path, $fusionObjectName);
+        $fusionObjectName = 'Neos.Fusion:Join';
+        $renderer = new JoinImplementation($mockRuntime, $path, $fusionObjectName);
         foreach ($subElements as $key => $value) {
             $renderer[$key] = $value;
         }
