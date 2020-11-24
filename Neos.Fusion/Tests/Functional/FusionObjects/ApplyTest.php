@@ -250,10 +250,10 @@ class ApplyTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function arrayWithSpreadRendering()
+    public function dataStructureWithSpreadRendering()
     {
         $view = $this->buildView();
-        $view->setFusionPath('apply/renderRawArrayWithSpread');
+        $view->setFusionPath('apply/renderDataStructureWithSpread');
         self::assertEquals(
             [
                 'key' => 'original value',
