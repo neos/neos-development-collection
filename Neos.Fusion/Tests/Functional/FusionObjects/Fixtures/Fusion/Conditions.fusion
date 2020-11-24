@@ -42,7 +42,7 @@ conditions.objectThis = Neos.Fusion:Value {
 conditions.variableCondition = 'Rendered'
 conditions.variableCondition.@if.cond1 = ${condition}
 
-conditions.rawArray = Neos.Fusion:RawArray {
+conditions.dataStructure = Neos.Fusion:DataStructure {
   key = 'foo'
   nullValue = ${null}
   keyNotSet = 'bar'
