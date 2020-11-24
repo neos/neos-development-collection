@@ -55,7 +55,7 @@ prototype(Neos.Fusion:Reduce) {
 #
 prototype(Neos.Fusion:Http.ResponseHead) {
   @class = 'Neos\\Fusion\\FusionObjects\\Http\\ResponseHeadImplementation'
-  headers = Neos.Fusion:RawArray
+  headers = Neos.Fusion:DataStructure
 }
 
 # Render an HTTP message (response)
@@ -82,7 +82,7 @@ prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Join) {
 # Usage:
 # attributes = Neos.Fusion:Attributes {
 #   foo = 'bar'
-#   class = Neos.Fusion:RawArray {
+#   class = Neos.Fusion:DataStructure {
 #     class1 = 'class1'
 #     class2 = 'class2'
 #   }
@@ -120,9 +120,9 @@ prototype(Neos.Fusion:Tag) {
 #
 prototype(Neos.Fusion:UriBuilder) {
   @class = 'Neos\\Fusion\\FusionObjects\\UriBuilderImplementation'
-  additionalParams = Neos.Fusion:RawArray
-  arguments = Neos.Fusion:RawArray
-  argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
+  additionalParams = Neos.Fusion:DataStructure
+  arguments = Neos.Fusion:DataStructure
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
 
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
@@ -182,14 +182,14 @@ prototype(Neos.Fusion:Fragment) < prototype(Neos.Fusion:Component) {
 }
 
 # These are globally applied cache identifiers.
-# If you don't make @cache.entryIdentifiers another prototype (like a Neos.Fusion:RawArray)
+# If you don't make @cache.entryIdentifiers another prototype (like a Neos.Fusion:DataStructure)
 # they will be rendered as this prototype, which means everything in here is added to ALL cached
 # Fusion parts.
 # The baseUri contains the protocol (http/https), domain and port.
 #
 # WARNING: Do not delete this prototype, it is used inside of \Neos\Fusion\Core\Cache\RuntimeContentCache::buildCacheIdentifierValues() as a fallback.
 #
-prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:RawArray) {
+prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:DataStructure) {
   format = ${request.format}
   baseUri = ${String.toString(BaseUri.getConfiguredBaseUriOrFallbackToCurrentRequest(request.httpRequest))}
 }
