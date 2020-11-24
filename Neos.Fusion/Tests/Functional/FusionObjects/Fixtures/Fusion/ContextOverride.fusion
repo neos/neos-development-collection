@@ -1,7 +1,7 @@
-prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(Neos.Fusion:Join).@class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
-contextOverride.test = Neos.Fusion:Array {
+contextOverride.test = Neos.Fusion:Join {
 
   100 = Neos.Fusion:TestRenderer
   100.@override.var1alias = ${var1}
