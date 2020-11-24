@@ -15,7 +15,7 @@ namespace Neos\Fusion\FusionObjects;
 /**
  * Value object for simple type handling as Fusion objects
  *
- * //tsPath value The value this object should be evaluated to
+ * //fusionPath value The value this object should be evaluated to
  * @api
  */
 class ValueImplementation extends AbstractFusionObject
