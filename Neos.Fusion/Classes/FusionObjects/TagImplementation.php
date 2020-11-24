@@ -15,8 +15,8 @@ namespace Neos\Fusion\FusionObjects;
 /**
  * A Fusion object for tag based content
  *
- * //tsPath attributes An array with attributes for this tag (optional)
- * //tsPath content Content for the body of the tag (optional)
+ * //fusionPath attributes An array with attributes for this tag (optional)
+ * //fusionPath content Content for the body of the tag (optional)
  * @api
  */
 class TagImplementation extends AbstractFusionObject

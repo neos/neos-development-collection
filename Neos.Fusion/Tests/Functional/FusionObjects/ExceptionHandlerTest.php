@@ -41,7 +41,7 @@ class ExceptionHandlerTest extends AbstractFusionObjectTest
     }
 
     /**
-     * We trigger rendering of a Fusion object with a nested TS object being "evaluated". If an exception happens there,
+     * We trigger rendering of a Fusion object with a nested Fusion object being "evaluated". If an exception happens there,
      * the configured exceptionHandler needs to be triggered as well, even though the object has been rendered with "evaluate()"
      * and not with "render()"
      *
