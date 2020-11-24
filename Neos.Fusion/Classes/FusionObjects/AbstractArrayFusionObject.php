@@ -13,7 +13,7 @@ namespace Neos\Fusion\FusionObjects;
 
 
 /**
- * Base class for Fusion objects that need access to arbitrary properties, like ArrayImplementation.
+ * Base class for Fusion objects that need access to arbitrary properties, like DataStructureImplementation.
  */
 abstract class AbstractArrayFusionObject extends AbstractFusionObject implements \ArrayAccess
 {
