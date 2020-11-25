@@ -2,7 +2,7 @@ prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\V
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:Collection).@class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
 prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
-prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(Neos.Fusion:Join).@class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
 prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\FusionObjects\\RendererImplementation'
 
 prototype(Neos.Fusion:EelValue) < prototype(Neos.Fusion:Value) {
@@ -133,7 +133,7 @@ apply.renderDataStructureWithSpread = Neos.Fusion:DataStructure {
   @apply.applyValues = ${{alter: 'altered value', add: 'added value' }}
 }
 
-apply.renderArrayWithPositionAndSpread = Neos.Fusion:Array {
+apply.renderJoinWithPositionAndSpread = Neos.Fusion:Join {
   last = 'end'
   last.@position = 'end'
   middle = 'middle'
@@ -163,7 +163,7 @@ prototype(Neos.Fusion:TestNestedPropsA) < prototype(Neos.Fusion:Component) {
 prototype(Neos.Fusion:TestNestedPropsB) < prototype(Neos.Fusion:Component) {
   applyValue = null
 
-  renderer = Neos.Fusion:Array {
+  renderer = Neos.Fusion:Join {
     item_0 = '::'
     item_1 = ${props.applyValue}
     item_2 = '::'

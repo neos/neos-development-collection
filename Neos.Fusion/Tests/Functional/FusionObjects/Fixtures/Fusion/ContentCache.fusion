@@ -1,11 +1,11 @@
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
-prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(Neos.Fusion:Join).@class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
 prototype(Neos.Fusion:Testing.Throwing).@class = 'Neos\\Fusion\\Tests\\Functional\\FusionObjects\\Fixtures\\FusionObjects\\ThrowingImplementation'
 
 prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:DataStructure)
 
-contentCache.cachedSegment = Neos.Fusion:Array {
+contentCache.cachedSegment = Neos.Fusion:Join {
   5 = 'Cached segment|'
 
   10 = ${object.value}
@@ -15,14 +15,14 @@ contentCache.cachedSegment = Neos.Fusion:Array {
   }
 }
 
-contentCache.nestedCacheSegments = Neos.Fusion:Array {
+contentCache.nestedCacheSegments = Neos.Fusion:Join {
   5 = 'Outer segment|'
 
   10 = ${'site=' + site}
 
   15 = '|'
 
-  20 = Neos.Fusion:Array {
+  20 = Neos.Fusion:Join {
 
     5 = 'Inner segment|'
 
@@ -50,7 +50,7 @@ contentCache.nestedCacheSegments = Neos.Fusion:Array {
   }
 }
 
-contentCache.uncachedSegmentOnTopLevel = Neos.Fusion:Array {
+contentCache.uncachedSegmentOnTopLevel = Neos.Fusion:Join {
   5 = 'Uncached segment|'
 
   10 = ${'counter=' + object.counter}
@@ -66,7 +66,7 @@ contentCache.uncachedSegmentOnTopLevel = Neos.Fusion:Array {
   }
 }
 
-contentCache.uncachedSegmentWithWronglyConfiguredContext = Neos.Fusion:Array {
+contentCache.uncachedSegmentWithWronglyConfiguredContext = Neos.Fusion:Join {
   5 = 'Uncached segment|'
 
   10 = ${'counter=' + object.counter}
@@ -82,14 +82,14 @@ contentCache.uncachedSegmentWithWronglyConfiguredContext = Neos.Fusion:Array {
   }
 }
 
-contentCache.uncachedSegmentInCachedSegment = Neos.Fusion:Array {
+contentCache.uncachedSegmentInCachedSegment = Neos.Fusion:Join {
   5 = 'Outer segment|'
 
   10 = ${'object=' + object.value}
 
   15 = '|'
 
-  20 = Neos.Fusion:Array {
+  20 = Neos.Fusion:Join {
     5 = 'Uncached segment|'
 
     10 = ${'counter=' + object.counter}
@@ -116,14 +116,14 @@ contentCache.uncachedSegmentInCachedSegment = Neos.Fusion:Array {
   }
 }
 
-contentCache.cacheSegmentsWithTags = Neos.Fusion:Array {
+contentCache.cacheSegmentsWithTags = Neos.Fusion:Join {
   5 = 'Outer segment|'
 
   10 = ${'counter=' + object.counter}
 
   15 = '|'
 
-  20 = Neos.Fusion:Array {
+  20 = Neos.Fusion:Join {
 
     5 = 'Inner segment 1|'
 
@@ -145,7 +145,7 @@ contentCache.cacheSegmentsWithTags = Neos.Fusion:Array {
     }
   }
 
-  25 = Neos.Fusion:Array {
+  25 = Neos.Fusion:Join {
 
     5 = 'Inner segment 2|'
 
@@ -183,7 +183,7 @@ contentCache.cacheSegmentsWithTags = Neos.Fusion:Array {
   }
 }
 
-contentCache.cachedSegmentWithProcessor = Neos.Fusion:Array {
+contentCache.cachedSegmentWithProcessor = Neos.Fusion:Join {
 
   5 = 'Cached segment|'
 
@@ -203,11 +203,11 @@ contentCache.cachedSegmentWithProcessor = Neos.Fusion:Array {
 
 }
 
-contentCache.uncachedSegmentWithProcessor = Neos.Fusion:Array {
+contentCache.uncachedSegmentWithProcessor = Neos.Fusion:Join {
 
   5 = 'Cached segment|'
 
-  10 = Neos.Fusion:Array {
+  10 = Neos.Fusion:Join {
     5 = 'Uncached segment|'
 
     10 = ${'object=' + object.value}
@@ -237,7 +237,7 @@ contentCache.uncachedSegmentWithProcessor = Neos.Fusion:Array {
 
 }
 
-contentCache.cachedSegmentWithCondition = Neos.Fusion:Array {
+contentCache.cachedSegmentWithCondition = Neos.Fusion:Join {
 
   @if.isFirst = ${condition && object.counter == 1}
 
@@ -258,11 +258,11 @@ contentCache.cachedSegmentWithCondition = Neos.Fusion:Array {
 
 }
 
-contentCache.uncachedSegmentWithCondition = Neos.Fusion:Array {
+contentCache.uncachedSegmentWithCondition = Neos.Fusion:Join {
 
   5 = 'Cached segment|'
 
-  10 = Neos.Fusion:Array {
+  10 = Neos.Fusion:Join {
     @if.isFirst = ${request.arguments.currentPage < 3}
 
     5 = 'Uncached segment|'
@@ -292,7 +292,7 @@ contentCache.uncachedSegmentWithCondition = Neos.Fusion:Array {
 
 }
 
-contentCache.nestedCacheSegmentsWithInnerException = Neos.Fusion:Array {
+contentCache.nestedCacheSegmentsWithInnerException = Neos.Fusion:Join {
 
   5 = 'Cached segment|'
 
@@ -328,12 +328,12 @@ contentCache.nestedCacheSegmentsWithInnerException = Neos.Fusion:Array {
 
 }
 
-contentCache.nestedCacheSegmentsWithConditionalException = Neos.Fusion:Array {
+contentCache.nestedCacheSegmentsWithConditionalException = Neos.Fusion:Join {
 
   5 = 'Cached segment|'
 
   // This is just a cached path
-  15 = Neos.Fusion:Array {
+  15 = Neos.Fusion:Join {
     5 = ${'counter=' + object.counter + '|'}
 
     @cache {
@@ -377,7 +377,7 @@ contentCache.nestedCacheSegmentsWithConditionalException = Neos.Fusion:Array {
 
 }
 
-contentCache.maximumLifetimeInNestedEmbedAndCachedSegments = Neos.Fusion:Array {
+contentCache.maximumLifetimeInNestedEmbedAndCachedSegments = Neos.Fusion:Join {
 
   5 = Neos.Fusion:Value {
     value = 'Foo'
@@ -395,7 +395,7 @@ contentCache.maximumLifetimeInNestedEmbedAndCachedSegments = Neos.Fusion:Array {
 
   10 = '|'
 
-  15 = Neos.Fusion:Array {
+  15 = Neos.Fusion:Join {
     1 = Neos.Fusion:Value {
       value = 'Bar'
 
@@ -507,14 +507,14 @@ contentCache.entryIdentifierPrototypeCanBeOverwritten < contentCache.cachedSegme
   }
 }
 
-contentCache.uncachedSegmentInCachedSegmentCanOverrideContextVariables = Neos.Fusion:Array {
+contentCache.uncachedSegmentInCachedSegmentCanOverrideContextVariables = Neos.Fusion:Join {
   5 = 'Outer segment|'
 
   10 = ${'object=' + object.value}
 
   15 = '|'
 
-  20 = Neos.Fusion:Array {
+  20 = Neos.Fusion:Join {
     @context.currentCounter = ${object.counter}
 
     5 = 'Uncached segment|'
@@ -543,7 +543,7 @@ contentCache.uncachedSegmentInCachedSegmentCanOverrideContextVariables = Neos.Fu
   }
 }
 
-contentCache.dynamicSegment = Neos.Fusion:Array {
+contentCache.dynamicSegment = Neos.Fusion:Join {
   5 = 'Dynamic segment|'
   10 = ${'counter=' + renderObject.counter}
 
@@ -560,7 +560,7 @@ contentCache.dynamicSegment = Neos.Fusion:Array {
   }
 }
 
-contentCache.dynamicSegmentWithDisabledDiscriminator = Neos.Fusion:Array {
+contentCache.dynamicSegmentWithDisabledDiscriminator = Neos.Fusion:Join {
   5 = 'Dynamic segment|'
   10 = ${'counter=' + renderObject.counter}
 
@@ -577,13 +577,13 @@ contentCache.dynamicSegmentWithDisabledDiscriminator = Neos.Fusion:Array {
   }
 }
 
-contentCache.dynamicSegmentWithNestedCachedSegment = Neos.Fusion:Array {
+contentCache.dynamicSegmentWithNestedCachedSegment = Neos.Fusion:Join {
   5 = 'Cached segment|'
   10 = ${'counter=' + renderObject.counter + '|'}
-  15 = Neos.Fusion:Array {
+  15 = Neos.Fusion:Join {
     5 = 'Nested dynamic segment|'
     10 = ${'counter=' + renderObject.counter + '|'}
-    15 = Neos.Fusion:Array {
+    15 = Neos.Fusion:Join {
       5 = 'Nested cached segment|'
       10 = ${'counter=' + renderObject.counter}
       @cache {

@@ -21,7 +21,7 @@ use Neos\Fusion\Service\HtmlAugmenter;
  *
  * @api
  */
-class AugmenterImplementation extends ArrayImplementation
+class AugmenterImplementation extends JoinImplementation
 {
 
     /**

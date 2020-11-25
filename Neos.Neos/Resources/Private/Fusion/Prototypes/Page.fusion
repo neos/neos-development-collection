@@ -23,8 +23,8 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     omitClosingTag = true
   }
 
-  # The content of the head tag, integrators can add their own head content in this array.
-  head = Neos.Fusion:Array {
+  # The content of the head tag, integrators can add their own head content.
+  head = Neos.Fusion:Join {
     @position = 'after headTag'
 
     characterSetMetaTag = Neos.Fusion:Tag {
@@ -41,10 +41,10 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     }
 
     # Link tags for stylesheets in the head should go here
-    stylesheets = Neos.Fusion:Array
+    stylesheets = Neos.Fusion:Join
 
     # Script includes in the head should go here
-    javascripts = Neos.Fusion:Array {
+    javascripts = Neos.Fusion:Join {
       @position = 'after stylesheets'
     }
   }
@@ -79,7 +79,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     site = ${site}
 
     # Script includes before the closing body tag should go here
-    javascripts = Neos.Fusion:Array
+    javascripts = Neos.Fusion:Join
     # This processor appends the rendered javascripts Array to the rendered template
     @process.appendJavaScripts = ${value + this.javascripts}
   }
