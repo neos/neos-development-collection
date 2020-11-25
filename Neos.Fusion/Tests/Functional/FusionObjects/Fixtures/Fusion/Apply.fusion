@@ -1,6 +1,6 @@
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
-prototype(Neos.Fusion:Collection).@class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
+prototype(Neos.Fusion:Loop).@class = 'Neos\\Fusion\\FusionObjects\\LoopImplementation'
 prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:Join).@class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
 prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\FusionObjects\\RendererImplementation'
@@ -106,16 +106,16 @@ apply.renderNestedPrototypeOverriddenWithSpreads = Neos.Fusion:NestedPrototype {
   @apply.alterValue = ${{value: 'i can change this'}}
 }
 
-apply.renderCollectionWithoutSpread = Neos.Fusion:Collection {
-  collection = ${[{test:1},{test:2},{test:2},{test:3}]}
+apply.renderLoopWithoutSpread = Neos.Fusion:Loop {
+  items = ${[{test:1},{test:2},{test:2},{test:3}]}
   itemName = 'item'
   itemRenderer = Neos.Fusion:TestRenderer {
     test = ${item.test}
   }
 }
 
-apply.renderCollectionWithSpread = Neos.Fusion:Collection {
-  collection = ${[{test:1},{test:2},{test:2},{test:3}]}
+apply.renderLoopWithSpread = Neos.Fusion:Loop {
+  items = ${[{test:1},{test:2},{test:2},{test:3}]}
   itemName = 'item'
   itemRenderer = Neos.Fusion:TestRenderer {
     @apply.applyItem = ${item}
