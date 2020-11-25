@@ -2,8 +2,8 @@ prototype(Neos.Fusion:Testing.Throwing).@class = 'Neos\\Fusion\\Tests\\Functiona
 
 exceptionHandler.eelExpressionInProperty = Neos.Fusion:Array {
   start = 'Start'
-  error = Neos.Fusion:Collection {
-    collection = ${Testing.Utility.throwException()}
+  error = Neos.Fusion:Loop {
+    items = ${Testing.Utility.throwException()}
 
     @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
   }
@@ -12,9 +12,9 @@ exceptionHandler.eelExpressionInProperty = Neos.Fusion:Array {
 
 exceptionHandler.eelExpressionInOverride = Neos.Fusion:Array {
   start = 'Start'
-  error = Neos.Fusion:Collection {
-    @context.myCollection = ${Testing.Utility.throwException()}
-    collection = ${myCollection}
+  error = Neos.Fusion:Loop {
+    @context.myItems = ${Testing.Utility.throwException()}
+    items = ${myItems}
     itemName = 'item'
 
     @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
