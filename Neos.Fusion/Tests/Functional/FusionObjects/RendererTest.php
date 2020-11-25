@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 /**
- * Testcase for the Renderer TS object
+ * Testcase for the Renderer Fusion object
  *
  */
 class RendererTest extends AbstractFusionObjectTest
