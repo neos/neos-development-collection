@@ -1,7 +1,7 @@
-prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
-quotedKeys.multipleKeys = Neos.Fusion:RawArray {
+quotedKeys.multipleKeys = Neos.Fusion:DataStructure {
   a = 1
   1 = 1
   'x-y' = 1
