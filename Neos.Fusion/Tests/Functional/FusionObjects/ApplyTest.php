@@ -220,20 +220,20 @@ class ApplyTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function collectionWithoutSpreadRendering()
+    public function loopWithoutSpreadRendering()
     {
         $view = $this->buildView();
-        $view->setFusionPath('apply/renderCollectionWithoutSpread');
+        $view->setFusionPath('apply/renderLoopWithoutSpread');
         self::assertEquals('X1X2X2X3', $view->render());
     }
 
     /**
      * @test
      */
-    public function collectionWithSpreadRendering()
+    public function loopWithSpreadRendering()
     {
         $view = $this->buildView();
-        $view->setFusionPath('apply/renderCollectionWithSpread');
+        $view->setFusionPath('apply/renderLoopWithSpread');
         self::assertEquals('X1X2X2X3', $view->render());
     }
 
