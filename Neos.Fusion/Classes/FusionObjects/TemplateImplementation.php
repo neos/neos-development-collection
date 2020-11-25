@@ -18,7 +18,7 @@ use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 /**
  * Fusion object rendering a fluid template
  *
- * //tsPath variables TODO The result of this TS object is made available inside the template as "variables"
+ * //fusionPath variables TODO The result of this Fusion object is made available inside the template as "variables"
  * @api
  */
 class TemplateImplementation extends AbstractArrayFusionObject

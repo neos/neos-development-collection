@@ -3,7 +3,7 @@ prototype(Neos.NodeTypes.Form:Form) < prototype(Neos.Neos:Content) {
   templatePath = 'resource://Neos.NodeTypes.Form/Private/Templates/NodeTypes/Form.html'
   presetName = 'default'
   formIdentifier = ${q(node).property('formIdentifier')}
-  overrideConfiguration = Neos.Fusion:RawArray
+  overrideConfiguration = Neos.Fusion:DataStructure
   @cache {
     mode = 'uncached'
     context {
