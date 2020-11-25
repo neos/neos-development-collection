@@ -20,7 +20,7 @@ class LoopTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicCollectionWorks()
+    public function basicLoopWorks()
     {
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
@@ -31,7 +31,7 @@ class LoopTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicCollectionWorksWithGlue()
+    public function basicLoopWorksWithGlue()
     {
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
@@ -42,7 +42,7 @@ class LoopTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicCollectionWorksAndStillContainsOtherContextVariables()
+    public function basicLoopWorksAndStillContainsOtherContextVariables()
     {
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
@@ -54,7 +54,7 @@ class LoopTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function emptyCollectionReturnsEmptyString()
+    public function emptyLoopReturnsEmptyString()
     {
         $view = $this->buildView();
         $view->assign('items', null);
@@ -65,7 +65,7 @@ class LoopTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function iterationInformationIsAddedToCollection()
+    public function iterationInformationIsAddedToLoop()
     {
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2', 'element3', 'element4']);

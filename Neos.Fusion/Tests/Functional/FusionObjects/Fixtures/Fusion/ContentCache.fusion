@@ -298,8 +298,8 @@ contentCache.nestedCacheSegmentsWithInnerException = Neos.Fusion:Join {
 
   10 = ${'counter=' + object.counter + '|'}
 
-  15 = Neos.Fusion:Collection {
-    collection = ${['Foo', 'Bar']}
+  15 = Neos.Fusion:Loop {
+    items = ${['Foo', 'Bar']}
     itemName = 'item'
     itemRenderer = Neos.Fusion:Template {
       templatePath = 'no.such.file.here.so.crash.please'
@@ -346,8 +346,8 @@ contentCache.nestedCacheSegmentsWithConditionalException = Neos.Fusion:Join {
   }
 
   // Use an exception to have the exception handler working
-  20 = Neos.Fusion:Collection {
-    collection = ${['Foo']}
+  20 = Neos.Fusion:Loop {
+    items = ${['Foo']}
 
     itemName = 'item'
     itemRenderer = Neos.Fusion:Testing.Throwing {
