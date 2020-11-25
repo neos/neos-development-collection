@@ -1,7 +1,7 @@
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:Collection).@class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
-prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:Join).@class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
 prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\FusionObjects\\RendererImplementation'
 
@@ -16,7 +16,7 @@ apply.renderEelValueWithSingleSpread = Neos.Fusion:EelValue {
 }
 
 apply.renderEelValueWithFusionObjectSpread = Neos.Fusion:EelValue {
-  @apply.alterValue = Neos.Fusion:RawArray {
+  @apply.alterValue = Neos.Fusion:DataStructure {
     value = 'altered eel expression'
   }
 }
@@ -127,7 +127,7 @@ apply.renderRendererWithTypeAndElementSpread = Neos.Fusion:Renderer {
   element.@apply.applyValues = ${{test: 'ValueAppliedViaElementSpread'}}
 }
 
-apply.renderRawArrayWithSpread = Neos.Fusion:RawArray {
+apply.renderDataStructureWithSpread = Neos.Fusion:DataStructure {
   key = 'original value'
   alter = 'original value'
   @apply.applyValues = ${{alter: 'altered value', add: 'added value' }}

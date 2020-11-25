@@ -15,8 +15,8 @@ namespace Neos\Fusion\FusionObjects;
 /**
  * Render a Fusion collection of nodes as an array
  *
- * //tsPath collection *Collection
- * //tsPath itemRenderer the TS object which is triggered for each element in the node collection
+ * //fusionPath collection *Collection
+ * //fusionPath itemRenderer the Fusion object which is triggered for each element in the node collection
  * @deprecated since Neos 4.2 in favor of MapImplementation
  */
 class RawCollectionImplementation extends AbstractCollectionImplementation

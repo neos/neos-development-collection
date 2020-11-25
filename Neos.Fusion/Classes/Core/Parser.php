@@ -40,7 +40,7 @@ class Parser implements ParserInterface
 			|\'(?:\\\\\'|[^\'])+\'          # Single quoted key, supporting more characters like underscore and at sign
 			|prototype\([a-zA-Z0-9.:]+\)    # Prototype definition
 		)
-		(?:                                 # followed by multiple .<tsPathPart> sections:
+		(?:                                 # followed by multiple .<fusionPathPart> sections:
 			\.
 			(?:
 				@?[a-zA-Z0-9:_\-]+              # Unquoted key

@@ -1,6 +1,6 @@
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
-prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 prototype(Neos.Fusion:Tag) {
   @class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
