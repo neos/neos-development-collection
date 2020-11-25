@@ -20,7 +20,7 @@ class MapTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicCollectionWorks()
+    public function basicMapWorks()
     {
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
@@ -31,7 +31,7 @@ class MapTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicCollectionWorksWithContentRenderer()
+    public function basicMapWorksWithContentRenderer()
     {
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
@@ -42,7 +42,7 @@ class MapTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicCollectionWorksAndPreservesKeys()
+    public function basicMapWorksAndPreservesKeys()
     {
         $view = $this->buildView();
         $view->assign('items', ['foo' => 'element1', 'bar' => 'element2']);
@@ -64,7 +64,7 @@ class MapTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicCollectionWorksAndStillContainsOtherContextVariables()
+    public function basicMapWorksAndStillContainsOtherContextVariables()
     {
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
@@ -76,7 +76,7 @@ class MapTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function emptyCollectionReturnsEmptyArray()
+    public function emptyMapReturnsEmptyArray()
     {
         $view = $this->buildView();
         $view->assign('items', null);
@@ -87,7 +87,7 @@ class MapTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function iterationInformationIsAddedToCollection()
+    public function iterationInformationIsAddedToMap()
     {
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2', 'element3', 'element4']);
