@@ -422,15 +422,15 @@ class ContentCacheTest extends AbstractFusionObjectTest
         self::assertCount(4, $entriesWritten);
         self::assertEquals([
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.5
-            '7075cb501854d7d8b25926b8c7f79c3e' => [
+            '217f4e026faf0fbd4cb0e86d77d934d1' => [
                 'lifetime' => 60
             ],
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.25
-            '007836f2658952a45cfd706c300e208f' => [
+            '2f0c5ec12ea60245110d35e86e8ce021' => [
                 'lifetime' => null
             ],
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.35
-            'd27ee4bbdef0fe0a4611e8f7bb34472b' => [
+            'b414ac4545ebfe9585bd8019acbc0b17' => [
                 'lifetime' => 0
             ],
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments

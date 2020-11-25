@@ -1,6 +1,6 @@
 prototype(Neos.Fusion:Testing.Throwing).@class = 'Neos\\Fusion\\Tests\\Functional\\FusionObjects\\Fixtures\\FusionObjects\\ThrowingImplementation'
 
-exceptionHandler.eelExpressionInProperty = Neos.Fusion:Array {
+exceptionHandler.eelExpressionInProperty = Neos.Fusion:Join {
   start = 'Start'
   error = Neos.Fusion:Collection {
     collection = ${Testing.Utility.throwException()}
@@ -10,7 +10,7 @@ exceptionHandler.eelExpressionInProperty = Neos.Fusion:Array {
   end = 'End'
 }
 
-exceptionHandler.eelExpressionInOverride = Neos.Fusion:Array {
+exceptionHandler.eelExpressionInOverride = Neos.Fusion:Join {
   start = 'Start'
   error = Neos.Fusion:Collection {
     @context.myCollection = ${Testing.Utility.throwException()}

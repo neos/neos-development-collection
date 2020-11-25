@@ -267,10 +267,10 @@ class ApplyTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function arrayWithPositionAndSpreadRendering()
+    public function joinWithPositionAndSpreadRendering()
     {
         $view = $this->buildView();
-        $view->setFusionPath('apply/renderArrayWithPositionAndSpread');
+        $view->setFusionPath('apply/renderJoinWithPositionAndSpread');
         self::assertEquals(
             'startmiddleModifiedendModified',
             $view->render()

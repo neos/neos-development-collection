@@ -23,7 +23,7 @@ use Neos\Fusion\FusionObjects\Helpers\LazyProps;
  * //fusionPath * generic Fusion values that will be added to the ``props`` object in the context
  * @api
  */
-class ComponentImplementation extends ArrayImplementation
+class ComponentImplementation extends JoinImplementation
 {
     /**
      * Properties that are ignored and not included into the ``props`` context
