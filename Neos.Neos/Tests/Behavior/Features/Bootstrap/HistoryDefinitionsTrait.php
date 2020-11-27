@@ -28,7 +28,7 @@ trait HistoryDefinitionsTrait
         try {
             $eventRepository = $this->getEventRepository();
             $eventRepository->removeAll();
-            $this->getTYPO3CRIntegrationService()->reset();
+            $this->getContentRepositoryIntegrationService()->reset();
         } catch (\Doctrine\DBAL\DBALException $e) {
             // Ignore DB exceptions, because the trait runs before applying migrations in FlowContext
         }
@@ -149,7 +149,7 @@ trait HistoryDefinitionsTrait
     /**
      * @return ContentRepositoryIntegrationService
      */
-    protected function getTYPO3CRIntegrationService()
+    protected function getContentRepositoryIntegrationService()
     {
         return $this->getObjectManager()->get(ContentRepositoryIntegrationService::class);
     }
