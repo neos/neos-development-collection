@@ -16,7 +16,7 @@ namespace Neos\Neos\ViewHelpers\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Domain\Model\User;
-use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Security\ManagableRolesCalculatorInterface;
 
 /**
  * Returns true, if the current user is allowed to edit the given user, false otherwise.
@@ -31,9 +31,9 @@ class IsAllowedToEditUserViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var UserService
+     * @var ManagableRolesCalculatorInterface
      */
-    protected $userService;
+    protected $managableRolesCalculator;
 
     /**
      * @return void
@@ -49,24 +49,10 @@ class IsAllowedToEditUserViewHelper extends AbstractViewHelper
      * Returns whether the current user is allowed to edit the given user.
      * Administrators can edit anybody.
      *
-     * @param User $user
      * @return bool
-     * @throws \Neos\Flow\Security\Exception
-     * @throws \Neos\Flow\Security\Exception\NoSuchRoleException
      */
-    protected function render()
+    protected function render(): bool
     {
-        if ($this->userService->currentUserIsAdministrator()) {
-            return true;
-        }
-
-        $user = $this->arguments['user'] ?? null;
-        if (!$user instanceof User) {
-            return false;
-        }
-
-        $currentUserRoles = $this->userService->getAllRoles($this->userService->getCurrentUser());
-        $userRoles = $this->userService->getAllRoles($user);
-        return count(array_diff($userRoles, $currentUserRoles)) === 0;
+        return $this->managableRolesCalculator->isCurrentUserAllowedToEdit($this->arguments['user']);
     }
 }
