@@ -233,7 +233,7 @@ class LinkingService
      * @param string $section
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
-     * @param boolean $resolveShortcuts @deprecated With Neos 6.0 this argument is no longer evaluated and log a message if set to FALSE
+     * @param boolean $resolveShortcuts @deprecated With Neos 7.0 this argument is no longer evaluated and log a message if set to FALSE
      * @return string The rendered URI
      * @throws NeosException if no URI could be resolved for the given node
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
