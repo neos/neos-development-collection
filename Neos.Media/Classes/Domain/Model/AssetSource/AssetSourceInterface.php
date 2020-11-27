@@ -38,7 +38,7 @@ interface AssetSourceInterface
 
     /**
      * Returns the resource path to the icon of the asset source
-     * !! Will be added to the interface with Neos 6.0
+     * !! Will be added to the interface with Neos 7.0
      *
      * @return string
      */
@@ -46,7 +46,7 @@ interface AssetSourceInterface
 
     /**
      * Returns the description of the asset source
-     * !! Will be added to the interface with Neos 6.0
+     * !! Will be added to the interface with Neos 7.0
      *
      * @return string
      */
