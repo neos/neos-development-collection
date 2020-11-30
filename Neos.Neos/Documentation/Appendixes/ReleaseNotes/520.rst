@@ -74,7 +74,7 @@ Allows a `position` to be specified in the NodeType `postprocessors` configurati
 
 FEATURE: Icons and description for asset sources
 ================================================
-Icons and descriptions can now be provided by the asset source.
+Icons and descriptions can now be provided by the asset source. 
 The icon makes the asset source easier to identify while the description can provide further information or a link to the asset source as required by some free asset source API guidelines.
 
 To make your AssetSources compatible with Neos 6.x add the methods
