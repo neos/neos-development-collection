@@ -1,0 +1,4 @@
+Neos:
+  Fusion:
+    dsl:
+      afx: Neos\Fusion\Afx\Dsl\AfxDslImplementation

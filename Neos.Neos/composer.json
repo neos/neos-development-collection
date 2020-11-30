@@ -14,7 +14,7 @@
         "neos/twitter-bootstrap": "*",
         "neos/content-repository": "*",
         "neos/fusion": "*",
-        "neos/fusion-afx": "^1.4",
+        "neos/fusion-afx": "*",
         "neos/fusion-form": "^1.0",
         "neos/fluid-adaptor": "*",
         "behat/transliterator": "~1.0",

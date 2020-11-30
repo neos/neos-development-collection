@@ -6,9 +6,9 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "php": "^7.3",
         "neos/flow-development-collection": "dev-master",
         "neos/neos-setup": "^1.0",
+        "php": "^7.3",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -16,27 +16,25 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
+        "doctrine/orm": "^2.6",
+        "gedmo/doctrine-extensions": "^3.0",
+        "behat/transliterator": "~1.0",
         "neos/utility-unicode": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
-        "behat/transliterator": "~1.0",
-
-        "doctrine/orm": "^2.6",
         "doctrine/common": "^2.7",
-        "doctrine/dbal": "^2.8",
-        "gedmo/doctrine-extensions": "^3.0",
-
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
+        "doctrine/dbal": "^2.8",
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
-        "neos/fusion-afx": "^1.4",
         "neos/fusion-form": "^1.0",
         "neos/form": "*",
         "neos/kickstarter": "dev-master"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
+        "packagefactory/atomicfusion-afx": "*",
         "typo3/typoscript": "self.version",
         "typo3/media": "self.version",
         "typo3/neos": "self.version",
@@ -44,6 +42,7 @@
         "typo3/neos-kickstarter": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
+        "neos/fusion-afx": "self.version",
         "neos/fusion": "self.version",
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
@@ -71,6 +70,9 @@
             ],
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
+            ],
+            "Neos\\Fusion\\Afx\\": [
+                "Neos.Fusion.Afx/Classes/"
             ],
             "Neos\\Fusion\\": [
                 "Neos.Fusion/Classes"
@@ -130,6 +132,9 @@
             "Neos\\ContentRepository\\Tests\\": [
                 "Neos.ContentRepository/Tests"
             ],
+            "Neos\\Fusion\\Afx\\Tests\\": [
+                "Neos.Fusion.Afx/Tests/"
+            ],
             "Neos\\Fusion\\Tests\\": [
                 "Neos.Fusion/Tests"
             ],
@@ -138,7 +143,13 @@
             ],
             "Neos\\Neos\\Tests\\": [
                 "Neos.Neos/Tests"
+            ],
+            "Neos\\SiteKickstarter\\Tests\\": [
+                "Neos.SiteKickstarter/Tests"
             ]
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.1"
     }
 }
