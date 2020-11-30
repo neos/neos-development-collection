@@ -6,6 +6,14 @@ This package provides a fusion preprocessor that expands a compact xml-ish synta
 to write compact components that do'nt need a seperate template file and enables unplanned extensibility for the defined 
 prototypes because the generated fusion-code can be overwritten and controlled from the outside if needed.
 
+## Note
+
+This repository (after versions 1.x) is a read-only subsplit of a package that is part of the Neos project (learn more on www.neos.io).
+
+Neos is an open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.
+
+If you want to use Neos, please have a look at the Neos documentation
+
 ## Installation
 
 Neos.Fusion.AFX is available via packagist. Just add `"neos/fusion-afx" : "~1.0.0"`
