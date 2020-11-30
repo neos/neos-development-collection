@@ -9,5 +9,6 @@
     inlineEditable: true
   constraints:
     nodeTypes:
-      '*': false
-      'Neos.Neos:Content': true
+      # Note: Reverting the constraints to explicitly allow content nodes instead won't work, see https://github.com/neos/neos-development-collection/issues/3212
+      'Neos.Neos:Document': false
+      '*': true
