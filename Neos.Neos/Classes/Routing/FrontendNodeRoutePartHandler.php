@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
@@ -160,7 +161,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
 
-        return new MatchResult($node->getContextPath());
+        return new MatchResult($node->getContextPath(), $this->buildRouteTagsForNode($node));
     }
 
     /**
@@ -275,7 +276,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $this->systemLogger->debug('FrontendNodeRoutePartHandler resolveValue(): ' . $exception->getMessage());
             return false;
         }
-        return new ResolveResult('', $uriConstraints);
+        return new ResolveResult('', $uriConstraints, $this->buildRouteTagsForNode($node));
     }
 
     /**
@@ -792,5 +793,20 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         } else {
             return ltrim(trim($uriSegment, '_') . '/', '/');
         }
+    }
+
+    /**
+     * Creates an instance of RouteTags that contains a tag corresponding to the identifier of the given node and all its parent nodes
+     *
+     * @param NodeInterface $node
+     * @return RouteTags
+     */
+    private function buildRouteTagsForNode(NodeInterface $node): RouteTags
+    {
+        $tags = [$node->getIdentifier()];
+        while ($node = $node->getParent()) {
+            $tags[] = $node->getIdentifier();
+        }
+        return RouteTags::createFromArray($tags);
     }
 }
