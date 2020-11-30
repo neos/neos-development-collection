@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 
 /**
  * Evaluate sub objects to an array (instead of a string as ArrayImplementation does)
- * @deprecated Will be removed with Neos 6
+ * @deprecated since Neos 4.2
  */
 class RawArrayImplementation extends DataStructureImplementation
 {
