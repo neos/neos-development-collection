@@ -154,7 +154,6 @@ final class NeosAssetSource implements AssetSourceInterface
     }
 
     /**
-     * !! Will be added to the interface with Neos 6.0
      *
      * @return string
      */
