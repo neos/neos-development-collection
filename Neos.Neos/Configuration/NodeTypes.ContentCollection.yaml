@@ -9,5 +9,6 @@
     inlineEditable: true
   constraints:
     nodeTypes:
-      '*': false
-      'Neos.Neos:Content': true
+      'Neos.Neos:Document': false
+      '*': true
+
