@@ -433,12 +433,6 @@
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
 			<target state="translated">編集ユーザー</target></trans-unit>
-      <trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
-				<source>Not enough privileges to edit this user</source>
-			<target state="needs-translation">Not enough privileges to edit this user</target></trans-unit>
-      <trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
-				<source>Not enough privileges to delete this user</source>
-			<target state="needs-translation">Not enough privileges to delete this user</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
 			<target state="translated">ユーザー削除</target></trans-unit>
