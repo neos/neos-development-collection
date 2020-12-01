@@ -83,7 +83,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
             throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
         }
 
-        if ($node->getContext()->getWorkspace()->getName() !== 'live' && !($this->fusionValue('forceConversion'))) {
+        if (!($this->fusionValue('forceConversion')) && $node->getContext()->getWorkspace()->getName() !== 'live') {
             return $text;
         }
 
@@ -116,7 +116,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         }, $text);
 
         if ($unresolvedUris !== []) {
-            $processedContent = preg_replace('/<a(?: [^>]*)? href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
+            $processedContent = preg_replace('/<a(?:\s+[^>]*)?\s+href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
             $processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
         }
 
@@ -128,43 +128,67 @@ class ConvertUrisImplementation extends AbstractFusionObject
     /**
      * Replace the target attribute of link tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
-     * Additionally set rel="noopener" for links with target="_blank".
+     * Additionally set rel="noopener" for external links.
      *
      * @param string $processedContent
      * @return string
      */
     protected function replaceLinkTargets($processedContent)
     {
-        $noOpenerString = $this->fusionValue('setNoOpener') ? ' rel="noopener"' : '';
-        $externalLinkTarget = trim($this->fusionValue('externalLinkTarget'));
-        $resourceLinkTarget = trim($this->fusionValue('resourceLinkTarget'));
-        if ($externalLinkTarget === '' && $resourceLinkTarget === '') {
-            return $processedContent;
-        }
+        $setNoOpener = $this->fusionValue('setNoOpener');
+        $externalLinkTarget = \trim($this->fusionValue('externalLinkTarget'));
+        $resourceLinkTarget = \trim($this->fusionValue('resourceLinkTarget'));
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
-        $processedContent = preg_replace_callback(
-            '~<a .*?href="(.*?)".*?>~i',
-            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $noOpenerString) {
-                list($linkText, $linkHref) = $matches;
-                $uriHost = parse_url($linkHref, PHP_URL_HOST);
+        $processedContent = \preg_replace_callback(
+            '~<a\s+.*?href="(.*?)".*?>~i',
+            static function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $setNoOpener) {
+                [$linkText, $linkHref] = $matches;
+                $uriHost = \parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
-                if ($externalLinkTarget !== '' && is_string($uriHost) && $uriHost !== $host) {
+                $isExternalLink = \is_string($uriHost) && $uriHost !== $host;
+
+                if ($externalLinkTarget && $externalLinkTarget !== '' && $isExternalLink) {
                     $target = $externalLinkTarget;
                 }
-                if ($resourceLinkTarget !== '' && strpos($linkHref, '_Resources') !== false) {
+                if ($resourceLinkTarget && $resourceLinkTarget !== '' && \strpos($linkHref, '_Resources') !== false) {
                     $target = $resourceLinkTarget;
                 }
-                if ($target === null) {
-                    return $linkText;
+                if ($isExternalLink && $setNoOpener) {
+                    $linkText = self::setAttribute('rel', 'noopener', $linkText);
                 }
-                if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
-                    return preg_replace('/target=".*?"/', sprintf('target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
+                if (is_string($target) && strlen($target) !== 0) {
+                    return self::setAttribute('target', $target, $linkText);
                 }
-                return str_replace('<a', sprintf('<a target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
+                return $linkText;
             },
             $processedContent
         );
         return $processedContent;
+    }
+
+
+    /**
+     * Set or add value to the a attribute
+     *
+     * @param string $attribute The attribute, ('target' or 'rel')
+     * @param string $value The value of the attribute to add
+     * @param string $content The content to parse
+     * @return string
+     */
+    private static function setAttribute(string $attribute, string $value, string $content): string
+    {
+        // The attribute is already set
+        if (\preg_match_all('~\s+' . $attribute . '="(.*?)~i', $content, $matches)) {
+            // If the attribute is target or the value is already set, leave the attribute as it is
+            if ($attribute === 'target' || \preg_match('~' . $attribute . '=".*?' . $value . '.*?"~i', $content)) {
+                return $content;
+            }
+            // Add the attribute to the list
+            return \preg_replace('/' . $attribute . '="(.*?)"/', sprintf('%s="$1 %s"', $attribute, $value), $content);
+        }
+
+        // Add the missing attribute with the value
+        return \str_replace('<a', sprintf('<a %s="%s"', $attribute, $value), $content);
     }
 }
