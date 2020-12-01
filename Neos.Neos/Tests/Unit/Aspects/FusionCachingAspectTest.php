@@ -64,7 +64,7 @@ class FusionCachingAspectTest extends UnitTestCase
      */
     private $mockSite;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
