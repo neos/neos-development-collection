@@ -9,6 +9,7 @@ prototype(Neos.Neos:ConvertUris) {
   externalLinkTarget = '_blank'
   resourceLinkTarget = '_blank'
   absolute = false
+  forceConversion = false
   # Sets the rel="noopener" attribute to external links, which is good practice.
   setNoOpener = true
 }

@@ -126,7 +126,7 @@
                 </li>
                 <f:for each="{assetCollections}" as="assetCollection">
                     <li>
-                        <f:link.action action="index" title="{assetCollection.object.title}" class="droppable-assetcollection{f:if(condition: '{assetCollection.object} === {activeAssetCollection}', then: ' neos-active')}" arguments="{view: view, assetCollection: assetCollection.object}" addQueryString="true" data="{assetcollection-identifier: '{assetCollection.object -> f:format.identifier()}'}">
+                        <f:link.action action="index" title="{assetCollection.object.title}" class="droppable-assetcollection{f:if(condition: '{assetCollection.object} === {activeAssetCollection}', then: ' neos-active')}" arguments="{view: view, assetCollection: assetCollection.object, collectionMode: 0}" addQueryString="true" data="{assetcollection-identifier: '{assetCollection.object -> f:format.identifier()}'}">
                             {assetCollection.object.title}
                             <span class="count">{assetCollection.count}</span>
                         </f:link.action>
@@ -198,7 +198,7 @@
             </li>
             <f:for each="{tags}" as="tag">
                 <li>
-                    <f:link.action action="index" title="{tag.object.label}" class="droppable-tag{f:if(condition: '{tag.object} === {activeTag}', then: ' neos-active')}" arguments="{tag: tag.object}" addQueryString="true" data="{tag-identifier: '{tag.object -> f:format.identifier()}'}">
+                    <f:link.action action="index" title="{tag.object.label}" class="droppable-tag{f:if(condition: '{tag.object} === {activeTag}', then: ' neos-active')}" arguments="{tag: tag.object, tagMode: 0}" addQueryString="true" data="{tag-identifier: '{tag.object -> f:format.identifier()}'}">
                         {tag.object.label}
                         <span class="count">{tag.count}</span>
                     </f:link.action>
