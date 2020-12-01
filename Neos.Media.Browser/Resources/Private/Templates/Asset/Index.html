@@ -207,7 +207,7 @@
             </li>
             <f:for each="{tags}" as="tag">
                 <li>
-                    <f:link.action action="index" title="{tag.object.label}" class="droppable-tag{f:if(condition: '{tag.object} === {activeTag}', then: ' neos-active')}" arguments="{tag: tag.object}" data="{tag-identifier: '{tag.object -> f:format.identifier()}'}">
+                    <f:link.action action="index" title="{tag.object.label}" class="droppable-tag{f:if(condition: '{tag.object} === {activeTag}', then: ' neos-active')}" arguments="{tag: tag.object, tagMode: 0}" data="{tag-identifier: '{tag.object -> f:format.identifier()}'}">
                         {tag.object.label}
                         <span class="count">{tag.count}</span>
                     </f:link.action>
