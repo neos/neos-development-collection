@@ -169,7 +169,7 @@ class ImageService
                 $adjustmentsApplied = true;
             }
         }
-        
+
         $additionalOptions = $this->getOptionsMergedWithDefaults($additionalOptions);
 
         if ($adjustmentsApplied === true) {
@@ -260,6 +260,10 @@ class ImageService
         } else {
             try {
                 $imagineImage = $this->imagineService->read($resource->getStream());
+
+                $autorotateFilter = new \Imagine\Filter\Basic\Autorotate();
+                $autorotateFilter->apply($imagineImage);
+
                 $sizeBox = $imagineImage->getSize();
                 $imageSize = ['width' => $sizeBox->getWidth(), 'height' => $sizeBox->getHeight()];
             } catch (\Exception $e) {
