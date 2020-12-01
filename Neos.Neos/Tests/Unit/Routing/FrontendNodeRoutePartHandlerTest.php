@@ -156,13 +156,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function contextPathsAndRequestPathsDataProvider()
     {
         return [
-            ['/sites/examplecom@live;language=en_US', '/', true],
-            ['/sites/examplecom@live;language=en_US', '/en_global', false],
-            ['/sites/examplecom@user-robert;language=de_DE,en_US', '/de_global', false],
-            ['/sites/examplecom/features@user-robert;language=de_DE,en_US', '/de_global/features', false],
-            ['/sites/examplecom/features@user-robert;language=en_US', '/en_global/features', false],
-            ['/sites/examplecom/features@user-robert;language=de_DE,en_US&country=global', '/de_global/features', false],
-            ['/sites/examplecom/features@user-robert;country=de', '/en_de/features', false]
+            ['/sites/examplecom@live;language=en_US', '', true],
+            ['/sites/examplecom@live;language=en_US', 'en_global', false],
+            ['/sites/examplecom@user-robert;language=de_DE,en_US', 'de_global', false],
+            ['/sites/examplecom/features@user-robert;language=de_DE,en_US', 'de_global/features', false],
+            ['/sites/examplecom/features@user-robert;language=en_US', 'en_global/features', false],
+            ['/sites/examplecom/features@user-robert;language=de_DE,en_US&country=global', 'de_global/features', false],
+            ['/sites/examplecom/features@user-robert;country=de', 'en_de/features', false]
         ];
     }
 
@@ -302,6 +302,31 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         self::assertInstanceOf(MatchResult::class, $this->matchForHost($routePath, 'localhost'));
     }
 
+
+    /**
+     * @test
+     */
+    public function matchWithParametersRespectsTheSpecifiedNodeTypeOption()
+    {
+        $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
+        $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
+        $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
+        $mockSubNode->mockProperties['uriPathSegment'] = 'features';
+
+        $routePath = 'features';
+        self::assertInstanceOf(MatchResult::class, $this->matchForHost($routePath, 'localhost'));
+
+        $this->routePartHandler->setOptions(['nodeType' => 'Some.Package:Some.Node.Type']);
+
+        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
+        $mockNodeType->method('isOfType')->willReturn(false);
+        $mockSubNode->method('getNodeType')->willReturn($mockNodeType);
+
+        $routePath = 'features';
+        self::assertFalse($this->matchForHost($routePath, 'localhost'));
+    }
 
     /**
      * @test
@@ -462,7 +487,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $routeValues = ['node' => $mockSubSubNode];
         $resolveResult = $this->resolveForHost($routeValues, 'localhost');
         self::assertInstanceOf(ResolveResult::class, $resolveResult);
-        self::assertSame('/home/coffee-brands@user-robert', (string)$resolveResult->getUriConstraints()->toUri());
+        self::assertSame('home/coffee-brands@user-robert', $resolveResult->getResolvedValue());
     }
 
     /**
@@ -488,7 +513,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $routeValues = ['node' => $mockSubSubNode];
         $resolveResult = $this->resolveForHost($routeValues, 'localhost');
         self::assertInstanceOf(ResolveResult::class, $resolveResult);
-        self::assertSame('/home/coffee-brands@user-robert', (string)$resolveResult->getUriConstraints()->toUri());
+        self::assertSame('home/coffee-brands@user-robert', (string)$resolveResult->getResolvedValue());
     }
 
     /**
@@ -647,6 +672,33 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function resolveRespectsTheSpecifiedNodeTypeOption()
+    {
+        $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
+        $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
+        $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
+        $mockSubNode->mockProperties['uriPathSegment'] = 'features';
+
+        $mockContext->expects(self::any())->method('getNode')->will(self::returnCallback(function ($nodePath) use ($mockSubNode) {
+            return ($nodePath === '/sites/examplecom/features') ? $mockSubNode : null;
+        }));
+
+        $routeValues = ['node' => $mockSubNode];
+
+        $this->routePartHandler->setOptions(['nodeType' => 'Some.Package:Some.Node.Type']);
+
+        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
+        $mockNodeType->method('isOfType')->willReturn(false);
+        $mockSubNode->method('getNodeType')->willReturn($mockNodeType);
+
+        self::assertFalse($this->resolveForHost($routeValues, 'localhost'));
+    }
+
+    /**
      * @dataProvider contextPathsAndRequestPathsDataProvider
      * @test
      */
@@ -717,7 +769,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $routeValues = ['node' => $contextPath];
         $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
         $resolveResult = $this->resolveForHost($routeValues, 'localhost');
-        self::assertSame($expectedUriPath, (string)$resolveResult->getUriConstraints()->toUri());
+        self::assertSame($expectedUriPath, $resolveResult->getResolvedValue());
     }
 
     /**
