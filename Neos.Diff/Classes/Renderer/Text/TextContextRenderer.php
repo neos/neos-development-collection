@@ -72,8 +72,10 @@ class TextContextRenderer extends AbstractRenderer
                     if ($tag == 'insert') {
                         continue;
                     }
-                    $diff .= $this->tagMap[$tag] . ' ' . implode("\n" . $this->tagMap[$tag] . ' ',
-                            $this->diff->GetA($i1, $i2)) . "\n";
+                    $diff .= $this->tagMap[$tag] . ' ' . implode(
+                        "\n" . $this->tagMap[$tag] . ' ',
+                        $this->diff->GetA($i1, $i2)
+                    ) . "\n";
                 }
             }
 
@@ -93,8 +95,10 @@ class TextContextRenderer extends AbstractRenderer
                     if ($tag == 'delete') {
                         continue;
                     }
-                    $diff .= $this->tagMap[$tag] . ' ' . implode("\n" . $this->tagMap[$tag] . ' ',
-                            $this->diff->GetB($j1, $j2)) . "\n";
+                    $diff .= $this->tagMap[$tag] . ' ' . implode(
+                        "\n" . $this->tagMap[$tag] . ' ',
+                        $this->diff->GetB($j1, $j2)
+                    ) . "\n";
                 }
             }
         }
