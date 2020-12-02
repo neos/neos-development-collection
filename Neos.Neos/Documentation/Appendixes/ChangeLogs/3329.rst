@@ -1,0 +1,25 @@
+`3.3.29 (2020-12-02) <https://github.com/neos/neos-development-collection/releases/tag/3.3.29>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: change regex for selecting \`<a href="">\` Tag <https://github.com/neos/neos-development-collection/pull/2409>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+fixe the behaviour when the a Tag is inside a Tag with the name beginning with a
+
+Example: `<article> test <a target="_blank" href="http://localhost/_Resources/01">example1</a></article>`
+
+the function replaceLinkTargets returned  `<a target="_blank"rticle> test <a target="_blank" href="http://localhost/_Resources/01">example1</a></article>`
+
+create new test evaluateReplaceResourceLinkTargetsInsideTag
+
+this issue was already fixed in 4.2 release on 5 Nov 2018
+
+Fixes #2395
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.3.28...3.3.29>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
