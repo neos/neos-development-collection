@@ -1,0 +1,126 @@
+`5.3.1 (2020-12-02) <https://github.com/neos/neos-development-collection/releases/tag/5.3.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: set tagMode explicitly for tag links in Media.Browser <https://github.com/neos/neos-development-collection/pull/3197>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Add `tagMode: 0` to tag links rendered in Media.Browser.
+
+* Fixes: `#3196 <https://github.com/neos/neos-development-collection/issues/3196>`_
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Respect already defined attributes in Neos.Neos:ConvertUris <https://github.com/neos/neos-development-collection/pull/3152>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+* The `rel` value get merged with existent`rel` attributes
+* If a value already exists, it will not get overridden. Example `<a href="https://external.site" target="external">` the target stays `external`
+* When you set the external target to something different (e.g. `'external'`) or disable it with false, the `rel` attribute will still be set
+* If you have `data-target` set, this will not be overwritten
+
+* Fixes: `#2942 <https://github.com/neos/neos-development-collection/issues/2942>`_
+* Packages: ``Neos``
+
+`BUGFIX: Add file and line information to fusion parser exceptions where possible <https://github.com/neos/neos-development-collection/pull/3204>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+In many cases the currently parsed resource and line is known and it would help to
+editors to show this information in the parser exception.
+
+* Resolves: `#3206 <https://github.com/neos/neos-development-collection/issues/3206>`_
+* Packages: ``Browser`` ``Fusion`` ``Neos``
+
+`BUGFIX: Align fusion caching and service <https://github.com/neos/neos-development-collection/pull/3193>`_
+-----------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3191 <https://github.com/neos/neos-development-collection/issues/3191>`_
+* Packages: ``Neos``
+
+`TASK: Adjust Node and NodeInterface deprecation annotations <https://github.com/neos/neos-development-collection/pull/3194>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Reword the deprecation message in the interface doc comment
+* For deprecated methods with a replacement (e.g. `getDepth()`):
+  * Don't remove the method but keep the deprecation annotation
+  * Remove any `@api` annotation from the method
+* For deprecated methods without replacement (e.g. `getContextPath()`):
+  * Don't remove the method
+  * replace the `@deprecated` annotation by some comment
+
+* Related: `#3137 <https://github.com/neos/neos-development-collection/issues/3137>`_ 
+* Packages: ``ContentRepository`` ``Neos``
+
+`BUGFIX: Use autorotate filter to apply resize adjustments properly to images with exif-orientations <https://github.com/neos/neos-development-collection/pull/3147>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The autorotate is applied before calculating the resize dimensions to work with correct size values.
+
+How to test:
+- Go to the media module
+- Upload an image with exif orientation like https://github.com/recurser/exif-orientation-examples/blob/master/Landscape_6.jpg
+- Look at the generated thumbnails (without this change the thumbnail is rotated 90°)
+
+* Resolves: `#3148 <https://github.com/neos/neos-development-collection/issues/3148>`_ 
+* Packages: ``Media``
+
+`BUGFIX: Flush 1st level node caches after publishing <https://github.com/neos/neos-development-collection/pull/3174>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When a fresh variant is published outdated URLs may be generated if
+the urlPathSegment was changed on the variant.
+
+* Fixes: `#3173 <https://github.com/neos/neos-development-collection/issues/3173>`_
+* Packages: ``Browser`` ``ContentRepository``
+
+`BUGFIX: set collection mode explicitly for custom collection links <https://github.com/neos/neos-development-collection/pull/3162>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+I set the collection mode explicitly to 0 to correct the argument in the url for switching to a custom collection. This Fixes Issue https://github.com/neos/neos-development-collection/issues/3161 
+**How I did it**
+I adjusted the arguments in the link generation in the template for the index action. 
+**How to verify it**
+Switch to the All collection and than by clicking on an link for a custom collection the view switches to the selected collection. 
+**Checklist**
+
+- [ x] Code follows the PSR-2 coding style
+- [ x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_ with the bug (5.3)
+
+* Packages: ``Browser``
+
+`BUGFIX: Fix Compatibility fallback after switching from Neos.Fusion:Collection to Neos.Fusion:Loop <https://github.com/neos/neos-development-collection/pull/3170>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Close: #3169
+
+* Packages: ``Neos``
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3160>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/PxlLxK>`_.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`BUGFIX: Fix LinkingService for CLI mode <https://github.com/neos/neos-development-collection/pull/3129>`_
+----------------------------------------------------------------------------------------------------------
+
+Specifies the HTTP request from the ControllerContext as
+fallback for the `BaseUriProvider` in order to prevent an
+exception when trying to create Node URIs on the CLI.
+
+Note: This requires https://github.com/neos/flow-development-collection/pull/2158
+
+* Fixes: `#3128 <https://github.com/neos/neos-development-collection/issues/3128>`_
+Related: https://github.com/neos/flow-development-collection/issues/2084
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.3.0...5.3.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
