@@ -1,0 +1,70 @@
+`4.1.22 (2020-12-02) <https://github.com/neos/neos-development-collection/releases/tag/4.1.22>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3106>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/RvbyGK).
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3107>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/4xEKGe).
+
+* Packages: ``Browser`` ``ContentRepository`` ``Diff`` ``Fusion`` ``Media`` ``Neos``
+
+`BUGFIX: Migrate icons from TYPO3.Media to Neos.Media <https://github.com/neos/neos-development-collection/pull/3101>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Fixes #2341
+
+* Packages: ``Media``
+
+`BUGFIX: Migrate media browser icons <https://github.com/neos/neos-development-collection/pull/3091>`_
+------------------------------------------------------------------------------------------------------
+
+In Neos prior to 4.1, the media browser uses PNG resources to show thumbnails for non graphical documents from `…/Public/Icons/`, like `ppt.png`. In 4.1 the PNG ressources were removed and replaced by SVG resources from `…/Resources/Public/IconSets/vivid/`. When you add new files after the upgrade, the valid SVG resources are used, but old assets still refer to their old resources, which are missing. As a result, the media browser shows the rotating “loading” icon for these old documents.
+
+This adds Doctrine migrations to replace the old with the  new icons in the database.
+
+Fixes #2341
+
+* Packages: ``Media``
+
+`TASK: Fix failing evaluateReplaceResourceLinkTargetsInsideTag test <https://github.com/neos/neos-development-collection/pull/2972>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes the test that is failing since merging https://github.com/neos/neos-development-collection/pull/2409
+
+* Packages: ``Neos``
+
+`BUGFIX: change regex for selecting \`<a href="">\` Tag <https://github.com/neos/neos-development-collection/pull/2409>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+fixe the behaviour when the a Tag is inside a Tag with the name beginning with a
+
+Example: `<article> test <a target="_blank" href="http://localhost/_Resources/01">example1</a></article>`
+
+the function replaceLinkTargets returned  `<a target="_blank"rticle> test <a target="_blank" href="http://localhost/_Resources/01">example1</a></article>`
+
+create new test evaluateReplaceResourceLinkTargetsInsideTag
+
+this issue was already fixed in 4.2 release on 5 Nov 2018
+
+Fixes #2395
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.1.21...4.1.22>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
