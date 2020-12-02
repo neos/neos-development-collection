@@ -1,0 +1,152 @@
+`5.1.11 (2020-12-02) <https://github.com/neos/neos-development-collection/releases/tag/5.1.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: set tagMode explicitly for tag links in Media.Browser <https://github.com/neos/neos-development-collection/pull/3197>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Add `tagMode: 0` to tag links rendered in Media.Browser.
+
+* Fixes: `#3196 <https://github.com/neos/neos-development-collection/issues/3196>`_
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Respect already defined attributes in Neos.Neos:ConvertUris <https://github.com/neos/neos-development-collection/pull/3152>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+* The `rel` value get merged with existent`rel` attributes
+* If a value already exists, it will not get overridden. Example `<a href="https://external.site" target="external">` the target stays `external`
+* When you set the external target to something different (e.g. `'external'`) or disable it with false, the `rel` attribute will still be set
+* If you have `data-target` set, this will not be overwritten
+
+* Fixes: `#2942 <https://github.com/neos/neos-development-collection/issues/2942>`_
+* Packages: ``Neos``
+
+`BUGFIX: Align fusion caching and service <https://github.com/neos/neos-development-collection/pull/3193>`_
+-----------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3191 <https://github.com/neos/neos-development-collection/issues/3191>`_
+* Packages: ``Neos``
+
+`TASK: Adjust Node and NodeInterface deprecation annotations <https://github.com/neos/neos-development-collection/pull/3194>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Reword the deprecation message in the interface doc comment
+* For deprecated methods with a replacement (e.g. `getDepth()`):
+  * Don't remove the method but keep the deprecation annotation
+  * Remove any `@api` annotation from the method
+* For deprecated methods without replacement (e.g. `getContextPath()`):
+  * Don't remove the method
+  * replace the `@deprecated` annotation by some comment
+
+* Related: `#3137 <https://github.com/neos/neos-development-collection/issues/3137>`_ 
+* Packages: ``ContentRepository`` ``Neos``
+
+`BUGFIX: Use autorotate filter to apply resize adjustments properly to images with exif-orientations <https://github.com/neos/neos-development-collection/pull/3147>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The autorotate is applied before calculating the resize dimensions to work with correct size values.
+
+How to test:
+- Go to the media module
+- Upload an image with exif orientation like https://github.com/recurser/exif-orientation-examples/blob/master/Landscape_6.jpg
+- Look at the generated thumbnails (without this change the thumbnail is rotated 90°)
+
+* Resolves: `#3148 <https://github.com/neos/neos-development-collection/issues/3148>`_ 
+* Packages: ``Media``
+
+`BUGFIX: Flush 1st level node caches after publishing <https://github.com/neos/neos-development-collection/pull/3174>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When a fresh variant is published outdated URLs may be generated if
+the urlPathSegment was changed on the variant.
+
+* Fixes: `#3173 <https://github.com/neos/neos-development-collection/issues/3173>`_
+* Packages: ``Browser`` ``ContentRepository``
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3160>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/PxlLxK>`_.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`BUGFIX: Fix LinkingService for CLI mode <https://github.com/neos/neos-development-collection/pull/3129>`_
+----------------------------------------------------------------------------------------------------------
+
+Specifies the HTTP request from the ControllerContext as
+fallback for the `BaseUriProvider` in order to prevent an
+exception when trying to create Node URIs on the CLI.
+
+Note: This requires https://github.com/neos/flow-development-collection/pull/2158
+
+* Fixes: `#3128 <https://github.com/neos/neos-development-collection/issues/3128>`_
+Related: https://github.com/neos/flow-development-collection/issues/2084
+
+* Packages: ``Neos``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3106>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/RvbyGK>`_.
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/3107>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/4xEKGe>`_.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Diff`` ``Fusion`` ``Media`` ``Neos``
+
+`FEATURE: Use breadcrumb for URL preview <https://github.com/neos/neos-development-collection/pull/3100>`_
+----------------------------------------------------------------------------------------------------------
+
+This replaces the (preview) URL by a "breadcrumb" to the homepage node.
+
+Essentially applies https://github.com/neos/neos-development-collection/pull/2966
+to the 4.3 branch, since the breadcrumb is a lot more user-friendly than the
+URL.
+
+* Packages: ``Neos``
+
+`BUGFIX: Migrate icons from TYPO3.Media to Neos.Media <https://github.com/neos/neos-development-collection/pull/3101>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2341 <https://github.com/neos/neos-development-collection/issues/2341>`_
+* Packages: ``Media``
+
+`BUGFIX: TransientNodeCache must be able to return null <https://github.com/neos/neos-development-collection/pull/3097>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This is an important bugfix because right now non existing nodes will result in a fatal error 
+due to the type hint, when the $getter() actually doesn't resolve a node but null, which can happen.
+The current behavior is therefore broken for many installations.
+
+Relate #2301
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`BUGFIX: Migrate media browser icons <https://github.com/neos/neos-development-collection/pull/3091>`_
+------------------------------------------------------------------------------------------------------
+
+In Neos prior to 4.1, the media browser uses PNG resources to show thumbnails for non graphical documents from `…/Public/Icons/`, like `ppt.png`. In 4.1 the PNG ressources were removed and replaced by SVG resources from `…/Resources/Public/IconSets/vivid/`. When you add new files after the upgrade, the valid SVG resources are used, but old assets still refer to their old resources, which are missing. As a result, the media browser shows the rotating “loading” icon for these old documents.
+
+This adds Doctrine migrations to replace the old with the  new icons in the database.
+
+* Fixes: `#2341 <https://github.com/neos/neos-development-collection/issues/2341>`_
+* Packages: ``Media``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.1.10...5.1.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
