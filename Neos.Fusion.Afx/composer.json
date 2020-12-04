@@ -7,33 +7,24 @@
     "packagefactory/atomicfusion-afx": "*"
   },
   "require": {
-    "neos/fusion": "^4.2 || ^5.0 || dev-master"
+    "neos/fusion": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^8.1"
   },
   "autoload": {
     "psr-4": {
-      "Neos\\Fusion\\Afx\\": "Classes/"
+      "Neos\\Fusion\\Afx\\": "Classes"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Neos\\Fusion\\Afx\\Tests\\": "Tests/"
+      "Neos\\Fusion\\Afx\\Tests\\": "Tests"
     }
   },
   "extra": {
     "neos": {
       "package-key": "Neos.Fusion.Afx"
     }
-  },
-  "scripts": {
-    "test:functional": [
-      "composer install",
-      "vendor/bin/phpunit Tests/Functional"
-    ],
-    "test": [
-      "composer test:functional"
-    ]
   }
 }
