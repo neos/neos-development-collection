@@ -70,11 +70,6 @@ class JoinImplementationTest extends UnitTestCase
                 ['/__meta/glue', '/first', '/second']
             ],
             [
-                'Position before adds after start if named element not present',
-                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
-                ['/__meta/glue', '/first', '/second', '/third']
-            ],
-            [
                 'Position before uses priority when referencing the same element; The higher the priority the closer before the element gets added.',
                 ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third 12']], 'first' => ['__meta' => ['position' => 'before third']]],
                 ['/__meta/glue', '/first', '/second', '/third']
@@ -90,11 +85,6 @@ class JoinImplementationTest extends UnitTestCase
                 ['/__meta/glue', '/first', '/second']
             ],
             [
-                'Position after adds before end if named element not present',
-                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
-                ['/__meta/glue', '/first', '/second', '/third']
-            ],
-            [
                 'Position after uses priority when referencing the same element; The higher the priority the closer after the element gets added.',
                 ['third' => ['__meta' => ['position' => 'after first']], 'second' => ['__meta' => ['position' => 'after first 12']], 'first' => ['__meta' => []]],
                 ['/__meta/glue', '/first', '/second', '/third']
@@ -102,6 +92,25 @@ class JoinImplementationTest extends UnitTestCase
             [
                 'Position after works recursively',
                 ['third' => ['__meta' => ['position' => 'after second']], 'second' => ['__meta' => ['position' => 'after first']], 'first' => ['__meta' => []]],
+                ['/__meta/glue', '/first', '/second', '/third']
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function positionalSubElementsThatShouldFailByInvalidPositions()
+    {
+        return [
+            [
+                'Position before adds after start if named element not present',
+                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
+                ['/__meta/glue', '/first', '/second', '/third']
+            ],
+            [
+                'Position after adds before end if named element not present',
+                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
                 ['/__meta/glue', '/first', '/second', '/third']
             ]
         ];
@@ -132,5 +141,35 @@ class JoinImplementationTest extends UnitTestCase
         $renderer->evaluate();
 
         self::assertSame($expectedKeyOrder, $renderedPaths, $message);
+    }
+
+    /**
+     * @test
+     * @dataProvider positionalSubElementsThatShouldFailByInvalidPositions
+     *
+     * @param string $message
+     * @param array $subElements
+     * @param array $expectedKeyOrder
+     */
+    public function evaluateRendersKeysSortedByPositionMetaPropertyThatShouldFail($message, $subElements, $expectedKeyOrder)
+    {
+        try {
+            $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+
+            $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
+                $renderedPaths[] = $path;
+            }));
+
+            $path = '';
+            $fusionObjectName = 'Neos.Fusion:Join';
+            $renderer = new JoinImplementation($mockRuntime, $path, $fusionObjectName);
+            foreach ($subElements as $key => $value) {
+                $renderer[$key] = $value;
+            }
+            $renderer->evaluate();
+            self::fail('Expected InvalidPositionException exception not thrown');
+        } catch (\Exception $exception) {
+            self::assertEquals($exception->getCode(), 1345126502);
+        }
     }
 }
