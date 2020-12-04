@@ -175,19 +175,12 @@ class ContentCacheTest extends UnitTestCase
             ['mytag2'],
             86400
         );
-
-        $mockCache->expects($this->at(0))->method('set')->with(
-            $this->anything(),
-            $invalidContent,
-            ['mytag1', 'mytag2'],
-            null
-        );
-        $mockCache->expects($this->at(1))->method('set')->with(
-            $this->anything(),
-            $validContent,
-            ['mytag2'],
-            86400
-        );
+        $mockCache->expects(self::atLeast(2))
+            ->method('set')
+            ->withConsecutive(
+                [self::anything(), $invalidContent, ['mytag1', 'mytag2'], null],
+                [self::anything(), $validContent, ['mytag2'], 86400],
+            );
 
         $output = $contentCache->processCacheSegments($content);
 

@@ -213,13 +213,9 @@ class NodeServiceTest extends UnitTestCase
             ->method('getNodeType')
             ->will(self::returnValue($mockNodeType));
 
-        $mockNode->expects($this->at(1))
+        $mockNode->expects(self::atLeast(2))
             ->method('createNode')
-            ->with('first-child-node-name', $firstChildNodeType);
-
-        $mockNode->expects($this->at(2))
-            ->method('createNode')
-            ->with('second-child-node-name', $secondChildNodeType);
+            ->withConsecutive(['first-child-node-name', $firstChildNodeType], ['second-child-node-name', $secondChildNodeType]);
 
         $nodeService->createChildNodes($mockNode);
     }
