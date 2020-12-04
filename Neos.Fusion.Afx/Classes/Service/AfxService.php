@@ -12,7 +12,6 @@ namespace Neos\Fusion\Afx\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Utility\Arrays;
 use Neos\Fusion\Afx\Parser\Parser as AfxParser;
 use Neos\Fusion\Afx\Exception\AfxException;
 
