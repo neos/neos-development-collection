@@ -151,8 +151,10 @@ class PublishingServiceTest extends UnitTestCase
         $mockNode2->expects(self::any())->method('getNodeData')->will(self::returnValue($mockNodeData2));
         $mockNode2->expects(self::any())->method('getPath')->will(self::returnValue('/node2'));
 
-        $this->mockNodeFactory->expects($this->at(0))->method('createFromNodeData')->with($mockNodeData1, $mockContext)->will(self::returnValue($mockNode1));
-        $this->mockNodeFactory->expects($this->at(1))->method('createFromNodeData')->with($mockNodeData2, $mockContext)->will(self::returnValue($mockNode2));
+        $this->mockNodeFactory->expects(self::atLeast(2))
+            ->method('createFromNodeData')
+            ->withConsecutive([$mockNodeData1, $mockContext], [$mockNodeData2, $mockContext])
+            ->willReturnOnConsecutiveCalls($mockNode1, $mockNode2);
 
         $this->mockNodeDataRepository->expects(self::atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will(self::returnValue([$mockNodeData1, $mockNodeData2]));
 
@@ -187,8 +189,10 @@ class PublishingServiceTest extends UnitTestCase
         $mockNode1->expects(self::any())->method('getNodeData')->will(self::returnValue($mockNodeData1));
         $mockNode1->expects(self::any())->method('getPath')->will(self::returnValue('/node1'));
 
-        $this->mockNodeFactory->expects($this->at(0))->method('createFromNodeData')->with($mockNodeData1, $mockContext)->will(self::returnValue($mockNode1));
-        $this->mockNodeFactory->expects($this->at(1))->method('createFromNodeData')->with($mockNodeData2, $mockContext)->will(self::returnValue(null));
+        $this->mockNodeFactory->expects(self::atLeast(2))
+            ->method('createFromNodeData')
+            ->withConsecutive([$mockNodeData1, $mockContext], [$mockNodeData2, $mockContext])
+            ->willReturnOnConsecutiveCalls($mockNode1, null);
 
         $this->mockNodeDataRepository->expects(self::atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will(self::returnValue([$mockNodeData1, $mockNodeData2]));
 
