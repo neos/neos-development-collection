@@ -14,6 +14,7 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\DataStructureImplementation;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the Fusion Concat object
@@ -21,14 +22,24 @@ use Neos\Fusion\FusionObjects\DataStructureImplementation;
 class DataStructureImplementationTest extends UnitTestCase
 {
     /**
+     * @var Runtime|MockObject
+     */
+    private $mockRuntime;
+
+
+    public function setUp(): void
+    {
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+    }
+
+    /**
      * @test
      */
-    public function evaluateWithEmptyArrayRendersEmptyArray()
+    public function evaluateWithEmptyArrayRendersEmptyArray(): void
     {
-        $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $path = 'datastructure/test';
         $fusionObjectName = 'Neos.Fusion:DataStructure';
-        $renderer = new DataStructureImplementation($mockRuntime, $path, $fusionObjectName);
+        $renderer = new DataStructureImplementation($this->mockRuntime, $path, $fusionObjectName);
         $result = $renderer->evaluate();
         self::assertSame($result, []);
     }
@@ -36,7 +47,7 @@ class DataStructureImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function positionalSubElements()
+    public function positionalSubElements(): array
     {
         return [
             [
@@ -70,11 +81,6 @@ class DataStructureImplementationTest extends UnitTestCase
                 ['/first', '/second']
             ],
             [
-                'Position before adds after start if named element not present',
-                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
-                ['/first', '/second', '/third']
-            ],
-            [
                 'Position before uses priority when referencing the same element; The higher the priority the closer before the element gets added.',
                 ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third 12']], 'first' => ['__meta' => ['position' => 'before third']]],
                 ['/first', '/second', '/third']
@@ -88,11 +94,6 @@ class DataStructureImplementationTest extends UnitTestCase
                 'Position after adds after named element if present',
                 ['second' => ['__meta' => ['position' => 'after first']], 'first' => ['__meta' => []]],
                 ['/first', '/second']
-            ],
-            [
-                'Position after adds before end if named element not present',
-                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
-                ['/first', '/second', '/third']
             ],
             [
                 'Position after uses priority when referencing the same element; The higher the priority the closer after the element gets added.',
@@ -110,27 +111,53 @@ class DataStructureImplementationTest extends UnitTestCase
     /**
      * @test
      * @dataProvider positionalSubElements
-     *
-     * @param string $message
-     * @param array $subElements
-     * @param array $expectedKeyOrder
      */
-    public function evaluateRendersKeysSortedByPositionMetaProperty($message, $subElements, $expectedKeyOrder)
+    public function evaluateRendersKeysSortedByPositionMetaProperty(string $message, array $subElements, array $expectedKeyOrder): void
     {
-        $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-
-        $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
+        $this->mockRuntime->method('evaluate')->willReturnCallback(function ($path) use (&$renderedPaths) {
             $renderedPaths[] = $path;
-        }));
+        });
 
-        $path = '';
         $fusionObjectName = 'Neos.Fusion:DataStructure';
-        $renderer = new DataStructureImplementation($mockRuntime, $path, $fusionObjectName);
+        $renderer = new DataStructureImplementation($this->mockRuntime, '', $fusionObjectName);
         foreach ($subElements as $key => $value) {
             $renderer[$key] = $value;
         }
         $renderer->evaluate();
 
         self::assertSame($expectedKeyOrder, $renderedPaths, $message);
+    }
+
+    /**
+     * @return array
+     */
+    public function positionalSubElementsThatShouldFailByInvalidPositions(): array
+    {
+        return [
+            [
+                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
+            ],
+            [
+                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider positionalSubElementsThatShouldFailByInvalidPositions
+     *
+     * @param array $subElements
+     */
+    public function evaluateThrowsExceptionIfKeysSortedByPositionMetaPropertyContainsInvalidValues(array $subElements): void
+    {
+        $fusionObjectName = 'Neos.Fusion:DataStructure';
+        $renderer = new DataStructureImplementation($this->mockRuntime, '', $fusionObjectName);
+        foreach ($subElements as $key => $value) {
+            $renderer[$key] = $value;
+        }
+        $this->expectExceptionCode(1345126502);
+
+        $renderer->evaluate();
     }
 }
