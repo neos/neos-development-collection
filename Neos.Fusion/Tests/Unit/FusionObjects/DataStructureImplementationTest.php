@@ -70,11 +70,6 @@ class DataStructureImplementationTest extends UnitTestCase
                 ['/first', '/second']
             ],
             [
-                'Position before adds after start if named element not present',
-                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
-                ['/first', '/second', '/third']
-            ],
-            [
                 'Position before uses priority when referencing the same element; The higher the priority the closer before the element gets added.',
                 ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third 12']], 'first' => ['__meta' => ['position' => 'before third']]],
                 ['/first', '/second', '/third']
@@ -90,11 +85,6 @@ class DataStructureImplementationTest extends UnitTestCase
                 ['/first', '/second']
             ],
             [
-                'Position after adds before end if named element not present',
-                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
-                ['/first', '/second', '/third']
-            ],
-            [
                 'Position after uses priority when referencing the same element; The higher the priority the closer after the element gets added.',
                 ['third' => ['__meta' => ['position' => 'after first']], 'second' => ['__meta' => ['position' => 'after first 12']], 'first' => ['__meta' => []]],
                 ['/first', '/second', '/third']
@@ -104,6 +94,25 @@ class DataStructureImplementationTest extends UnitTestCase
                 ['third' => ['__meta' => ['position' => 'after second']], 'second' => ['__meta' => ['position' => 'after first']], 'first' => ['__meta' => []]],
                 ['/first', '/second', '/third']
             ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function positionalSubElementsThatShouldFailByInvalidPositions()
+    {
+        return [
+            [
+                'Position after adds before end if named element not present',
+                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
+                ['/first', '/second', '/third']
+            ],
+            [
+                'Position before adds after start if named element not present',
+                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
+                ['/first', '/second', '/third']
+            ],
         ];
     }
 
@@ -132,5 +141,35 @@ class DataStructureImplementationTest extends UnitTestCase
         $renderer->evaluate();
 
         self::assertSame($expectedKeyOrder, $renderedPaths, $message);
+    }
+
+    /**
+     * @test
+     * @dataProvider positionalSubElementsThatShouldFailByInvalidPositions
+     *
+     * @param string $message
+     * @param array $subElements
+     * @param array $expectedKeyOrder
+     */
+    public function evaluateRendersKeysSortedByPositionMetaPropertyThatShouldFail($message, $subElements, $expectedKeyOrder)
+    {
+        try {
+            $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+
+            $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
+                $renderedPaths[] = $path;
+            }));
+
+            $path = '';
+            $fusionObjectName = 'Neos.Fusion:DataStructure';
+            $renderer = new DataStructureImplementation($mockRuntime, $path, $fusionObjectName);
+            foreach ($subElements as $key => $value) {
+                $renderer[$key] = $value;
+            }
+            $renderer->evaluate();
+            self::fail('Expected InvalidPositionException exception not thrown');
+        } catch (\Exception $exception) {
+            self::assertEquals($exception->getCode(), 1345126502);
+        }
     }
 }
