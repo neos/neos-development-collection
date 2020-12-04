@@ -156,6 +156,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
             return false;
         }
+        if (!$this->nodeTypeIsAllowed($node)) {
+            return false;
+        }
         if ($this->onlyMatchSiteNodes() && $node !== $node->getContext()->getCurrentSiteNode()) {
             return false;
         }
@@ -255,31 +258,27 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $contentContext = $node->getContext();
         }
 
-        if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
+        if (!$this->nodeTypeIsAllowed($node)) {
             return false;
         }
-
         $siteNode = $contentContext->getCurrentSiteNode();
         if ($this->onlyMatchSiteNodes() && $node !== $siteNode) {
             return false;
         }
-        $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
-        if ($resolvedNode === null) {
-            throw new NeosException(sprintf('Could not resolve shortcut target for node "%s"', $node->getPath()), 1414771137);
-        }
 
-        $node = $this->resolveShortcutNode($node);
-        if ($node instanceof UriInterface) {
-            return new ResolveResult('', UriConstraints::fromUri($node), null);
+        $nodeOrUri = $this->resolveShortcutNode($node);
+        if ($nodeOrUri instanceof UriInterface) {
+            return new ResolveResult('', UriConstraints::fromUri($nodeOrUri), null);
         }
 
         try {
-            $uriConstraints = $this->buildUriConstraintsForResolvedNode($node);
+            $uriConstraints = $this->buildUriConstraintsForResolvedNode($nodeOrUri);
         } catch (Exception\NoSiteException $exception) {
             $this->systemLogger->debug('FrontendNodeRoutePartHandler resolveValue(): ' . $exception->getMessage());
             return false;
         }
-        return new ResolveResult('', $uriConstraints);
+        $uriPath = $this->resolveRoutePathForNode($nodeOrUri);
+        return new ResolveResult($uriPath, $uriConstraints);
     }
 
     /**
@@ -321,7 +320,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
     /**
      * Builds UriConstraints for the given $node with:
-     * * a path constraint equal to the resolved URI path
      * * domain specific constraints for nodes in a different Neos site
      * * a path suffix corresponding to the configured "uriPathSuffix"
      *
@@ -331,8 +329,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function buildUriConstraintsForResolvedNode(NodeInterface $node): UriConstraints
     {
-        $uriPath = $this->resolveRoutePathForNode($node);
-        $uriConstraints = UriConstraints::create()->withPath($uriPath);
+        $uriConstraints = UriConstraints::create();
         $requestSite = $this->getCurrentSite();
         if (!NodePaths::isSubPathOf(SiteService::SITES_ROOT_PATH, $node->getPath())) {
             throw new Exception\NoSiteException(sprintf('The node at path "%s" is not located underneath the sites root path "%s"', $node->getPath(), SiteService::SITES_ROOT_PATH), 1604922914);
@@ -341,7 +338,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if ($resolvedSiteNodeName !== $requestSite->getNodeName()) {
             $resolvedSite = $this->siteRepository->findOneByNodeName($resolvedSiteNodeName);
             if ($resolvedSite === null || $resolvedSite->isOffline()) {
-                throw new Exception\NoSiteException(sprintf('No online site found for request path "%s" and resolved site node name of "%s"', $uriPath, $resolvedSiteNodeName), 1604505599);
+                throw new Exception\NoSiteException(sprintf('No online site found for node "%s" and resolved site node name of "%s"', $node->getIdentifier(), $resolvedSiteNodeName), 1604505599);
             }
             $uriConstraints = $this->applyDomainToUriConstraints($uriConstraints, $resolvedSite->getPrimaryDomain());
         }
@@ -469,6 +466,18 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected function onlyMatchSiteNodes()
     {
         return isset($this->options['onlyMatchSiteNodes']) && $this->options['onlyMatchSiteNodes'] === true;
+    }
+
+    /**
+     * Whether the given $node is allowed according to the "nodeType" option
+     *
+     * @param NodeInterface $node
+     * @return bool
+     */
+    protected function nodeTypeIsAllowed(NodeInterface $node): bool
+    {
+        $allowedNodeType = !empty($this->options['nodeType']) ? $this->options['nodeType'] : 'Neos.Neos:Document';
+        return $node->getNodeType()->isOfType($allowedNodeType);
     }
 
     /**
