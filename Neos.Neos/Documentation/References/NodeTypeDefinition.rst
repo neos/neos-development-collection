@@ -267,10 +267,6 @@ The following options are allowed for defining a NodeType:
     ``inlineEditable``
       If `true`, this property is inline editable, i.e. edited directly on the page.
 
-    ``aloha``
-      Legacy configuration of rich text editor, works for the sake of backwards compatibility, but it
-      is advised to use `inline.editorOptions` instead.
-
     ``inline``
 
       ``editor``
@@ -283,9 +279,6 @@ The following options are allowed for defining a NodeType:
 
       ``editorOptions``
         This section controls the text formatting options the user has available for this property.
-
-        **Note**: When using `inline.editorOptions` anything defined under the legacy `aloha` key for a
-        property is ignored. Keep this in mind when using supertypes and mixins.
 
         ``placeholder``
           A text that is shown when the field is empty. Supports i18n.
