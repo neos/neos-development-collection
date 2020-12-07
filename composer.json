@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "dev-master",
+        "neos/flow-development-collection": "7.0.x-dev",
         "neos/neos-setup": "^1.0",
         "php": "^7.3",
         "neos/flow": "*",
@@ -30,7 +30,7 @@
         "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0",
         "neos/form": "*",
-        "neos/kickstarter": "dev-master"
+        "neos/kickstarter": "~7.0.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -72,7 +72,7 @@
                 "Neos.Diff/Classes"
             ],
             "Neos\\Fusion\\Afx\\": [
-                "Neos.Fusion.Afx/Classes/"
+                "Neos.Fusion.Afx/Classes"
             ],
             "Neos\\Fusion\\": [
                 "Neos.Fusion/Classes"
@@ -133,7 +133,7 @@
                 "Neos.ContentRepository/Tests"
             ],
             "Neos\\Fusion\\Afx\\Tests\\": [
-                "Neos.Fusion.Afx/Tests/"
+                "Neos.Fusion.Afx/Tests"
             ],
             "Neos\\Fusion\\Tests\\": [
                 "Neos.Fusion/Tests"
@@ -150,6 +150,6 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^8.1"
     }
 }
