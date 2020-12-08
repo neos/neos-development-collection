@@ -10,7 +10,7 @@
     "neos/fusion": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^8.1"
+    "phpunit/phpunit": "^9.0"
   },
   "autoload": {
     "psr-4": {
