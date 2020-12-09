@@ -2,6 +2,8 @@
 
 > JSX inspired compact syntax for Neos.Fusion
 
+__This repository is a **read-only subsplit** of a package that is part of the Neos project (learn more on `www.neos.io <https://www.neos.io/>`_).__
+
 This package provides a fusion preprocessor that expands a compact xml-ish syntax to pure fusion code. This allows
 to write compact components that do'nt need a seperate template file and enables unplanned extensibility for the defined 
 prototypes because the generated fusion-code can be overwritten and controlled from the outside if needed.
