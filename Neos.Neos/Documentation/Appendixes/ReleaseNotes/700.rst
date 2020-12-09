@@ -1,0 +1,38 @@
+=====
+7.0.0
+=====
+
+Neos 7.0 is the next major version and <tbd>
+
+
+Feature 1
+=========
+
+<tbd>
+
+Feature 2
+=========
+
+<tbd>
+
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+
+See https://www.neos.io/download-and-extend/upgrade-instructions-5-3-7-0.html
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+As this is a major release a few breaking changes have gone in. All of them can be found
+in the ChangeLog, but everything important should be listed above and in the upgrade instructions.
+
+In case you have any problems with this guide, please get in touch with us
+via `discuss.neos.io <https://discuss.neos.io/>`_ or on `Slack <https://neos-project.slack.com/>`_.
+
+.. note::
+
+   Additionally all changes in Flow 7.0 apply, see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/7.0/TheDefinitiveGuide/PartV/ReleaseNotes/700.html
