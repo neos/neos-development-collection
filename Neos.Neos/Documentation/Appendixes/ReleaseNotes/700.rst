@@ -2,8 +2,8 @@
 7.0.0
 =====
 
-Neos 7.0 is the next major version and comes with numerous changes, and a few additional features.
-Since some refactoring has happeend, developers will need to get familiar with a few changes.
+Neos 7.0 is the next major version and comes with numerous changes and a few additional features.
+Since some refactoring has happened, developers will need to get familiar with a few changes.
 
 
 Raise the minimum PHP version to 7.3
@@ -15,7 +15,7 @@ Relative position to non-existing key throws exception
 ======================================================
 Until now, an element positioned relative to a non-existing key would just be skipped silently.
 Now it will throw an exception to bring awareness to the "inactive" array element.
-This is a breaking change because previously referring to a non existing position would be ignored.
+This is a breaking change because previously referring to a non-existing position would be ignored.
 
 
 Faster frontend routing
@@ -35,7 +35,7 @@ Improvements for AFX
 
 Catch AFX parser exceptions
 ---------------------------
-Previously only AFX exceptions were converted to fusion exceptions, which hid valuable information
+Previously, only AFX exceptions were converted to fusion exceptions, which hid valuable information
 about the user's error source. This change will also catch for AFX parser exceptions and
 convert those to Fusion Exceptions.
 
@@ -56,7 +56,7 @@ kickstart some sorts of sites with one package:
 Include AFX in the development collection
 -----------------------------------------
 Now it is much easier to implement changes that need synchronous alterations in AFX and Fusion
-and will reduce the number different of version constraints we have to deal with.
+and will reduce the number of different version constraints we have to deal with.
 
 `PR 3205 <https://github.com/neos/neos-development-collection/pull/3205>`_
 
