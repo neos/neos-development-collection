@@ -16,6 +16,7 @@ use Neos\Fusion;
 use Neos\Fusion\Core\DslInterface;
 use Neos\Fusion\Afx\Service\AfxService;
 use Neos\Fusion\Afx\Exception\AfxException;
+use Neos\Fusion\Afx\Parser\AfxParserException;
 
 /**
  * Class Fusion AFX Dsl
@@ -37,6 +38,8 @@ class AfxDslImplementation implements DslInterface
         try {
             return AfxService::convertAfxToFusion($code);
         } catch (AfxException $afxException) {
+            throw new Fusion\Exception(sprintf('Error during AFX-transpilation: %s', $afxException->getMessage()));
+        } catch (AfxParserException $afxException) {
             throw new Fusion\Exception(sprintf('Error during AFX-parsing: %s', $afxException->getMessage()));
         }
     }
