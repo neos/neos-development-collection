@@ -72,7 +72,7 @@
                 "Neos.Diff/Classes"
             ],
             "Neos\\Fusion\\Afx\\": [
-                "Neos.Fusion.Afx/Classes/"
+                "Neos.Fusion.Afx/Classes"
             ],
             "Neos\\Fusion\\": [
                 "Neos.Fusion/Classes"
@@ -133,7 +133,7 @@
                 "Neos.ContentRepository/Tests"
             ],
             "Neos\\Fusion\\Afx\\Tests\\": [
-                "Neos.Fusion.Afx/Tests/"
+                "Neos.Fusion.Afx/Tests"
             ],
             "Neos\\Fusion\\Tests\\": [
                 "Neos.Fusion/Tests"
