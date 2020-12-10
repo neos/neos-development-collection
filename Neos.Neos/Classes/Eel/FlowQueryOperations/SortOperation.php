@@ -50,6 +50,7 @@ class SortOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation.
      * @throws \Neos\Eel\FlowQuery\FlowQueryException
+     * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
