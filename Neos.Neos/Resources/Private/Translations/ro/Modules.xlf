@@ -7,7 +7,7 @@
 			<target state="needs-translation">Back</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="needs-translation">Cancel</target></trans-unit>
+			<target state="translated">Anulare</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
