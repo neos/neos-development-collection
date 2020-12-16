@@ -39,6 +39,7 @@ prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
 
 	tagName = 'img'
 	attributes {
+		alt = ''
 		src = Neos.Neos:ImageUri {
 			asset = ${asset}
 			width = ${width}
