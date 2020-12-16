@@ -5,40 +5,40 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target state="needs-translation">Auto-Publish</target></trans-unit>
+			<target state="translated">Auto publicare</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target state="needs-translation">Auto-Publish to {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target state="needs-translation">Review changes</target></trans-unit>
+			<target state="translated">Revizuieste modificariile</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target state="needs-translation">Apply</target></trans-unit>
+			<target state="translated">Aplicare</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target state="needs-translation">Apply changes</target></trans-unit>
+			<target state="translated">Aplica modificariile</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="needs-translation">Cancel</target></trans-unit>
+			<target state="translated">Anulare</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target state="needs-translation">Back</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target state="needs-translation">Choose</target></trans-unit>
+			<target state="translated">Alege</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target state="needs-translation">Type to search</target></trans-unit>
+			<target state="translated">Tasteaza pentru a cauta</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target state="needs-translation">Content</target></trans-unit>
+			<target state="translated">Continut</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target state="needs-translation">Node</target></trans-unit>
+			<target state="translated">Nod</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target state="needs-translation">Content View</target></trans-unit>
+			<target state="translated">Vezi continutul</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target state="needs-translation">Create after</target></trans-unit>
@@ -444,7 +444,7 @@
 			<target state="needs-translation">Throw away</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target state="needs-translation">Apply</target></trans-unit>
+			<target state="translated">Aplicare</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target state="needs-translation">Select a Plugin</target></trans-unit>
@@ -567,7 +567,7 @@
 			<target state="needs-translation">Create and copy</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target state="needs-translation">Content</target></trans-unit>
+			<target state="translated">Continut</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
 			<target state="needs-translation">Toggle menu group</target></trans-unit>
