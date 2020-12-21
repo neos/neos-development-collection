@@ -167,6 +167,38 @@ prototype(Neos.Fusion:ResourceUri) {
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
+# Renders a link pointing to a controller/action
+#
+# Usage:
+# link = Neos.Fusion:Link.Action {
+#   href {
+#     package = 'Some.Package'
+#     controller = 'Standard'
+#     action = 'index'
+#   }
+# }
+#
+prototype(Neos.Fusion:Link.Action) < prototype(Neos.Fusion:Tag) {
+    tagName = 'a'
+    href = Neos.Fusion:UriBuilder
+    attributes.href = ${this.href}
+}
+
+# Renders a link pointing to a resource
+#
+# Usage:
+# link = Neos.Fusion:Link.Resource {
+#   href {
+#     path = 'resource://Some.Package/Public/Images/SomeImage.png'
+#   }
+# }
+#
+prototype(Neos.Fusion:Link.Resource) < prototype(Neos.Fusion:Tag) {
+    tagName = 'a'
+    href = Neos.Fusion:ResourceUri
+    attributes.href = ${this.href}
+}
+
 # Render a content fragment without any additional markup
 # to allow placing conditions for multiple tags at once.
 #
