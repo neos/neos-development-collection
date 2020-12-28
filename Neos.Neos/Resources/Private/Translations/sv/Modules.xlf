@@ -625,7 +625,7 @@
 			<target state="translated">Ändra domän</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">Domändata</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
 			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
