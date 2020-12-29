@@ -341,10 +341,10 @@
 			<target state="translated">Visa publiceringsalternativ</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Aktivera redigering i helskärmsläge</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Avaktivera redigering i helskärmsläge</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
 			<target state="translated">Visa förhandsgranskning</target></trans-unit>
@@ -684,10 +684,10 @@
 			<target state="translated">Databasfel</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target state="translated">Det finns ingen databasanslutning ännu eller Neos databasschema har inte skapats.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target state="translated">Kör installationen för att konfigurera din databas.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Sidan hittades inte</target></trans-unit>
