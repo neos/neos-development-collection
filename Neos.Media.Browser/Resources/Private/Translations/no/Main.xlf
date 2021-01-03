@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+			<target state="translated">Dra og slipp en ressurs over en samling / merkelapp for å legge den til.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target state="needs-translation">Keep the filename "{0}"</target></trans-unit>
+			<target state="translated">Behold filnavnet "{0}"</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve">
 				<source>Media</source>
 			<target state="translated">Media</target></trans-unit>
@@ -61,10 +61,10 @@
 			<target state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target state="translated">Sorteringsretning stigende</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target state="translated">Sorteringsretning synkende</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="translated">Dra og slipp på merke eller samling</target></trans-unit>
@@ -109,7 +109,7 @@
 			<target state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="needs-translation">Replace asset resource</target></trans-unit>
+			<target state="translated">Erstatt ressurs</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target state="translated">Lagre</target></trans-unit>
@@ -316,7 +316,7 @@
 			<target state="translated">Kan ikke laste opp filen</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target state="needs-translation">No file selected</target></trans-unit>
+			<target state="translated">Ingen fil er valgt</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="translated">Filstørrelsen {0} overskrider den tillatte grensen på {1}</target></trans-unit>
@@ -341,11 +341,11 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target state="needs-translation">{0} usages</target>
+          <target state="translated">{0} anvendelser</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target state="needs-translation">{0} usages</target>
+          <target state="translated">{0} anvendelser</target>
         </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
@@ -380,55 +380,55 @@
 			<target state="needs-translation">Preview current file</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target state="needs-translation">Could not replace asset</target></trans-unit>
+			<target state="translated">Kunne ikke erstatte ressurs</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>
+			<target state="translated">Ressurs "{0}" har blitt erstattet.</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target state="needs-translation">Asset "{0}" has been updated.</target></trans-unit>
+			<target state="translated">Ressurs "{0}" har blitt oppdatert.</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
-			<target state="needs-translation">Asset "{0}" has been added.</target></trans-unit>
+			<target state="translated">Ressurs "{0}" har blitt lagt til.</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
-			<target state="needs-translation">Asset "{0}" has been deleted.</target></trans-unit>
+			<target state="translated">Ressurs "{0}" har blitt slettet.</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			<target state="needs-translation">Asset could not be deleted.</target></trans-unit>
+			<target state="translated">Ressurs kunne ikke slettes.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target state="needs-translation">Tag "{0}" already exists and was added to collection.</target></trans-unit>
+			<target state="translated">Merkelapp "{0}" eksisterer allerede og har blitt lagt til i samlingen.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
-			<target state="needs-translation">Tag "{0}" has been created.</target></trans-unit>
+			<target state="translated">Merkelapp "{0}" har blitt opprettet.</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
-			<target state="needs-translation">Tag "{0}" has been updated.</target></trans-unit>
+			<target state="translated">Merkelapp "{0}" har blitt oppdatert.</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
-			<target state="needs-translation">Tag "{0}" has been deleted.</target></trans-unit>
+			<target state="translated">Merkelapp "{0}" har blitt slettet.</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target state="needs-translation">Collection "{0}" has been created.</target></trans-unit>
+			<target state="translated">Samling "{0}" har blitt opprettet.</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
-			<target state="needs-translation">Collection "{0}" has been updated.</target></trans-unit>
+			<target state="translated">Samling "{0}" har blitt oppdatert.</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
-			<target state="needs-translation">Collection "{0}" has been deleted.</target></trans-unit>
+			<target state="translated">Samling "{0}" har blitt slettet.</target></trans-unit>
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
+			<target state="translated">Generer omdirigeringer fra originalfilens URL til ny URL</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target state="translated">'Ressurser av typen "{0}" kan kun erstattes med en lignende ressurs. Fikk type "{1}"</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target state="translated">Ingen tilgang til arbeidsområdet "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="needs-translation">No document node found for this node</target></trans-unit>
+			<target state="translated">Ingen dokumentnode ble funnet for denne noden</target></trans-unit>
     </body>
   </file>
 </xliff>
