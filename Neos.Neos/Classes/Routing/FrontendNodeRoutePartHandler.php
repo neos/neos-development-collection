@@ -303,8 +303,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
     /**
      * @param NodeInterface $node
-     * @return NodeInterface|Uri The original, unaltered $node if it's not a shortcut node. Otherwise the nodes shortcut target (a node or an URI for external & asset shortcuts)
-     * @throws NeosException
+     * @return NodeInterface|Uri The original, unaltered $node if it's not a shortcut node, or if the target could not be resolved. Otherwise the nodes shortcut target (a node or an URI for external & asset shortcuts)
      */
     protected function resolveShortcutNode(NodeInterface $node)
     {
@@ -312,9 +311,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if (is_string($resolvedNode)) {
             return new Uri($resolvedNode);
         }
+
         if (!$resolvedNode instanceof NodeInterface) {
-            throw new NeosException(sprintf('Could not resolve shortcut target for node "%s"', $node->getPath()), 1414771137);
+            return $node;
         }
+
         return $resolvedNode;
     }
 
