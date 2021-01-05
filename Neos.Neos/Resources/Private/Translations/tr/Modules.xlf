@@ -23,10 +23,10 @@
 			<target state="translated">"{0}" için ayrıntılar</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
-			<target state="translated">Yeni çalışma alanı oluşturma</target></trans-unit>
+			<target state="translated">Yeni çalışma alanı oluştur</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
-			<target state="translated">Çalışma alanı yarat</target></trans-unit>
+			<target state="translated">Çalışma alanı oluştur</target></trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
 				<source>Delete workspace</source>
 			<target state="translated">Çalışma alanını sil</target></trans-unit>
@@ -71,19 +71,19 @@
 			<target state="translated">Özel</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target state="translated">Bu çalışma alanına sadece inceleyici ve yöneticiler erişebilir ve çalışma alanını değiştirebilirler</target></trans-unit>
+			<target state="translated">Bu çalışma alanına yalnızca inceleyiciler ve yöneticiler erişebilir ve değiştirebilir</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
 			<target state="translated">Dahili</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target state="translated">Bu çalışma alanını bütün giriş yapmış editör değiştirebilir.</target></trans-unit>
+			<target state="translated">Oturum açmış herhangi bir düzenleyici bu çalışma alanını görebilir ve değiştirebilir.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
 			<target state="translated">Değişiklikler</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
-			<target state="translated">Sayfayı "{0}" çalışma alanında aç</target></trans-unit>
+			<target state="translated">Sayfayı "{0}" çalışma alanında açın</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
 			<target state="translated">Bu sizin silemeyeceğiniz kişisel çalışma alanınızdır.</target></trans-unit>
@@ -92,7 +92,7 @@
 			<target state="translated">Çalışma alanı değişiklikler içeriyor. Silmek için önce değişiklikleri iptal etmelisiniz.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target state="translated">Çalışma alanı, hala değişiklikler içerdiği için bir başka çalışma alanının üzerine yeniden kurulamaz.</target></trans-unit>
+			<target state="translated">Çalışma alanı, hâlâ değişiklikler içerdiği için bir başka çalışma alanının üzerine yeniden kurulamaz.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
 			<target state="translated">Diğer çalışma alanları bu çalışma alanına bağlı olduklarından çalışma alanı silinemez.</target></trans-unit>
@@ -107,7 +107,7 @@
 			<target state="translated">Bu, çalışma alanını, yayımlanmamış bütün içerikler de dahil olmak üzere silecektir. Bu işlem geri alınamaz.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target state="translated">Bu modül geçerli çalışma alanı içerisindeki bütün öğelerin genel görünümünü içerir ve onların incelemeye devam etme ve yayınlama iş akışlarını etkinleştirir.</target></trans-unit>
+			<target state="translated">Bu modül geçerli çalışma alanı içerisindeki bütün öğelerin genel görünümünü içerir ve onların incelemeye devam etme ve yayımlama iş akışlarını etkinleştirir.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes in workspace "{0}"</source>
 			<target state="translated">{0} çalışma alanındaki yayımlanmamış değişiklikler</target></trans-unit>
@@ -179,11 +179,11 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target state="translated">Şu anda {1} düğümü içerdiğinden "{0}" çalışma alanını silmedim.</target>
+          <target state="translated">Şu anda {1} düğüm içerdiği için "{0}" çalışma alanı silinmedi.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="translated">Şu anda {1} düğümü içerdiğinden "{0}" çalışma alanını silmedim.</target>
+          <target state="translated">Şu anda {1} düğüm içerdiği için "{0}" çalışma alanı silinmedi.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
