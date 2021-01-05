@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target state="translated">Bir öğeyi eklemek için bir öğeyi sürükleyip bir koleksiyon / etikete bırakın.</target></trans-unit>
+			<target state="translated">Bir koleksiyona / etikete eklemek için bir varlığı sürükleyip bırakın.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target state="translated">Dosya adını "{0}" olarak saklayın</target></trans-unit>
+			<target state="translated">"{0}" dosya adını saklayın</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve">
 				<source>Media</source>
 			<target state="translated">Medya</target></trans-unit>
       <trans-unit id="module.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target state="translated">Bu modül, resimler, videolar, ses ve belgeler de dahil olmak üzere medya varlıklarını yönetmenizi sağlar.</target></trans-unit>
+			<target state="translated">Bu modül, resimler, videolar, ses ve belgeler dahil olmak üzere medya varlıklarının yönetilmesine izin verir.</target></trans-unit>
       <trans-unit id="field.name" xml:space="preserve">
 				<source>Name</source>
 			<target state="translated">İsim</target></trans-unit>
@@ -341,11 +341,11 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target state="translated">{0} kullanımlar</target>
+          <target state="translated">{0} kullanım</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target state="translated">{0} kullanımlar</target>
+          <target state="translated">{0} kullanım</target>
         </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
