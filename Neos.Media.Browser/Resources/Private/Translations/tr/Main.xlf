@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target state="translated">Bir öğeyi eklemek için bir öğeyi sürükleyip bir koleksiyon / etikete bırakın.</target></trans-unit>
+			<target state="translated">Bir koleksiyona / etikete eklemek için bir varlığı sürükleyip bırakın.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target state="translated">Dosya adını "{0}" olarak saklayın</target></trans-unit>
+			<target state="translated">"{0}" dosya adını saklayın</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve">
 				<source>Media</source>
 			<target state="translated">Medya</target></trans-unit>
       <trans-unit id="module.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target state="translated">Bu modül, resimler, videolar, ses ve belgeler de dahil olmak üzere medya varlıklarını yönetmenizi sağlar.</target></trans-unit>
+			<target state="translated">Bu modül, resimler, videolar, ses ve belgeler dahil olmak üzere medya varlıklarının yönetilmesine izin verir.</target></trans-unit>
       <trans-unit id="field.name" xml:space="preserve">
 				<source>Name</source>
-			<target state="translated">İsim</target></trans-unit>
+			<target state="translated">Ad</target></trans-unit>
       <trans-unit id="field.title" xml:space="preserve">
 				<source>Title</source>
 			<target state="translated">Başlık</target></trans-unit>
@@ -43,19 +43,19 @@
 			<target state="translated">Etiketler</target></trans-unit>
       <trans-unit id="sortByName" xml:space="preserve">
 				<source>Sort by name</source>
-			<target state="translated">İsme göre sırala</target></trans-unit>
+			<target state="translated">Ada göre sırala</target></trans-unit>
       <trans-unit id="sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
 			<target state="translated">Son düzenlemeye göre sırala</target></trans-unit>
       <trans-unit id="sortby" xml:space="preserve">
 				<source>Sort by</source>
-			<target state="translated">Göre sırala</target></trans-unit>
+			<target state="translated">Sıralamaya göre</target></trans-unit>
       <trans-unit id="sortDirection" xml:space="preserve">
 				<source>Sort direction</source>
 			<target state="translated">Sıralama yönü</target></trans-unit>
       <trans-unit id="sortDirection.asc" xml:space="preserve">
 				<source>Ascending</source>
-			<target state="translated">Yükselen</target></trans-unit>
+			<target state="translated">Artan</target></trans-unit>
       <trans-unit id="sortDirection.desc" xml:space="preserve">
 				<source>Descending</source>
 			<target state="translated">Azalan</target></trans-unit>
@@ -67,7 +67,7 @@
 			<target state="translated">Azalan sıralamaya göre sırala</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
-			<target state="translated">Etikete veya koleksiyona sürükle ve bırak</target></trans-unit>
+			<target state="translated">Etikete veya koleksiyona sürükleyip bırakın</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
 			<target state="translated">Görüntüle</target></trans-unit>
@@ -94,10 +94,10 @@
 			<target state="translated">Bu, öğeyi silecektir.</target></trans-unit>
       <trans-unit id="message.willDeleteCollection" xml:space="preserve">
 				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target state="translated">Bu, koleksiyonu silecek, ancak içerdiği öğeleri silecektir.</target></trans-unit>
+			<target state="translated">Bu, koleksiyonu siler, ancak içerdiği varlıkları silmez.</target></trans-unit>
       <trans-unit id="message.willDeleteTag" xml:space="preserve">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target state="translated">Bu etiketi silecek, ancak sahip olduğu varlıkları silecektir.</target></trans-unit>
+			<target state="translated">Bu, etiketi siler, ancak ona sahip olan varlıkları silmez.</target></trans-unit>
       <trans-unit id="message.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target state="translated">Bu işlem geri alınamaz.</target></trans-unit>
@@ -106,7 +106,7 @@
 			<target state="translated">İptal et</target></trans-unit>
       <trans-unit id="replace" xml:space="preserve">
 				<source>Replace</source>
-			<target state="translated">Değiştirmek</target></trans-unit>
+			<target state="translated">Değiştir</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
 			<target state="translated">Seçili objenin kaynağını değiştirin</target></trans-unit>
@@ -127,7 +127,7 @@
 			<target state="translated">{0} düzenle</target></trans-unit>
       <trans-unit id="search.title" xml:space="preserve">
 				<source>Search in assets</source>
-			<target state="translated">Varlıklarda arama yapın</target></trans-unit>
+			<target state="translated">Varlıklarda arayın</target></trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve">
 				<source>Search</source>
 			<target state="translated">Ara</target></trans-unit>
@@ -136,7 +136,7 @@
 			<target state="translated">{0} öğe</target></trans-unit>
       <trans-unit id="search.foundMatches" xml:space="preserve">
 				<source>found matching "{0}"</source>
-			<target state="translated">eşleşen "{0}" kelimesini buldu</target></trans-unit>
+			<target state="translated">"{0}" ile eşleşen bulundu</target></trans-unit>
       <trans-unit id="upload" xml:space="preserve">
 				<source>Upload</source>
 			<target state="translated">Yükle</target></trans-unit>
@@ -341,11 +341,11 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target state="translated">{0} kullanımlar</target>
+          <target state="translated">{0} kullanım</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target state="translated">{0} kullanımlar</target>
+          <target state="translated">{0} kullanım</target>
         </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
