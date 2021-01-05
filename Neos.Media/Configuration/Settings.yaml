@@ -10,7 +10,7 @@ Neos:
     mvc:
       routes:
         Neos.Media:
-          position: 'before Neos.Neos'
+          position: 'start'
 
   Media:
     # Enable asynchronous thumbnails
