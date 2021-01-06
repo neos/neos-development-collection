@@ -319,7 +319,7 @@
 			<target state="translated">Rol(ler)</target></trans-unit>
       <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve">
 				<source>Authentication Provider</source>
-			<target state="translated">Kimlik Doğrulama Sağlayıcı</target></trans-unit>
+			<target state="translated">Kimlik Doğrulama Sağlayıcısı</target></trans-unit>
       <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve">
 				<source>Use system default</source>
 			<target state="translated">Sistem varsayılanı kullan</target></trans-unit>
@@ -355,13 +355,13 @@
 			<target state="translated">Ad</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target state="translated">Ikinci adınız varsa yazınız</target></trans-unit>
+			<target state="translated">İkinci Ad</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target state="translated">Soyad</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target state="translated">Diğer İsminiz</target></trans-unit>
+			<target state="translated">Diğer Ad</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target state="translated">Hesaplar</target></trans-unit>
@@ -391,7 +391,7 @@
 			<target state="translated">Bu kullanıcı olarak oturum açtınız ve kendiniz silemezsiniz.</target></trans-unit>
       <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve">
 				<source>Click here to delete this user</source>
-			<target state="translated">Bu kullanıcıyı silmek için burayı tıklayın</target></trans-unit>
+			<target state="translated">Bu kullanıcıyı silmek için buraya tıklayın</target></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete the user "{0}"?</source>
 			<target state="translated">"{0}" kullanıcısını gerçekten silmek istiyor musunuz?</target></trans-unit>
@@ -400,13 +400,13 @@
 			<target state="translated">Evet, kullanıcıyı sil</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="translated">Bu, yayınlanmamış tüm içerik de dahil olmak üzere kullanıcıyı, ilgili hesapları ve kişisel çalışma alanını silecek.</target></trans-unit>
+			<target state="translated">Bu, yayımlanmamış tüm içerik de dahil olmak üzere kullanıcıyı, ilgili hesapları ve kişisel çalışma alanını silecek.</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone</source>
 			<target state="translated">Bu işlem geri alınamaz</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target state="translated">Hesabı düzenle "{accountIdentifier}"</target></trans-unit>
+			<target state="translated">"{accountIdentifier}" hesabını düzenle</target></trans-unit>
       <trans-unit id="users.account" xml:space="preserve">
 				<source>Account</source>
 			<target state="translated">Hesap</target></trans-unit>
@@ -427,13 +427,13 @@
 			<target state="translated">Roller</target></trans-unit>
       <trans-unit id="users.name" xml:space="preserve">
 				<source>Name</source>
-			<target state="translated">İsim</target></trans-unit>
+			<target state="translated">Ad</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
-			<target state="translated">Hesaplar ve roller</target></trans-unit>
+			<target state="translated">Hesaplar ve Roller</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
-			<target state="translated">Kullanıcıyı göster</target></trans-unit>
+			<target state="translated">Kullanıcıyı gör</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
 			<target state="translated">Kullanıcıyı düzenle</target></trans-unit>
@@ -448,7 +448,7 @@
 			<target state="translated">"{0}" kullanıcısını gerçekten silmek istiyor musunuz?</target></trans-unit>
       <trans-unit id="users.message.willBeDeleted" xml:space="preserve">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="translated">Bu, yayınlanmamış tüm içerik de dahil olmak üzere kullanıcıyı, ilgili hesapları ve kişisel çalışma alanını silecek.</target></trans-unit>
+			<target state="translated">Bu, yayımlanmamış tüm içerik de dahil olmak üzere kullanıcıyı, ilgili hesapları ve kişisel çalışma alanını silecek.</target></trans-unit>
       <trans-unit id="users.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the user</source>
 			<target state="translated">Evet, kullanıcıyı sil</target></trans-unit>
@@ -457,55 +457,55 @@
 			<target state="translated">"{0}" kullanıcısını düzenle</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
 				<source>Home</source>
-			<target state="translated">Ana ekran</target></trans-unit>
+			<target state="translated">Ana</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
 				<source>Work</source>
-			<target state="translated">Iş</target></trans-unit>
+			<target state="translated">İş</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target state="translated">Paket Yönetimi</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target state="translated">Paket Yönetimi modülü, tüm paketlere genel bir bakış sağlar. Tek tek paketleri etkinleştirebilir veya devre dışı bırakabilir, yeni paketleri içe aktarabilir ve mevcut paketleri silebilirsiniz. Aynı zamanda geliştirme bağlamında paketleri dondurma ve paketten çıkarma olanağı da sağlar.</target></trans-unit>
+			<target state="translated">Paket Yönetimi modülü, tüm paketlere genel bir bakış sağlar. Tek tek paketleri etkinleştirebilir ve devre dışı bırakabilir, yeni paketleri içe aktarabilir ve mevcut paketleri silebilirsiniz. Ayrıca geliştirme bağlamında paketleri dondurma ve çözme yeteneği de sağlar.</target></trans-unit>
       <trans-unit id="packages.index.legend" xml:space="preserve">
 				<source>Available packages</source>
 			<target state="translated">Mevcut paketler</target></trans-unit>
       <trans-unit id="packages.name" xml:space="preserve">
 				<source>Package Name</source>
-			<target state="translated">Paket adı</target></trans-unit>
+			<target state="translated">Paket Adı</target></trans-unit>
       <trans-unit id="packages.key" xml:space="preserve">
 				<source>Package Key</source>
-			<target state="translated">Paket anahtarı</target></trans-unit>
+			<target state="translated">Paket Anahtarı</target></trans-unit>
       <trans-unit id="packages.type" xml:space="preserve">
 				<source>Package Type</source>
-			<target state="translated">Paket türü</target></trans-unit>
+			<target state="translated">Paket Türü</target></trans-unit>
       <trans-unit id="packages.deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target state="translated">Devre dışı</target></trans-unit>
+			<target state="translated">Devre dışı bırakıldı</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target state="translated">Bu paket şu anda dondurulmuş durumda. Yenilemek için tıklayın.</target></trans-unit>
+			<target state="translated">Bu paket şu anda donmuş durumda. Etkinleştirmek için tıklayın.</target></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
 				<source>Freeze the package in order to speed up your website.</source>
-			<target state="translated">Web sitenizi hızlandırmak için paketi dondunuz.</target></trans-unit>
+			<target state="translated">Web sitenizi hızlandırmak için paketi dondurun.</target></trans-unit>
       <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
 				<source>This package is protected and cannot be deactivated.</source>
-			<target state="translated">Bu paket korunuyor ve devre dışı bırakılamaz.</target></trans-unit>
+			<target state="translated">Bu paket korumada ve devre dışı bırakılamaz.</target></trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
 				<source>Deactivate Package</source>
-			<target state="translated">Paketi Kapatın</target></trans-unit>
+			<target state="translated">Paketi Devre Dışı Bırak </target></trans-unit>
       <trans-unit id="packages.tooltip.activate" xml:space="preserve">
 				<source>Activate Package</source>
-			<target state="translated">Paketi etkinleştir</target></trans-unit>
+			<target state="translated">Paketi Etkinleştir</target></trans-unit>
       <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
 				<source>This package is protected and cannot be deleted.</source>
-			<target state="translated">Bu paket korunuyor ve silinemiyor.</target></trans-unit>
+			<target state="translated">Bu paket korundu ve silinemiyor.</target></trans-unit>
       <trans-unit id="packages.tooltip.delete" xml:space="preserve">
 				<source>Delete Package</source>
 			<target state="translated">Paketi Sil</target></trans-unit>
       <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
 				<source>Do you really want to delete "{0}"?</source>
-			<target state="translated">"{0}" nı gerçekten silmek istiyor musun?</target></trans-unit>
+			<target state="translated">"{0}" gerçekten silmek istiyor musunuz?</target></trans-unit>
       <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the package</source>
 			<target state="translated">Evet, paketi sil</target></trans-unit>
@@ -520,7 +520,7 @@
 			<target state="translated">Seçilen paketleri dondur</target></trans-unit>
       <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
 				<source>Unfreeze selected packages</source>
-			<target state="translated">Seçili paketleri yenilemek</target></trans-unit>
+			<target state="translated">Seçili paketleri etkinleştir</target></trans-unit>
       <trans-unit id="packages.selected.delete" xml:space="preserve">
 				<source>Delete selected packages</source>
 			<target state="translated">Seçilen paketleri sil</target></trans-unit>
@@ -529,7 +529,7 @@
 			<target state="translated">Seçilen paketleri devre dışı bırak</target></trans-unit>
       <trans-unit id="packages.selected.activate" xml:space="preserve">
 				<source>Activate selected packages</source>
-			<target state="translated">Seçilen paketleri etkinleştirme</target></trans-unit>
+			<target state="translated">Seçilen paketleri etkinleştir</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
 			<target state="translated">Siteler Yönetimi</target></trans-unit>
@@ -544,7 +544,7 @@
 			<target state="translated">Site oluştur</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
-			<target state="translated">Yeni site oluştur</target></trans-unit>
+			<target state="translated">Yeni bir site oluştur</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
 			<target state="translated">Kök düğüm adı</target></trans-unit>
@@ -556,7 +556,7 @@
 			<target state="translated">Site</target></trans-unit>
       <trans-unit id="site.name" xml:space="preserve">
 				<source>Name</source>
-			<target state="translated">İsim</target></trans-unit>
+			<target state="translated">Ad</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
 				<source>Default asset collection</source>
 			<target state="translated">Varsayılan varlık koleksiyonu</target></trans-unit>
@@ -675,10 +675,10 @@ Yalnızca geri dönüşünü ve değişkenlerini görmek için düğümlerden bi
 			<target state="translated">Kullanıcı</target></trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve">
 				<source>User Settings</source>
-			<target state="translated">Kullanıcı ayarları</target></trans-unit>
+			<target state="translated">Kullanıcı Ayarları</target></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target state="translated">Bu modül, arka uç kullanıcı profilinizi özelleştirmenizi sağlar. Burada aktif sistem dilinizi, adınızı ve e-posta adresinizi değiştirebilirsiniz. Sistemde diğer genel özellikleri yapılandırabilirsiniz.</target></trans-unit>
+			<target state="translated">Bu modül, arka uç kullanıcı profilinizi özelleştirmenize olanak tanır. Burada aktif sistem dilinizi, adınızı ve e-posta adresinizi değiştirebilirsiniz. Ayrıca sistemdeki diğer genel özellikleri de yapılandırabilirsiniz.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
 			<target state="translated">Düzenle</target></trans-unit>
@@ -699,7 +699,7 @@ Yalnızca geri dönüşünü ve değişkenlerini görmek için düğümlerden bi
 			<target state="translated">Kullanıcı Verisi</target></trans-unit>
       <trans-unit id="userSettings.usermenu" xml:space="preserve">
 				<source>User Menu</source>
-			<target state="translated">Kullanıcı menüsü</target></trans-unit>
+			<target state="translated">Kullanıcı Menüsü</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target state="translated">Kullanıcı Tercihleri</target></trans-unit>
@@ -720,10 +720,10 @@ Yalnızca geri dönüşünü ve değişkenlerini görmek için düğümlerden bi
 			<target state="translated">Roller</target></trans-unit>
       <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve">
 				<source>Authentication Provider</source>
-			<target state="translated">Kimlik Doğrulama Sağlayıcı</target></trans-unit>
+			<target state="translated">Kimlik Doğrulama Sağlayıcısı</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses" xml:space="preserve">
 				<source>Electronic addresses</source>
-			<target state="translated">Elektronik adresler</target></trans-unit>
+			<target state="translated">Elektronik adresleri</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target state="translated">Gerçekten silmek istiyor musunuz</target></trans-unit>
@@ -732,13 +732,13 @@ Yalnızca geri dönüşünü ve değişkenlerini görmek için düğümlerden bi
 			<target state="translated">Evet, elektronik adresini sil</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve">
 				<source>Click to add a new Electronic address</source>
-			<target state="translated">Yeni bir Elektronik adres eklemek için tıklayın</target></trans-unit>
+			<target state="translated">Yeni bir Elektronik adresi eklemek için tıklayın</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
 				<source>Add electronic address</source>
-			<target state="translated">Elektronik adres ekle</target></trans-unit>
+			<target state="translated">Elektronik adresi ekle</target></trans-unit>
       <trans-unit id="userSettings.saveUser" xml:space="preserve">
 				<source>Save User</source>
-			<target state="translated">Kullanıcıyı kaydet</target></trans-unit>
+			<target state="translated">Kullanıcıyı Kaydet</target></trans-unit>
       <trans-unit id="userSettings.editUser" xml:space="preserve">
 				<source>Edit User</source>
 			<target state="translated">Kullanıcıyı Düzenle</target></trans-unit>
