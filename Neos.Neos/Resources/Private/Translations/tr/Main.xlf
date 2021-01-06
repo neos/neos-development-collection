@@ -227,10 +227,10 @@
 			<target state="translated">Son yayımlanma</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target state="translated">Tanıtıcı</target></trans-unit>
+			<target state="translated">Tanımlayıcı</target></trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
-			<target state="translated">İsim</target></trans-unit>
+			<target state="translated">Ad</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target state="translated">Çalışma alanı</target></trans-unit>
@@ -290,7 +290,7 @@
 			<target state="translated">Paket</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target state="translated">Devre dışı</target></trans-unit>
+			<target state="translated">Devre dışı bırakıldı</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
 			<target state="translated">Kullanım dışı</target></trans-unit>
@@ -329,7 +329,7 @@
 			<target state="translated">Evet, sil!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
-			<target state="translated">Paket anahtarı</target></trans-unit>
+			<target state="translated">Paket Anahtarı</target></trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
 			<target state="translated">Açıklama</target></trans-unit>
@@ -492,7 +492,7 @@
 			<target state="translated">Bu metin {maximum} karakteri aşamaz.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Sadece ingilizce harfler (a-z, ve noktalı harfler) kullanılabilir.</target></trans-unit>
+			<target state="translated">Yalnızca İngilizce normal karakterlere (a'dan z'ye, çift noktalı karakterler, ...) ve sayılara izin verilir.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target state="translated">Verilen başlık sayılabilir değildi.</target></trans-unit>
@@ -653,7 +653,7 @@
 			<target state="translated">Kimlik Doğrulanıyor</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target state="translated">Çıkış Yap</target></trans-unit>
+			<target state="translated">Oturumu kapat</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
 			<target state="translated">Girilen kullanıcı adı veya parola yanlıştı</target></trans-unit>

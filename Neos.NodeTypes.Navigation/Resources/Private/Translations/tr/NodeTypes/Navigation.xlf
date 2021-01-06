@@ -49,7 +49,7 @@
 			<target state="translated">Seçim</target></trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve">
 				<source>Starting Point</source>
-			<target state="translated">Başlangıç noktası</target></trans-unit>
+			<target state="translated">Başlangıç Noktası</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve">
 				<source>Maximum Levels</source>
 			<target state="translated">Maksimum Düzeyler</target></trans-unit>
