@@ -154,13 +154,13 @@
 			<target state="translated">Yalnızca belge varlıklarını görüntüle</target></trans-unit>
       <trans-unit id="filter.title.video" xml:space="preserve">
 				<source>Only display video assets</source>
-			<target state="translated">Yalnızca video öğelerini görüntüleyin</target></trans-unit>
+			<target state="translated">Yalnızca video öğelerini görüntüle</target></trans-unit>
       <trans-unit id="filter.title.audio" xml:space="preserve">
 				<source>Only display audio assets</source>
-			<target state="translated">Yalnızca ses öğelerini görüntüleyin</target></trans-unit>
+			<target state="translated">Yalnızca ses öğelerini görüntüle</target></trans-unit>
       <trans-unit id="filter.all" xml:space="preserve">
 				<source>All</source>
-			<target state="translated">Hepsi</target></trans-unit>
+			<target state="translated">Tümü</target></trans-unit>
       <trans-unit id="filter.images" xml:space="preserve">
 				<source>Images</source>
 			<target state="translated">Resimler</target></trans-unit>
@@ -205,13 +205,13 @@
 			<target state="translated">Koleksiyonu sil</target></trans-unit>
       <trans-unit id="createCollection" xml:space="preserve">
 				<source>Create collection</source>
-			<target state="translated">Koleksiyon yarat</target></trans-unit>
+			<target state="translated">Koleksiyon oluştur</target></trans-unit>
       <trans-unit id="newCollection.placeholder" xml:space="preserve">
 				<source>Enter collection title</source>
 			<target state="translated">Koleksiyon başlığı gir</target></trans-unit>
       <trans-unit id="allCollections" xml:space="preserve">
 				<source>All collections</source>
-			<target state="translated">Bütün koleksiyonlar</target></trans-unit>
+			<target state="translated">Tüm koleksiyonlar</target></trans-unit>
       <trans-unit id="tags" xml:space="preserve">
 				<source>Tags</source>
 			<target state="translated">Etiketler</target></trans-unit>
@@ -235,7 +235,7 @@
 			<target state="translated">Tüm varlıklar</target></trans-unit>
       <trans-unit id="tags.all" xml:space="preserve">
 				<source>All</source>
-			<target state="translated">Hepsi</target></trans-unit>
+			<target state="translated">Tümü</target></trans-unit>
       <trans-unit id="untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
 			<target state="translated">Etiketsiz varlıklar</target></trans-unit>
@@ -247,7 +247,7 @@
 			<target state="translated">Maksimum dosya başına {0} boyutunu yükle</target></trans-unit>
       <trans-unit id="dropFiles" xml:space="preserve">
 				<source>Drop files here</source>
-			<target state="translated">Dosyaları buraya bırak</target></trans-unit>
+			<target state="translated">Dosyaları buraya bırakın</target></trans-unit>
       <trans-unit id="clickToUpload" xml:space="preserve">
 				<source>or click to upload</source>
 			<target state="translated">veya yüklemek için tıklayın</target></trans-unit>
@@ -289,7 +289,7 @@
 			<target state="translated">Tür</target></trans-unit>
       <trans-unit id="metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target state="translated">Tanıtıcı</target></trans-unit>
+			<target state="translated">Tanımlayıcı</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve">
 				<source>Title</source>
 			<target state="translated">Başlık</target></trans-unit>
@@ -334,7 +334,7 @@
 			<target state="translated">Öğeyi koleksiyona eklemek başarısız oldu.</target></trans-unit>
       <trans-unit id="creating" xml:space="preserve">
 				<source>Creating</source>
-			<target state="translated">Oluşturma</target></trans-unit>
+			<target state="translated">Oluşturuluyor</target></trans-unit>
       <trans-unit id="deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target state="translated">Varlık silinemedi, çünkü hala kullanan Düğümler var</target></trans-unit>
@@ -350,25 +350,25 @@
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
-			<target state="translated">"{Asset}" e yapılan başvurular</target></trans-unit>
+			<target state="translated">"{asset}" referansları</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target state="translated">"{Filename}" kelimesini değiştirin</target></trans-unit>
+			<target state="translated">"{filename}" dosyasını değiştirin</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-			<target state="translated">Bu öğeyi, yeni bir dosya yükleyerek değiştirebilirsiniz. Yerine getirildiğinde, yeni öğe, öğenin web sitenizde kullanıldığı tüm yerlerde kullanılır.</target></trans-unit>
+			<target state="translated">Yeni bir dosya yükleyerek bu varlığı değiştirebilirsiniz. Değiştirildikten sonra, yeni varlık, varlığın web sitenizde kullanıldığı tüm yerlerde kullanılacaktır.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
 				<source>Note</source>
 			<target state="translated">Not</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-			<target state="translated">Bu işlem, canlı web sitesi de dahil olmak üzere, yayınlanmış veya yayınlanmamış çalışma alanlarındaki varlığın yerini alacaktır.</target></trans-unit>
+			<target state="translated">Bu işlem, canlı web sitesi de dahil olmak üzere, yayımlanmış veya yayımlanmamış çalışma alanlarındaki varlığın yerini alacaktır.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
 				<source>Choose a new file</source>
-			<target state="translated">Yeni bir dosya seç</target></trans-unit>
+			<target state="translated">Yeni bir dosya seçin</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
 				<source>Currently the asset is used {usageCount} times.</source>
-			<target state="translated">Şu anda öğe {usageCount} kez kullanılmaktadır.</target></trans-unit>
+			<target state="translated">Şu anda varlık {usageCount} kez kullanılıyor.</target></trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve">
 				<source>Show all usages</source>
 			<target state="translated">Tüm kullanımları göster</target></trans-unit>

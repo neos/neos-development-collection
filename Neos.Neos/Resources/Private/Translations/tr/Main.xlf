@@ -227,7 +227,7 @@
 			<target state="translated">Son yayımlanma</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target state="translated">Tanıtıcı</target></trans-unit>
+			<target state="translated">Tanımlayıcı</target></trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
 			<target state="translated">Ad</target></trans-unit>
@@ -492,7 +492,7 @@
 			<target state="translated">Bu metin {maximum} karakteri aşamaz.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Sadece ingilizce harfler (a-z, ve noktalı harfler) kullanılabilir.</target></trans-unit>
+			<target state="translated">Yalnızca İngilizce normal karakterlere (a'dan z'ye, çift noktalı karakterler, ...) ve sayılara izin verilir.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target state="translated">Verilen başlık sayılabilir değildi.</target></trans-unit>
@@ -653,7 +653,7 @@
 			<target state="translated">Kimlik Doğrulanıyor</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target state="translated">Çıkış Yap</target></trans-unit>
+			<target state="translated">Oturumu kapat</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
 			<target state="translated">Girilen kullanıcı adı veya parola yanlıştı</target></trans-unit>

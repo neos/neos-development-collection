@@ -355,13 +355,13 @@
 			<target state="translated">Ad</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target state="translated">Ikinci adınız varsa yazınız</target></trans-unit>
+			<target state="translated">İkinci Ad</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target state="translated">Soyad</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target state="translated">Diğer İsminiz</target></trans-unit>
+			<target state="translated">Diğer Ad</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target state="translated">Hesaplar</target></trans-unit>
