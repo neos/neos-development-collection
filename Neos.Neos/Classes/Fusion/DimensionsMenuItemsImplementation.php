@@ -106,11 +106,11 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             }
 
             // determine metadata for target dimensions of node
-            array_walk($targetDimensions, function (&$dimensionValue, $dimensionName, $allDimensionPresets) use ($pinnedDimensionName) {
+            array_walk($targetDimensions, static function (&$dimensionValue, $dimensionName, $allDimensionPresets) use ($pinnedDimensionName) {
                 $dimensionValue = [
                     'value' => $dimensionValue,
                     'label' => $allDimensionPresets[$dimensionName]['presets'][$dimensionValue]['label'],
-                    'isPinnedDimension' => ($pinnedDimensionName === null || $dimensionName == $pinnedDimensionName) ? true : false
+                    'isPinnedDimension' => $pinnedDimensionName === null || $dimensionName == $pinnedDimensionName
                 ];
             }, $allDimensionPresets);
 
@@ -143,9 +143,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * Render and return a label for the $nodeInDimensions in the built menu item.
      *
-     * @param string $pinnedDimensionName
-     * @param NodeInterface $nodeInDimensions
-     * @param array $targetDimensions
+     * @param string|null $pinnedDimensionName
+     * @param NodeInterface|null $nodeInDimensions
+     * @param array|null $targetDimensions
      * @return string
      */
     protected function itemLabel(string $pinnedDimensionName = null, NodeInterface $nodeInDimensions = null, array $targetDimensions = null): string
@@ -157,7 +157,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             }
 
             return trim($itemLabel, ' -');
-        } elseif ($nodeInDimensions instanceof NodeInterface && $pinnedDimensionName === null) {
+        }
+
+        if ($nodeInDimensions instanceof NodeInterface && $pinnedDimensionName === null) {
             return $nodeInDimensions->getLabel();
         }
 
