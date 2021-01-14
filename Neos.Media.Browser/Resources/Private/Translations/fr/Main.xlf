@@ -304,13 +304,13 @@
 			<target state="final">Prévisualisation</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">Télécharger</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">Suivant</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">Précédent</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="final">Impossible de charger le fichier</target></trans-unit>
