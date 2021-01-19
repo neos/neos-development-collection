@@ -7,25 +7,25 @@
 			<target state="translated">Ярлик</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target state="needs-translation">Shortcut options</target></trans-unit>
+			<target state="translated">Налаштування скорочення</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target state="needs-translation">Shortcut options</target></trans-unit>
+			<target state="translated">Налаштування скорочення</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target state="needs-translation">Target mode</target></trans-unit>
+			<target state="translated">Режим цілі</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target state="needs-translation">Target</target></trans-unit>
+			<target state="translated">Ціль</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve">
 				<source>First child node</source>
-			<target state="needs-translation">First child node</target></trans-unit>
+			<target state="translated">Перший дочірній вузол</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve">
 				<source>Parent node</source>
-			<target state="needs-translation">Parent node</target></trans-unit>
+			<target state="translated">Батьківський вузол</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
-			<target state="needs-translation">Selected target</target></trans-unit>
+			<target state="translated">Вибрана ціль</target></trans-unit>
     </body>
   </file>
 </xliff>
