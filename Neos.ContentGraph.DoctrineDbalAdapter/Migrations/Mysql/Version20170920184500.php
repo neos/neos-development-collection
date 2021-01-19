@@ -16,7 +16,7 @@ class Version20170920184500 extends AbstractMigration
         return 'The migration for adjusting nodes to support node aggregates and unhashed subgraph identifiers';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -44,7 +44,7 @@ class Version20170920184500 extends AbstractMigration
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation ADD PRIMARY KEY (parentnodeidentifier, subgraphidentityhash, childnodeidentifier)');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

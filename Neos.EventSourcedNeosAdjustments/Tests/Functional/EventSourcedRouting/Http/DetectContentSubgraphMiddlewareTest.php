@@ -135,11 +135,10 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         $this->inject($dimensionPresetSource, 'contentDimensions', $contentDimensions);
 
         $this->mockNextMiddleware = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
-        $this->mockNextMiddleware->method('handle')->willReturnCallback(function(ServerRequestInterface $modifiedRequest) {
+        $this->mockNextMiddleware->method('handle')->willReturnCallback(function (ServerRequestInterface $modifiedRequest) {
             $this->routeParameters = $modifiedRequest->getAttribute(Http\ServerRequestAttributes::ROUTING_PARAMETERS);
             return new Response();
         });
-
     }
 
 

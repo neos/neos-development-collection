@@ -13,7 +13,7 @@ class Version20181030124912 extends AbstractMigration
         return 'Rename dimensionspacepoint / dimensionspacepointhash to origindimensionspacepoint / origindimensionspacepointhash in node';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -23,7 +23,7 @@ class Version20181030124912 extends AbstractMigration
         $this->addSql('ALTER TABLE neos_contentgraph_node CHANGE COLUMN dimensionspacepointhash origindimensionspacepointhash varchar(255) DEFAULT NULL');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
