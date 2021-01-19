@@ -19,10 +19,10 @@
 			<target state="translated">Ім'я</target></trans-unit>
       <trans-unit id="field.title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target></trans-unit>
+			<target state="translated">Назва</target></trans-unit>
       <trans-unit id="field.label" xml:space="preserve">
 				<source>Label</source>
-			<target state="needs-translation">Label</target></trans-unit>
+			<target state="translated">Мітка</target></trans-unit>
       <trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target state="translated">Заголовок</target></trans-unit>
@@ -70,7 +70,7 @@
 			<target state="translated">Перетягнути теґ або колекцію</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target state="translated">Перегляд</target></trans-unit>
+			<target state="translated">Вигляд</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
 			<target state="translated">Переглянути вкладення</target></trans-unit>
@@ -187,10 +187,10 @@
 			<target state="translated">Помилка з’єднання</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="translated">джерело медіа</target></trans-unit>
+			<target state="translated">Джерело медіа</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="translated">джерела медіа</target></trans-unit>
+			<target state="translated">Джерела медіа</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			<target state="needs-translation">Collections</target></trans-unit>
@@ -292,7 +292,7 @@
 			<target state="needs-translation">Identifier</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target></trans-unit>
+			<target state="translated">Назва</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve">
 				<source>Caption</source>
 			<target state="translated">Заголовок</target></trans-unit>
@@ -304,13 +304,13 @@
 			<target state="translated">Попередній перегляд</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">Завантажити</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">Наступний</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">Попередній</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target state="needs-translation">Cannot upload the file</target></trans-unit>

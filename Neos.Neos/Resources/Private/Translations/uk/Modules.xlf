@@ -53,7 +53,7 @@
 			<target state="translated">Робоче середовище: тільки для читання</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target></trans-unit>
+			<target state="translated">Назва</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
 			<target state="translated">Опис</target></trans-unit>
@@ -357,7 +357,7 @@
 			<target state="translated">Персональні дані</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target></trans-unit>
+			<target state="translated">Назва</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target state="translated">Ім'я</target></trans-unit>
@@ -558,10 +558,10 @@
 			<target state="needs-translation">Root node name</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
-			<target state="needs-translation">Domains</target></trans-unit>
+			<target state="translated">Домени</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve">
 				<source>Site</source>
-			<target state="needs-translation">Site</target></trans-unit>
+			<target state="translated">Сайт</target></trans-unit>
       <trans-unit id="site.name" xml:space="preserve">
 				<source>Name</source>
 			<target state="translated">Ім'я</target></trans-unit>
