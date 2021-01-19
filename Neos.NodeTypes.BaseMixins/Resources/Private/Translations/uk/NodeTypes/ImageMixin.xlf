@@ -13,7 +13,7 @@
 			<target state="translated">Текст заміщення</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target></trans-unit>
+			<target state="translated">Назва</target></trans-unit>
     </body>
   </file>
 </xliff>
