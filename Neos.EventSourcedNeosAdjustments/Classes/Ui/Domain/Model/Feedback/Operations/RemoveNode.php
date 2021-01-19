@@ -73,7 +73,7 @@ class RemoveNode extends AbstractFeedback
      *
      * @return string
      */
-    public function getDescription(): string 
+    public function getDescription(): string
     {
         return sprintf('Node "%s" has been removed.', $this->getNode()->getLabel());
     }

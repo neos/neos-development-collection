@@ -76,7 +76,7 @@ class ReloadDocument extends AbstractFeedback
      *
      * @return string
      */
-    public function getDescription(): string 
+    public function getDescription(): string
     {
         return sprintf('Reload of current document required.');
     }
