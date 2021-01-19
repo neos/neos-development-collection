@@ -9,7 +9,7 @@ Neos:
     http:
       middlewares:
         'detectContentSubgraph':
-          position: 'befoure routing'
+          position: 'before routing'
           middleware: 'Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphMiddleware'
     error:
       debugger:
