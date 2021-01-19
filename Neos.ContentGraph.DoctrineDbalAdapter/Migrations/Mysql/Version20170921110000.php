@@ -13,7 +13,7 @@ class Version20170921110000 extends AbstractMigration
         return 'The migration for splitting subgraph identity hashes';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -42,7 +42,7 @@ class Version20170921110000 extends AbstractMigration
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation ADD PRIMARY KEY (parentnodeidentifier, contentstreamidentifier, dimensionspacepointhash, childnodeidentifier)');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

@@ -16,7 +16,7 @@ class Version20170727150037 extends AbstractMigration
         return 'The migration for providing nodes and hierarchy edges';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -27,7 +27,7 @@ class Version20170727150037 extends AbstractMigration
         $this->addSql('CREATE TABLE neos_arboretum_node (identifieringraph VARCHAR(255) NOT NULL, identifierinsubgraph VARCHAR(255) NOT NULL, subgraphidentifier VARCHAR(255) NOT NULL, properties LONGTEXT NOT NULL COMMENT \'(DC2Type:flow_json_array)\', nodetypename VARCHAR(255) NOT NULL, PRIMARY KEY(identifieringraph)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

@@ -16,7 +16,7 @@ class Version20170919234100 extends AbstractMigration
         return 'The migration for adjusting nodes to the new identifier format';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -30,7 +30,7 @@ class Version20170919234100 extends AbstractMigration
         $this->addSql('ALTER TABLE neos_contentgraph_node ADD PRIMARY KEY (nodeidentifier, subgraphidentifier)');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

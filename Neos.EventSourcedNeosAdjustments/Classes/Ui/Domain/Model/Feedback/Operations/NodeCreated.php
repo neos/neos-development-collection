@@ -69,7 +69,7 @@ class NodeCreated extends AbstractFeedback
      *
      * @return string
      */
-    public function getDescription(): string 
+    public function getDescription(): string
     {
         return sprintf('Document Node "%s" created.', (string)$this->getNode()->getNodeAggregateIdentifier());
     }

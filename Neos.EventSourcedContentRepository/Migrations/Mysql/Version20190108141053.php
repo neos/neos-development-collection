@@ -13,7 +13,7 @@ class Version20190108141053 extends AbstractMigration
         return 'Create neos_contentrepository_projection_nodehiddenstate table';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -23,7 +23,7 @@ class Version20190108141053 extends AbstractMigration
         $this->addSql('CREATE TABLE neos_contentrepository_projection_nodehiddenstate (contentstreamidentifier VARCHAR(255) NOT NULL, nodeaggregateidentifier VARCHAR(255) NOT NULL, dimensionspacepointhash VARCHAR(255) NOT NULL, dimensionspacepoint TEXT, hidden TINYINT(1), PRIMARY KEY(contentstreamidentifier, nodeaggregateidentifier, dimensionspacepointhash)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
