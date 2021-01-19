@@ -168,7 +168,7 @@ class RenderContentOutOfBand extends AbstractFeedback
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string 
     {
         return sprintf('Rendering of node "%s" required.', $this->getNode()->getNodeAggregateIdentifier());
     }

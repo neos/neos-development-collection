@@ -27,7 +27,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
 use Neos\EventSourcedNeosAdjustments\Ui\View\BackendFusionView;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\SetHeaderComponent;
+
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Session\SessionInterface;
@@ -205,7 +205,7 @@ class BackendController extends ActionController
      */
     public function redirectToAction(NodeAddress $node)
     {
-        $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', [
+        $this->response->setHttpHeader('Cache-Control', [
             'no-cache',
             'no-store'
         ]);

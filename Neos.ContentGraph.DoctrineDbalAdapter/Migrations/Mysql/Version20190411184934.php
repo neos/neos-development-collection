@@ -13,7 +13,7 @@ class Version20190411184934 extends AbstractMigration
         return 'Add index on hierarchyedge::contentstreamidentifier (speeds up performance for some copying all edges a lot; e.g. with 50 000 nodes from 5 s to <1 ms)';
     }
 
-    public function up(Schema $schema)
+    public function up(Schema $schema): void 
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -22,7 +22,7 @@ class Version20190411184934 extends AbstractMigration
         $this->addSql('ALTER TABLE `neos_contentgraph_hierarchyrelation` ADD INDEX `CONTENTSTREAMIDENTIFIER` (`contentstreamidentifier`)');
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema): void 
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

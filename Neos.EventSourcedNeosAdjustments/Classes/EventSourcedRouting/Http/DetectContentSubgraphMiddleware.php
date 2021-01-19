@@ -18,13 +18,17 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Routing\WorkspaceNameAndDimensionSpacePointForUriSerialization;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-use Neos\Flow\Mvc\Routing\RoutingComponent;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * The HTTP component for detecting the requested dimension space point
  */
-final class DetectContentSubgraphComponent implements Http\Component\ComponentInterface
+final class DetectContentSubgraphMiddleware implements MiddlewareInterface
 {
     /**
      * @Flow\Inject
@@ -50,37 +54,31 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
      */
     protected $supportEmptySegmentForDimensions;
 
-
-    /**
-     * @param Http\Component\ComponentContext $componentContext
-     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
-     */
-    public function handle(Http\Component\ComponentContext $componentContext)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
         $uriPathSegmentUsed = false;
 
-        $existingParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters') ?? RouteParameters::createEmpty();
+        $existingParameters = $request->getAttribute(Http\ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
         $parameters = $existingParameters
-            ->withParameter('dimensionSpacePoint', $this->detectDimensionSpacePoint($componentContext, $uriPathSegmentUsed))
+            ->withParameter('dimensionSpacePoint', $this->detectDimensionSpacePoint($request, $uriPathSegmentUsed))
             ->withParameter('uriPathSegmentOffset', $uriPathSegmentUsed ? 1 : 0);
-        $workspaceName = $this->detectWorkspaceName($componentContext);
+        $workspaceName = $this->detectWorkspaceName($request);
         if ($workspaceName) {
             $parameters = $parameters->withParameter('workspaceName', $workspaceName);
         }
-
-        $componentContext->setParameter(RoutingComponent::class, 'parameters', $parameters);
+        return $next->handle($request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters));
     }
 
     /**
-     * @param Http\Component\ComponentContext $componentContext
+     * @param ServerRequestInterface $request
      * @param bool $uriPathSegmentUsed
      * @return DimensionSpacePoint
      * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
-    protected function detectDimensionSpacePoint(Http\Component\ComponentContext $componentContext, bool &$uriPathSegmentUsed): DimensionSpacePoint
+    protected function detectDimensionSpacePoint(ServerRequestInterface $request, bool &$uriPathSegmentUsed): DimensionSpacePoint
     {
         $coordinates = [];
-        $path = $componentContext->getHttpRequest()->getUri()->getPath();
+        $path = $request->getUri()->getPath();
 
         /** @todo no more paths! */
         $isParseablebackendUri = WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($path);
@@ -101,12 +99,12 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
             }
 
             if ($isParseablebackendUri) {
-                $dimensionValue = $backendUriDimensionPresetDetector->detectValue($contentDimension, $componentContext);
+                $dimensionValue = $backendUriDimensionPresetDetector->detectValue($contentDimension, $request);
                 if ($dimensionValue) {
                     $coordinates[$rawDimensionIdentifier] = (string)$dimensionValue;
                     if ($detector instanceof ContentDimensionDetection\UriPathSegmentContentDimensionValueDetector) {
                         // we might have to remove the uri path segment anyway
-                        $dimensionValueByUriPathSegment = $detector->detectValue($contentDimension, $componentContext, $detectorOverrideOptions);
+                        $dimensionValueByUriPathSegment = $detector->detectValue($contentDimension, $request, $detectorOverrideOptions);
                         if ($dimensionValueByUriPathSegment) {
                             $uriPathSegmentUsed = true;
                         }
@@ -115,7 +113,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
                 }
             }
 
-            $dimensionValue = $detector->detectValue($contentDimension, $componentContext, $detectorOverrideOptions);
+            $dimensionValue = $detector->detectValue($contentDimension, $request, $detectorOverrideOptions);
             if ($dimensionValue) {
                 $coordinates[$rawDimensionIdentifier] = (string)$dimensionValue;
                 if ($resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
@@ -147,12 +145,12 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
     }
 
     /**
-     * @param Http\Component\ComponentContext $componentContext
+     * @param ServerRequestInterface $request
      * @return WorkspaceName|null
      */
-    protected function detectWorkspaceName(Http\Component\ComponentContext $componentContext): ?WorkspaceName
+    protected function detectWorkspaceName(ServerRequestInterface $request): ?WorkspaceName
     {
-        $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
+        $requestPath = $request->getUri()->getPath();
         $requestPath = mb_substr($requestPath, mb_strrpos($requestPath, '/'));
         if ($requestPath !== '' && WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($requestPath)) {
             $nodePathAndContext = WorkspaceNameAndDimensionSpacePointForUriSerialization::fromBackendUri($requestPath);

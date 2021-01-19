@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 class Version20180226165300 extends AbstractMigration
@@ -13,7 +13,7 @@ class Version20180226165300 extends AbstractMigration
         return 'The migration for splitting subgraph identity hashes';
     }
 
-    public function up(Schema $schema)
+    public function up(Schema $schema): void 
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -23,7 +23,7 @@ class Version20180226165300 extends AbstractMigration
         $this->addSql('ALTER TABLE neos_contentgraph_node ADD `hidden` tinyint(1) NOT NULL');
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema): void 
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
