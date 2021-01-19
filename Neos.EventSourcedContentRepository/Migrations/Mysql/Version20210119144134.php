@@ -1,15 +1,10 @@
 <?php
-
 declare(strict_types=1);
-
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Fix event table schema
- */
 final class Version20210119144134 extends AbstractMigration
 {
     public function getDescription() : string
