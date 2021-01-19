@@ -87,7 +87,7 @@ class UpdateWorkspaceInfo extends AbstractFeedback
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string 
     {
         return sprintf('New workspace info available.');
     }

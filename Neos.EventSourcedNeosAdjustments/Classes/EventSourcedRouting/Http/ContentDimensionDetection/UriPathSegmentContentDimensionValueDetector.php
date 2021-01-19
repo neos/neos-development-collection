@@ -13,8 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
-use Neos\Flow\Http;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * URI path segment based dimension value detector
@@ -31,14 +31,14 @@ final class UriPathSegmentContentDimensionValueDetector implements ContentDimens
 
     /**
      * @param Dimension\ContentDimension $contentDimension
-     * @param Http\Component\ComponentContext $componentContext
+     * @param ServerRequestInterface $request
      * @param array|null $overrideOptions
      * @return Dimension\ContentDimensionValue|null
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?Dimension\ContentDimensionValue
+    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue
     {
         $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
-        $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
+        $requestPath = $request->getUri()->getPath();
 
         if (!empty($requestPath) && $requestPath !== '/' && mb_strpos($requestPath, '/') !== false) {
             $pivot = mb_strpos($requestPath, '@');

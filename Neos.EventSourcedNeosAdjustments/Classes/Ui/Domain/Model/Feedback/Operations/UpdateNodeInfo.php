@@ -87,7 +87,7 @@ class UpdateNodeInfo extends AbstractFeedback
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string 
     {
         return sprintf('Updated info for node "%s" is available.', $this->getNode()->getNodeAggregateIdentifier());
     }

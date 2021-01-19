@@ -7,11 +7,10 @@ Neos:
       enableObjectTreeCache: false
   Flow:
     http:
-      chain:
-        preprocess:
-          chain:
-            detectContentSubgraph:
-              component: Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphComponent
+      middlewares:
+        'detectContentSubgraph':
+          position: 'befoure routing'
+          middleware: 'Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphMiddleware'
     error:
       debugger:
         ignoredClasses:

@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
-use Neos\Flow\Http;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Interface to detect the current request's dimension value
@@ -22,9 +22,9 @@ interface ContentDimensionValueDetectorInterface
 {
     /**
      * @param Dimension\ContentDimension $contentDimension
-     * @param Http\Component\ComponentContext $componentContext
-     * @param array $overrideOptions
+     * @param ServerRequestInterface $request
+     * @param array|null $overrideOptions
      * @return Dimension\ContentDimensionValue|null
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?Dimension\ContentDimensionValue;
+    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue;
 }

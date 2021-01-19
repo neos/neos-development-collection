@@ -55,9 +55,9 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
 class ContentRepositoryExportService
@@ -100,7 +100,7 @@ class ContentRepositoryExportService
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 

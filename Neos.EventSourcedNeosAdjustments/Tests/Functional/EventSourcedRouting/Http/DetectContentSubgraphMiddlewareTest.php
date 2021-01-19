@@ -21,13 +21,25 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphComponent;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphMiddleware;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class DetectContentSubgraphComponentTest extends FunctionalTestCase
+class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
 {
+    /**
+     * @var RouteParameters|null
+     */
+    private $routeParameters;
+
+    /**
+     * @var RequestHandlerInterface|MockObject
+     */
+    private $mockNextMiddleware;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -121,6 +133,13 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
         $dimensionPresetSource = $this->objectManager->get(Dimension\ContentDimensionSourceInterface::class);
         $this->inject($dimensionPresetSource, 'contentDimensions', $contentDimensions);
+
+        $this->mockNextMiddleware = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+        $this->mockNextMiddleware->method('handle')->willReturnCallback(function(ServerRequestInterface $modifiedRequest) {
+            $this->routeParameters = $modifiedRequest->getAttribute(Http\ServerRequestAttributes::ROUTING_PARAMETERS);
+            return new Response();
+        });
+
     }
 
 
@@ -132,15 +151,12 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
     {
         $uri = new Uri('https://de.domain.com/sellerA_channelA/home.html');
         $request = new ServerRequest('GET', $uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Response());
 
-        $detectSubgraphComponent = new DetectContentSubgraphComponent();
-        $detectSubgraphComponent->handle($componentContext);
-        /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
+        $detectContentSubgraphMiddleware = new DetectContentSubgraphMiddleware();
+        $detectContentSubgraphMiddleware->process($request, $this->mockNextMiddleware);
 
-        $this->assertSame(null, $routeParameters->getValue('workspaceName'));
-        $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
+        self::assertNull($this->routeParameters->getValue('workspaceName'));
+        self::assertSame(1, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
             'market' => 'WORLD',
@@ -148,9 +164,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
             'channel' => 'channelA',
             'language' => 'de'
         ]);
-        $this->assertEquals(
+        self::assertEquals(
             $expectedDimensionSpacePoint,
-            $routeParameters->getValue('dimensionSpacePoint')
+            $this->routeParameters->getValue('dimensionSpacePoint')
         );
     }
 
@@ -161,16 +177,13 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
     {
         $uri = new Uri('https://de.domain.com/sellerA-channelA/home.html');
         $request = new ServerRequest('GET', $uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Response());
 
-        $detectSubgraphComponent = new DetectContentSubgraphComponent();
-        $this->inject($detectSubgraphComponent, 'uriPathSegmentDelimiter', '-');
-        $detectSubgraphComponent->handle($componentContext);
-        /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
+        $detectContentSubgraphMiddleware = new DetectContentSubgraphMiddleware();
+        $this->inject($detectContentSubgraphMiddleware, 'uriPathSegmentDelimiter', '-');
+        $detectContentSubgraphMiddleware->process($request, $this->mockNextMiddleware);
 
-        $this->assertSame(null, $routeParameters->getValue('workspaceName'));
-        $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
+        self::assertNull($this->routeParameters->getValue('workspaceName'));
+        self::assertSame(1, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
             'market' => 'WORLD',
@@ -178,9 +191,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
             'channel' => 'channelA',
             'language' => 'de'
         ]);
-        $this->assertEquals(
+        self::assertEquals(
             $expectedDimensionSpacePoint,
-            $routeParameters->getValue('dimensionSpacePoint')
+            $this->routeParameters->getValue('dimensionSpacePoint')
         );
     }
 
@@ -192,15 +205,11 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
     {
         $uri = new Uri('https://domain.com/home.html');
         $request = new ServerRequest('GET', $uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Response());
 
-        $detectSubgraphComponent = new DetectContentSubgraphComponent();
-        $detectSubgraphComponent->handle($componentContext);
-        /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
-
-        $this->assertSame(null, $routeParameters->getValue('workspaceName'));
-        $this->assertSame(0, $routeParameters->getValue('uriPathSegmentOffset'));
+        $detectContentSubgraphMiddleware = new DetectContentSubgraphMiddleware();
+        $detectContentSubgraphMiddleware->process($request, $this->mockNextMiddleware);
+        self::assertNull($this->routeParameters->getValue('workspaceName'));
+        self::assertSame(0, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
             'market' => 'WORLD',
@@ -208,9 +217,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
             'channel' => 'default',
             'language' => 'en'
         ]);
-        $this->assertEquals(
+        self::assertEquals(
             $expectedDimensionSpacePoint,
-            $routeParameters->getValue('dimensionSpacePoint')
+            $this->routeParameters->getValue('dimensionSpacePoint')
         );
     }
 
@@ -222,15 +231,12 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
     {
         $uri = new Uri('https://de.domain.com/sellerA_channelA/home@user-me;language=en&market=GB&seller=default&channel=default.html');
         $request = new ServerRequest('GET', $uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Response());
 
-        $detectSubgraphComponent = new DetectContentSubgraphComponent();
-        $detectSubgraphComponent->handle($componentContext);
-        /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
+        $detectContentSubgraphMiddleware = new DetectContentSubgraphMiddleware();
+        $detectContentSubgraphMiddleware->process($request, $this->mockNextMiddleware);
 
-        $this->assertEquals(new WorkspaceName('user-me'), $routeParameters->getValue('workspaceName'));
-        $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
+        self::assertEquals(new WorkspaceName('user-me'), $this->routeParameters->getValue('workspaceName'));
+        self::assertSame(1, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
             'market' => 'GB',
@@ -238,9 +244,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
             'channel' => 'default',
             'language' => 'en'
         ]);
-        $this->assertEquals(
+        self::assertEquals(
             $expectedDimensionSpacePoint,
-            $routeParameters->getValue('dimensionSpacePoint')
+            $this->routeParameters->getValue('dimensionSpacePoint')
         );
     }
 }

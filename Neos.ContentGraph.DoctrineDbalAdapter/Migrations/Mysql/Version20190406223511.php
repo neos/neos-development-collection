@@ -18,7 +18,7 @@ class Version20190406223511 extends AbstractMigration
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void 
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -33,7 +33,7 @@ class Version20190406223511 extends AbstractMigration
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void 
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
