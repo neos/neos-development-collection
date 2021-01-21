@@ -15,6 +15,7 @@ use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Repository;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
@@ -147,6 +148,11 @@ class AssetTest extends AbstractTest
     public function getAssetProxyReturnsNullIfNoCorrespondingImportedAssetExists()
     {
         $asset = $this->buildAssetObject();
+        $asset->setAssetSourceIdentifier('test-source');
+
+        $mockExternalAssetSource = $this->getMockBuilder(AssetSourceInterface::class)->disableOriginalConstructor()->getMock();
+        $this->inject($asset, 'assetSources', ['test-source' => $mockExternalAssetSource]);
+
         $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->setMethods(['findOneByLocalAssetIdentifier'])->getMock();
         $this->inject($asset, 'importedAssetRepository', $mockImportedAssetRepository);
 
