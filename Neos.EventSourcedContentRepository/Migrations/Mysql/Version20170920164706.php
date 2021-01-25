@@ -7,7 +7,6 @@ use Doctrine\DBAL\Schema\Schema;
 
 class Version20170920164706 extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Remove collation from workspace.workspaceOwner column';
