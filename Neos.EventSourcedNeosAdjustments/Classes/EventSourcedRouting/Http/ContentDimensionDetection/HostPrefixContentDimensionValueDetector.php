@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
-use Neos\Flow\Http;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A content dimension preset detector evaluating the host prefix
@@ -21,20 +21,14 @@ use Neos\Flow\Http;
 final class HostPrefixContentDimensionValueDetector implements ContentDimensionValueDetectorInterface
 {
     /**
-     * @var array
-     */
-    protected $defaultOptions = [];
-
-
-    /**
      * @param Dimension\ContentDimension $contentDimension
-     * @param Http\Component\ComponentContext $componentContext
+     * @param ServerRequestInterface $request
      * @param array|null $overrideOptions
      * @return Dimension\ContentDimensionValue|null
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?Dimension\ContentDimensionValue
+    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue
     {
-        $host = $componentContext->getHttpRequest()->getUri()->getHost();
+        $host = $request->getUri()->getHost();
         foreach ($contentDimension->getValues() as $contentDimensionValue) {
             $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value');
             if ($resolutionValue) {

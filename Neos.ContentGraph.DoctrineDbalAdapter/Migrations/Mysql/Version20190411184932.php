@@ -13,7 +13,7 @@ class Version20190411184932 extends AbstractMigration
         return 'Add index on child node anchor (speeds up performance for many queries a lot; e.g. with 50 000 nodes from 800 ms to <1 ms)';
     }
 
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -22,7 +22,7 @@ class Version20190411184932 extends AbstractMigration
         $this->addSql('ALTER TABLE `neos_contentgraph_hierarchyrelation` ADD INDEX `CHILDNODEANCHOR` (`childnodeanchor`)');
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

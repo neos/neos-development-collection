@@ -125,10 +125,11 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @param array $routeValues
+     * @param RouteParameters $parameters
      * @return ResolveResult|bool
      * @throws InvalidContentDimensionValueUriProcessorException
      */
-    public function resolve(array &$routeValues)
+    public function resolveWithParameters(array &$routeValues, RouteParameters $parameters)
     {
         if ($this->name === null || $this->name === '' || !\array_key_exists($this->name, $routeValues)) {
             return false;
@@ -303,5 +304,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     public function match(&$routePath)
     {
         throw new \BadMethodCallException('match() is not supported by this Route Part Handler, use "matchWithParameters" instead', 1568287772);
+    }
+
+    public function resolve(array &$routeValues)
+    {
+        throw new \BadMethodCallException('resolve() is not supported by this Route Part Handler, use "resolveWithParameters" instead', 1611600169);
     }
 }

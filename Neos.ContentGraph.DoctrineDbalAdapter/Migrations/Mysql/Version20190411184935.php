@@ -13,7 +13,7 @@ class Version20190411184935 extends AbstractMigration
         return 'Remove primary key on Edge, as it improves ForkContentStream performance by factor 2';
     }
 
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -22,7 +22,7 @@ class Version20190411184935 extends AbstractMigration
         $this->addSql('ALTER TABLE `neos_contentgraph_hierarchyrelation` DROP PRIMARY KEY');
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

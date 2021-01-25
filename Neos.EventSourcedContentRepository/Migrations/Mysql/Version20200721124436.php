@@ -1,16 +1,11 @@
 <?php
 declare(strict_types=1);
-
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Migrations\AbortMigrationException;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
-/**
- * Fix event table schema
- */
 class Version20200721124436 extends AbstractMigration
 {
     public function getDescription(): string
@@ -20,7 +15,7 @@ class Version20200721124436 extends AbstractMigration
 
     /**
      * @param Schema $schema
-     * @throws DBALException | AbortMigrationException
+     * @throws DbalException
      */
     public function up(Schema $schema): void
     {
@@ -32,7 +27,7 @@ class Version20200721124436 extends AbstractMigration
 
     /**
      * @param Schema $schema
-     * @throws DBALException | AbortMigrationException
+     * @throws DbalException
      */
     public function down(Schema $schema): void
     {

@@ -30,7 +30,7 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortc
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\SetHeaderComponent;
+
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Property\PropertyMapper;
@@ -161,7 +161,7 @@ class EventSourcedNodeController extends ActionController
         ]);
 
         $this->overrideViewVariablesFromInternalArguments();
-        $this->response->setComponentParameter(SetHeaderComponent::class, 'Cache-Control', 'no-cache');
+        $this->response->setHttpHeader('Cache-Control', 'no-cache');
         if (!$this->view->canRenderWithNodeAndPath()) {
             $this->view->setFusionPath('rawContent');
         }
@@ -245,7 +245,7 @@ class EventSourcedNodeController extends ActionController
         }
 
         if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {
-            $this->response->setComponentParameter(SetHeaderComponent::class, 'X-Neos-AffectedNodePath', $affectedNodeContextPath);
+            $this->response->setHttpHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
         }
 
         if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {
