@@ -60,7 +60,7 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut selected target asset
     Given an asset with id "some-asset" and file name "asset.txt" exists with the content "do we need asset shortcut nodes?"
     When I am on URL "/"
-    Then the node "shortcut-selected-asset" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://localhost/_Resources/Testing/Persistent/23dae371d1664f1d9cc7dd029b299ea717298103/asset.txt"
+    Then the node "shortcut-selected-asset" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/_Resources/Testing/Persistent/23dae371d1664f1d9cc7dd029b299ea717298103/asset.txt"
 
   Scenario: Shortcut selected target URL
     When I am on URL "/"

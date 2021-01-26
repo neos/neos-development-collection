@@ -14,7 +14,6 @@ declare(strict_types=1);
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -23,23 +22,23 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphComponent;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphMiddleware;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathProjector;
 use Neos\EventSourcing\EventListener\EventListenerInvoker;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RouterInterface;
-use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Tests\FunctionalTestRequestHandler;
+use Neos\Flow\Tests\Unit\Http\Fixtures\SpyRequestHandler;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Domain;
@@ -145,10 +144,9 @@ trait RoutingTrait
         if (empty($this->requestUrl->getHost())) {
             $this->requestUrl = $this->requestUrl->withScheme('http')->withHost('localhost');
         }
-        /** @var HttpRequestHandlerInterface $activeRequestHandler */
+        /** @var FunctionalTestRequestHandler $activeRequestHandler */
         $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
-        $componentContext = $activeRequestHandler->getComponentContext();
-        $componentContext->replaceHttpRequest($componentContext->getHttpRequest()->withUri($this->requestUrl));
+        $activeRequestHandler->setHttpRequest($activeRequestHandler->getHttpRequest()->withUri($this->requestUrl));
     }
 
     /**
@@ -184,13 +182,10 @@ trait RoutingTrait
         $serverRequestFactory = $this->getObjectManager()->get(ServerRequestFactoryInterface::class);
         $httpRequest = $serverRequestFactory->createServerRequest('GET', $uri);
 
-        $componentContext = new ComponentContext($httpRequest, new Response());
-        $component = new DetectContentSubgraphComponent();
-        $component->handle($componentContext);
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
-        if ($routeParameters === null) {
-            $routeParameters = RouteParameters::createEmpty();
-        }
+        $middleware = new DetectContentSubgraphMiddleware();
+        $spyMiddleware = new SpyRequestHandler();
+        $middleware->process($httpRequest, $spyMiddleware);
+        $routeParameters = $spyMiddleware->getHandledRequest()->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
         $routeContext = new RouteContext($httpRequest, $routeParameters);
         $routeValues = $router->route($routeContext);
 
