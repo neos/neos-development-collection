@@ -7,7 +7,6 @@ use Doctrine\DBAL\Schema\Schema;
 
 class Version20170920161748 extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Add contentStreamIdentifier column to workspace read model';

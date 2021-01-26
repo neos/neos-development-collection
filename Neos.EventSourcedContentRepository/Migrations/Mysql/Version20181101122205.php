@@ -14,7 +14,9 @@ class Version20181101122205 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on "mysql".'
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() !== 'mysql',
+            'Migration can only be executed safely on "mysql".'
         );
         $this->addSql('TRUNCATE neos_contentrepository_projection_change');
         $this->addSql('ALTER TABLE neos_contentrepository_projection_change DROP PRIMARY KEY');

@@ -7,7 +7,6 @@ use Doctrine\DBAL\Schema\Schema;
 
 class Version20170920163431 extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Make the workspace name the identifier of the workspace read model';
