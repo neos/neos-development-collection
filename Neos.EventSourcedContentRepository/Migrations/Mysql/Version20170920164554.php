@@ -7,7 +7,6 @@ use Doctrine\DBAL\Schema\Schema;
 
 class Version20170920164554 extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Remove collation of workspace.baseWorkspaceName column';
