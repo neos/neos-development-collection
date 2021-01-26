@@ -231,7 +231,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if ($requestHandler instanceof HttpRequestHandlerInterface) {
-            return $requestHandler->getComponentContext()->getHttpRequest()->getUri()->getHost();
+            return $requestHandler->getHttpRequest()->getUri()->getHost();
         }
         return '';
     }
