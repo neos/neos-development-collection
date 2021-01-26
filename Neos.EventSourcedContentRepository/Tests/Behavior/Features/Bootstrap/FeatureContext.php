@@ -16,10 +16,12 @@ require_once(__DIR__ . '/NodeOperationsTrait.php');
 require_once(__DIR__ . '/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
 require_once(__DIR__ . '/StructureAdjustmentsTrait.php');
+require_once(__DIR__ . '/MigrationsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -42,6 +44,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use EventSourcedTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use StructureAdjustmentsTrait;
+    use MigrationsTrait;
 
     /**
      * @var string
@@ -59,6 +62,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $this->setupEventSourcedTrait();
         $this->setupIntegrityViolationTrait();
         $this->setupProjectionIntegrityViolationDetectionTrait();
+        $this->setupMigrationsTrait();
     }
 
     /**

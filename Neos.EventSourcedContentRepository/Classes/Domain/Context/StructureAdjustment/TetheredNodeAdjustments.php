@@ -141,7 +141,7 @@ class TetheredNodeAdjustments
     private function ensureNodeIsTethered(NodeInterface $node): \Generator
     {
         if (!$node->isTethered()) {
-            yield StructureAdjustment::createForNode($node, StructureAdjustment::NODE_IS_NOT_TETHERED_BUT_SHOULD_BE, 'This node should be a tethered node, but is not.');
+            yield StructureAdjustment::createForNode($node, StructureAdjustment::NODE_IS_NOT_TETHERED_BUT_SHOULD_BE, 'This node should be a tethered node, but is not. This can not be fixed automatically right now (TODO)');
         }
     }
 
