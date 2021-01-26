@@ -102,8 +102,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!is_string($requestPath)) {
             return false;
         }
-        // TODO verify parameters / use "host" parameter (see https://github.com/neos/flow-development-collection/issues/2141)
-        if (!$parameters->has('dimensionSpacePoint')) {
+        if (!$parameters->has('dimensionSpacePoint') || !$parameters->has('requestUriHost')) {
             return false;
         }
 
@@ -113,7 +112,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $dimensionSpacePoint = $parameters->getValue('dimensionSpacePoint');
 
         try {
-            $matchResult = $this->matchUriPath($requestPath, $dimensionSpacePoint);
+            $matchResult = $this->matchUriPath($requestPath, $dimensionSpacePoint, $parameters->getValue('requestUriHost'));
         } catch (NodeNotFoundException $exception) {
             // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
             // (and other routes could still handle this).
@@ -134,6 +133,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if ($this->name === null || $this->name === '' || !\array_key_exists($this->name, $routeValues)) {
             return false;
         }
+        if (!$parameters->has('requestUriHost') ) {
+            return false;
+        }
 
         $nodeAddress = $routeValues[$this->name];
         if (!$nodeAddress instanceof NodeAddress) {
@@ -141,7 +143,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
 
         try {
-            $resolveResult = $this->resolveNodeAddress($nodeAddress);
+            $resolveResult = $this->resolveNodeAddress($nodeAddress, $parameters->getValue('requestUriHost'));
         } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
@@ -153,11 +155,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @param NodeAddress $nodeAddress
+     * @param string $host
      * @return ResolveResult
      * @throws Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException
      * @throws NodeNotFoundException | InvalidShortcutException
      */
-    private function resolveNodeAddress(NodeAddress $nodeAddress): ResolveResult
+    private function resolveNodeAddress(NodeAddress $nodeAddress, string $host): ResolveResult
     {
         $nodeInfo = $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($nodeAddress->getNodeAggregateIdentifier(), $nodeAddress->getDimensionSpacePoint()->getHash());
         if ($nodeInfo->isDisabled()) {
@@ -172,7 +175,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
         $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($nodeAddress);
 
-        if ((string)$nodeInfo->getSiteNodeName() !== (string)$this->getCurrentSiteNodeName()) {
+        if ((string)$nodeInfo->getSiteNodeName() !== (string)$this->getCurrentSiteNodeName($host)) {
             /** @var Site $site */
             foreach ($this->siteRepository->findOnline() as $site) {
                 if ($site->getNodeName() === (string)$nodeInfo->getSiteNodeName()) {
@@ -192,12 +195,13 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     /**
      * @param string $uriPath
      * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param string $host
      * @return MatchResult
      * @throws NodeNotFoundException | NodeAddressCannotBeSerializedException
      */
-    private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint): MatchResult
+    private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint, string $host): MatchResult
     {
-        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash($this->getCurrentSiteNodeName(), $uriPath, $dimensionSpacePoint->getHash());
+        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash($this->getCurrentSiteNodeName($host), $uriPath, $dimensionSpacePoint->getHash());
         $nodeAddress = new NodeAddress(
             $this->documentUriPathFinder->getLiveContentStreamIdentifier(),
             $dimensionSpacePoint,
@@ -207,10 +211,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
     }
 
-    private function getCurrentSiteNodeName(): NodeName
+    private function getCurrentSiteNodeName(string $host): NodeName
     {
-        // TODO pass in host (only possible for RoutePart:matchWithParameters() right now, see https://github.com/neos/flow-development-collection/issues/2141)
-        $host = $this->getCurrentHost();
         if (!isset($this->siteNodeNameRuntimeCache[$host])) {
             $site = null;
             if (!empty($host)) {
@@ -225,15 +227,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $this->siteNodeNameRuntimeCache[$host] = NodeName::fromString($site->getNodeName());
         }
         return $this->siteNodeNameRuntimeCache[$host];
-    }
-
-    private function getCurrentHost(): string
-    {
-        $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        if ($requestHandler instanceof HttpRequestHandlerInterface) {
-            return $requestHandler->getHttpRequest()->getUri()->getHost();
-        }
-        return '';
     }
 
     private function truncateRequestPathAndReturnRemainder(string &$requestPath, int $uriPathSegmentOffset): string

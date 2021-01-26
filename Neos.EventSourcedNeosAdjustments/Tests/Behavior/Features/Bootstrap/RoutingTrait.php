@@ -45,9 +45,11 @@ use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Routing\RequestUriHostMiddleware;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -181,11 +183,9 @@ trait RoutingTrait
         $router = $this->getObjectManager()->get(RouterInterface::class);
         $serverRequestFactory = $this->getObjectManager()->get(ServerRequestFactoryInterface::class);
         $httpRequest = $serverRequestFactory->createServerRequest('GET', $uri);
+        $httpRequest = $this->addRoutingParameters($httpRequest);
 
-        $middleware = new DetectContentSubgraphMiddleware();
-        $spyMiddleware = new SpyRequestHandler();
-        $middleware->process($httpRequest, $spyMiddleware);
-        $routeParameters = $spyMiddleware->getHandledRequest()->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
+        $routeParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
         $routeContext = new RouteContext($httpRequest, $routeParameters);
         $routeValues = $router->route($routeContext);
 
@@ -249,7 +249,16 @@ trait RoutingTrait
             WorkspaceName::forLive()
         );
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
+        $httpRequest = $this->addRoutingParameters($httpRequest);
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         return NodeUriBuilder::fromRequest($actionRequest)->uriFor($nodeAddress);
+    }
+
+    private function addRoutingParameters(ServerRequestInterface $httpRequest): ServerRequestInterface
+    {
+        $spyMiddleware = new SpyRequestHandler();
+        (new RequestUriHostMiddleware())->process($httpRequest, $spyMiddleware);
+        (new DetectContentSubgraphMiddleware())->process($spyMiddleware->getHandledRequest(), $spyMiddleware);
+        return $spyMiddleware->getHandledRequest();
     }
 }
