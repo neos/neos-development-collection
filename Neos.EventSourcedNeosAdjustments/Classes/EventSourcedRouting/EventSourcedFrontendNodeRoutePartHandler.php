@@ -24,7 +24,6 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUri
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Mvc\Routing\AbstractRoutePart;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
@@ -133,7 +132,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if ($this->name === null || $this->name === '' || !\array_key_exists($this->name, $routeValues)) {
             return false;
         }
-        if (!$parameters->has('requestUriHost') ) {
+        if (!$parameters->has('requestUriHost')) {
             return false;
         }
 
