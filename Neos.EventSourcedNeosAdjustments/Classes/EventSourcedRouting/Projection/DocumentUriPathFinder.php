@@ -27,11 +27,13 @@ final class DocumentUriPathFinder
     }
 
     /**
+     * Returns the DocumentNodeInfo of a node for the given $siteNodeName and $uriPath
+     *
      * @param NodeName $siteNodeName
      * @param string $uriPath
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
-     * @throws NodeNotFoundException
+     * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found (node is disabled, node doesn't exist in live workspace, projection not up to date)
      */
     public function getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(NodeName $siteNodeName, string $uriPath, string $dimensionSpacePointHash): DocumentNodeInfo
     {
@@ -39,32 +41,41 @@ final class DocumentUriPathFinder
     }
 
     /**
+     * Returns the DocumentNodeInfo of a node for the given $nodeAggregateIdentifier
+     * Note: This will not exclude *disabled* nodes in order to allow the calling side to make a distinction (e.g. in order to display a custom error)
+     *
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
-     * @throws NodeNotFoundException
+     * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found (node doesn't exist in live workspace, projection not up to date)
      */
-    public function getOneByIdAndDimensionSpacePointHash(NodeAggregateIdentifier $nodeAggregateIdentifier, string $dimensionSpacePointHash): DocumentNodeInfo
+    public function getByIdAndDimensionSpacePointHash(NodeAggregateIdentifier $nodeAggregateIdentifier, string $dimensionSpacePointHash): DocumentNodeInfo
     {
         return $this->fetchSingle('nodeAggregateIdentifier = :nodeAggregateIdentifier AND dimensionSpacePointHash = :dimensionSpacePointHash', compact('nodeAggregateIdentifier', 'dimensionSpacePointHash'));
     }
 
     /**
+     * Returns the parent DocumentNodeInfo of a node for the given $nodeInfo
+     * Note: This will not exclude *disabled* nodes in order to allow the calling side to make a distinction (e.g. in order to display a custom error)
+     *
      * @param DocumentNodeInfo $nodeInfo
      * @return DocumentNodeInfo
-     * @throws NodeNotFoundException
+     * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found (given $nodeInfo belongs to a site root node, projection not up to date)
      */
     public function getParentNode(DocumentNodeInfo $nodeInfo): DocumentNodeInfo
     {
-        return $this->getOneByIdAndDimensionSpacePointHash($nodeInfo->getParentNodeAggregateIdentifier(), $nodeInfo->getDimensionSpacePointHash());
+        return $this->getByIdAndDimensionSpacePointHash($nodeInfo->getParentNodeAggregateIdentifier(), $nodeInfo->getDimensionSpacePointHash());
     }
 
     /**
+     * Returns the preceding DocumentNodeInfo for $succeedingNodeAggregateIdentifier and the $parentNodeAggregateIdentifier (= node on the same hierarchy level)
+     * Note: This will not exclude *disabled* nodes in order to allow the calling side to make a distinction (e.g. in order to display a custom error)
+     *
      * @param NodeAggregateIdentifier $succeedingNodeAggregateIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
-     * @throws NodeNotFoundException
+     * @throws NodeNotFoundException if no preceding DocumentNodeInfo can be found (given $succeedingNodeAggregateIdentifier doesn't exist or refers to the first/only node with the given $parentNodeAggregateIdentifier)
      */
     public function getPrecedingNode(NodeAggregateIdentifier $succeedingNodeAggregateIdentifier, NodeAggregateIdentifier $parentNodeAggregateIdentifier, string $dimensionSpacePointHash): DocumentNodeInfo
     {
@@ -72,6 +83,9 @@ final class DocumentUriPathFinder
     }
 
     /**
+     * Returns the DocumentNodeInfo for the first *enabled* child node for the specified $parentNodeAggregateIdentifier
+     * Note: This will not exclude *disabled* nodes in order to allow the calling side to make a distinction (e.g. in order to display a custom error)
+     *
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
@@ -133,6 +147,7 @@ final class DocumentUriPathFinder
      */
     private function fetchSingle(string $where, array $parameters): DocumentNodeInfo
     {
+        # NOTE: "LIMIT 1" in the following query is just a performance optimization since Connection::fetchAssoc() only returns the first result anyways
         try {
             $row = $this->dbal->fetchAssoc('SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS . ' WHERE ' . $where . ' LIMIT 1', $parameters, DocumentUriPathProjector::COLUMN_TYPES_DOCUMENT_URIS);
         } catch (DBALException $e) {

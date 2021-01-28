@@ -47,6 +47,7 @@ class NodeShortcutResolver
 
     /**
      * "adapter" for {@see resolveNode} when working with NodeAddresses.
+     * Note: The ContentStreamIdentifier is not required for this service, because it is only covering the live workspace
      *
      * @param NodeAddress $nodeAddress
      * @return NodeAddress|UriInterface NodeAddress is returned if we want to link to another node (i.e. node is NOT a shortcut node; or target is a node); or UriInterface for links to fixed URLs (Asset URLs or external URLs)
@@ -55,84 +56,85 @@ class NodeShortcutResolver
      */
     public function resolveShortcutTarget(NodeAddress $nodeAddress)
     {
-        $node = $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($nodeAddress->getNodeAggregateIdentifier(), $nodeAddress->getDimensionSpacePoint()->getHash());
-        $resolvedTarget = $this->resolveNode($node);
+        $documentNodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($nodeAddress->getNodeAggregateIdentifier(), $nodeAddress->getDimensionSpacePoint()->getHash());
+        $resolvedTarget = $this->resolveNode($documentNodeInfo);
         if ($resolvedTarget instanceof UriInterface) {
             return $resolvedTarget;
         }
-        if ($resolvedTarget === $node) {
+        if ($resolvedTarget === $documentNodeInfo) {
             return $nodeAddress;
         }
-        return $nodeAddress->withNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
+        return $nodeAddress->withNodeAggregateIdentifier($documentNodeInfo->getNodeAggregateIdentifier());
     }
 
     /**
      * This method is used during routing (when creating URLs), to directly generate URLs to the shortcut TARGET,
      * if linking to a shortcut.
+     * Note: The ContentStreamIdentifier is not required for this service, because it is only covering the live workspace
      *
-     * @param DocumentNodeInfo $node
+     * @param DocumentNodeInfo $documentNodeInfo
      * @return DocumentNodeInfo|UriInterface DocumentNodeInfo is returned if we want to link to another node (i.e. node is NOT a shortcut node; or target is a node); or UriInterface for links to fixed URLs (Asset URLs or external URLs)
      * @throws InvalidShortcutException
      */
-    public function resolveNode(DocumentNodeInfo $node)
+    public function resolveNode(DocumentNodeInfo $documentNodeInfo)
     {
         $shortcutRecursionLevel = 0;
-        while ($node->isShortcut()) {
+        while ($documentNodeInfo->isShortcut()) {
             if (++ $shortcutRecursionLevel > 50) {
                 throw new InvalidShortcutException(sprintf('Shortcut recursion level reached after %d levels', $shortcutRecursionLevel), 1599035282);
             }
-            switch ($node->getShortcutMode()) {
+            switch ($documentNodeInfo->getShortcutMode()) {
                 case 'parentNode':
                     try {
-                        $node = $this->documentUriPathFinder->getParentNode($node);
+                        $documentNodeInfo = $this->documentUriPathFinder->getParentNode($documentNodeInfo);
                     } catch (NodeNotFoundException $e) {
-                        throw new InvalidShortcutException(sprintf('Shortcut Node "%s" points to a non-existing parent node "%s"', $node, $node->getNodeAggregateIdentifier()), 1599669406, $e);
+                        throw new InvalidShortcutException(sprintf('Shortcut Node "%s" points to a non-existing parent node "%s"', $documentNodeInfo, $documentNodeInfo->getNodeAggregateIdentifier()), 1599669406, $e);
                     }
-                    if ($node->isDisabled()) {
-                        throw new InvalidShortcutException(sprintf('Shortcut Node "%s" points to disabled parent node "%s"', $node, $node->getNodeAggregateIdentifier()), 1599664517);
+                    if ($documentNodeInfo->isDisabled()) {
+                        throw new InvalidShortcutException(sprintf('Shortcut Node "%s" points to disabled parent node "%s"', $documentNodeInfo, $documentNodeInfo->getNodeAggregateIdentifier()), 1599664517);
                     }
                     continue 2;
                 case 'firstChildNode':
                     try {
-                        $node = $this->documentUriPathFinder->getFirstEnabledChildNode($node->getNodeAggregateIdentifier(), $node->getDimensionSpacePointHash());
+                        $documentNodeInfo = $this->documentUriPathFinder->getFirstEnabledChildNode($documentNodeInfo->getNodeAggregateIdentifier(), $documentNodeInfo->getDimensionSpacePointHash());
                     } catch (\Exception $e) {
-                        throw new InvalidShortcutException(sprintf('Failed to fetch firstChildNode in Node "%s": %s', $node, $e->getMessage()), 1599043861, $e);
+                        throw new InvalidShortcutException(sprintf('Failed to fetch firstChildNode in Node "%s": %s', $documentNodeInfo, $e->getMessage()), 1599043861, $e);
                     }
                     continue 2;
                 case 'selectedTarget':
                     try {
-                        $targetUri = $node->getShortcutTargetUri();
+                        $targetUri = $documentNodeInfo->getShortcutTargetUri();
                     } catch (\Exception $e) {
-                        throw new InvalidShortcutException(sprintf('Invalid shortcut target in Node "%s": %s', $node, $e->getMessage()), 1599043489, $e);
+                        throw new InvalidShortcutException(sprintf('Invalid shortcut target in Node "%s": %s', $documentNodeInfo, $e->getMessage()), 1599043489, $e);
                     }
                     if ($targetUri->getScheme() === 'node') {
                         $targetNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($targetUri->getHost());
                         try {
-                            $node = $this->documentUriPathFinder->getOneByIdAndDimensionSpacePointHash($targetNodeAggregateIdentifier, $node->getDimensionSpacePointHash());
+                            $documentNodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($targetNodeAggregateIdentifier, $documentNodeInfo->getDimensionSpacePointHash());
                         } catch (\Exception $e) {
-                            throw new InvalidShortcutException(sprintf('Failed to load selectedTarget node in Node "%s": %s', $node, $e->getMessage()), 1599043803, $e);
+                            throw new InvalidShortcutException(sprintf('Failed to load selectedTarget node in Node "%s": %s', $documentNodeInfo, $e->getMessage()), 1599043803, $e);
                         }
-                        if ($node->isDisabled()) {
-                            throw new InvalidShortcutException(sprintf('Shortcut target in Node "%s" points to disabled node "%s"', $node, $node->getNodeAggregateIdentifier()), 1599664423);
+                        if ($documentNodeInfo->isDisabled()) {
+                            throw new InvalidShortcutException(sprintf('Shortcut target in Node "%s" points to disabled node "%s"', $documentNodeInfo, $documentNodeInfo->getNodeAggregateIdentifier()), 1599664423);
                         }
                         continue 2;
                     }
                     if ($targetUri->getScheme() === 'asset') {
                         $asset = $this->assetRepository->findByIdentifier($targetUri->getHost());
                         if ($asset === null) {
-                            throw new InvalidShortcutException(sprintf('Failed to load selectedTarget asset in Node "%s", probably it was deleted', $node), 1599314109);
+                            throw new InvalidShortcutException(sprintf('Failed to load selectedTarget asset in Node "%s", probably it was deleted', $documentNodeInfo), 1599314109);
                         }
                         $assetUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
                         if (!$assetUri) {
-                            throw new InvalidShortcutException(sprintf('Failed to resolve asset URI in Node "%s", probably it was deleted', $node), 1599314203);
+                            throw new InvalidShortcutException(sprintf('Failed to resolve asset URI in Node "%s", probably it was deleted', $documentNodeInfo), 1599314203);
                         }
                         return new Uri($assetUri);
                     }
                     return $targetUri;
                 default:
-                    throw new InvalidShortcutException(sprintf('Unsupported shortcut mode "%s" in Node "%s"', $node->getShortcutMode(), $node), 1598194032);
+                    throw new InvalidShortcutException(sprintf('Unsupported shortcut mode "%s" in Node "%s"', $documentNodeInfo->getShortcutMode(), $documentNodeInfo), 1598194032);
             }
         }
-        return $node;
+        return $documentNodeInfo;
     }
 }
