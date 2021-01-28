@@ -6,6 +6,7 @@ Feature: The demo site renders
       | Name       | Value     |
       | packageKey | Neos.Demo |
     And I execute the flow command "contentrepositorymigrate:run" only once per feature
+    And The documenturipath projection is up to date
 
   Scenario: rendering the homepage basically works
     When I visit "/"

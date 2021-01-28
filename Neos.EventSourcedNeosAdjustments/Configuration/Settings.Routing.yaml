@@ -1,0 +1,14 @@
+Neos:
+  EventSourcedNeosAdjustments:
+    contentDimensions:
+      resolution:
+        uriPathSegmentDelimiter: '_'
+    fusion:
+      enableObjectTreeCache: false
+  Flow:
+    http:
+      chain:
+        preprocess:
+          chain:
+            detectContentSubgraph:
+              component: Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphComponent

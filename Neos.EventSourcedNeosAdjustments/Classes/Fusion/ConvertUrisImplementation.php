@@ -15,11 +15,13 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Neos\Domain\Exception;
-use Neos\Neos\Service\LinkingService;
+use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\Domain\Exception as NeosException;
 
 /**
  * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs
@@ -54,11 +56,7 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
  */
 class ConvertUrisImplementation extends AbstractFusionObject
 {
-    /**
-     * @Flow\Inject
-     * @var LinkingService
-     */
-    protected $linkingService;
+    private const PATTERN_SUPPORTED_URIS = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
 
     /**
      * @Flow\Inject
@@ -67,13 +65,25 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected $nodeAddressFactory;
 
     /**
+     * @Flow\Inject
+     * @var AssetRepository
+     */
+    protected $assetRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
+
+    /**
      * Convert URIs matching a supported scheme with generated URIs
      *
      * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
      * set. This is needed to show the editable links with metadata in the content module.
      *
      * @return string
-     * @throws Exception
+     * @throws NeosException
      */
     public function evaluate()
     {
@@ -84,13 +94,13 @@ class ConvertUrisImplementation extends AbstractFusionObject
         }
 
         if (!is_string($text)) {
-            throw new Exception(sprintf('Only strings can be processed by this Fusion object, given: "%s".', gettype($text)), 1382624080);
+            throw new NeosException(sprintf('Only strings can be processed by this Fusion object, given: "%s".', gettype($text)), 1382624080);
         }
 
         $node = $this->fusionValue('node');
 
         if (!$node instanceof TraversableNodeInterface) {
-            throw new Exception(sprintf('The current node must be an instance of TraversableNodeInterface, given: "%s".', gettype($text)), 1382624087);
+            throw new NeosException(sprintf('The current node must be an instance of TraversableNodeInterface, given: "%s".', gettype($text)), 1382624087);
         }
 
         $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
@@ -102,7 +112,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
 
-        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use (&$unresolvedUris, $absolute, $nodeAddress) {
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use (&$unresolvedUris, $absolute, $nodeAddress) {
+            $resolvedUri = null;
             switch ($matches[1]) {
                 case 'node':
                     $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, NodeAggregateIdentifier::fromString($matches[2]));
@@ -110,23 +121,16 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
                     $uriBuilder->setCreateAbsoluteUri($absolute);
 
-                    $resolvedUri = $uriBuilder->uriFor(
-                        'show',
-                        [
-                            'node' => $nodeAddress
-                        ],
-                        'Frontend\Node',
-                        'Neos.Neos'
-                    );
-
+                    $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
                     $this->runtime->addCacheTag('node', $matches[2]);
                     break;
                 case 'asset':
-                    $resolvedUri = $this->linkingService->resolveAssetUri($matches[0]);
-                    $this->runtime->addCacheTag('asset', $matches[2]);
+                    $asset = $this->assetRepository->findByIdentifier($matches[2]);
+                    if ($asset !== null) {
+                        $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+                        $this->runtime->addCacheTag('asset', $matches[2]);
+                    }
                     break;
-                default:
-                    $resolvedUri = null;
             }
 
             if ($resolvedUri === null) {
@@ -139,7 +143,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         if ($unresolvedUris !== []) {
             $processedContent = preg_replace('/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
-            $processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
+            $processedContent = preg_replace(self::PATTERN_SUPPORTED_URIS, '', $processedContent);
         }
 
         $processedContent = $this->replaceLinkTargets($processedContent);

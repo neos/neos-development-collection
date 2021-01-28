@@ -12,9 +12,9 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
-use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -47,11 +47,11 @@ trait BrowserTrait
         $this->browser->setRequestEngine(new \Neos\EventSourcedNeosAdjustments\Testing\CustomizedInternalRequestEngine());
         $bootstrap = $this->getObjectManager()->get(\Neos\Flow\Core\Bootstrap::class);
 
-        $bootstrap->setActiveRequestHandler(new \Neos\Flow\Tests\FunctionalTestRequestHandler($bootstrap));
-        $requestHandler = $bootstrap->getActiveRequestHandler();
-        $request = new ServerRequest('GET', new Uri('http://localhost/flow/test'));
-        $componentContext = new ComponentContext($request, new \GuzzleHttp\Psr7\Response());
-        $requestHandler->setComponentContext($componentContext);
+        $requestHandler = new \Neos\Flow\Tests\FunctionalTestRequestHandler($bootstrap);
+        $serverRequestFactory = new ServerRequestFactory(new UriFactory());
+        $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/flow/test');
+        $requestHandler->setHttpRequest($request);
+        $bootstrap->setActiveRequestHandler($requestHandler);
     }
 
     /**
