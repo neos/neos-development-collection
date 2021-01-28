@@ -125,11 +125,13 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             if ($event->getSucceedingNodeAggregateIdentifier() === null) {
                 $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getLastChildNode($parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
                 if ($precedingNode !== null) {
+                    // make the new node the new succeeding node of the previously last child (= insert at the end of all children)
                     $this->updateNode($precedingNode, ['succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
                 }
             } else {
                 $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getPrecedingNode($event->getSucceedingNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
                 if ($precedingNode !== null) {
+                    // make the new node the new succeeding node of the previously preceding node of the specified succeeding node (= re-wire <preceding>-<succeeding> to <preceding>-<new node>)
                     $this->updateNode($precedingNode, ['succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
                 }
                 $this->updateNodeByIdAndDimensionSpacePointHash($event->getSucceedingNodeAggregateIdentifier(), $dimensionSpacePoint->getHash(), ['precedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
@@ -164,6 +166,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             return;
         }
         if ($this->isShortcutNodeType($event->getNewNodeTypeName())) {
+            // The node has been turned into a shortcut node, but since the shortcut mode is not yet set we'll set it to "firstChildNode" in order to prevent an invalid mode
             $this->updateNodeQuery('SET shortcuttarget = \'{"mode":"firstChildNode","target":null}\' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier AND shortcuttarget IS NULL', [
                 'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
             ]);
@@ -321,6 +324,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         if ($oldUriPath === '') {
             return;
         }
+        /** @var string[] $uriPathSegments */
         $uriPathSegments = explode('/', $oldUriPath);
         $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
         $newUriPath = implode('/', $uriPathSegments);
