@@ -304,7 +304,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             // probably not a document node
             return;
         }
-        if (isset($newPropertyValues['targetMode']) || isset($newPropertyValues['target'])) {
+        if ((isset($newPropertyValues['targetMode']) || isset($newPropertyValues['target'])) && $node->isShortcut()) {
             $shortcutTarget = $node->getShortcutTarget();
             $shortcutTarget = [
                 'mode' => $newPropertyValues['targetMode'] ?? $shortcutTarget['mode'],
