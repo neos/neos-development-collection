@@ -674,6 +674,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $this->assertTrue($this->subject->getVariantType($generalization, $specialization)->equals(DimensionSpace\VariantType::generalization()));
         $this->assertTrue($this->subject->getVariantType($specialization, $peer)->equals(DimensionSpace\VariantType::peer()));
         $this->assertTrue($this->subject->getVariantType($peer, $specialization)->equals(DimensionSpace\VariantType::peer()));
+        $this->assertTrue($this->subject->getVariantType($peer, $peer)->equals(DimensionSpace\VariantType::same()));
     }
 
     /**

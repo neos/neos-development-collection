@@ -25,6 +25,7 @@ use Neos\Flow\Annotations as Flow;
  *  * specialization (de -> en)
  *  * generalization (en -> de)
  *  * peer (de <-> fr)
+ *  * same (de <-> de)
  *
  * @Flow\Proxy(false)
  */
@@ -35,6 +36,8 @@ final class VariantType implements \JsonSerializable
     const TYPE_GENERALIZATION = 'generalization';
 
     const TYPE_PEER = 'peer';
+
+    const TYPE_SAME = 'same';
 
     /**
      * @var string
@@ -59,6 +62,11 @@ final class VariantType implements \JsonSerializable
     public static function peer(): VariantType
     {
         return new VariantType(self::TYPE_PEER);
+    }
+
+    public static function same(): VariantType
+    {
+        return new VariantType(self::TYPE_SAME);
     }
 
     public function getType(): string
