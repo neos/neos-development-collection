@@ -55,7 +55,7 @@ class NodeType implements NodeAggregateBasedFilterInterface
      * @param string $nodeTypeName
      * @return void
      */
-    public function setNodeType(string $nodeTypeName)
+    public function setNodeType(string $nodeTypeName): void
     {
         $this->nodeTypeName = $nodeTypeName;
     }
@@ -70,7 +70,7 @@ class NodeType implements NodeAggregateBasedFilterInterface
      * @param bool $withSubTypes
      * @return void
      */
-    public function setWithSubTypes(bool $withSubTypes)
+    public function setWithSubTypes(bool $withSubTypes): void
     {
         $this->withSubTypes = $withSubTypes;
     }
@@ -80,12 +80,12 @@ class NodeType implements NodeAggregateBasedFilterInterface
      *
      * @param bool $exclude
      */
-    public function setExclude(bool $exclude)
+    public function setExclude(bool $exclude): void
     {
         $this->exclude = $exclude;
     }
 
-    public function matches(ReadableNodeAggregateInterface $nodeAggregate)
+    public function matches(ReadableNodeAggregateInterface $nodeAggregate): bool
     {
         $nodeTypes = [$this->nodeTypeName];
         if ($this->withSubTypes) {

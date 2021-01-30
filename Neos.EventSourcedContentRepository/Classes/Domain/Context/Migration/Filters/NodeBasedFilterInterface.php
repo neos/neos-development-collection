@@ -29,5 +29,5 @@ interface NodeBasedFilterInterface
      * @param NodeInterface $node
      * @return boolean
      */
-    public function matches(NodeInterface $node);
+    public function matches(NodeInterface $node): bool;
 }

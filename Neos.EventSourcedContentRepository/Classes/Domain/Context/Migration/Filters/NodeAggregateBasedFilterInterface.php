@@ -29,5 +29,5 @@ interface NodeAggregateBasedFilterInterface
      * @param ReadableNodeAggregateInterface $nodeAggregate
      * @return boolean
      */
-    public function matches(ReadableNodeAggregateInterface $nodeAggregate);
+    public function matches(ReadableNodeAggregateInterface $nodeAggregate): bool;
 }
