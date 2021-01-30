@@ -60,20 +60,24 @@ final class PropertyConversionService
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
-            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
-            $nodeType->getProperties();
+            if ($propertyValue !== null) {
+                // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+                $nodeType->getProperties();
 
-            $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
-            self::assertTypeIsNoReference($propertyTypeFromSchema);
-            self::assertPropertyTypeMatchesPropertyValue($propertyTypeFromSchema, $propertyValue, $propertyName);
+                $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
+                self::assertTypeIsNoReference($propertyTypeFromSchema);
+                self::assertPropertyTypeMatchesPropertyValue($propertyTypeFromSchema, $propertyValue, $propertyName);
 
-            try {
-                $propertyValue = $this->serializer->normalize($propertyValue);
-            } catch (NotEncodableValueException $e) {
-                throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
+                try {
+                    $propertyValue = $this->serializer->normalize($propertyValue);
+                } catch (NotEncodableValueException $e) {
+                    throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
+                }
+                $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, $propertyTypeFromSchema);
+            } else {
+                // $propertyValue == null -> we want to unset $propertyName!
+                $serializedPropertyValues[$propertyName] = null;
             }
-
-            $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, $propertyTypeFromSchema);
         }
 
         return SerializedPropertyValues::fromArray($serializedPropertyValues);

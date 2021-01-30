@@ -43,7 +43,7 @@ class ChangePropertyValue implements NodeBasedTransformationInterface
     /**
      * @var string
      */
-    protected $newValue = '{current}';
+    protected string $newValue = '{current}';
 
     /**
      * @var string
