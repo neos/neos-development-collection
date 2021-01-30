@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * source code.
  */
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueIsInvalid;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -21,11 +22,11 @@ class ContentDimensionValueTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueIsInvalid
      */
     public function initializationThrowsExceptionForEmptyValue()
     {
-        $subject = new Dimension\ContentDimensionValue('');
+        $this->expectException(ContentDimensionValueIsInvalid::class);
+        new Dimension\ContentDimensionValue('');
     }
 
     /**

@@ -21,10 +21,10 @@ class ContentDimensionIdentifierTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionIdentifierIsInvalid
      */
     public function initializationThrowsExceptionForEmptyValue()
     {
-        $subject = new Dimension\ContentDimensionIdentifier('');
+        $this->expectException(Dimension\Exception\ContentDimensionIdentifierIsInvalid::class);
+        new Dimension\ContentDimensionIdentifier('');
     }
 }
