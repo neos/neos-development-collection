@@ -2,9 +2,11 @@
 Feature: Adjust node types with a node migration
 
   Background:
-    Given I have no content dimensions
+    Given I have the following content dimensions:
+      | Identifier | Default | Values          | Generalizations      |
+      | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
 
-  Scenario: Direct constraints
+  Scenario: Success Case
     ########################
     # SETUP
     ########################
@@ -27,25 +29,23 @@ Feature: Adjust node types with a node migration
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "system-user"        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
-      | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier    | "system-user"                 |
-      | nodeAggregateClassification | "root"                        |
+      | Key                         | Value                                                                      |
+      | contentStreamIdentifier     | "cs-identifier"                                                            |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                   |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
+      | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] |
+      | initiatingUserIdentifier    | "system-user"                                                              |
+      | nodeAggregateClassification | "root"                                                                     |
+    And the graph projection is fully up to date
     # Node /document
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
+      | originDimensionSpacePoint     | {"language": "de"}                        |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-      | nodeName                      | "document"                                |
-      | nodeAggregateClassification   | "regular"                                 |
-
     And the graph projection is fully up to date
 
     ########################
@@ -81,11 +81,19 @@ Feature: Adjust node types with a node migration
               newType: 'Neos.ContentRepository.Testing:OtherDocument'
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
+    # ... also in the fallback dimension
+    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
     Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
     # the node type was changed inside the new content stream
-    When I am in content stream "migration-cs" and Dimension Space Point {}
+    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"
+    # ... also in the fallback dimension
+    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
     Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
     And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"
