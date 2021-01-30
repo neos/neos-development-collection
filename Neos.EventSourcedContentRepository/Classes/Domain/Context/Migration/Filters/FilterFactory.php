@@ -11,7 +11,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
- * Implementation detail of {@see NodeMigrationService}
+ * Implementation detail of {@see MigrationCommandHandler}
  *
  * @Flow\Scope("singleton")
  */

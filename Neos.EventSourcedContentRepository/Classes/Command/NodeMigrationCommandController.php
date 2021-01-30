@@ -11,9 +11,9 @@ namespace Neos\EventSourcedContentRepository\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Migration\Domain\Factory\MigrationFactory;
-use Neos\EventSourcedContentRepository\Domain\Context\Migration\NodeMigrationService;
+use Neos\EventSourcedContentRepository\Domain\Context\Migration\Command\ExecuteMigration;
+use Neos\EventSourcedContentRepository\Domain\Context\Migration\MigrationCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
@@ -37,9 +37,9 @@ class NodeMigrationCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var NodeMigrationService
+     * @var MigrationCommandHandler
      */
-    protected $nodeMigrationService;
+    protected $migrationCommandHandler;
 
     /**
      * Do the configured migrations in the given migration.
@@ -63,8 +63,8 @@ class NodeMigrationCommandController extends CommandController
                 $this->quit(1);
             }
 
-            $contentStreamForWriting = ContentStreamIdentifier::create();
-            $this->nodeMigrationService->execute($migrationConfiguration, new WorkspaceName($workspace), $contentStreamForWriting);
+            $command = new ExecuteMigration($migrationConfiguration, new WorkspaceName($workspace));
+            $this->migrationCommandHandler->handleExecuteMigration($command);
             $this->outputLine();
             $this->outputLine('Successfully applied migration.');
         } catch (MigrationException $e) {

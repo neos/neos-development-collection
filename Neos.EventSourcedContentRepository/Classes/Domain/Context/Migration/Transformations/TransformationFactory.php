@@ -5,13 +5,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Migration\Transforma
 
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 use Neos\EventSourcedContentRepository\Domain\Context\Migration\Dto\Transformations;
-use Neos\EventSourcedContentRepository\Domain\Context\Migration\NodeMigrationService;
+use Neos\EventSourcedContentRepository\Domain\Context\Migration\MigrationCommandHandler;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 
 /**
- * Implementation detail of {@see NodeMigrationService}
+ * Implementation detail of {@see MigrationCommandHandler}
  * @Flow\Scope("singleton")
  */
 class TransformationFactory

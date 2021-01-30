@@ -8,6 +8,7 @@ use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\Migration\Command\ExecuteMigration;
 use Neos\EventSourcedContentRepository\Domain\Context\Migration\Filters\FilterFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Migration\Transformations\TransformationFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
@@ -32,11 +33,20 @@ use Neos\Flow\Annotations as Flow;
  * becomes non-obvious.
  *
  * All migrations are applied in an empty, new ContentStream, which is forked off the target workspace where the
- * migrations are done. This way, migrations can be easily rolled back by the content stream instead of publishing it.
+ * migrations are done. This way, migrations can be easily rolled back by discarding the content stream instead of publishing it.
+ *
+ * A migration file is structured like this:
+ * migrations: [
+ *   {filters: ... transformations: ...},
+ *   {filters: ... transformations: ...}
+ * ]
+ *
+ * Every pair of filters/transformations is a "submigration". Inside a submigration, you'll operate on the result state of all
+ * *previous* submigrations; but you do not see the modified state of the current submigration while you are running it.
  *
  * @Flow\Scope("singleton")
  */
-class NodeMigrationService
+class MigrationCommandHandler
 {
     protected WorkspaceFinder $workspaceFinder;
     protected ContentStreamCommandHandler $contentStreamCommandHandler;
@@ -53,30 +63,32 @@ class NodeMigrationService
         $this->transformationFactory = $transformationFactory;
     }
 
-    public function execute(MigrationConfiguration $migrationConfiguration, WorkspaceName $workspaceName, ContentStreamIdentifier $contentStreamForWriting)
+    public function handleExecuteMigration(ExecuteMigration $command): void
     {
-        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         if ($workspace === null) {
-            throw new WorkspaceDoesNotExist(sprintf('The workspace %s does not exist', $workspaceName), 1611688225);
+            throw new WorkspaceDoesNotExist(sprintf('The workspace %s does not exist', $command->getWorkspaceName()), 1611688225);
         }
 
-        $this->contentStreamCommandHandler->handleForkContentStream(
-            new ForkContentStream(
-                $contentStreamForWriting,
-                $workspace->getCurrentContentStreamIdentifier()
-            )
-        )->blockUntilProjectionsAreUpToDate();
+        $contentStreamForReading = $workspace->getCurrentContentStreamIdentifier();
 
-        foreach ($migrationConfiguration->getMigration() as $migrationDescription) {
+        foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
+            $contentStreamForWriting = $command->getOrCreateContentStreamIdentifierForWriting($step);
+            $this->contentStreamCommandHandler->handleForkContentStream(
+                new ForkContentStream(
+                    $contentStreamForWriting,
+                    $contentStreamForReading
+                )
+            )->blockUntilProjectionsAreUpToDate();
             /** array $migrationDescription */
-            $this->executeSingle($migrationDescription, $workspace->getCurrentContentStreamIdentifier(), $contentStreamForWriting)->blockUntilProjectionsAreUpToDate();
-        }
+            $this->executeSubMigration($migrationDescription, $workspace->getCurrentContentStreamIdentifier(), $contentStreamForWriting)->blockUntilProjectionsAreUpToDate();
 
-        echo "TODO: adjusted to new content stream: " . $contentStreamForWriting;
+            $contentStreamForReading = $contentStreamForWriting;
+        }
     }
 
     /**
-     * Execute a single migration
+     * Execute a single "filters / transformation" pair, i.e. a single sub-migration
      *
      * @param array $migrationDescription
      * @param ContentStreamIdentifier $contentStreamForReading
@@ -84,7 +96,7 @@ class NodeMigrationService
      * @return void
      * @throws MigrationException
      */
-    protected function executeSingle(array $migrationDescription, ContentStreamIdentifier $contentStreamForReading, ContentStreamIdentifier $contentStreamForWriting): CommandResult
+    protected function executeSubMigration(array $migrationDescription, ContentStreamIdentifier $contentStreamForReading, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters']);
         $transformations = $this->transformationFactory->buildTransformation($migrationDescription['transformations']);

@@ -65,7 +65,7 @@ Feature: Adjust node types with a node migration
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
     # we should be able to rename the node type
-    When I run the following node migration for workspace "live", creating content stream "migration-cs":
+    When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:
       -
