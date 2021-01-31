@@ -18,6 +18,11 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
+/**
+ * All variants in a NodeAggregate have the same NodeName - and this can be changed here.
+ * This is the case because Node Names are usually only used for tethered nodes (=autocreated in the old CR);
+ * as then the Node Name is used for querying.
+ */
 final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
