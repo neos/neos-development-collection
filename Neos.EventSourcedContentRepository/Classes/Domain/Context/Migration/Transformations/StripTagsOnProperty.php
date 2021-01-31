@@ -21,9 +21,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 
 /**
- * Remove the property
+ * Strip all tags on a given property
  */
-class RemoveProperty implements NodeBasedTransformationInterface
+class StripTagsOnProperty implements NodeBasedTransformationInterface
 {
     protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
@@ -38,23 +38,16 @@ class RemoveProperty implements NodeBasedTransformationInterface
     }
 
     /**
-     * Sets the name of the property to be removed.
+     * Sets the name of the property to work on.
      *
      * @param string $propertyName
      * @return void
      */
-    public function setProperty(string $propertyName)
+    public function setProperty(string $propertyName): void
     {
         $this->propertyName = $propertyName;
     }
 
-    /**
-     * Remove the property from the given node.
-     *
-     * @param NodeData $node
-     * @return void
-     * @throws \Neos\ContentRepository\Exception\NodeException
-     */
     public function execute(NodeInterface $node, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if ($node->hasProperty($this->propertyName)) {
@@ -63,7 +56,7 @@ class RemoveProperty implements NodeBasedTransformationInterface
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
                 PropertyValuesToWrite::fromArray([
-                    $this->propertyName => null
+                    $this->propertyName => strip_tags($node->getProperty($this->propertyName))
                 ])
             ));
         }
