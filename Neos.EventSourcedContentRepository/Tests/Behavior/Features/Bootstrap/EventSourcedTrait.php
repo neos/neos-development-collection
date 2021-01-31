@@ -1632,6 +1632,14 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then I expect this node to not have the property :propertyName
+     */
+    public function iExpectThisNodeToNotHaveTheProperty(string $propertyName)
+    {
+        Assert::assertFalse($this->currentNode->hasProperty($propertyName));
+    }
+
+    /**
      * @Then /^I expect this node to be of type "([^"]*)"$/
      * @param string $nodeTypeName
      */
