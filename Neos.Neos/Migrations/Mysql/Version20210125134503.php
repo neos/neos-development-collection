@@ -23,6 +23,7 @@ final class Version20210125134503 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event ADD dimensionshash VARCHAR(32) DEFAULT NULL');
+        $this->addSql('CREATE INDEX dimensionshash ON neos_neos_eventlog_domain_model_event (dimensionshash)');
     }
 
     /**
@@ -33,6 +34,7 @@ final class Version20210125134503 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
+        $this->addSql('DROP INDEX dimensionshash ON neos_neos_eventlog_domain_model_event');
         $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event DROP dimensionshash');
     }
 
@@ -43,14 +45,13 @@ final class Version20210125134503 extends AbstractMigration
      */
     public function postUp(Schema $schema): void
     {
-        $eventLogResult = $this->connection->executeQuery('SELECT uid, dimension FROM neos_neos_eventlog_domain_model_event');
+        $eventLogResult = $this->connection->executeQuery('SELECT dimension FROM neos_neos_eventlog_domain_model_event where dimensionshash IS NULL AND dimension IS NOT NULL LIMIT 1');
 
         while ($eventLogInfo = $eventLogResult->fetchAssociative()) {
-            if ($eventLogInfo['dimension'] !== null) {
-                $dimensionsArray = unserialize($eventLogInfo['dimension'], ['allowed_classes' => false]);
-                $dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($dimensionsArray);
-                $this->connection->executeStatement('UPDATE neos_neos_eventlog_domain_model_event SET dimensionshash = ? WHERE uid = ?', [$dimensionsHash, $eventLogInfo['uid']]);
-            }
+            $dimensionsArray = unserialize($eventLogInfo['dimension'], ['allowed_classes' => false]);
+            $dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($dimensionsArray);
+            $this->connection->executeStatement('UPDATE neos_neos_eventlog_domain_model_event SET dimensionshash = ? WHERE dimension = ?', [$dimensionsHash, $eventLogInfo['dimension']]);
+            $eventLogResult = $this->connection->executeQuery('SELECT dimension FROM neos_neos_eventlog_domain_model_event where dimensionshash IS NULL AND dimension IS NOT NULL LIMIT 1');
         }
     }
 }
