@@ -232,6 +232,7 @@ class ImageService
         }
         $defaultOptions['jpeg_quality'] = $quality;
         $defaultOptions['webp_quality'] = $quality;
+        $defaultOptions['png_quality'] = $quality;
         // png_compression_level should be an integer between 0 and 9 and inverse to the quality level given. So quality 100 should result in compression 0.
         $defaultOptions['png_compression_level'] = (9 - ceil($quality * 9 / 100));
 
