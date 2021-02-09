@@ -98,8 +98,8 @@ class MigrationCommandHandler
      */
     protected function executeSubMigration(array $migrationDescription, ContentStreamIdentifier $contentStreamForReading, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
-        $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters']);
-        $transformations = $this->transformationFactory->buildTransformation($migrationDescription['transformations']);
+        $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters'] ?? []);
+        $transformations = $this->transformationFactory->buildTransformation($migrationDescription['transformations'] ?? []);
 
         if ($transformations->containsMoreThanOneTransformationType()) {
             throw new \Exception("TODO: more than one transformation type");

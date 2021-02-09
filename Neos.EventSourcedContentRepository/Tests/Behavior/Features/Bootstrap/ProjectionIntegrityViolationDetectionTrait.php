@@ -50,7 +50,8 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         Assert::assertSame(
             $expectedNumberOfErrors,
-            count($this->lastIntegrityViolationDetectionResult->getErrors())
+            count($this->lastIntegrityViolationDetectionResult->getErrors()),
+            'Errors were: ' . implode(', ', array_map(fn(Error $e) => $e->render(), $this->lastIntegrityViolationDetectionResult->getErrors()))
         );
     }
 
