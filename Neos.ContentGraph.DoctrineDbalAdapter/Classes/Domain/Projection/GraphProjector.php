@@ -25,6 +25,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
+use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionSpacePointWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
@@ -967,6 +968,8 @@ insert ignore into neos_contentgraph_restrictionrelation
                     'contentStreamIdentifier' => (string)$contentStreamIdentifierWhereWriteOccurs
                 ]
             );
+
+            // TODO: reference relation rows need to be copied as well - BUG!!
         } else {
             // No copy on write needed :)
 
@@ -979,5 +982,76 @@ insert ignore into neos_contentgraph_restrictionrelation
             $node->updateToDatabase($this->getDatabaseConnection());
         }
         return $result;
+    }
+
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    {
+        $this->transactional(function () use ($event) {
+            // TODO: we cannot use the contentstreamidentifier here!!! AND
+            // As OTHERWISE THE ORIGINS DO NOT MATCH
+            $this->getDatabaseConnection()->executeStatement(
+                '
+                UPDATE neos_contentgraph_hierarchyrelation h
+                    SET
+                        h.dimensionspacepoint = :newDimensionSpacePoint,
+                        h.dimensionspacepointhash = :newDimensionSpacePointHash
+                    WHERE
+                      h.dimensionspacepointhash = :originalDimensionSpacePointHash
+                      AND h.contentstreamidentifier = :contentStreamIdentifier
+                      ',
+                [
+                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                ]
+            );
+
+            // NOTE: we cannot simply run the following:
+            /*$this->getDatabaseConnection()->executeStatement(
+                '
+                UPDATE neos_contentgraph_node n
+                    SET
+                        n.origindimensionspacepoint = :newDimensionSpacePoint,
+                        n.origindimensionspacepointhash = :newDimensionSpacePointHash
+                    WHERE
+                      n.origindimensionspacepointhash = :originalDimensionSpacePointHash',
+                [
+                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
+                ]
+            );*/
+
+            $rel = $this->getDatabaseConnection()->executeQuery(
+                'SELECT n.relationanchorpoint, n.origindimensionspacepointhash FROM neos_contentgraph_node n
+                     INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+
+                     AND h.contentstreamidentifier = :contentStreamIdentifier
+                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                ',
+                [
+                    'dimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                ]
+            );
+            while ($res = $rel->fetchAssociative()) {
+                $relationAnchorPoint = NodeRelationAnchorPoint::fromString($res['relationanchorpoint']);
+                if ($res['origindimensionspacepointhash'] === $event->getSource()->getHash()) {
+                    // TODO: build testcase for "ELSE" part; to ensure this actually works.
+                    $this->updateNodeRecordWithCopyOnWrite($event->getContentStreamIdentifier(), $relationAnchorPoint, function(NodeRecord $nodeRecord) use ($event) {
+                        $nodeRecord->originDimensionSpacePoint = $event->getTarget()->jsonSerialize();
+                        $nodeRecord->originDimensionSpacePointHash = $event->getTarget()->getHash();
+                    });
+                }
+            }
+
+            // TODO: restrictionrelation
+            // TODO: projection_change
+            // TODO: projection_nodehiddenstate
+
+
+        });
+
     }
 }
