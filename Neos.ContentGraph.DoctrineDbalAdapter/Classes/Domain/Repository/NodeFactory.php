@@ -168,14 +168,13 @@ final class NodeFactory
     }
 
     /**
-     * @param array $nodeRows
-     * @return array|ContentProjection\NodeAggregate[]
+     * @param iterable $nodeRows
+     * @return iterable<ContentProjection\NodeAggregate>
      * @throws NodeConfigurationException
      * @throws NodeTypeNotFoundException
      */
-    public function mapNodeRowsToNodeAggregates(array $nodeRows): array
+    public function mapNodeRowsToNodeAggregates(iterable $nodeRows): iterable
     {
-        $nodeAggregates = [];
         $nodeTypeNames = [];
         $nodeNames = [];
         $occupiedDimensionSpacePointsByNodeAggregate = [];
@@ -222,7 +221,7 @@ final class NodeFactory
         }
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateIdentifier => $nodes) {
-            $nodeAggregates[$rawNodeAggregateIdentifier] = new ContentProjection\NodeAggregate(
+            yield new ContentProjection\NodeAggregate(
                 current($nodes)->getContentStreamIdentifier(), // this line is safe because a nodeAggregate only exists if it at least contains one node.
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
                 $classificationByNodeAggregate[$rawNodeAggregateIdentifier],
@@ -237,8 +236,6 @@ final class NodeFactory
                 new DimensionSpacePointSet($disabledDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier] ?? [])
             );
         }
-
-        return $nodeAggregates;
     }
 
     /**

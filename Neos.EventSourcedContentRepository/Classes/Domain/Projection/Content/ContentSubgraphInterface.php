@@ -142,9 +142,9 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param array $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param SearchTerm|null $searchTerm
-     * @return array|NodeInterface[]
+     * @return iterable<NodeInterface>
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): array;
+    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): iterable;
 
     public function countNodes(): int;
 

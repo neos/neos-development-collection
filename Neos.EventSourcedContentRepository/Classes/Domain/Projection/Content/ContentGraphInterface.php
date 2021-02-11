@@ -50,9 +50,9 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeTypeName $nodeTypeName
-     * @return NodeAggregate[]|\Iterator
+     * @return iterable<NodeAggregate>
      */
-    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): \Iterator;
+    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): iterable;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -74,22 +74,24 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
+     * @internal only for consumption inside the Command Handler
      */
     public function findParentNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): array;
+    ): iterable;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
+     * @internal only for consumption inside the Command Handler
      */
     public function findChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
-    ): array;
+    ): iterable;
 
     /**
      * A node aggregate may have multiple child node aggregates with the same name
@@ -98,23 +100,25 @@ interface ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $name
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
+     * @internal only for consumption inside the Command Handler
      */
     public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $name
-    ): array;
+    ): iterable;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
+     * @internal only for consumption inside the Command Handler
      */
     public function findTetheredChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
-    ): array;
+    ): iterable;
 
     public function getDimensionSpacePointsOccupiedByChildNodeName(
         ContentStreamIdentifier $contentStreamIdentifier,

@@ -109,7 +109,7 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
     }
 
-    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): \Iterator
+    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): iterable
     {
         $connection = $this->client->getConnection();
 
@@ -167,14 +167,14 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
      * @throws DBALException
      * @throws \Exception
      */
     public function findParentNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): array {
+    ): iterable {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT p.*,
@@ -252,14 +252,14 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
      * @throws DBALException
      * @throws \Exception
      */
     public function findChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
-    ): array {
+    ): iterable {
         $connection = $this->client->getConnection();
 
         $query = $this->createChildNodeAggregateQuery();
@@ -278,14 +278,14 @@ final class ContentGraph implements ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $name
-     * @return array
+     * @return iterable<NodeAggregate>
      * @throws DBALException
      */
     public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $name
-    ): array {
+    ): iterable {
         $connection = $this->client->getConnection();
 
         $query = $this->createChildNodeAggregateQuery() . '
@@ -305,13 +305,13 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
      * @throws DBALException
      */
     public function findTetheredChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
-    ): array {
+    ): iterable {
         $connection = $this->client->getConnection();
 
         $query = $this->createChildNodeAggregateQuery() . '
