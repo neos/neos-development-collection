@@ -400,47 +400,7 @@ final class ContentGraph implements ContentGraphInterface
         return (int) $connection->executeQuery($query)->fetch()['COUNT(*)'];
     }
 
-    /**
-     * Returns all content stream identifiers
-     *
-     * @return ContentStreamIdentifier[]
-     */
-    public function findProjectedContentStreamIdentifiers(): array
-    {
-        $connection = $this->client->getConnection();
-
-        $rows = $connection->executeQuery('SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation')->fetchAll();
-        return array_map(function (array $row) {
-            return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
-        }, $rows);
-    }
-
-    public function findProjectedDimensionSpacePoints(): DimensionSpacePointSet
-    {
-        $records = $this->client->getConnection()->executeQuery(
-            'SELECT DISTINCT dimensionspacepoint FROM neos_contentgraph_hierarchyrelation'
-        )->fetchAll();
-
-        $records = array_map(function (array $record) {
-            return DimensionSpacePoint::fromJsonString($record['dimensionspacepoint']);
-        }, $records);
-
-        return new DimensionSpacePointSet($records);
-    }
-
-    public function findProjectedNodeAggregateIdentifiersInContentStream(ContentStreamIdentifier $contentStreamIdentifier): array
-    {
-        $records = $this->client->getConnection()->executeQuery(
-            'SELECT DISTINCT nodeaggregateidentifier FROM neos_contentgraph_node'
-        )->fetchAll();
-
-        return array_map(function (array $record) {
-            return NodeAggregateIdentifier::fromString($record['nodeaggregateidentifier']);
-        }, $records);
-    }
-
-
-    public function findProjectedNodeTypes(): iterable
+    public function findUsedNodeTypeNames(): iterable
     {
         $connection = $this->client->getConnection();
 

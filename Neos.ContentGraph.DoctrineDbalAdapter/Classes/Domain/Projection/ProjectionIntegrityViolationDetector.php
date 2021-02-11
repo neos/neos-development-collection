@@ -13,6 +13,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
@@ -290,8 +294,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
 
-        foreach ($this->contentGraph->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
-            foreach ($this->contentGraph->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
+        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+            foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $nodeAggregateIdentifiersInCycles = $this->client->getConnection()->executeQuery(
                     'WITH RECURSIVE subgraph AS (
     SELECT
@@ -365,8 +369,8 @@ WHERE
     public function nodeAggregateIdentifiersAreUniquePerSubgraph(): Result
     {
         $result = new Result();
-        foreach ($this->contentGraph->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
-            foreach ($this->contentGraph->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
+        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+            foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $ambiguousNodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT n.nodeaggregateidentifier, COUNT(n.relationanchorpoint)
                     FROM neos_contentgraph_node n
@@ -401,8 +405,8 @@ WHERE
     public function allNodesHaveAtMostOneParentPerSubgraph(): Result
     {
         $result = new Result();
-        foreach ($this->contentGraph->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
-            foreach ($this->contentGraph->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
+        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+            foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $nodeRecordsWithMultipleParents = $this->client->getConnection()->executeQuery(
                     'SELECT c.nodeaggregateidentifier
                     FROM neos_contentgraph_node c
@@ -437,8 +441,8 @@ WHERE
     public function nodeAggregatesAreConsistentlyTypedPerContentStream(): Result
     {
         $result = new Result();
-        foreach ($this->contentGraph->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
-            foreach ($this->contentGraph->findProjectedNodeAggregateIdentifiersInContentStream($contentStreamIdentifier) as $nodeAggregateIdentifier) {
+        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+            foreach ($this->findProjectedNodeAggregateIdentifiersInContentStream($contentStreamIdentifier) as $nodeAggregateIdentifier) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.nodetypename FROM neos_contentgraph_node n
                         INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
@@ -472,8 +476,8 @@ WHERE
     public function nodeAggregatesAreConsistentlyClassifiedPerContentStream(): Result
     {
         $result = new Result();
-        foreach ($this->contentGraph->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
-            foreach ($this->contentGraph->findProjectedNodeAggregateIdentifiersInContentStream($contentStreamIdentifier) as $nodeAggregateIdentifier) {
+        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+            foreach ($this->findProjectedNodeAggregateIdentifiersInContentStream($contentStreamIdentifier) as $nodeAggregateIdentifier) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.classification FROM neos_contentgraph_node n
                         INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
@@ -507,7 +511,7 @@ WHERE
     public function childNodeCoverageIsASubsetOfParentNodeCoverage(): Result
     {
         $result = new Result();
-        foreach ($this->contentGraph->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
             $excessivelyCoveringNodeRecords = $this->client->getConnection()->executeQuery(
                 'SELECT n.nodeaggregateidentifier, c.dimensionspacepoint FROM neos_contentgraph_hierarchyrelation c
                     INNER JOIN neos_contentgraph_node n ON c.childnodeanchor = n.relationanchorpoint
@@ -541,7 +545,7 @@ WHERE
     public function allNodesCoverTheirOrigin(): Result
     {
         $result = new Result();
-        foreach ($this->contentGraph->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
             $nodeRecordsWithMissingOriginCoverage = $this->client->getConnection()->executeQuery(
                 'SELECT nodeaggregateidentifier, origindimensionspacepoint
                     FROM neos_contentgraph_node
@@ -571,5 +575,50 @@ WHERE
         }
 
         return $result;
+    }
+
+    /**
+     * Returns all content stream identifiers
+     *
+     * @return iterable<ContentStreamIdentifier>
+     */
+    protected function findProjectedContentStreamIdentifiers(): iterable
+    {
+        $connection = $this->client->getConnection();
+
+        $rows = $connection->executeQuery('SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation')->fetchAll();
+        return array_map(function (array $row) {
+            return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
+        }, $rows);
+    }
+
+    /**
+     * Returns all projected dimension space points
+     *
+     * @return DimensionSpacePointSet
+     */
+    protected function findProjectedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        $records = $this->client->getConnection()->executeQuery(
+            'SELECT DISTINCT dimensionspacepoint FROM neos_contentgraph_hierarchyrelation'
+        )->fetchAll();
+
+        $records = array_map(function (array $record) {
+            return DimensionSpacePoint::fromJsonString($record['dimensionspacepoint']);
+        }, $records);
+
+        return new DimensionSpacePointSet($records);
+    }
+
+
+    public function findProjectedNodeAggregateIdentifiersInContentStream(ContentStreamIdentifier $contentStreamIdentifier): array
+    {
+        $records = $this->client->getConnection()->executeQuery(
+            'SELECT DISTINCT nodeaggregateidentifier FROM neos_contentgraph_node'
+        )->fetchAll();
+
+        return array_map(function (array $record) {
+            return NodeAggregateIdentifier::fromString($record['nodeaggregateidentifier']);
+        }, $records);
     }
 }

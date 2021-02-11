@@ -117,7 +117,7 @@ class MigrationCommandHandler
         if ($transformations->containsGlobal()) {
             $commandResult = $transformations->executeGlobal($contentStreamForReading, $contentStreamForWriting);
         } else if ($transformations->containsNodeAggregateBased()) {
-            foreach ($this->contentGraph->findProjectedNodeTypes() as $nodeTypeName) {
+            foreach ($this->contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
                 foreach ($this->contentGraph->findNodeAggregatesByType($contentStreamForReading, $nodeTypeName) as $nodeAggregate) {
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
                         $commandResult = $commandResult->merge(
@@ -128,7 +128,7 @@ class MigrationCommandHandler
                 }
             }
         } else if ($transformations->containsNodeBased()) {
-            foreach ($this->contentGraph->findProjectedNodeTypes() as $nodeTypeName) {
+            foreach ($this->contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
                 foreach ($this->contentGraph->findNodeAggregatesByType($contentStreamForReading, $nodeTypeName) as $nodeAggregate) {
                     // we *also* apply the node-aggregate-based filters on the node based transformations, so that you can filter
                     // Nodes e.g. based on node type

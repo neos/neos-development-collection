@@ -65,6 +65,14 @@ interface ContentGraphInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeAggregate;
 
+    /**
+     *
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
+     * @param OriginDimensionSpacePoint $childOriginDimensionSpacePoint
+     * @return NodeAggregate|null
+     * @internal only for consumption inside the Command Handler
+     */
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
@@ -120,6 +128,15 @@ interface ContentGraphInterface
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
     ): iterable;
 
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeName $nodeName
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param OriginDimensionSpacePoint $parentNodeOriginOriginDimensionSpacePoint
+     * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
+     * @return DimensionSpacePointSet
+     * @internal only for consumption inside the Command Handler
+     */
     public function getDimensionSpacePointsOccupiedByChildNodeName(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeName $nodeName,
@@ -131,27 +148,11 @@ interface ContentGraphInterface
     public function countNodes(): int;
 
     /**
-     * Returns all projected content stream identifiers
-     *
-     * @return ContentStreamIdentifier[]
-     */
-    public function findProjectedContentStreamIdentifiers(): array;
-
-    /**
-     * Returns all projected dimension space points
-     *
-     * @return DimensionSpacePointSet
-     */
-    public function findProjectedDimensionSpacePoints(): DimensionSpacePointSet;
-
-    public function findProjectedNodeAggregateIdentifiersInContentStream(ContentStreamIdentifier $contentStreamIdentifier): array;
-
-    /**
      * Returns all node types in use, from the graph projection
      *
-     * @return NodeTypeName[]
+     * @return iterable<NodeTypeName>
      */
-    public function findProjectedNodeTypes(): iterable;
+    public function findUsedNodeTypeNames(): iterable;
 
     /**
      * Enable all caches. All READ requests should enable the cache.
