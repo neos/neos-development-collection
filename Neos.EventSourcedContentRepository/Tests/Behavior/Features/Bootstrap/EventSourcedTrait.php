@@ -1326,11 +1326,14 @@ trait EventSourcedTrait
     public function iExpectANodeWithIdentifierToExistInTheContentGraph(string $serializedNodeIdentifier)
     {
         $nodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
-        $this->currentNode = $this->contentGraph->findNodeByIdentifiers(
-            $nodeIdentifier->getContentStreamIdentifier(),
-            $nodeIdentifier->getNodeAggregateIdentifier(),
-            $nodeIdentifier->getOriginDimensionSpacePoint()
-        );
+
+        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($nodeIdentifier->getContentStreamIdentifier(), $nodeIdentifier->getNodeAggregateIdentifier());
+        if ($nodeAggregate !== null) {
+            $this->currentNode = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($nodeIdentifier->getOriginDimensionSpacePoint());
+        } else {
+            $this->currentNode = null;
+        }
+
         Assert::assertNotNull(
             $this->currentNode,
             'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()

@@ -79,37 +79,6 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @return NodeInterface|null
-     * @throws DBALException
-     */
-    public function findNodeByIdentifiers(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?NodeInterface {
-        $connection = $this->client->getConnection();
-
-        // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
-        $nodeRow = $connection->executeQuery(
-            'SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
-                  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-                  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
-                  AND h.contentstreamidentifier = :contentStreamIdentifier',
-            [
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier
-            ]
-        )->fetch();
-
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeTypeName $nodeTypeName
      * @throws DBALException
      * @throws \Exception

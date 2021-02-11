@@ -42,18 +42,6 @@ interface ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @return NodeInterface|null
-     */
-    public function findNodeByIdentifiers(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?NodeInterface;
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeTypeName $nodeTypeName
      * @return NodeAggregate|null
      */
