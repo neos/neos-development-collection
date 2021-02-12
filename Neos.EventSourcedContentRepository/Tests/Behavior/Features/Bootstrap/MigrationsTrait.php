@@ -48,4 +48,16 @@ trait MigrationsTrait
         $command = new ExecuteMigration($migrationConfiguration, new WorkspaceName($workspaceName), $contentStreamIdentifiers);
         $this->migrationCommandHandler->handleExecuteMigration($command);
     }
+
+    /**
+     * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams and exceptions are caught:
+     */
+    public function iRunTheFollowingNodeMigrationAndExceptionsAreCaught(string $workspaceName, string $contentStreams, PyStringNode $string)
+    {
+        try {
+            $this->iRunTheFollowingNodeMigration($workspaceName, $contentStreams, $string);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
 }

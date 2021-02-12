@@ -6,8 +6,6 @@ Feature: Move dimension space point
       | Identifier | Default | Values          | Generalizations      |
       | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
 
-
-  Scenario: Success Case
     ########################
     # SETUP
     ########################
@@ -30,13 +28,13 @@ Feature: Move dimension space point
       | newContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier   | "system-user"        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                  |
-      | contentStreamIdentifier     | "cs-identifier"                        |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
-      | nodeTypeName                | "Neos.ContentRepository:Root"          |
-      | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"}] |
-      | initiatingUserIdentifier    | "system-user"                          |
-      | nodeAggregateClassification | "root"                                 |
+      | Key                         | Value                                                    |
+      | contentStreamIdentifier     | "cs-identifier"                                          |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"ch"},{"language":"de"}] |
+      | initiatingUserIdentifier    | "system-user"                                            |
+      | nodeAggregateClassification | "root"                                                   |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -49,9 +47,9 @@ Feature: Move dimension space point
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
     And the graph projection is fully up to date
 
-    ########################
-    # Actual Test
-    ########################
+
+
+  Scenario: Success Case
     # we change the dimension configuration
     When I have the following content dimensions:
       | Identifier | Default | Values     | Generalizations |
@@ -83,3 +81,39 @@ Feature: Move dimension space point
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
+
+
+  Scenario: Error case - there's already an edge in the target dimension
+    # we change the dimension configuration
+    When I have the following content dimensions:
+      | Identifier | Default | Values  | Generalizations |
+      | language   | mul     | mul, ch | ch->mul         |
+
+    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    """
+    migration:
+      -
+        transformations:
+          -
+            type: 'MoveDimensionSpacePoint'
+            settings:
+              from: { language: 'de' }
+              to: { language: 'ch' }
+    """
+    Then the last command should have thrown an exception of type "DimensionSpacePointAlreadyExists"
+    #When I run integrity violation detection
+    #Then I expect the integrity violation detection result to contain exactly 0 errors
+
+  Scenario: Error case - the target dimension is not configured
+    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    """
+    migration:
+      -
+        transformations:
+          -
+            type: 'MoveDimensionSpacePoint'
+            settings:
+              from: { language: 'de' }
+              to: { language: 'notexisting' }
+    """
+    Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
