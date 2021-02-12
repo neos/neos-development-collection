@@ -168,7 +168,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if ($nodeInfo->isShortcut()) {
             $nodeInfo = $this->nodeShortcutResolver->resolveNode($nodeInfo);
             if ($nodeInfo instanceof UriInterface) {
-                return $this->buildResolverResultFromUri($nodeInfo);
+                return $this->buildResolveResultFromUri($nodeInfo);
             }
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($nodeInfo->getNodeAggregateIdentifier());
         }
@@ -253,7 +253,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
 
-    private function buildResolverResultFromUri(UriInterface $uri): ResolveResult
+    private function buildResolveResultFromUri(UriInterface $uri): ResolveResult
     {
         $uriConstraints = UriConstraints::create();
         if (!empty($uri->getScheme())) {
