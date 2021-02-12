@@ -86,6 +86,27 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             ));
         }
 
+        $hierarchyRelationRecordsAppearingMultipleTimes = $this->client->getConnection()->executeQuery(
+            'SELECT COUNT(*) as uniquenessCounter, h.* FROM neos_contentgraph_hierarchyrelation h
+                LEFT JOIN neos_contentgraph_node p ON h.parentnodeanchor = p.relationanchorpoint
+                LEFT JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
+                WHERE h.parentnodeanchor != :rootNodeAnchor
+                GROUP BY p.nodeaggregateidentifier, c.nodeaggregateidentifier, h.dimensionspacepointhash, h.contentstreamidentifier
+                HAVING uniquenessCounter > 1
+                ',
+            [
+                'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()
+            ]
+        )->fetchAll();
+
+        foreach ($hierarchyRelationRecordsAppearingMultipleTimes as $record) {
+            $result->addError(new Error(
+                'Hierarchy relation ' . \json_encode($record)
+                . ' appears multiple times.',
+                self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED
+            ));
+        }
+
         return $result;
     }
 
