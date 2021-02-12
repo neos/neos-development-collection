@@ -432,6 +432,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
             ', [
                 'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
             ]);
+
+            // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
+            // we do not need to copy reference edges here (but we need to do it during copy on write).
         });
     }
 
@@ -696,6 +699,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
+            // Do the actual specialization
             $sourceNode = $this->projectionContentGraph->findNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
 
             $specializedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getSpecializationOrigin());
@@ -714,6 +718,9 @@ insert ignore into neos_contentgraph_restrictionrelation
             ) as $hierarchyRelation) {
                 $hierarchyRelation->assignNewParentNode($specializedNode->relationAnchorPoint, null, $this->getDatabaseConnection());
             }
+
+            // Copy Reference Edges
+            $this->copyReferenceRelations($sourceNode->relationAnchorPoint, $specializedNode->relationAnchorPoint);
         });
     }
 
@@ -725,6 +732,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
+            // do the generalization
             $sourceNode = $this->projectionContentGraph->findNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
             $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
@@ -775,6 +783,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                     );
                 }
             }
+
+            // Copy Reference Edges
+            $this->copyReferenceRelations($sourceNode->relationAnchorPoint, $generalizedNode->relationAnchorPoint);
         });
     }
 
@@ -785,6 +796,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodePeerVariantWasCreated(Event\NodePeerVariantWasCreated $event)
     {
         $this->transactional(function () use ($event) {
+            // Do the peer variant creation itself
             $sourceNode = $this->projectionContentGraph->findNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
             $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
@@ -828,6 +840,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                     $sourceNode->nodeName
                 );
             }
+
+            // Copy Reference Edges
+            $this->copyReferenceRelations($sourceNode->relationAnchorPoint, $peerNode->relationAnchorPoint);
         });
     }
 
@@ -950,7 +965,7 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node". IMPORTANT: We need to reconnect
             // BOTH the incoming and outgoing edges.
-            $this->getDatabaseConnection()->executeUpdate(
+            $this->getDatabaseConnection()->executeStatement(
                 '
                 UPDATE neos_contentgraph_hierarchyrelation h
                     SET
@@ -969,7 +984,8 @@ insert ignore into neos_contentgraph_restrictionrelation
                 ]
             );
 
-            // TODO: reference relation rows need to be copied as well - BUG!!
+            // reference relation rows need to be copied as well!
+            $this->copyReferenceRelations($anchorPoint, $copiedNode->relationAnchorPoint);
         } else {
             // No copy on write needed :)
 
@@ -982,6 +998,28 @@ insert ignore into neos_contentgraph_restrictionrelation
             $node->updateToDatabase($this->getDatabaseConnection());
         }
         return $result;
+    }
+
+    protected function copyReferenceRelations(NodeRelationAnchorPoint $sourceRelationAnchorPoint, NodeRelationAnchorPoint $destinationRelationAnchorPoint): void
+    {
+        $this->getDatabaseConnection()->executeStatement('
+                INSERT INTO neos_contentgraph_referencerelation (
+                  nodeanchorpoint,
+                  name,
+                  position,
+                  destinationnodeaggregateidentifier
+                )
+                SELECT
+                  "' . (string)$destinationRelationAnchorPoint . '" AS nodeanchorpoint,
+                  ref.name,
+                  ref.position,
+                  ref.destinationnodeaggregateidentifier
+                FROM
+                    neos_contentgraph_referencerelation ref
+                    WHERE ref.nodeanchorpoint = :sourceNodeAnchorPoint
+            ', [
+            'sourceNodeAnchorPoint' => (string)$sourceRelationAnchorPoint
+        ]);
     }
 
     public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)

@@ -36,6 +36,16 @@ trait NodeReferencing
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
+        // Check if source node exists
+        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSourceNodeAggregateIdentifier());
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getSourceOriginDimensionSpacePoint());
+
+        // check if targets exist
+        foreach ($command->getDestinationNodeAggregateIdentifiers() as $destinationNodeAggregateIdentifier) {
+            $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $destinationNodeAggregateIdentifier);
+            $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getSourceOriginDimensionSpacePoint());
+        }
+
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
             $events = DomainEvents::withSingleEvent(
