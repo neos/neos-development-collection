@@ -59,3 +59,12 @@ Feature: Single Node operations on live workspace
     And I expect this node to have the properties:
       | Key  | Value |
       | text | Hello |
+
+  Scenario: Error on invalid dimension space point
+    Given the command "SetNodeProperties" is executed with payload and exceptions are caught:
+      | Key                       | Value              |
+      | contentStreamIdentifier   | "cs-identifier"    |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface" |
+      | originDimensionSpacePoint | {"not": "existing"}                 |
+      | propertyValues            | {"text": "Hello"}  |
+    Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied"
