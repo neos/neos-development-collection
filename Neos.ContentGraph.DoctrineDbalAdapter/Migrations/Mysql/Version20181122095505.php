@@ -13,7 +13,7 @@ class Version20181122095505 extends AbstractMigration
         return 'Create restriction edge';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -32,7 +32,7 @@ class Version20181122095505 extends AbstractMigration
         ');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

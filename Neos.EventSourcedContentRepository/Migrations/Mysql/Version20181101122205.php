@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\Migrations\AbstractMigration;
@@ -13,10 +12,10 @@ class Version20181101122205 extends AbstractMigration
         return 'update structure of Change table (removing NodeIdentifier; Adding NodeAggregateIdentifier/OriginDimensionSpacePoint)';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
-            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            $this->connection->getDatabasePlatform()->getName() !== 'mysql',
             'Migration can only be executed safely on "mysql".'
         );
         $this->addSql('TRUNCATE neos_contentrepository_projection_change');
@@ -28,7 +27,7 @@ class Version20181101122205 extends AbstractMigration
         $this->addSql('ALTER TABLE neos_contentrepository_projection_change ADD PRIMARY KEY (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePointHash)');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         throw new \Exception("TODO unsupported");
     }

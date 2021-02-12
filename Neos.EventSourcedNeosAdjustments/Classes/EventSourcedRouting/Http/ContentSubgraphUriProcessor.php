@@ -22,6 +22,8 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLi
 
 /**
  * The default content subgraph URI processor
+ *
+ * @Flow\Scope("singleton")
  */
 final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorInterface
 {

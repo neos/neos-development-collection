@@ -13,7 +13,7 @@ class Version20180226165300 extends AbstractMigration
         return 'The migration for splitting subgraph identity hashes';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -23,7 +23,7 @@ class Version20180226165300 extends AbstractMigration
         $this->addSql('ALTER TABLE neos_contentgraph_node ADD `hidden` tinyint(1) NOT NULL');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

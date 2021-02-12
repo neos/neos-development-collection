@@ -16,7 +16,7 @@ class Version20170919182300 extends AbstractMigration
         return 'The migration for adjusting table names to the new namespace';
     }
 
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
@@ -27,7 +27,7 @@ class Version20170919182300 extends AbstractMigration
         $this->addSql('RENAME TABLE neos_arboretum_hierarchyedge TO neos_contentgraph_hierarchyedge');
     }
 
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',

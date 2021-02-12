@@ -97,13 +97,14 @@ final class EditorContentStreamZookeeper
             $user = $this->partyService->getAssignedPartyOfAccount($token->getAccount());
             if ($user instanceof User) {
                 /** @var Workspace $workspace */
-                $workspace = $this->workspaceFinder->findOneByWorkspaceOwner($this->persistenceManager->getIdentifierByObject($user));
+                $workspaceName = \Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName::fromAccountIdentifier($token->getAccount()->getAccountIdentifier());
+                $workspace = $this->workspaceFinder->findOneByName($workspaceName->toContentRepositoryWorkspaceName());
+
                 if (!$workspace) {
                     // @todo: find base workspace for user
                     $baseWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
                     $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
                     $editorsNewContentStreamIdentifier = ContentStreamIdentifier::create();
-                    $workspaceName = \Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName::fromAccountIdentifier($token->getAccount()->getAccountIdentifier());
                     $similarlyNamedWorkspaces = $this->workspaceFinder->findByPrefix($workspaceName->toContentRepositoryWorkspaceName());
                     if (!empty($similarlyNamedWorkspaces)) {
                         $workspaceName = $workspaceName->increment($similarlyNamedWorkspaces);

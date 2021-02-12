@@ -1,0 +1,14 @@
+# Those node type definitions are required for the Routing Behat tests
+
+'Neos.EventSourcedNeosAdjustments:Test.Routing.Page':
+  superTypes:
+    'Neos.Neos:Document': true
+  constraints:
+    nodeTypes:
+      '*': true
+      'Neos.EventSourcedNeosAdjustments:Test.Routing.Page': true
+      'Neos.EventSourcedNeosAdjustments:Test.Routing.Content': true
+
+'Neos.EventSourcedNeosAdjustments:Test.Routing.Content':
+  superTypes:
+    'Neos.Neos:Content': true

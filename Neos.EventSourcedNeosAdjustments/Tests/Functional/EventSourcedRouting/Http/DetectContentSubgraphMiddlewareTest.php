@@ -17,7 +17,6 @@ use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -135,11 +134,10 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         $this->inject($dimensionPresetSource, 'contentDimensions', $contentDimensions);
 
         $this->mockNextMiddleware = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
-        $this->mockNextMiddleware->method('handle')->willReturnCallback(function(ServerRequestInterface $modifiedRequest) {
+        $this->mockNextMiddleware->method('handle')->willReturnCallback(function (ServerRequestInterface $modifiedRequest) {
             $this->routeParameters = $modifiedRequest->getAttribute(Http\ServerRequestAttributes::ROUTING_PARAMETERS);
             return new Response();
         });
-
     }
 
 
@@ -213,33 +211,6 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
             'market' => 'WORLD',
-            'seller' => 'default',
-            'channel' => 'default',
-            'language' => 'en'
-        ]);
-        self::assertEquals(
-            $expectedDimensionSpacePoint,
-            $this->routeParameters->getValue('dimensionSpacePoint')
-        );
-    }
-
-    /**
-     * @test
-     * @throws InvalidContentDimensionValueDetectorException
-     */
-    public function handleAddsCorrectSubgraphIdentityToComponentContextWithDimensionValuesGivenButOverriddenViaContextPath()
-    {
-        $uri = new Uri('https://de.domain.com/sellerA_channelA/home@user-me;language=en&market=GB&seller=default&channel=default.html');
-        $request = new ServerRequest('GET', $uri);
-
-        $detectContentSubgraphMiddleware = new DetectContentSubgraphMiddleware();
-        $detectContentSubgraphMiddleware->process($request, $this->mockNextMiddleware);
-
-        self::assertEquals(new WorkspaceName('user-me'), $this->routeParameters->getValue('workspaceName'));
-        self::assertSame(1, $this->routeParameters->getValue('uriPathSegmentOffset'));
-
-        $expectedDimensionSpacePoint = new DimensionSpacePoint([
-            'market' => 'GB',
             'seller' => 'default',
             'channel' => 'default',
             'language' => 'en'

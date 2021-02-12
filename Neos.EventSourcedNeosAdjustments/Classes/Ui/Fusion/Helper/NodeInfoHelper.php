@@ -12,18 +12,18 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping\NodePropertyConverterService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Service\LinkingService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 use Neos\Neos\Ui\Service\NodePolicyService;
@@ -44,12 +44,6 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      * @var UserLocaleService
      */
     protected $userLocaleService;
-
-    /**
-     * @Flow\Inject
-     * @var LinkingService
-     */
-    protected $linkingService;
 
     /**
      * @Flow\Inject
@@ -206,14 +200,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         if (!$node->getNodeType()->isOfType($this->documentNodeTypeRole)) {
             return $nodeInfo;
         }
-
-        try {
-            $nodeInfo['uri'] = $this->createRedirectToNode($controllerContext, $node);
-        } catch (\Neos\Flow\Mvc\Routing\Exception\MissingActionNameException $exception) {
-            // Unless there is a serious problem with routes there shouldn't be an exception ever.
-            $nodeInfo['uri'] = '';
-        }
-
+        $nodeInfo['uri'] = $this->previewUri($node, $controllerContext);
         return $nodeInfo;
     }
 
@@ -397,45 +384,34 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param ControllerContext $controllerContext
-     * @param TraversableNodeInterface $node
-     * @return string
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
-     */
-    public function createRedirectToNode(ControllerContext $controllerContext, TraversableNodeInterface $node = null)
-    {
-        if ($node === null) {
-            return '';
-        }
-
-        $basicRedirectUrl = $controllerContext->getUriBuilder()
-            ->reset()
-            ->setCreateAbsoluteUri(true)
-            ->setFormat('html')
-            ->uriFor('redirectTo', [], 'Backend', 'Neos.Neos.Ui');
-
-        $basicRedirectUrl .= '?' . http_build_query(['node' => $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri()]);
-
-        return $basicRedirectUrl;
-    }
-
-    /**
      * @param NodeAddress $nodeAddress
      * @param ControllerContext $controllerContext
      * @return string
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function uri(NodeAddress $nodeAddress, ControllerContext $controllerContext)
     {
-        $request = $controllerContext->getRequest()->getMainRequest();
-        $uriBuilder = clone $controllerContext->getUriBuilder();
-        $uriBuilder->setRequest($request);
-        $uri = $uriBuilder
+        return (string)NodeUriBuilder::fromRequest($controllerContext->getRequest())->uriFor($nodeAddress);
+    }
+
+    /**
+     * @param TraversableNodeInterface $node
+     * @param ControllerContext $controllerContext
+     * @return string
+     */
+    public function previewUri(TraversableNodeInterface $node, ControllerContext $controllerContext)
+    {
+        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
+        return (string)NodeUriBuilder::fromRequest($controllerContext->getRequest())->previewUriFor($nodeAddress);
+    }
+
+    public function redirectUri(TraversableNodeInterface $node, ControllerContext $controllerContext): string
+    {
+        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
+        return $controllerContext->getUriBuilder()
             ->reset()
-            ->setFormat('html')
             ->setCreateAbsoluteUri(true)
-            ->uriFor('show', ['node' => $nodeAddress], 'Frontend\Node', 'Neos.Neos');
-        return $uri;
+            ->setFormat('html')
+            ->uriFor('redirectTo', ['node' => $nodeAddress->serializeForUri()], 'Backend', 'Neos.Neos.Ui');
     }
 
     /**

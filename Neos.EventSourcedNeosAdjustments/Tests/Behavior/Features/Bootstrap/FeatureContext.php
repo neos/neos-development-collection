@@ -36,6 +36,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use NodeOperationsTrait;
     use FlowQueryTrait;
     use IsolatedBehatStepsTrait;
+    use RoutingTrait;
 
     public function __construct()
     {
