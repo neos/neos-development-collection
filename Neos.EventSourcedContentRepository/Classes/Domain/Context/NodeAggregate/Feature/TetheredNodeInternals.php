@@ -57,6 +57,13 @@ trait TetheredNodeInternals
     protected function createEventsForMissingTetheredNode(ReadableNodeAggregateInterface $parentNodeAggregate, NodeInterface $parentNode, NodeName $tetheredNodeName, NodeType $expectedTetheredNodeType): DomainEvents
     {
         $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName($parentNode->getContentStreamIdentifier(), $parentNode->getNodeAggregateIdentifier(), $tetheredNodeName);
+
+        $tmp = [];
+        foreach ($childNodeAggregates as $childNodeAggregate) {
+            $tmp[] = $childNodeAggregate;
+        }
+        $childNodeAggregates = $tmp;
+
         if (count($childNodeAggregates) === 0) {
 
             // there is no tethered child node aggregate already; let's create it!
