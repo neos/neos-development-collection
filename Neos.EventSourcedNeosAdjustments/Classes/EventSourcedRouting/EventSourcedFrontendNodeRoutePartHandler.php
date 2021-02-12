@@ -270,6 +270,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         if (!empty($uri->getQuery())) {
             $uriConstraints = $uriConstraints->withQueryString($uri->getQuery());
         }
+        if (!empty($uri->getFragment())) {
+            $uriConstraints = $uriConstraints->withFragment($uri->getFragment());
+        }
         return new ResolveResult($uri->getPath(), $uriConstraints);
     }
 
