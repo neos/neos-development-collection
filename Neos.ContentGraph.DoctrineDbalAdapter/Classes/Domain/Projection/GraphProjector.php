@@ -1027,6 +1027,8 @@ insert ignore into neos_contentgraph_restrictionrelation
         $this->transactional(function () use ($event) {
             // the ordering is important - we first update the OriginDimensionSpacePoints, as we need the
             // hierarchy relations for this query. Then, we update the Hierarchy Relations.
+
+            // 1) originDimensionSpacePoint on Node
             $rel = $this->getDatabaseConnection()->executeQuery(
                 'SELECT n.relationanchorpoint, n.origindimensionspacepointhash FROM neos_contentgraph_node n
                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
@@ -1050,6 +1052,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                 });
             }
 
+            // 2) hierarchy relations
             $this->getDatabaseConnection()->executeStatement(
                 '
                 UPDATE neos_contentgraph_hierarchyrelation h
@@ -1068,8 +1071,23 @@ insert ignore into neos_contentgraph_restrictionrelation
                 ]
             );
 
+            // 3) restriction relations
+            $this->getDatabaseConnection()->executeStatement(
+                '
+                UPDATE neos_contentgraph_restrictionrelation r
+                    SET
+                        r.dimensionspacepointhash = :newDimensionSpacePointHash
+                    WHERE
+                      r.dimensionspacepointhash = :originalDimensionSpacePointHash
+                      AND r.contentstreamidentifier = :contentStreamIdentifier
+                      ',
+                [
+                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                ]
+            );
 
-            // TODO: restrictionrelation
             // TODO: projection_change
             // TODO: projection_nodehiddenstate
             // TODO: Routing Projection!

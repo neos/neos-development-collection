@@ -48,8 +48,7 @@ Feature: Move dimension space point
     And the graph projection is fully up to date
 
 
-
-  Scenario: Success Case
+  Scenario: Success Case - simple
     # we change the dimension configuration
     When I have the following content dimensions:
       | Identifier | Default | Values     | Generalizations |
@@ -83,6 +82,57 @@ Feature: Move dimension space point
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
+  Scenario: Success Case - disabled nodes stay disabled
+
+    When the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "cs-identifier"          |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"language": "de"}       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+    And the graph projection is fully up to date
+
+    # ensure the node is disabled
+    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When VisibilityConstraints are set to "withoutRestrictions"
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When VisibilityConstraints are set to "frontend"
+
+    # we change the dimension configuration
+    When I have the following content dimensions:
+      | Identifier | Default | Values     | Generalizations |
+      | language   | mul     | mul, de_DE | de_DE->mul      |
+
+    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    """
+    migration:
+      -
+        transformations:
+          -
+            type: 'MoveDimensionSpacePoint'
+            settings:
+              from: { language: 'de' }
+              to: { language: 'de_DE' }
+    """
+
+    # the original content stream has not been touched
+    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When VisibilityConstraints are set to "withoutRestrictions"
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When VisibilityConstraints are set to "frontend"
+
+    # The visibility edges were modified
+    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de_DE"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When VisibilityConstraints are set to "withoutRestrictions"
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When VisibilityConstraints are set to "frontend"
+
+    When I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 0 errors
+
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
     When I have the following content dimensions:
@@ -101,8 +151,6 @@ Feature: Move dimension space point
               to: { language: 'ch' }
     """
     Then the last command should have thrown an exception of type "DimensionSpacePointAlreadyExists"
-    #When I run integrity violation detection
-    #Then I expect the integrity violation detection result to contain exactly 0 errors
 
   Scenario: Error case - the target dimension is not configured
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
@@ -117,3 +165,4 @@ Feature: Move dimension space point
               to: { language: 'notexisting' }
     """
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
+
