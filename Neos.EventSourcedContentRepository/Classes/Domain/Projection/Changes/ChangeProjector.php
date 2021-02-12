@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionSpacePointWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
@@ -29,6 +30,8 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * TODO: this class needs testing and probably a major refactoring!
+ *
  * @Flow\Scope("singleton")
  */
 class ChangeProjector implements ProjectorInterface
@@ -150,12 +153,37 @@ class ChangeProjector implements ProjectorInterface
         });
     }
 
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    {
+        $this->transactional(function () use ($event) {
+            $this->getDatabaseConnection()->executeStatement(
+                '
+                UPDATE neos_contentrepository_projection_change c
+                    SET
+                        c.originDimensionSpacePoint = :newDimensionSpacePoint,
+                        c.originDimensionSpacePointHash = :newDimensionSpacePointHash
+                    WHERE
+                      c.originDimensionSpacePointHash = :originalDimensionSpacePointHash
+                      AND c.contentStreamIdentifier = :contentStreamIdentifier
+                      ',
+                [
+                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                ]
+            );
+        });
+    }
+
     protected function markAsChanged(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
         $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
+            // HACK: basically we are not allowed to read other Projection's finder methods here; but we nevertheless do it.
+            // we can maybe figure out another way of solving this lateron.
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything

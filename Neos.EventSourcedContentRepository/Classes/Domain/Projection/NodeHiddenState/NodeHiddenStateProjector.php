@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState;
 
 use Doctrine\DBAL\Connection;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
+use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionSpacePointWasMoved;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
@@ -22,6 +23,8 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * TODO: this class needs proper testing
+ *
  * @Flow\Scope("singleton")
  */
 class NodeHiddenStateProjector implements ProjectorInterface
@@ -112,6 +115,29 @@ class NodeHiddenStateProjector implements ProjectorInterface
             ', [
                 'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
             ]);
+        });
+    }
+
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    {
+        $this->transactional(function () use ($event) {
+            $this->getDatabaseConnection()->executeStatement(
+                '
+                UPDATE neos_contentrepository_projection_nodehiddenstate nhs
+                    SET
+                        nhs.dimensionspacepoint = :newDimensionSpacePoint,
+                        nhs.dimensionspacepointhash = :newDimensionSpacePointHash
+                    WHERE
+                      nhs.dimensionspacepointhash = :originalDimensionSpacePointHash
+                      AND nhs.contentstreamidentifier = :contentStreamIdentifier
+                      ',
+                [
+                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                ]
+            );
         });
     }
 

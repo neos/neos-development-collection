@@ -1088,8 +1088,6 @@ insert ignore into neos_contentgraph_restrictionrelation
                 ]
             );
 
-            // TODO: projection_change
-            // TODO: projection_nodehiddenstate
             // TODO: Routing Projection!
 
         });
