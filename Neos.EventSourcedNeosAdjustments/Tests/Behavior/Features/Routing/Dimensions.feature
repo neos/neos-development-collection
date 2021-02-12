@@ -55,6 +55,40 @@ Feature: Routing functionality with multiple content dimensions
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"de"}' should resolve to URL "/de/nody/carl"
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
 
+  Scenario: Move Dimension, then resolving should still work
+    Given I have the following content dimensions:
+      | Identifier | Default | Values         | Generalizations | ResolutionMode | ResolutionValues         |
+      | market     | DE      | DE, CH         | CH->DE          |                |                          |
+      | language   | en      | en, de_DE, gsw | gsw->de_DE->en  | uriPathSegment | en:en, de_DE:de, gsw:gsw |
+
+    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    """
+    migration:
+      -
+        transformations:
+          -
+            type: 'MoveDimensionSpacePoint'
+            settings:
+              from: {"market":"DE", "language":"de"}
+              to: {"market":"DE", "language":"de_DE"}
+          -
+            type: 'MoveDimensionSpacePoint'
+            settings:
+              from: {"market":"CH", "language":"de"}
+              to: {"market":"CH", "language":"de_DE"}
+    """
+    When the command "PublishWorkspace" is executed with payload:
+      | Key           | Value          |
+      | workspaceName | "migration-cs" |
+    And the graph projection is fully up to date
+    And The documenturipath projection is up to date
+
+    When I am on URL "/"
+    Then the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"en"}' should resolve to URL "/nody/carl"
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"de_DE"}' should resolve to URL "/de/nody/carl"
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de_DE"}' should resolve to URL "/de/nody/karl-de"
+
+
   Scenario: Match homepage node in default dimension
     When I am on URL "/"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}'

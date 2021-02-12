@@ -12,6 +12,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionSpacePointWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
@@ -528,4 +529,25 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             'succeedingNodeAggregateIdentifier' => $newSucceedingNodeAggregateIdentifier,
         ]);
     }
+
+
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    {
+        $this->updateNodeQuery(
+            'SET dimensionspacepointhash = :newDimensionSpacePointHash WHERE dimensionspacepointhash = :originalDimensionSpacePointHash', [
+            'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+            'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+            'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                // TODO: contentStreamIdentifier restriction HOW?
+        ]);
+
+        $this->updateNodeQuery(
+            'SET origindimensionspacepointhash = :newDimensionSpacePointHash WHERE origindimensionspacepointhash = :originalDimensionSpacePointHash', [
+            'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+            'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+            'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+            // TODO: contentStreamIdentifier restriction HOW?
+        ]);
+    }
+
 }

@@ -11,11 +11,16 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\Migration\Command\ExecuteMigration;
 use Neos\EventSourcedContentRepository\Domain\Context\Migration\Filters\FilterFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Migration\Transformations\TransformationFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -49,12 +54,12 @@ use Neos\Flow\Annotations as Flow;
 class MigrationCommandHandler
 {
     protected WorkspaceFinder $workspaceFinder;
-    protected ContentStreamCommandHandler $contentStreamCommandHandler;
+    protected WorkspaceCommandHandler $contentStreamCommandHandler;
     protected ContentGraphInterface $contentGraph;
     protected FilterFactory $filterFactory;
     protected TransformationFactory $transformationFactory;
 
-    public function __construct(WorkspaceFinder $workspaceFinder, ContentStreamCommandHandler $contentStreamCommandHandler, ContentGraphInterface $contentGraph, FilterFactory $filterFactory, TransformationFactory $transformationFactory)
+    public function __construct(WorkspaceFinder $workspaceFinder, WorkspaceCommandHandler $contentStreamCommandHandler, ContentGraphInterface $contentGraph, FilterFactory $filterFactory, TransformationFactory $transformationFactory)
     {
         $this->workspaceFinder = $workspaceFinder;
         $this->contentStreamCommandHandler = $contentStreamCommandHandler;
@@ -74,15 +79,20 @@ class MigrationCommandHandler
 
         foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
             $contentStreamForWriting = $command->getOrCreateContentStreamIdentifierForWriting($step);
-            $this->contentStreamCommandHandler->handleForkContentStream(
-                new ForkContentStream(
+            $this->contentStreamCommandHandler->handleCreateWorkspace(
+                new CreateWorkspace(
+                    new WorkspaceName($contentStreamForWriting->jsonSerialize()),
+                    $workspace->getWorkspaceName(),
+                    WorkspaceTitle::fromString($contentStreamForWriting->jsonSerialize()),
+                    WorkspaceDescription::fromString(''),
+                    UserIdentifier::forSystemUser(),
                     $contentStreamForWriting,
-                    $contentStreamForReading
                 )
             )->blockUntilProjectionsAreUpToDate();
             /** array $migrationDescription */
             $this->executeSubMigration($migrationDescription, $workspace->getCurrentContentStreamIdentifier(), $contentStreamForWriting)->blockUntilProjectionsAreUpToDate();
 
+            // TODO: WORKSPACE NAME pass through
             $contentStreamForReading = $contentStreamForWriting;
         }
     }

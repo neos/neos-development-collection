@@ -13,7 +13,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionSpacePointWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceRebaseFailed;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
