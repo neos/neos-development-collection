@@ -9,8 +9,7 @@ Neos:
             listener: Neos\Media\Domain\EventListener\ImageEventListener
     mvc:
       routes:
-        Neos.Media:
-          position: 'before Neos.Neos'
+        Neos.Media: true
 
   Media:
     # Enable asynchronous thumbnails
