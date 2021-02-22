@@ -10,13 +10,13 @@
 			<target state="translated">Form</target></trans-unit>
       <trans-unit id="properties.formIdentifier" xml:space="preserve">
 				<source>Form Identifier</source>
-			<target state="translated">Form Tanımlayıcı</target></trans-unit>
+			<target state="translated">Form Tanımlayıcısı</target></trans-unit>
       <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Select the Form identifier</source>
 			<target state="translated">Form tanımlayıcısını seçin</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target state="translated">Lütfen denetçide geçerli bir Form tanımlayıcı seçin.</target></trans-unit>
+			<target state="translated">Lütfen denetçide geçerli bir Form tanımlayıcısı seçin.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -61,10 +61,10 @@
 			<target state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target state="translated">Сортирајте узлазно</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target state="translated">Сортирајте низлазно</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
@@ -316,7 +316,7 @@
 			<target state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target state="needs-translation">No file selected</target></trans-unit>
+			<target state="translated">Ниједан фајл није изабран</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>

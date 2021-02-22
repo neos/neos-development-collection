@@ -176,6 +176,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function getNodeInDimensions(array $dimensions, array $targetDimensions)
     {
+        if ($this->currentNode === null) {
+            return null;
+        }
+
         $q = new FlowQuery([$this->currentNode]);
 
         return $q->context([

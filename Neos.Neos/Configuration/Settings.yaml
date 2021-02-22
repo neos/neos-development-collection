@@ -428,6 +428,9 @@ Neos:
           variables:
             # Set this to an empty string if you prefer URLs without the ".html" suffix
             'defaultUriSuffix': '.html'
+        # Move Neos.Media routes before default Neos routes so that they have priority
+        'Neos.Media':
+          position: 'before Neos.Neos'
 
     security:
       authentication:

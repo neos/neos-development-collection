@@ -8,10 +8,10 @@
 			<target state="translated">Авто публікувати</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target state="translated">Автоматична публікація в {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target state="needs-translation">Review changes</target></trans-unit>
+			<target state="translated">Переглянути зміни</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target state="translated">Застосувати</target></trans-unit>
@@ -35,10 +35,10 @@
 			<target state="translated">Вміст</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target state="needs-translation">Node</target></trans-unit>
+			<target state="translated">Вузол</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target state="needs-translation">Content View</target></trans-unit>
+			<target state="translated">Вигляд змісту</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target state="translated">Створити після</target></trans-unit>
@@ -86,16 +86,16 @@
 			<target state="translated">Приховати</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target state="needs-translation">Unhide</target></trans-unit>
+			<target state="translated">Показати</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target state="needs-translation">into</target></trans-unit>
+			<target state="translated">в</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target state="needs-translation">before</target></trans-unit>
+			<target state="translated">до</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target state="needs-translation">after</target></trans-unit>
+			<target state="translated">після</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target state="translated">Завантаження</target></trans-unit>
@@ -140,31 +140,31 @@
 			<target state="translated">Опублікувати</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target state="needs-translation">Publish to {0}</target></trans-unit>
+			<target state="translated">Опублікувати в {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target state="translated">Опублікувати всі зміни для поточної сторінки</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target state="translated">Не вдається опублікувати, тому що цільова робоча область доступна тільки для читання</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target state="needs-translation">Select target workspace</target></trans-unit>
+			<target state="translated">Вибрати цільове робоче середовище</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target state="needs-translation">Publishing</target></trans-unit>
+			<target state="translated">Опубліковується…</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target state="translated">Опубліковано</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target state="needs-translation">Toggle publish menu</target></trans-unit>
+			<target state="translated">Відкрити меню публікації</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target state="needs-translation">Target workspace</target></trans-unit>
+			<target state="translated">Цільове робоче середовище</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target state="needs-translation">Current workspace</target></trans-unit>
+			<target state="translated">Поточне робоче середовище</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
 			<target state="translated">Видалити</target></trans-unit>
@@ -197,34 +197,34 @@
 			<target state="translated">[без назви]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target state="needs-translation">Label</target></trans-unit>
+			<target state="translated">Мітка</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
 			<target state="translated">Тип вузла</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target state="needs-translation">Path</target></trans-unit>
+			<target state="translated">Шлях</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
-			<target state="needs-translation">Relative Path</target></trans-unit>
+			<target state="translated">Відносний шлях</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target state="needs-translation">Version</target></trans-unit>
+			<target state="translated">Версія</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target state="needs-translation">Asset</target></trans-unit>
+			<target state="translated">Актив</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
 			<target state="translated">Створений</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target state="needs-translation">Last modification</target></trans-unit>
+			<target state="translated">Остання зміна</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target state="needs-translation">Last publication</target></trans-unit>
+			<target state="translated">Остання публікація</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target state="needs-translation">Identifier</target></trans-unit>
@@ -239,46 +239,46 @@
 			<target state="translated">Структура</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target state="needs-translation">Toggle context structure</target></trans-unit>
+			<target state="translated">Перемкнути структуру контексту</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
 			<target state="translated">Фільтр</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
-			<target state="needs-translation">Toggle menu</target></trans-unit>
+			<target state="translated">Відкрити меню</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target state="needs-translation">Load error!</target></trans-unit>
+			<target state="translated">Помилка завантаження!</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
-			<target state="needs-translation">You have to select a node</target></trans-unit>
+			<target state="translated">Ви повинні вибрати вузол</target></trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
-			<target state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
+			<target state="translated">Кореневий вузол неможливо видалити.</target></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target state="needs-translation">You cannot copy this node</target></trans-unit>
+			<target state="translated">Ви не можете скопіювати цей вузол</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target state="needs-translation">You cannot cut this node</target></trans-unit>
+			<target state="translated">Ви не можете скоротити цей вузол</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
-			<target state="needs-translation">Content Dimensions</target></trans-unit>
+			<target state="translated">Розміри вмісту</target></trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-			<target state="needs-translation">Site</target></trans-unit>
+			<target state="translated">Сайт</target></trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
 			<target state="translated">Документ</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target state="needs-translation">Reference</target></trans-unit>
+			<target state="translated">Посилання</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target state="needs-translation">Host</target></trans-unit>
+			<target state="translated">Хост</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target state="needs-translation">Scheme</target></trans-unit>
+			<target state="translated">Схема</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
 			<target state="translated">Порт</target></trans-unit>
@@ -287,46 +287,46 @@
 			<target state="translated">Первинний</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target state="needs-translation">Package</target></trans-unit>
+			<target state="translated">Пакет</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target state="translated">Деактивовано</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target state="needs-translation">Unavailable</target></trans-unit>
+			<target state="translated">Недоступний</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target state="needs-translation">Inactive</target></trans-unit>
+			<target state="translated">Неактивно</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
 			<target state="translated">Натисніть для редагування</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target state="needs-translation">Click to deactivate</target></trans-unit>
+			<target state="translated">Натисніть, щоб деактивувати</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target state="needs-translation">Click to activate</target></trans-unit>
+			<target state="translated">Натисніть, щоб активувати</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target state="needs-translation">Click to create new</target></trans-unit>
+			<target state="translated">Натисніть, щоб створити новий</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target state="needs-translation">Status</target></trans-unit>
+			<target state="translated">Статус</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target state="needs-translation">Active</target></trans-unit>
+			<target state="translated">Активний</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target state="needs-translation">Domains</target></trans-unit>
+			<target state="translated">Домени</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target state="needs-translation">Domain</target></trans-unit>
+			<target state="translated">Домен</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target state="translated">Так, видалити це!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target state="translated">Ключ пакету</target></trans-unit>
@@ -338,7 +338,7 @@
 			<target state="translated">Переключити дерево вмісту</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target state="translated">Показати опції публікації</target></trans-unit>
+			<target state="translated">Показати параметри публікації</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
 			<target state="translated">Увімкнути повноекранний режим редагування</target></trans-unit>
@@ -347,11 +347,11 @@
 			<target state="translated">Вимкнути повноекранний режим редагування</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target state="translated">Попередній перегляд</target></trans-unit>
+			<target state="translated">Показати попередній перегляд</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target state="translated">Основні</target></trans-unit>
+			<target state="translated">Загальні</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
 			<target state="translated">Структура</target></trans-unit>
@@ -361,7 +361,7 @@
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
-			<target state="needs-translation">Click {0} to continue to the page.</target></trans-unit>
+			<target state="translated">Натисніть {0} , щоб перейти на сторінку.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
 			<target state="needs-translation">Click {0} to see the file.</target></trans-unit>
@@ -663,13 +663,13 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target state="needs-translation">Welcome to Neos</target></trans-unit>
+			<target state="translated">Вітаємо в Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target state="translated">До установки</target></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
-			<target state="needs-translation">Technical Information</target></trans-unit>
+			<target state="translated">Технічна інформація</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target state="translated">Відсутня домашня сторінка</target></trans-unit>
@@ -687,7 +687,7 @@
 			<target state="translated">Зараз немає підключення бази даних або схему бази даних Neos ще не створено.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target state="translated">Запустіть програму установки, щоб настроїти базу даних.</target></trans-unit>
+			<target state="translated">Запустіть програму установки, щоб налаштувати базу даних.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Сторінка не знайдена</target></trans-unit>

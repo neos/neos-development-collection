@@ -7,16 +7,16 @@
 			<target state="translated">Документ</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target></trans-unit>
+			<target state="translated">Назва</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target state="needs-translation">URL path segment</target></trans-unit>
+			<target state="translated">Сегмент адреси URL</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target state="needs-translation">Hide in menus</target></trans-unit>
+			<target state="translated">Сховати до меню</target></trans-unit>
       <trans-unit id="creationDialog.title" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target></trans-unit>
+			<target state="translated">Назва</target></trans-unit>
     </body>
   </file>
 </xliff>
