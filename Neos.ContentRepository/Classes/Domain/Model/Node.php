@@ -1663,7 +1663,40 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         $referenceNodeDimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($referenceNodeDimensions);
         $thisDimensions = $this->getDimensions();
         $thisNodeDimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($thisDimensions);
-        if ($detachedCopy === false && $referenceNodeDimensionsHash !== $thisNodeDimensionsHash && $referenceNode->getContext()->getNodeByIdentifier($this->getIdentifier()) === null) {
+
+        // We are only allowed to re-use the node's identifier if the copy-target's context (from $referenceNode)
+        // does NOT contain this identifier.
+        // We need to check this also taking removed and invisible nodes into account.
+        //
+        // Without changing the context, removedContentShown is typically FALSE, leading to the FOLLOWING BUG:
+        //
+        // PREREQUISITES:
+        // - a language dimension with two values, without fallbacks ("de" and "en")
+        // - create a page in DE with content nodes "text1" and "text2"
+        // - translate this page to EN and let it copy all content. "text1" also exists on EN now, and has the same identifier as in DE.
+        // - publish everything.
+        //
+        // REPRODUCING THE BUG: (comment out the removedContentShown line below)
+        // - select "text1" in "DE" and copy it
+        // - switch to EN
+        // - REMOVE the node "text1" in EN
+        // - PASTE the node from the clipboard AFTER text2 (in EN).
+        // - (this triggers the code we have here.)
+        //
+        // EXPECTED BEHAVIOR
+        // - the pasted node is shown
+        //
+        // ACTUAL BEHAVIOR
+        // - the pasted node is not shown, but is still in the database.
+        // - it can happen that the node *is* shown, if it is inserted above the removed node. Still, we have an invariant violation nevertheless.
+        // - this can also trigger problems when **publishing** the not-rendered-anymore-node (UniqueConstraint errors in the database) - this is
+        //   how we actually found the error.
+        $contextPropertiesWithAllNodesShown = $referenceNode->getContext()->getProperties();
+        $contextPropertiesWithAllNodesShown['invisibleContentShown'] = true;
+        $contextPropertiesWithAllNodesShown['removedContentShown'] = true;
+        $contextPropertiesWithAllNodesShown['inaccessibleContentShown'] = true;
+        $referenceNodeContextWithAllNodesShown = $this->contextFactory->create($contextPropertiesWithAllNodesShown);
+        if ($detachedCopy === false && $referenceNodeDimensionsHash !== $thisNodeDimensionsHash && $referenceNodeContextWithAllNodesShown->getNodeByIdentifier($this->getIdentifier()) === null) {
             // If the target dimensions are different than this one, and there is no node shadowing this one in the target dimension yet, we use the same
             // node identifier, effectively creating a new node variant.
             $identifier = $this->getIdentifier();
