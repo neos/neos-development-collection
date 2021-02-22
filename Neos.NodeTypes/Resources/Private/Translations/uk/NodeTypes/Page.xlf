@@ -7,7 +7,7 @@
 			<target state="translated">Сторінка</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Title</source>
-			<target state="translated">Заголовок</target></trans-unit>
+			<target state="translated">Назва</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
 			<target state="translated">Розмітка</target></trans-unit>
