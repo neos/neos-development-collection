@@ -1,0 +1,159 @@
+`7.0.1 (2021-02-23) <https://github.com/neos/neos-development-collection/releases/tag/7.0.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGIX: Fix drag-n-drop upload of assets in media browser <https://github.com/neos/neos-development-collection/pull/3286>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This fixes parsing of the Fluid template on PHP 7.3+ so the upload
+URL is correctly set.
+
+* Fixes: `#2906 <https://github.com/neos/neos-development-collection/issues/2906>`_
+* Fixes: `#3096 <https://github.com/neos/neos-development-collection/issues/3096>`_
+
+* Packages: ``BaseMixins`` ``Browser`` ``Neos`` ``NodeTypes``
+
+`BUGFIX: Allow Neos.Media package to be installed without Neos <https://github.com/neos/neos-development-collection/pull/3268>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Moves the `Neos.Neos` reference from the `Neos.Media` routing configuration
+to the Neos package.
+
+**NOTE:** This removes the `Neos.Media` route positioning, so that it depends solely on the package
+loading order.
+
+To set the position explicitly, this configuration can be overridden with a few lines of `Settings.yaml`, for example:
+
+```yaml
+Neos:
+  Flow:
+    mvc:
+      routes:
+        'Neos.Media':
+          position: 'after Some.Package'
+```
+
+* Fixes: `#3258 <https://github.com/neos/neos-development-collection/issues/3258>`_
+* Packages: ``Media``
+
+`BUGFIX: Prevent exception when shortcut nodes can't be resolved <https://github.com/neos/neos-development-collection/pull/3269>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Adjusts the `FrontendNodeRoutePartHandler`  such that it doesn't throw an
+exception if the URL to a Shortcut node can't be resolved.
+
+Instead the handler just won't handle this case, passing its handling on to the
+next route (usually leading to a `NoMatchingRouteException` when no custom
+route handles broken shortcuts).
+
+Background:
+
+When creating Shortcut nodes, the `mode` defaults to "first child node". If that new node
+is published without a child node, the shortcut points to a non-existing node which
+led to the exception.
+
+* Related: `#3256 <https://github.com/neos/neos-development-collection/issues/3256>`_
+* Packages: ``Neos``
+
+`BUGFIX: When copying nodes from another dimension, you are only allowed to re-use the other node's identifier if the identifier never appears in the target dimension <https://github.com/neos/neos-development-collection/pull/3267>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+## PREREQUISITES
+
+- a language dimension with two values, without fallbacks ("de" and "en")
+- create a page in DE with content nodes "text1" and "text2"
+- translate this page to EN and let it copy all content. "text1" also sts on EN now, and has the same identifier as in DE.
+- publish everything.
+
+## REPRODUCING THE BUG:
+
+- select "text1" in "DE" and copy it
+- switch to EN
+- REMOVE the node "text1" in EN
+- PASTE the node from the clipboard AFTER text2 (in EN).
+- (this triggers the code we have here.)
+
+## EXPECTED BEHAVIOR
+
+- the pasted node is shown
+
+## ACTUAL BEHAVIOR
+
+- the pasted node is not shown, but is still in the database.
+- it can happen that the node *is* shown, if it is inserted above the removed node. Still, we have an invariant violation nevertheless.
+- this can also trigger problems when **publishing** the not-rendered-anymore-node (UniqueConstraint errors in the database) - this is how we actually found the error.
+
+## Root Cause
+
+ContentRepository Node.php createRecursiveCopy() checks only in the **current context** whether the target node identifier exists, and not taking deleted nodes into account.
+
+## Affected versions
+
+- We found this in Neos 5.3, but we'll fix it for 4.3, as it is the oldest supported version (and it will also exhibit this bug)
+
+* Resolves: `#3265 <https://github.com/neos/neos-development-collection/issues/3265>`_
+
+**What I did**
+
+**How I did it**
+
+**How to verify it**
+
+* Packages: ``BaseMixins`` ``Browser`` ``ContentReferences`` ``ContentRepository`` ``Form`` ``Html`` ``Navigation`` ``Neos`` ``NodeTypes``
+
+`BUGFIX: Avoid possible exception during sitemap rendering <https://github.com/neos/neos-development-collection/pull/3251>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+hen rendering the XML sitemap with Neos.Seo sometimes an exception
+occurs:
+
+    No operation which satisfies the runtime constraints found for
+    "context"
+
+See https://github.com/neos/neos-development-collection/issues/2968
+for more details.
+
+This change should fix that by returning null early, if there is no
+"current" node.
+
+* Fixes: `#2968 <https://github.com/neos/neos-development-collection/issues/2968>`_
+* Packages: ``Neos``
+
+`BUGFIX: Set \`\`alt\`\` attribute per default for \`\`Neos.Neos:ImageTag\`\` <https://github.com/neos/neos-development-collection/pull/3250>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Add alt attribute (empty by default) for full HTML conformance with validity checkers.
+See https://www.w3.org/wiki/HTML/Usage/TextAlternatives
+
+Bonus effect: Since screen readers will read the full file name when no
+alt attribute is set at all, this will improve accessibility.
+It is recommended to provide meaningful alternative texts for non-decorative images.
+
+* Packages: ``Browser`` ``Neos``
+
+`TASK: Add 7.0 ReleaseNotes <https://github.com/neos/neos-development-collection/pull/3237>`_
+---------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix headline in release notes (5.2) <https://github.com/neos/neos-development-collection/pull/3246>`_
+--------------------------------------------------------------------------------------------------------------
+
+The headline "What has changed" is one level to high, so it will generate the wrong menu on the sidebar.
+
+* Packages: ``Neos``
+
+`TASK: Tweak generated change log for 7.0.0 <https://github.com/neos/neos-development-collection/pull/3243>`_
+-------------------------------------------------------------------------------------------------------------
+
+- removes commits that were included due to our history-rewriting
+- fixes code block rendering
+- explains the challenge of having a simple detailed change log
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.0.0...7.0.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
