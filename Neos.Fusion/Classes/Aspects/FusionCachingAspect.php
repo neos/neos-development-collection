@@ -34,7 +34,7 @@ class FusionCachingAspect
      */
     public function cacheGetMergedFusionObjectTree(JoinPointInterface $joinPoint)
     {
-        $fusionPathPatterns = $joinPoint->getProxy()->getOption('fusionPathPatterns');
+        $fusionPathPatterns = $joinPoint->getProxy()->getFusionPathPatterns();
         $cacheIdentifier = md5(serialize($fusionPathPatterns));
 
         if ($this->fusionCache->has($cacheIdentifier)) {
