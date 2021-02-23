@@ -1,0 +1,119 @@
+`5.1.12 (2021-02-23) <https://github.com/neos/neos-development-collection/releases/tag/5.1.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGIX: Fix drag-n-drop upload of assets in media browser <https://github.com/neos/neos-development-collection/pull/3286>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This fixes parsing of the Fluid template on PHP 7.3+ so the upload
+URL is correctly set.
+
+* Fixes: `#2906 <https://github.com/neos/neos-development-collection/issues/2906>`_
+* Fixes: `#3096 <https://github.com/neos/neos-development-collection/issues/3096>`_
+
+* Packages: ``BaseMixins`` ``Browser`` ``Neos`` ``NodeTypes``
+
+`BUGFIX: When copying nodes from another dimension, you are only allowed to re-use the other node's identifier if the identifier never appears in the target dimension <https://github.com/neos/neos-development-collection/pull/3267>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+## PREREQUISITES
+
+- a language dimension with two values, without fallbacks ("de" and "en")
+- create a page in DE with content nodes "text1" and "text2"
+- translate this page to EN and let it copy all content. "text1" also sts on EN now, and has the same identifier as in DE.
+- publish everything.
+
+## REPRODUCING THE BUG:
+
+- select "text1" in "DE" and copy it
+- switch to EN
+- REMOVE the node "text1" in EN
+- PASTE the node from the clipboard AFTER text2 (in EN).
+- (this triggers the code we have here.)
+
+## EXPECTED BEHAVIOR
+
+- the pasted node is shown
+
+## ACTUAL BEHAVIOR
+
+- the pasted node is not shown, but is still in the database.
+- it can happen that the node *is* shown, if it is inserted above the removed node. Still, we have an invariant violation nevertheless.
+- this can also trigger problems when **publishing** the not-rendered-anymore-node (UniqueConstraint errors in the database) - this is how we actually found the error.
+
+## Root Cause
+
+ContentRepository Node.php createRecursiveCopy() checks only in the **current context** whether the target node identifier exists, and not taking deleted nodes into account.
+
+## Affected versions
+
+- We found this in Neos 5.3, but we'll fix it for 4.3, as it is the oldest supported version (and it will also exhibit this bug)
+
+* Resolves: `#3265 <https://github.com/neos/neos-development-collection/issues/3265>`_
+
+<!--
+Thanks for your contribution, we appreciate it!
+
+Please read through our pull request guidelines, there are some interesting things there:
+https://discuss.neos.io/t/creating-a-pull-request/506
+
+And one more thing... Don't forget about the tests!
+-->
+
+
+**What I did**
+
+**How I did it**
+
+**How to verify it**
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+
+* Packages: ``BaseMixins`` ``Browser`` ``ContentReferences`` ``ContentRepository`` ``Form`` ``Html`` ``Navigation`` ``Neos`` ``NodeTypes``
+
+`BUGFIX: Avoid possible exception during sitemap rendering <https://github.com/neos/neos-development-collection/pull/3251>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+hen rendering the XML sitemap with Neos.Seo sometimes an exception
+occurs:
+
+    No operation which satisfies the runtime constraints found for
+    "context"
+
+See https://github.com/neos/neos-development-collection/issues/2968
+for more details.
+
+This change should fix that by returning null early, if there is no
+"current" node.
+
+* Fixes: `#2968 <https://github.com/neos/neos-development-collection/issues/2968>`_
+* Packages: ``Neos``
+
+`BUGFIX: Set \`\`alt\`\` attribute per default for \`\`Neos.Neos:ImageTag\`\` <https://github.com/neos/neos-development-collection/pull/3250>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Add alt attribute (empty by default) for full HTML conformance with validity checkers.
+See https://www.w3.org/wiki/HTML/Usage/TextAlternatives
+
+Bonus effect: Since screen readers will read the full file name when no
+alt attribute is set at all, this will improve accessibility.
+It is recommended to provide meaningful alternative texts for non-decorative images.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Add missing return tag for the flow query operation <https://github.com/neos/neos-development-collection/pull/3239>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Without this, the reference documentation can not be parsed. The Eel helper was not updated since version 4.3!!!
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.1.11...5.1.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
