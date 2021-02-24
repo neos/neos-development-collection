@@ -30,6 +30,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantS
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
@@ -37,6 +38,10 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateN
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePropertyConversionService;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Repository\UserRepository;
+use Neos\Neos\Service\UserService;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 
 /**
@@ -44,7 +49,6 @@ use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
  */
 class Property extends AbstractChange
 {
-
     /**
      * @Flow\Inject
      * @var NodePropertyConversionService
@@ -62,6 +66,18 @@ class Property extends AbstractChange
      * @var NodeServiceInterface
      */
     protected $nodeService;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * The node dom address
@@ -218,6 +234,8 @@ class Property extends AbstractChange
             $propertyName = $this->getPropertyName();
 
             $propertyType = $node->getNodeType()->getPropertyType($propertyName);
+            $user = $this->userService->getBackendUser();
+            $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
 
             // Use extra commands for reference handling
             if ($propertyType === 'reference' || $propertyType === 'references') {
@@ -274,7 +292,8 @@ class Property extends AbstractChange
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
                             NodeTypeName::fromString($value),
-                            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete()
+                            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete(),
+                            $userIdentifier
                         );
                         $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType($command)->blockUntilProjectionsAreUpToDate();
                     } elseif ($propertyName === '_hidden') {
@@ -283,7 +302,8 @@ class Property extends AbstractChange
                                 $node->getContentStreamIdentifier(),
                                 $node->getNodeAggregateIdentifier(),
                                 $node->getOriginDimensionSpacePoint(),
-                                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                $userIdentifier
                             );
                             $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                         } else {

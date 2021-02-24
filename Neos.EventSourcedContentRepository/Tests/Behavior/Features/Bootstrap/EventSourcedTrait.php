@@ -891,6 +891,9 @@ trait EventSourcedTrait
     public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = DisableNodeAggregate::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()

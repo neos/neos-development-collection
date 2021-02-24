@@ -18,48 +18,50 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
  * Disable the given node aggregate in the given content stream in a dimension space point using a given strategy
  */
 final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * Node aggregate identifier of the node the user intends to disable
      *
      * @var NodeAggregateIdentifier
      */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * One of the dimension space points covered by the node aggregate in which the user intends to disable it
      *
      * @var DimensionSpacePoint
      */
-    private $coveredDimensionSpacePoint;
+    private DimensionSpacePoint $coveredDimensionSpacePoint;
 
     /**
      * The strategy the user chose to determine which specialization variants will also be disabled
      *
      * @var NodeVariantSelectionStrategyIdentifier
      */
-    private $nodeVariantSelectionStrategy;
+    private NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy
+        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
         $this->nodeVariantSelectionStrategy = $nodeVariantSelectionStrategy;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
@@ -68,7 +70,8 @@ final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherC
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy'])
+            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -92,6 +95,11 @@ final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherC
         return $this->nodeVariantSelectionStrategy;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -99,16 +107,18 @@ final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherC
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
             'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new static(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->coveredDimensionSpacePoint,
-            $this->nodeVariantSelectionStrategy
+            $this->nodeVariantSelectionStrategy,
+            $this->initiatingUserIdentifier
         );
     }
 

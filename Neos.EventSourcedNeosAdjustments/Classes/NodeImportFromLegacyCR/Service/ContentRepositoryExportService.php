@@ -365,7 +365,8 @@ class ContentRepositoryExportService
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
-                    NodeVariantSelectionStrategyIdentifier::virtualSpecializations()
+                    NodeVariantSelectionStrategyIdentifier::virtualSpecializations(),
+                    UserIdentifier::forSystemUser()
                 ));
             }
 
