@@ -74,7 +74,8 @@ class MoveBefore extends AbstractStructuralChange
                 $hasEqualParentNode ? null : $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
                 $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
                 $succeedingSibling->getNodeAggregateIdentifier(),
-                RelationDistributionStrategy::gatherAll()
+                RelationDistributionStrategy::gatherAll(),
+                $this->getInitiatingUserIdentifier()
             );
 
             $this->contentCacheFlusher->registerNodeChange($subject);

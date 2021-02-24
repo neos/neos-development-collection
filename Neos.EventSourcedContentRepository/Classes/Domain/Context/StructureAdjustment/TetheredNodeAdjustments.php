@@ -216,7 +216,8 @@ class TetheredNodeAdjustments
                                 ])
                             )
                         ]),
-                        new DimensionSpace\DimensionSpacePointSet([])
+                        new DimensionSpace\DimensionSpacePointSet([]),
+                        UserIdentifier::forSystemUser()
                     ),
                     Uuid::uuid4()->toString()
                 )

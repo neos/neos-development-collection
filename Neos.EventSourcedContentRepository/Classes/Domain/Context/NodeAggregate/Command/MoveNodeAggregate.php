@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWit
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\RelationDistributionStrategyIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
  * The "Move node aggregate" command
@@ -30,6 +31,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * between `newPrecedingSiblingNodeAggregateIdentifier`
  * and `newSucceedingSiblingNodeAggregateIdentifier` (or as last of all siblings)
  * using `relationDistributionStrategy`
+ * initiated by `initiatingUserIdentifier`
  *
  * Why can you specify **both** newPrecedingSiblingNodeAggregateIdentifier and newSucceedingSiblingNodeAggregateIdentifier?
  * - it can happen that in one subgraph, only one of these match.
@@ -42,7 +44,7 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
      *
      * @var ContentStreamIdentifier
      */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * This is one of the *covered* dimension space points of the node aggregate and not necessarily one of the occupied ones.
@@ -50,23 +52,23 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
      *
      * @var DimensionSpacePoint
      */
-    private $dimensionSpacePoint;
+    private DimensionSpacePoint $dimensionSpacePoint;
 
     /**
      * The node aggregate to be moved
      *
      * @var NodeAggregateIdentifier
      */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * This is the identifier of the new parent node aggregate.
      * If given, it enforces that all nodes in the given aggregate are moved into nodes of the parent aggregate,
      * even if the given siblings belong to other parents. In latter case, those siblings are ignored.
      *
-     * @var NodeAggregateIdentifier
+     * @var NodeAggregateIdentifier|null
      */
-    private $newParentNodeAggregateIdentifier;
+    private ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier;
 
     /**
      * This is the identifier of the new preceding sibling node aggregate.
@@ -75,7 +77,7 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
      *
      * @var NodeAggregateIdentifier|null
      */
-    private $newPrecedingSiblingNodeAggregateIdentifier;
+    private ?NodeAggregateIdentifier $newPrecedingSiblingNodeAggregateIdentifier;
 
     /**
      * This is the identifier of the new succeeding sibling node aggregate.
@@ -84,14 +86,16 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
      *
      * @var NodeAggregateIdentifier|null
      */
-    private $newSucceedingSiblingNodeAggregateIdentifier;
+    private ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier;
 
     /**
      * The relation distribution strategy to be used
      *
      * @var RelationDistributionStrategy
      */
-    private $relationDistributionStrategy;
+    private RelationDistributionStrategy $relationDistributionStrategy;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -100,7 +104,8 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
         ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newPrecedingSiblingNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
-        RelationDistributionStrategy $relationDistributionStrategy
+        RelationDistributionStrategy $relationDistributionStrategy,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -109,6 +114,7 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
         $this->newPrecedingSiblingNodeAggregateIdentifier = $newPrecedingSiblingNodeAggregateIdentifier;
         $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
         $this->relationDistributionStrategy = $relationDistributionStrategy;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -125,7 +131,8 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
             isset($array['newParentNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newParentNodeAggregateIdentifier']) : null,
             isset($array['newPrecedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newPrecedingSiblingNodeAggregateIdentifier']) : null,
             isset($array['newSucceedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newSucceedingSiblingNodeAggregateIdentifier']) : null,
-            RelationDistributionStrategy::fromString($array['relationDistributionStrategy'])
+            RelationDistributionStrategy::fromString($array['relationDistributionStrategy']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -164,6 +171,11 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
         return $this->relationDistributionStrategy;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -174,6 +186,7 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
             'newPrecedingSiblingNodeAggregateIdentifier' => $this->newPrecedingSiblingNodeAggregateIdentifier,
             'newSucceedingSiblingNodeAggregateIdentifier' => $this->newSucceedingSiblingNodeAggregateIdentifier,
             'relationDistributionStrategy' => $this->relationDistributionStrategy,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 
@@ -186,7 +199,8 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
             $this->newParentNodeAggregateIdentifier,
             $this->newPrecedingSiblingNodeAggregateIdentifier,
             $this->newSucceedingSiblingNodeAggregateIdentifier,
-            $this->relationDistributionStrategy
+            $this->relationDistributionStrategy,
+            $this->initiatingUserIdentifier
         );
     }
 

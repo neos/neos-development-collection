@@ -804,6 +804,9 @@ trait EventSourcedTrait
         if (!isset($commandArguments['relationDistributionStrategy'])) {
             $commandArguments['relationDistributionStrategy'] = RelationDistributionStrategy::STRATEGY_GATHER_ALL;
         }
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = MoveNodeAggregate::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()

@@ -68,18 +68,6 @@ class Property extends AbstractChange
     protected $nodeService;
 
     /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
-
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
-
-    /**
      * The node dom address
      *
      * @var RenderedNodeDomAddress
@@ -234,8 +222,7 @@ class Property extends AbstractChange
             $propertyName = $this->getPropertyName();
 
             $propertyType = $node->getNodeType()->getPropertyType($propertyName);
-            $user = $this->userService->getBackendUser();
-            $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
+            $userIdentifier = $this->getInitiatingUserIdentifier();
 
             // Use extra commands for reference handling
             if ($propertyType === 'reference' || $propertyType === 'references') {

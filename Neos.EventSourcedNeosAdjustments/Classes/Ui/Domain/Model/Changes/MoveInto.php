@@ -46,7 +46,7 @@ class MoveInto extends AbstractStructuralChange
      *
      * @return TraversableNodeInterface
      */
-    public function getParentNode(): TraversableNodeInterface
+    public function getParentNode(): ?TraversableNodeInterface
     {
         if ($this->parentContextPath === null) {
             return null;
@@ -101,7 +101,8 @@ class MoveInto extends AbstractStructuralChange
                 $hasEqualParentNode ? null : $this->getParentNode()->getNodeAggregateIdentifier(),
                 null,
                 null,
-                RelationDistributionStrategy::gatherAll()
+                RelationDistributionStrategy::gatherAll(),
+                $this->getInitiatingUserIdentifier()
             );
 
             $this->contentCacheFlusher->registerNodeChange($subject);
