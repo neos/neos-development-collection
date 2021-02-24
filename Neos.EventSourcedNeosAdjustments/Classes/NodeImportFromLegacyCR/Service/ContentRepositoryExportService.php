@@ -307,7 +307,8 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
-                        PropertyValuesToWrite::fromArray($propertyValues)
+                        PropertyValuesToWrite::fromArray($propertyValues),
+                        UserIdentifier::forSystemUser()
                     ))->blockUntilProjectionsAreUpToDate();
                 }
             } else {
@@ -327,7 +328,8 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
-                        PropertyValuesToWrite::fromArray($propertyValues)
+                        PropertyValuesToWrite::fromArray($propertyValues),
+                        UserIdentifier::forSystemUser()
                     ))->blockUntilProjectionsAreUpToDate();
                 } else {
                     $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePath, $nodeTypeName);

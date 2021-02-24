@@ -30,7 +30,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantS
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
@@ -38,10 +37,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateN
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePropertyConversionService;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\Domain\Repository\UserRepository;
-use Neos\Neos\Service\UserService;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 
 /**
@@ -269,7 +264,8 @@ class Property extends AbstractChange
                             [
                                 $propertyName => $value
                             ]
-                        )
+                        ),
+                        $this->getInitiatingUserIdentifier()
                     );
                     $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
                 } else {

@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonSetNodePropertiesTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
  * Set property values for a given node.
@@ -37,12 +38,14 @@ final class SetNodeProperties
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        PropertyValuesToWrite $propertyValues
+        PropertyValuesToWrite $propertyValues,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->propertyValues = $propertyValues;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -60,7 +63,8 @@ final class SetNodeProperties
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
-            PropertyValuesToWrite::fromArray($array['propertyValues'])
+            PropertyValuesToWrite::fromArray($array['propertyValues']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 }

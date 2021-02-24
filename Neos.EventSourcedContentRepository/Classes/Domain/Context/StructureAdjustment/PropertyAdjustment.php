@@ -11,6 +11,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Pro
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -114,7 +115,8 @@ class PropertyAdjustment
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
-                    $serializedPropertyValues
+                    $serializedPropertyValues,
+                    UserIdentifier::forSystemUser()
                 ),
                 Uuid::uuid4()->toString()
             )
