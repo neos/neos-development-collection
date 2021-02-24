@@ -9,6 +9,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccu
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
@@ -30,7 +31,8 @@ trait RemoveNodeAggregateTrait
                     ),
                     AffectedCoveredDimensionSpacePointSet::allVariants(
                         $tetheredNodeAggregate
-                    )
+                    ),
+                    UserIdentifier::forSystemUser()
                 ),
                 Uuid::uuid4()->toString()
             )

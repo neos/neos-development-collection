@@ -18,41 +18,37 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * One of the dimension space points covered by the node aggregate in which the user intends to remove it
      *
      * @var DimensionSpacePoint
      */
-    private $coveredDimensionSpacePoint;
+    private DimensionSpacePoint $coveredDimensionSpacePoint;
 
-    /**
-     * @var NodeVariantSelectionStrategyIdentifier
-     */
-    private $nodeVariantSelectionStrategy;
+    private NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy
+        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
         $this->nodeVariantSelectionStrategy = $nodeVariantSelectionStrategy;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
@@ -61,7 +57,8 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy'])
+            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -85,13 +82,19 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
         return $this->nodeVariantSelectionStrategy;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function jsonSerialize(): array
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
-            'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy
+            'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 
@@ -101,7 +104,8 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->coveredDimensionSpacePoint,
-            $this->nodeVariantSelectionStrategy
+            $this->nodeVariantSelectionStrategy,
+            $this->initiatingUserIdentifier
         );
     }
 

@@ -742,6 +742,9 @@ trait EventSourcedTrait
     public function theCommandRemoveNodeAggregateIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = RemoveNodeAggregate::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()

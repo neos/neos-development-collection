@@ -149,8 +149,8 @@ trait NodeRetyping
 
             // remove disallowed nodes
             if ($command->getStrategy()->getStrategy() === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
-                $events = $events->appendEvents($this->deleteDisallowedNodesWhenChangingNodeType($nodeAggregate, $newNodeType));
-                $events = $events->appendEvents($this->deleteObsoleteTetheredNodesWhenChangingNodeType($nodeAggregate, $newNodeType));
+                $events = $events->appendEvents($this->deleteDisallowedNodesWhenChangingNodeType($nodeAggregate, $newNodeType, $command->getInitiatingUserIdentifier()));
+                $events = $events->appendEvents($this->deleteObsoleteTetheredNodesWhenChangingNodeType($nodeAggregate, $newNodeType, $command->getInitiatingUserIdentifier()));
             }
 
             // new tethered child nodes
@@ -224,9 +224,10 @@ trait NodeRetyping
      *
      * @param ReadableNodeAggregateInterface $nodeAggregate
      * @param NodeType $newNodeType
+     * @param UserIdentifier $initiatingUserIdentifier
      * @return DomainEvents
      */
-    private function deleteDisallowedNodesWhenChangingNodeType(ReadableNodeAggregateInterface $nodeAggregate, NodeType $newNodeType): DomainEvents
+    private function deleteDisallowedNodesWhenChangingNodeType(ReadableNodeAggregateInterface $nodeAggregate, NodeType $newNodeType, UserIdentifier $initiatingUserIdentifier): DomainEvents
     {
         $events = DomainEvents::createEmpty();
         // if we have children, we need to check whether they are still allowed after we changed the node type of the $nodeAggregate to $newNodeType.
@@ -237,7 +238,7 @@ trait NodeRetyping
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints. We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate($nodeAggregate, $childNodeAggregate);
                 // AND REMOVE THEM
-                $events = $events->appendEvent($this->removeNodeInDimensionSpacePointSet($childNodeAggregate, $dimensionSpacePointsToBeRemoved));
+                $events = $events->appendEvent($this->removeNodeInDimensionSpacePointSet($childNodeAggregate, $dimensionSpacePointsToBeRemoved, $initiatingUserIdentifier));
             }
 
             // we do not need to test for grandparents here, as we did not modify the grandparents. Thus, if it was allowed before, it is allowed now.
@@ -256,7 +257,7 @@ trait NodeRetyping
                     // this aggregate (or parts thereof) are DISALLOWED according to constraints. We now need to find out which edges we need to remove,
                     $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate($childNodeAggregate, $grandchildNodeAggregate);
                     // AND REMOVE THEM
-                    $events = $events->appendEvent($this->removeNodeInDimensionSpacePointSet($grandchildNodeAggregate, $dimensionSpacePointsToBeRemoved));
+                    $events = $events->appendEvent($this->removeNodeInDimensionSpacePointSet($grandchildNodeAggregate, $dimensionSpacePointsToBeRemoved, $initiatingUserIdentifier));
                 }
             }
         }
@@ -264,7 +265,7 @@ trait NodeRetyping
         return $events;
     }
 
-    private function deleteObsoleteTetheredNodesWhenChangingNodeType(ReadableNodeAggregateInterface $nodeAggregate, NodeType $newNodeType): DomainEvents
+    private function deleteObsoleteTetheredNodesWhenChangingNodeType(ReadableNodeAggregateInterface $nodeAggregate, NodeType $newNodeType, UserIdentifier $initiatingUserIdentifier): DomainEvents
     {
         $expectedTetheredNodes = $newNodeType->getAutoCreatedChildNodes();
 
@@ -277,7 +278,7 @@ trait NodeRetyping
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints. We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate($nodeAggregate, $tetheredNodeAggregate);
                 // AND REMOVE THEM
-                $events = $events->appendEvent($this->removeNodeInDimensionSpacePointSet($tetheredNodeAggregate, $dimensionSpacePointsToBeRemoved));
+                $events = $events->appendEvent($this->removeNodeInDimensionSpacePointSet($tetheredNodeAggregate, $dimensionSpacePointsToBeRemoved, $initiatingUserIdentifier));
             }
         }
 
@@ -311,8 +312,10 @@ trait NodeRetyping
      * @param ReadableNodeAggregateInterface $childNodeAggregate
      * @return DimensionSpacePointSet
      */
-    private function findDimensionSpacePointsConnectingParentAndChildAggregate(ReadableNodeAggregateInterface $parentNodeAggregate, ReadableNodeAggregateInterface $childNodeAggregate): DimensionSpacePointSet
-    {
+    private function findDimensionSpacePointsConnectingParentAndChildAggregate(
+        ReadableNodeAggregateInterface $parentNodeAggregate,
+        ReadableNodeAggregateInterface $childNodeAggregate
+    ): DimensionSpacePointSet {
         $points = [];
         foreach ($childNodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
             $subgraph = $this->getContentGraph()->getSubgraphByIdentifier($childNodeAggregate->getContentStreamIdentifier(), $coveredDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
@@ -325,14 +328,18 @@ trait NodeRetyping
         return new DimensionSpacePointSet($points);
     }
 
-    private function removeNodeInDimensionSpacePointSet(ReadableNodeAggregateInterface $nodeAggregate, DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved): DomainEventInterface
-    {
+    private function removeNodeInDimensionSpacePointSet(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved,
+        UserIdentifier $initiatingUserIdentifier
+    ): DomainEventInterface {
         return DecoratedEvent::addIdentifier(
             new NodeAggregateWasRemoved(
                 $nodeAggregate->getContentStreamIdentifier(),
                 $nodeAggregate->getIdentifier(),
                 $coveredDimensionSpacePointsToBeRemoved, // TODO: we also use the covered dimension space points as OCCUPIED dimension space points - however the OCCUPIED dimension space points are not really used by now (except for the change projector, which needs love anyways...)
-                $coveredDimensionSpacePointsToBeRemoved
+                $coveredDimensionSpacePointsToBeRemoved,
+                $initiatingUserIdentifier
             ),
             Uuid::uuid4()->toString()
         );
