@@ -31,21 +31,11 @@ use Ramsey\Uuid\Uuid;
  */
 final class ContentStreamCommandHandler
 {
-    /**
-     * @var ContentStreamRepository
-     */
-    protected $contentStreamRepository;
+    private ContentStreamRepository $contentStreamRepository;
 
-    /**
-     * @var EventStore
-     */
-    protected $eventStore;
+    private EventStore $eventStore;
 
-    /**
-     * @var ReadSideMemoryCacheManager
-     */
-    protected $readSideMemoryCacheManager;
-
+    private ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
     public function __construct(ContentStreamRepository $contentStreamRepository, EventStore $eventStore, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
     {
@@ -53,7 +43,6 @@ final class ContentStreamCommandHandler
         $this->eventStore = $eventStore;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
-
 
     /**
      * @param Command\CreateContentStream $command
@@ -128,7 +117,6 @@ final class ContentStreamCommandHandler
         $this->eventStore->commit($streamName, $events);
         return CommandResult::fromPublishedEvents($events);
     }
-
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
