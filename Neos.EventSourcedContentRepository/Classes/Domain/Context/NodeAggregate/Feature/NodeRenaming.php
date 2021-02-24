@@ -28,10 +28,6 @@ trait NodeRenaming
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
-    /**
-     * @param ChangeNodeAggregateName $command
-     * @return CommandResult
-     */
     public function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): CommandResult
     {
         // TODO: check if CS exists
@@ -44,7 +40,8 @@ trait NodeRenaming
                     new NodeAggregateNameWasChanged(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
-                        $command->getNewNodeName()
+                        $command->getNewNodeName(),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )
