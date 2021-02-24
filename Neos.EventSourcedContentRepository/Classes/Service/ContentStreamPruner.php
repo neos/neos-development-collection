@@ -6,6 +6,7 @@ namespace Neos\EventSourcedContentRepository\Service;
 use Doctrine\DBAL\Connection;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -67,7 +68,10 @@ class ContentStreamPruner
         $unusedContentStreams = $this->contentStreamFinder->findUnusedContentStreams();
 
         foreach ($unusedContentStreams as $contentStream) {
-            $this->lastCommandResult = $this->contentStreamCommandHandler->handleRemoveContentStream(new RemoveContentStream($contentStream));
+            $this->lastCommandResult = $this->contentStreamCommandHandler->handleRemoveContentStream(new RemoveContentStream(
+                $contentStream,
+                UserIdentifier::forSystemUser()
+            ));
         }
 
         return $unusedContentStreams;

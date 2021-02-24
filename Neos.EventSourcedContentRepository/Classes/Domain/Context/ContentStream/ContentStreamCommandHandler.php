@@ -110,7 +110,8 @@ final class ContentStreamCommandHandler
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
                 new Event\ContentStreamWasRemoved(
-                    $command->getContentStreamIdentifier()
+                    $command->getContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
             )
