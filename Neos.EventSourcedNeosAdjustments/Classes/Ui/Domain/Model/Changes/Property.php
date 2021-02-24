@@ -312,7 +312,8 @@ class Property extends AbstractChange
                                 $node->getContentStreamIdentifier(),
                                 $node->getNodeAggregateIdentifier(),
                                 $node->getOriginDimensionSpacePoint(),
-                                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                $userIdentifier
                             );
                             $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                         }

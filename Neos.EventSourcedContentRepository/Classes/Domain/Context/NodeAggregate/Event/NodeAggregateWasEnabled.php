@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -25,28 +26,29 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeAggregateWasEnabled implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * Identifier of the node aggregate which the user enabled
      *
      * @var NodeAggregateIdentifier
      */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var DimensionSpacePointSet
-     */
-    private $affectedDimensionSpacePoints;
+    private DimensionSpacePointSet $affectedDimensionSpacePoints;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
-    {
+    private UserIdentifier $initiatingUserIdentifier;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePointSet $affectedDimensionSpacePoints,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->affectedDimensionSpacePoints = $affectedDimensionSpacePoints;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -64,12 +66,18 @@ final class NodeAggregateWasEnabled implements DomainEventInterface, Publishable
         return $this->affectedDimensionSpacePoints;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeAggregateWasEnabled(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
-            $this->affectedDimensionSpacePoints
+            $this->affectedDimensionSpacePoints,
+            $this->initiatingUserIdentifier
         );
     }
 }
