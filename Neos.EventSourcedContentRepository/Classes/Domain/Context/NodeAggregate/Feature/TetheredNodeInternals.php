@@ -26,6 +26,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Ramsey\Uuid\Uuid;
@@ -38,7 +39,13 @@ trait TetheredNodeInternals
 
     abstract protected function getDefaultPropertyValues(NodeType $nodeType): SerializedPropertyValues;
 
-    abstract protected function createEventsForVariations(ContentStreamIdentifier $contentStreamIdentifier, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin, ReadableNodeAggregateInterface $nodeAggregate): DomainEvents;
+    abstract protected function createEventsForVariations(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        OriginDimensionSpacePoint $sourceOrigin,
+        OriginDimensionSpacePoint $targetOrigin,
+        ReadableNodeAggregateInterface $nodeAggregate,
+        UserIdentifier $initiatingUserIdentifier
+    ): DomainEvents;
 
     /**
      * This is the remediation action for non-existing tethered nodes.
@@ -46,16 +53,21 @@ trait TetheredNodeInternals
      * - there is no tethered node IN ANY DimensionSpacePoint -> we can simply create it
      * - there is a tethered node already in some DimensionSpacePoint -> we need to specialize/generalize/... the other Tethered Node.
      *
-     * @param NodeAggregate $parentNodeAggregate the node aggregate of the parent node
-     * @param NodeInterface $parentNode the parent node underneath the tethered node should be.
-     * @param NodeName $tetheredNodeName name of the edge towards the tethered node
-     * @param NodeType $expectedTetheredNodeType expected node type of the tethered node
-     * @param $command
-     * @return CommandResult
+     * @param ReadableNodeAggregateInterface $parentNodeAggregate
+     * @param NodeInterface $parentNode
+     * @param NodeName $tetheredNodeName
+     * @param NodeType $expectedTetheredNodeType
+     * @param UserIdentifier $initiatingUserIdentifier
+     * @return DomainEvents
      * @throws \Exception
      */
-    protected function createEventsForMissingTetheredNode(ReadableNodeAggregateInterface $parentNodeAggregate, NodeInterface $parentNode, NodeName $tetheredNodeName, NodeType $expectedTetheredNodeType): DomainEvents
-    {
+    protected function createEventsForMissingTetheredNode(
+        ReadableNodeAggregateInterface $parentNodeAggregate,
+        NodeInterface $parentNode,
+        NodeName $tetheredNodeName,
+        NodeType $expectedTetheredNodeType,
+        UserIdentifier $initiatingUserIdentifier
+    ): DomainEvents {
         $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName($parentNode->getContentStreamIdentifier(), $parentNode->getNodeAggregateIdentifier(), $tetheredNodeName);
         if (count($childNodeAggregates) === 0) {
 
@@ -83,7 +95,13 @@ trait TetheredNodeInternals
             }
 
             $childNodeSource = $childNodeAggregate->getNodes()[0];
-            $events = $this->createEventsForVariations($parentNode->getContentStreamIdentifier(), $childNodeSource->getOriginDimensionSpacePoint(), $parentNode->getOriginDimensionSpacePoint(), $parentNodeAggregate);
+            $events = $this->createEventsForVariations(
+                $parentNode->getContentStreamIdentifier(),
+                $childNodeSource->getOriginDimensionSpacePoint(),
+                $parentNode->getOriginDimensionSpacePoint(),
+                $parentNodeAggregate,
+                $initiatingUserIdentifier
+            );
         } else {
             throw new \RuntimeException('There is >= 2 ChildNodeAggregates with the same name reachable from the parent - this is ambiguous and we should analyze how this may happen. That is very likely a bug.');
         }

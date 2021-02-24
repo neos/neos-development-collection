@@ -64,7 +64,13 @@ trait NodeVariation
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetOrigin());
 
-        $events = $this->createEventsForVariations($command->getContentStreamIdentifier(), $command->getSourceOrigin(), $command->getTargetOrigin(), $nodeAggregate);
+        $events = $this->createEventsForVariations(
+            $command->getContentStreamIdentifier(),
+            $command->getSourceOrigin(),
+            $command->getTargetOrigin(),
+            $nodeAggregate,
+            $command->getInitiatingUserIdentifier()
+        );
 
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $events) {
             $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(

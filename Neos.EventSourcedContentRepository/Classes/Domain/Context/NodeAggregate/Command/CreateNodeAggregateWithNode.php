@@ -38,8 +38,6 @@ final class CreateNodeAggregateWithNode
 
     /**
      * The node's initial property values. Will be merged over the node type's default property values
-     *
-     * @var PropertyValuesToWrite
      */
     private ?PropertyValuesToWrite $initialPropertyValues;
 

@@ -36,6 +36,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -72,7 +73,13 @@ trait NodeRetyping
 
     abstract protected static function populateNodeAggregateIdentifiers(NodeType $nodeType, NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths;
 
-    abstract protected function createEventsForMissingTetheredNode(ReadableNodeAggregateInterface $parentNodeAggregate, NodeInterface $parentNode, NodeName $tetheredNodeName, NodeType $expectedTetheredNodeType): DomainEvents;
+    abstract protected function createEventsForMissingTetheredNode(
+        ReadableNodeAggregateInterface $parentNodeAggregate,
+        NodeInterface $parentNode,
+        NodeName $tetheredNodeName,
+        NodeType $expectedTetheredNodeType,
+        UserIdentifier $initiatingUserIdentifier
+    ): DomainEvents;
 
     /**
      * @param ChangeNodeAggregateType $command
@@ -155,7 +162,13 @@ trait NodeRetyping
                     $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
                     $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName($node->getNodeAggregateIdentifier(), $tetheredNodeName);
                     if ($tetheredNode === null) {
-                        $events = $events->appendEvents($this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType));
+                        $events = $events->appendEvents($this->createEventsForMissingTetheredNode(
+                            $nodeAggregate,
+                            $node,
+                            $tetheredNodeName,
+                            $expectedTetheredNodeType,
+                            $command->getInitiatingUserIdentifier()
+                        ));
                     }
                 }
             }

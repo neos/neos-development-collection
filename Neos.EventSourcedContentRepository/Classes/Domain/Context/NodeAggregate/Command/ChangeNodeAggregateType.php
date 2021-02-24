@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -27,25 +28,15 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
  */
 final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    protected $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    protected $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var NodeTypeName
-     */
-    protected $newNodeTypeName;
+    private NodeTypeName $newNodeTypeName;
 
-    /**
-     * @var NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
-     */
-    protected $strategy;
+    private NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     /**
      * NodeAggregateIdentifiers for tethered descendants (optional).
@@ -54,17 +45,23 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
      * using this assignment registry.
      * Since tethered child nodes may have tethered child nodes themselves,
      * this registry is indexed using relative node paths to the node to create in the first place.
-     *
-     * @var NodeAggregateIdentifiersByNodePaths|null
      */
     private ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $newNodeTypeName, NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy, ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null)
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeName $newNodeTypeName,
+        NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
+        UserIdentifier $initiatingUserIdentifier,
+        ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null
+    )
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newNodeTypeName = $newNodeTypeName;
         $this->strategy = $strategy;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
         $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers;
     }
 
@@ -80,42 +77,36 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['newNodeTypeName']),
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::fromString($array['strategy']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier']),
             isset($array['tetheredDescendantNodeAggregateIdentifiers'])
                 ? NodeAggregateIdentifiersByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIdentifiers'])
                 : null
         );
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return NodeTypeName
-     */
     public function getNewNodeTypeName(): NodeTypeName
     {
         return $this->newNodeTypeName;
     }
 
-    /**
-     * @return NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|null
-     */
     public function getStrategy(): ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
     {
         return $this->strategy;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 
     public function getTetheredDescendantNodeAggregateIdentifiers(): ?NodeAggregateIdentifiersByNodePaths
@@ -131,24 +122,26 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
         );
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->newNodeTypeName,
             $this->strategy,
+            $this->initiatingUserIdentifier,
             $this->tetheredDescendantNodeAggregateIdentifiers
         );
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'newNodeTypeName' => $this->newNodeTypeName,
             'strategy' => $this->strategy,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
             'tetheredDescendantNodeAggregateIdentifiers' => $this->tetheredDescendantNodeAggregateIdentifiers
         ];
     }
@@ -160,7 +153,7 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
      * Is needed to make this command fully deterministic before storing it at the events.
      *
      * @param NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
-     * @return self
+     * @return ChangeNodeAggregateType
      */
     public function withTetheredDescendantNodeAggregateIdentifiers(NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers): self
     {
@@ -169,6 +162,7 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
             $this->nodeAggregateIdentifier,
             $this->newNodeTypeName,
             $this->strategy,
+            $this->initiatingUserIdentifier,
             $tetheredDescendantNodeAggregateIdentifiers
         );
     }

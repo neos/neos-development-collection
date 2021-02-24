@@ -16,6 +16,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -26,90 +27,64 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeGeneralizationVariantWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    private $sourceOrigin;
+    private OriginDimensionSpacePoint $sourceOrigin;
 
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    private $generalizationOrigin;
+    private OriginDimensionSpacePoint $generalizationOrigin;
 
-    /**
-     * @var DimensionSpacePointSet
-     */
-    private $generalizationCoverage;
+    private DimensionSpacePointSet $generalizationCoverage;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $generalizationOrigin,
-        DimensionSpacePointSet $generalizationCoverage
+        DimensionSpacePointSet $generalizationCoverage,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceOrigin = $sourceOrigin;
         $this->generalizationOrigin = $generalizationOrigin;
         $this->generalizationCoverage = $generalizationCoverage;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return OriginDimensionSpacePoint
-     */
     public function getSourceOrigin(): OriginDimensionSpacePoint
     {
         return $this->sourceOrigin;
     }
 
-    /**
-     * @return OriginDimensionSpacePoint
-     */
     public function getGeneralizationOrigin(): OriginDimensionSpacePoint
     {
         return $this->generalizationOrigin;
     }
 
-    /**
-     * @return DimensionSpacePointSet
-     */
     public function getGeneralizationCoverage(): DimensionSpacePointSet
     {
         return $this->generalizationCoverage;
     }
 
-    /**
-     * @param ContentStreamIdentifier $targetContentStreamIdentifier
-     * @return NodeGeneralizationVariantWasCreated
-     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeGeneralizationVariantWasCreated
     {
         return new NodeGeneralizationVariantWasCreated(
@@ -117,7 +92,8 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,
             $this->generalizationOrigin,
-            $this->generalizationCoverage
+            $this->generalizationCoverage,
+            $this->initiatingUserIdentifier
         );
     }
 }

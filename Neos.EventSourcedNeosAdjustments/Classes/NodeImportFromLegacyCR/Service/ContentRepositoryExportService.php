@@ -319,7 +319,8 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $dimensionSpacePointOfAlreadyCreatedNode,
-                        $originDimensionSpacePoint
+                        $originDimensionSpacePoint,
+                        UserIdentifier::forSystemUser()
                     ))->blockUntilProjectionsAreUpToDate();
 
                     $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
