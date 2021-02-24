@@ -715,6 +715,9 @@ trait EventSourcedTrait
         if (!isset($commandArguments['sourceOriginDimensionSpacePoint'])) {
             $commandArguments['sourceOriginDimensionSpacePoint'] = [];
         }
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = SetNodeReferences::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()

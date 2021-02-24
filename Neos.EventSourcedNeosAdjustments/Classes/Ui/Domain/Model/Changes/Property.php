@@ -25,6 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Enab
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -243,8 +244,9 @@ class Property extends AbstractChange
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
-                    $destinationNodeAggregateIdentifiers,
-                    PropertyName::fromString($propertyName)
+                    new NodeAggregateIdentifierCollection($destinationNodeAggregateIdentifiers),
+                    PropertyName::fromString($propertyName),
+                    $this->getInitiatingUserIdentifier()
                 );
                 $this->nodeAggregateCommandHandler->handleSetNodeReferences($command)->blockUntilProjectionsAreUpToDate();
             } else {

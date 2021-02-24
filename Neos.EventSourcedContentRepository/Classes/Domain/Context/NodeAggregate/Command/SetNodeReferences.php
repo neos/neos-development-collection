@@ -6,112 +6,85 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
  * Create a named reference from source to destination node
  */
 final class SetNodeReferences implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $sourceNodeAggregateIdentifier;
+    private NodeAggregateIdentifier $sourceNodeAggregateIdentifier;
 
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    private $sourceOriginDimensionSpacePoint;
+    private OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint;
 
-    /**
-     * @var NodeAggregateIdentifier[]
-     */
-    private $destinationNodeAggregateIdentifiers;
+    private NodeAggregateIdentifierCollection $destinationNodeAggregateIdentifiers;
 
-    /**
-     * @var PropertyName
-     */
-    private $referenceName;
+    private PropertyName $referenceName;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $sourceNodeAggregateIdentifier
-     * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint
-     * @param NodeAggregateIdentifier[] $destinationNodeAggregateIdentifiers
-     * @param PropertyName $referenceName
-     */
+    private UserIdentifier $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
         OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
-        array $destinationNodeAggregateIdentifiers,
-        PropertyName $referenceName
+        NodeAggregateIdentifierCollection $destinationNodeAggregateIdentifiers,
+        PropertyName $referenceName,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->sourceNodeAggregateIdentifier = $sourceNodeAggregateIdentifier;
         $this->sourceOriginDimensionSpacePoint = $sourceOriginDimensionSpacePoint;
         $this->destinationNodeAggregateIdentifiers = $destinationNodeAggregateIdentifiers;
         $this->referenceName = $referenceName;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
             new OriginDimensionSpacePoint($array['sourceOriginDimensionSpacePoint']),
-            array_map(function ($identifier) {
-                return NodeAggregateIdentifier::fromString($identifier);
-            }, $array['destinationNodeAggregateIdentifiers']),
-            PropertyName::fromString($array['referenceName'])
+            NodeAggregateIdentifierCollection::fromArray($array['destinationNodeAggregateIdentifiers']),
+            PropertyName::fromString($array['referenceName']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getSourceNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->sourceNodeAggregateIdentifier;
     }
 
-    /**
-     * @return OriginDimensionSpacePoint
-     */
     public function getSourceOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->sourceOriginDimensionSpacePoint;
     }
 
-    /**
-     * @return NodeAggregateIdentifier[]
-     */
-    public function getDestinationNodeAggregateIdentifiers(): array
+    public function getDestinationNodeAggregateIdentifiers(): NodeAggregateIdentifierCollection
     {
         return $this->destinationNodeAggregateIdentifiers;
     }
 
-    /**
-     * @return PropertyName
-     */
     public function getReferenceName(): PropertyName
     {
         return $this->referenceName;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 
     public function jsonSerialize(): array
@@ -121,18 +94,20 @@ final class SetNodeReferences implements \JsonSerializable, RebasableToOtherCont
             'sourceNodeAggregateIdentifier' => $this->sourceNodeAggregateIdentifier,
             'sourceOriginDimensionSpacePoint' => $this->sourceOriginDimensionSpacePoint,
             'destinationNodeAggregateIdentifiers' => $this->destinationNodeAggregateIdentifiers,
-            'referenceName' => $this->referenceName
+            'referenceName' => $this->referenceName,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new SetNodeReferences(
+        return new self(
             $targetContentStreamIdentifier,
             $this->sourceNodeAggregateIdentifier,
             $this->sourceOriginDimensionSpacePoint,
             $this->destinationNodeAggregateIdentifiers,
-            $this->referenceName
+            $this->referenceName,
+            $this->initiatingUserIdentifier
         );
     }
 
