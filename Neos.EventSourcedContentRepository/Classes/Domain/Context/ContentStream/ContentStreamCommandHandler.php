@@ -91,7 +91,8 @@ final class ContentStreamCommandHandler
                 new Event\ContentStreamWasForked(
                     $command->getContentStreamIdentifier(),
                     $command->getSourceContentStreamIdentifier(),
-                    $sourceContentStreamVersion
+                    $sourceContentStreamVersion,
+                    $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
             )

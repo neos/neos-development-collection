@@ -16,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
@@ -24,41 +25,43 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  */
 final class PublishIndividualNodesFromWorkspace
 {
-    /**
-     * @var WorkspaceName
-     */
-    private $workspaceName;
+    private WorkspaceName $workspaceName;
 
     /**
-     * @var NodeAddress[]
+     * @var array|NodeAddress[]
      */
-    private $nodeAddresses;
+    private array $nodeAddresses;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     /**
-     * PublishIndividualNodesInWorkspace constructor.
      * @param WorkspaceName $workspaceName
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress[] $nodeAddresses
+     * @param array|NodeAddress[] $nodeAddresses
+     * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, array $nodeAddresses)
+    public function __construct(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier)
     {
         $this->workspaceName = $workspaceName;
         $this->nodeAddresses = $nodeAddresses;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
     }
 
     /**
-     * @return \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress[]
+     * @return array|NodeAddress[]
      */
     public function getNodeAddresses(): array
     {
         return $this->nodeAddresses;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
@@ -72,9 +75,11 @@ final class PublishIndividualNodesFromWorkspace
                 null
             );
         }
-        return new static(
+
+        return new self(
             new WorkspaceName($array['workspaceName']),
-            $nodeAddresses
+            $nodeAddresses,
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 }

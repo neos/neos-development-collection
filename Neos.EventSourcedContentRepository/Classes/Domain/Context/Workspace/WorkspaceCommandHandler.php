@@ -157,7 +157,8 @@ final class WorkspaceCommandHandler
         $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $command->getNewContentStreamIdentifier(),
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         ));
 
@@ -230,9 +231,11 @@ final class WorkspaceCommandHandler
      * @param PublishWorkspace $command
      * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
+     * @throws ContentStreamAlreadyExists
+     * @throws ContentStreamDoesNotExistYet
      * @throws WorkspaceDoesNotExist
-     * @throws EventStreamNotFoundException
-     * @throws \Exception
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function handlePublishWorkspace(PublishWorkspace $command): CommandResult
     {
@@ -254,7 +257,8 @@ final class WorkspaceCommandHandler
             $this->contentStreamCommandHandler->handleForkContentStream(
                 new ForkContentStream(
                     $newContentStream,
-                    $baseWorkspace->getCurrentContentStreamIdentifier()
+                    $baseWorkspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 )
             )
         );
@@ -380,7 +384,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $rebasedContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -586,7 +591,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $matchingContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -603,7 +609,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $remainingContentStream,
-                $matchingContentStream
+                $matchingContentStream,
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -686,7 +693,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $newContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -750,7 +758,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $newContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 

@@ -962,6 +962,9 @@ trait EventSourcedTrait
     public function theCommandForkContentStreamIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = ForkContentStream::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getContentStreamCommandHandler()
