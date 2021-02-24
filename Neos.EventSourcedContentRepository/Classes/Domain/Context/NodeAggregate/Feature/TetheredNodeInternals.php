@@ -23,8 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -83,7 +81,8 @@ trait TetheredNodeInternals
                         $parentNode->getNodeAggregateIdentifier(),
                         $tetheredNodeName,
                         $this->getDefaultPropertyValues($expectedTetheredNodeType),
-                        NodeAggregateClassification::tethered()
+                        NodeAggregateClassification::tethered(),
+                        $initiatingUserIdentifier
                     ),
                     Uuid::uuid4()->toString()
                 )

@@ -25,8 +25,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\ConstraintChecks;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeAggregateIdentifierMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -40,59 +42,32 @@ final class NodeDuplicationCommandHandler
 {
     use ConstraintChecks;
 
-    /**
-     * @var NodeAggregateCommandHandler
-     */
-    protected $nodeAggregateCommandHandler;
+    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
-    /**
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
+    protected ContentGraphInterface $contentGraph;
 
-    /**
-     * @var ContentStreamRepository
-     */
-    protected $contentStreamRepository;
+    protected ContentStreamRepository $contentStreamRepository;
 
-    /**
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
+    protected NodeTypeManager $nodeTypeManager;
 
-    /**
-     * @var ReadSideMemoryCacheManager
-     */
-    protected $readSideMemoryCacheManager;
+    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    /**
-     * @var NodeAggregateEventPublisher
-     */
-    protected $nodeAggregateEventPublisher;
+    protected NodeAggregateEventPublisher $nodeAggregateEventPublisher;
 
-    /**
-     * @var DimensionSpacePointSet
-     */
-    protected $allowedDimensionSubspace;
+    protected DimensionSpacePointSet $allowedDimensionSubspace;
 
-    /**
-     * @var InterDimensionalVariationGraph
-     */
-    protected $interDimensionalVariationGraph;
+    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
-    /**
-     * NodeDuplicationCommandHandler constructor.
-     * @param NodeAggregateCommandHandler $nodeAggregateCommandHandler
-     * @param ContentGraphInterface $contentGraph
-     * @param ContentStreamRepository $contentStreamRepository
-     * @param NodeTypeManager $nodeTypeManager
-     * @param ReadSideMemoryCacheManager $readSideMemoryCacheManager
-     * @param NodeAggregateEventPublisher $nodeAggregateEventPublisher
-     * @param ContentDimensionZookeeper $contentDimensionZookeeper
-     * @param InterDimensionalVariationGraph $interDimensionalVariationGraph
-     */
-    public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler, ContentGraphInterface $contentGraph, ContentStreamRepository $contentStreamRepository, NodeTypeManager $nodeTypeManager, ReadSideMemoryCacheManager $readSideMemoryCacheManager, NodeAggregateEventPublisher $nodeAggregateEventPublisher, ContentDimensionZookeeper $contentDimensionZookeeper, InterDimensionalVariationGraph $interDimensionalVariationGraph)
-    {
+    public function __construct(
+        NodeAggregateCommandHandler $nodeAggregateCommandHandler,
+        ContentGraphInterface $contentGraph,
+        ContentStreamRepository $contentStreamRepository,
+        NodeTypeManager $nodeTypeManager,
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        NodeAggregateEventPublisher $nodeAggregateEventPublisher,
+        ContentDimensionZookeeper $contentDimensionZookeeper,
+        InterDimensionalVariationGraph $interDimensionalVariationGraph
+    ) {
         $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
         $this->contentGraph = $contentGraph;
         $this->contentStreamRepository = $contentStreamRepository;
@@ -102,7 +77,6 @@ final class NodeDuplicationCommandHandler
         $this->allowedDimensionSubspace = $contentDimensionZookeeper->getAllowedDimensionSubspace();
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
     }
-
 
     protected function getContentGraph(): ContentGraphInterface
     {
@@ -183,6 +157,7 @@ final class NodeDuplicationCommandHandler
                 $command->getTargetNodeName(),
                 $command->getNodeToInsert(),
                 $command->getNodeAggregateIdentifierMapping(),
+                $command->getInitiatingUserIdentifier(),
                 $events
             );
 
@@ -203,20 +178,31 @@ final class NodeDuplicationCommandHandler
         }
     }
 
-    private function createEventsForNodeToInsert(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePointSet $coveredDimensionSpacePoints, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier, NodeName $targetNodeName, Command\Dto\NodeSubtreeSnapshot $nodeToInsert, NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping, DomainEvents &$events)
-    {
+    private function createEventsForNodeToInsert(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
+        NodeName $targetNodeName,
+        Command\Dto\NodeSubtreeSnapshot $nodeToInsert,
+        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
+        UserIdentifier $initiatingUserIdentifier,
+        DomainEvents &$events
+    ) {
         $events = $events->appendEvent(
             DecoratedEvent::addIdentifier(
                 new NodeAggregateWithNodeWasCreated(
                     $contentStreamIdentifier,
                     $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier($nodeToInsert->getNodeAggregateIdentifier()),
                     $nodeToInsert->getNodeTypeName(),
-                    $dimensionSpacePoint,
+                    OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint),
                     $coveredDimensionSpacePoints,
                     $targetParentNodeAggregateIdentifier,
                     $targetNodeName,
                     $nodeToInsert->getPropertyValues(),
                     $nodeToInsert->getNodeAggregateClassification(),
+                    $initiatingUserIdentifier,
                     $targetSucceedingSiblingNodeAggregateIdentifier
                 ),
                 Uuid::uuid4()->toString()
@@ -233,6 +219,7 @@ final class NodeDuplicationCommandHandler
                 $childNodeToInsert->getNodeName(),
                 $childNodeToInsert,
                 $nodeAggregateIdentifierMapping,
+                $initiatingUserIdentifier,
                 $events
             );
         }

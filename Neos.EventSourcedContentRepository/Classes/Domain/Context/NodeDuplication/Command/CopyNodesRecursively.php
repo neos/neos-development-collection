@@ -40,28 +40,28 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
      *
      * @var ContentStreamIdentifier
      */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * The to be copied node's node aggregate identifier
      *
      * @var NodeSubtreeSnapshot
      */
-    private $nodeToInsert;
+    private NodeSubtreeSnapshot $nodeToInsert;
 
     /**
      * the dimension space point which is the target of the copy
      *
      * @var OriginDimensionSpacePoint
      */
-    private $targetDimensionSpacePoint;
+    private OriginDimensionSpacePoint $targetDimensionSpacePoint;
 
     /**
      * The initiating user's identifier
      *
      * @var UserIdentifier
      */
-    private $initiatingUserIdentifier;
+    private UserIdentifier $initiatingUserIdentifier;
 
     /**
      * Node aggregate identifier of the target node's parent (optional)
@@ -70,42 +70,36 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
      *
      * @var NodeAggregateIdentifier
      */
-    private $targetParentNodeAggregateIdentifier;
+    private NodeAggregateIdentifier $targetParentNodeAggregateIdentifier;
 
     /**
      * Node aggregate identifier of the target node's succeeding sibling (optional)
      *
      * If not given, the node will be added as the parent's first child
      *
-     * @var NodeAggregateIdentifier
+     * @var NodeAggregateIdentifier|null
      */
-    private $targetSucceedingSiblingNodeAggregateIdentifier;
+    private ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier;
 
     /**
      * the root node name of the root-inserted-node
      *
-     * @var NodeName
+     * @var NodeName|null
      */
-    private $targetNodeName;
+    private ?NodeName $targetNodeName;
 
-    /**
-     * @var NodeAggregateIdentifierMapping
-     */
-    private $nodeAggregateIdentifierMapping;
+    private NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping;
 
-    /**
-     * CopyNodesRecursively constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeSubtreeSnapshot $nodeToInsert
-     * @param OriginDimensionSpacePoint $targetDimensionSpacePoint
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @param NodeAggregateIdentifier $targetParentNodeAggregateIdentifier
-     * @param NodeAggregateIdentifier|null $targetSucceedingSiblingNodeAggregateIdentifier
-     * @param NodeName|null $targetNodeName
-     * @param NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
-     */
-    private function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeSubtreeSnapshot $nodeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, UserIdentifier $initiatingUserIdentifier, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier, ?NodeName $targetNodeName, NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping)
-    {
+    private function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeSubtreeSnapshot $nodeToInsert,
+        OriginDimensionSpacePoint $targetDimensionSpacePoint,
+        UserIdentifier $initiatingUserIdentifier,
+        NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
+        ?NodeName $targetNodeName,
+        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeToInsert = $nodeToInsert;
         $this->targetDimensionSpacePoint = $targetDimensionSpacePoint;
@@ -147,78 +141,46 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         );
     }
 
-
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeSubtreeSnapshot
-     */
     public function getNodeToInsert(): NodeSubtreeSnapshot
     {
         return $this->nodeToInsert;
     }
 
-    /**
-     * @return OriginDimensionSpacePoint
-     */
     public function getTargetDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->targetDimensionSpacePoint;
     }
 
-    /**
-     * @return UserIdentifier
-     */
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getTargetParentNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->targetParentNodeAggregateIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getTargetSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
     {
         return $this->targetSucceedingSiblingNodeAggregateIdentifier;
     }
 
-    /**
-     * @return NodeName
-     */
-    public function getTargetNodeName(): NodeName
+    public function getTargetNodeName(): ?NodeName
     {
         return $this->targetNodeName;
     }
 
-    /**
-     * @return NodeAggregateIdentifierMapping
-     */
     public function getNodeAggregateIdentifierMapping(): NodeAggregateIdentifierMapping
     {
         return $this->nodeAggregateIdentifierMapping;
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
     public function jsonSerialize(): array
     {
         return [

@@ -249,6 +249,7 @@ trait NodeCreation
                     $command->getNodeName(),
                     $initialPropertyValues,
                     NodeAggregateClassification::regular(),
+                    $command->getInitiatingUserIdentifier(),
                     $command->getSucceedingSiblingNodeAggregateIdentifier()
                 ),
                 Uuid::uuid4()->toString()
@@ -353,6 +354,7 @@ trait NodeCreation
                     $nodeName,
                     $initialPropertyValues,
                     NodeAggregateClassification::tethered(),
+                    $command->getInitiatingUserIdentifier(),
                     $precedingNodeAggregateIdentifier
                 ),
                 Uuid::uuid4()->toString()
