@@ -272,7 +272,8 @@ final class WorkspaceCommandHandler
                     $command->getWorkspaceName(),
                     $workspace->getBaseWorkspaceName(),
                     $newContentStream,
-                    $workspace->getCurrentContentStreamIdentifier()
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
             )

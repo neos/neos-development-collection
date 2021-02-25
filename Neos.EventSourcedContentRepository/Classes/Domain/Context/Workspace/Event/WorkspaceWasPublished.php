@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -25,77 +26,62 @@ class WorkspaceWasPublished implements DomainEventInterface
 {
     /**
      * From which workspace have changes been published?
-     *
-     * @var WorkspaceName
      */
-    private $sourceWorkspaceName;
+    private WorkspaceName $sourceWorkspaceName;
 
     /**
      * The target workspace where the changes have been published to.
-     *
-     * @var WorkspaceName
      */
-    private $targetWorkspaceName;
+    private WorkspaceName $targetWorkspaceName;
 
     /**
      * The new, empty content stream identifier of $sourceWorkspaceName, (after the publish was successful)
-     *
-     * @var ContentStreamIdentifier
      */
-    private $newSourceContentStreamIdentifier;
+    private ContentStreamIdentifier $newSourceContentStreamIdentifier;
 
     /**
      * The old content stream identifier of $sourceWorkspaceName (which is not active anymore now)
-     *
-     * @var ContentStreamIdentifier
      */
-    private $previousSourceContentStreamIdentifier;
+    private ContentStreamIdentifier $previousSourceContentStreamIdentifier;
 
-    /**
-     * WorkspaceWasPublished constructor.
-     * @param WorkspaceName $sourceWorkspaceName
-     * @param WorkspaceName $targetWorkspaceName
-     * @param ContentStreamIdentifier $newSourceContentStreamIdentifier
-     * @param ContentStreamIdentifier $previousSourceContentStreamIdentifier
-     */
-    public function __construct(WorkspaceName $sourceWorkspaceName, WorkspaceName $targetWorkspaceName, ContentStreamIdentifier $newSourceContentStreamIdentifier, ContentStreamIdentifier $previousSourceContentStreamIdentifier)
-    {
+    private UserIdentifier $initiatingUserIdentifier;
+
+    public function __construct(
+        WorkspaceName $sourceWorkspaceName,
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamIdentifier $newSourceContentStreamIdentifier,
+        ContentStreamIdentifier $previousSourceContentStreamIdentifier,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->sourceWorkspaceName = $sourceWorkspaceName;
         $this->targetWorkspaceName = $targetWorkspaceName;
         $this->newSourceContentStreamIdentifier = $newSourceContentStreamIdentifier;
         $this->previousSourceContentStreamIdentifier = $previousSourceContentStreamIdentifier;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-
-    /**
-     * @return WorkspaceName
-     */
     public function getSourceWorkspaceName(): WorkspaceName
     {
         return $this->sourceWorkspaceName;
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getTargetWorkspaceName(): WorkspaceName
     {
         return $this->targetWorkspaceName;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getNewSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->newSourceContentStreamIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getPreviousSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->previousSourceContentStreamIdentifier;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 }

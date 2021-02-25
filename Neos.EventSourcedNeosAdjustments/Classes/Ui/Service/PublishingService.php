@@ -24,9 +24,12 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Service\UserService;
 
 /**
  * A generic ContentRepository Publishing Service
@@ -36,7 +39,6 @@ use Neos\ContentRepository\Domain\Model\Workspace;
  */
 class PublishingService
 {
-
     /**
      * @Flow\Inject
      * @var ContentDimensionPresetSourceInterface
@@ -60,6 +62,18 @@ class PublishingService
      * @var ChangeFinder
      */
     protected $changeFinder;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
 
     /**
      * Returns a list of nodes contained in the given workspace which are not yet published
@@ -117,6 +131,7 @@ class PublishingService
      */
     public function publishWorkspace(WorkspaceName $workspaceName)
     {
+        $userIdentifier = $this->getCurrentUserIdentifier();
         $command = new RebaseWorkspace(
             $workspaceName
         );
@@ -124,9 +139,16 @@ class PublishingService
         // TODO: only rebase if necessary!
         $this->workspaceCommandHandler->handleRebaseWorkspace($command)->blockUntilProjectionsAreUpToDate();
 
-        $command = new PublishWorkspace(
-            $workspaceName
+        $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace(
+            $workspaceName,
+            $userIdentifier
+        ))->blockUntilProjectionsAreUpToDate();
+    }
+
+    private function getCurrentUserIdentifier(): UserIdentifier
+    {
+        return UserIdentifier::fromString(
+            $this->persistenceManager->getIdentifierByObject($this->userService->getBackendUser())
         );
-        $this->workspaceCommandHandler->handlePublishWorkspace($command)->blockUntilProjectionsAreUpToDate();
     }
 }

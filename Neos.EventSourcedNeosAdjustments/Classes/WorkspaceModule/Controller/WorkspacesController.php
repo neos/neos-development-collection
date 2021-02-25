@@ -465,7 +465,7 @@ class WorkspacesController extends AbstractModuleController
         $workspace = $this->workspaceFinder->findOneByName($workspace);
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
 
-        $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
+        $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace($workspace->getWorkspaceName(), $this->getCurrentUserIdentifier()))->blockUntilProjectionsAreUpToDate();
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getWorkspaceName()->getName()), htmlspecialchars($baseWorkspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
