@@ -32,22 +32,16 @@ final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherCo
 
     /**
      * Node aggregate identifier of the node the user intends to enable
-     *
-     * @var NodeAggregateIdentifier
      */
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * The covered dimension space points of the node aggregate in which the user intends to enable it
-     *
-     * @var DimensionSpacePoint
      */
     private DimensionSpacePoint $coveredDimensionSpacePoint;
 
     /**
      * The strategy the user chose to determine which specialization variants will also be disabled
-     *
-     * @var NodeVariantSelectionStrategyIdentifier
      */
     private NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy;
 

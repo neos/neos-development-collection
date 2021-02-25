@@ -32,22 +32,16 @@ final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherC
 
     /**
      * Node aggregate identifier of the node the user intends to disable
-     *
-     * @var NodeAggregateIdentifier
      */
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * One of the dimension space points covered by the node aggregate in which the user intends to disable it
-     *
-     * @var DimensionSpacePoint
      */
     private DimensionSpacePoint $coveredDimensionSpacePoint;
 
     /**
      * The strategy the user chose to determine which specialization variants will also be disabled
-     *
-     * @var NodeVariantSelectionStrategyIdentifier
      */
     private NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy;
 

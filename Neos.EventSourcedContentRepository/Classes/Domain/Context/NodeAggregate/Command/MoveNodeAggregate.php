@@ -44,23 +44,17 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
 {
     /**
      * The content stream in which the move operation is to be performed
-     *
-     * @var ContentStreamIdentifier
      */
     private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * This is one of the *covered* dimension space points of the node aggregate and not necessarily one of the occupied ones.
      * This allows us to move virtual specializations only when using the scatter strategy.
-     *
-     * @var DimensionSpacePoint
      */
     private DimensionSpacePoint $dimensionSpacePoint;
 
     /**
      * The node aggregate to be moved
-     *
-     * @var NodeAggregateIdentifier
      */
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
@@ -68,8 +62,6 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
      * This is the identifier of the new parent node aggregate.
      * If given, it enforces that all nodes in the given aggregate are moved into nodes of the parent aggregate,
      * even if the given siblings belong to other parents. In latter case, those siblings are ignored.
-     *
-     * @var NodeAggregateIdentifier|null
      */
     private ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier;
 
@@ -77,8 +69,6 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
      * This is the identifier of the new preceding sibling node aggregate.
      * If given and no successor found, it is attempted to insert the moved nodes right after nodes of this aggregate.
      * In dimension space points this aggregate does not cover, other siblings, in order of proximity, are tried to be used instead.
-     *
-     * @var NodeAggregateIdentifier|null
      */
     private ?NodeAggregateIdentifier $newPrecedingSiblingNodeAggregateIdentifier;
 
@@ -86,15 +76,11 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
      * This is the identifier of the new succeeding sibling node aggregate.
      * If given, it is attempted to insert the moved nodes right before nodes of this aggregate.
      * In dimension space points this aggregate does not cover, the preceding sibling is tried to be used instead.
-     *
-     * @var NodeAggregateIdentifier|null
      */
     private ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier;
 
     /**
      * The relation distribution strategy to be used
-     *
-     * @var RelationDistributionStrategy
      */
     private RelationDistributionStrategy $relationDistributionStrategy;
 

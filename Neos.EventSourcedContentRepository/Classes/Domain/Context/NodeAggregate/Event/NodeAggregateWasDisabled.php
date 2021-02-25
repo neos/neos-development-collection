@@ -28,22 +28,16 @@ final class NodeAggregateWasDisabled implements DomainEventInterface, Publishabl
 {
     /**
      * The identifier of the content stream the node aggregate was disabled in
-     *
-     * @var ContentStreamIdentifier
      */
     private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * The identifier of the node Aagregate that was disabled
-     *
-     * @var NodeAggregateIdentifier
      */
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * The dimension space points the node aggregate was disabled in
-     *
-     * @var DimensionSpacePointSet
      */
     private DimensionSpacePointSet $affectedDimensionSpacePoints;
 
