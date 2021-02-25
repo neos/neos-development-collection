@@ -220,7 +220,8 @@ class BackendServiceController extends ActionController
             }
             $command = new PublishIndividualNodesFromWorkspace(
                 $workspaceName,
-                $nodeAddresses
+                $nodeAddresses,
+                $this->getCurrentUserIdentifier()
             );
             $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
 

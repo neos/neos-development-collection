@@ -632,7 +632,8 @@ final class WorkspaceCommandHandler
                     $command->getWorkspaceName(),
                     $workspace->getBaseWorkspaceName(),
                     $remainingContentStream,
-                    $workspace->getCurrentContentStreamIdentifier()
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
             )
@@ -647,7 +648,7 @@ final class WorkspaceCommandHandler
     /**
      * This method is like a Rebase while dropping some modifications!
      *
-     * @param Command\PublishIndividualNodesFromWorkspace $command
+     * @param Command\DiscardIndividualNodesFromWorkspace $command
      * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
      * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
