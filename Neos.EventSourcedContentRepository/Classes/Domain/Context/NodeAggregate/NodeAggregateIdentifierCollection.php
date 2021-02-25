@@ -13,9 +13,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * An immutable collection of NodeAggregateIdentifiers
+ *
+ * @Flow\Proxy(false)
  */
 final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \JsonSerializable
 {

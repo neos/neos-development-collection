@@ -14,9 +14,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Comman
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * ForkContentStream for creating a new fork of a content stream.
+ *
+ * @Flow\Proxy(false)
  */
 final class ForkContentStream
 {

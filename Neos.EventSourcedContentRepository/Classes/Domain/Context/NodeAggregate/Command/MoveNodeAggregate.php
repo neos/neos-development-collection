@@ -20,6 +20,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDist
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\RelationDistributionStrategyIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The "Move node aggregate" command
@@ -36,6 +37,8 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  * Why can you specify **both** newPrecedingSiblingNodeAggregateIdentifier and newSucceedingSiblingNodeAggregateIdentifier?
  * - it can happen that in one subgraph, only one of these match.
  * - See the PHPDoc of the attributes (a few lines down) for the exact behavior.
+ *
+ * @Flow\Proxy(false)
  */
 final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {

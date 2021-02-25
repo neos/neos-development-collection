@@ -14,9 +14,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
 
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Publish a workspace
+ *
+ * @Flow\Proxy(false)
  */
 final class PublishWorkspace
 {

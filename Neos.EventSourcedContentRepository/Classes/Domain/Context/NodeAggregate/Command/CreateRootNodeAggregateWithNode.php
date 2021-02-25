@@ -17,12 +17,15 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Create root node aggregate with node command
  *
  * A root node has no variants and no origin dimension space point but occupies the whole allowed dimension subspace.
  * It also has no tethered child nodes.
+ *
+ * @Flow\Proxy(false)
  */
 final class CreateRootNodeAggregateWithNode implements \JsonSerializable, RebasableToOtherContentStreamsInterface
 {

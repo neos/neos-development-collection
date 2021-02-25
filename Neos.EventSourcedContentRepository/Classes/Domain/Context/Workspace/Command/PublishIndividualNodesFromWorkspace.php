@@ -19,9 +19,12 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Publish a set of nodes in a workspace
+ *
+ * @Flow\Proxy(false)
  */
 final class PublishIndividualNodesFromWorkspace
 {

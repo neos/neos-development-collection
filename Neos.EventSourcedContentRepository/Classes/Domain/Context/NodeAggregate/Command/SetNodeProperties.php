@@ -18,6 +18,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonSetNodePropertiesTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Set property values for a given node.
@@ -27,6 +28,8 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  *
  * Internally, this object is converted into a {@see SetSerializedNodeProperties} command, which is
  * then processed and stored.
+ *
+ * @Flow\Proxy(false)
  */
 final class SetNodeProperties
 {

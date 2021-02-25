@@ -16,11 +16,14 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Create a variant of a node in a content stream
  *
  * Copy a node to another dimension space point respecting further variation mechanisms
+ *
+ * @Flow\Proxy(false)
  */
 final class CreateNodeVariant implements \JsonSerializable
 {

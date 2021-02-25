@@ -17,9 +17,12 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Create a new workspace, based on an existing baseWorkspace
+ *
+ * @Flow\Proxy(false)
  */
 final class CreateWorkspace
 {
