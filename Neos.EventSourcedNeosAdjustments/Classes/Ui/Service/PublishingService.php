@@ -76,6 +76,12 @@ class PublishingService
     protected $userService;
 
     /**
+     * @Flow\Inject
+     * @var WorkspaceCommandHandler
+     */
+    protected $workspaceCommandHandler;
+
+    /**
      * Returns a list of nodes contained in the given workspace which are not yet published
      *
      * @param WorkspaceName $workspaceName
@@ -119,36 +125,21 @@ class PublishingService
         return $this->changeFinder->countByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
     }
 
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceCommandHandler
-     */
-    protected $workspaceCommandHandler;
-
-    /**
-     * @param WorkspaceName $workspaceName
-     */
-    public function publishWorkspace(WorkspaceName $workspaceName)
+    public function publishWorkspace(WorkspaceName $workspaceName): void
     {
-        $userIdentifier = $this->getCurrentUserIdentifier();
-        $command = new RebaseWorkspace(
-            $workspaceName
+        $userIdentifier = UserIdentifier::fromString(
+            $this->persistenceManager->getIdentifierByObject($this->userService->getBackendUser())
         );
 
         // TODO: only rebase if necessary!
-        $this->workspaceCommandHandler->handleRebaseWorkspace($command)->blockUntilProjectionsAreUpToDate();
+        $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
+            $workspaceName,
+            $userIdentifier
+        ))->blockUntilProjectionsAreUpToDate();
 
         $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace(
             $workspaceName,
             $userIdentifier
         ))->blockUntilProjectionsAreUpToDate();
-    }
-
-    private function getCurrentUserIdentifier(): UserIdentifier
-    {
-        return UserIdentifier::fromString(
-            $this->persistenceManager->getIdentifierByObject($this->userService->getBackendUser())
-        );
     }
 }

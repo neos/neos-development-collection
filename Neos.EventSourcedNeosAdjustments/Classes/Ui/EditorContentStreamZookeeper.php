@@ -100,10 +100,10 @@ final class EditorContentStreamZookeeper
                 $workspaceName = \Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName::fromAccountIdentifier($token->getAccount()->getAccountIdentifier());
                 $workspace = $this->workspaceFinder->findOneByName($workspaceName->toContentRepositoryWorkspaceName());
 
+                $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
                 if (!$workspace) {
                     // @todo: find base workspace for user
                     $baseWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
-                    $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
                     $editorsNewContentStreamIdentifier = ContentStreamIdentifier::create();
                     $similarlyNamedWorkspaces = $this->workspaceFinder->findByPrefix($workspaceName->toContentRepositoryWorkspaceName());
                     if (!empty($similarlyNamedWorkspaces)) {
@@ -121,7 +121,8 @@ final class EditorContentStreamZookeeper
                     ))->blockUntilProjectionsAreUpToDate();
                 } else {
                     $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
-                        $workspace->getWorkspaceName()
+                        $workspace->getWorkspaceName(),
+                        $userIdentifier
                     ))->blockUntilProjectionsAreUpToDate();
                 }
             }

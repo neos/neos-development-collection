@@ -436,7 +436,8 @@ final class WorkspaceCommandHandler
                     new WorkspaceWasRebased(
                         $command->getWorkspaceName(),
                         $rebasedContentStream,
-                        $workspace->getCurrentContentStreamIdentifier()
+                        $workspace->getCurrentContentStreamIdentifier(),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )
@@ -453,6 +454,7 @@ final class WorkspaceCommandHandler
                         $command->getWorkspaceName(),
                         $rebasedContentStream,
                         $workspace->getCurrentContentStreamIdentifier(),
+                        $command->getInitiatingUserIdentifier(),
                         $rebaseStatistics->getErrors()
                     ),
                     Uuid::uuid4()->toString()
