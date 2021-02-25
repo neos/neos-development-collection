@@ -529,7 +529,7 @@ class BackendServiceController extends ActionController
         return json_encode($result);
     }
 
-    private function getCurrentUserIdentifier(): UserIdentifier
+    protected function getCurrentUserIdentifier(): UserIdentifier
     {
         return UserIdentifier::fromString(
             $this->persistenceManager->getIdentifierByObject($this->userService->getBackendUser())
