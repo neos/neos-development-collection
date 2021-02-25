@@ -846,6 +846,9 @@ trait EventSourcedTrait
     public function theCommandDiscardWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = DiscardWorkspace::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()

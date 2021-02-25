@@ -477,10 +477,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function discardWorkspaceAction(WorkspaceName $workspace)
     {
-        $workspace = $this->workspaceFinder->findOneByName($workspace);
-        $this->workspaceCommandHandler->handleDiscardWorkspace(new DiscardWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
+        $this->workspaceCommandHandler->handleDiscardWorkspace(new DiscardWorkspace($workspace, $this->getCurrentUserIdentifier()))->blockUntilProjectionsAreUpToDate();
 
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
 
@@ -794,5 +793,12 @@ class WorkspacesController extends AbstractModuleController
         }
 
         return $ownerOptions;
+    }
+
+    private function getCurrentUserIdentifier(): UserIdentifier
+    {
+        return UserIdentifier::fromString(
+            $this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser())
+        );
     }
 }

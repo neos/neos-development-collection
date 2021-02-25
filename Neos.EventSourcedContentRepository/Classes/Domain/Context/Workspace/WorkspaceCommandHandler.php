@@ -770,7 +770,8 @@ final class WorkspaceCommandHandler
                 new WorkspaceWasDiscarded(
                     $command->getWorkspaceName(),
                     $newContentStream,
-                    $workspace->getCurrentContentStreamIdentifier()
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
             )

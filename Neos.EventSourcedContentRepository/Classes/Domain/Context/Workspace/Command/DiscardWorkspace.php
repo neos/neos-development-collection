@@ -32,7 +32,7 @@ final class DiscardWorkspace
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             new WorkspaceName($array['workspaceName']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
         );
