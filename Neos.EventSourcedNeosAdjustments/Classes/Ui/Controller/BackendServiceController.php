@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishI
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
@@ -256,7 +257,8 @@ class BackendServiceController extends ActionController
             }
             $command = new DiscardIndividualNodesFromWorkspace(
                 $workspaceName,
-                $nodeAddresses
+                $nodeAddresses,
+                $this->getCurrentUserIdentifier()
             );
             $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
 
@@ -524,5 +526,12 @@ class BackendServiceController extends ActionController
         }
 
         return json_encode($result);
+    }
+
+    private function getCurrentUserIdentifier(): UserIdentifier
+    {
+        return UserIdentifier::fromString(
+            $this->persistenceManager->getIdentifierByObject($this->userService->getBackendUser())
+        );
     }
 }

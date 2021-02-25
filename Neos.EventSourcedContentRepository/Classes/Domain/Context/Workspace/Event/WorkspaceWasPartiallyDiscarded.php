@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -23,66 +24,56 @@ use Neos\Flow\Annotations as Flow;
  */
 class WorkspaceWasPartiallyDiscarded implements DomainEventInterface
 {
-    /**
-     * @var WorkspaceName
-     */
-    private $workspaceName;
+    private WorkspaceName $workspaceName;
 
     /**
      * The new content stream; containing the data which we want to keep
-     *
-     * @var ContentStreamIdentifier
      */
-    private $newContentStreamIdentifier;
+    private ContentStreamIdentifier $newContentStreamIdentifier;
 
     /**
      * The old content stream, which contains ALL the data (discarded and non-discarded)
-     *
-     * @var ContentStreamIdentifier
      */
-    private $previousContentStreamIdentifier;
+    private ContentStreamIdentifier $previousContentStreamIdentifier;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     /**
      * TODO build
      *
-     * @var NodeAddress[]
+     * @var array|NodeAddress[]
      */
-    private $discardedNodeAddresses;
+    private array $discardedNodeAddresses;
 
-    /**
-     * WorkspaceWasDiscarded constructor.
-     * @param WorkspaceName $workspaceName
-     * @param ContentStreamIdentifier $newContentStreamIdentifier
-     * @param ContentStreamIdentifier $previousContentStreamIdentifier
-     */
-    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $newContentStreamIdentifier, ContentStreamIdentifier $previousContentStreamIdentifier)
-    {
+    public function __construct(
+        WorkspaceName $workspaceName,
+        ContentStreamIdentifier $newContentStreamIdentifier,
+        ContentStreamIdentifier $previousContentStreamIdentifier,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->workspaceName = $workspaceName;
         $this->newContentStreamIdentifier = $newContentStreamIdentifier;
         $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getNewContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->newContentStreamIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getPreviousContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->previousContentStreamIdentifier;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 }

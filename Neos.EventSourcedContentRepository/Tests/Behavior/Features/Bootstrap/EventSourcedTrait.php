@@ -886,6 +886,9 @@ trait EventSourcedTrait
     public function theCommandDiscardIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = DiscardIndividualNodesFromWorkspace::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
