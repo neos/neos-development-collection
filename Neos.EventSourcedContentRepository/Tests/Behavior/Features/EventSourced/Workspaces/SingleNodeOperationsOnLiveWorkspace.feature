@@ -44,6 +44,7 @@ Feature: Single Node operations on live workspace
       | nodeAggregateIdentifier   | "nody-mc-nodeface" |
       | originDimensionSpacePoint | {}                 |
       | propertyValues            | {"text": "Hello"}  |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 3 is of type "Neos.EventSourcedContentRepository:NodePropertiesWereSet" with payload:
@@ -52,6 +53,7 @@ Feature: Single Node operations on live workspace
       | nodeAggregateIdentifier   | "nody-mc-nodeface" |
       | originDimensionSpacePoint | []                 |
       | propertyValues.text.value | "Hello"            |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
 
     When the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and Dimension Space Point {}

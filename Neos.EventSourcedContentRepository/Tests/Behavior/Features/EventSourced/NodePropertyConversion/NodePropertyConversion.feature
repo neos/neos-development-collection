@@ -69,6 +69,7 @@ Feature: Node Property Conversion
       | nodeAggregateIdentifier     | "nody-mc-nodeface"          |
       | originDimensionSpacePoint   | {}                          |
       | propertyValues.dateProperty | "1997-07-19T19:20:30+05:00" |
+      | initiatingUserIdentifier    | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}

@@ -45,6 +45,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
@@ -62,6 +63,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
     # now, we have one unused content stream (the old content stream of the user-test workspace)
 
@@ -85,6 +87,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
     # now, we have one unused content stream (the old content stream of the user-test workspace)
 
@@ -116,6 +119,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "review" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I prune unused content streams

@@ -74,11 +74,13 @@ Feature: Rebasing auto-created nodes works
       | nodeAggregateIdentifier   | $this->currentNodeAggregateIdentifier          |
       | originDimensionSpacePoint | {}                                             |
       | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
     # This should properly work; no error.
 
