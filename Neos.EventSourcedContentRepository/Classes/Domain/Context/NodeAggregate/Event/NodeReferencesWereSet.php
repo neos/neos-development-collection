@@ -72,6 +72,11 @@ final class NodeReferencesWereSet implements DomainEventInterface, PublishableTo
         return $this->referenceName;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeReferencesWereSet(

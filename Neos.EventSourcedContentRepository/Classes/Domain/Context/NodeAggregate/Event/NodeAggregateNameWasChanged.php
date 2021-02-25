@@ -59,6 +59,11 @@ final class NodeAggregateNameWasChanged implements DomainEventInterface, Publish
         return $this->newNodeName;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeAggregateNameWasChanged(

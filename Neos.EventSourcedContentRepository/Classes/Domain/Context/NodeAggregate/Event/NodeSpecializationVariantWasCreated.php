@@ -80,6 +80,11 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
         return $this->specializationCoverage;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeSpecializationVariantWasCreated
     {
         return new NodeSpecializationVariantWasCreated(
