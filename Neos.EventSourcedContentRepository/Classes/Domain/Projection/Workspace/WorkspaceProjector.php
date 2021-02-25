@@ -33,9 +33,6 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';
 
-    /**
-     * @param WorkspaceWasCreated $event
-     */
     public function whenWorkspaceWasCreated(WorkspaceWasCreated $event)
     {
         $this->getDatabaseConnection()->insert(self::TABLE_NAME, [
@@ -49,9 +46,6 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         ]);
     }
 
-    /**
-     * @param RootWorkspaceWasCreated $event
-     */
     public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event)
     {
         $this->getDatabaseConnection()->insert(self::TABLE_NAME, [

@@ -23,55 +23,32 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
  */
 final class CreateWorkspace
 {
-    /**
-     * @var WorkspaceName
-     */
-    private $workspaceName;
+    private WorkspaceName $workspaceName;
 
-    /**
-     * @var WorkspaceName
-     */
-    private $baseWorkspaceName;
+    private WorkspaceName $baseWorkspaceName;
 
-    /**
-     * @var WorkspaceTitle
-     */
-    private $workspaceTitle;
+    private WorkspaceTitle $workspaceTitle;
 
-    /**
-     * @var WorkspaceDescription
-     */
-    private $workspaceDescription;
+    private WorkspaceDescription $workspaceDescription;
 
-    /**
-     * @var UserIdentifier
-     */
-    private $initiatingUserIdentifier;
+    private UserIdentifier $initiatingUserIdentifier;
 
     /**
      * the content stream identifier for the content stream which is created together with the to-be-created workspace
-     * @var ContentStreamIdentifier
      */
-    private $newContentStreamIdentifier;
+    private ContentStreamIdentifier $newContentStreamIdentifier;
 
-    /**
-     * @var UserIdentifier
-     */
-    private $workspaceOwner;
+    private ?UserIdentifier $workspaceOwner;
 
-    /**
-     * CreateWorkspace constructor.
-     *
-     * @param WorkspaceName $workspaceName
-     * @param WorkspaceName $baseWorkspaceName
-     * @param WorkspaceTitle $workspaceTitle
-     * @param WorkspaceDescription $workspaceDescription
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @param ContentStreamIdentifier $newContentStreamIdentifier
-     * @param UserIdentifier $workspaceOwner
-     */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier = null, UserIdentifier $workspaceOwner = null)
-    {
+    public function __construct(
+        WorkspaceName $workspaceName,
+        WorkspaceName $baseWorkspaceName,
+        WorkspaceTitle $workspaceTitle,
+        WorkspaceDescription $workspaceDescription,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $newContentStreamIdentifier = null,
+        UserIdentifier $workspaceOwner = null
+    ) {
         $this->workspaceName = $workspaceName;
         $this->baseWorkspaceName = $baseWorkspaceName;
         $this->workspaceTitle = $workspaceTitle;
@@ -94,59 +71,37 @@ final class CreateWorkspace
         );
     }
 
-
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getBaseWorkspaceName()
     {
         return $this->baseWorkspaceName;
     }
 
-    /**
-     * @return WorkspaceTitle
-     */
     public function getWorkspaceTitle(): WorkspaceTitle
     {
         return $this->workspaceTitle;
     }
 
-    /**
-     * @return WorkspaceDescription
-     */
     public function getWorkspaceDescription(): WorkspaceDescription
     {
         return $this->workspaceDescription;
     }
 
-    /**
-     * @return UserIdentifier
-     */
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getNewContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->newContentStreamIdentifier;
     }
 
-    /**
-     * @return UserIdentifier|null
-     */
-    public function getWorkspaceOwner()
+    public function getWorkspaceOwner(): ?UserIdentifier
     {
         return $this->workspaceOwner;
     }
