@@ -25,42 +25,23 @@ use Neos\Flow\Annotations as Flow;
  */
 class RootWorkspaceWasCreated implements DomainEventInterface
 {
-    /**
-     * @var WorkspaceName
-     */
-    private $workspaceName;
+    private WorkspaceName $workspaceName;
 
-    /**
-     * @var WorkspaceTitle
-     */
-    private $workspaceTitle;
+    private WorkspaceTitle $workspaceTitle;
 
-    /**
-     * @var WorkspaceDescription
-     */
-    private $workspaceDescription;
+    private WorkspaceDescription $workspaceDescription;
 
-    /**
-     * @var UserIdentifier
-     */
-    private $initiatingUserIdentifier;
+    private UserIdentifier $initiatingUserIdentifier;
 
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $newContentStreamIdentifier;
+    private ContentStreamIdentifier $newContentStreamIdentifier;
 
-    /**
-     * RootWorkspaceWasCreated constructor.
-     *
-     * @param WorkspaceName $workspaceName
-     * @param WorkspaceTitle $workspaceTitle
-     * @param WorkspaceDescription $workspaceDescription
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @param ContentStreamIdentifier $newContentStreamIdentifier
-     */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier)
-    {
+    public function __construct(
+        WorkspaceName $workspaceName,
+        WorkspaceTitle $workspaceTitle,
+        WorkspaceDescription $workspaceDescription,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $newContentStreamIdentifier
+    ) {
         $this->workspaceName = $workspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
@@ -68,41 +49,26 @@ class RootWorkspaceWasCreated implements DomainEventInterface
         $this->newContentStreamIdentifier = $newContentStreamIdentifier;
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
     }
 
-    /**
-     * @return WorkspaceTitle
-     */
     public function getWorkspaceTitle(): WorkspaceTitle
     {
         return $this->workspaceTitle;
     }
 
-    /**
-     * @return WorkspaceDescription
-     */
     public function getWorkspaceDescription(): WorkspaceDescription
     {
         return $this->workspaceDescription;
     }
 
-    /**
-     * @return UserIdentifier
-     */
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getNewContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->newContentStreamIdentifier;

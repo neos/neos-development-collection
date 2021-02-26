@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -42,12 +43,14 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        SerializedPropertyValues $propertyValues
+        SerializedPropertyValues $propertyValues,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->propertyValues = $propertyValues;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
@@ -56,7 +59,8 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
-            SerializedPropertyValues::fromArray($array['propertyValues'])
+            SerializedPropertyValues::fromArray($array['propertyValues']),
+            UserIdentifier::fromString($array['$initiatingUserIdentifier'])
         );
     }
 
@@ -79,6 +83,7 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
             'propertyValues' => $this->propertyValues,
+            '$initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 
@@ -88,7 +93,8 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
-            $this->propertyValues
+            $this->propertyValues,
+            $this->initiatingUserIdentifier
         );
     }
 

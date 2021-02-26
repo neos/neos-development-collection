@@ -16,6 +16,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetS
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
  * Helper which contains common fields for {@see SetNodeProperties}
@@ -28,6 +29,8 @@ trait CommonSetNodePropertiesTrait
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     private OriginDimensionSpacePoint $originDimensionSpacePoint;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     /**
      * @return ContentStreamIdentifier
@@ -54,5 +57,14 @@ trait CommonSetNodePropertiesTrait
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
+    }
+
+    /**
+     * @return UserIdentifier
+     * @internal
+     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 }

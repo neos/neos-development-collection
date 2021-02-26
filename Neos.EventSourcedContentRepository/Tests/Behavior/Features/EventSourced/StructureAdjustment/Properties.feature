@@ -106,6 +106,7 @@ Feature: Properties
       | nodeAggregateIdentifier   | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {}                       |
       | propertyValues            | {"otherProp": ""}        |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
@@ -126,6 +127,7 @@ Feature: Properties
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                    |
       | originDimensionSpacePoint | {}                                                                          |
       | propertyValues            | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                        | nodeAggregateIdentifier |

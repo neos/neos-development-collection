@@ -151,7 +151,8 @@ trait NodeMove
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $nodeMoveMappings,
-                        !$command->getNewParentNodeAggregateIdentifier() && !$command->getNewSucceedingSiblingNodeAggregateIdentifier() && !$command->getNewPrecedingSiblingNodeAggregateIdentifier() ? $affectedDimensionSpacePoints : new DimensionSpacePointSet([])
+                        !$command->getNewParentNodeAggregateIdentifier() && !$command->getNewSucceedingSiblingNodeAggregateIdentifier() && !$command->getNewPrecedingSiblingNodeAggregateIdentifier() ? $affectedDimensionSpacePoints : new DimensionSpacePointSet([]),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

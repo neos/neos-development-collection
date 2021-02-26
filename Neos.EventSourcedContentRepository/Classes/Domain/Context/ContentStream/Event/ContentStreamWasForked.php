@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -21,58 +22,46 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ContentStreamWasForked implements DomainEventInterface
 {
-
     /**
      * Content stream identifier for the new content stream
-     *
-     * @var ContentStreamIdentifier
      */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $sourceContentStreamIdentifier;
+    private ContentStreamIdentifier $sourceContentStreamIdentifier;
 
-    /**
-     * @var integer
-     */
-    private $versionOfSourceContentStream;
+    private int $versionOfSourceContentStream;
 
-    /**
-     * ContentStreamWasForked constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param ContentStreamIdentifier $sourceContentStreamIdentifier
-     * @param int $versionOfSourceContentStream
-     */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, ContentStreamIdentifier $sourceContentStreamIdentifier, int $versionOfSourceContentStream)
-    {
+    private UserIdentifier $initiatingUserIdentifier;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamIdentifier $sourceContentStreamIdentifier,
+        int $versionOfSourceContentStream,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->sourceContentStreamIdentifier = $sourceContentStreamIdentifier;
         $this->versionOfSourceContentStream = $versionOfSourceContentStream;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->sourceContentStreamIdentifier;
     }
 
-    /**
-     * @return int
-     */
     public function getVersionOfSourceContentStream(): int
     {
         return $this->versionOfSourceContentStream;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 }

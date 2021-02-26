@@ -88,6 +88,7 @@ Feature: Remove NodeAggregate
       | Key                           | Value                |
       | contentStreamIdentifier       | "user-cs-identifier" |
       | sourceContentStreamIdentifier | "live-cs-identifier" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When the command RemoveNodeAggregate is executed with payload:

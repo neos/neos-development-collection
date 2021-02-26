@@ -17,10 +17,13 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\NodeCreated;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Service\UserService;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 
 abstract class AbstractChange implements ChangeInterface
@@ -47,6 +50,18 @@ abstract class AbstractChange implements ChangeInterface
      * @var ContentGraphInterface
      */
     protected $contentGraph;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
 
     /**
@@ -116,5 +131,12 @@ abstract class AbstractChange implements ChangeInterface
         $nodeCreated = new NodeCreated();
         $nodeCreated->setNode($node);
         $this->feedbackCollection->add($nodeCreated);
+    }
+
+    final protected function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        $user = $this->userService->getBackendUser();
+
+        return UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
     }
 }

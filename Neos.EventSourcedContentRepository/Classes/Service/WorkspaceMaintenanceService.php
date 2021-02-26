@@ -6,8 +6,10 @@ namespace Neos\EventSourcedContentRepository\Service;
 use Doctrine\DBAL\Connection;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
@@ -16,33 +18,14 @@ use Neos\Flow\Annotations as Flow;
  */
 class WorkspaceMaintenanceService
 {
+    protected WorkspaceFinder $workspaceFinder;
 
-    /**
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
+    protected WorkspaceCommandHandler $workspaceCommandHandler;
 
-    /**
-     * @var WorkspaceCommandHandler
-     */
-    protected $workspaceCommandHandler;
+    protected Connection $connection;
 
-    /**
-     * @var Connection
-     */
-    protected $connection;
+    protected ?CommandResult $lastCommandResult;
 
-    /**
-     * @var ?CommandResult
-     */
-    protected $lastCommandResult;
-
-    /**
-     * ContentStreamPruner constructor.
-     * @param WorkspaceFinder $workspaceFinder
-     * @param WorkspaceCommandHandler $workspaceCommandHandler
-     * @param DbalClient $dbalClient
-     */
     public function __construct(WorkspaceFinder $workspaceFinder, WorkspaceCommandHandler $workspaceCommandHandler, DbalClient $dbalClient)
     {
         $this->workspaceFinder = $workspaceFinder;
@@ -58,14 +41,17 @@ class WorkspaceMaintenanceService
      *
      *       To remove the deleted Content Streams, call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
      *
-     * @return WorkspaceName[] the removed content streams
+     * @return array|Workspace[] the removed content streams
      */
     public function rebaseOutdatedWorkspaces(): array
     {
         $outdatedWorkspaces = $this->workspaceFinder->findOutdated();
 
         foreach ($outdatedWorkspaces as $workspace) {
-            $this->lastCommandResult = $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace($workspace));
+            $this->lastCommandResult = $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
+                $workspace->getWorkspaceName(),
+                UserIdentifier::forSystemUser()
+            ));
         }
 
         return $outdatedWorkspaces;

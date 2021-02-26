@@ -76,7 +76,8 @@ class Remove extends AbstractChange
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getDimensionSpacePoint(),
-                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                $this->getInitiatingUserIdentifier()
             );
 
             $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();

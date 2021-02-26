@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -35,83 +36,73 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
      *
      * @var ContentStreamIdentifier
      */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * The origin dimension space point the node aggregate and its node were created in
      *
      * @var OriginDimensionSpacePoint
      */
-    private $originDimensionSpacePoint;
+    private OriginDimensionSpacePoint $originDimensionSpacePoint;
 
     /**
      * The dimension space points the node aggregate and its node cover
      *
      * @var DimensionSpacePointSet
      */
-    private $coveredDimensionSpacePoints;
+    private DimensionSpacePointSet $coveredDimensionSpacePoints;
 
     /**
      * The node aggregate's identifier
      *
      * @var NodeAggregateIdentifier
      */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * The node aggregate type's name
      *
      * @var NodeTypeName
      */
-    private $nodeTypeName;
+    private NodeTypeName $nodeTypeName;
 
     /**
      * The parent node aggregate's identifier
      *
      * @var NodeAggregateIdentifier
      */
-    private $parentNodeAggregateIdentifier;
+    private NodeAggregateIdentifier $parentNodeAggregateIdentifier;
 
     /**
      * The node aggregate's name
      *
-     * @var NodeName
+     * @var NodeName|null
      */
-    private $nodeName;
+    private ?NodeName $nodeName;
 
     /**
      * The node's initial property values
      *
      * @var SerializedPropertyValues
      */
-    private $initialPropertyValues;
+    private SerializedPropertyValues $initialPropertyValues;
 
     /**
      * The node aggregate's classification
      *
      * @var NodeAggregateClassification
      */
-    private $nodeAggregateClassification;
+    private NodeAggregateClassification $nodeAggregateClassification;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     /**
      * The node's succeeding sibling's node aggregate identifier
      *
-     * @var NodeAggregateIdentifier
+     * @var NodeAggregateIdentifier|null
      */
-    private $succeedingNodeAggregateIdentifier;
+    private ?NodeAggregateIdentifier $succeedingNodeAggregateIdentifier;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeName|null $nodeName
-     * @param SerializedPropertyValues $initialPropertyValues
-     * @param NodeAggregateClassification $nodeAggregateClassification
-     * @param NodeAggregateIdentifier|null $succeedingNodeAggregateIdentifier
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -122,7 +113,8 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
         ?NodeName $nodeName,
         SerializedPropertyValues $initialPropertyValues,
         NodeAggregateClassification $nodeAggregateClassification,
-        NodeAggregateIdentifier $succeedingNodeAggregateIdentifier = null
+        UserIdentifier $initiatingUserIdentifier,
+        ?NodeAggregateIdentifier $succeedingNodeAggregateIdentifier = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -133,6 +125,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
         $this->nodeName = $nodeName;
         $this->initialPropertyValues = $initialPropertyValues;
         $this->nodeAggregateClassification = $nodeAggregateClassification;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
         $this->succeedingNodeAggregateIdentifier = $succeedingNodeAggregateIdentifier;
     }
 
@@ -181,6 +174,11 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
         return $this->nodeAggregateClassification;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function getSucceedingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
     {
         return $this->succeedingNodeAggregateIdentifier;
@@ -198,6 +196,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Pub
             $this->nodeName,
             $this->initialPropertyValues,
             $this->nodeAggregateClassification,
+            $this->initiatingUserIdentifier,
             $this->succeedingNodeAggregateIdentifier
         );
     }

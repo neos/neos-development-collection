@@ -14,6 +14,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
@@ -87,7 +88,7 @@ class TetheredNodeAdjustments
                         yield StructureAdjustment::createForNode($node, StructureAdjustment::TETHERED_NODE_MISSING, 'The tethered child node "' . $tetheredNodeName . '" is missing.', function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
                             $this->readSideMemoryCacheManager->disableCache();
 
-                            $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType);
+                            $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType, UserIdentifier::forSystemUser());
 
                             $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
                             $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
@@ -215,7 +216,8 @@ class TetheredNodeAdjustments
                                 ])
                             )
                         ]),
-                        new DimensionSpace\DimensionSpacePointSet([])
+                        new DimensionSpace\DimensionSpacePointSet([]),
+                        UserIdentifier::forSystemUser()
                     ),
                     Uuid::uuid4()->toString()
                 )

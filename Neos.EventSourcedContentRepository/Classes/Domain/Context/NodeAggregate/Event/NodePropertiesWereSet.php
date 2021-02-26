@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -32,82 +33,63 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodePropertiesWereSet implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $nodeAggregateIdentifier;
+    private OriginDimensionSpacePoint $originDimensionSpacePoint;
 
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    private $originDimensionSpacePoint;
+    private SerializedPropertyValues $propertyValues;
 
-    /**
-     * @var SerializedPropertyValues
-     */
-    private $propertyValues;
+    private UserIdentifier $initiatingUserIdentifier;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        SerializedPropertyValues $propertyValues
+        SerializedPropertyValues $propertyValues,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->propertyValues = $propertyValues;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return OriginDimensionSpacePoint
-     */
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
     }
 
-    /**
-     * @return SerializedPropertyValues
-     */
     public function getPropertyValues(): SerializedPropertyValues
     {
         return $this->propertyValues;
     }
 
-    /**
-     * @param ContentStreamIdentifier $targetContentStreamIdentifier
-     * @return NodePropertiesWereSet
-     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodePropertiesWereSet(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
-            $this->propertyValues
+            $this->propertyValues,
+            $this->initiatingUserIdentifier
         );
     }
 }

@@ -24,7 +24,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Exception\InvalidNodeCreationHandlerException;
@@ -158,7 +157,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
             $nodeAggregateIdentifier,
             $nodeTypeName,
             OriginDimensionSpacePoint::fromDimensionSpacePoint($parentNode->getDimensionSpacePoint()),
-            UserIdentifier::forSystemUser(), // TODO
+            $this->getInitiatingUserIdentifier(),
             $parentNode->getNodeAggregateIdentifier(),
             $succeedingSiblingNodeAggregateIdentifier,
             $nodeName

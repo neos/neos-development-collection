@@ -82,18 +82,21 @@ Feature: Publishing and discard individual nodes (basics)
       | nodeAggregateIdentifier   | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {}                       |
       | propertyValues            | {"text": "Modified t1"}  |
+      | initiatingUserIdentifier    | "initiating-user-identifier" |
     And the command "SetNodeProperties" is executed with payload:
       | Key                       | Value                   |
       | contentStreamIdentifier   | "user-cs-identifier"    |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"      |
       | originDimensionSpacePoint | {}                      |
       | propertyValues            | {"text": "Modified t2"} |
+      | initiatingUserIdentifier    | "initiating-user-identifier" |
     And the command "SetNodeProperties" is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "user-cs-identifier"         |
       | nodeAggregateIdentifier   | "sir-nodeward-nodington-iii" |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"image": "Modified image"}  |
+      | initiatingUserIdentifier    | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
   ################

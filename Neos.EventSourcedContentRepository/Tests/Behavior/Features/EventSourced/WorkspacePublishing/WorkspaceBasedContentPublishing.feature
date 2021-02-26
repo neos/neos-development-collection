@@ -50,6 +50,7 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Original"} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
@@ -81,6 +82,7 @@ Feature: Workspace based content publishing
       | Key                           | Expected             |
       | contentStreamIdentifier       | "user-cs-identifier" |
       | sourceContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
 
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:Workspace:user-test"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:WorkspaceWasCreated" with payload:
@@ -100,6 +102,7 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
@@ -118,6 +121,7 @@ Feature: Workspace based content publishing
     When the command "PublishWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
@@ -134,6 +138,7 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
       | originDimensionSpacePoint | {}                                     |
       | propertyValues            | {"text": "Modified in user workspace"} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
     And the command "SetNodeProperties" is executed with payload:
       | Key                       | Value                                  |
@@ -141,12 +146,14 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
       | originDimensionSpacePoint | {}                                     |
       | propertyValues            | {"text": "Modified in live workspace"} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     # PUBLISHING without rebase: error
     When the command "PublishWorkspace" is executed with payload and exceptions are caught:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
 
     Then the last command should have thrown an exception of type "BaseWorkspaceHasBeenModifiedInTheMeantime"
 
@@ -154,11 +161,13 @@ Feature: Workspace based content publishing
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     And the command "PublishWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
@@ -177,6 +186,7 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
 
     And the graph projection is fully up to date
 
@@ -184,6 +194,7 @@ Feature: Workspace based content publishing
     And the command "PublishWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
 
@@ -193,6 +204,7 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier   | "nody-mc-nodeface"             |
       | originDimensionSpacePoint | {}                             |
       | propertyValues            | {"text": "Modified anew"}      |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
 
     And the graph projection is fully up to date
 
@@ -200,6 +212,7 @@ Feature: Workspace based content publishing
     And the command "PublishWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
@@ -215,6 +228,7 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
@@ -227,6 +241,7 @@ Feature: Workspace based content publishing
     When the command DiscardWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
@@ -242,6 +257,7 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     And the command "SetNodeProperties" is executed with payload:
@@ -250,12 +266,14 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
       | originDimensionSpacePoint | {}                                     |
       | propertyValues            | {"text": "Modified in live workspace"} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     # Discarding
     When the command DiscardWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}

@@ -17,34 +17,25 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Create root node aggregate with node command
  *
  * A root node has no variants and no origin dimension space point but occupies the whole allowed dimension subspace.
  * It also has no tethered child nodes.
+ *
+ * @Flow\Proxy(false)
  */
 final class CreateRootNodeAggregateWithNode implements \JsonSerializable, RebasableToOtherContentStreamsInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var NodeTypeName
-     */
-    protected $nodeTypeName;
+    protected NodeTypeName $nodeTypeName;
 
-    /**
-     * @var UserIdentifier
-     */
-    private $initiatingUserIdentifier;
+    private UserIdentifier $initiatingUserIdentifier;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -68,9 +59,6 @@ final class CreateRootNodeAggregateWithNode implements \JsonSerializable, Rebasa
         );
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
@@ -103,7 +91,7 @@ final class CreateRootNodeAggregateWithNode implements \JsonSerializable, Rebasa
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new CreateRootNodeAggregateWithNode(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,

@@ -15,44 +15,40 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Create a variant of a node in a content stream
  *
  * Copy a node to another dimension space point respecting further variation mechanisms
+ *
+ * @Flow\Proxy(false)
  */
 final class CreateNodeVariant implements \JsonSerializable
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    private $sourceOrigin;
+    private OriginDimensionSpacePoint $sourceOrigin;
 
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    private $targetOrigin;
+    private OriginDimensionSpacePoint $targetOrigin;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
-        OriginDimensionSpacePoint $targetOrigin
+        OriginDimensionSpacePoint $targetOrigin,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceOrigin = $sourceOrigin;
         $this->targetOrigin = $targetOrigin;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
@@ -61,40 +57,34 @@ final class CreateNodeVariant implements \JsonSerializable
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new OriginDimensionSpacePoint($array['sourceOrigin']),
-            new OriginDimensionSpacePoint($array['targetOrigin'])
+            new OriginDimensionSpacePoint($array['targetOrigin']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return OriginDimensionSpacePoint
-     */
     public function getSourceOrigin(): OriginDimensionSpacePoint
     {
         return $this->sourceOrigin;
     }
 
-    /**
-     * @return OriginDimensionSpacePoint
-     */
     public function getTargetOrigin(): OriginDimensionSpacePoint
     {
         return $this->targetOrigin;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 
     public function jsonSerialize(): array
@@ -103,7 +93,8 @@ final class CreateNodeVariant implements \JsonSerializable
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'sourceOrigin' => $this->sourceOrigin,
-            'targetOrigin' => $this->targetOrigin
+            'targetOrigin' => $this->targetOrigin,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 }

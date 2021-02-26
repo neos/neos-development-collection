@@ -59,7 +59,8 @@ trait NodeModification
             $command->getContentStreamIdentifier(),
             $command->getNodeAggregateIdentifier(),
             $command->getOriginDimensionSpacePoint(),
-            $serializedPropertyValues
+            $serializedPropertyValues,
+            $command->getInitiatingUserIdentifier()
         );
 
         return $this->handleSetSerializedNodeProperties($newCommand);
@@ -89,7 +90,8 @@ trait NodeModification
                         $contentStreamIdentifier,
                         $command->getNodeAggregateIdentifier(),
                         $command->getOriginDimensionSpacePoint(),
-                        $command->getPropertyValues()
+                        $command->getPropertyValues(),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

@@ -29,65 +29,47 @@ trait CommonCreateNodeAggregateWithNodeTrait
 {
     /**
      * The identifier of the content stream this command is to be handled in
-     *
-     * @var ContentStreamIdentifier
      */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * The new node's node aggregate identifier
-     *
-     * @var NodeAggregateIdentifier
      */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * Name of the new node's type
-     *
-     * @var NodeTypeName
      */
-    private $nodeTypeName;
+    private NodeTypeName $nodeTypeName;
 
     /**
      * Origin of the new node in the dimension space.
      * Will also be used to calculate a set of dimension points where the new node will cover
      * from the configured specializations.
-     *
-     * @var OriginDimensionSpacePoint
      */
-    private $originDimensionSpacePoint;
+    private OriginDimensionSpacePoint $originDimensionSpacePoint;
 
     /**
      * The initiating user's identifier
-     *
-     * @var UserIdentifier
      */
-    private $initiatingUserIdentifier;
+    private UserIdentifier $initiatingUserIdentifier;
 
     /**
      * The node's optional name. Set if there is a meaningful relation to its parent that should be named.
-     *
-     * @var NodeName
      */
-    private $nodeName;
+    private ?NodeName $nodeName;
 
     /**
-     * Node aggregate identifier of the node's parent (optional)
-     *
-     * If not given, the node will be added as a root node
-     *
-     * @var NodeAggregateIdentifier
+     * Node aggregate identifier of the node's parent
      */
-    private $parentNodeAggregateIdentifier;
+    private NodeAggregateIdentifier $parentNodeAggregateIdentifier;
 
     /**
      * Node aggregate identifier of the node's succeeding sibling (optional)
      *
      * If not given, the node will be added as the parent's first child
-     *
-     * @var NodeAggregateIdentifier
      */
-    private $succeedingSiblingNodeAggregateIdentifier;
+    private ?NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier;
 
     /**
      * NodeAggregateIdentifiers for tethered descendants (optional).
@@ -96,10 +78,8 @@ trait CommonCreateNodeAggregateWithNodeTrait
      * using this assignment registry.
      * Since tethered child nodes may have tethered child nodes themselves,
      * this registry is indexed using relative node paths to the node to create in the first place.
-     *
-     * @var NodeAggregateIdentifiersByNodePaths
      */
-    private $tetheredDescendantNodeAggregateIdentifiers;
+    private ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers;
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {

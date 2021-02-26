@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -27,33 +28,31 @@ final class NodeAggregateWasDisabled implements DomainEventInterface, Publishabl
 {
     /**
      * The identifier of the content stream the node aggregate was disabled in
-     *
-     * @var ContentStreamIdentifier
      */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
      * The identifier of the node Aagregate that was disabled
-     *
-     * @var NodeAggregateIdentifier
      */
-    private $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
     /**
      * The dimension space points the node aggregate was disabled in
-     *
-     * @var DimensionSpacePointSet
      */
-    private $affectedDimensionSpacePoints;
+    private DimensionSpacePointSet $affectedDimensionSpacePoints;
+
+    private UserIdentifier $initiatingUserIdentifier;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePointSet $affectedDimensionSpacePoints
+        DimensionSpacePointSet $affectedDimensionSpacePoints,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->affectedDimensionSpacePoints = $affectedDimensionSpacePoints;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -71,12 +70,18 @@ final class NodeAggregateWasDisabled implements DomainEventInterface, Publishabl
         return $this->affectedDimensionSpacePoints;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new NodeAggregateWasDisabled(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
-            $this->affectedDimensionSpacePoints
+            $this->affectedDimensionSpacePoints,
+            $this->initiatingUserIdentifier
         );
     }
 }

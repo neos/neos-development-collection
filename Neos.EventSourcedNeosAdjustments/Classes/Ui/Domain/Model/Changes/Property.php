@@ -25,6 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Enab
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -44,7 +45,6 @@ use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
  */
 class Property extends AbstractChange
 {
-
     /**
      * @Flow\Inject
      * @var NodePropertyConversionService
@@ -218,6 +218,7 @@ class Property extends AbstractChange
             $propertyName = $this->getPropertyName();
 
             $propertyType = $node->getNodeType()->getPropertyType($propertyName);
+            $userIdentifier = $this->getInitiatingUserIdentifier();
 
             // Use extra commands for reference handling
             if ($propertyType === 'reference' || $propertyType === 'references') {
@@ -243,8 +244,9 @@ class Property extends AbstractChange
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
-                    $destinationNodeAggregateIdentifiers,
-                    PropertyName::fromString($propertyName)
+                    new NodeAggregateIdentifierCollection($destinationNodeAggregateIdentifiers),
+                    PropertyName::fromString($propertyName),
+                    $this->getInitiatingUserIdentifier()
                 );
                 $this->nodeAggregateCommandHandler->handleSetNodeReferences($command)->blockUntilProjectionsAreUpToDate();
             } else {
@@ -264,7 +266,8 @@ class Property extends AbstractChange
                             [
                                 $propertyName => $value
                             ]
-                        )
+                        ),
+                        $this->getInitiatingUserIdentifier()
                     );
                     $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
                 } else {
@@ -274,7 +277,8 @@ class Property extends AbstractChange
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
                             NodeTypeName::fromString($value),
-                            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete()
+                            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete(),
+                            $userIdentifier
                         );
                         $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType($command)->blockUntilProjectionsAreUpToDate();
                     } elseif ($propertyName === '_hidden') {
@@ -283,7 +287,8 @@ class Property extends AbstractChange
                                 $node->getContentStreamIdentifier(),
                                 $node->getNodeAggregateIdentifier(),
                                 $node->getOriginDimensionSpacePoint(),
-                                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                $userIdentifier
                             );
                             $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                         } else {
@@ -292,7 +297,8 @@ class Property extends AbstractChange
                                 $node->getContentStreamIdentifier(),
                                 $node->getNodeAggregateIdentifier(),
                                 $node->getOriginDimensionSpacePoint(),
-                                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                $userIdentifier
                             );
                             $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                         }
