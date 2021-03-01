@@ -102,7 +102,7 @@ jobs:
       - name: Checkout development distribution
         uses: actions/checkout@v2
         with:
-          repository: neos/flow-development-distribution
+          repository: neos/neos-development-distribution
           ref: ${{ env.NEOS_TARGET_VERSION }}
           path: ${{ env.NEOS_DIST_FOLDER }}
 
