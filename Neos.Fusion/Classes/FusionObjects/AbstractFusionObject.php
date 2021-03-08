@@ -40,7 +40,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
     /**
      * @var array
      */
-    protected $tsValueCache = [];
+    protected $fusionValueCache = [];
 
     /**
      * Constructor
@@ -76,7 +76,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
     /**
      * Return the Fusion value relative to this Fusion object (with processors etc applied).
      *
-     * Note that subsequent calls of tsValue() with the same Fusion path will return the same values since the
+     * Note that subsequent calls of fusionValue() with the same Fusion path will return the same values since the
      * first evaluated value will be cached in memory.
      *
      * @param string $path
@@ -85,10 +85,10 @@ abstract class AbstractFusionObject implements \ArrayAccess
     protected function fusionValue($path)
     {
         $fullPath = $this->path . '/' . $path;
-        if (!isset($this->tsValueCache[$fullPath])) {
-            $this->tsValueCache[$fullPath] = $this->runtime->evaluate($fullPath, $this);
+        if (!isset($this->fusionValueCache[$fullPath])) {
+            $this->fusionValueCache[$fullPath] = $this->runtime->evaluate($fullPath, $this);
         }
-        return $this->tsValueCache[$fullPath];
+        return $this->fusionValueCache[$fullPath];
     }
 
     /**
