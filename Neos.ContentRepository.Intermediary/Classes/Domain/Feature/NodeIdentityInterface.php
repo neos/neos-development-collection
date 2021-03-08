@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Api\Domain\Feature;
+namespace Neos\ContentRepository\Intermediary\Domain\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository.Api package.
@@ -17,6 +17,7 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
 /**
@@ -46,6 +47,8 @@ interface NodeIdentityInterface extends CacheAwareInterface
      * in order to update it.
      */
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint;
+
+    public function getAddress(): NodeAddress;
 
     /**
      * Compare whether two nodes are equal

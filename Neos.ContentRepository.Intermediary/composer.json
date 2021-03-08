@@ -1,7 +1,7 @@
 {
-    "name": "neos/contentrepository-api",
+    "name": "neos/contentrepository-intermediary",
     "type": "neos-package",
-    "description": "API layer for the evnet sourced content repository",
+    "description": "Intermediary API layer for the event sourced content repository",
     "license": [
         "GPL-3.0-or-later"
     ],
@@ -10,12 +10,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\ContentRepository\\Api\\": "Classes"
+            "Neos\\ContentRepository\\Intermediary\\": "Classes"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Neos\\ContentRepository\\Api\\Tests\\": "Tests"
+            "Neos\\ContentRepository\\Intermediary\\Tests\\": "Tests"
         }
     },
     "extra": {

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Api\Domain\Feature;
+namespace Neos\ContentRepository\Intermediary\Domain\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository.Api package.
@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Api\Domain\Feature;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\ContentRepository\Intermediary\Domain\PropertyCollectionInterface;
 
 /**
  * The feature interface declaring node property access

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Api\Domain;
+namespace Neos\ContentRepository\Intermediary\Domain;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Api\Domain;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -59,7 +58,7 @@ final class NodeBasedReadModels implements \IteratorAggregate, \Countable
         return count($this->nodes);
     }
 
-    public function getFirst(): ?TraversableNode
+    public function getFirst(): ?NodeBasedReadModelInterface
     {
         return reset($this->nodes) ?? null;
     }

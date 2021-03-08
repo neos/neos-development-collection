@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Api\Domain\Feature;
+namespace Neos\ContentRepository\Intermediary\Domain\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository.Api package.
@@ -13,22 +13,21 @@ namespace Neos\ContentRepository\Api\Domain\Feature;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\ContentRepository\Intermediary\Domain\PropertyCollectionInterface;
 
 /**
- * The feature trait implementing the property access interface based on a node
+ * The feature trait implementing the property access interface based on a property collection
  */
 trait PropertyAccess
 {
-    private NodeInterface $node;
+    private PropertyCollectionInterface $propertyCollection;
 
     /**
      * Returns all properties of this node. References are NOT part of this API; there you need to check getReference() and getReferences()
      */
     public function getProperties(): PropertyCollectionInterface
     {
-        return $this->node->getProperties();
+        return $this->propertyCollection;
     }
 
     /**
@@ -36,10 +35,12 @@ trait PropertyAccess
      *
      * If the node has a content object attached, the property will be fetched
      * there if it is gettable.
+     *
+     * @return mixed
      */
     public function getProperty(string $propertyName)
     {
-        return $this->node->getProperty($propertyName);
+        return $this->propertyCollection->offsetGet($propertyName);
     }
 
     /**
@@ -48,6 +49,6 @@ trait PropertyAccess
      */
     public function hasProperty(string $propertyName): bool
     {
-        return $this->node->hasProperty($propertyName);
+        return $this->propertyCollection->offsetExists($propertyName);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Api\Domain\Feature;
+namespace Neos\ContentRepository\Intermediary\Domain\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository.Api package.
@@ -13,14 +13,14 @@ namespace Neos\ContentRepository\Api\Domain\Feature;
  * source code.
  */
 
-use Neos\ContentRepository\Api\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Api\Domain\NodeBasedReadModels;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModels;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\EventSourcedContentRepository\Api\Domain\ReadModelFactory;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
@@ -32,6 +32,8 @@ trait SubgraphTraversal
     private NodeInterface $node;
 
     private ContentSubgraphInterface $subgraph;
+
+    private ReadModelFactory $readModelFactory;
 
     /**
      * Retrieves and returns the parent node from the node's subgraph.
@@ -46,7 +48,7 @@ trait SubgraphTraversal
             throw new NodeException('This node has no parent', 1542982973);
         }
 
-        return ReadModelFactory::createReadModel($parentNode, $this->subgraph);
+        return $this->readModelFactory->createReadModel($parentNode, $this->subgraph);
     }
 
     /**
@@ -69,7 +71,7 @@ trait SubgraphTraversal
             throw new NodeException(sprintf('Child node with name "%s" does not exist', $nodeName), 1542982917);
         }
 
-        return ReadModelFactory::createReadModel($namedChildNode, $this->subgraph);
+        return $this->readModelFactory->createReadModel($namedChildNode, $this->subgraph);
     }
 
     /**
@@ -80,7 +82,7 @@ trait SubgraphTraversal
     {
         $childNodes = $this->subgraph->findChildNodes($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
-        return ReadModelFactory::createReadModels($childNodes, $this->subgraph);
+        return $this->readModelFactory->createReadModels($childNodes, $this->subgraph);
     }
 
     /**
@@ -102,7 +104,7 @@ trait SubgraphTraversal
     ): NodeBasedReadModels {
         $siblingNodes = $this->subgraph->findSiblings($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
-        return ReadModelFactory::createReadModels($siblingNodes, $this->subgraph);
+        return $this->readModelFactory->createReadModels($siblingNodes, $this->subgraph);
     }
 
     /**
@@ -116,7 +118,7 @@ trait SubgraphTraversal
     ): NodeBasedReadModels {
         $siblingNodes = $this->subgraph->findPrecedingSiblings($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
-        return ReadModelFactory::createReadModels($siblingNodes, $this->subgraph);
+        return $this->readModelFactory->createReadModels($siblingNodes, $this->subgraph);
     }
 
     /**
@@ -130,7 +132,7 @@ trait SubgraphTraversal
     ): NodeBasedReadModels {
         $siblingNodes = $this->subgraph->findSucceedingSiblings($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
-        return ReadModelFactory::createReadModels($siblingNodes, $this->subgraph);
+        return $this->readModelFactory->createReadModels($siblingNodes, $this->subgraph);
     }
 
     /**
@@ -140,7 +142,7 @@ trait SubgraphTraversal
     {
         $referencedNodes = $this->subgraph->findReferencedNodes($this->node->getNodeAggregateIdentifier());
 
-        return ReadModelFactory::createReadModels($referencedNodes, $this->subgraph);
+        return $this->readModelFactory->createReadModels($referencedNodes, $this->subgraph);
     }
 
     /**
@@ -150,7 +152,7 @@ trait SubgraphTraversal
     {
         $referencedNodes = $this->subgraph->findReferencedNodes($this->node->getNodeAggregateIdentifier(), $edgeName);
 
-        return ReadModelFactory::createReadModels($referencedNodes, $this->subgraph);
+        return $this->readModelFactory->createReadModels($referencedNodes, $this->subgraph);
     }
 
     /**
@@ -160,7 +162,7 @@ trait SubgraphTraversal
     {
         $referencingNodes = $this->subgraph->findReferencingNodes($this->node->getNodeAggregateIdentifier());
 
-        return ReadModelFactory::createReadModels($referencingNodes, $this->subgraph);
+        return $this->readModelFactory->createReadModels($referencingNodes, $this->subgraph);
     }
 
     /**
@@ -170,6 +172,6 @@ trait SubgraphTraversal
     {
         $referencingNodes = $this->subgraph->findReferencingNodes($this->node->getNodeAggregateIdentifier(), $edgeName);
 
-        return ReadModelFactory::createReadModels($referencingNodes, $this->subgraph);
+        return $this->readModelFactory->createReadModels($referencingNodes, $this->subgraph);
     }
 }

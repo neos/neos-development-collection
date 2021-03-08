@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Api\Domain\Feature;
+namespace Neos\ContentRepository\Intermediary\Domain\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository.Api package.
@@ -13,8 +13,8 @@ namespace Neos\ContentRepository\Api\Domain\Feature;
  * source code.
  */
 
-use Neos\ContentRepository\Api\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Api\Domain\NodeBasedReadModels;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModels;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;

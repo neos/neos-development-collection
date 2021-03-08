@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Api\Domain\Feature;
+namespace Neos\ContentRepository\Intermediary\Domain\Feature;
 
 /*
  * This file is part of the Neos.ContentRepository.Api package.
@@ -17,8 +17,10 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 
 /**
  * The feature trait implementing the node identity interface based on a node and a subgraph
@@ -28,6 +30,8 @@ trait NodeIdentity
     private NodeInterface $node;
 
     private ContentSubgraphInterface $subgraph;
+
+    private WorkspaceName $workspaceName;
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
@@ -56,6 +60,16 @@ trait NodeIdentity
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->node->getOriginDimensionSpacePoint();
+    }
+
+    public function getAddress(): NodeAddress
+    {
+        return new NodeAddress(
+            $this->subgraph->getContentStreamIdentifier(),
+            $this->subgraph->getDimensionSpacePoint(),
+            $this->node->getNodeAggregateIdentifier(),
+            $this->workspaceName
+        );
     }
 
     /**

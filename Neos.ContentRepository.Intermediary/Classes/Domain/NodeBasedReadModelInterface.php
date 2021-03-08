@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Api\Domain;
+namespace Neos\ContentRepository\Intermediary\Domain;
 
 /*
  * This file is part of the Neos.ContentRepository.Api package.
@@ -13,10 +13,10 @@ namespace Neos\ContentRepository\Api\Domain;
  * source code.
  */
 
-use Neos\ContentRepository\Api\Domain\Feature\NodeIdentityInterface;
-use Neos\ContentRepository\Api\Domain\NodeMetadataInterface;
-use Neos\ContentRepository\Api\Domain\Feature\PropertyAccessInterface;
-use Neos\ContentRepository\Api\Domain\Feature\SubgraphTraversalInterface;
+use Neos\ContentRepository\Intermediary\Domain\Feature\NodeIdentityInterface;
+use Neos\ContentRepository\Intermediary\Domain\Feature\PropertyAccessInterface;
+use Neos\ContentRepository\Intermediary\Domain\Feature\SubgraphTraversalInterface;
+use Neos\ContentRepository\Intermediary\Domain\Feature\NodeMetadataInterface;
 
 /**
  * The interface to be implemented by node based read models
