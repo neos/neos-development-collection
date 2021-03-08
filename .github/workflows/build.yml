@@ -135,6 +135,7 @@ jobs:
       - name: Setup Flow configuration
         run: |
           rm -f Configuration/Routes.yaml
+          rm -f Configuration/Testing/Settings.yaml
           cat <<EOF >> Configuration/Testing/Settings.yaml
           Neos:
             Flow:
