@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 
 /**
  * ViewHelper to find out if Neos is rendering a preview mode.
@@ -55,11 +55,11 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
-     * @param TraversableNodeInterface $node Optional Node to use context from
+     * @param NodeBasedReadModelInterface $node Optional Node to use context from
      * @param string $mode Optional rendering mode name to check if this specific mode is active
      * @return boolean
      */
-    public function render(TraversableNodeInterface $node = null, $mode = null)
+    public function render(NodeBasedReadModelInterface $node = null, $mode = null)
     {
         // TODO: implement
         return false;

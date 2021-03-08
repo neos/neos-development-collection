@@ -13,12 +13,12 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\Neos\Domain\Exception;
 
 /**
@@ -29,20 +29,20 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ReadModelFactory
      */
-    protected $nodeAddressFactory;
+    protected $readModelFactory;
 
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
      * if no content collection could be found
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param string $nodePath
-     * @return TraversableNodeInterface
+     * @return NodeBasedReadModelInterface
      * @throws Exception
      */
-    public function nearestContentCollection(TraversableNodeInterface $node, $nodePath, ContentSubgraphInterface $subgraph)
+    public function nearestContentCollection(NodeBasedReadModelInterface $node, $nodePath, ContentSubgraphInterface $subgraph): NodeBasedReadModelInterface
     {
         $contentCollectionType = 'Neos.Neos:ContentCollection';
         if ($node->getNodeType()->isOfType($contentCollectionType)) {
@@ -58,16 +58,16 @@ class NodeHelper implements ProtectedContextAwareInterface
             );
 
             if ($subNode !== null && $subNode->getNodeType()->isOfType($contentCollectionType)) {
-                return $subNode;
+                return $this->readModelFactory->createReadModel($subNode, $subgraph);
             } else {
                 throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:repair --node-type %s" command.', $contentCollectionType, $node->findNodePath(), $nodePath, (string)$node->getNodeType()), 1389352984);
             }
         }
     }
 
-    public function nodeAddressToString(TraversableNodeInterface $node): string
+    public function nodeAddressToString(NodeBasedReadModelInterface $node): string
     {
-        return $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri();
+        return $node->getAddress()->serializeForUri();
     }
 
     /**

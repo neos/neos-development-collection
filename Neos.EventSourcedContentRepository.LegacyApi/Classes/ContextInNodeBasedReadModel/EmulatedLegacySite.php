@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInTraversableNode;
+namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\SiteNodeUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
@@ -26,11 +26,11 @@ class EmulatedLegacySite
     protected $siteRepository;
 
     /**
-     * @var TraversableNodeInterface
+     * @var NodeBasedReadModelInterface
      */
     protected $contextNode;
 
-    public function __construct(TraversableNodeInterface $traversableNode)
+    public function __construct(NodeBasedReadModelInterface $traversableNode)
     {
         $this->contextNode = $traversableNode;
     }

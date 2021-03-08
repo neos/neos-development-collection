@@ -13,8 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  */
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -60,12 +59,6 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
-     * @Flow\Inject
      * @var AssetRepository
      */
     protected $assetRepository;
@@ -99,11 +92,11 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         $node = $this->fusionValue('node');
 
-        if (!$node instanceof TraversableNodeInterface) {
-            throw new NeosException(sprintf('The current node must be an instance of TraversableNodeInterface, given: "%s".', gettype($text)), 1382624087);
+        if (!$node instanceof NodeBasedReadModelInterface) {
+            throw new NeosException(sprintf('The current node must be an instance of NodeBasedReadModelInterface, given: "%s".', gettype($text)), 1382624087);
         }
 
-        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
+        $nodeAddress = $node->getAddress();
 
         if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
             return $text;
@@ -116,7 +109,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
             $resolvedUri = null;
             switch ($matches[1]) {
                 case 'node':
-                    $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, NodeAggregateIdentifier::fromString($matches[2]));
+                    $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($matches[2]));
                     $uriBuilder = new UriBuilder();
                     $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
                     $uriBuilder->setCreateAbsoluteUri($absolute);

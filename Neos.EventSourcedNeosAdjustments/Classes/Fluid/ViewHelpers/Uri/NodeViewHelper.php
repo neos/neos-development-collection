@@ -14,7 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri;
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
@@ -153,12 +153,12 @@ class NodeViewHelper extends AbstractViewHelper
         $node = $this->arguments['node'];
         $nodeAddress = null;
 
-        if ($node instanceof TraversableNodeInterface) {
-            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
+        if ($node instanceof NodeBasedReadModelInterface) {
+            $nodeAddress = $node->getAddress();
         } elseif (is_string($node)) {
             $nodeAddress = $this->resolveNodeAddressFromString($node);
         } else {
-            throw new ViewHelperException(sprintf('The "node" argument can only be a string or an instance of %s. Given: %s', TraversableNodeInterface::class, is_object($node) ? get_class($node) : gettype($node)), 1601372376);
+            throw new ViewHelperException(sprintf('The "node" argument can only be a string or an instance of %s. Given: %s', NodeBasedReadModelInterface::class, is_object($node) ? get_class($node) : gettype($node)), 1601372376);
         }
 
         $uriBuilder = new UriBuilder();
@@ -187,9 +187,9 @@ class NodeViewHelper extends AbstractViewHelper
      */
     private function resolveNodeAddressFromString(string $path): NodeAddress
     {
-        /* @var TraversableNodeInterface $documentNode */
+        /* @var NodeBasedReadModelInterface $documentNode */
         $documentNode = $this->getContextVariable('documentNode');
-        $documentNodeAddress = $this->nodeAddressFactory->createFromTraversableNode($documentNode);
+        $documentNodeAddress = $documentNode->getAddress();
         if (strncmp($path, 'node://', 7) === 0) {
             return $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($documentNodeAddress, NodeAggregateIdentifier::fromString(\mb_substr($path, 7)));
         }

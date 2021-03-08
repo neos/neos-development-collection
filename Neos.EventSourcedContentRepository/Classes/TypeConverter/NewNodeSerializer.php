@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
@@ -29,7 +29,7 @@ class NewNodeSerializer extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = [\Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface::class];
+    protected $sourceTypes = [NodeBasedReadModelInterface::class];
 
     /**
      * @var string
@@ -41,19 +41,8 @@ class NewNodeSerializer extends AbstractTypeConverter
      */
     protected $priority = 1;
 
-
-    /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
-     *
-     */
     public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        // TODO: Move Node Address to CR
-        return $this->nodeAddressFactory->createFromTraversableNode($source)->serializeForUri();
+        return $source->getAddress()->serializeForUri();
     }
 }

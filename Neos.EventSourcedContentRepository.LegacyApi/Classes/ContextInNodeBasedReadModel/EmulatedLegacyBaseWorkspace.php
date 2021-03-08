@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInTraversableNode;
+namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;

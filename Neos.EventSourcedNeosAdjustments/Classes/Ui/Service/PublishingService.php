@@ -13,8 +13,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
@@ -22,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommand
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\Change;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -82,10 +82,16 @@ class PublishingService
     protected $workspaceCommandHandler;
 
     /**
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
+
+    /**
      * Returns a list of nodes contained in the given workspace which are not yet published
      *
      * @param WorkspaceName $workspaceName
-     * @return TraversableNodeInterface[]
+     * @return NodeBasedReadModelInterface[]
      * @api
      */
     public function getUnpublishedNodes(WorkspaceName $workspaceName)
@@ -106,7 +112,7 @@ class PublishingService
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
 
             if ($node instanceof NodeInterface) {
-                $unpublishedNodes[] = new TraversableNode($node, $subgraph);
+                $unpublishedNodes[] = $this->readModelFactory->createReadModel($node, $subgraph);
             }
         }
         return $unpublishedNodes;

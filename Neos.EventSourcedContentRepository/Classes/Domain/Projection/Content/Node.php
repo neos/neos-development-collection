@@ -13,59 +13,34 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
  */
-class Node implements NodeInterface
+final class Node implements NodeInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    protected $contentStreamIdentifier;
+    protected ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    protected $nodeAggregateIdentifier;
+    protected NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    protected $originDimensionSpacePoint;
+    protected OriginDimensionSpacePoint $originDimensionSpacePoint;
 
-    /**
-     * @var NodeTypeName
-     */
-    protected $nodeTypeName;
+    protected NodeTypeName $nodeTypeName;
 
-    /**
-     * @var NodeType
-     */
-    protected $nodeType;
+    protected NodeType $nodeType;
 
-    /**
-     * @var NodeName
-     */
-    protected $nodeName;
+    protected ?NodeName $nodeName;
 
-    /**
-     * @var PropertyCollection
-     */
-    protected $properties;
+    protected SerializedPropertyValues $properties;
 
-    /**
-     * @var NodeAggregateClassification
-     */
-    protected $classification;
+    protected NodeAggregateClassification $classification;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -74,7 +49,7 @@ class Node implements NodeInterface
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        PropertyCollection $properties,
+        SerializedPropertyValues $properties,
         NodeAggregateClassification $classification
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -89,8 +64,6 @@ class Node implements NodeInterface
 
     /**
      * Whether or not this node is a root of the graph, i.e. has no parent node
-     *
-     * @return bool
      */
     public function isRoot(): bool
     {
@@ -99,66 +72,43 @@ class Node implements NodeInterface
 
     /**
      * Whether or not this node is tethered to its parent, fka auto created child node
-     *
-     * @return bool
      */
     public function isTethered(): bool
     {
         return $this->classification->isTethered();
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return OriginDimensionSpacePoint
-     */
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
     }
 
-    /**
-     * @return NodeTypeName
-     */
     public function getNodeTypeName(): NodeTypeName
     {
         return $this->nodeTypeName;
     }
 
-    /**
-     * @return NodeType
-     */
     public function getNodeType(): NodeType
     {
         return $this->nodeType;
     }
 
-    /**
-     * @return NodeName|null
-     */
     public function getNodeName(): ?NodeName
     {
         return $this->nodeName;
     }
 
-    /**
-     * @return PropertyCollectionInterface
-     */
-    public function getProperties(): PropertyCollectionInterface
+    public function getProperties(): SerializedPropertyValues
     {
         return $this->properties;
     }
@@ -170,7 +120,7 @@ class Node implements NodeInterface
      * @return mixed value of the property
      * @api
      */
-    public function getProperty($propertyName)
+    public function getProperty(string $propertyName)
     {
         return $this->properties->offsetGet($propertyName);
     }
@@ -178,25 +128,5 @@ class Node implements NodeInterface
     public function hasProperty($propertyName): bool
     {
         return $this->properties->offsetExists($propertyName);
-    }
-
-    /**
-     * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
-     * related to this object.
-     *
-     * @return string
-     */
-    public function getCacheEntryIdentifier(): string
-    {
-        return sha1(json_encode([
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'originDimensionSpacePoint' => $this->originDimensionSpacePoint
-        ]));
-    }
-
-    public function getLabel(): string
-    {
-        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this) ?? '';
     }
 }

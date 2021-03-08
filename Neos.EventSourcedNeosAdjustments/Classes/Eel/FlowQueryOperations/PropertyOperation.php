@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
@@ -56,7 +56,7 @@ class PropertyOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
+        return (isset($context[0]) && ($context[0] instanceof NodeBasedReadModelInterface));
     }
 
     /**
@@ -79,7 +79,7 @@ class PropertyOperation extends AbstractOperation
                 return null;
             }
 
-            /* @var $element TraversableNodeInterface */
+            /* @var $element NodeBasedReadModelInterface */
             $element = $context[0];
             if ($propertyPath === '_path') {
                 return (string)$element->findNodePath();

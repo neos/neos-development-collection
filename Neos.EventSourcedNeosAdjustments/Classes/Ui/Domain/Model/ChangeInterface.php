@@ -12,40 +12,30 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 
 /**
  * An interface to describe a change
  */
 interface ChangeInterface
 {
-
     /**
      * Set the subject
-     *
-     * @param TraversableNodeInterface $subject
-     * @return void
      */
-    public function setSubject(TraversableNodeInterface $subject);
+    public function setSubject(NodeBasedReadModelInterface $subject): void;
 
     /**
      * Get the subject
-     *
-     * @return TraversableNodeInterface
      */
-    public function getSubject();
+    public function getSubject(): NodeBasedReadModelInterface;
 
     /**
      * Checks whether this change can be applied to the subject
-     *
-     * @return boolean
      */
-    public function canApply();
+    public function canApply(): bool;
 
     /**
      * Applies this change
-     *
-     * @return void
      */
-    public function apply();
+    public function apply(): void;
 }

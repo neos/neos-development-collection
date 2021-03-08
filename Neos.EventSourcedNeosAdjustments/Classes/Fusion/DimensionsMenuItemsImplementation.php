@@ -18,12 +18,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeep
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -67,7 +67,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected $contentGraph;
 
     /**
-     * @var TraversableNodeInterface
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
+
+    /**
+     * @var NodeBasedReadModelInterface
      */
     protected $currentNode;
 
@@ -105,7 +111,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 if ($variant === null || !$this->isNodeHidden($variant)) {
                     $menuItems[] = [
                         'subgraph' => $subgraph,
-                        'node' => $variant ? new TraversableNode($variant, $subgraph) : null,
+                        'node' => $variant ? $this->readModelFactory->createReadModel($variant, $subgraph) : null,
                         'state' => $this->calculateItemState($variant),
                         'label' => $this->determineLabel($variant, $metadata),
                         'targetDimensions' => $metadata
@@ -142,7 +148,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param ContentDimensionIdentifier $contentDimensionIdentifier
-     * @param \Neos\ContentRepository\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeInterface|null
      */
     protected function findClosestGeneralizationMatchingDimensionValue(

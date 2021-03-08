@@ -12,9 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
@@ -23,51 +22,36 @@ use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 class NodeCreated extends AbstractFeedback
 {
     /**
-     * @var TraversableNodeInterface
+     * @var NodeBasedReadModelInterface
      */
     protected $node;
 
     /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
      * Set the node
-     *
-     * @param TraversableNodeInterface $node
-     * @return void
      */
-    public function setNode(TraversableNodeInterface $node)
+    public function setNode(NodeBasedReadModelInterface $node): void
     {
         $this->node = $node;
     }
 
     /**
      * Get the node
-     *
-     * @return TraversableNodeInterface
      */
-    public function getNode()
+    public function getNode(): NodeBasedReadModelInterface
     {
         return $this->node;
     }
 
     /**
      * Get the type identifier
-     *
-     * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'Neos.Neos.Ui:NodeCreated';
     }
 
     /**
      * Get the description
-     *
-     * @return string
      */
     public function getDescription(): string
     {
@@ -105,7 +89,7 @@ class NodeCreated extends AbstractFeedback
         $node = $this->getNode();
 
         return [
-            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->getNode())->serializeForUri(),
+            'contextPath' => $node->getAddress()->serializeForUri(),
             'identifier' => (string)$node->getNodeAggregateIdentifier(),
             'isDocument' => $nodeService->isDocument($node)
         ];

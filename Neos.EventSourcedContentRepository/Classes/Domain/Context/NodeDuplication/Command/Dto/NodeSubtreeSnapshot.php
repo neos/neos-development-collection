@@ -1,11 +1,12 @@
 <?php
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto;
 
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeReferences;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
@@ -51,11 +52,11 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
      */
     private $childNodes;
 
-    public static function fromTraversableNode(TraversableNodeInterface $sourceNode): self
+    public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, NodeInterface $sourceNode): self
     {
         $childNodes = [];
-        foreach ($sourceNode->findChildNodes() as $sourceChildNode) {
-            $childNodes[] = self::fromTraversableNode($sourceChildNode);
+        foreach ($subgraph->findChildNodes($sourceNode->getNodeAggregateIdentifier()) as $sourceChildNode) {
+            $childNodes[] = self::fromSubgraphAndStartNode($subgraph, $sourceChildNode);
         }
 
         return new self(
@@ -63,8 +64,8 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             $sourceNode->getNodeTypeName(),
             $sourceNode->getNodeName(),
             NodeAggregateClassification::fromNode($sourceNode),
-            SerializedPropertyValues::fromNode($sourceNode),
-            NodeReferences::fromArray([]), // TODO
+            $sourceNode->getProperties(),
+            NodeReferences::fromArray($subgraph->findReferencedNodes($sourceNode->getNodeAggregateIdentifier())),
             $childNodes
         );
     }

@@ -14,7 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
@@ -50,12 +50,6 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      * @var NodeTypeConstraintFactory
      */
     protected $nodeTypeConstraintFactory;
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
 
     /**
      * @Flow\Inject
@@ -106,14 +100,14 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     protected $ignoredNodeTypeRole;
 
     /**
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param ControllerContext $controllerContext
      * @param bool $omitMostPropertiesForTreeState
      * @param string $nodeTypeFilterOverride
      * @return array
      * @deprecated See methods with specific names for different behaviors
      */
-    public function renderNode(TraversableNodeInterface $node, ControllerContext $controllerContext = null, $omitMostPropertiesForTreeState = false, $nodeTypeFilterOverride = null)
+    public function renderNode(NodeBasedReadModelInterface $node, ControllerContext $controllerContext = null, $omitMostPropertiesForTreeState = false, $nodeTypeFilterOverride = null)
     {
         return ($omitMostPropertiesForTreeState ?
             $this->renderNodeWithMinimalPropertiesAndChildrenInformation($node, $controllerContext, $nodeTypeFilterOverride) :
@@ -122,12 +116,12 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param ControllerContext|null $controllerContext
      * @param string $nodeTypeFilterOverride
      * @return array|null
      */
-    public function renderNodeWithMinimalPropertiesAndChildrenInformation(TraversableNodeInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
+    public function renderNodeWithMinimalPropertiesAndChildrenInformation(NodeBasedReadModelInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
     {
         //if (!$this->nodePolicyService->isNodeTreePrivilegeGranted($node)) {
         //    return null;
@@ -158,12 +152,12 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param ControllerContext|null $controllerContext
      * @param string $nodeTypeFilterOverride
      * @return array|null
      */
-    public function renderNodeWithPropertiesAndChildrenInformation(TraversableNodeInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
+    public function renderNodeWithPropertiesAndChildrenInformation(NodeBasedReadModelInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
     {
         //if (!$this->nodePolicyService->isNodeTreePrivilegeGranted($node)) {
         //    return null;
@@ -190,11 +184,11 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     /**
      * Get the "uri" and "previewUri" for the given node
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param ControllerContext $controllerContext
      * @return array
      */
-    protected function getUriInformation(TraversableNodeInterface $node, ControllerContext $controllerContext): array
+    protected function getUriInformation(NodeBasedReadModelInterface $node, ControllerContext $controllerContext): array
     {
         $nodeInfo = [];
         if (!$node->getNodeType()->isOfType($this->documentNodeTypeRole)) {
@@ -207,13 +201,13 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     /**
      * Get the basic information about a node.
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @return array
      */
-    protected function getBasicNodeInformation(TraversableNodeInterface $node): array
+    protected function getBasicNodeInformation(NodeBasedReadModelInterface $node): array
     {
         return [
-            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri(),
+            'contextPath' => $node->getAddress()->serializeForUri(),
             'name' => $node->getNodeName() ? $node->getNodeName()->jsonSerialize() : null,
             'identifier' => $node->getNodeAggregateIdentifier()->jsonSerialize(),
             'nodeType' => $node->getNodeType()->getName(),
@@ -221,12 +215,12 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             'isAutoCreated' => self::isAutoCreated($node),
             'depth' => $node->findNodePath()->getDepth(),
             'children' => [],
-            'parent' => $this->nodeAddressFactory->createFromTraversableNode($node->findParentNode())->serializeForUri(),
+            'parent' => $node->findParentNode()->getAddress()->serializeForUri(),
             'matchesCurrentDimensions' => $node->getDimensionSpacePoint()->equals($node->getOriginDimensionSpacePoint())
         ];
     }
 
-    private static function isAutoCreated(TraversableNodeInterface $node)
+    private static function isAutoCreated(NodeBasedReadModelInterface $node)
     {
         $parent = $node->findParentNode();
         if ($parent) {
@@ -237,7 +231,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         return false;
     }
 
-    public static function isNodeTypeAllowedAsChildNode(TraversableNodeInterface $node, NodeType $nodeType)
+    public static function isNodeTypeAllowedAsChildNode(NodeBasedReadModelInterface $node, NodeType $nodeType)
     {
         if (self::isAutoCreated($node)) {
             return $node->findParentNode()->getNodeType()->allowsGrandchildNodeType((string)$node->getNodeName(), $nodeType);
@@ -250,12 +244,12 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     /**
      * Get information for all children of the given parent node.
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param string $nodeTypeFilterString
      * @return array
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    protected function renderChildrenInformation(TraversableNodeInterface $node, string $nodeTypeFilterString): array
+    protected function renderChildrenInformation(NodeBasedReadModelInterface $node, string $nodeTypeFilterString): array
     {
         $documentChildNodes = $node->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString($nodeTypeFilterString));
         // child nodes for content tree, must not include those nodes filtered out by `baseNodeType`
@@ -265,7 +259,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         $infos = [];
         foreach ($childNodes as $childNode) {
             $infos[] = [
-                'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($childNode)->serializeForUri(),
+                'contextPath' => $childNode->getAddress()->serializeForUri(),
                 'nodeType' => $childNode->getNodeType()->getName() // TODO: DUPLICATED; should NOT be needed!!!
             ];
         };
@@ -281,7 +275,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     public function renderNodes(array $nodes, ControllerContext $controllerContext, $omitMostPropertiesForTreeState = false): array
     {
         $methodName = $omitMostPropertiesForTreeState ? 'renderNodeWithMinimalPropertiesAndChildrenInformation' : 'renderNodeWithPropertiesAndChildrenInformation';
-        $mapper = function (TraversableNodeInterface $node) use ($controllerContext, $methodName) {
+        $mapper = function (NodeBasedReadModelInterface $node) use ($controllerContext, $methodName) {
             return $this->$methodName($node, $controllerContext);
         };
 
@@ -299,7 +293,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         $baseNodeTypeOverride = $this->documentNodeTypeRole;
         $renderedNodes = [];
 
-        /** @var TraversableNodeInterface $node */
+        /** @var NodeBasedReadModelInterface $node */
         foreach ($nodes as $node) {
             if (array_key_exists($node->getPath(), $renderedNodes)) {
                 $renderedNodes[$node->getPath()]['matched'] = true;
@@ -344,21 +338,21 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param TraversableNodeInterface $documentNode
+     * @param NodeBasedReadModelInterface $documentNode
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function renderDocumentNodeAndChildContent(TraversableNodeInterface $documentNode, ControllerContext $controllerContext)
+    public function renderDocumentNodeAndChildContent(NodeBasedReadModelInterface $documentNode, ControllerContext $controllerContext)
     {
         return $this->renderNodeAndChildContent($documentNode, $controllerContext);
     }
 
     /**
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param ControllerContext $controllerContext
      * @return array
      */
-    protected function renderNodeAndChildContent(TraversableNodeInterface $node, ControllerContext $controllerContext)
+    protected function renderNodeAndChildContent(NodeBasedReadModelInterface $node, ControllerContext $controllerContext)
     {
         $reducer = function ($nodes, $node) use ($controllerContext) {
             $nodes = array_merge($nodes, $this->renderNodeAndChildContent($node, $controllerContext));
@@ -370,16 +364,16 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param TraversableNodeInterface $site
-     * @param TraversableNodeInterface $documentNode
+     * @param NodeBasedReadModelInterface $site
+     * @param NodeBasedReadModelInterface $documentNode
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function defaultNodesForBackend(TraversableNodeInterface $site, TraversableNodeInterface $documentNode, ControllerContext $controllerContext): array
+    public function defaultNodesForBackend(NodeBasedReadModelInterface $site, NodeBasedReadModelInterface $documentNode, ControllerContext $controllerContext): array
     {
         return [
-            ($this->nodeAddressFactory->createFromTraversableNode($site)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($site, $controllerContext),
-            ($this->nodeAddressFactory->createFromTraversableNode($documentNode)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($documentNode, $controllerContext)
+            ($site->getAddress()->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($site, $controllerContext),
+            ($documentNode->getAddress()->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($documentNode, $controllerContext)
         ];
     }
 
@@ -394,19 +388,19 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param ControllerContext $controllerContext
      * @return string
      */
-    public function previewUri(TraversableNodeInterface $node, ControllerContext $controllerContext)
+    public function previewUri(NodeBasedReadModelInterface $node, ControllerContext $controllerContext)
     {
-        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
+        $nodeAddress = $node->getAddress();
         return (string)NodeUriBuilder::fromRequest($controllerContext->getRequest())->previewUriFor($nodeAddress);
     }
 
-    public function redirectUri(TraversableNodeInterface $node, ControllerContext $controllerContext): string
+    public function redirectUri(NodeBasedReadModelInterface $node, ControllerContext $controllerContext): string
     {
-        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
+        $nodeAddress = $node->getAddress();
         return $controllerContext->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)
@@ -452,21 +446,6 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     protected function buildContentChildNodeFilterString()
     {
         return $this->buildNodeTypeFilterString([], $this->nodeTypeStringsToList($this->documentNodeTypeRole, $this->ignoredNodeTypeRole));
-    }
-
-    public function nodeAddress(TraversableNodeInterface $node): NodeAddress
-    {
-        return $this->nodeAddressFactory->createFromTraversableNode($node);
-    }
-
-    public function serializedNodeAddress(TraversableNodeInterface $node): string
-    {
-        return $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri();
-    }
-
-    public function inBackend(TraversableNodeInterface $node)
-    {
-        return !$this->nodeAddressFactory->createFromTraversableNode($node)->isInLiveWorkspace();
     }
 
     /**

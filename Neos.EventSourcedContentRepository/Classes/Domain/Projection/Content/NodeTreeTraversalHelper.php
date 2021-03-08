@@ -15,12 +15,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 
 final class NodeTreeTraversalHelper
 {
-
     /**
      * the callback always gets the current NodeInterface passed as first parameter, and then its parent, and its parent etc etc.
      * Until it has reached the root, or the return value of the closure is FALSE.
@@ -37,7 +36,7 @@ final class NodeTreeTraversalHelper
         } while ($shouldContinueTraversal !== false && $node !== null);
     }
 
-    public static function findNodeByNodePath(ContentSubgraphInterface $subgraph, TraversableNodeInterface $node, NodePath $nodePath): ?TraversableNodeInterface
+    public static function findNodeByNodePath(ContentSubgraphInterface $subgraph, NodeBasedReadModelInterface $node, NodePath $nodePath): ?NodeInterface
     {
         $nodeAggregateIdentifier = $node->getNodeAggregateIdentifier();
         if ($nodePath->isAbsolute()) {
@@ -47,8 +46,7 @@ final class NodeTreeTraversalHelper
 
         $childNodeAggregateIdentifier = self::findNodeAggregateIdentifierByPath($subgraph, $nodeAggregateIdentifier, $nodePath);
         if ($childNodeAggregateIdentifier !== null) {
-            $node = $subgraph->findNodeByNodeAggregateIdentifier($childNodeAggregateIdentifier);
-            return new TraversableNode($node, $subgraph);
+            return $subgraph->findNodeByNodeAggregateIdentifier($childNodeAggregateIdentifier);
         }
 
         return null;

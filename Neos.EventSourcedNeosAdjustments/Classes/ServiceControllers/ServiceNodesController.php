@@ -14,10 +14,10 @@ namespace Neos\EventSourcedNeosAdjustments\ServiceControllers;
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\SearchTerm;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -69,6 +69,12 @@ class ServiceNodesController extends ActionController
     protected $nodeTypeConstraintFactory;
 
     /**
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
+
+    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = [
@@ -117,9 +123,7 @@ class ServiceNodesController extends ActionController
                 SearchTerm::fulltext($searchTerm)
             );
 
-            foreach ($nodes as $node) {
-                $traversableNodes[] = new TraversableNode($node, $subgraph);
-            }
+            $traversableNodes = $this->readModelFactory->createReadModels($nodes, $subgraph)->toArray();
         } else {
             if (!empty($searchTerm)) {
                 throw new \RuntimeException('Combination of $nodeIdentifiers and $searchTerm not supported');
@@ -128,7 +132,7 @@ class ServiceNodesController extends ActionController
             foreach ($nodeIdentifiers as $nodeAggregateIdentifier) {
                 $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
                 if ($node !== null) {
-                    $traversableNodes[] = new TraversableNode($node, $subgraph);
+                    $traversableNodes[] = $this->readModelFactory->createReadModel($node, $subgraph);
                 }
             }
         }

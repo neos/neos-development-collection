@@ -2,47 +2,24 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 
 /**
  * A menu item
  */
 final class MenuItem
 {
-    /**
-     * @var NodeInterface
-     */
-    protected $node;
+    protected NodeBasedReadModelInterface $node;
 
-    /**
-     * @var MenuItemState
-     */
-    protected $state;
+    protected ?MenuItemState $state;
 
-    /**
-     * @var string
-     */
-    protected $label;
+    protected ?string $label;
 
-    /**
-     * @var int
-     */
-    protected $menuLevel;
+    protected int $menuLevel;
 
-    /**
-     * @var array
-     */
-    protected $children;
+    protected array $children;
 
-
-    /**
-     * @param NodeInterface $node
-     * @param MenuItemState|null $state
-     * @param string|null $label
-     * @param int $menuLevel
-     * @param array $children
-     */
-    public function __construct(NodeInterface $node, MenuItemState $state = null, string $label = null, int $menuLevel = 1, array $children = [])
+    public function __construct(NodeBasedReadModelInterface $node, MenuItemState $state = null, string $label = null, int $menuLevel = 1, array $children = [])
     {
         $this->node = $node;
         $this->state = $state;
@@ -51,34 +28,21 @@ final class MenuItem
         $this->children = $children;
     }
 
-
-    /**
-     * @return NodeInterface
-     */
-    public function getNode(): NodeInterface
+    public function getNode(): NodeBasedReadModelInterface
     {
         return $this->node;
     }
 
-    /**
-     * @return MenuItemState
-     */
     public function getState(): MenuItemState
     {
         return $this->state;
     }
 
-    /**
-     * @return string
-     */
     public function getLabel(): ?string
     {
         return $this->label;
     }
 
-    /**
-     * @return int
-     */
     public function getMenuLevel(): int
     {
         return $this->menuLevel;

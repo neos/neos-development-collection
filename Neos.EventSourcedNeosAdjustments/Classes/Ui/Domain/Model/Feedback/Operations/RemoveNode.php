@@ -12,48 +12,25 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
 class RemoveNode extends AbstractFeedback
 {
-    /**
-     * @var TraversableNodeInterface
-     */
-    protected $node;
+    protected NodeBasedReadModelInterface $node;
 
-    /**
-     * @var TraversableNodeInterface
-     */
-    protected $parentNode;
+    protected NodeBasedReadModelInterface $parentNode;
 
-    /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
-     * RemoveNode constructor.
-     * @param TraversableNodeInterface $node
-     * @param TraversableNodeInterface $parentNode
-     */
-    public function __construct(TraversableNodeInterface $node, TraversableNodeInterface $parentNode)
+    public function __construct(NodeBasedReadModelInterface $node, NodeBasedReadModelInterface $parentNode)
     {
         $this->node = $node;
         $this->parentNode = $parentNode;
     }
 
-    /**
-     * Get the node
-     *
-     * @return TraversableNodeInterface
-     */
-    public function getNode()
+    public function getNode(): NodeBasedReadModelInterface
     {
         return $this->node;
     }
@@ -102,8 +79,8 @@ class RemoveNode extends AbstractFeedback
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->node)->serializeForUri(),
-            'parentContextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->parentNode)->serializeForUri()
+            'contextPath' => $this->node->getAddress()->serializeForUri(),
+            'parentContextPath' => $this->parentNode->getAddress()->serializeForUri()
         ];
     }
 }

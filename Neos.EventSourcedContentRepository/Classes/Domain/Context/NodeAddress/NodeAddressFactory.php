@@ -14,10 +14,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress;
  */
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
@@ -41,20 +41,6 @@ class NodeAddressFactory
      * @var ContentGraphInterface
      */
     protected $contentGraph;
-
-    public function createFromTraversableNode(TraversableNodeInterface $node): NodeAddress
-    {
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($node->getContentStreamIdentifier());
-        if ($workspace === null) {
-            throw new \RuntimeException('Cannot build a NodeAddress for traversable node of aggregate ' . $node->getNodeAggregateIdentifier() . ', because the content stream ' . $node->getContentStreamIdentifier() . ' is not assigned to a workspace.');
-        }
-        return new NodeAddress(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getNodeAggregateIdentifier(),
-            $workspace->getWorkspaceName()
-        );
-    }
 
     public function createFromUriString(string $nodeAddressSerialized): NodeAddress
     {
