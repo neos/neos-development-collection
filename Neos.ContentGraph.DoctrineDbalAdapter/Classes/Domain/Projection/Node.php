@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
 /**
@@ -122,11 +123,11 @@ final class Node implements NodeInterface
      */
     public function getProperty(string $propertyName)
     {
-        return $this->properties->offsetGet($propertyName);
+        return $this->properties->getProperty($propertyName)->getValue();
     }
 
     public function hasProperty($propertyName): bool
     {
-        return $this->properties->offsetExists($propertyName);
+        return $this->properties->propertyExists($propertyName);
     }
 }
