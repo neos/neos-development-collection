@@ -7570,11 +7570,11 @@ readers do not read off random characters that represent icons */
 .neos .neos-dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 0;
+  min-width: 100%;
   z-index: 1000;
   display: none;
   float: left;
-  min-width: 160px;
+  min-width: 100%;
   padding: 0;
   margin: 1px 0 0;
   list-style: none;
