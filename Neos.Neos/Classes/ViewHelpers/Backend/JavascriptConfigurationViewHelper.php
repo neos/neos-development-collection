@@ -105,27 +105,35 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     public function render()
     {
         $configuration = [
-            'window.T3Configuration = {};',
-            'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
-            'window.T3Configuration.nodeTypes = {};',
-            'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
-            'window.T3Configuration.requirejs = {};',
-            'window.T3Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
-            'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';',
-            'window.T3Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
+            'window.NeosCMS = !!window.NeosCMS ? window.NeosCMS : {};',
+            'window.NeosCMS.Configuration = {};',
+            'window.NeosCMS.Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
+            'window.NeosCMS.Configuration.nodeTypes = {};',
+            'window.NeosCMS.Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
+            'window.NeosCMS.Configuration.requirejs = {};',
+            'window.NeosCMS.Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
+            'window.NeosCMS.Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';',
+            'window.NeosCMS.Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
         ];
 
         $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://Neos.Neos/Public/JavaScript');
 
-        $configuration[] = 'window.T3Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
+        $configuration[] = 'window.NeosCMS.Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
 
         if ($this->bootstrap->getContext()->isDevelopment()) {
-            $configuration[] = 'window.T3Configuration.DevelopmentMode = true;';
+            $configuration[] = 'window.NeosCMS.Configuration.DevelopmentMode = true;';
         }
 
         if ($activeDomain = $this->domainRepository->findOneByActiveRequest()) {
-            $configuration[] = 'window.T3Configuration.site = "' . $activeDomain->getSite()->getNodeName() . '";';
+            $configuration[] = 'window.NeosCMS.Configuration.site = "' . $activeDomain->getSite()->getNodeName() . '";';
         }
+
+        /*
+         * create backwards compatibility
+         * @deprecate Can be removed with Neos 8.0
+         */
+        $configuration[] = 'window.T3Configuration = Object.assign({}, window.NeosCMS.Configuration);';
+        $configuration[] = 'console.log(window.NeosCMS.Configuration);';
 
         return implode("\n", $configuration);
     }

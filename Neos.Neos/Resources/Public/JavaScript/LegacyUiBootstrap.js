@@ -64,6 +64,7 @@ require(
 
 		// Export external Neos API
 		window.Typo3Neos = ExternalApi;
-		window.NeosCMS = ExternalApi;
+		window.NeosCMS = Object.assign(!!window.NeosCMS ? window.NeosCMS : {}, ExternalApi);
 	}
 );
+
