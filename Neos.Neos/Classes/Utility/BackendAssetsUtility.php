@@ -51,6 +51,6 @@ class BackendAssetsUtility
      */
     public function getCssBuiltVersion()
     {
-        return substr(md5_file('resource://Neos.Neos/Public/Styles/Includes-built.css'), 0, 12);
+        return substr(md5_file('resource://Neos.Neos/Public/Styles/Lite.css'), 0, 12);
     }
 }
