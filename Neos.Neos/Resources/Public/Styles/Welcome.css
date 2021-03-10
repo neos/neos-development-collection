@@ -1,27 +1,2 @@
-@charset "UTF-8";
-.neos {
-  color: #fff; }
-
-.neos-setup-btn {
-  background: #00ADEE;
-  width: 100%; }
-
-.neos-error-details-toggle .neos-error-details-toggle__header {
-  margin-bottom: 0;
-  cursor: pointer;
-  position: relative;
-  display: block; }
-  .neos-error-details-toggle .neos-error-details-toggle__header:before {
-    content: '▼';
-    padding-right: .4rem;
-    font-size: 11.9px; }
-
-.neos-error-details-toggle .neos-error-details-toggle__body {
-  overflow: hidden; }
-
-.neos-error-details-toggle--closed .neos-error-details-toggle__header:before {
-  content: '▶'; }
-
-.neos-error-details-toggle--closed .neos-error-details-toggle__body {
-  height: 0; }
+.neos{color:#fff}.neos-setup-btn{background:#00ADEE;width:100%}.neos-error-details-toggle .neos-error-details-toggle__header{margin-bottom:0;cursor:pointer;position:relative;display:block}.neos-error-details-toggle .neos-error-details-toggle__header:before{content:'▼';padding-right:.4rem;font-size:11.9px}.neos-error-details-toggle .neos-error-details-toggle__body{overflow:hidden}.neos-error-details-toggle--closed .neos-error-details-toggle__header:before{content:'▶'}.neos-error-details-toggle--closed .neos-error-details-toggle__body{height:0}
 
