@@ -27,23 +27,21 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ReadModelFactory
 {
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
     protected ContentGraphInterface $contentGraph;
 
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
     protected WorkspaceFinder $workspaceFinder;
 
-    /**
-     * @Flow\Inject
-     * @var PropertyConverter
-     */
     protected PropertyConverter $propertyConverter;
+
+    public function __construct(
+        ContentGraphInterface $contentGraph,
+        WorkspaceFinder $workspaceFinder,
+        PropertyConverter $propertyConverter
+    ) {
+        $this->contentGraph = $contentGraph;
+        $this->workspaceFinder = $workspaceFinder;
+        $this->propertyConverter = $propertyConverter;
+    }
 
     public function createReadModel(NodeInterface $node, ContentSubgraphInterface $subgraph): NodeBasedReadModelInterface
     {
