@@ -71,22 +71,12 @@ const stylesConfig = {
 			"Welcome.js",
 		]),
 		new ImageMinimizerPlugin({
-			test: /\.(jpe?g|png|gif|svg)$/i,
+			test: /\.(jpe?g|png|gif)$/i,
 			minimizerOptions: {
 				plugins: [
 					["gifsicle", { interlaced: true }],
 					["jpegtran", { progressive: true }],
 					["optipng", { optimizationLevel: 5 }],
-					[
-						"svgo",
-						{
-							plugins: [
-								{
-									removeViewBox: false,
-								},
-							],
-						},
-					],
 				],
 			},
 		}),
