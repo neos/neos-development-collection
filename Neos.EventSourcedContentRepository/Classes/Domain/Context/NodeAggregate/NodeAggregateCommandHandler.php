@@ -30,7 +30,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\Node
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRetyping;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeVariation;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\TetheredNodeInternals;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -94,8 +94,6 @@ final class NodeAggregateCommandHandler
      */
     protected $readSideMemoryCacheManager;
 
-    protected PropertyConversionService $propertyConversionService;
-
     /**
      * can be disabled in {@see NodeAggregateCommandHandler::withoutAnchestorNodeTypeConstraintChecks()}
      * @var bool
@@ -110,7 +108,6 @@ final class NodeAggregateCommandHandler
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         NodeAggregateEventPublisher $nodeEventPublisher,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        PropertyConversionService $propertyConversionService
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
@@ -119,7 +116,6 @@ final class NodeAggregateCommandHandler
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->nodeEventPublisher = $nodeEventPublisher;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->propertyConversionService = $propertyConversionService;
     }
 
     protected function getContentGraph(): ContentGraphInterface
@@ -142,7 +138,7 @@ final class NodeAggregateCommandHandler
         return $this->readSideMemoryCacheManager;
     }
 
-    protected function getPropertyConversionService(): PropertyConversionService
+    protected function getPropertyConversionService(): PropertyConverter
     {
         return $this->propertyConversionService;
     }

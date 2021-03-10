@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property;
+namespace Neos\ContentRepository\Intermediary\Domain\Property;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\Serializer;
  * @Flow\Scope("singleton")
  * @internal
  */
-final class PropertyConversionService
+final class PropertyConverter
 {
     private Serializer $serializer;
 

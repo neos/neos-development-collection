@@ -19,8 +19,9 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeException;
+use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
@@ -35,6 +36,12 @@ abstract class AbstractCreate extends AbstractStructuralChange
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var PropertyConverter
+     */
+    protected $propertyConverter;
 
     /**
      * The type of the node that will be created
@@ -165,7 +172,10 @@ abstract class AbstractCreate extends AbstractStructuralChange
         $command = $this->applyNodeCreationHandlers($command, $nodeTypeName);
 
         $this->contentCacheFlusher->registerNodeChange($parentNode);
-        $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)->blockUntilProjectionsAreUpToDate();
+        $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNodeAndSerializedProperties($command->toSerializedCommand(
+            $this->getNodeType(),
+            $this->propertyConverter
+        ))->blockUntilProjectionsAreUpToDate();
 
         $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
 

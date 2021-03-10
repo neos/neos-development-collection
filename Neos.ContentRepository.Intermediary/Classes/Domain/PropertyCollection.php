@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Intermediary\Domain;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
 /**
@@ -30,16 +31,16 @@ final class PropertyCollection implements PropertyCollectionInterface
 
     private \ArrayIterator $iterator;
 
-    private PropertyConverter $propertyConversionService;
+    private PropertyConverter $propertyConverter;
 
     /**
      * @internal do not create from userspace
      */
-    public function __construct(SerializedPropertyValues $serializedPropertyValues, PropertyConverter $propertyConversionService)
+    public function __construct(SerializedPropertyValues $serializedPropertyValues, PropertyConverter $propertyConverter)
     {
         $this->serializedPropertyValues = $serializedPropertyValues;
         $this->iterator = new \ArrayIterator($serializedPropertyValues->getPlainValues());
-        $this->propertyConversionService = $propertyConversionService;
+        $this->propertyConverter = $propertyConverter;
     }
 
     public function offsetExists($offset): bool
@@ -56,7 +57,7 @@ final class PropertyCollection implements PropertyCollectionInterface
             return null;
         }
         if (!isset($this->deserializedPropertyValues[$offset])) {
-            $this->deserializedPropertyValues[$offset] = $this->propertyConversionService->deserializePropertyValue(
+            $this->deserializedPropertyValues[$offset] = $this->propertyConverter->deserializePropertyValue(
                 $this->serializedPropertyValues->getProperty($offset)
             );
         }

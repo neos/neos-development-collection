@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\Flow\Annotations as Flow;
 
 /**

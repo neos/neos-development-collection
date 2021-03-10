@@ -30,6 +30,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
@@ -69,7 +70,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -77,6 +77,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommand
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
@@ -630,7 +631,7 @@ trait EventSourcedTrait
             $commandArguments['initialPropertyValues']['dateProperty'] = \DateTime::createFromFormat(\DateTime::W3C, $commandArguments['initialPropertyValues.dateProperty']);
         }
 
-        $command = new CreateNodeAggregateWithNode(
+        $command = new CreateNodeAggregateWithNodeAndSerializedProperties(
             ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
@@ -644,7 +645,7 @@ trait EventSourcedTrait
                 ? NodeName::fromString($commandArguments['nodeName'])
                 : null,
             isset($commandArguments['initialPropertyValues'])
-                ? PropertyValuesToWrite::fromArray($commandArguments['initialPropertyValues'])
+                ? SerializedPropertyValues::fromArray($commandArguments['initialPropertyValues'])
                 : null,
             isset($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
                 ? NodeAggregateIdentifiersByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
@@ -652,7 +653,7 @@ trait EventSourcedTrait
         );
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeAggregateWithNode($command);
+            ->handleCreateNodeAggregateWithNodeAndSerializedProperties($command);
     }
 
     /**
@@ -662,7 +663,7 @@ trait EventSourcedTrait
     public function theFollowingCreateNodeAggregateWithNodeCommandsAreExecuted(string $contentStreamIdentifier, string $originSpacePoint, TableNode $table): void
     {
         foreach ($table->getHash() as $row) {
-            $command = new CreateNodeAggregateWithNode(
+            $command = new CreateNodeAggregateWithNodeAndSerializedProperties(
                 ContentStreamIdentifier::fromString($contentStreamIdentifier),
                 NodeAggregateIdentifier::fromString($row['nodeAggregateIdentifier']),
                 NodeTypeName::fromString($row['nodeTypeName']),
@@ -676,14 +677,14 @@ trait EventSourcedTrait
                     ? NodeName::fromString($row['nodeName'])
                     : null,
                 !empty($row['initialPropertyValues'])
-                    ? PropertyValuesToWrite::fromArray(json_decode($row['initialPropertyValues'], true, 512, JSON_THROW_ON_ERROR))
+                    ? SerializedPropertyValues::fromArray(json_decode($row['initialPropertyValues'], true, 512, JSON_THROW_ON_ERROR))
                     : null,
                 !empty($row['tetheredDescendantNodeAggregateIdentifiers'])
                     ? NodeAggregateIdentifiersByNodePaths::fromArray(json_decode($row['tetheredDescendantNodeAggregateIdentifiers'], true, 512, JSON_THROW_ON_ERROR))
                     : null
             );
             $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-                ->handleCreateNodeAggregateWithNode($command);
+                ->handleCreateNodeAggregateWithNodeAndSerializedProperties($command);
             $this->theGraphProjectionIsFullyUpToDate();
         }
     }
@@ -1132,7 +1133,7 @@ trait EventSourcedTrait
                 ];
             case 'CreateNodeAggregateWithNode':
                 return [
-                    CreateNodeAggregateWithNode::class,
+                    CreateNodeAggregateWithNodeAndSerializedProperties::class,
                     NodeAggregateCommandHandler::class,
                     'handleCreateNodeAggregateWithNode'
                 ];

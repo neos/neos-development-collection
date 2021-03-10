@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers;
+namespace Neos\ContentRepository\Intermediary\Domain\Property\Normalizers;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Annotations\Entity;

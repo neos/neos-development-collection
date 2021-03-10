@@ -9,7 +9,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAg
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\TetheredNodeInternals;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantAssignment;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantAssignments;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
@@ -50,10 +50,10 @@ class TetheredNodeAdjustments
     protected NodeTypeManager $nodeTypeManager;
     protected DimensionSpace\InterDimensionalVariationGraph  $interDimensionalVariationGraph;
     protected ContentGraphInterface $contentGraph;
-    protected PropertyConversionService $propertyConversionService;
+    protected PropertyConverter $propertyConversionService;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph, ContentGraphInterface $contentGraph, PropertyConversionService $propertyConversionService, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
+    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph, ContentGraphInterface $contentGraph, PropertyConverter $propertyConversionService, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
     {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;

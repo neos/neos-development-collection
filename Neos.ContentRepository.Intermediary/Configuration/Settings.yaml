@@ -1,0 +1,15 @@
+Neos:
+  ContentRepository:
+    Intermediary:
+      propertyConverters:
+        CollectionTypeDenormalizer:
+          className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizers\CollectionTypeDenormalizer
+        ScalarNormalizer:
+          className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizers\ScalarNormalizer
+        DateTime:
+          className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+          position: 'start'
+        DoctrinePersistentObjectNormalizer:
+          className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizers\DoctrinePersistentObjectNormalizer
+        ProxyAwareObjectNormalizer:
+          className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer

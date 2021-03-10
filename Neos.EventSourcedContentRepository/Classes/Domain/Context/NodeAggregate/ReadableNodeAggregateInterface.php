@@ -81,7 +81,7 @@ interface ReadableNodeAggregateInterface
      */
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
 
-    public function getCoverageByOccupant(DimensionSpacePoint $occupiedDimensionSpacePoint): DimensionSpacePointSet;
+    public function getCoverageByOccupant(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): DimensionSpacePointSet;
 
     /**
      * @return array|NodeInterface[]

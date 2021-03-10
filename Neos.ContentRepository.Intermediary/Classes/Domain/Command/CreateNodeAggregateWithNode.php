@@ -1,8 +1,8 @@
 <?php
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
+namespace Neos\ContentRepository\Intermediary\Domain\Command;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.Intermediary package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,6 +11,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Intermediary\Domain\Exception\CommandCannotBeTransformedToSerializedForm;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonCreateNodeAggregateWithNodeTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
@@ -65,14 +69,9 @@ final class CreateNodeAggregateWithNode
         $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers ?: new NodeAggregateIdentifiersByNodePaths([]);
     }
 
-    public function getInitialPropertyValues(): PropertyValuesToWrite
-    {
-        return $this->initialPropertyValues;
-    }
-
     public function withInitialPropertyValues(PropertyValuesToWrite $newInitialPropertyValues): self
     {
-        return new static(
+        return new self(
             $this->contentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
@@ -82,6 +81,36 @@ final class CreateNodeAggregateWithNode
             $this->succeedingSiblingNodeAggregateIdentifier,
             $this->nodeName,
             $newInitialPropertyValues,
+            $this->tetheredDescendantNodeAggregateIdentifiers
+        );
+    }
+
+    /**
+     * @return PropertyValuesToWrite|null
+     */
+    public function getInitialPropertyValues(): ?PropertyValuesToWrite
+    {
+        return $this->initialPropertyValues;
+    }
+
+    public function toSerializedCommand(NodeType $nodeType, PropertyConverter $propertyConverter): CreateNodeAggregateWithNodeAndSerializedProperties
+    {
+        $actualNodeTypeName = NodeTypeName::fromString($nodeType->getName());
+        if (!$actualNodeTypeName->equals($this->nodeTypeName)) {
+            throw CommandCannotBeTransformedToSerializedForm::becauseTheNodeTypeDoesNotMatch(get_class($this), $this->nodeTypeName, $actualNodeTypeName);
+        }
+        $serializedPropertyValues = $propertyConverter->serializePropertyValues($this->initialPropertyValues, $nodeType);
+
+        return new CreateNodeAggregateWithNodeAndSerializedProperties(
+            $this->contentStreamIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->nodeTypeName,
+            $this->originDimensionSpacePoint,
+            $this->initiatingUserIdentifier,
+            $this->parentNodeAggregateIdentifier,
+            $this->succeedingSiblingNodeAggregateIdentifier,
+            $this->nodeName,
+            $serializedPropertyValues,
             $this->tetheredDescendantNodeAggregateIdentifiers
         );
     }

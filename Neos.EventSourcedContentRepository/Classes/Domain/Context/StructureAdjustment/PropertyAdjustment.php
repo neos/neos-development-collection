@@ -7,7 +7,7 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
@@ -33,9 +33,9 @@ class PropertyAdjustment
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected NodeTypeManager $nodeTypeManager;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-    protected PropertyConversionService $propertyConversionService;
+    protected PropertyConverter $propertyConversionService;
 
-    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, ReadSideMemoryCacheManager $readSideMemoryCacheManager, PropertyConversionService $propertyConversionService)
+    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, ReadSideMemoryCacheManager $readSideMemoryCacheManager, PropertyConverter $propertyConversionService)
     {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;

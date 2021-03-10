@@ -21,6 +21,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeep
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
@@ -28,7 +30,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Disa
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
@@ -126,6 +127,12 @@ class ContentRepositoryExportService
      * @var ContentDimensionZookeeper
      */
     protected $contentDimensionZookeeper;
+
+    /**
+     * @Flow\Inject
+     * @var PropertyConverter
+     */
+    protected $propertyConverter;
 
     /**
      * @var NodeAggregateIdentifierAndNodeTypeForLegacyImport
@@ -333,9 +340,9 @@ class ContentRepositoryExportService
                         UserIdentifier::forSystemUser()
                     ))->blockUntilProjectionsAreUpToDate();
                 } else {
+                    $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
                     $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePath, $nodeTypeName);
-
-                    $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode(new CreateNodeAggregateWithNode(
+                    $nonSerializedCommand = new CreateNodeAggregateWithNode(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $nodeTypeName,
@@ -346,8 +353,15 @@ class ContentRepositoryExportService
                         $nodeName,
                         PropertyValuesToWrite::fromArray($propertyValues),
                         $nodeAggregateIdentifiersByNodePaths
-                    // TODO: tethered descendant IDs
-                    ))->blockUntilProjectionsAreUpToDate();
+                        // TODO: tethered descendant IDs
+                    );
+                    $serializedCommand = $nonSerializedCommand->toSerializedCommand(
+                        $nodeType,
+                        $this->propertyConverter
+                    );
+
+                    $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNodeAndSerializedProperties($serializedCommand)
+                        ->blockUntilProjectionsAreUpToDate();
                 }
             }
 

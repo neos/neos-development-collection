@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  */
 
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
@@ -85,6 +85,6 @@ class CreateNodePrivilege extends AbstractNodePrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'method(' . CreateNodeVariant::class . '->__construct()) && method(' . CreateNodeAggregateWithNode::class . '->__construct())';
+        return 'method(' . CreateNodeVariant::class . '->__construct()) && method(' . CreateNodeAggregateWithNodeAndSerializedProperties::class . '->__construct())';
     }
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property;
+namespace Neos\ContentRepository\Intermediary\Domain\Property;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -23,12 +23,11 @@ use Symfony\Component\Serializer\Serializer;
  */
 final class PropertyConversionSerializerFactory
 {
-
     /**
      * @var array
      * @Flow\InjectConfiguration(path="propertyConverters")
      */
-    protected $propertyConvertersConfiguration;
+    protected array $propertyConvertersConfiguration;
 
     public function buildSerializer(): Serializer
     {

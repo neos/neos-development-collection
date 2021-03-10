@@ -21,7 +21,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -35,7 +35,7 @@ trait NodeModification
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
-    abstract protected function getPropertyConversionService(): PropertyConversionService;
+    abstract protected function getPropertyConversionService(): PropertyConverter;
 
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
