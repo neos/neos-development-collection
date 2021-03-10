@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;

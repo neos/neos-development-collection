@@ -46,12 +46,12 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     And the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                |
-      | contentStreamIdentifier   | "cs-identifier"      |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
-      | originDimensionSpacePoint | {}                   |
-      | propertyValues            | {"text": "Original"} |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | Key                       | Value                                             |
+      | contentStreamIdentifier   | "cs-identifier"                                   |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                |
+      | originDimensionSpacePoint | {}                                                |
+      | propertyValues            | {"text": {"type": "string", "value": "Original"}} |
+      | initiatingUserIdentifier  | "initiating-user-identifier"                      |
     And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
@@ -62,21 +62,21 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
 
   Scenario: Set property of a node
     Given the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                |
-      | contentStreamIdentifier   | "user-cs-identifier" |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
-      | originDimensionSpacePoint | {}                   |
-      | propertyValues            | {"text": "Changed"}  |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | Key                       | Value                                            |
+      | contentStreamIdentifier   | "user-cs-identifier"                             |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                               |
+      | originDimensionSpacePoint | {}                                               |
+      | propertyValues            | {"text": {"type": "string", "value": "Changed"}} |
+      | initiatingUserIdentifier  | "initiating-user-identifier"                     |
 
     Then I expect exactly 2 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:user-cs-identifier"
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePropertiesWereSet" with payload:
-      | Key                       | Expected             |
-      | contentStreamIdentifier   | "user-cs-identifier" |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
-      | originDimensionSpacePoint | []                   |
-      | propertyValues.text.value | "Changed"            |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | Key                       | Expected                     |
+      | contentStreamIdentifier   | "user-cs-identifier"         |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | originDimensionSpacePoint | []                           |
+      | propertyValues.text.value | "Changed"                    |
+      | initiatingUserIdentifier  | "initiating-user-identifier" |
 
     When the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and Dimension Space Point {}

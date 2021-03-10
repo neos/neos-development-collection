@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 

@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Intermediary\Domain\Feature;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
  * The feature trait implementing the node metadata interface based on a node

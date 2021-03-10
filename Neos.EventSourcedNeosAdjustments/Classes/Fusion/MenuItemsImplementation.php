@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  */
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;

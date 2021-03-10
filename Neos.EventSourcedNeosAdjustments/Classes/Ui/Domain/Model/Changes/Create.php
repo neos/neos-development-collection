@@ -40,7 +40,7 @@ class Create extends AbstractCreate
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         $subject = $this->getSubject();
         $nodeType = $this->getNodeType();
@@ -53,7 +53,7 @@ class Create extends AbstractCreate
      *
      * @return void
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             $parentNode = $this->getSubject();

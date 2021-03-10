@@ -28,14 +28,14 @@ Feature: Node Property Conversion
 
   Scenario: DateTime objects at Node Creation
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                                | Value                                    |
-      | contentStreamIdentifier            | "cs-identifier"                          |
-      | nodeAggregateIdentifier            | "nody-mc-nodeface"                       |
-      | nodeTypeName                       | "Neos.ContentRepository.Testing:Content" |
-      | originDimensionSpacePoint          | {}                                       |
-      | initiatingUserIdentifier           | "00000000-0000-0000-0000-000000000000"   |
-      | parentNodeAggregateIdentifier      | "lady-eleonode-rootford"                 |
-      | initialPropertyValues.dateProperty | "1997-07-16T19:20:30+05:00"              |
+      | Key                           | Value                                                                        |
+      | contentStreamIdentifier       | "cs-identifier"                                                              |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                           |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                     |
+      | originDimensionSpacePoint     | {}                                                                           |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                       |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                     |
+      | initialPropertyValues         | {"dateProperty": {"type": "DateTime", "value": "1997-07-16T19:20:30+05:00"}} |
 
     And the graph projection is fully up to date
 
@@ -45,31 +45,25 @@ Feature: Node Property Conversion
       | Key          | Value                     | Type     |
       | dateProperty | 1997-07-16T19:20:30+05:00 | DateTime |
 
-    # we have a real date object, so we can take the same timestamp from another timezone and it matches as well.
-    And I expect this node to have the properties:
-      | Key          | Value                     | Type     |
-      | dateProperty | 1997-07-16T18:20:30+04:00 | DateTime |
-
-
   Scenario: DateTime objects at Node Property Updating
     Given the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                                | Value                                    |
-      | contentStreamIdentifier            | "cs-identifier"                          |
-      | nodeAggregateIdentifier            | "nody-mc-nodeface"                       |
-      | nodeTypeName                       | "Neos.ContentRepository.Testing:Content" |
-      | originDimensionSpacePoint          | {}                                       |
-      | initiatingUserIdentifier           | "00000000-0000-0000-0000-000000000000"   |
-      | parentNodeAggregateIdentifier      | "lady-eleonode-rootford"                 |
-      | initialPropertyValues.dateProperty | "1997-07-16T19:20:30+05:00"              |
+      | Key                           | Value                                                                        |
+      | contentStreamIdentifier       | "cs-identifier"                                                              |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                           |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                     |
+      | originDimensionSpacePoint     | {}                                                                           |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                       |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                     |
+      | initialPropertyValues         | {"dateProperty": {"type": "DateTime", "value": "1997-07-16T19:20:30+05:00"}} |
     And the graph projection is fully up to date
 
     When the command "SetNodeProperties" is executed with payload:
-      | Key                         | Value                       |
-      | contentStreamIdentifier     | "cs-identifier"             |
-      | nodeAggregateIdentifier     | "nody-mc-nodeface"          |
-      | originDimensionSpacePoint   | {}                          |
-      | propertyValues.dateProperty | "1997-07-19T19:20:30+05:00" |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
+      | Key                       | Value                                                                        |
+      | contentStreamIdentifier   | "cs-identifier"                                                              |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                           |
+      | originDimensionSpacePoint | {}                                                                           |
+      | propertyValues            | {"dateProperty": {"type": "DateTime", "value": "1997-07-19T19:20:30+05:00"}} |
+      | initiatingUserIdentifier  | "initiating-user-identifier"                                                 |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
@@ -77,9 +71,3 @@ Feature: Node Property Conversion
     And I expect this node to have the properties:
       | Key          | Value                     | Type     |
       | dateProperty | 1997-07-19T19:20:30+05:00 | DateTime |
-
-    # we have a real date object, so we can take the same timestamp from another timezone and it matches as well.
-    And I expect this node to have the properties:
-      | Key          | Value                     | Type     |
-      | dateProperty | 1997-07-19T18:20:30+04:00 | DateTime |
-

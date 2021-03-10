@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
@@ -58,7 +58,7 @@ class PropertyAdjustment
             foreach ($nodeAggregate->getNodes() as $node) {
                 $propertyKeysInNode = [];
 
-                foreach ($node->getProperties() as $propertyKey => $property) {
+                foreach ($node->getProperties()->getValues() as $propertyKey => $property) {
                     $propertyKeysInNode[$propertyKey] = $propertyKey;
 
                     // detect obsolete properties
@@ -69,7 +69,8 @@ class PropertyAdjustment
                         });
                     }
 
-                    // detect non-deserializable properties
+                    // detect non-deserializable properties: move to intermediary if necessary
+                    /*
                     try {
                         $node->getProperties()->offsetGet($propertyKey);
                     } catch (\Exception $e) {
@@ -78,7 +79,7 @@ class PropertyAdjustment
                             $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeProperty($node, $propertyKey);
                         });
-                    }
+                    }*/
                 }
 
                 // detect missing default values

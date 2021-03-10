@@ -106,7 +106,7 @@ final class NodeAggregateCommandHandler
         ContentGraphInterface $contentGraph,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         NodeAggregateEventPublisher $nodeEventPublisher,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;

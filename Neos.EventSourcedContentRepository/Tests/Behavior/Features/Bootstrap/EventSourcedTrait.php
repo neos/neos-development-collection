@@ -625,11 +625,6 @@ trait EventSourcedTrait
             $commandArguments['originDimensionSpacePoint'] = [];
         }
 
-        if (isset($commandArguments['initialPropertyValues.dateProperty'])) {
-            // special case to test Date type conversion
-            $commandArguments['initialPropertyValues']['dateProperty'] = \DateTime::createFromFormat(\DateTime::W3C, $commandArguments['initialPropertyValues.dateProperty']);
-        }
-
         $command = new CreateNodeAggregateWithNodeAndSerializedProperties(
             ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
@@ -1678,11 +1673,8 @@ trait EventSourcedTrait
 
         $properties = $this->currentNode->getProperties();
         foreach ($expectedProperties->getHash() as $row) {
-            Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
-            $actualProperty = $properties[$row['Key']];
-            if (isset($row['Type']) && $row['Type'] === 'DateTime') {
-                $row['Value'] = \DateTime::createFromFormat(\DateTime::W3C, $row['Value']);
-            }
+            Assert::assertTrue($properties->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
+            $actualProperty = $properties->getProperty($row['Key'])->getValue();
             Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
         }
     }

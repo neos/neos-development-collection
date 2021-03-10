@@ -51,12 +51,12 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
             SerializedPropertyValues::fromArray($array['propertyValues']),
-            UserIdentifier::fromString($array['$initiatingUserIdentifier'])
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -79,7 +79,7 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
             'propertyValues' => $this->propertyValues,
-            '$initiatingUserIdentifier' => $this->initiatingUserIdentifier
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 

@@ -17,7 +17,7 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterf
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;

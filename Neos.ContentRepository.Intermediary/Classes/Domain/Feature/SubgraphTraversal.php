@@ -18,7 +18,7 @@ use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModels;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
