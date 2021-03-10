@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Intermediary\Domain;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyCollectionImplementationClassNameIsInvalid;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -25,24 +26,18 @@ use Neos\Flow\Annotations as Flow;
 final class PropertyCollectionImplementationClassName
 {
     /**
-     * @throws NodeConfigurationException
+     * @throws PropertyCollectionImplementationClassNameIsInvalid
      */
     public static function forNodeType(NodeType $nodeType): string
     {
         $customClassName = $nodeType->getConfiguration('propertyCollectionClass');
         if (!empty($customClassName)) {
             if (!class_exists($customClassName)) {
-                throw new NodeConfigurationException(
-                    'The configured property collection implementation class name "' . $customClassName . '" for NodeType "' . $nodeType . '" does not exist.',
-                    1615027843
-                );
+                throw PropertyCollectionImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($customClassName);
             }
 
             if (!in_array(PropertyCollectionInterface::class, class_implements($customClassName))) {
-                throw new NodeConfigurationException(
-                    'The configured property collection implementation class name "' . $customClassName . '" for NodeType "' . $nodeType. '" does not inherit from ' . PropertyCollectionInterface::class . '.',
-                    1615027852
-                );
+                throw PropertyCollectionImplementationClassNameIsInvalid::becauseTheClassDoesNotImplementTheRequiredInterface($customClassName);
             }
 
             return $customClassName;

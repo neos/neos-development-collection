@@ -13,6 +13,8 @@ namespace Neos\ContentRepository\Intermediary\Domain;
  * source code.
  */
 
+use Neos\ContentRepository\Intermediary\Domain\Exception\NodeImplementationClassNameIsInvalid;
+use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyCollectionImplementationClassNameIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -43,6 +45,13 @@ final class ReadModelFactory
         $this->propertyConverter = $propertyConverter;
     }
 
+    /**
+     * @param NodeInterface $node
+     * @param ContentSubgraphInterface $subgraph
+     * @return NodeBasedReadModelInterface
+     * @throws NodeImplementationClassNameIsInvalid
+     * @throws PropertyCollectionImplementationClassNameIsInvalid
+     */
     public function createReadModel(NodeInterface $node, ContentSubgraphInterface $subgraph): NodeBasedReadModelInterface
     {
         $implementationClassName = NodeImplementationClassName::forNodeType($node->getNodeType());

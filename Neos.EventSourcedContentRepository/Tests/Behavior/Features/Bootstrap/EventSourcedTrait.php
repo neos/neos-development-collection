@@ -112,10 +112,7 @@ trait EventSourcedTrait
      */
     private $eventStore;
 
-    /**
-     * @var ContentGraphInterface
-     */
-    private $contentGraph;
+    private ContentGraphInterface $contentGraph;
 
     /**
      * @var WorkspaceFinder
@@ -137,15 +134,9 @@ trait EventSourcedTrait
      */
     private $lastCommandException = null;
 
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ?ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    private $dimensionSpacePoint;
+    private ?DimensionSpacePoint $dimensionSpacePoint;
 
     /**
      * @var NodeAggregateIdentifier
