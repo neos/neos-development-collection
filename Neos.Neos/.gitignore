@@ -14,3 +14,13 @@
 /Resources/Public/Styles/Neos.css
 /Resources/Public/Styles/RawContentMode.css
 
+#
+# Application & development dependencies.
+#
+node_modules/
+
+#
+# editors / IDEs
+#
+.vscode/
+.idea/
