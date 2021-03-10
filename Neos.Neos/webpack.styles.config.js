@@ -2,6 +2,7 @@ const debug = process.env.NODE_ENV !== "production";
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const IgnoreEmitPlugin = require("ignore-emit-webpack-plugin");
 
 const stylesConfig = {
 	context: __dirname,
@@ -14,6 +15,10 @@ const stylesConfig = {
 		Error: ["./Resources/Private/Styles/Error.scss"],
 		RawContentMode: ["./Resources/Private/Styles/RawContentMode.scss"],
 		Welcome: ["./Resources/Private/Styles/Welcome.scss"],
+	},
+	output: {
+		path: __dirname + "/Resources/Public/Styles",
+		filename: "[name].js",
 	},
 	resolve: {
 		extensions: [".css", ".scss", ".sass"],
@@ -56,11 +61,18 @@ const stylesConfig = {
 		new MiniCssExtractPlugin({
 			filename: "[name].css",
 		}),
+		new IgnoreEmitPlugin([
+			"Main.js",
+			"Lite.js",
+			"Error.js",
+			"Minimal.js",
+			"Login.js",
+			"RawContentMode.js",
+			"Welcome.js",
+		]),
 		new ImageMinimizerPlugin({
 			test: /\.(jpe?g|png|gif|svg)$/i,
 			minimizerOptions: {
-				// Lossless optimization with custom option
-				// Feel free to experiment with options for better result for you
 				plugins: [
 					["gifsicle", { interlaced: true }],
 					["jpegtran", { progressive: true }],
