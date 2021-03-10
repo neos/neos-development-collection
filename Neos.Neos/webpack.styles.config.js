@@ -1,10 +1,11 @@
 const debug = process.env.NODE_ENV !== "production";
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpack = require("webpack");
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 const stylesConfig = {
 	context: __dirname,
-	devtool: debug ? "inline-sourcemap" : false,
+	devtool: debug ? "source-map" : false,
 	entry: {
 		Main: ["./Resources/Private/Styles/Neos.scss"],
 		Lite: ["./Resources/Private/Styles/Lite.scss"],
@@ -14,36 +15,70 @@ const stylesConfig = {
 		RawContentMode: ["./Resources/Private/Styles/RawContentMode.scss"],
 		Welcome: ["./Resources/Private/Styles/Welcome.scss"],
 	},
-	output: {
-		path: __dirname + "/Resources/Public/Styles",
-		filename: "[name].css",
+	resolve: {
+		extensions: [".css", ".scss", ".sass"],
 	},
 	module: {
 		rules: [
 			{
-				test: /\.(gif|png|jpg|svg)$/,
+				test: /\.(png|gif|jpe?g|svg)$/i,
 				include: __dirname + "/Resources/Public/Images/",
-				loader: "url-loader?limit=30000&name=images/[name].[ext]",
+				use: [
+					{
+						loader: "url-loader",
+						options: {
+							name: "images/[name].[ext]",
+							publicPath: "../",
+							limit: 30000,
+						},
+					},
+				],
 			},
 			{
 				test: /\.scss$/,
 				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
 			},
 			{
-				test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+				test: /\.(eot|ttf|woff|woff2)$/,
 				use: [
 					{
-						loader: "file-loader",
+						loader: "url-loader",
 						options: {
 							name: "[name].[ext]",
-							outputPath: "../Fonts/",
+							publicPath: "../Fonts/",
 						},
 					},
 				],
 			},
 		],
 	},
-	plugins: [new MiniCssExtractPlugin({ filename: "./[name].css" })],
+	plugins: [
+		new MiniCssExtractPlugin({
+			filename: "[name].css",
+		}),
+		new ImageMinimizerPlugin({
+			test: /\.(jpe?g|png|gif|svg)$/i,
+			minimizerOptions: {
+				// Lossless optimization with custom option
+				// Feel free to experiment with options for better result for you
+				plugins: [
+					["gifsicle", { interlaced: true }],
+					["jpegtran", { progressive: true }],
+					["optipng", { optimizationLevel: 5 }],
+					[
+						"svgo",
+						{
+							plugins: [
+								{
+									removeViewBox: false,
+								},
+							],
+						},
+					],
+				],
+			},
+		}),
+	],
 	optimization: {
 		minimizer: [],
 	},
@@ -52,19 +87,19 @@ const stylesConfig = {
 	},
 };
 
-// if (!debug) {
-// 	const terserOptions = {
-// 		terserOptions: {
-// 			sourceMap: true,
-// 			warnings: false,
-// 			parse: {},
-// 			compress: {},
-// 			mangle: true,
-// 			keep_fnames: true,
-// 		},
-// 	};
+if (!debug) {
+	const terserOptions = {
+		terserOptions: {
+			sourceMap: true,
+			warnings: false,
+			parse: {},
+			compress: {},
+			mangle: true,
+			keep_fnames: true,
+		},
+	};
 
-// 	stylesConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
-// }
+	stylesConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
+}
 
 module.exports = stylesConfig;

@@ -4,7 +4,7 @@ const webpack = require("webpack");
 
 const javascriptConfig = {
 	context: __dirname,
-	devtool: debug ? "inline-sourcemap" : false,
+	devtool: debug ? 'source-map' : false,
 	entry: {
 		Main: ["./Resources/Public/JavaScript/index.js"],
 	},
@@ -37,19 +37,19 @@ const javascriptConfig = {
 	},
 };
 
-// if (!debug) {
-// 	const terserOptions = {
-// 		terserOptions: {
-// 			sourceMap: true,
-// 			warnings: false,
-// 			parse: {},
-// 			compress: {},
-// 			mangle: true,
-// 			keep_fnames: true,
-// 		},
-// 	};
+if (!debug) {
+	const terserOptions = {
+		terserOptions: {
+			sourceMap: true,
+			warnings: false,
+			parse: {},
+			compress: {},
+			mangle: true,
+			keep_fnames: true,
+		},
+	};
 
-// 	javascriptConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
-// }
+	javascriptConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
+}
 
 module.exports = javascriptConfig;
