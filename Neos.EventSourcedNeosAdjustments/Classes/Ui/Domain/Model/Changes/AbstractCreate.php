@@ -20,9 +20,9 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
@@ -172,10 +172,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
         $command = $this->applyNodeCreationHandlers($command, $nodeTypeName);
 
         $this->contentCacheFlusher->registerNodeChange($parentNode);
-        $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNodeAndSerializedProperties($command->toSerializedCommand(
-            $this->getNodeType(),
-            $this->propertyConverter
-        ))->blockUntilProjectionsAreUpToDate();
+        $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)->blockUntilProjectionsAreUpToDate();
 
         $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
 

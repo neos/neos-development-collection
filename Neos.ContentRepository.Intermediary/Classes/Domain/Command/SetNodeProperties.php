@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
+namespace Neos\ContentRepository\Intermediary\Domain\Command;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.Intermediary package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonSetNodePropertiesTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -62,7 +61,7 @@ final class SetNodeProperties
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),

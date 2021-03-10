@@ -17,7 +17,6 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
@@ -26,9 +25,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValu
  *
  * The new Event-Sourced core NodeInterface used for READING. It contains only information
  * local to a node; i.e. all properties in this interface can be accessed extremely fast.
- *
- * Most likely, you want to use {@see NodeBasedReadModelInterface} instead, as it is more
- * convenient to use for end-users, as it also contains node traversal operations.
  *
  * The NodeInterface is *immutable*, meaning its contents never change after creation.
  * It is *only used for reading*.

@@ -35,8 +35,6 @@ trait TetheredNodeInternals
 
     abstract protected function getContentGraph(): ContentGraphInterface;
 
-    abstract protected function getDefaultPropertyValues(NodeType $nodeType): SerializedPropertyValues;
-
     abstract protected function createEventsForVariations(
         ContentStreamIdentifier $contentStreamIdentifier,
         OriginDimensionSpacePoint $sourceOrigin,
@@ -80,7 +78,7 @@ trait TetheredNodeInternals
                         $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),
                         $parentNode->getNodeAggregateIdentifier(),
                         $tetheredNodeName,
-                        $this->getDefaultPropertyValues($expectedTetheredNodeType),
+                        SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
                         NodeAggregateClassification::tethered(),
                         $initiatingUserIdentifier
                     ),

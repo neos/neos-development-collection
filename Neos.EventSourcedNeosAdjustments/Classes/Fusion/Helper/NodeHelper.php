@@ -53,7 +53,7 @@ class NodeHelper implements ProtectedContextAwareInterface
             }
             $subNode = NodeTreeTraversalHelper::findNodeByNodePath(
                 $subgraph,
-                $node,
+                $node->getNodeAggregateIdentifier(),
                 NodePath::fromString($nodePath)
             );
 

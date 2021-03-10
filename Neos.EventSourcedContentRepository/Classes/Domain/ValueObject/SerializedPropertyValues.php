@@ -31,12 +31,9 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     /**
      * @var array|SerializedPropertyValue[]
      */
-    private $values = [];
+    private array $values = [];
 
-    /**
-     * @var \ArrayIterator
-     */
-    protected $iterator;
+    protected \ArrayIterator $iterator;
 
     private function __construct(array $values)
     {

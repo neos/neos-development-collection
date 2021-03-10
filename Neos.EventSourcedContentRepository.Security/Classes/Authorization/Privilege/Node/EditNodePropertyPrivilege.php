@@ -15,8 +15,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Chan
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 
 /**
  * A privilege to restrict editing of node properties.
@@ -40,6 +40,6 @@ class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return  'method(' . SetNodeProperties::class . '->__construct()) || method(' . SetNodeReferences::class . '->__construct()) || method(' . EnableNodeAggregate::class . '->__construct()) || method(' . DisableNodeAggregate::class . '->__construct()) || method(' . ChangeNodeAggregateName::class . '->__construct()) || method(' . ChangeNodeAggregateType::class . '->__construct())';
+        return  'method(' . SetSerializedNodeProperties::class . '->__construct()) || method(' . SetNodeReferences::class . '->__construct()) || method(' . EnableNodeAggregate::class . '->__construct()) || method(' . DisableNodeAggregate::class . '->__construct()) || method(' . ChangeNodeAggregateName::class . '->__construct()) || method(' . ChangeNodeAggregateType::class . '->__construct())';
     }
 }

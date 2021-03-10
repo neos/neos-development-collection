@@ -4,12 +4,10 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\TetheredNodeInternals;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantAssignment;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantAssignments;
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
@@ -29,7 +27,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
@@ -50,17 +47,21 @@ class TetheredNodeAdjustments
     protected NodeTypeManager $nodeTypeManager;
     protected DimensionSpace\InterDimensionalVariationGraph  $interDimensionalVariationGraph;
     protected ContentGraphInterface $contentGraph;
-    protected PropertyConverter $propertyConversionService;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph, ContentGraphInterface $contentGraph, PropertyConverter $propertyConversionService, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
-    {
+    public function __construct(
+        EventStore $eventStore,
+        ProjectedNodeIterator $projectedNodeIterator,
+        NodeTypeManager $nodeTypeManager,
+        DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        ContentGraphInterface $contentGraph,
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager
+    ) {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->contentGraph = $contentGraph;
-        $this->propertyConversionService = $propertyConversionService;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
 
@@ -161,13 +162,6 @@ class TetheredNodeAdjustments
     protected function getContentGraph(): ContentGraphInterface
     {
         return $this->contentGraph;
-    }
-
-
-    private function getDefaultPropertyValues(NodeType $nodeType): SerializedPropertyValues
-    {
-        $rawDefaultPropertyValues = PropertyValuesToWrite::fromArray($nodeType->getDefaultValuesForProperties());
-        return $this->propertyConversionService->serializePropertyValues($rawDefaultPropertyValues, $nodeType);
     }
 
     protected function getEventStore(): EventStore

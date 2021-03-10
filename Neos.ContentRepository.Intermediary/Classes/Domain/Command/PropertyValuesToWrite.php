@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto;
+namespace Neos\ContentRepository\Intermediary\Domain\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +12,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
@@ -32,7 +31,7 @@ final class PropertyValuesToWrite
     /**
      * @var array|mixed[]
      */
-    private $values = [];
+    private array $values = [];
 
     private function __construct(array $values)
     {
@@ -48,7 +47,8 @@ final class PropertyValuesToWrite
     {
         $values = $this->values;
         $values[$valueName] = $value;
-        return new static($values);
+
+        return new self($values);
     }
 
     /**

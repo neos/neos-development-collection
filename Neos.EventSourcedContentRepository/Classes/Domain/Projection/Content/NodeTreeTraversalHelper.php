@@ -16,7 +16,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 
 final class NodeTreeTraversalHelper
 {
@@ -36,9 +35,8 @@ final class NodeTreeTraversalHelper
         } while ($shouldContinueTraversal !== false && $node !== null);
     }
 
-    public static function findNodeByNodePath(ContentSubgraphInterface $subgraph, NodeBasedReadModelInterface $node, NodePath $nodePath): ?NodeInterface
+    public static function findNodeByNodePath(ContentSubgraphInterface $subgraph, NodeAggregateIdentifier $nodeAggregateIdentifier, NodePath $nodePath): ?NodeInterface
     {
-        $nodeAggregateIdentifier = $node->getNodeAggregateIdentifier();
         if ($nodePath->isAbsolute()) {
             $nodeAggregateIdentifier = self::findRootNodeAggregateIdentifier($subgraph, $nodeAggregateIdentifier);
         }

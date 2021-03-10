@@ -33,7 +33,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNo
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -46,8 +45,6 @@ trait NodeCreation
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
-    abstract protected function getPropertyConversionService(): PropertyConverter;
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 

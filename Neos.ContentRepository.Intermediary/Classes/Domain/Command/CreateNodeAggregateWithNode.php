@@ -11,11 +11,6 @@ namespace Neos\ContentRepository\Intermediary\Domain\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Intermediary\Domain\Exception\CommandCannotBeTransformedToSerializedForm;
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonCreateNodeAggregateWithNodeTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
@@ -91,27 +86,5 @@ final class CreateNodeAggregateWithNode
     public function getInitialPropertyValues(): ?PropertyValuesToWrite
     {
         return $this->initialPropertyValues;
-    }
-
-    public function toSerializedCommand(NodeType $nodeType, PropertyConverter $propertyConverter): CreateNodeAggregateWithNodeAndSerializedProperties
-    {
-        $actualNodeTypeName = NodeTypeName::fromString($nodeType->getName());
-        if (!$actualNodeTypeName->equals($this->nodeTypeName)) {
-            throw CommandCannotBeTransformedToSerializedForm::becauseTheNodeTypeDoesNotMatch(get_class($this), $this->nodeTypeName, $actualNodeTypeName);
-        }
-        $serializedPropertyValues = $propertyConverter->serializePropertyValues($this->initialPropertyValues, $nodeType);
-
-        return new CreateNodeAggregateWithNodeAndSerializedProperties(
-            $this->contentStreamIdentifier,
-            $this->nodeAggregateIdentifier,
-            $this->nodeTypeName,
-            $this->originDimensionSpacePoint,
-            $this->initiatingUserIdentifier,
-            $this->parentNodeAggregateIdentifier,
-            $this->succeedingSiblingNodeAggregateIdentifier,
-            $this->nodeName,
-            $serializedPropertyValues,
-            $this->tetheredDescendantNodeAggregateIdentifiers
-        );
     }
 }

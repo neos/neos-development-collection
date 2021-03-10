@@ -18,8 +18,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Disa
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -63,6 +63,6 @@ class EditNodePrivilege extends AbstractNodePrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return  'method(' . SetNodeProperties::class . '->__construct()) || method(' . SetNodeReferences::class . '->__construct()) || method(' . RemoveNodeAggregate::class . '->__construct()) || method(' . MoveNodeAggregate::class . '->__construct()) || method(' . EnableNodeAggregate::class . '->__construct()) || method(' . DisableNodeAggregate::class . '->__construct()) || method(' . ChangeNodeAggregateName::class . '->__construct()) || method(' . ChangeNodeAggregateType::class . '->__construct())';
+        return  'method(' . SetSerializedNodeProperties::class . '->__construct()) || method(' . SetNodeReferences::class . '->__construct()) || method(' . RemoveNodeAggregate::class . '->__construct()) || method(' . MoveNodeAggregate::class . '->__construct()) || method(' . EnableNodeAggregate::class . '->__construct()) || method(' . DisableNodeAggregate::class . '->__construct()) || method(' . ChangeNodeAggregateName::class . '->__construct()) || method(' . ChangeNodeAggregateType::class . '->__construct())';
     }
 }

@@ -16,12 +16,13 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
+use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
+use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler as IntermediaryNodeAggregateCommandHandlerAlias;
 use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
@@ -96,6 +97,12 @@ class Property extends AbstractChange
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var IntermediaryNodeAggregateCommandHandlerAlias
+     */
+    protected $intermediaryNodeAggregateCommandHandler;
 
     /**
      * @Flow\Inject
@@ -196,7 +203,7 @@ class Property extends AbstractChange
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         $nodeType = $this->getSubject()->getNodeType();
         $propertyName = $this->getPropertyName();
@@ -215,7 +222,7 @@ class Property extends AbstractChange
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws DimensionSpacePointNotFound
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             $node = $this->getSubject();
@@ -275,7 +282,7 @@ class Property extends AbstractChange
                         ),
                         $this->getInitiatingUserIdentifier()
                     );
-                    $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
+                    $this->intermediaryNodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
                 } else {
                     // property starts with "_"
                     if ($propertyName === '_nodeType') {

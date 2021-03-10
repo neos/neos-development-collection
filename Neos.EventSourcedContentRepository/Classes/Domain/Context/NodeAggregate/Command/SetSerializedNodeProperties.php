@@ -28,7 +28,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * The property values contain the serialized types already, and include type information.
  *
  * @Flow\Proxy(false)
- * @internal you most likely want to use {@see SetNodeProperties} instead
  */
 final class SetSerializedNodeProperties implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
@@ -36,9 +35,6 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
 
     private SerializedPropertyValues $propertyValues;
 
-    /**
-     * @internal use {@see SetNodeProperties::__construct} for the public API
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,

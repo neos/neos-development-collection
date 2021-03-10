@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\TypeConverter;
+namespace Neos\ContentRepository\Intermediary\Infrastructure;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -24,7 +24,7 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
  * @Flow\Scope("singleton")
  * @deprecated
  */
-class NewNodeSerializer extends AbstractTypeConverter
+class NodeBasedReadModelConverter extends AbstractTypeConverter
 {
     /**
      * @var array

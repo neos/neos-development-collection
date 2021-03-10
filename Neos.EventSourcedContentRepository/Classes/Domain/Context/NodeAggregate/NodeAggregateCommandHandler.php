@@ -30,7 +30,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\Node
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRetyping;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeVariation;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\TetheredNodeInternals;
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -136,11 +135,6 @@ final class NodeAggregateCommandHandler
     protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager
     {
         return $this->readSideMemoryCacheManager;
-    }
-
-    protected function getPropertyConversionService(): PropertyConverter
-    {
-        return $this->propertyConversionService;
     }
 
     protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher
