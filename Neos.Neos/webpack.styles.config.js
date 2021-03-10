@@ -6,7 +6,7 @@ const IgnoreEmitPlugin = require("ignore-emit-webpack-plugin");
 
 const stylesConfig = {
 	context: __dirname,
-	devtool: debug ? "source-map" : false,
+	devtool: !debug ? "source-map" : false,
 	entry: {
 		Main: ["./Resources/Private/Styles/Neos.scss"],
 		Lite: ["./Resources/Private/Styles/Lite.scss"],
@@ -61,15 +61,7 @@ const stylesConfig = {
 		new MiniCssExtractPlugin({
 			filename: "[name].css",
 		}),
-		new IgnoreEmitPlugin([
-			"Main.js",
-			"Lite.js",
-			"Error.js",
-			"Minimal.js",
-			"Login.js",
-			"RawContentMode.js",
-			"Welcome.js",
-		]),
+		new IgnoreEmitPlugin(/([a-zA-Z0-9\s_\\.\-\(\):])+(.js|.map.js)$/),
 		new ImageMinimizerPlugin({
 			test: /\.(jpe?g|png|gif)$/i,
 			minimizerOptions: {
@@ -92,7 +84,6 @@ const stylesConfig = {
 if (!debug) {
 	const terserOptions = {
 		terserOptions: {
-			sourceMap: true,
 			warnings: false,
 			parse: {},
 			compress: {},
