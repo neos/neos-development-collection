@@ -41,11 +41,10 @@
 .neos-dropdown-menu {
 	position: absolute;
 	top: 100%;
-	left: 0;
 	z-index: $zindexDropdown;
 	display: none; // none by default, but block on "open" of the menu
 	float: left;
-	min-width: 160px;
+	min-width: 100%;
 	padding: 0;
 	margin: 1px 0 0;
 	list-style: none;
