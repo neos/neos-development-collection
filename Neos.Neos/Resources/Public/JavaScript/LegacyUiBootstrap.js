@@ -42,8 +42,6 @@ require(
 		_,
 		I18n
 	) {
-		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
-
 		/**
 		 * Load all translations, and then bootstrap the Neos interface
 		 */
