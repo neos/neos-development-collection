@@ -1,5 +1,5 @@
 import { isNil, isEmpty } from "../Helper";
-import { loadStorageData, saveStorageData } from "../Services/Storage";
+import { loadStorageData, saveStorageData } from "../Services/LocalStorage";
 
 const VALUE_PATH = "module.configuration";
 export default class Tree {

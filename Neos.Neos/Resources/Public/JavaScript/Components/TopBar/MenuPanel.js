@@ -1,5 +1,5 @@
 import Expandable from "./Expandable";
-import { loadStorageData, saveStorageData } from "../../Services/Storage";
+import { loadStorageData, saveStorageData } from "../../Services/LocalStorage";
 
 const VALUE_PATH = "ui.drawer.collapsedMenuGroups";
 export default class MenuPanel {
