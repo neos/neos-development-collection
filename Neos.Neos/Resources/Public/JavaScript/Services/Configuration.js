@@ -3,7 +3,7 @@ import { getCollectionValueByPath, isNil } from "../Helper";
 const hasConfiguration =
 	!isNil(window.NeosCMS) || !sNil(window.NeosCMS.Configuration);
 
-const initConfiguration = () => {
+const init = () => {
 	if (isNil(window.NeosCMS)) {
 		window.NeosCMS = {};
 	}
@@ -39,4 +39,4 @@ const override = (key, value) => {
 	}
 };
 
-export { initConfiguration, get, override };
+export default { init, get, override };
