@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Intermediary\Domain\Feature;
 
 /*
- * This file is part of the Neos.ContentRepository.Api package.
+ * This file is part of the Neos.ContentRepository.Intermediary package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
