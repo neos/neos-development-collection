@@ -1,6 +1,5 @@
 const debug = process.env.NODE_ENV !== "production";
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const IgnoreEmitPlugin = require("ignore-emit-webpack-plugin");
 
@@ -62,16 +61,6 @@ const stylesConfig = {
 			filename: "[name].css",
 		}),
 		new IgnoreEmitPlugin(/([a-zA-Z0-9\s_\\.\-\(\):])+(.js|.map.js)$/),
-		new ImageMinimizerPlugin({
-			test: /\.(jpe?g|png|gif)$/i,
-			minimizerOptions: {
-				plugins: [
-					["gifsicle", { interlaced: true }],
-					["jpegtran", { progressive: true }],
-					["optipng", { optimizationLevel: 5 }],
-				],
-			},
-		}),
 	],
 	optimization: {
 		minimizer: [],
