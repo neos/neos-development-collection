@@ -18,45 +18,46 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
 use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
+use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler as LowLevelCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\TypeHandling;
 
 /**
  * The intermediary's node aggregate command handler
  *
  * Responsible for higher level validation and serialization of properties
+ *
+ * @Flow\Scope("singleton")
  */
 final class NodeAggregateCommandHandler
 {
-    /**
-     * @Flow\Inject
-     * @var LowLevelCommandHandler
-     */
-    protected $lowLevelCommandHandler;
+    protected LowLevelCommandHandler $lowLevelCommandHandler;
 
-    /**
-     * @Flow\Inject
-     * @var PropertyConverter
-     */
-    protected $propertyConverter;
+    protected PropertyConverter $propertyConverter;
 
-    /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
+    protected NodeTypeManager $nodeTypeManager;
 
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
+    protected ContentGraphInterface $contentGraph;
+
+    public function __construct(
+        LowLevelCommandHandler $lowLevelCommandHandler,
+        PropertyConverter $propertyConverter,
+        NodeTypeManager $nodeTypeManager,
+        ContentGraphInterface $contentGraph
+    ) {
+        $this->lowLevelCommandHandler = $lowLevelCommandHandler;
+        $this->propertyConverter = $propertyConverter;
+        $this->nodeTypeManager = $nodeTypeManager;
+        $this->contentGraph = $contentGraph;
+    }
 
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
@@ -100,7 +101,24 @@ final class NodeAggregateCommandHandler
 
     private function validateProperties(?PropertyValuesToWrite $propertyValues, NodeTypeName $nodeTypeName): void
     {
-        // @todo implement me
+        if (!$propertyValues) {
+            return;
+        }
+
+        $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
+        // initialize node type
+        $nodeType->getOptions();
+        foreach ($propertyValues->getValues() as $propertyName => $propertyValue) {
+            $attemptedType = TypeHandling::getTypeForValue($propertyValue);
+            $expectedType = $nodeType->getPropertyType($propertyName);
+            if ($attemptedType !== $expectedType) {
+                throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
+                    PropertyName::fromString($propertyName),
+                    $attemptedType,
+                    $expectedType
+                );
+            }
+        }
     }
 
     private function serializeProperties(?PropertyValuesToWrite $propertyValues, NodeTypeName $nodeTypeName): ?SerializedPropertyValues
@@ -108,7 +126,7 @@ final class NodeAggregateCommandHandler
         if (!$propertyValues) {
             return null;
         }
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
 
         return $this->propertyConverter->serializePropertyValues($propertyValues, $nodeType);
     }

@@ -129,14 +129,11 @@ trait EventSourcedTrait
      */
     private $currentEventStreamAsArray = null;
 
-    /**
-     * @var \Exception
-     */
-    private $lastCommandException = null;
+    private ?\Exception $lastCommandException = null;
 
-    private ?ContentStreamIdentifier $contentStreamIdentifier;
+    private ?ContentStreamIdentifier $contentStreamIdentifier = null;
 
-    private ?DimensionSpacePoint $dimensionSpacePoint;
+    private ?DimensionSpacePoint $dimensionSpacePoint = null;
 
     /**
      * @var NodeAggregateIdentifier
@@ -1067,15 +1064,23 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^the last command should have thrown an exception of type "([^"]*)"$/
+     * @Then /^the last command should have thrown an exception of type "([^"]*)"(?: with code (\d*))?$/
      * @param string $shortExceptionName
+     * @param int|null $expectedCode
      * @throws ReflectionException
      */
-    public function theLastCommandShouldHaveThrown(string $shortExceptionName)
+    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode)
     {
         Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
         $lastCommandExceptionShortName = (new \ReflectionClass($this->lastCommandException))->getShortName();
         Assert::assertSame($shortExceptionName, $lastCommandExceptionShortName, sprintf('Actual exception: %s (%s): %s', get_class($this->lastCommandException), $this->lastCommandException->getCode(), $this->lastCommandException->getMessage()));
+        if (!is_null($expectedCode)) {
+            Assert::assertSame($expectedCode, $this->lastCommandException->getCode(), sprintf(
+                'Expected exception code %s, got exception code %s instead',
+                $expectedCode,
+                $this->lastCommandException->getCode()
+            ));
+        }
     }
 
     /**

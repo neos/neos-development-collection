@@ -17,9 +17,11 @@ require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
 require_once('ReadModelInstantiationTrait.php');
+require_once('IntermediaryCommandTrait.php');
 
 use Behat\Behat\Context\Context as BehatContext;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\IntermediaryCommandTrait;
 use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\ReadModelInstantiationTrait;
 use Neos\EventSourcedContentRepository\Tests\Functional\Command\BehatTestHelper;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -37,6 +39,7 @@ class FeatureContext implements BehatContext
     use IsolatedBehatStepsTrait;
     use EventSourcedTrait;
     use ReadModelInstantiationTrait;
+    use IntermediaryCommandTrait;
 
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
@@ -47,7 +50,8 @@ class FeatureContext implements BehatContext
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->setupEventSourcedTrait();
-        $this->setupReadModeInstantiationTrait();
+        $this->setupReadModelInstantiationTrait();
+        $this->setupIntermediaryCommandTrait();
     }
 
     /**

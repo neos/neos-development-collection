@@ -10,6 +10,8 @@ default:
     cr:
       paths:
         - "%paths.base%/Features/ReadModelInstantiation/"
+        - "%paths.base%/Features/NodeCreation/"
+        - "%paths.base%/Features/NodeModification/"
       contexts:
         - FeatureContext:
 

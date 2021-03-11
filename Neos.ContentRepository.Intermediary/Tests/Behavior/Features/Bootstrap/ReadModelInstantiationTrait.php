@@ -28,9 +28,9 @@ use PHPUnit\Framework\Assert;
  */
 trait ReadModelInstantiationTrait
 {
-    private ?ContentStreamIdentifier $contentStreamIdentifier;
+    private ?ContentStreamIdentifier $contentStreamIdentifier = null;
 
-    private ?DimensionSpacePoint $dimensionSpacePoint;
+    private ?DimensionSpacePoint $dimensionSpacePoint = null;
 
     private ReadModelFactory $readModelFactory;
 
@@ -42,7 +42,7 @@ trait ReadModelInstantiationTrait
 
     abstract protected function getObjectManager(): ObjectManagerInterface;
 
-    public function setupReadModeInstantiationTrait(): void
+    public function setupReadModelInstantiationTrait(): void
     {
         $this->readModelFactory = $this->getObjectManager()->get(ReadModelFactory::class);
     }
