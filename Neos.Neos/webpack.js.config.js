@@ -24,6 +24,7 @@ const javascriptConfig = {
 		],
 	},
 	plugins: [
+		// @deprecated Will remove jQuery support with neos 8.0
 		new webpack.ProvidePlugin({
 			$: "jquery",
 			jQuery: "jquery",
