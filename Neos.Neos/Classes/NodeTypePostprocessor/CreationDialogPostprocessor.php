@@ -130,13 +130,6 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
             $editorOptions = Arrays::arrayMergeRecursiveOverrule($this->editorDefaultConfiguration[$editor]['editorOptions'], $editorOptions);
         }
 
-        // The following editors don't (completely) work in the Creation Dialog so they are disabled
-        // TODO should be adjusted if fixed. See https://github.com/neos/neos-ui/issues/1034
-        $unsupportedEditors = ['Neos.Neos/Inspector/Editors/ImageEditor', 'Neos.Neos/Inspector/Editors/AssetEditor', 'Neos.Neos/Inspector/Editors/RichTextEditor', 'Neos.Neos/Inspector/Editors/CodeEditor'];
-        if (\in_array($editor, $unsupportedEditors, true)) {
-            $convertedConfiguration['ui']['help']['message'] = sprintf('The "%s" editor is currently not supported in the Creation Dialog', $editor);
-            $editorOptions['disabled'] = true;
-        }
         $convertedConfiguration['ui']['editor'] = $editor;
         $convertedConfiguration['ui']['editorOptions'] = $editorOptions;
         return $convertedConfiguration;
