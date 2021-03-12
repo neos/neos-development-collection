@@ -30,6 +30,7 @@
     "webpack-cli": "^4.5.0"
   },
   "dependencies": {
+    "dompurify": "^2.2.6",
     "jquery": "^3.6.0"
   }
 }
