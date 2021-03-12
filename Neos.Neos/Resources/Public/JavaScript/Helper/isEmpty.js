@@ -1,8 +1,11 @@
-import isNil from './isNil';
+import isNil from "./isNil";
 
-const isEmpty = object => {
+const isEmpty = (object) => {
+	if (typeof object === "string") {
+		return object.length === 0;
+	}
 	if (isNil(object)) {
-		return false;
+		return true;
 	}
 
 	return (
