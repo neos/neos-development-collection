@@ -1,4 +1,57 @@
 // Notifications
+
+@-moz-keyframes fadeIn {
+	from {
+		height: 0;
+	}
+	to {
+		height: $unit;
+	}
+}
+
+@-webkit-keyframes fadeIn {
+	from {
+		height: 0;
+	}
+	to {
+		height: $unit;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		height: 0;
+	}
+	to {
+		height: $unit;
+	}
+}
+@-moz-keyframes fadeOut {
+	from {
+		height: $unit;
+	}
+	to {
+		height: 0;
+	}
+}
+
+@-webkit-keyframes fadeOut {
+	from {
+		height: $unit;
+	}
+	to {
+		height: 0;
+	}
+}
+@keyframes fadeOut {
+	from {
+		height: $unit;
+	}
+	to {
+		height: 0;
+	}
+}
+
 #neos-notification-container.neos-notification-top {
 	position: fixed;
 	z-index: 999999;
@@ -10,6 +63,7 @@
 	transform: translate(-50%, 0);
 
 	> .neos-notification {
+		display: block;
 		color: white;
 		font-size: 14px;
 		position: relative;
@@ -18,17 +72,26 @@
 		word-wrap: break-word;
 		overflow: hidden;
 		box-sizing: border-box;
-		box-shadow: 0 0 14px rgba(0, 0, 0, .15);
+		box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
+		-webkit-animation: fadeIn 250ms;
+		-moz-animation: fadeIn 250ms;
+		animation: fadeIn 250ms;
+
+		&.fade-out {
+			-webkit-animation: fadeOut 250ms;
+			-moz-animation: fadeOut 250ms;
+			animation: fadeOut 250ms;
+		}
 
 		&::before {
-			content: '';
+			content: "";
 			display: block;
 			position: absolute;
 			left: 40px;
 			top: 0;
 			bottom: 0;
 			width: 1px;
-			background: rgba(255, 255, 255, .25);
+			background: rgba(255, 255, 255, 0.25);
 		}
 
 		&.neos-notification-error {
@@ -98,33 +161,41 @@
 				@extend .#{$fa-css-prefix}-times-circle;
 
 				&:hover {
-					background-color: rgba(255, 255, 255, .25);
+					background-color: rgba(255, 255, 255, 0.25);
 				}
 			}
 		}
 
 		.neos-notification-content {
-			.neos-expand-content {
-				display: none;
-				padding: $defaultMargin ($unit + 1 + $relatedMargin);
-
-				pre {
-					padding: $defaultMargin 0;
-					font-family: "Lucida Console", Monaco, monospace;
-					background-color: transparent;
-					border: none;
-					color: #fff;
-					border-radius: 0;
-					white-space: pre-wrap;
-				}
-			}
-
 			&.expandable {
+				.neos-expand-content {
+					visibility: hidden;
+					padding: 0 ($unit + 1 + $relatedMargin);
+					transition: all 500ms cubic-bezier(0, 1, 0.5, 1);
+
+					pre {
+						padding: $defaultMargin 0;
+						font-family: "Lucida Console", Monaco, monospace;
+						background-color: transparent;
+						border: none;
+						color: #fff;
+						border-radius: 0;
+						white-space: pre-wrap;
+					}
+				}
+
+				&:not(.expanded) .neos-expand-content {
+					max-height: 0;
+				}
+
 				.neos-notification-heading {
 					cursor: pointer;
 					color: #fff;
 
 					&::after {
+						&:focus {
+							outline: none;
+						}
 						content: "›";
 						font-size: 26px;
 						font-weight: normal;
@@ -136,12 +207,17 @@
 						line-height: 0;
 					}
 				}
+			}
 
-				&.expanded {
-					.neos-notification-heading::after {
-						rotate: -90deg;
-						left: 10px;
-					}
+			&.expanded {
+				.neos-expand-content {
+					visibility: visible;
+					max-height: auto;
+					padding: $defaultMargin ($unit + 1 + $relatedMargin);
+				}
+				.neos-notification-heading::after {
+					rotate: -90deg;
+					left: 10px;
 				}
 			}
 

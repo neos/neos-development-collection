@@ -1,10 +1,11 @@
 import { DropDownMenu, MenuPanel } from "./Components/TopBar";
 import Tree from "./Components/Tree";
-import Configuration from "./Services/Configuration";
+import { Configuration, Notification } from "./Services";
 import { cachedFetch } from "./Services/ResourceCache";
 
-// init configuration
+// init API's
 Configuration.init();
+Notification.init();
 
 // preload vieSchema
 const vieSchema = cachedFetch(Configuration.get("VieSchemaUri"));
