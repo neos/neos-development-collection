@@ -1,7 +1,7 @@
 import { getCollectionValueByPath, isNil } from "../Helper";
 
 const hasConfiguration =
-	!isNil(window.NeosCMS) || !sNil(window.NeosCMS.Configuration);
+	!isNil(window.NeosCMS) || !isNil(window.NeosCMS.Configuration);
 
 const init = () => {
 	if (isNil(window.NeosCMS)) {
