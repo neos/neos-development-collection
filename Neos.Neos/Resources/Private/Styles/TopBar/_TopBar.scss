@@ -1,113 +1,121 @@
 #neos-top-bar {
-  position: fixed;
-  display: none;
-  -webkit-flex-flow: row wrap;
-  justify-content: space-between;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 10021;
-  background-color: $grayDark;
-  height: $unit;
-  border-bottom: 1px solid $grayLight;
-  @include font;
-  font-size: 0;
+	position: fixed;
+	display: none;
+	-webkit-flex-flow: row wrap;
+	justify-content: space-between;
+	left: 0;
+	right: 0;
+	top: 0;
+	z-index: 10021;
+	background-color: $grayDark;
+	height: $unit;
+	border-bottom: 1px solid $grayLight;
+	@include font;
+	font-size: 0;
 
-  transition-property: top;
-  transition-duration: 0.2s;
+	transition-property: top;
+	transition-duration: 0.2s;
 
-  .neos-top-bar-left {
-    display: flex;
-    -webkit-flex-flow: row wrap;
-    justify-content: space-around;
+	.neos-top-bar-left {
+		display: flex;
+		-webkit-flex-flow: row wrap;
+		justify-content: space-around;
 
-    .neos-branding {
-      padding: $relatedMargin 1px;
+		.neos-branding {
+			padding: $relatedMargin 1px;
 
-      svg {
-        height: $unit * 0.6;
-        width: auto;
-      }
-    }
-  }
+			svg {
+				height: $unit * 0.6;
+				width: auto;
+			}
+		}
+	}
 
-  .neos-top-bar-right {
-    display: flex;
-    -webkit-flex-flow: row wrap;
-    justify-content: space-around;
-  }
+	.neos-top-bar-right {
+		display: flex;
+		-webkit-flex-flow: row wrap;
+		justify-content: space-around;
+	}
 
-  #neos-user-actions {
-    float: left;
+	#neos-user-actions {
+		float: left;
 
-    i {
-      margin-left: $relatedMargin;
-      margin-right: $relatedMargin;
-    }
+		i {
+			margin-left: $relatedMargin;
+			margin-right: $relatedMargin;
+		}
 
-    .neos-dropdown-toggle {
-      outline: none;
+		.neos-dropdown-toggle {
+			outline: none;
 
-      &:hover {
-        color: $blue;
-        i {
-          color: white;
-        }
-      }
-    }
+			&:hover {
+				color: $blue;
+				i {
+					color: white;
+				}
+			}
+		}
 
-    .neos-dropdown-menu {
-      @import '../Shared/Checkboxes';
-      border: 0;
-      right: 0;
-      background: none;
-      padding: 2px;
-      margin: -2px 0 0;
-      -webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
-      box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+		.neos-dropdown-menu {
+			@import "../Shared/Checkboxes";
+			border: 0;
+			right: 0;
+			background: none;
+			padding: 2px;
+			margin: -2px 0 0;
+			-webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+			box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
 
-      li {
-        height: $unit;
-        background: $grayDarker;
-        border-top: 1px solid $grayDark;
+			li {
+				height: $unit;
+				background: $grayDarker;
+				border-top: 1px solid $grayDark;
 
-        a,
-        button {
-          height: $unit;
-          color: white;
-          font-size: $generalFontSize;
-          line-height: $unit;
-          padding: 0 $defaultMargin;
-          box-sizing: border-box;
-          border: 0;
+				a,
+				button {
+					height: $unit;
+					color: white;
+					font-size: $generalFontSize;
+					line-height: $unit;
+					padding: 0 $defaultMargin;
+					box-sizing: border-box;
+					border: 0;
 
-          &:hover {
-            background: $blue;
-          }
-        }
+					&:hover {
+						background: $blue;
+					}
+				}
 
-        button {
-          width: 100%;
-          text-align: left;
-          background-color: $grayDarker;
+				button {
+					width: 100%;
+					text-align: left;
+					background-color: $grayDarker;
 
-          &:hover {
-            background-color: $blue;
-          }
-        }
+					&:hover {
+						background-color: $blue;
+					}
+				}
 
-        label {
-          padding-top: 9px;
-        }
+				label {
+					padding-top: 9px;
+				}
 
-        button i {
-          line-height: 18px;
-        }
-      }
+				button i {
+					line-height: 18px;
+				}
+			}
 
-      label {
-        font-size: $generalFontSize;
-      }
-    }
-  }
+			label {
+				font-size: $generalFontSize;
+			}
+		}
+
+		.neos-user-menu {
+			&.neos-dropdown-open {
+				.neos-dropdown-menu {
+					display: block;
+				}
+			}
+		}
+	}
 }
