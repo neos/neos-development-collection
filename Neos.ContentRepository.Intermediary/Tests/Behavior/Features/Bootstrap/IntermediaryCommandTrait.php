@@ -144,6 +144,8 @@ trait IntermediaryCommandTrait
         foreach ($properties as &$propertyValue) {
             if ($propertyValue === 'PostalAddress:dummy') {
                 $propertyValue = PostalAddress::dummy();
+            } elseif ($propertyValue === 'PostalAddress:anotherDummy') {
+                $propertyValue = PostalAddress::anotherDummy();
             }
             if (is_string($propertyValue)) {
                 if (\mb_strpos($propertyValue, 'Date:') === 0) {

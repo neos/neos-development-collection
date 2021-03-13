@@ -60,6 +60,16 @@ final class PostalAddress
         );
     }
 
+    public static function anotherDummy(): self
+    {
+        return new self(
+            '29 31st of February Street',
+            '12346',
+            'Another city',
+            'Another country'
+        );
+    }
+
     public function getStreetAddress(): string
     {
         return $this->streetAddress;

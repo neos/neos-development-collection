@@ -131,6 +131,8 @@ trait ReadModelInstantiationTrait
             Assert::assertTrue(isset($properties[$propertyName]), 'Property "' . $propertyName . '" not found');
             if ($expectedPropertyValue === 'PostalAddress:dummy') {
                 $expectedPropertyValue = PostalAddress::dummy();
+            } elseif ($expectedPropertyValue === 'PostalAddress:anotherDummy') {
+                $expectedPropertyValue = PostalAddress::anotherDummy();
             }
             if (is_string($expectedPropertyValue)) {
                 if ($expectedPropertyValue === 'Date:now') {
