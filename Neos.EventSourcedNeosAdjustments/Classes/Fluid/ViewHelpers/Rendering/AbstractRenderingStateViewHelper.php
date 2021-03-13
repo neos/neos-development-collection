@@ -12,15 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\Flow\Security\Authorization\PrivilegeManager;
 use Neos\Flow\Security\Exception;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 
 /**
  * Abstract ViewHelper for all Neos rendering state helpers.

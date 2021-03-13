@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Intermediary\Domain;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyCollectionImplementationClassNameIsInvalid;
 use Neos\Flow\Annotations as Flow;
 

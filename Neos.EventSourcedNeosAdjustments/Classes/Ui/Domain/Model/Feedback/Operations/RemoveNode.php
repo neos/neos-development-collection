@@ -13,7 +13,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  */
 
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;

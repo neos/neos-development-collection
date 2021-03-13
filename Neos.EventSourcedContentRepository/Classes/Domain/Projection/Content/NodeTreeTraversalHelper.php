@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 
 final class NodeTreeTraversalHelper
