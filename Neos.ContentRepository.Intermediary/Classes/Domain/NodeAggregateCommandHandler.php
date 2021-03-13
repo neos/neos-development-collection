@@ -62,9 +62,8 @@ final class NodeAggregateCommandHandler
 
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
+        $this->validateProperties($this->unserializeDefaultProperties($command->getNodeTypeName()), $command->getNodeTypeName());
         $this->validateProperties($command->getInitialPropertyValues(), $command->getNodeTypeName());
-        $initialProperties = $this->unserializeDefaultProperties($command->getNodeTypeName())
-            ->merge($command->getInitialPropertyValues());
 
         $lowLevelCommand = new CreateNodeAggregateWithNodeAndSerializedProperties(
             $command->getContentStreamIdentifier(),
@@ -75,7 +74,7 @@ final class NodeAggregateCommandHandler
             $command->getParentNodeAggregateIdentifier(),
             $command->getSucceedingSiblingNodeAggregateIdentifier(),
             $command->getNodeName(),
-            $this->serializeProperties($initialProperties, $command->getNodeTypeName()),
+            $this->serializeProperties($command->getInitialPropertyValues(), $command->getNodeTypeName()),
             $command->getTetheredDescendantNodeAggregateIdentifiers()
         );
 
