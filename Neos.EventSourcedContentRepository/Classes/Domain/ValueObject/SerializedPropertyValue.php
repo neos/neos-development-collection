@@ -39,9 +39,9 @@ final class SerializedPropertyValue implements \JsonSerializable
      */
     public function __construct($value, string $type)
     {
-        if (!is_scalar($value) && !is_array($value)) {
+        if (!is_scalar($value) && !is_array($value) && !is_null($value)) {
             // TODO: check that array does not contain nested objects...
-            $exceptionMessage = 'TODO: Property value must not contain any objects, contained' . gettype($value);
+            $exceptionMessage = 'TODO: Property value must not contain any objects, contained ' . gettype($value);
             if (is_object($value)) {
                 $exceptionMessage .= ' - object type: ' . get_class($value);
             }

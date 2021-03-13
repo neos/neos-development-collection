@@ -22,12 +22,12 @@ Feature: Create a node aggregate with complex initial values
           type: string
         array:
           type: array
-        postalAddress:
-          type: Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress
         date:
           type: DateTimeImmutable
         uri:
           type: GuzzleHttp\Psr7\Uri
+        postalAddress:
+          type: Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress
         image:
           type: Neos\Media\Domain\Model\ImageInterface
         images:
@@ -69,10 +69,10 @@ Feature: Create a node aggregate with complex initial values
       | int           | 42                                              |
       | float         | 4.2                                             |
       | string        | "Nody McNodeface"                               |
-      | nullString    | "Nody McNodeface"                               |
+      | nullString    | null                                            |
       | array         | {"givenName":"Nody", "familyName":"McNodeface"} |
-      | postalAddress | "VO:PostalAddress"                              |
-      | date          | "2020-08-20T18:56:15+00:00"                     |
-      | uri           | "https://neos.io"                               |
+      | postalAddress | "PostalAddress:dummy"                           |
+      | date          | "Date:2020-08-20T18:56:15+00:00"                |
+      | uri           | "URI:https://neos.io"                           |
       | image         | "IMG:dummy"                                     |
       | images        | "[IMG:dummy]"                                   |

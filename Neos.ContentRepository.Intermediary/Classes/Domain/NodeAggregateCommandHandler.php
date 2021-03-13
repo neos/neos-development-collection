@@ -20,6 +20,7 @@ use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
 use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
 use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler as LowLevelCommandHandler;
@@ -28,7 +29,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
-use Neos\Utility\TypeHandling;
 
 /**
  * The intermediary's node aggregate command handler
@@ -109,25 +109,12 @@ final class NodeAggregateCommandHandler
         // initialize node type
         $nodeType->getOptions();
         foreach ($propertyValues->getValues() as $propertyName => $propertyValue) {
-            if (is_null($propertyValue)) {
-                // we always allow null for now.
-                continue;
-            }
-            $attemptedType = TypeHandling::getTypeForValue($propertyValue);
-            $expectedType = TypeHandling::normalizeType($nodeType->getPropertyType($propertyName));
-            if ($attemptedType === 'float' && $expectedType === 'double'
-                || $attemptedType === 'double' && $expectedType === 'float'
-            ) {
-                continue;
-            }
-            if ($attemptedType !== $expectedType) {
-                if (interface_exists($expectedType) && class_exists($attemptedType) && in_array($expectedType, class_implements($attemptedType))) {
-                    continue;
-                }
+            $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
+            if (!$propertyType->isMatchedBy($propertyValue)) {
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
                     PropertyName::fromString($propertyName),
-                    $attemptedType,
-                    $expectedType
+                    gettype($propertyValue),
+                    $propertyType->getValue()
                 );
             }
         }

@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValu
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -34,46 +35,23 @@ final class PropertyConverter
         $this->serializer = $serializer;
     }
 
-    private static function assertPropertyTypeMatchesPropertyValue(string $propertyTypeFromSchema, $propertyValue, $propertyName)
-    {
-        if (is_object($propertyValue)) {
-            if ($propertyValue === null) {
-                return;
-            }
-            if ($propertyValue instanceof $propertyTypeFromSchema) {
-                return;
-            }
-
-            throw new \RuntimeException('TODO: Property "' . $propertyName . '": type must match the type ' . $propertyTypeFromSchema . ', was ' . get_class($propertyValue));
-        }
-    }
-
-    private static function assertTypeIsNoReference(string $propertyTypeFromSchema)
-    {
-        if ($propertyTypeFromSchema === 'reference' || $propertyTypeFromSchema === 'references') {
-            throw new \RuntimeException('TODO: references cannot be serialized; you need to use the SetNodeReferences command instead.');
-        }
-    }
-
     public function serializePropertyValues(PropertyValuesToWrite $propertyValuesToWrite, NodeType $nodeType): SerializedPropertyValues
     {
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
             // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
-            $nodeType->getProperties();
+            $nodeType->getOptions();
 
-            $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
-            self::assertTypeIsNoReference($propertyTypeFromSchema);
-            self::assertPropertyTypeMatchesPropertyValue($propertyTypeFromSchema, $propertyValue, $propertyName);
+            $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
 
             try {
                 $propertyValue = $this->serializer->normalize($propertyValue);
-            } catch (NotEncodableValueException $e) {
+            } catch (NotEncodableValueException | NotNormalizableValueException $e) {
                 throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
             }
 
-            $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, $propertyTypeFromSchema);
+            $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, (string)$propertyType);
         }
 
         return SerializedPropertyValues::fromArray($serializedPropertyValues);
@@ -81,6 +59,10 @@ final class PropertyConverter
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue)
     {
+        if (is_null($serializedPropertyValue->getValue())) {
+            return null;
+        }
+
         return $this->serializer->denormalize($serializedPropertyValue->getValue(), $serializedPropertyValue->getType());
     }
 }

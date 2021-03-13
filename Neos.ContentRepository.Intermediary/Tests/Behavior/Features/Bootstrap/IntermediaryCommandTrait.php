@@ -23,7 +23,7 @@ use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNo
 use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
 use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
 use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Intermediary\Tests\Fixtures\PostalAddress;
+use Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -157,6 +157,7 @@ trait IntermediaryCommandTrait
                 }
             }
         }
+
         return PropertyValuesToWrite::fromArray($properties);
     }
 

@@ -28,7 +28,7 @@ final class PostalAddress
 
     private string $addressCountry;
 
-    public function __construct(
+    private function __construct(
         string $streetAddress,
         string $postalCode,
         string $addressLocality,
@@ -38,6 +38,16 @@ final class PostalAddress
         $this->postalCode = $postalCode;
         $this->addressLocality = $addressLocality;
         $this->addressCountry = $addressCountry;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            $array['streetAddress'],
+            $array['postalCode'],
+            $array['addressLocality'],
+            $array['addressCountry']
+        );
     }
 
     public static function dummy(): self

@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\Domain\Property\Normalizers;
+namespace Neos\ContentRepository\Intermediary\Domain\Property\Normalizer;
 
 use Neos\Utility\TypeHandling;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface
+final class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     public function normalize($object, string $format = null, array $context = [])
     {

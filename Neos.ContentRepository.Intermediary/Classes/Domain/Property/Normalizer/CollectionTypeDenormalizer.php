@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\Domain\Property\Normalizers;
+namespace Neos\ContentRepository\Intermediary\Domain\Property\Normalizer;
 
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
@@ -70,9 +70,9 @@ final class CollectionTypeDenormalizer implements DenormalizerInterface, Seriali
             return false;
         }
         if ($this->serializer instanceof ContextAwareDenormalizerInterface) {
-            return $this->serializer->supportsDenormalization($data, $parsedType['elementType'], $format, $context);
+            return $this->serializer->supportsDenormalization(reset($data), $parsedType['elementType'], $format, $context);
         }
-        return $this->serializer->supportsDenormalization($data, $parsedType['elementType'], $format);
+        return $this->serializer->supportsDenormalization(reset($data), $parsedType['elementType'], $format);
     }
 
     /**

@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Intermediary\Domain\Property;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyTypeIsInvalid;
 use Neos\Flow\Annotations as Flow;
 
@@ -59,8 +60,14 @@ final class PropertyType
         if ($declaration === 'int' || $declaration === 'integer') {
             return self::int($isNullable);
         }
+        if ($declaration === 'float' || $declaration === 'double') {
+            return self::float($isNullable);
+        }
         if (in_array($declaration, ['DateTime', '\DateTime', 'DateTimeImmutable', '\DateTimeImmutable', 'DateTimeInterface', '\DateTimeInterface'])) {
             return self::date($isNullable);
+        }
+        if ($declaration === 'Uri') {
+            $declaration = Uri::class;
         }
         $className = $declaration[0] != '\\'
             ? '\\' . $declaration
@@ -90,6 +97,11 @@ final class PropertyType
     public static function string(bool $isNullable): self
     {
         return new self(self::TYPE_STRING, $isNullable);
+    }
+
+    public static function float(bool $isNullable): self
+    {
+        return new self(self::TYPE_FLOAT, $isNullable);
     }
 
     public static function date(bool $isNullable): self
@@ -147,7 +159,7 @@ final class PropertyType
         return \mb_substr($this->value, 6, \mb_strlen($this->value) - 7);
     }
 
-    public function matches($propertyValue): bool
+    public function isMatchedBy($propertyValue): bool
     {
         if (is_null($propertyValue)) {
             return true;

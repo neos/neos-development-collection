@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\Domain\Property\Normalizers;
+namespace Neos\ContentRepository\Intermediary\Domain\Property\Normalizer;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Annotations\Entity;
@@ -12,7 +12,7 @@ use Neos\Utility\TypeHandling;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class DoctrinePersistentObjectNormalizer implements NormalizerInterface, DenormalizerInterface
+final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     /**
      * @Flow\Inject

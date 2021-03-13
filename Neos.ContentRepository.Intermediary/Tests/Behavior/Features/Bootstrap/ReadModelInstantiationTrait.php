@@ -14,11 +14,13 @@ namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
+use Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -42,6 +44,8 @@ trait ReadModelInstantiationTrait
     private \Exception $lastInstantiationException;
 
     abstract protected function getObjectManager(): ObjectManagerInterface;
+
+    abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     public function setupReadModelInstantiationTrait(): void
     {
@@ -114,17 +118,32 @@ trait ReadModelInstantiationTrait
 
     /**
      * @Then /^I expect this read model to have the properties:$/
-     * @param TableNode $expectedProperties
+     * @param TableNode $payloadTable
      */
-    public function iExpectThisReadModelToHaveTheProperties(TableNode $expectedProperties): void
+    public function iExpectThisReadModelToHaveTheProperties(TableNode $payloadTable): void
     {
-        Assert::assertNotNull($this->currentReadModel, 'Current read model not found');
+        Assert::assertNotNull($this->currentReadModel, 'Current read model could not be found.');
+
+        $expectedProperties = $this->readPayloadTable($payloadTable);
 
         $properties = $this->currentReadModel->getProperties();
-        foreach ($expectedProperties->getHash() as $row) {
-            $propertyName = $row['Key'];
+        foreach ($expectedProperties as $propertyName => $expectedPropertyValue) {
+            if ($expectedPropertyValue === 'PostalAddress:dummy') {
+                $expectedPropertyValue = PostalAddress::dummy();
+            }
+            if (is_string($expectedPropertyValue)) {
+                if (\mb_strpos($expectedPropertyValue, 'Date:') === 0) {
+                    $expectedPropertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($expectedPropertyValue, 5));
+                } elseif (\mb_strpos($expectedPropertyValue, 'URI:') === 0) {
+                    $expectedPropertyValue = new Uri(\mb_substr($expectedPropertyValue, 4));
+                } elseif ($expectedPropertyValue === 'IMG:dummy') {
+                    $expectedPropertyValue = $this->requireDummyImage();
+                } elseif ($expectedPropertyValue === '[IMG:dummy]') {
+                    $expectedPropertyValue = [$this->requireDummyImage()];
+                }
+            }
             Assert::assertTrue(isset($properties[$propertyName]), 'Property "' . $propertyName . '" not found');
-            Assert::assertEquals($row['Value'], $properties[$propertyName], 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($properties[$propertyName]));
+            Assert::assertEquals($expectedPropertyValue, $properties[$propertyName], 'Node property ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($properties[$propertyName]));
         }
     }
 }
