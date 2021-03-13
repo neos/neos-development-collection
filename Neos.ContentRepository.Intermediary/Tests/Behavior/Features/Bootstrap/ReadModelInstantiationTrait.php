@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -109,5 +110,21 @@ trait ReadModelInstantiationTrait
             $this->currentReadModel,
             'The current read model is not of expected type "' . $expectedClassName . '" but of type "' . get_class($this->currentReadModel) . '"'
         );
+    }
+
+    /**
+     * @Then /^I expect this read model to have the properties:$/
+     * @param TableNode $expectedProperties
+     */
+    public function iExpectThisReadModelToHaveTheProperties(TableNode $expectedProperties): void
+    {
+        Assert::assertNotNull($this->currentReadModel, 'Current read model not found');
+
+        $properties = $this->currentReadModel->getProperties();
+        foreach ($expectedProperties->getHash() as $row) {
+            $propertyName = $row['Key'];
+            Assert::assertTrue(isset($properties[$propertyName]), 'Property "' . $propertyName . '" not found');
+            Assert::assertEquals($row['Value'], $properties[$propertyName], 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($properties[$propertyName]));
+        }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures;
+namespace Neos\ContentRepository\Intermediary\Tests\Unit\Fixtures;
 
 /*
  * This file is part of the Neos.ContentRepository.Intermediary package.

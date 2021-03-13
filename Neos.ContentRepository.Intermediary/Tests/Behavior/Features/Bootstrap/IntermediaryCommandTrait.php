@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -22,10 +23,13 @@ use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNo
 use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
 use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
 use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Intermediary\Tests\Fixtures\PostalAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\Image;
 
 /**
  * Custom context trait for executing intermediary commands
@@ -36,6 +40,10 @@ trait IntermediaryCommandTrait
 
     private ?\Exception $lastCommandException = null;
 
+    protected ?Image $dummyImage = null;
+
+    protected ResourceManager $resourceManager;
+
     abstract protected function getObjectManager(): ObjectManagerInterface;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
@@ -43,6 +51,7 @@ trait IntermediaryCommandTrait
     public function setupIntermediaryCommandTrait(): void
     {
         $this->intermediaryNodeAggregateCommandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
+        $this->resourceManager = $this->getObjectManager()->get(ResourceManager::class);
     }
 
     /**
@@ -130,8 +139,34 @@ trait IntermediaryCommandTrait
         }
     }
 
-    protected function unserializeProperties(array $properties): PropertyValuesToWrite
+    private function unserializeProperties(array $properties): PropertyValuesToWrite
     {
+        foreach ($properties as &$propertyValue) {
+            if ($propertyValue === 'PostalAddress:dummy') {
+                $propertyValue = PostalAddress::dummy();
+            }
+            if (is_string($propertyValue)) {
+                if (\mb_strpos($propertyValue, 'Date:') === 0) {
+                    $propertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($propertyValue, 5));
+                } elseif (\mb_strpos($propertyValue, 'URI:') === 0) {
+                    $propertyValue = new Uri(\mb_substr($propertyValue, 4));
+                } elseif ($propertyValue === 'IMG:dummy') {
+                    $propertyValue = $this->requireDummyImage();
+                } elseif ($propertyValue === '[IMG:dummy]') {
+                    $propertyValue = [$this->requireDummyImage()];
+                }
+            }
+        }
         return PropertyValuesToWrite::fromArray($properties);
+    }
+
+    private function requireDummyImage(): Image
+    {
+        if (!$this->dummyImage) {
+            $resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/bat.jpg');
+            $this->dummyImage = new Image($resource);
+        }
+
+        return $this->dummyImage;
     }
 }

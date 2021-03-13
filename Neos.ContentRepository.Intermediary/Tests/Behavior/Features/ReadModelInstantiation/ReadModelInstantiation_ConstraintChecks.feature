@@ -23,10 +23,6 @@ Feature: Provide and configure a custom read model
       properties:
         foo:
           type: 'I\Do\Not\Exist'
-    'Neos.ContentRepository.Intermediary.Testing:Node':
-      properties:
-        postalAddress:
-          type: 'Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress'
     """
     And the event RootWorkspaceWasCreated was published with payload:
       | Key                        | Value                                  |

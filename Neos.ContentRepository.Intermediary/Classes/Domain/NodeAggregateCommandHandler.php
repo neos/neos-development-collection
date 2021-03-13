@@ -109,9 +109,21 @@ final class NodeAggregateCommandHandler
         // initialize node type
         $nodeType->getOptions();
         foreach ($propertyValues->getValues() as $propertyName => $propertyValue) {
+            if (is_null($propertyValue)) {
+                // we always allow null for now.
+                continue;
+            }
             $attemptedType = TypeHandling::getTypeForValue($propertyValue);
-            $expectedType = $nodeType->getPropertyType($propertyName);
+            $expectedType = TypeHandling::normalizeType($nodeType->getPropertyType($propertyName));
+            if ($attemptedType === 'float' && $expectedType === 'double'
+                || $attemptedType === 'double' && $expectedType === 'float'
+            ) {
+                continue;
+            }
             if ($attemptedType !== $expectedType) {
+                if (interface_exists($expectedType) && class_exists($attemptedType) && in_array($expectedType, class_implements($attemptedType))) {
+                    continue;
+                }
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
                     PropertyName::fromString($propertyName),
                     $attemptedType,

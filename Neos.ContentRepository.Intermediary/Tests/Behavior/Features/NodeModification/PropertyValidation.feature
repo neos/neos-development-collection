@@ -41,10 +41,10 @@ Feature: Validate initial and default properties
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
     And the graph projection is fully up to date
     And the intermediary command SetNodeProperties is executed with payload and exceptions are caught:
-      | Key                       | Value                                                   |
-      | contentStreamIdentifier   | "cs-identifier"                                         |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
-      | originDimensionSpacePoint | {}                                                      |
-      | propertyValues            | {"postalAddress": "Straße des 31. Februar, 12345 Baum"} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                            |
+      | Key                       | Value                                           |
+      | contentStreamIdentifier   | "cs-identifier"                                 |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                              |
+      | originDimensionSpacePoint | {}                                              |
+      | propertyValues            | {"postalAddress": "28 31st of February Street"} |
+      | initiatingUserIdentifier  | "initiating-user-identifier"                    |
     Then the last command should have thrown an exception of type "PropertyCannotBeSet" with code 1615466573

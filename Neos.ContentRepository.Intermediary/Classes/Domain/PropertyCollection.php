@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Intermediary\Domain;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
