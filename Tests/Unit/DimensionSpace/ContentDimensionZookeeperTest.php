@@ -30,7 +30,7 @@ class ContentDimensionZookeeperTest extends UnitTestCase
      */
     protected $dimensionSource;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -12,7 +12,9 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace;
  * source code.
  */
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -67,11 +69,10 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable
-     * @throws DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable
      */
     public function decreaseByThrowsExceptionForIncomparableWeights()
     {
+        $this->expectException(ContentSubgraphVariationWeightsAreIncomparable::class);
         $weight = new DimensionSpace\ContentSubgraphVariationWeight([
             'dimensionA' => new Dimension\ContentDimensionValueSpecializationDepth(0),
             'dimensionB' => new Dimension\ContentDimensionValueSpecializationDepth(1)
@@ -86,11 +87,10 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid
-     * @throws DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable
      */
     public function decreaseByThrowsExceptionForComponentsGreaterThanTheOriginal()
     {
+        $this->expectException(ContentDimensionValueSpecializationDepthIsInvalid::class);
         $weight = new DimensionSpace\ContentSubgraphVariationWeight([
             'dimensionA' => new Dimension\ContentDimensionValueSpecializationDepth(0),
             'dimensionB' => new Dimension\ContentDimensionValueSpecializationDepth(1)
@@ -105,7 +105,7 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
 
     /**
      * @test
-     * @throws DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable
+     * @throws ContentSubgraphVariationWeightsAreIncomparable
      */
     public function decreaseByCorrectlyDecreasesEachComponent()
     {

@@ -12,6 +12,8 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * source code.
  */
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValuesAreMissing;
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\GeneralizationIsInvalid;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -29,7 +31,7 @@ class ContentDimensionTest extends UnitTestCase
      */
     protected $values;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -46,12 +48,12 @@ class ContentDimensionTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValuesAreMissing
      * @test
      */
     public function initializationThrowsExceptionWithoutAnyDimensionValuesGiven()
     {
-        $subject = new Dimension\ContentDimension(
+        $this->expectException(ContentDimensionValuesAreMissing::class);
+        new Dimension\ContentDimension(
             new Dimension\ContentDimensionIdentifier('dimension'),
             [],
             new Dimension\ContentDimensionValue('default')
@@ -118,7 +120,7 @@ class ContentDimensionTest extends UnitTestCase
 
     /**
      * @test
-     * @throws Dimension\Exception\GeneralizationIsInvalid
+     * @throws GeneralizationIsInvalid
      */
     public function calculateSpecializationDepthReturnsZeroForValueItself()
     {
@@ -130,7 +132,7 @@ class ContentDimensionTest extends UnitTestCase
 
     /**
      * @test
-     * @throws Dimension\Exception\GeneralizationIsInvalid
+     * @throws GeneralizationIsInvalid
      */
     public function calculateSpecializationDepthCalculatesCorrectDepthForSpecialization()
     {
@@ -146,11 +148,10 @@ class ContentDimensionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\DimensionSpace\Dimension\Exception\GeneralizationIsInvalid
-     * @throws Dimension\Exception\GeneralizationIsInvalid
      */
     public function calculateSpecializationDepthThrowsExceptionForDisconnectedValues()
     {
+        $this->expectException(GeneralizationIsInvalid::class);
         $this->subject->calculateSpecializationDepth($this->values['us'], $this->values['eu']);
     }
 

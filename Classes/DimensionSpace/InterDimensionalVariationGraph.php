@@ -356,6 +356,10 @@ class InterDimensionalVariationGraph
      */
     public function getVariantType(DimensionSpacePoint $subject, DimensionSpacePoint $object): VariantType
     {
+        if ($subject->equals($object)) {
+            return VariantType::same();
+        }
+
         if (is_null($this->indexedGeneralizations)) {
             $this->initializeVariations();
         }

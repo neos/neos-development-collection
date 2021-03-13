@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * source code.
  */
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -21,11 +22,11 @@ class ContentDimensionValueSpecializationDepthTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid
      */
     public function initializationThrowsExceptionForNegativeDepth()
     {
-        $subject = new Dimension\ContentDimensionValueSpecializationDepth(random_int(PHP_INT_MIN, -1));
+        $this->expectException(ContentDimensionValueSpecializationDepthIsInvalid::class);
+        new Dimension\ContentDimensionValueSpecializationDepth(random_int(PHP_INT_MIN, -1));
     }
 
     /**
