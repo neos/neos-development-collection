@@ -41,3 +41,15 @@ Feature: Validate initial and default properties
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
       | initialPropertyValues         | {"postalAddress": "28 31st of February Street"}    |
     Then the last command should have thrown an exception of type "PropertyCannotBeSet" with code 1615466573
+
+  Scenario: Try to create a node aggregate with a property the node type does not declare
+    When the intermediary command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                           | Value                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                    |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                 |
+      | nodeTypeName                  | "Neos.ContentRepository.Intermediary.Testing:Node" |
+      | originDimensionSpacePoint     | {}                                                 |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"             |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
+      | initialPropertyValues         | {"iDoNotExist": "whatever"}                        |
+    Then the last command should have thrown an exception of type "PropertyCannotBeSet" with code 1615664798

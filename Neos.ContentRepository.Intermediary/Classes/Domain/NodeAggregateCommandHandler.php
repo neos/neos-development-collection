@@ -111,6 +111,9 @@ final class NodeAggregateCommandHandler
         // initialize node type
         $nodeType->getOptions();
         foreach ($propertyValues->getValues() as $propertyName => $propertyValue) {
+            if (!isset($nodeType->getProperties()[$propertyName])) {
+                throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(PropertyName::fromString($propertyName), $nodeTypeName);
+            }
             $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
             if (!$propertyType->isMatchedBy($propertyValue)) {
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
