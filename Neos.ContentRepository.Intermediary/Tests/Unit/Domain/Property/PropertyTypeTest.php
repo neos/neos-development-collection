@@ -15,6 +15,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Intermediary\Domain\Property\PropertyType;
 use Neos\ContentRepository\Intermediary\Tests\Unit\Fixtures\PostalAddress;
 use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageInterface;
 use PHPUnit\Framework\Assert;
@@ -29,7 +30,7 @@ class PropertyTypeTest extends TestCase
     /**
      * @dataProvider declarationAndValueProvider
      */
-    public function testMatches(array $declarationsByType, array $validValues, array $invalidValues): void
+    public function testIsMatchedBy(array $declarationsByType, array $validValues, array $invalidValues): void
     {
         foreach ($declarationsByType as $declaration) {
             $subject = PropertyType::fromNodeTypeDeclaration($declaration);
@@ -50,6 +51,7 @@ class PropertyTypeTest extends TestCase
         $string = 'It\'s a graph!';
         $array = [$string];
         $image = new Image(new PersistentResource());
+        $asset = new Asset(new PersistentResource());
         $date = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, '2020-08-20T18:56:15+00:00');
         $uri = new Uri('https://www.neos.io');
         $postalAddress = PostalAddress::dummy();
@@ -58,58 +60,92 @@ class PropertyTypeTest extends TestCase
             [
                 ['bool', '?bool', 'boolean', '?boolean'],
                 [$bool, null],
-                [0, $int, 0.0, $float, '', $string, [], $array, $date, $uri, $postalAddress, $image, [$image]]
+                [0, $int, 0.0, $float, '', $string, [], $array, $date, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
                 ['int', '?int', 'integer', '?integer'],
                 [42, null],
-                [$bool, $float, $string, $array, $date, $uri, $postalAddress, $image, [$image]]
+                [$bool, $float, $string, $array, $date, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
                 ['float', '?float', 'double', '?double'],
                 [4.2, null],
-                [$bool, $int, $string, $array, $date, $uri, $postalAddress, $image, [$image]]
+                [$bool, $int, $string, $array, $date, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
                 ['string', '?string'],
                 ['', null],
-                [$bool, $int, $float, $array, $date, $uri, $postalAddress, $image, [$image]]
+                [$bool, $int, $float, $array, $date, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
                 ['array', '?array'],
-                [[], $array, null],
-                [$bool, $int, $float, $string, $date, $uri, $postalAddress, $image]
+                [[], $array, [$asset], null],
+                [$bool, $int, $float, $string, $date, $uri, $postalAddress, $image, $asset]
             ],
             [
                 [\DateTime::class, '?' . \DateTime::class, \DateTimeImmutable::class, '?' . \DateTimeImmutable::class, \DateTimeInterface::class, '?' . \DateTimeInterface::class],
                 [$date, null],
-                [$bool, $int, $float, $string, $array, $uri, $postalAddress, $image, [$image]]
+                [$bool, $int, $float, $string, $array, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
                 ['Uri', '?Uri', Uri::class, '?' . Uri::class, UriInterface::class, '?' . UriInterface::class],
                 [$uri, null],
-                [$bool, $int, $float, $string, $array, $date, $postalAddress, $image, [$image]]
+                [$bool, $int, $float, $string, $array, $date, $postalAddress, $image, $asset, [$asset]]
             ],
             [
                 [PostalAddress::class, '?' . PostalAddress::class],
                 [$postalAddress, null],
-                [$bool, $int, $float, $string, $array, $date, $uri, $image, [$image]]
+                [$bool, $int, $float, $string, $array, $date, $uri, $image, $asset, [$asset]]
             ],
             [
                 [ImageInterface::class, '?' . ImageInterface::class],
                 [$image, null],
-                [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, [$image]]
+                [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, $asset, [$image]]
             ],
             [
-                ['array<' . ImageInterface::class . '>'],
-                [[$image], null],
-                [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, $image]
+                [Asset::class, '?' . Asset::class],
+                [$asset, $image, null],
+                [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, [$asset]]
             ],
             [
-                [ImageInterface::class . '[]'],
-                [[$image], null],
-                [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, $image]
+                ['array<' . Asset::class . '>'],
+                [[$asset], [$image], null],
+                [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, $image, $asset]
             ]
+        ];
+    }
+
+    /**
+     * @dataProvider declarationTypeProvider
+     * @param array $declaredTypes
+     * @param string $expectedSerializationType
+     */
+    public function testGetSerializationType(array $declaredTypes, string $expectedSerializationType): void
+    {
+        foreach ($declaredTypes as $declaredType) {
+            $actualSerializationType = PropertyType::fromNodeTypeDeclaration($declaredType)->getSerializationType();
+            Assert::assertSame(
+                $expectedSerializationType,
+                $actualSerializationType,
+                'Serialization type does not match for declared type "' . $declaredType . '". Expected "' . $expectedSerializationType . '", got "' . $actualSerializationType . '"'
+            );
+        }
+    }
+
+    public function declarationTypeProvider(): array
+    {
+        return [
+            [['bool', '?bool', 'boolean', '?boolean'], 'boolean'],
+            [['int', '?int', 'integer', '?integer'], 'integer'],
+            [['float', '?float', 'double', '?double'], 'float'],
+            [['string', '?string'], 'string'],
+            [['array', '?array'], 'array'],
+            [['DateTime', '?DateTime', 'DateTimeImmutable', '?DateTimeImmutable', 'DateTimeInterface', '?DateTimeInterface'], 'DateTimeImmutable'],
+            [['Uri', '?Uri', Uri::class, '?' . Uri::class, UriInterface::class, '?' . UriInterface::class], Uri::class],
+            [[PostalAddress::class, '?' . PostalAddress::class], PostalAddress::class],
+            [[ImageInterface::class, '?' . ImageInterface::class], ImageInterface::class],
+            [[Asset::class, '?' . Asset::class], Asset::class],
+            [['array<' . Asset::class . '>', '?array<' . Asset::class . '>'], 'array<' . Asset::class . '>'],
         ];
     }
 }

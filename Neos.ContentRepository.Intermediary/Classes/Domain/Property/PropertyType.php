@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Intermediary\Domain\Property;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyTypeIsInvalid;
 use Neos\Flow\Annotations as Flow;
+use Psr\Http\Message\UriInterface;
 
 /**
  * The property type value object as declared in a NodeType
@@ -24,8 +25,8 @@ use Neos\Flow\Annotations as Flow;
  */
 final class PropertyType
 {
-    const TYPE_BOOL = 'bool';
-    const TYPE_INT = 'int';
+    const TYPE_BOOL = 'boolean';
+    const TYPE_INT = 'integer';
     const TYPE_FLOAT = 'float';
     const TYPE_STRING = 'string';
     const TYPE_ARRAY = 'array';
@@ -66,7 +67,7 @@ final class PropertyType
         if (in_array($declaration, ['DateTime', '\DateTime', 'DateTimeImmutable', '\DateTimeImmutable', 'DateTimeInterface', '\DateTimeInterface'])) {
             return self::date($isNullable);
         }
-        if ($declaration === 'Uri') {
+        if ($declaration === 'Uri' || $declaration === Uri::class || $declaration === UriInterface::class) {
             $declaration = Uri::class;
         }
         $className = $declaration[0] != '\\'
