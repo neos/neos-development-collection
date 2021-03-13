@@ -39,9 +39,9 @@ trait ReadModelInstantiationTrait
 
     private ContentGraphInterface $contentGraph;
 
-    private NodeBasedReadModelInterface $currentReadModel;
+    private ?NodeBasedReadModelInterface $currentReadModel = null;
 
-    private \Exception $lastInstantiationException;
+    private ?\Exception $lastInstantiationException = null;
 
     abstract protected function getObjectManager(): ObjectManagerInterface;
 
@@ -128,11 +128,18 @@ trait ReadModelInstantiationTrait
 
         $properties = $this->currentReadModel->getProperties();
         foreach ($expectedProperties as $propertyName => $expectedPropertyValue) {
+            Assert::assertTrue(isset($properties[$propertyName]), 'Property "' . $propertyName . '" not found');
             if ($expectedPropertyValue === 'PostalAddress:dummy') {
                 $expectedPropertyValue = PostalAddress::dummy();
             }
             if (is_string($expectedPropertyValue)) {
-                if (\mb_strpos($expectedPropertyValue, 'Date:') === 0) {
+                if ($expectedPropertyValue === 'Date:now') {
+                    // we accept 10s offset for the projector to be fine
+                    $expectedPropertyValue = new \DateTimeImmutable();
+                    $expectedDateInterval = new \DateInterval('PT10S');
+                    Assert::assertLessThan($properties[$propertyName], $expectedPropertyValue->sub($expectedDateInterval), 'Node property ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($properties[$propertyName]));
+                    continue;
+                } elseif (\mb_strpos($expectedPropertyValue, 'Date:') === 0) {
                     $expectedPropertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($expectedPropertyValue, 5));
                 } elseif (\mb_strpos($expectedPropertyValue, 'URI:') === 0) {
                     $expectedPropertyValue = new Uri(\mb_substr($expectedPropertyValue, 4));
@@ -142,7 +149,6 @@ trait ReadModelInstantiationTrait
                     $expectedPropertyValue = [$this->requireDummyImage()];
                 }
             }
-            Assert::assertTrue(isset($properties[$propertyName]), 'Property "' . $propertyName . '" not found');
             Assert::assertEquals($expectedPropertyValue, $properties[$propertyName], 'Node property ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($properties[$propertyName]));
         }
     }

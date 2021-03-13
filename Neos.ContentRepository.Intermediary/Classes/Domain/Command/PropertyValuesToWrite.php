@@ -51,6 +51,11 @@ final class PropertyValuesToWrite
         return new self($values);
     }
 
+    public function merge(self $other): self
+    {
+        return new self(array_merge($this->values, $other->getValues()));
+    }
+
     /**
      * @return array|mixed[]
      */

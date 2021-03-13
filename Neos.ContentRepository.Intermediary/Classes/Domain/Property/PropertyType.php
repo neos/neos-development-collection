@@ -198,6 +198,11 @@ final class PropertyType
         return (class_exists($className) || interface_exists($className)) && $propertyValue instanceof $className;
     }
 
+    public function getSerializationType(): string
+    {
+        return $this->value;
+    }
+
     public function __toString(): string
     {
         return $this->value;

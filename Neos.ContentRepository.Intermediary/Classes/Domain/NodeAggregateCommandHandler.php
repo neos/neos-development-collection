@@ -27,6 +27,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
 
@@ -62,6 +63,8 @@ final class NodeAggregateCommandHandler
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
         $this->validateProperties($command->getInitialPropertyValues(), $command->getNodeTypeName());
+        $initialProperties = $this->unserializeDefaultProperties($command->getNodeTypeName())
+            ->merge($command->getInitialPropertyValues());
 
         $lowLevelCommand = new CreateNodeAggregateWithNodeAndSerializedProperties(
             $command->getContentStreamIdentifier(),
@@ -72,7 +75,7 @@ final class NodeAggregateCommandHandler
             $command->getParentNodeAggregateIdentifier(),
             $command->getSucceedingSiblingNodeAggregateIdentifier(),
             $command->getNodeName(),
-            $this->serializeProperties($command->getInitialPropertyValues(), $command->getNodeTypeName()),
+            $this->serializeProperties($initialProperties, $command->getNodeTypeName()),
             $command->getTetheredDescendantNodeAggregateIdentifiers()
         );
 
@@ -128,5 +131,19 @@ final class NodeAggregateCommandHandler
         $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
 
         return $this->propertyConverter->serializePropertyValues($propertyValues, $nodeType);
+    }
+
+    private function unserializeDefaultProperties(NodeTypeName $nodeTypeName): PropertyValuesToWrite
+    {
+        $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
+        $defaultValues = [];
+        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
+            $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
+            $defaultValues[$propertyName] = $this->propertyConverter->deserializePropertyValue(
+                new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
+            );
+        }
+
+        return PropertyValuesToWrite::fromArray($defaultValues);
     }
 }
