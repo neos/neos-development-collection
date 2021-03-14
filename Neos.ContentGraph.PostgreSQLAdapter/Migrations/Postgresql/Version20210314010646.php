@@ -19,31 +19,41 @@ class Version20210314010646 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->abortIf(
-            $this->connection->getDatabasePlatform()->getName() != 'pgsql',
-            'Migration can only be executed safely on "pgsql".'
+            $this->connection->getDatabasePlatform()->getName() != 'postgresql',
+            'Migration can only be executed safely on "postgresql".'
         );
 
         $this->addSql('CREATE TABLE neos_contentgraph_node(
     relationanchorpoint uuid NOT NULL PRIMARY KEY,
-    origindimensionspacepoint text NOT NULL,
+    origindimensionspacepoint jsonb NOT NULL,
     origindimensionspacepointhash varchar(255) NOT NULL,
     nodeaggregateidentifier varchar(255) NOT NULL,
     nodetypename varchar(255) NOT NULL,
     classification varchar(255) NOT NULL,
     properties jsonb NOT NULL
-) COLLATE=utf8_unicode_ci;');
+)');
 
         $this->addSql('CREATE INDEX NODE_AGGREGATE_IDENTIFIER ON neos_contentgraph_node (nodeaggregateidentifier);');
         $this->addSql('CREATE INDEX PROPERTIES ON neos_contentgraph_node USING GIN (properties);');
+
+        $this->addSql('CREATE TABLE neos_contentgraph_hierarchyrelationset(
+    contentstreamidentifier varchar(255) NOT NULL,
+    parentnodeanchor uuid NOT NULL,
+    childnodeanchorpoints jsonb NOT NULL
+)');
+        $this->addSql('CREATE INDEX CONTENT_STREAM_IDENTIFIER ON neos_contentgraph_hierarchyrelationset (contentstreamidentifier);');
+        $this->addSql('CREATE INDEX PARENT_NODE_ANCHOR ON neos_contentgraph_hierarchyrelationset (parentnodeanchor);');
+        $this->addSql('CREATE INDEX CHILD_NODE_ANCHOR_POINTS ON neos_contentgraph_hierarchyrelationset USING GIN (childnodeanchorpoints);');
     }
 
     public function down(Schema $schema): void
     {
         $this->abortIf(
-            $this->connection->getDatabasePlatform()->getName() != 'pgsql',
-            'Migration can only be executed safely on "pgsql".'
+            $this->connection->getDatabasePlatform()->getName() != 'postgresql',
+            'Migration can only be executed safely on "postgresql".'
         );
 
         $this->addSql('DROP TABLE neos_contentgraph_node');
+        $this->addSql('DROP TABLE neos_contentgraph_hierarchyrelationset');
     }
 }

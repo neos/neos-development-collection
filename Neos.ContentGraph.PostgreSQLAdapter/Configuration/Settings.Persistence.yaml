@@ -1,0 +1,18 @@
+#
+# Persistence configuration for the PostgreSQL adapter
+#
+
+Neos:
+  ContentGraph:
+    PostgreSQLAdapter:
+      persistence:
+        backendOptions:
+          driver: 'pdo_pgsql'
+          host: NULL
+          dbname: NULL
+          user: NULL
+          password: NULL
+          charset: 'UTF8'
+          defaultTableOptions:
+            charset: 'UTF8'
+        cacheAllQueryResults: false
