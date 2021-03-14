@@ -15,7 +15,6 @@
         "neos/content-repository-dimensionspace": "*"
     },
     "replace": {
-        "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
         "neos/eventsourcedcontentrepository-security": "self.version",
