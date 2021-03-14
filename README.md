@@ -147,6 +147,10 @@ Transition package implementing the event sourced CR core. In the longer run, wi
 
 implementation of the `ContentGraphInterface` and `ContentSubgraphInterface` using MySQL queries.
 
+## CR / Neos.ContentGraph.PostgreSQLAdapter
+
+implementation of the `ContentGraphInterface` and `ContentSubgraphInterface` using PostgreSQL queries.
+
 ## CR / Neos.EventSourcedNeosAdjustments
 
 It turns out that there are numerous changes needed to the details of Neos.Neos - so this package hooks into various places in the Neos lifecycle to override certain Neos functionality.
