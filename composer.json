@@ -25,9 +25,6 @@
     "suggest": [],
     "autoload": {
         "psr-4": {
-            "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
-                "Neos.ContentGraph.DoctrineDbalAdapter/Classes"
-            ],
             "Neos\\ContentGraph\\PostgreSQLAdapter\\": [
                 "Neos.ContentGraph.PostgreSQLAdapter/Classes"
             ],
