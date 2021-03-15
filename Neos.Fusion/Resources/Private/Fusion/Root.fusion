@@ -171,32 +171,59 @@ prototype(Neos.Fusion:ResourceUri) {
 #
 # Usage:
 # link = Neos.Fusion:Link.Action {
-#   href {
 #     package = 'Some.Package'
 #     controller = 'Standard'
 #     action = 'index'
-#   }
 # }
 #
-prototype(Neos.Fusion:Link.Action) < prototype(Neos.Fusion:Tag) {
+prototype(Neos.Fusion:Link.Action) < prototype(Neos.Fusion:Component) {
+  package = ''
+  subpackage = ''
+  controller = ''
+  action = 'index'
+  additionalParams = Neos.Fusion:DataStructure
+  arguments = Neos.Fusion:DataStructure
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
+  renderer = Neos.Fusion:Tag {
     tagName = 'a'
-    href = Neos.Fusion:UriBuilder
-    attributes.href = ${this.href}
+    @ignoreProperties=${['package', 'subpackage', 'controller', 'action', 'arguments', 'format', 'section', 'additionalParams', 'argumentsToBeExcludedFromQueryString', 'addQueryString', 'absolute']}
+    @apply.props = ${props}
+    href = Neos.Fusion:UriBuilder {
+      package = ${props.package}
+      subpackage = ${props.subpackage}
+      controller = ${props.controller}
+      action = ${props.action}
+      arguments = ${props.arguments}
+      format = ${props.format}
+      section = ${props.section}
+      additionalParams = ${props.additionalParams}
+      argumentsToBeExcludedFromQueryString = ${props.argumentsToBeExcludedFromQueryString}
+      addQueryString = ${props.addQueryString}
+      absolute = ${props.absolute}
+    }
+  }
 }
 
 # Renders a link pointing to a resource
 #
 # Usage:
 # link = Neos.Fusion:Link.Resource {
-#   href {
-#     path = 'resource://Some.Package/Public/Images/SomeImage.png'
-#   }
+#   path = 'resource://Some.Package/Public/Images/SomeImage.png'
 # }
 #
-prototype(Neos.Fusion:Link.Resource) < prototype(Neos.Fusion:Tag) {
+prototype(Neos.Fusion:Link.Resource) < prototype(Neos.Fusion:Component) {
+  localize = true
+  renderer = Neos.Fusion:Tag {
     tagName = 'a'
-    href = Neos.Fusion:ResourceUri
-    attributes.href = ${this.href}
+    @ignoreProperties=${['path','package','resource','localize']}
+    @apply.props = ${props}
+    href = Neos.Fusion:ResourceUri {
+      path = ${props.path}
+      package = ${props.package}
+      resource = ${props.resource}
+      localize = ${props.localize}
+    }
+  }
 }
 
 # Render a content fragment without any additional markup
