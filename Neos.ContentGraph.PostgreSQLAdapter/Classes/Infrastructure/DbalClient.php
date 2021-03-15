@@ -33,15 +33,11 @@ class DbalClient
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="persistence.doctrine.sqlLogger")
-     * @var string
+     * @var string|null
      */
-    protected string $sqlLogger;
+    protected ?string $sqlLogger;
 
-    /**
-     * @var Connection
-     */
     protected Connection $connection;
-
 
     public function initializeObject(): void
     {

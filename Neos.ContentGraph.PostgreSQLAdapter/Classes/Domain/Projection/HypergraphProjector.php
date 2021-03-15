@@ -32,7 +32,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class HypergraphProjector extends AbstractProcessedEventsAwareProjector
+final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
 {
     private DbalClient $databaseClient;
 
@@ -48,7 +48,7 @@ class HypergraphProjector extends AbstractProcessedEventsAwareProjector
     /**
      * @throws \Throwable
      */
-    public function whenRootNodeAggregateWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
+    public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $originDimensionSpacePoint = new OriginDimensionSpacePoint([]);
