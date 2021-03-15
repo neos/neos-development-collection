@@ -27,8 +27,8 @@ Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGr
 
 
 Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector:
-  properties:
-    'processedEventsCache':
+  arguments:
+    2:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
@@ -37,8 +37,8 @@ Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjecto
             value: Neos_EventSourcedContentRepository_ProcessedWorkspaceEvents
 
 Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector:
-  properties:
-    'processedEventsCache':
+  arguments:
+    2:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache

@@ -13,6 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
+use Doctrine\DBAL\Connection;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceRebaseFailed;
@@ -24,6 +26,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceW
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -32,6 +35,16 @@ use Neos\Flow\Annotations as Flow;
 class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';
+
+    private DbalClient $databaseClient;
+
+    public function __construct(
+        DbalClient $eventStorageDatabaseClient,
+        VariableFrontend $processedEventsCache
+    ) {
+        $this->databaseClient = $eventStorageDatabaseClient;
+        parent::__construct($eventStorageDatabaseClient, $processedEventsCache);
+    }
 
     public function whenWorkspaceWasCreated(WorkspaceWasCreated $event)
     {
@@ -163,5 +176,18 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
     {
         parent::reset();
         $this->getDatabaseConnection()->exec('TRUNCATE ' . self::TABLE_NAME);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    protected function transactional(callable $operations): void
+    {
+        $this->getDatabaseConnection()->transactional($operations);
+    }
+
+    protected function getDatabaseConnection(): Connection
+    {
+        return $this->databaseClient->getConnection();
     }
 }

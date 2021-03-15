@@ -1,6 +1,6 @@
-Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
+Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector:
   arguments:
-    2:
+    3:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
