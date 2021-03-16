@@ -1,6 +1,6 @@
 import { DropDownMenu, MenuPanel } from "./Components/TopBar";
 import Tree from "./Components/Tree";
-import { Configuration, Notification } from "./Services";
+import { Configuration, Notification, Localisation } from "./Services";
 import { cachedFetch } from "./Services/ResourceCache";
 
 // init API's
@@ -9,6 +9,9 @@ Notification.init();
 
 // preload vieSchema
 const vieSchema = cachedFetch(Configuration.get("VieSchemaUri"));
+cachedFetch(Configuration.get("XliffUri")).then((xliffData) => {
+	Localisation.init(xliffData);
+});
 
 const dropDownMenuElements = document.querySelectorAll(".neos-user-menu");
 dropDownMenuElements.forEach((dropDownElement) => {

@@ -84,7 +84,6 @@ const init = () => {
 		window.NeosCMS = {};
 	}
 
-	// @todo change back to Notification namespace not new ;)
 	if (isNil(window.NeosCMS.Notification)) {
 		window.NeosCMS.Notification = {
 			init: init,

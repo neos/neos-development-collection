@@ -1,6 +1,6 @@
 import Configuration from "./Configuration";
-import LocalStorage from "./LocalStorage";
 import Notification from "./Notification";
+import Localisation from "./Localisation";
 import SessionStorage from "./SessionStorage";
 
-export { Configuration, LocalStorage, Notification, SessionStorage };
+export { Configuration, Notification, Localisation, SessionStorage };
