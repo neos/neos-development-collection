@@ -58,6 +58,34 @@ const getCurrentLanguage = () => {
 };
 
 /**
+ * The xliff data saves plurals as arrays. The i18next library need a flatt structure in the labels.
+ * So we replace the arrays with new items and append to the label the index with a underscore.
+ *
+ * e.g.:
+ * "key": "singular",
+ * "key_plural": "plural",
+ *
+ * @param {object} xliffData JSON object with xliff data
+ * @returns {object}
+ */
+const flattenPluralItems = (translations) => {
+	const translationKeys = Object.keys(translations);
+	translationKeys.forEach((key) => {
+		if (Array.isArray(translations[key])) {
+			translations[key].forEach((pluralItem, index) => {
+				let newKey = key;
+				if (Number.isInteger(index) && index === 1) {
+					newKey = `${key}_plural`;
+				}
+				translations[newKey] = pluralItem;
+			});
+		}
+	});
+
+	return translations;
+};
+
+/**
  * Transforms the data structue of the xliff data to i18next namespaced resource bundles.
  * Therefore we replace the underscores in the package and source name with dots.
  *
@@ -78,11 +106,12 @@ const transformAndAppendXliffData = (xliffData) => {
 		const Sources = Object.keys(xliffData[packageName]);
 		Sources.forEach((sourceName) => {
 			const namespace = getTransformedNamespace(packageName, sourceName);
-			if (!isNil(xliffData[packageName][sourceName])) {
+			const translations = xliffData[packageName][sourceName];
+			if (!isNil(translations)) {
 				i18next.addResourceBundle(
 					language,
 					namespace,
-					xliffData[packageName][sourceName],
+					flattenPluralItems(translations),
 					true,
 					true
 				);
