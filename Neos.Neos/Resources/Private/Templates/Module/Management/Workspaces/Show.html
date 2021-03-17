@@ -109,52 +109,54 @@
 			<f:form action="index" id="postHelper" method="post"></f:form>
 
 			<script>
-				(function($) {
-					$('#check-all').change(function() {
-						var value = false;
-						if ($(this).is(':checked')) {
-							value = true;
-							$('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled');
-						} else {
-							$('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-						}
-						$('tbody input[type="checkbox"]').prop('checked', value);
-					});
-
-					$('.neos-check-document').change(function() {
-						var documentIdentifier = $(this).val();
-						var checked = $(this).prop('checked');
-						$(this).closest('table').find('tr.neos-change.document-' + documentIdentifier + ' td.check input').prop('checked', checked);
-					});
-
-					$('tbody input[type="checkbox"]').change(function() {
-						if ($(this).closest('tr').data('ismoved') === true || $(this).closest('tr').data('isnew') === true) {
-							var currentNodePath = $(this).closest('tr').attr('data-nodepath') + '/';
-							var checked = $(this).prop('checked');
-
-							function nodePathStartsWith(nodePath) {
-								return function(index, element) {
-									return nodePath.indexOf($(element).data('nodepath')) === 0;
-								}
+				window.addEventListener('DOMContentLoaded', (event) => {
+					jQuery(function() {
+						jQuery('#check-all').change(function() {
+							var value = false;
+							if (jQuery(this).is(':checked')) {
+								value = true;
+								jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled');
+							} else {
+								jQuery('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
 							}
-							var movedOrNewParentDocuments = $(this).closest('table').find('.neos-document[data-ismoved="true"], .neos-document[data-isnew="true"]').filter(nodePathStartsWith(currentNodePath));
-							$(movedOrNewParentDocuments).each(function(index, movedParentDocument) {
-								$('tr[data-nodepath^="' + $(movedParentDocument).data('nodepath') + '"] td.check input').prop('checked', checked);
-							});
-						}
+							jQuery('tbody input[type="checkbox"]').prop('checked', value);
+						});
 
-						if ($('tbody input[type="checkbox"]:checked').length > 0) {
-							$('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled')
-						} else {
-							$('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-						}
-					});
+						jQuery('.neos-check-document').change(function() {
+							var documentIdentifier = jQuery(this).val();
+							var checked = jQuery(this).prop('checked');
+							jQuery(this).closest('table').find('tr.neos-change.document-' + documentIdentifier + ' td.check input').prop('checked', checked);
+						});
 
-					$('.fold-toggle').click(function() {
-						$(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
-						$('tr.' + $(this).data('toggle')).toggle();
+						jQuery('tbody input[type="checkbox"]').change(function() {
+							if (jQuery(this).closest('tr').data('ismoved') === true || jQuery(this).closest('tr').data('isnew') === true) {
+								var currentNodePath = jQuery(this).closest('tr').attr('data-nodepath') + '/';
+								var checked = jQuery(this).prop('checked');
+
+								function nodePathStartsWith(nodePath) {
+									return function(index, element) {
+										return nodePath.indexOf(jQuery(element).data('nodepath')) === 0;
+									}
+								}
+								var movedOrNewParentDocuments = jQuery(this).closest('table').find('.neos-document[data-ismoved="true"], .neos-document[data-isnew="true"]').filter(nodePathStartsWith(currentNodePath));
+								jQuery(movedOrNewParentDocuments).each(function(index, movedParentDocument) {
+									jQuery('tr[data-nodepath^="' + jQuery(movedParentDocument).data('nodepath') + '"] td.check input').prop('checked', checked);
+								});
+							}
+
+							if (jQuery('tbody input[type="checkbox"]:checked').length > 0) {
+								jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled')
+							} else {
+								jQuery('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
+							}
+						});
+
+						jQuery('.fold-toggle').click(function() {
+							jQuery(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
+							jQuery('tr.' + jQuery(this).data('toggle')).toggle();
+						});
 					});
-				})(jQuery);
+				});
 			</script>
 
 		</f:then>
