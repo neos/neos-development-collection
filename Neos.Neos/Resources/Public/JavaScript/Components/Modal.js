@@ -33,9 +33,6 @@ export default class Modal {
 	_close() {
 		this._root.classList.toggle("open");
 		this._root.classList.toggle("neos-hide");
-		if (!isNil(this._trigger)) {
-			this._trigger.focus();
-		}
 	}
 
 	_onKeyPress(_event) {
