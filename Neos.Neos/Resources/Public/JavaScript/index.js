@@ -1,13 +1,15 @@
-import jQuery from 'jquery'
+import jQuery from "jquery";
 
 import { DropDownMenu, MenuPanel } from "./Components/TopBar";
 import Tree from "./Components/Tree";
+import Modal from "./Components/Modal";
 import { Configuration, Notification, Localisation } from "./Services";
 import { cachedFetch } from "./Services/ResourceCache";
+import { isNil } from "./Helper";
 
 // export jQuery globally
-window.jQuery = jQuery
-window.$ = jQuery
+window.jQuery = jQuery;
+window.$ = jQuery;
 
 // init API's
 Configuration.init();
@@ -32,4 +34,14 @@ menuPanelElements.forEach((panelElement) => {
 const treeElements = document.querySelectorAll(".neos-tree-container");
 treeElements.forEach((treeElement) => {
 	new Tree(treeElement);
+});
+
+const modalTrigger = Array.from(
+	document.querySelectorAll('[data-toggle="modal"]')
+);
+modalTrigger.forEach((_modalTrigger) => {
+	const modalElement = document.querySelector(_modalTrigger.getAttribute('href'));
+	if (!isNil(modalElement)) {
+		new Modal(modalElement);
+	}
 });
