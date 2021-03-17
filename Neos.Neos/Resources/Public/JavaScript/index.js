@@ -1,7 +1,13 @@
+import jQuery from 'jquery'
+
 import { DropDownMenu, MenuPanel } from "./Components/TopBar";
 import Tree from "./Components/Tree";
 import { Configuration, Notification, Localisation } from "./Services";
 import { cachedFetch } from "./Services/ResourceCache";
+
+// export jQuery globally
+window.jQuery = jQuery
+window.$ = jQuery
 
 // init API's
 Configuration.init();
