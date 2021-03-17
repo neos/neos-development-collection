@@ -22,9 +22,9 @@
 		</f:for>
 	</f:if>
 
-	<script
+	<!-- <script
 		src="{f:uri.resource(path: 'Library/jquery/jquery-3.5.1.js')}"
-	></script>
+	></script> -->
 	<f:if condition="{moduleConfiguration.additionalResources.javaScripts}">
 		<f:for
 			each="{moduleConfiguration.additionalResources.javaScripts}"
@@ -101,9 +101,6 @@
 				/>
 			</div>
 		</div>
-		<script
-			src="{f:uri.resource(path: 'Library/requirejs/src/require.js', package: 'Neos.Neos')}"
-		></script>
 		<script
 			src="{f:uri.resource(path: 'JavaScript/Main.min.js', package: 'Neos.Neos')}"
 		></script>
