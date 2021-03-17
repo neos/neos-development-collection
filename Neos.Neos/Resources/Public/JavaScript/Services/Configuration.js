@@ -8,6 +8,10 @@ const init = () => {
 		window.NeosCMS = {};
 	}
 
+	if (isNil(window.Typo3Neos)) {
+		window.Typo3Neos = {};
+	}
+
 	if (isNil(window.NeosCMS.Configuration)) {
 		window.NeosCMS.Configuration = {};
 	}
@@ -23,6 +27,9 @@ const init = () => {
 	if (!isNil(xliffLink)) {
 		window.NeosCMS.Configuration.XliffUri = xliffLink.getAttribute("href");
 	}
+
+	// deprecated - to be removed in 8.0
+	window.Typo3Neos.Configuration = window.NeosCMS.Configuration;
 };
 
 const get = (key) => {

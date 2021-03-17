@@ -168,6 +168,10 @@ const init = (xliffData) => {
 		window.NeosCMS = {};
 	}
 
+	if (isNil(window.Typo3Neos)) {
+		window.Typo3Neos = {};
+	}
+
 	if (isNil(window.NeosCMS.I18n)) {
 		// default options
 		const options = {
@@ -197,6 +201,9 @@ const init = (xliffData) => {
 			init: init,
 			translate: translate,
 		};
+
+		// deprecated - to be removed in 8.0
+		window.Typo3Neos.I18n = window.NeosCMS.I18n
 	}
 };
 
