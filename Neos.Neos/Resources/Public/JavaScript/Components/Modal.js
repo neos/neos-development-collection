@@ -24,7 +24,8 @@ export default class Modal {
 		document.addEventListener("keyup", this._onKeyPress.bind(this));
 	}
 
-	_open() {
+	_open(_event) {
+		_event.preventDefault();
 		this._root.classList.add("open");
 		this._root.classList.remove("neos-hide");
 	}
