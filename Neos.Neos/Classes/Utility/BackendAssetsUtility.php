@@ -32,19 +32,6 @@ class BackendAssetsUtility
     }
 
     /**
-     * Returns true if the minified Neos JavaScript sources should be loaded, false otherwise.
-     *
-     * @return boolean
-     */
-    public function shouldLoadMinifiedJavascript()
-    {
-        if (isset($this->settings['userInterface']['loadMinifiedJavaScript'])) {
-            return $this->settings['userInterface']['loadMinifiedJavaScript'];
-        }
-        return true;
-    }
-
-    /**
      * Returns a shortened md5 of the built CSS file
      *
      * @return string
