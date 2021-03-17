@@ -171,7 +171,6 @@ const init = (xliffData) => {
 	if (isNil(window.NeosCMS.I18n)) {
 		// default options
 		const options = {
-			debug: true,
 			interpolation: {
 				prefix: "{",
 				suffix: "}",
