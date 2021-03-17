@@ -132,7 +132,7 @@
                         </f:link.action>
                         <div class="neos-sidelist-edit-actions">
                             <f:link.action class="neos-button" action="editAssetCollection" arguments="{assetCollection: assetCollection.object}" addQueryString="true" title="{neos:backend.translate(id: 'editCollection', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}"><i class="fas fa-pencil-alt"></i></f:link.action>
-                            <button type="submit" class="neos-button neos-button-danger" data-modal="delete-assetcollection-modal" data-object-identifier="{assetCollection.object -> f:format.identifier()}" data-label="{assetCollection.object.title}" title="{neos:backend.translate(id: 'deleteCollection', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="fas fa-trash"></i></button>
+                            <button type="submit" class="neos-button neos-button-danger" data-toggle="modal" href="#delete-assetcollection-modal" data-object-identifier="{assetCollection.object -> f:format.identifier()}" data-modal-header="{neos:backend.translate(id: 'message.reallyDeleteCollection', package: 'Neos.Media.Browser', arguments:'{0: assetCollection.object.title}')}" title="{neos:backend.translate(id: 'deleteCollection', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="fas fa-trash"></i></button>
                         </div>
                     </li>
                 </f:for>

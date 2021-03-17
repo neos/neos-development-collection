@@ -127,25 +127,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
 					}
 			});
 
-			$('[data-modal]').click(function (e) {
-					e.preventDefault();
-					var $this = $(this),
-							$modal = $('#' + $this.data('modal')),
-							$header = $('.neos-header', $modal),
-							headerText = $header.text();
-					$header.text(headerText.replace('{0}', $this.data('label')));
-					$('#modal-form-object', $modal).val($this.data('object-identifier'));
-					$(document).on('keyup.modal', function (e) {
-							if (e.keyCode == 27) {
-									$modal.modal('hide');
-							}
-					});
-					$modal.modal().one('hide', function () {
-							$this.focus();
-							$header.text(headerText);
-							$(document).off('keyup.modal');
-					});
-					$('[type="submit"]', $modal).focus();
-			});
+
+			const modalOpened = (_event) => {
+				const modalIdentifier = _event['detail']['identifier'];
+				const modal = document.querySelector('#' + modalIdentifier)
+				if (modal) {
+					const trigger = document.querySelector(`[href="#${modalIdentifier}"][data-toggle="modal"]`);
+					const assetCollection = trigger.getAttribute('data-object-identifier');
+					modal.querySelector('#modal-form-object').setAttribute('value', assetCollection);
+				}
+			}
+			window.addEventListener('neoscms-modal-opened', modalOpened, false)
 	});
 });
