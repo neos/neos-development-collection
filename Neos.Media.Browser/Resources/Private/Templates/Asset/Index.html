@@ -204,7 +204,7 @@
                     </f:link.action>
                     <div class="neos-sidelist-edit-actions">
                         <f:link.action class="neos-button" action="editTag" arguments="{tag: tag.object}" addQueryString="true" title="{neos:backend.translate(id: 'editTag', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}"><i class="fas fa-pencil-alt"></i></f:link.action>
-                        <button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'deleteTag', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip" data-modal="delete-tag-modal" data-object-identifier="{tag.object -> f:format.identifier()}" data-label="{tag.object.label}"><i class="fas fa-trash"></i></button>
+                        <button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'deleteTag', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip" data-toggle="modal" href="#delete-tag-modal" data-modal-header="{neos:backend.translate(id: 'message.reallyDeleteTag', package: 'Neos.Media.Browser', arguments:'{0: tag.object.label}')}" data-object-identifier="{tag.object -> f:format.identifier()}"><i class="fas fa-trash"></i></button>
                     </div>
                 </li>
             </f:for>

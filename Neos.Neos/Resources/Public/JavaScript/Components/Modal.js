@@ -27,17 +27,37 @@ export default class Modal {
 
 	_open(_event) {
 		_event.preventDefault();
-		const trigger = _event.target;
-		this._handleDynamicHeader(trigger);
+		const trigger = this._getTriggerElement(_event.target);
 
+		this._handleDynamicHeader(trigger);
 		this._root.classList.add("open");
 		this._root.classList.remove("neos-hide");
 
-		window.dispatchEvent(
+		trigger.dispatchEvent(
 			new CustomEvent("neoscms-modal-opened", {
+				bubbles: true,
 				detail: { identifier: this._root.id },
 			})
 		);
+	}
+
+	/**
+	 * Trigger buttons can contain icons or text and so the event target is maybe not the mapping
+	 * button element. So this function checks for the data-toggle attribute and if this does not
+	 * exists we try to find the closest matching element.
+	 *
+	 * @param {object} _element
+	 * @return {object}
+	 */
+	_getTriggerElement(_element) {
+		if (isNil(_element)) {
+			return null;
+		}
+
+		if (!_element.hasAttribute("data-toggle")) {
+			_element = _element.closest('[data-toggle="modal"]');
+		}
+		return _element;
 	}
 
 	_close() {
@@ -59,14 +79,6 @@ export default class Modal {
 
 	_handleDynamicHeader(_trigger) {
 		if (isNil(_trigger) || isNil(this._header)) {
-			return false;
-		}
-
-		if (!_trigger.hasAttribute("data-toggle")) {
-			_trigger = _trigger.closest('[data-toggle="modal"]');
-		}
-
-		if (isNil(_trigger)) {
 			return false;
 		}
 
