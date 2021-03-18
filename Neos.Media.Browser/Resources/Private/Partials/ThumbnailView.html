@@ -57,10 +57,10 @@
                                             </li>
                                         </f:security.ifAccess>
                                         <li>
-                                            <a href="#" class="neos-media-delete" title="{deleteAssetLabel}"
+                                            <a href="#delete-asset-modal" class="neos-media-delete" title="{deleteAssetLabel}"
                                                data-neos-toggle="tooltip" data-placement="left"
-                                               data-modal="delete-asset-modal"
-                                               data-label="{assetProxy.label -> f:format.crop(maxCharacters: 50)}"
+                                               data-toggle="modal"
+                                               data-modal-header="{neos:backend.translate(id: 'message.reallyDeleteAsset', package: 'Neos.Media.Browser', arguments:'{0: \'{assetProxy.label -> f:format.crop(maxCharacters: 50)}\'}')}"
                                                data-object-identifier="{assetProxy.identifier}">
                                                 <i class="fas fa-trash icon-white"></i> {deleteLabel}
                                             </a>

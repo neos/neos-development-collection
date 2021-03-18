@@ -10,9 +10,9 @@ Neos:
     Browser:
       bodyClasses: 'neos neos-module media-browser'
       scripts:
-        - 'resource://Neos.Neos/Public/Library/jquery/jquery-3.5.1.js'
+        - 'resource://Neos.Media.Browser/Public/Libraries/jquery/jquery-3.6.0.min.js'
         - 'resource://Neos.Twitter.Bootstrap/Public/2/js/bootstrap.min.js'
-        - 'resource://Neos.Neos/Public/Library/bootstrap-components.js'
+        - 'resource://Neos.Media.Browser/Public/Libraries/bootstrap/bootstrap-components.js'
         - 'resource://Neos.Media.Browser/Public/JavaScript/media-browser.js'
       styles:
         - 'resource://Neos.Neos/Public/Styles/Neos.css'
@@ -53,6 +53,10 @@ Neos:
             mainStylesheet: 'Lite'
             privilegeTarget: 'Neos.Media.Browser:ManageAssets'
             additionalResources:
+              javaScripts:
+                - 'resource://Neos.Media.Browser/Public/Libraries/jquery/jquery-3.6.0.min.js'
+                - 'resource://Neos.Twitter.Bootstrap/Public/2/js/bootstrap.min.js'
+                - 'resource://Neos.Media.Browser/Public/Libraries/bootstrap/bootstrap-components.js'
               styleSheets:
                 - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
                 - 'resource://Neos.Media.Browser/Public/Styles/Main.css'
