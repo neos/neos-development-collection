@@ -3,7 +3,7 @@ import jQuery from "jquery";
 import { DropDownMenu, MenuPanel } from "./Components/TopBar";
 import Tree from "./Components/Tree";
 import Modal from "./Components/Modal";
-import { Configuration, Notification, Localisation } from "./Services";
+import { Configuration, Notification, Localisation, Tools } from "./Services";
 import { cachedFetch } from "./Services/ResourceCache";
 import { isNil } from "./Helper";
 
@@ -12,6 +12,7 @@ window.jQuery = jQuery;
 window.$ = jQuery;
 
 // init API's
+Tools.init();
 Configuration.init();
 Notification.init();
 
@@ -40,7 +41,9 @@ const modalTrigger = Array.from(
 	document.querySelectorAll('[data-toggle="modal"]')
 );
 modalTrigger.forEach((_modalTrigger) => {
-	const modalElement = document.querySelector(_modalTrigger.getAttribute('href'));
+	const modalElement = document.querySelector(
+		_modalTrigger.getAttribute("href")
+	);
 	if (!isNil(modalElement)) {
 		new Modal(modalElement);
 	}
