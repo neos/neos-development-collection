@@ -19,7 +19,6 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
@@ -48,6 +47,18 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
     /**
      * @throws \Throwable
      */
+    public function reset(): void
+    {
+        parent::reset();
+        $this->transactional(function () {
+            $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . NodeRecord::TABLE_NAME);
+            $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . HierarchyHyperrelationRecord::TABLE_NAME);
+        });
+    }
+
+    /**
+     * @throws \Throwable
+     */
     public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
@@ -60,7 +71,8 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
             $originDimensionSpacePoint->getHash(),
             SerializedPropertyValues::fromArray([]),
             $event->getNodeTypeName(),
-            $event->getNodeAggregateClassification()
+            $event->getNodeAggregateClassification(),
+            null
         );
 
         $this->transactional(function () use ($node, $event) {
@@ -83,17 +95,13 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
         NodeRelationAnchorPoint $parentNodeAnchorPoint,
         NodeRelationAnchorPoint $childNodeAnchorPoint,
         DimensionSpacePointSet $dimensionSpacePointSet,
-        ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
-        ?NodeName $relationName = null
+        ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint
     ): void {
-        $childNodeAnchorPoints = [];
-        foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
-            $childNodeAnchorPoints[$dimensionSpacePoint->getHash()][$relationName ? (string)$relationName : $childNodeAnchorPoint] = $childNodeAnchorPoint;
-        }
-        $hierarchyRelationSet = new HierarchyRelationSetRecord(
+        $hierarchyRelationSet = new HierarchyHyperrelationRecord(
             $contentStreamIdentifier,
             $parentNodeAnchorPoint,
-            $childNodeAnchorPoints
+            $dimensionSpacePointSet,
+            [$childNodeAnchorPoint]
         );
 
         $hierarchyRelationSet->addToDatabase($this->getDatabaseConnection());

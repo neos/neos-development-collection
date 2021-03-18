@@ -46,9 +46,6 @@ final class NodeRecord
 
     public NodeAggregateClassification $classification;
 
-    /**
-     * Transient node name to store a node name after fetching a node with hierarchy (not always available)
-     */
     public ?NodeName $nodeName;
 
     public function __construct(
@@ -84,7 +81,7 @@ final class NodeRecord
             SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::fromString($databaseRow['classification']),
-            isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null
+            isset($databaseRow['nodename']) ? NodeName::fromString($databaseRow['nodename']) : null
         );
     }
 
@@ -100,7 +97,8 @@ final class NodeRecord
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
             'nodetypename' => (string) $this->nodeTypeName,
             'classification' => (string) $this->classification,
-            'properties' => json_encode($this->properties)
+            'properties' => json_encode($this->properties),
+            'nodename' => (string) $this->nodeName
         ]);
     }
 
@@ -117,7 +115,8 @@ final class NodeRecord
                 'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
                 'nodetypename' => (string) $this->nodeTypeName,
                 'classification' => (string) $this->classification,
-                'properties' => json_encode($this->properties)
+                'properties' => json_encode($this->properties),
+                'nodename' => (string) $this->nodeName,
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint
@@ -130,7 +129,7 @@ final class NodeRecord
      */
     public function removeFromDatabase(Connection $databaseConnection): void
     {
-        $databaseConnection->delete('neos_contentgraph_node', [
+        $databaseConnection->delete(self::TABLE_NAME, [
             'relationanchorpoint' => $this->relationAnchorPoint
         ]);
     }

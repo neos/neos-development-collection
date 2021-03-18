@@ -13,36 +13,65 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  * source code.
  */
 
+use Doctrine\DBAL\Connection as DatabaseConnection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
- * The PostgreSQL adapter content graph
+ * The PostgreSQL adapter content hypergraph
  *
- * To be used as a read-only source of nodes
+ * To be used as a read-only source of subhypergraphs, node aggregates and nodes
  *
- * @Flow\Scope("singleton")
+ * @Flow\Proxy(false)
  * @api
  */
 final class ContentHypergraph implements ContentGraphInterface
 {
+    private DbalClient $databaseClient;
+
+    private NodeFactory $nodeFactory;
+
+    /**
+     * @var array|ContentSubhypergraph[]
+     */
+    private array $subhypergraphs;
+
+    public function __construct(DbalClient $databaseClient, NodeFactory $nodeFactory)
+    {
+        $this->databaseClient = $databaseClient;
+        $this->nodeFactory = $nodeFactory;
+    }
+
     public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
+        VisibilityConstraints $visibilityConstraints
     ): ?ContentSubgraphInterface {
-        // TODO: Implement getSubgraphByIdentifier() method.
+        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash() . '-' . $visibilityConstraints->getHash();
+        if (!isset($this->subhypergraphs[$index])) {
+            $this->subhypergraphs[$index] = new ContentSubhypergraph(
+                $contentStreamIdentifier,
+                $dimensionSpacePoint,
+                $visibilityConstraints,
+                $this->databaseClient,
+                $this->nodeFactory
+            );
+        }
+
+        return $this->subhypergraphs[$index];
     }
 
     public function findNodeByIdentifiers(
@@ -50,7 +79,29 @@ final class ContentHypergraph implements ContentGraphInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeInterface {
-        // TODO: Implement findNodeByIdentifiers() method.
+        $query = /** @lang PostgreSQL */
+            'SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename, n.classification, n.properties, n.nodename,
+                h.contentstreamidentifier
+            FROM neos_contentgraph_hierarchyhyperrelation h,
+            neos_contentgraph_node n
+                JOIN (
+                    SELECT jsonb_array_elements_text(childnodeanchors)::varchar relationanchorpoint
+                    FROM neos_contentgraph_hierarchyhyperrelation
+                ) nodes_with_hierarchyhyperrelations
+                USING (relationanchorpoint)
+                WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
+                AND h.contentstreamidentifier = :contentStreamIdentifier';
+
+        $parameters = [
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash()
+        ];
+
+        $nodeRow = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
+
+        return $this->nodeFactory->mapNodeRowToNode($nodeRow);
     }
 
     public function findRootNodeAggregateByType(
@@ -71,7 +122,27 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeAggregate {
-        // TODO: Implement findNodeAggregateByIdentifier() method.
+        $query = /** @lang PostgreSQL */
+            'SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename, n.classification, n.properties, n.nodename,
+                h.contentstreamidentifier, h.dimensionspacepoints
+            FROM neos_contentgraph_hierarchyhyperrelation h,
+            neos_contentgraph_node n
+                JOIN (
+                    SELECT jsonb_array_elements_text(childnodeanchors)::varchar relationanchorpoint
+                    FROM neos_contentgraph_hierarchyhyperrelation
+                ) nodes_with_hierarchyhyperrelations
+                USING (relationanchorpoint)
+                WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                AND h.contentstreamidentifier = :contentStreamIdentifier';
+
+        $parameters = [
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+        ];
+
+        $nodeRows = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
     }
 
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
@@ -121,9 +192,15 @@ final class ContentHypergraph implements ContentGraphInterface
         // TODO: Implement getDimensionSpacePointsOccupiedByChildNodeName() method.
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function countNodes(): int
     {
-        // TODO: Implement countNodes() method.
+        $query = 'SELECT COUNT(*) FROM ' . NodeRecord::TABLE_NAME;
+
+        return $this->getDatabaseConnection()->executeQuery($query)->fetchOne();
     }
 
     public function findProjectedContentStreamIdentifiers(): array
@@ -155,5 +232,10 @@ final class ContentHypergraph implements ContentGraphInterface
     public function disableCache(): void
     {
         // TODO: Implement disableCache() method.
+    }
+
+    private function getDatabaseConnection(): DatabaseConnection
+    {
+        return $this->databaseClient->getConnection();
     }
 }

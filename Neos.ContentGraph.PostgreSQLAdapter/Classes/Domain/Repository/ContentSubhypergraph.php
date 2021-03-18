@@ -13,9 +13,11 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  * source code.
  */
 
+use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
@@ -43,11 +45,35 @@ use Neos\Flow\Annotations as Flow;
  *   - h -> the hierarchy hyperrelation connecting parent and children
  *   - ph -> the hierarchy hyperrelation incoming to the parent (sometimes relevant)
  *
- *
+ * @Flow\Proxy(false)
  * @api
  */
 final class ContentSubhypergraph implements ContentSubgraphInterface
 {
+    private ContentStreamIdentifier $contentStreamIdentifier;
+
+    private DimensionSpacePoint $dimensionSpacePoint;
+
+    private VisibilityConstraints $visibilityConstraints;
+
+    private DbalClient $databaseClient;
+
+    private NodeFactory $nodeFactory;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints,
+        DbalClient $databaseClient,
+        NodeFactory $nodeFactory
+    ) {
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->visibilityConstraints = $visibilityConstraints;
+        $this->databaseClient = $databaseClient;
+        $this->nodeFactory = $nodeFactory;
+    }
+
     public function findChildNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null,
