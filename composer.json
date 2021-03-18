@@ -26,6 +26,7 @@
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
         "doctrine/dbal": "^2.8",
+        "doctrine/migrations": "3.1.0",
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0",
