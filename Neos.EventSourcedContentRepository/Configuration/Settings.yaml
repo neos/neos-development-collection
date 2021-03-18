@@ -13,6 +13,8 @@ Neos:
         className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\DoctrinePersistentObjectNormalizer
       ProxyAwareObjectNormalizer:
         className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
+    testing:
+      projectorsToBeReset: {}
 
   EventSourcing:
     EventStore:

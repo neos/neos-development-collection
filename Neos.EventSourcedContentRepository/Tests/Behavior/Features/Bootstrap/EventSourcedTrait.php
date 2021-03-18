@@ -179,6 +179,11 @@ trait EventSourcedTrait
     protected $lastCommandOrEventResult;
 
     /**
+     * @var array|\Neos\EventSourcing\Projection\ProjectorInterface[]
+     */
+    private array $projectorsToBeReset = [];
+
+    /**
      * @return ObjectManagerInterface
      */
     abstract protected function getObjectManager();
@@ -196,6 +201,16 @@ trait EventSourcedTrait
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
         $this->eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
 
+        $configurationManager = $this->getObjectManager()->get(\Neos\Flow\Configuration\ConfigurationManager::class);
+        foreach ($configurationManager->getConfiguration(
+            \Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.EventSourcedContentRepository.testing.projectorsToBeReset'
+        ) ?: [] as $projectorClassName => $toBeReset) {
+            if ($toBeReset) {
+                $this->projectorsToBeReset[] = $this->getObjectManager()->get($projectorClassName);
+            }
+        }
+
         $contentStreamRepository = $this->getObjectManager()->get(ContentStreamRepository::class);
         ObjectAccess::setProperty($contentStreamRepository, 'contentStreams', [], true);
     }
@@ -212,6 +227,9 @@ trait EventSourcedTrait
         $this->dimensionSpacePoint = null;
         $this->rootNodeAggregateIdentifier = null;
         $this->contentStreamIdentifier = null;
+        foreach ($this->projectorsToBeReset as $projector) {
+            $projector->reset();
+        }
     }
 
     public function currentNodeAggregateIdentifier()
