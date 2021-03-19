@@ -1,6 +1,6 @@
 import isNil from "./isNil";
 
-const isEmpty = (object) => {
+const isEmpty = (object: any) => {
 	if (typeof object === "string") {
 		return object.length === 0;
 	}
