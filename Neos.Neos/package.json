@@ -25,6 +25,7 @@
     "sass-loader": "^11.0.1",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
+    "ts-migrate": "^0.1.16",
     "url-loader": "^4.1.1",
     "webpack": "^5.24.4",
     "webpack-cli": "^4.5.0"
