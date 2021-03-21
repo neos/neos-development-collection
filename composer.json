@@ -33,13 +33,7 @@
         "neos/kickstarter": "dev-master"
     },
     "replace": {
-        "typo3/typo3cr": "self.version",
         "packagefactory/atomicfusion-afx": "*",
-        "typo3/typoscript": "self.version",
-        "typo3/media": "self.version",
-        "typo3/neos": "self.version",
-        "typo3/neos-nodetypes": "self.version",
-        "typo3/neos-kickstarter": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
         "neos/fusion-afx": "self.version",
