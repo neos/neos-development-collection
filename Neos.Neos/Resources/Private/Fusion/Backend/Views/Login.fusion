@@ -11,9 +11,23 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
     content = Neos.Fusion:Component {
       @apply.props = ${props}
 
-      backgroundImageSource = Neos.Fusion:ResourceUri {
+      backgroundImageSource = Neos.Fusion:Component {
         @if.set = ${this.path}
         path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
+
+        renderer = Neos.Fusion:Case {
+          resourcePath {
+            condition = ${String.indexOf(props.path, 'resource://') == 0}
+            renderer = Neos.Fusion:ResourceUri {
+              path = ${props.path}
+            }
+          }
+
+          default {
+            condition = true
+            renderer = ${props.path}
+          }
+        }
       }
 
       headerComment = ${Configuration.setting('Neos.Neos.headerComment')}

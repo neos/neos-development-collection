@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2020-12-10
+This reference was automatically generated from code on 2021-02-23
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -383,6 +383,15 @@ Allows to insert multiple elements at once::
 * ``element`` (mixed)
 
 **Return** (array) The array with the inserted elements
+
+Array.values(array)
+^^^^^^^^^^^^^^^^^^^
+
+Get the array values
+
+* ``array`` (iterable) The array
+
+**Return** (array)
 
 
 

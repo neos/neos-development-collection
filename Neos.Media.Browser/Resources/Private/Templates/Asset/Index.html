@@ -319,10 +319,11 @@
     <script type="text/javascript">
         var uploadUrl = "{f:uri.action(action: 'upload', addQueryString: true, additionalParams: {__csrfToken: '{f:security.csrfToken()}'}, absolute: true) -> f:format.raw()}";
         var maximumFileUploadSize = {maximumFileUploadSize};
-
+<![CDATA[
         if (window.parent !== window && window.parent.NeosMediaBrowserCallbacks && window.parent.NeosMediaBrowserCallbacks.refreshThumbnail) {
             window.parent.NeosMediaBrowserCallbacks.refreshThumbnail();
         }
+]]>
     </script>
     <f:form action="tagAsset" addQueryString="true" id="tag-asset-form" format="json">
         <f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />

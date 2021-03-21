@@ -7730,7 +7730,8 @@ q:after {
             font-size: 14px;
             line-height: 40px;
             padding: 0 16px;
-            box-sizing: border-box; }
+            box-sizing: border-box;
+            border: 0; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li a:hover,
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button:hover {
               background: #00b5ff; }

@@ -266,7 +266,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
 
-        $nodeOrUri = $this->resolveShortcutNode($node);
+        try {
+            $nodeOrUri = $this->resolveShortcutNode($node);
+        } catch (Exception\InvalidShortcutException $exception) {
+            $this->systemLogger->debug('FrontendNodeRoutePartHandler resolveValue(): ' . $exception->getMessage());
+            return false;
+        }
         if ($nodeOrUri instanceof UriInterface) {
             return new ResolveResult('', UriConstraints::fromUri($nodeOrUri), null);
         }
@@ -304,7 +309,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     /**
      * @param NodeInterface $node
      * @return NodeInterface|Uri The original, unaltered $node if it's not a shortcut node. Otherwise the nodes shortcut target (a node or an URI for external & asset shortcuts)
-     * @throws NeosException
+     * @throws Exception\InvalidShortcutException
      */
     protected function resolveShortcutNode(NodeInterface $node)
     {
@@ -313,7 +318,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return new Uri($resolvedNode);
         }
         if (!$resolvedNode instanceof NodeInterface) {
-            throw new NeosException(sprintf('Could not resolve shortcut target for node "%s"', $node->getPath()), 1414771137);
+            throw new Exception\InvalidShortcutException(sprintf('Could not resolve shortcut target for node "%s"', $node->getPath()), 1414771137);
         }
         return $resolvedNode;
     }

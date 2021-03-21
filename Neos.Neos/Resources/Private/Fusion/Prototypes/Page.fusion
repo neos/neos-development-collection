@@ -3,6 +3,12 @@
 prototype(Neos.Neos:Page) >
 prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 
+  httpResponseHead {
+    headers {
+      'Content-Type' = 'text/html'
+    }
+  }
+
   doctype = '<!DOCTYPE html>'
   doctype.@position = 'start 100'
 

@@ -16,7 +16,7 @@
 			<target state="translated">Velg skjema-ID</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target state="needs-translation">Please select a valid Form identifier in the inspector.</target></trans-unit>
+			<target state="translated">Vennligst velg en gyldig skjemaidentifikator i inspektøren.</target></trans-unit>
     </body>
   </file>
 </xliff>
