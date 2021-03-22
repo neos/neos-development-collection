@@ -20,7 +20,6 @@ export default class Message {
   _initialize() {
     const milliseconds = Date.now();
     const timestamp = Math.floor(milliseconds / 1000);
-    console.log(this._options);
     const { title, message, type, closeButton } = this._options;
     const htmlSafeMessage = DOMPurify.sanitize(message);
     const messageMarkup = messageTemplate(
