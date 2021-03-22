@@ -1,9 +1,15 @@
 import i18next from "i18next";
 
-import { isNil, isEmpty, getCollectionValueByPath } from "../Helper";
+import {
+	isNil,
+	isEmpty,
+	getCollectionValueByPath,
+	createCollectionByPath,
+} from "../Helper";
 
 const DEFAULT_PACKAGE = "Neos.Neos";
 const DEFAULT_SOURCE = "Main";
+const EXISTING_NAMESPACES = [];
 
 /**
  * Creates a namespace string from the neos package name and the source name.
@@ -58,6 +64,28 @@ const getCurrentLanguage = () => {
 };
 
 /**
+ * Set the initialised value for the I18n API.
+ * The parameter is available via window.NeosCMS.I18n.initialized
+ *
+ * @param {boolean} initialised
+ * @returns {void}
+ */
+const setInitialized = (initialised) => {
+	createCollectionByPath(
+		window,
+		"NeosCMS.I18n.initialized",
+		Boolean(initialised)
+	);
+
+	// deprecated - to be removed in 8.0
+	createCollectionByPath(
+		window,
+		"Typo3Neos.I18n.initialized",
+		Boolean(initialised)
+	);
+};
+
+/**
  * The xliff data saves plurals as arrays. The i18next library need a flatt structure in the labels.
  * So we replace the arrays with new items and append to the label the index with a underscore.
  *
@@ -86,6 +114,55 @@ const flattenPluralItems = (translations) => {
 };
 
 /**
+ * Collect and define the existing namespaces for the language resources from the xliff data
+ *
+ * @param {object} xliffData JSON object with xliff data
+ * @returns {void}
+ */
+const initializeExistingNamespaces = (xliffData) => {
+	if (isNil(xliffData)) {
+		return false;
+	}
+	const packageNames = Object.keys(xliffData);
+	packageNames.forEach((packageName) => {
+		const Sources = Object.keys(xliffData[packageName]);
+		Sources.forEach((sourceName) => {
+			const namespace = getTransformedNamespace(packageName, sourceName);
+			const translations = xliffData[packageName][sourceName];
+			if (!isNil(translations)) {
+				EXISTING_NAMESPACES.push({ name: namespace, initialized: false });
+			}
+		});
+	});
+};
+
+/**
+ * Checks if we have language namespaces that has not been added to the i18next resources.
+ * Also fires the neoscms-i18n-initialized event when all resources are available.
+ *
+ * @param {object} xliffData JSON object with xliff data
+ * @returns {void}
+ */
+const checkInitialisedNamespaces = () => {
+	const hasNonInitializedNamespaces =
+		EXISTING_NAMESPACES.findIndex(
+			(namespace) => namespace.initialized === false
+		) >= 0;
+
+	if (!hasNonInitializedNamespaces) {
+		setInitialized(true);
+
+		window.dispatchEvent(
+			new CustomEvent("neoscms-i18n-initialized", {
+				bubbles: true,
+			})
+		);
+	}
+
+	return !hasNonInitializedNamespaces;
+};
+
+/**
  * Transforms the data structue of the xliff data to i18next namespaced resource bundles.
  * Therefore we replace the underscores in the package and source name with dots.
  *
@@ -102,6 +179,15 @@ const transformAndAppendXliffData = (xliffData) => {
 	}
 
 	const packageNames = Object.keys(xliffData);
+
+	i18next.store.on("added", (lng, ns) => {
+		// set namespace as initialized
+		EXISTING_NAMESPACES.find((entry) => entry.name === ns)[
+			"initialized"
+		] = true;
+		checkInitialisedNamespaces();
+	});
+
 	packageNames.forEach((packageName) => {
 		const Sources = Object.keys(xliffData[packageName]);
 		Sources.forEach((sourceName) => {
@@ -182,6 +268,15 @@ const init = (xliffData) => {
 			resources: {},
 		};
 
+		window.NeosCMS.I18n = {
+			init: init,
+			translate: translate,
+			initialized: false,
+		};
+
+		// deprecated - to be removed in 8.0
+		window.Typo3Neos.I18n = window.NeosCMS.I18n;
+
 		// configure language
 		const currentLangauge = getCurrentLanguage();
 		if (!isEmpty(currentLangauge)) {
@@ -192,18 +287,12 @@ const init = (xliffData) => {
 			options[languageOption] = currentLangauge;
 		}
 
+		initializeExistingNamespaces(xliffData);
+
 		// append translation resources
 		i18next.init(options, (err, t) => {
 			transformAndAppendXliffData(xliffData);
 		});
-
-		window.NeosCMS.I18n = {
-			init: init,
-			translate: translate,
-		};
-
-		// deprecated - to be removed in 8.0
-		window.Typo3Neos.I18n = window.NeosCMS.I18n
 	}
 };
 
