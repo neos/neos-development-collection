@@ -230,6 +230,7 @@ const translate = (
 	context,
 	quantity
 ) => {
+	id = id.replace(/\./g, '_');
 	const namespace = getNamespace(packageKey, source);
 	const identifier = namespace + ":" + id.trim();
 
