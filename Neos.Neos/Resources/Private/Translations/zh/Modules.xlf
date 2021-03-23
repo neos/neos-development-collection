@@ -534,7 +534,7 @@
 			<target state="translated">站点管理模块为您提供了所有站点的概览。你可以编辑、 添加和删除信息关于您的站点，如添加新的域。</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target state="needs-translation">Add new site</target></trans-unit>
+			<target state="translated">添加新站点</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target state="translated">创建站点</target></trans-unit>
@@ -573,7 +573,7 @@
 			<target state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target state="needs-translation">Yes, delete the site</target></trans-unit>
+			<target state="translated">是，删除站点</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
 			<target state="needs-translation">Import a site</target></trans-unit>
