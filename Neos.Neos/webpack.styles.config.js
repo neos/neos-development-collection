@@ -39,20 +39,20 @@ const stylesConfig = {
 				],
 			},
 			{
-				test: /\.scss$/,
-				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
-			},
-			{
 				test: /\.(eot|ttf|woff|woff2)$/,
 				use: [
 					{
-						loader: "url-loader",
+						loader: "file-loader",
 						options: {
 							name: "[name].[ext]",
-							publicPath: "../Fonts/",
+							outputPath: "../Fonts/",
 						},
 					},
 				],
+			},
+			{
+				test: /\.scss$/,
+				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
 			},
 		],
 	},
