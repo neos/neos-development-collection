@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', (event) => {
-	jQuery(function() {
+	$(function() {
 			$(function () {
 					var uploader = new plupload.Uploader({
 							runtimes: 'html5,flash',
