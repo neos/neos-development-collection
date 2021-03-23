@@ -3,7 +3,7 @@ import jQuery from "jquery";
 import { DropDownMenu, MenuPanel } from "./Components/TopBar";
 import Tree from "./Components/Tree";
 import Modal from "./Components/Modal";
-import { Configuration, Notification, Localisation, Tools } from "./Services";
+import { Configuration, Notification, Localization, Tools } from "./Services";
 import { cachedFetch } from "./Services/ResourceCache";
 import { isNil } from "./Helper";
 
@@ -19,7 +19,7 @@ Notification.init();
 // preload vieSchema
 const vieSchema = cachedFetch(Configuration.get("VieSchemaUri"));
 cachedFetch(Configuration.get("XliffUri")).then((xliffData) => {
-	Localisation.init(xliffData);
+	Localization.init(xliffData);
 });
 
 const dropDownMenuElements = document.querySelectorAll(".neos-user-menu");
