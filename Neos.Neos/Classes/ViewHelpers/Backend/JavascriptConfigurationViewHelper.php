@@ -128,7 +128,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             $configuration[] = 'window.NeosCMS.Configuration.site = "' . $activeDomain->getSite()->getNodeName() . '";';
         }
 
-        /*
+        /**
          * create backwards compatibility
          * @deprecated Can be removed with Neos 8.0
          */
