@@ -9,20 +9,20 @@ const defaultOptions: ToastDefaultOptions = {
 };
 
 export default class Toast {
-  _container?: HTMLElement;
+  protected container?: HTMLElement;
 
   constructor() {
-    this._container = document.getElementById("neos-notification-container");
+    this.container = document.getElementById("neos-notification-container");
     this._initialize();
   }
 
   _initialize() {
-    if (isNil(this._container)) {
+    if (isNil(this.container)) {
       const applicationContainer = document.getElementById("neos-application");
       if (!isNil(applicationContainer)) {
-        this._container = document.createElement("div");
-        this._container.id = "neos-notification-container";
-        applicationContainer.appendChild(this._container);
+        this.container = document.createElement("div");
+        this.container.id = "neos-notification-container";
+        applicationContainer.appendChild(this.container);
       }
     }
   }
@@ -36,10 +36,10 @@ export default class Toast {
   _create(options: MessageOptions) {
     const toastOptions: any = { ...defaultOptions, ...options };
     if (!isNil(toastOptions.position)) {
-      this._container.classList.add(toastOptions.position);
+      this.container.classList.add(toastOptions.position);
     }
 
-    new Message(toastOptions, this._container);
+    new Message(toastOptions, this.container);
   }
 
   /**

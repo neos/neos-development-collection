@@ -5,14 +5,14 @@ import { messageTemplate } from "./MessageTemplate";
 import { MessageOptions } from "../../Interfaces/";
 
 export default class Message {
-  _container?: HTMLElement;
-  _message?: HTMLElement;
-  _options: MessageOptions;
+  protected container?: HTMLElement;
+  protected message?: HTMLElement;
+  protected options: MessageOptions;
 
   constructor(_options: MessageOptions, _container: HTMLElement) {
-    this._message = null;
-    this._container = _container;
-    this._options = _options;
+    this.message = null;
+    this.container = _container;
+    this.options = _options;
     this._initialize();
     this._setupEventListeners();
   }
@@ -20,7 +20,7 @@ export default class Message {
   _initialize() {
     const milliseconds = Date.now();
     const timestamp = Math.floor(milliseconds / 1000);
-    const { title, message, type, closeButton } = this._options;
+    const { title, message, type, closeButton } = this.options;
     const htmlSafeMessage = DOMPurify.sanitize(message);
     const messageMarkup = messageTemplate(
       type,
@@ -33,8 +33,8 @@ export default class Message {
 
     const messageElement = <HTMLElement>messageElementWrapper.firstElementChild;
     messageElement.id = "neos-notification-message-" + timestamp;
-    this._message = messageElement;
-    this._container.appendChild(messageElement);
+    this.message = messageElement;
+    this.container.appendChild(messageElement);
     this._registerCloseButton(messageElement);
     this._registerExpandHandling(messageElement);
   }
@@ -57,27 +57,27 @@ export default class Message {
   }
 
   _setupEventListeners() {
-    const timeout: number = this._options.timeout;
+    const timeout: number = this.options.timeout;
     if (timeout > 0) {
       setTimeout(this._close.bind(this), timeout);
     }
   }
 
   _close() {
-    if (!isNil(this._message)) {
-      this._message.classList.add("fade-out");
+    if (!isNil(this.message)) {
+      this.message.classList.add("fade-out");
       setTimeout(() => {
-        this._message.remove();
+        this.message.remove();
       }, 250);
     }
   }
 
   _toggle() {
-    if (isNil(this._message)) {
+    if (isNil(this.message)) {
       return false;
     }
 
-    const contentSection: HTMLElement = this._message.querySelector(
+    const contentSection: HTMLElement = this.message.querySelector(
       ".neos-notification-content"
     );
     if (!isNil(contentSection)) {

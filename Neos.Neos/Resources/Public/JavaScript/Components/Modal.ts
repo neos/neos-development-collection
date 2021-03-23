@@ -1,29 +1,29 @@
 import { isEmpty, isNil } from "../Helper";
 
 export default class Modal {
-  _root?: HTMLElement;
-  _triggers: Array<HTMLElement>;
-  _closeButtons: Array<HTMLElement>;
-  _header?: HTMLElement;
+  protected root?: HTMLElement;
+  protected triggers: Array<HTMLElement>;
+  protected closeButtons: Array<HTMLElement>;
+  protected header?: HTMLElement;
 
   constructor(_root: HTMLElement) {
-    this._root = _root;
-    this._triggers = Array.from(
+    this.root = _root;
+    this.triggers = Array.from(
       document.querySelectorAll(`[href="#${_root.id}"][data-toggle="modal"]`)
     );
-    this._closeButtons = Array.from(
-      this._root.querySelectorAll('[data-dismiss="modal"]')
+    this.closeButtons = Array.from(
+      this.root.querySelectorAll('[data-dismiss="modal"]')
     );
-    this._header = _root.querySelector(".neos-header");
+    this.header = _root.querySelector(".neos-header");
     this._setupEventListeners();
   }
 
   _setupEventListeners() {
-    this._triggers.forEach((_trigger) => {
+    this.triggers.forEach((_trigger) => {
       _trigger.addEventListener("click", this._open.bind(this));
     });
 
-    this._closeButtons.forEach((_closeButton) => {
+    this.closeButtons.forEach((_closeButton) => {
       _closeButton.addEventListener("click", this._close.bind(this));
     });
 
@@ -36,13 +36,13 @@ export default class Modal {
     const trigger = this._getTriggerElement(targetElement);
 
     this._handleDynamicHeader(trigger);
-    this._root.classList.add("open");
-    this._root.classList.remove("neos-hide");
+    this.root.classList.add("open");
+    this.root.classList.remove("neos-hide");
 
     trigger.dispatchEvent(
       new CustomEvent("neoscms-modal-opened", {
         bubbles: true,
-        detail: { identifier: this._root.id },
+        detail: { identifier: this.root.id },
       })
     );
   }
@@ -67,12 +67,12 @@ export default class Modal {
   }
 
   _close() {
-    this._root.classList.remove("open");
-    this._root.classList.add("neos-hide");
+    this.root.classList.remove("open");
+    this.root.classList.add("neos-hide");
 
     window.dispatchEvent(
       new CustomEvent("neoscms-modal-closed", {
-        detail: { identifier: this._root.id },
+        detail: { identifier: this.root.id },
       })
     );
   }
@@ -84,13 +84,13 @@ export default class Modal {
   }
 
   _handleDynamicHeader(_trigger: HTMLElement) {
-    if (isNil(_trigger) || isNil(this._header)) {
+    if (isNil(_trigger) || isNil(this.header)) {
       return false;
     }
 
     const dynamicHeader = _trigger.getAttribute("data-modal-header");
     if (!isEmpty(dynamicHeader)) {
-      this._header.innerText = dynamicHeader;
+      this.header.innerText = dynamicHeader;
     }
   }
 }

@@ -3,22 +3,22 @@ import { loadStorageData, saveStorageData } from "../Services/LocalStorage";
 
 const VALUE_PATH = "module.configuration";
 export default class Tree {
-  _root?: HTMLElement;
-  _nodes?: Array<HTMLElement>;
-  _type?: string;
-  _treeBranchStates: Array<string>;
+  protected root?: HTMLElement;
+  protected nodes?: Array<HTMLElement>;
+  protected type?: string;
+  protected treeBranchStates: Array<string>;
 
   constructor(_root: HTMLElement) {
-    this._root = _root;
-    this._type = this._root.getAttribute("data-type");
-    this._treeBranchStates = this._loadTreeBranchStates(true);
-    this._nodes = Array.from(this._root.querySelectorAll(".neos-tree-node"));
+    this.root = _root;
+    this.type = this.root.getAttribute("data-type");
+    this.treeBranchStates = this._loadTreeBranchStates(true);
+    this.nodes = Array.from(this.root.querySelectorAll(".neos-tree-node"));
     this._initializeTree();
     this._setupEventListeners();
   }
 
   _initializeTree() {
-    this._nodes.forEach((_node: HTMLElement) => {
+    this.nodes.forEach((_node: HTMLElement) => {
       if (_node.firstChild.nodeName.toLowerCase() !== "ul") {
         // @ts-ignore
         this._wrapElementWithNodeTitle(_node.firstChild);
@@ -41,7 +41,7 @@ export default class Tree {
     }
 
     items.forEach((_item) => {
-      const node = this._root.querySelector(`[title="${_item}"`);
+      const node = this.root.querySelector(`[title="${_item}"`);
       if (!isNil(node)) {
         node.classList.add("neos-tree-open");
       }
@@ -49,7 +49,7 @@ export default class Tree {
   }
 
   _setupEventListeners() {
-    this._nodes.forEach((_node) => {
+    this.nodes.forEach((_node) => {
       _node.addEventListener("click", this._onNodeClick.bind(this));
     });
   }
@@ -70,7 +70,7 @@ export default class Tree {
   }
 
   _deselectCurrentActiveNode() {
-    this._root.querySelectorAll(".neos-tree-active").forEach((_node) => {
+    this.root.querySelectorAll(".neos-tree-active").forEach((_node) => {
       _node.classList.remove("neos-tree-active");
     });
   }
@@ -98,7 +98,7 @@ export default class Tree {
   }
 
   _getPathForType() {
-    const path = VALUE_PATH + (!isEmpty(this._type) ? "." + this._type : "");
+    const path = VALUE_PATH + (!isEmpty(this.type) ? "." + this.type : "");
     return path.toLowerCase();
   }
 
@@ -109,28 +109,28 @@ export default class Tree {
       this._initializeTreeState(storageData);
     }
 
-    this._treeBranchStates = Array.isArray(storageData) ? storageData : [];
-    return this._treeBranchStates;
+    this.treeBranchStates = Array.isArray(storageData) ? storageData : [];
+    return this.treeBranchStates;
   }
 
   _saveTreeBranchStates() {
     const pathWithType = this._getPathForType();
-    if (Array.isArray(this._treeBranchStates)) {
-      saveStorageData(pathWithType, this._treeBranchStates);
+    if (Array.isArray(this.treeBranchStates)) {
+      saveStorageData(pathWithType, this.treeBranchStates);
     }
   }
 
   _changeTreeBranchState(path: string) {
-    if (isEmpty(path) || !Array.isArray(this._treeBranchStates)) {
+    if (isEmpty(path) || !Array.isArray(this.treeBranchStates)) {
       return;
     }
 
-    if (this._treeBranchStates.includes(path)) {
-      this._treeBranchStates = this._treeBranchStates.filter(
+    if (this.treeBranchStates.includes(path)) {
+      this.treeBranchStates = this.treeBranchStates.filter(
         (item) => item !== path
       );
     } else {
-      this._treeBranchStates.push(path);
+      this.treeBranchStates.push(path);
     }
 
     this._saveTreeBranchStates();
