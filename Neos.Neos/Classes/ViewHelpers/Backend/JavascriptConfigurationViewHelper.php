@@ -130,7 +130,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
 
         /*
          * create backwards compatibility
-         * @deprecate Can be removed with Neos 8.0
+         * @deprecated Can be removed with Neos 8.0
          */
         $configuration[] = 'window.T3Configuration = Object.assign({}, window.NeosCMS.Configuration);';
 
