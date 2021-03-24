@@ -29,7 +29,7 @@
 	<f:if condition="{showRoles}">
 		<fieldset class="neos-span6">
 			<label class="neos-control-label">{neos:backend.translate(source: 'Modules', id: 'users.roles')}</label>
-			<table class="neos-table">
+			<table class="neos-table" data-neos-expandable="dropdown-group">
 				<thead>
 				<tr>
 					<th></th>
@@ -61,11 +61,13 @@
 						</td>
 						<td class="neos-action">
 							<div class="neos-pull-right">
-								<a data-neos-toggle="tooltip" class="neos-button"data-neos-toggle="dropdown" title="{role.identifier}" href="#"><i class="fas fa-info-circle icon-white"></i></a>
+								<button data-neos-toggle="tooltip" title="{role.identifier}" class="neos-button neos-dropdown-trigger" aria-controls="neos-dropdown-content-{rolesIteration.cycle}" aria-expanded="false">
+									<i class="fas fa-info-circle icon-white"></i>
+								</button>
 							</div>
 						</td>
 					</tr>
-					<tr>
+					<tr id="neos-dropdown-content-{rolesIteration.cycle}" class="neos-dropdown-content" hidden="true">
 						<td></td>
 						<td colspan="2">
 							<h2>{neos:backend.translate(source: 'Modules', id: 'users.roles.directlyAssignedPrivileges')}</h2>
