@@ -81,7 +81,7 @@ final class NodeRecord
             SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::fromString($databaseRow['classification']),
-            isset($databaseRow['nodename']) ? NodeName::fromString($databaseRow['nodename']) : null
+            $databaseRow['nodename'] ? NodeName::fromString($databaseRow['nodename']) : null
         );
     }
 

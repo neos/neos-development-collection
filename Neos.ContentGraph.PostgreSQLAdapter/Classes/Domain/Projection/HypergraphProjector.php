@@ -19,6 +19,8 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
@@ -35,12 +37,15 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
 {
     private DbalClient $databaseClient;
 
+    private ProjectionHypergraph $projectionHypergraph;
+
     public function __construct(
         DbalClient $databaseClient,
         EventStorageDbalClient $eventStorageDatabaseClient,
         VariableFrontend $processedEventsCache
     ) {
         $this->databaseClient = $databaseClient;
+        $this->projectionHypergraph = new ProjectionHypergraph($databaseClient);
         parent::__construct($eventStorageDatabaseClient, $processedEventsCache);
     }
 
@@ -88,6 +93,58 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
     }
 
     /**
+     * @param NodeAggregateWithNodeWasCreated $event
+     * @throws \Throwable
+     */
+    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
+    {
+        $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
+        $node = new NodeRecord(
+            $nodeRelationAnchorPoint,
+            $event->getNodeAggregateIdentifier(),
+            $event->getOriginDimensionSpacePoint(),
+            $event->getOriginDimensionSpacePoint()->getHash(),
+            $event->getInitialPropertyValues(),
+            $event->getNodeTypeName(),
+            $event->getNodeAggregateClassification(),
+            $event->getNodeName()
+        );
+
+        $this->transactional(function () use ($node, $event) {
+            $node->addToDatabase($this->getDatabaseConnection());
+            foreach ($event->getCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
+                $parentNodeAddress = new NodeAddress(
+                    $event->getContentStreamIdentifier(),
+                    $dimensionSpacePoint,
+                    $event->getParentNodeAggregateIdentifier(),
+                    null
+                );
+                $hierarchyRelation = $this->projectionHypergraph->findChildHierarchyHyperrelationRecordByAddress($parentNodeAddress);
+                if ($hierarchyRelation) {
+                    $succeedingSiblingNodeAnchor = null;
+                    if ($event->getSucceedingNodeAggregateIdentifier()) {
+                        $succeedingSiblingNodeAddress = $parentNodeAddress->withNodeAggregateIdentifier($event->getSucceedingNodeAggregateIdentifier());
+                        $succeedingSiblingNode = $this->projectionHypergraph->findNodeRecordByAddress($succeedingSiblingNodeAddress);
+                        if ($succeedingSiblingNode) {
+                            $succeedingSiblingNodeAnchor = $succeedingSiblingNode->relationAnchorPoint;
+                        }
+                    }
+                    $hierarchyRelation->addChildNodeAnchor($node->relationAnchorPoint, $succeedingSiblingNodeAnchor, $this->getDatabaseConnection());
+                } else {
+                    $parentNode = $this->projectionHypergraph->findNodeRecordByAddress($parentNodeAddress);
+                    $hierarchyRelation = new HierarchyHyperrelationRecord(
+                        $event->getContentStreamIdentifier(),
+                        $parentNode->relationAnchorPoint,
+                        $dimensionSpacePoint,
+                        [$node->relationAnchorPoint]
+                    );
+                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                }
+            }
+        });
+    }
+
+    /**
      * @throws DBALException
      */
     private function connectHierarchy(
@@ -97,14 +154,15 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
         DimensionSpacePointSet $dimensionSpacePointSet,
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint
     ): void {
-        $hierarchyRelationSet = new HierarchyHyperrelationRecord(
-            $contentStreamIdentifier,
-            $parentNodeAnchorPoint,
-            $dimensionSpacePointSet,
-            [$childNodeAnchorPoint]
-        );
-
-        $hierarchyRelationSet->addToDatabase($this->getDatabaseConnection());
+        foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
+            $hierarchyHyperrelationRecord = new HierarchyHyperrelationRecord(
+                $contentStreamIdentifier,
+                $parentNodeAnchorPoint,
+                $dimensionSpacePoint,
+                [$childNodeAnchorPoint]
+            );
+            $hierarchyHyperrelationRecord->addToDatabase($this->getDatabaseConnection());
+        }
     }
 
     /**

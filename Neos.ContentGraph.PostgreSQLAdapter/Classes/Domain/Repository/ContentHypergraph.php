@@ -15,6 +15,9 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection as DatabaseConnection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -35,7 +38,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * To be used as a read-only source of subhypergraphs, node aggregates and nodes
  *
- * @Flow\Proxy(false)
+ * @Flow\Scope("singleton")
  * @api
  */
 final class ContentHypergraph implements ContentGraphInterface
@@ -79,27 +82,11 @@ final class ContentHypergraph implements ContentGraphInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeInterface {
-        $query = /** @lang PostgreSQL */
-            'SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename, n.classification, n.properties, n.nodename,
-                h.contentstreamidentifier
-            FROM neos_contentgraph_hierarchyhyperrelation h,
-            neos_contentgraph_node n
-                JOIN (
-                    SELECT jsonb_array_elements_text(childnodeanchors)::varchar relationanchorpoint
-                    FROM neos_contentgraph_hierarchyhyperrelation
-                ) nodes_with_hierarchyhyperrelations
-                USING (relationanchorpoint)
-                WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-                AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
-                AND h.contentstreamidentifier = :contentStreamIdentifier';
+        $query = HypergraphQuery::create($contentStreamIdentifier);
+        $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
+        $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
-        $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash()
-        ];
-
-        $nodeRow = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
+        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $this->nodeFactory->mapNodeRowToNode($nodeRow);
     }
@@ -122,25 +109,10 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeAggregate {
-        $query = /** @lang PostgreSQL */
-            'SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename, n.classification, n.properties, n.nodename,
-                h.contentstreamidentifier, h.dimensionspacepoints
-            FROM neos_contentgraph_hierarchyhyperrelation h,
-            neos_contentgraph_node n
-                JOIN (
-                    SELECT jsonb_array_elements_text(childnodeanchors)::varchar relationanchorpoint
-                    FROM neos_contentgraph_hierarchyhyperrelation
-                ) nodes_with_hierarchyhyperrelations
-                USING (relationanchorpoint)
-                WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-                AND h.contentstreamidentifier = :contentStreamIdentifier';
+        $query = HypergraphQuery::create($contentStreamIdentifier);
+        $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
-        $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
-        ];
-
-        $nodeRows = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAllAssociative();
+        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
     }
@@ -157,7 +129,12 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): array {
-        // TODO: Implement findParentNodeAggregates() method.
+        $query = HypergraphParentQuery::create($contentStreamIdentifier);
+        $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+
+        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
     }
 
     public function findChildNodeAggregates(
@@ -189,7 +166,18 @@ final class ContentHypergraph implements ContentGraphInterface
         OriginDimensionSpacePoint $parentNodeOriginOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet {
-        // TODO: Implement getDimensionSpacePointsOccupiedByChildNodeName() method.
+        $query = HypergraphChildQuery::create($contentStreamIdentifier, ['ch.dimensionspacepoint, ch.dimensionspacepointhash']);
+        $query = $query->withNodeName($nodeName)
+            ->withNodeAggregateIdentifier($parentNodeAggregateIdentifier)
+            ->withOriginDimensionSpacePoint($parentNodeOriginOriginDimensionSpacePoint)
+            ->withDimensionSpacePoints($dimensionSpacePointsToCheck);
+
+        $occupiedDimensionSpacePoints = [];
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $row) {
+            $occupiedDimensionSpacePoints[$row['ch.dimensionspacepointhash']] = DimensionSpacePoint::fromArray(\json_decode($row['ch.dimensionspacepoint']));
+        }
+
+        return new DimensionSpacePointSet($occupiedDimensionSpacePoints);
     }
 
     /**

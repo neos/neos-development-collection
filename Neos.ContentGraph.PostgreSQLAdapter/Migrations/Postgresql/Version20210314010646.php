@@ -40,13 +40,13 @@ class Version20210314010646 extends AbstractMigration
         $this->addSql(/** @lang PostgreSQL */'CREATE TABLE neos_contentgraph_hierarchyhyperrelation(
     contentstreamidentifier varchar(255) NOT NULL,
     parentnodeanchor varchar(255) NOT NULL,
-    dimensionspacepoints json NOT NULL,
-    dimensionspacepointhashes jsonb NOT NULL,
+    dimensionspacepoint json NOT NULL,
+    dimensionspacepointhash varchar(255) NOT NULL,
     childnodeanchors jsonb NOT NULL
 )');
         $this->addSql('CREATE INDEX CONTENT_STREAM_IDENTIFIER ON neos_contentgraph_hierarchyhyperrelation (contentstreamidentifier);');
         $this->addSql('CREATE INDEX PARENT_NODE_ANCHOR ON neos_contentgraph_hierarchyhyperrelation (parentnodeanchor);');
-        $this->addSql(/** @lang PostgreSQL */'CREATE INDEX DIMENSION_SPACE_POINTS ON neos_contentgraph_hierarchyhyperrelation USING GIN (dimensionspacepointhashes);');
+        $this->addSql('CREATE INDEX DIMENSION_SPACE_POINT ON neos_contentgraph_hierarchyhyperrelation (dimensionspacepointhash);');
         $this->addSql(/** @lang PostgreSQL */'CREATE INDEX CHILD_NODE_ANCHORS ON neos_contentgraph_hierarchyhyperrelation USING GIN (childnodeanchors);');
     }
 

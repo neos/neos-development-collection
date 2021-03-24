@@ -15,7 +15,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -30,7 +30,7 @@ final class HierarchyHyperrelationRecord
 
     public ContentStreamIdentifier $contentStreamIdentifier;
 
-    public DimensionSpacePointSet $dimensionSpacePoints;
+    public DimensionSpacePoint $dimensionSpacePoint;
 
     public NodeRelationAnchorPoint $parentNodeAnchor;
 
@@ -44,12 +44,12 @@ final class HierarchyHyperrelationRecord
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeRelationAnchorPoint $parentNodeAnchor,
-        DimensionSpacePointSet $dimensionSpacePoints,
+        DimensionSpacePoint $dimensionSpacePoint,
         array $childNodeAnchorPoints
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->parentNodeAnchor = $parentNodeAnchor;
-        $this->dimensionSpacePoints = $dimensionSpacePoints;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->childNodeAnchors = $childNodeAnchorPoints;
     }
 
@@ -62,8 +62,35 @@ final class HierarchyHyperrelationRecord
         return new self(
             ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
             NodeRelationAnchorPoint::fromString($databaseRow['parentnodeanchor']),
-            DimensionSpacePointSet::fromArray(json_decode($databaseRow['dimensionspacepoints'])),
+            DimensionSpacePoint::fromArray(json_decode($databaseRow['dimensionspacepoint'])),
             $childNodeAnchors
+        );
+    }
+
+    public function getDimensionSpacePoints(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    public function addChildNodeAnchor(
+        NodeRelationAnchorPoint $childNodeAnchor,
+        ?NodeRelationAnchorPoint $succeedingSiblingAnchor,
+        Connection $databaseConnection
+    ): void {
+        $childNodeAnchors = $this->childNodeAnchors;
+        if ($succeedingSiblingAnchor) {
+            $pivot = array_search($succeedingSiblingAnchor, $childNodeAnchors);
+            array_splice($childNodeAnchors, $pivot, 0, $childNodeAnchor);
+        } else {
+            $childNodeAnchors[] = $childNodeAnchor;
+        }
+
+        $databaseConnection->update(
+            self::TABLE_NAME,
+            [
+                'childnodeanchors' => \json_encode($childNodeAnchors)
+            ],
+            $this->getDatabaseIdentifier()
         );
     }
 
@@ -75,8 +102,8 @@ final class HierarchyHyperrelationRecord
         $databaseConnection->insert(self::TABLE_NAME, [
             'contentstreamidentifier' => $this->contentStreamIdentifier,
             'parentnodeanchor' => $this->parentNodeAnchor,
-            'dimensionspacepoints' => \json_encode($this->dimensionSpacePoints),
-            'dimensionspacepointhashes' => \json_encode($this->dimensionSpacePoints->getPointHashes()),
+            'dimensionspacepoint' => \json_encode($this->dimensionSpacePoint),
+            'dimensionspacepointhash' => $this->dimensionSpacePoint->getHash(),
             'childnodeanchors' => \json_encode($this->childNodeAnchors)
         ]);
     }
@@ -92,8 +119,9 @@ final class HierarchyHyperrelationRecord
     public function getDatabaseIdentifier(): array
     {
         return [
-            'contentstreamidentifier' => $this->contentStreamIdentifier,
-            'parentnodeanchor' => $this->parentNodeAnchor
+            'contentstreamidentifier' => (string)$this->contentStreamIdentifier,
+            'parentnodeanchor' => (string)$this->parentNodeAnchor,
+            'dimensionspacepointhash' => $this->dimensionSpacePoint->getHash()
         ];
     }
 }

@@ -13,6 +13,11 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  * source code.
  */
 
+use Doctrine\DBAL\Connection as DatabaseConnection;
+use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -99,7 +104,13 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
     {
-        // TODO: Implement findNodeByNodeAggregateIdentifier() method.
+        $query = HypergraphQuery::create($this->contentStreamIdentifier);
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint);
+        $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+
+        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
     }
 
     public function countChildNodes(
@@ -188,12 +199,19 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function countNodes(): int
     {
-        // TODO: Implement countNodes() method.
+        $query = 'SELECT COUNT(*) FROM ' . NodeRecord::TABLE_NAME;
+
+        return $this->getDatabaseConnection()->executeQuery($query)->fetchOne();
     }
 
     public function getInMemoryCache(): InMemoryCache
     {
         // TODO: Implement getInMemoryCache() method.
+    }
+
+    private function getDatabaseConnection(): DatabaseConnection
+    {
+        return $this->databaseClient->getConnection();
     }
 
     public function jsonSerialize()
