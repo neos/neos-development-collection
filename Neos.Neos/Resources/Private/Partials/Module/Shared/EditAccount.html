@@ -6,8 +6,7 @@
 		<div class="neos-control-group">
 			<label class="neos-control-label">{neos:backend.translate(source: 'Modules', id: 'users.username')}</label>
 			<div class="neos-controls">
-					<span class="neos-span12 neos-uneditable-input"
-								title="{neos:backend.translate(source: 'Modules', id: 'users.usernameCannotBeChanged')}">{account.accountIdentifier}</span>
+					<span class="neos-span12 neos-uneditable-input" title="{neos:backend.translate(source: 'Modules', id: 'users.usernameCannotBeChanged')}">{account.accountIdentifier}</span>
 			</div>
 		</div>
 
@@ -19,8 +18,7 @@
 		</div>
 
 		<div class="neos-control-group{f:validation.ifHasErrors(for: 'password', then: ' neos-error')}">
-			<label class="neos-control-label" for="password[1]">{neos:backend.translate(source: 'Modules', id:
-				'users.repeatPassword')}</label>
+			<label class="neos-control-label" for="password[1]">{neos:backend.translate(source: 'Modules', id: 'users.repeatPassword')}</label>
 			<div class="neos-controls">
 				<f:form.password name="password[1]" id="password[1]" class="neos-span12"/>
 				<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'password'}"/>
@@ -45,8 +43,7 @@
 					<tr>
 						<td>
 							<div class="neos-controls">
-								<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.packageKey}"
-											 data-neos-toggle="tooltip" data-placement="right">
+								<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.packageKey}" data-neos-toggle="tooltip" data-placement="right">
 									<f:form.checkbox name="roleIdentifiers" multiple="true" value="{role.identifier}" id="roles-{rolesIteration.cycle}" checked="{f:security.ifHasRole(role: role, account: account, then: true, else: false)}"/>
 									<span></span>
 								</label>
