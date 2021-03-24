@@ -1,10 +1,9 @@
-const debug = process.env.NODE_ENV !== "production";
 const TerserPlugin = require("terser-webpack-plugin");
 const webpack = require("webpack");
 
 const javascriptConfig = {
 	context: __dirname,
-	devtool: debug ? 'source-map' : false,
+	devtool: "source-map",
 	entry: {
 		Main: ["./Resources/Public/JavaScript/index.js"],
 	},
@@ -31,26 +30,22 @@ const javascriptConfig = {
 		}),
 	],
 	optimization: {
-		minimizer: [],
+		minimizer: [
+			new TerserPlugin({
+				terserOptions: {
+					sourceMap: true,
+					warnings: false,
+					parse: {},
+					compress: {},
+					mangle: true,
+					keep_fnames: true,
+				},
+			}),
+		],
 	},
 	performance: {
-		hints: debug ? "warning" : false,
+		hints: "warning",
 	},
 };
-
-if (!debug) {
-	const terserOptions = {
-		terserOptions: {
-			sourceMap: true,
-			warnings: false,
-			parse: {},
-			compress: {},
-			mangle: true,
-			keep_fnames: true,
-		},
-	};
-
-	javascriptConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
-}
 
 module.exports = javascriptConfig;
