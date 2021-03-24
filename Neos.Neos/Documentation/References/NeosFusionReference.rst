@@ -449,6 +449,27 @@ Example::
 
 .. note:: Most of the time this can be simplified by directly assigning the value instead of using the ``Value`` object.
 
+.. _Neos_Fusion__Match:
+
+Neos.Fusion:Match
+-----------------
+
+Matches the given subject to a value
+
+:@subject: (string, **required**) The subject to match
+:@default: (mixed) The default to return when no match was found
+:[key]: (mixed) Definition list, the keys will be matched to the subject and their value returned.
+
+Example::
+
+	myValue = Neos.Fusion:Match {
+	  @subject = 'hello'
+	  @default = 'World?'
+		hello = 'Hello World'
+		bye = 'Goodbye world'
+	}
+
+.. note:: This can be used to simplify many usages of :ref:`Neos_Fusion__Case` when the subject is a string.
 
 .. _Neos_Fusion__RawArray:
 
