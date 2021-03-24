@@ -308,6 +308,41 @@ Example::
 
   # the initial value is not changed, so you can define the Debug prototype anywhere in your Fusion code
 
+.. _Neos_Fusion__DebugConsole:
+
+Neos.Fusion:DebugConsole
+-----------------
+
+Wraps the given value with a script tag to print it to the browser console.
+When used as process the script tag is appended to the processed value.
+
+:title: (optional) Title for the debug output
+:value: (mixed) The value to print to the console
+:method: (string, optional) The method to call on the browser console object
+:[key]: (mixed) Other arguments to pass to the console method
+
+Example::
+
+  renderer.@process.debug = Neos.Fusion:Debug.Console {
+    title = 'My props'
+    value = ${props}
+    method = 'table'
+  }
+
+Multiple values::
+
+  renderer.@process.debug = Neos.Fusion:Debug.Console {
+    value = ${props.foo}
+    otherValue = ${props.other}
+    thirdValue = ${props.third}
+  }
+
+Color usage::
+
+  renderer.@process.debug = Neos.Fusion:Debug.Console {
+    value = ${'%c' + node.identifier}
+    color = 'color: red'
+  }
 
 .. _Neos_Fusion__Component:
 
