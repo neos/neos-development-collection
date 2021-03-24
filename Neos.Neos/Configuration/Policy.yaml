@@ -12,21 +12,27 @@ privilegeTargets:
     #
 
     'Neos.Neos:AllControllerActions':
+      label: Generall access to all actions
       matcher: 'within(Neos\Flow\Mvc\Controller\AbstractController) && method(public .*->(?!initialize).*Action())'
 
     'Neos.Neos:WidgetControllers':
+      label: Generall access to Fluid widget controllers
       matcher: 'method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\ContentRepository\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
 
     'Neos.Neos:PublicFrontendAccess':
+      label: General Access to frontend rendering
       matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->showAction())'
 
     'Neos.Neos:ContentPreview':
+      label: Access to the backend content preview
       matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->previewAction())'
 
     'Neos.Neos:BackendLogin':
+      label: General access to the backend login
       matcher: 'method(Neos\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
 
     'Neos.Neos:Backend.GeneralAccess':
+      label: General access to the Neos backend
       matcher: 'method(Neos\Neos\Controller\Backend\BackendController->(index|switchSite|xliffAsJson)Action()) || method(Neos\Neos\Controller\Backend\ModuleController->indexAction()) || method(Neos\Neos\Controller\LoginController->logoutAction()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(Neos\Neos\Controller\Module\AbstractModuleController->indexAction()) || method(Neos\Neos\Service\Controller\AbstractServiceController->errorAction())'
 
     #
@@ -34,28 +40,36 @@ privilegeTargets:
     #
 
     'Neos.Neos:Backend.Content.Services':
+      label: Access to content service APIs
       matcher: 'method(Neos\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(Neos\Neos\Controller\Backend\SettingsController->editPreviewAction())'
 
     'Neos.Neos:Backend.PersonalWorkspaceReadAccess.NodeConverter':
+      label: Access to own personal workspace
       matcher: 'method(Neos\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName === current.userInformation.personalWorkspaceName))'
 
     # No role should have this privilege assigned:
     'Neos.Neos:Backend.OtherUsersPersonalWorkspaceAccess':
+      label: Access to other users personal workspace
       matcher: 'method(Neos\ContentRepository\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === true)'
 
     'Neos.Neos:Backend.EditContent':
+      label: General access to content editing
       matcher: 'method(Neos\Neos\Service\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|moveAndRender|copy|copyBefore|copyAfter|copyInto|copyAndRender|update|updateAndRender|delete|searchPage|error)Action()) || method(Neos\Neos\Controller\Backend\ContentController->(uploadAsset|assetsWithMetadata|imageWithMetadata|pluginViews|createImageVariant|masterPlugins|error)Action()) || method(Neos\Neos\Controller\Service\AssetProxiesController->(index|show|import|error)Action()) || method(Neos\Neos\Controller\Service\AssetsController->(index|show|error)Action()) || method(Neos\Neos\Controller\Service\NodesController->(index|show|create|error)Action())'
 
     'Neos.Neos:Backend.PublishToLiveWorkspace':
+      label: Allowed to publish to the live workspace
       matcher: 'method(Neos\ContentRepository\Domain\Model\Workspace->(publish|publishNode|publishNodes)(targetWorkspace.name === "live"))'
 
     'Neos.Neos:Backend.PublishAllToLiveWorkspace':
+      label: Allowed to publish to the live workspace
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->publishWorkspaceAction(workspace.baseWorkspace.name === "live"))'
 
     'Neos.Neos:Backend.PublishOwnWorkspaceContent':
+      label: Allowed to publish own personal workspace
       matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.personalWorkspaceName)) || method(Neos\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.personalWorkspaceName))'
 
     'Neos.Neos:Backend.DiscardOwnWorkspaceContent':
+      label: Allowed to discard changes in own workspace
       matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name === current.userInformation.personalWorkspaceName))'
 
     #
@@ -63,9 +77,11 @@ privilegeTargets:
     #
 
     'Neos.Neos:Backend.CreateWorkspaces':
+      label: Allowed to create a workspace
       matcher: 'method(Neos\Neos\Controller\Service\WorkspacesController->(new|create)Action()) || method(Neos\Neos\Controller\Module\Management\WorkspacesController->(create|new)Action())'
 
     'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
+      label: Allowed to manage own workspaces
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === current.userInformation.backendUser))'
 
     'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces':
@@ -77,9 +93,11 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === false)'
 
     'Neos.Neos:Backend.Service.Workspaces.Index':
+      label: Access workspace services
       matcher: 'method(Neos\Neos\Controller\Service\WorkspacesController->(index|error|show)Action())'
 
     'Neos.Neos:Backend.Service.Workspaces.ManageOwnWorkspaces':
+      label: Access services to manage own worksapce
       matcher: 'method(Neos\Neos\Controller\Service\WorkspacesController->(update|delete)Action(workspace.owner === current.userInformation.backendUser))'
 
     #
@@ -87,9 +105,11 @@ privilegeTargets:
     #
 
     'Neos.Neos:Backend.Module.User.UserSettings.UpdateOwnSettings':
+      label: Allowed to update own user setings
       matcher: 'method(Neos\Neos\Controller\Module\User\UserSettingsController->updateAction(user === current.userInformation.backendUser))'
 
     'Neos.Neos:Backend.EditUserPreferences':
+      label: Allowed to edit user preferences
       matcher: 'method(Neos\Neos\Service\Controller\UserPreferenceController->(index|update|error)Action())'
 
     #
@@ -97,9 +117,11 @@ privilegeTargets:
     #
 
     'Neos.Neos:Backend.ContentDimensions':
+      label: Allowed to list content dimensions
       matcher: 'method(Neos\Neos\Controller\Service\ContentDimensionsController->(index|show|error)Action())'
 
     'Neos.Neos:Backend.DataSource':
+      label: General access to data sources
       matcher: 'method(Neos\Neos\Service\Controller\DataSourceController->(index|error)Action())'
 
   #
@@ -109,40 +131,47 @@ privilegeTargets:
   'Neos\Neos\Security\Authorization\Privilege\ModulePrivilege':
 
     'Neos.Neos:Backend.Module.User':
+      label: General access to the user module section
       matcher: 'user'
 
     'Neos.Neos:Backend.Module.User.UserSettings':
+      label: General access to the user settings module
       matcher: 'user/usersettings'
 
     'Neos.Neos:Backend.Module.Management':
+      label: General access to the management module section
       matcher: 'management'
 
     'Neos.Neos:Backend.Module.Management.Workspaces':
+      label: General access to the workspace module
       matcher: 'management/workspaces'
 
     'Neos.Neos:Backend.Module.Management.History':
+      label: General access to the history module
       matcher: 'management/history'
 
     'Neos.Neos:Backend.Module.Administration':
-      label: Access the administration module
+      label: General access to the administration module
       matcher: 'administration'
 
     'Neos.Neos:Backend.Module.Administration.Users':
-      label: Access the user administration module
+      label: General access to the user administration module
       matcher: 'administration/users'
 
     'Neos.Neos:Backend.Module.Administration.Packages':
-      label: Access the user packages module
+      label: General access the user packages module
       matcher: 'administration/packages'
 
     'Neos.Neos:Backend.Module.Administration.Sites':
-      label: Access the sites module
+      label: General access the sites module
       matcher: 'administration/sites'
 
     'Neos.Neos:Backend.Module.Administration.Configuration':
+      label: General access the configuration module
       matcher: 'administration/configuration'
 
     'Neos.Neos:Backend.Module.Administration.Dimensions':
+      label: General access the dimensions module
       matcher: 'administration/dimensions'
 
 roles:
@@ -163,6 +192,8 @@ roles:
 
 
   'Neos.Neos:LivePublisher':
+    label: Live publisher
+    description: The role allows to publish to the live workspace
     privileges:
       -
         privilegeTarget: 'Neos.Neos:Backend.PublishToLiveWorkspace'
@@ -258,9 +289,13 @@ roles:
 
 
   'Neos.Neos:RestrictedEditor':
+    label: Restricted Editor
+    description: Grants access to the content, asset, workspace and history module. The user is only allowed to publish to internal workspace.
     parentRoles: ['Neos.Neos:AbstractEditor']
 
   'Neos.Neos:Editor':
+    label: Editor
+    description: Grants access to the content, asset, workspace and history module. Users with this role is able to publish to the live workspace.
     parentRoles: ['Neos.Neos:AbstractEditor', 'Neos.Neos:LivePublisher']
 
   'Neos.Neos:UserManager':

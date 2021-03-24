@@ -1,25 +1,31 @@
 privilegeTargets:
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
     'Neos.Media.Browser:Widgets':
+      label: Allowed to paginate through assets
       matcher: 'method(Neos\Media\Browser\ViewHelpers\Controller\(Paginate)Controller->(index)Action())'
 
     'Neos.Media.Browser:ManageAssets':
+      label: Allowed to manage assets
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(index|new|show|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes|variants)Action()) || method(Neos\Media\Browser\Controller\ImageVariantController->(update)Action())'
 
     'Neos.Media.Browser:AssetUsage':
+      label: Allowed to calculate asset usages
       matcher: 'method(Neos\Media\Browser\Controller\UsageController->relatedNodesAction())'
 
     'Neos.Media.Browser:ManageTags':
+      label: Allowed to mange tags
       matcher: 'method(Neos\Media\Browser\Controller\TagController->(create|edit|update|delete)Action())'
 
     'Neos.Media.Browser:AssetProxyService':
+      label: Allowed to use asset proxoes
       matcher: 'method(Neos\Media\Browser\Controller\AssetProxyController->(index|import)Action())'
 
     'Neos.Media.Browser:ManageAssetCollections':
-      label: Manage Asset Collections
+      label: Allowed to manage Asset Collections
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action()) || method(Neos\Media\Browser\Controller\AssetCollectionController->(create|edit|update|delete)Action())'
 
     'Neos.Media.Browser:ReplaceAssetResource':
+      label: Allowed to replace asset resources
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(replaceAssetResource|updateAssetResource)Action())'
 
 roles:
