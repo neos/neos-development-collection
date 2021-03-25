@@ -9,8 +9,8 @@
     "build:production": "yarn build:js:prod && yarn build:styles:prod",
     "build:js": "webpack --mode development --config=webpack.js.config.js",
     "build:styles": "webpack --mode development --config=webpack.styles.config.js",
-    "build:js:prod": "NODE_ENV=production webpack --mode production --config=webpack.js.config.js",
-    "build:styles:prod": "NODE_ENV=production  webpack --mode production --config=webpack.styles.config.js"
+    "build:js:prod": "webpack --mode production --config=webpack.js.config.js",
+    "build:styles:prod": "webpack --mode production --config=webpack.styles.config.js"
   },
   "devDependencies": {
     "@babel/core": "^7.13.10",
