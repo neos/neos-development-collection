@@ -252,10 +252,6 @@ $dropcap-bg: transparent !default;
 
 @mixin css-hyphens($val) {
 	// Accepted values: [ none | manual | auto ]
-	-webkit-hyphens: $val; // Safari 5.1 thru 6, iOS 4.2 thru 6
-	-moz-hyphens: $val; // Firefox 16 thru 20
-	-ms-hyphens: $val; // IE10
-	-o-hyphens: $val; // PRESTO...haha LOL
 	hyphens: $val; // W3C standard
 }
 

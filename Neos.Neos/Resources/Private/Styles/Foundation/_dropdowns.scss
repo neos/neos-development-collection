@@ -8,10 +8,6 @@
 .neos-dropdown {
 	position: relative;
 }
-.neos-dropdown-toggle {
-	// The caret makes the toggle a bit too tall in IE7
-	*margin-bottom: -3px;
-}
 .neos-dropdown-toggle:active,
 .neos-open .neos-dropdown-toggle {
 	outline: 0;
@@ -207,17 +203,12 @@
 .neos-dropdown-menu > .neos-disabled > a:focus {
 	text-decoration: none;
 	background-color: transparent;
-	@include reset-filter();
 	cursor: default;
 }
 
 // Open state for the dropdown
 // ---------------------------
 .neos-open {
-	// IE7's z-index only goes to the nearest positioned ancestor, which would
-	// make the menu appear below buttons that appeared later on the page
-	*z-index: $zindexDropdown;
-
 	& > .neos-dropdown-menu {
 		display: block;
 	}

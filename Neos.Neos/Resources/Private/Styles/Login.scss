@@ -16,13 +16,6 @@ body {
 	background-attachment: fixed;
 }
 
-body,
-html,
-.neos-modal-centered {
-	// IE 10+ needs this to work in combination with `flex: 1 0 auto` to make the footer stick to the bottom
-	height: 100%;
-}
-
 .neos {
 	// CSS Reset
 	@import "Foundation/reset";
