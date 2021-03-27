@@ -30,7 +30,7 @@ const stylesConfig = {
 					{
 						loader: "url-loader",
 						options: {
-							name: "images/[name].[ext]",
+							name: "Images/[name].[ext]",
 							publicPath: "../",
 							limit: 30000,
 						},
