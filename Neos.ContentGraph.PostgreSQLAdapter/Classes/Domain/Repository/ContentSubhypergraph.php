@@ -13,11 +13,19 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  * source code.
  */
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connection as DatabaseConnection;
-use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content\Node;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphReferenceQuery;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblingQuery;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblingQueryMode;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -79,91 +87,258 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $this->nodeFactory = $nodeFactory;
     }
 
-    public function findChildNodes(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
-    ): array {
-        // TODO: Implement findChildNodes() method.
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
     }
 
-    public function findReferencedNodes(
-        NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
-        PropertyName $name = null
-    ): array {
-        // TODO: Implement findReferencedNodes() method.
-    }
-
-    public function findReferencingNodes(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        PropertyName $name = null
-    ): array {
-        // TODO: Implement findReferencingNodes() method.
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
     }
 
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
     {
         $query = HypergraphQuery::create($this->contentStreamIdentifier);
-        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint);
-        $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withNodeAggregateIdentifier($nodeAggregateIdentifier)
+            ->withRestriction($this->visibilityConstraints);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
     }
 
+    public function findChildNodes(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): array {
+        $childNodes = [];
+        $query = HypergraphChildQuery::create($this->contentStreamIdentifier);
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withParentNodeAggregateIdentifier($nodeAggregateIdentifier)
+            ->withRestriction($this->visibilityConstraints);
+        if (!is_null($nodeTypeConstraints)) {
+            $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
+        }
+        if (!is_null($limit)) {
+            $query = $query->withLimit($limit);
+        }
+        if (!is_null($offset)) {
+            $query = $query->withOffset($offset);
+        }
+
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $childNodeRow) {
+            $childNodes[] = $this->nodeFactory->mapNodeRowToNode($childNodeRow);
+        }
+
+        return $childNodes;
+    }
+
     public function countChildNodes(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null
     ): int {
-        // TODO: Implement countChildNodes() method.
+        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, ['COUNT(*)']);
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withParentNodeAggregateIdentifier($parentNodeAggregateIdentifier)
+            ->withRestriction($this->visibilityConstraints);
+        if (!is_null($nodeTypeConstraints)) {
+            $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
+        }
+
+        $result = $query->execute($this->getDatabaseConnection())->fetchNumeric();
+
+        return $result[0];
+    }
+
+    public function findReferencedNodes(
+        NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
+        PropertyName $name = null
+    ): array {
+        $query = HypergraphReferenceQuery::create(
+            $this->contentStreamIdentifier,
+            'destn.*, desth.contentstreamidentifier, desth.dimensionspacepoint'
+        );
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withOriginNodeAggregateIdentifier($nodeAggregateAggregateIdentifier)
+            ->withDestinationRestriction($this->visibilityConstraints);
+        if ($name) {
+            $query = $query->withReferenceName($name);
+        }
+        $query = $query->ordered();
+
+        $referencedNodes = [];
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $referencedNodeRow) {
+            $referencedNodes[] = $this->nodeFactory->mapNodeRowToNode($referencedNodeRow);
+        }
+
+        return $referencedNodes;
+    }
+
+    public function findReferencingNodes(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        PropertyName $name = null
+    ): array {
+        $query = HypergraphReferenceQuery::create(
+            $this->contentStreamIdentifier,
+            'orgn.*, orgh.contentstreamidentifier, orgh.dimensionspacepoint'
+        );
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withDestinationNodeAggregateIdentifier($nodeAggregateIdentifier)
+            ->withOriginRestriction($this->visibilityConstraints);
+        if ($name) {
+            $query = $query->withReferenceName($name);
+        }
+        $query = $query->ordered();
+
+        $referencedNodes = [];
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $referencedNodeRow) {
+            $referencedNodes[] = $this->nodeFactory->mapNodeRowToNode($referencedNodeRow);
+        }
+
+        return $referencedNodes;
     }
 
     public function findParentNode(NodeAggregateIdentifier $childAggregateIdentifier): ?NodeInterface
     {
-        // TODO: Implement findParentNode() method.
+        $query = HypergraphParentQuery::create($this->contentStreamIdentifier);
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withChildNodeAggregateIdentifier($childAggregateIdentifier);
+
+        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
     }
 
     public function findNodeByPath(
         NodePath $path,
         NodeAggregateIdentifier $startingNodeAggregateIdentifier
     ): ?NodeInterface {
-        // TODO: Implement findNodeByPath() method.
+        $currentNode = $this->findNodeByNodeAggregateIdentifier($startingNodeAggregateIdentifier);
+        if (!$currentNode) {
+            throw new \RuntimeException('Starting Node (identified by ' . $startingNodeAggregateIdentifier . ') does not exist.');
+        }
+        foreach ($path->getParts() as $edgeName) {
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName(
+                $currentNode->getNodeAggregateIdentifier(),
+                $edgeName
+            );
+            if (!$currentNode) {
+                return null;
+            }
+        }
+
+        return $currentNode;
     }
 
     public function findChildNodeConnectedThroughEdgeName(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
     ): ?NodeInterface {
-        // TODO: Implement findChildNodeConnectedThroughEdgeName() method.
+        $query = HypergraphChildQuery::create($this->contentStreamIdentifier);
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withParentNodeAggregateIdentifier($parentNodeAggregateIdentifier)
+            ->withRestriction($this->visibilityConstraints)
+            ->withChildNodeName($edgeName);
+
+        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
     }
 
+    /**
+     * @return array|Node[]
+     */
     public function findSiblings(
         NodeAggregateIdentifier $sibling,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
     ): array {
-        // TODO: Implement findSiblings() method.
+        return $this->findAnySiblings(
+            $sibling,
+            HypergraphSiblingQueryMode::all(),
+            $nodeTypeConstraints,
+            $limit,
+            $offset
+        );
     }
 
+    /**
+     * @return array|Node[]
+     */
     public function findSucceedingSiblings(
         NodeAggregateIdentifier $sibling,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
     ): array {
-        // TODO: Implement findSucceedingSiblings() method.
+        return $this->findAnySiblings(
+            $sibling,
+            HypergraphSiblingQueryMode::onlySucceeding(),
+            $nodeTypeConstraints,
+            $limit,
+            $offset
+        );
     }
 
+    /**
+     * @return array|Node[]
+     */
     public function findPrecedingSiblings(
         NodeAggregateIdentifier $sibling,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
     ): array {
-        // TODO: Implement findPrecedingSiblings() method.
+        return array_reverse($this->findAnySiblings(
+            $sibling,
+            HypergraphSiblingQueryMode::onlyPreceding(),
+            $nodeTypeConstraints,
+            $limit,
+            $offset
+        ));
+    }
+
+    /**
+     * @return array|Node[]
+     */
+    private function findAnySiblings(
+        NodeAggregateIdentifier $sibling,
+        HypergraphSiblingQueryMode $mode,
+        ?NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): array {
+        $query = HypergraphSiblingQuery::create(
+            $this->contentStreamIdentifier,
+            $this->dimensionSpacePoint,
+            $sibling,
+            $mode
+        );
+        $query = $query->withRestriction($this->visibilityConstraints);
+        if (!is_null($nodeTypeConstraints)) {
+            $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'sn');
+        }
+        if (!is_null($limit)) {
+            $query = $query->withLimit($limit);
+        }
+        if (!is_null($offset)) {
+            $query = $query->withOffset($offset);
+        }
+
+        $siblings = [];
+        $rows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        if (!empty($rows)) {
+            foreach ($rows as $row) {
+                $siblings[] = $this->nodeFactory->mapNodeRowToNode($row, $this->contentStreamIdentifier);
+            }
+        }
+
+        return $siblings;
     }
 
     public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath
@@ -171,22 +346,62 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         // TODO: Implement findNodePath() method.
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        // TODO: Implement getContentStreamIdentifier() method.
-    }
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        // TODO: Implement getDimensionSpacePoint() method.
-    }
-
     public function findSubtrees(
         array $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
     ): SubtreeInterface {
-        // TODO: Implement findSubtrees() method.
+        $query = /** @lang PostgreSQL */ '-- ContentSubhypergraph::findSubtrees
+    WITH RECURSIVE subtree AS (
+        SELECT n.*, h.contentstreamidentifier,
+            \'ROOT\'::varchar AS parentNodeAggregateIdentifier,
+            0 as level
+        FROM ' . NodeRecord::TABLE_NAME . ' n
+            INNER JOIN (
+                SELECT *, unnest(childnodeanchors) AS childnodeanchor
+                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+            ) h ON n.relationanchorpoint = h.childnodeanchor
+        WHERE n.nodeaggregateidentifier IN (:entryNodeAggregateIdentifiers)
+            AND h.contentstreamidentifier = :contentStreamIdentifier
+	    	AND h.dimensionspacepointhash = :dimensionSpacePointHash
+        ' . QueryUtility::getRestrictionClause($this->visibilityConstraints) . '
+    UNION ALL
+         -- --------------------------------
+         -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
+         -- --------------------------------
+        SELECT cn.*, ch.contentstreamidentifier,
+            p.nodeaggregateidentifier as parentNodeAggregateIdentifier,
+     	    p.level + 1 as level
+        FROM subtree p
+            INNER JOIN (
+                SELECT *, unnest(childnodeanchors) AS childnodeanchor
+                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+            ) ch ON ch.parentnodeanchor = p.relationanchorpoint
+            INNER JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ch.childnodeanchor
+	    WHERE
+	 	    ch.contentstreamidentifier = :contentStreamIdentifier
+		    AND ch.dimensionspacepointhash = :dimensionSpacePointHash
+		    AND p.level + 1 <= :maximumLevels
+            ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, 'c') .'
+		    -- @todo node type constraints
+    )
+    SELECT * FROM subtree
+    ORDER BY level DESC';
+
+        $parameters = [
+            'entryNodeAggregateIdentifiers' => $entryNodeAggregateIdentifiers,
+            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->getHash(),
+            'maximumLevels' => $maximumLevels
+        ];
+
+        $types = [
+            'entryNodeAggregateIdentifiers' => Connection::PARAM_STR_ARRAY
+        ];
+
+        $nodeRows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToSubtree($nodeRows);
     }
 
     public function findDescendants(

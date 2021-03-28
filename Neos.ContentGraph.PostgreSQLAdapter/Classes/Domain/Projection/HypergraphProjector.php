@@ -19,8 +19,12 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
@@ -58,6 +62,8 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
         $this->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . NodeRecord::TABLE_NAME);
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . HierarchyHyperrelationRecord::TABLE_NAME);
+            $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . RestrictionHyperrelationRecord::TABLE_NAME);
+            $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . ReferenceHyperrelationRecord::TABLE_NAME);
         });
     }
 
@@ -82,7 +88,7 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
 
         $this->transactional(function () use ($node, $event) {
             $node->addToDatabase($this->getDatabaseConnection());
-            $this->connectHierarchy(
+            $this->connectToHierarchy(
                 $event->getContentStreamIdentifier(),
                 NodeRelationAnchorPoint::forRootHierarchyRelation(),
                 $node->relationAnchorPoint,
@@ -136,33 +142,126 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
                         $event->getContentStreamIdentifier(),
                         $parentNode->relationAnchorPoint,
                         $dimensionSpacePoint,
-                        [$node->relationAnchorPoint]
+                        NodeRelationAnchorPoints::fromArray([$node->relationAnchorPoint])
                     );
                     $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
                 }
+                $this->connectToRestrictionRelations($parentNodeAddress, $event->getNodeAggregateIdentifier());
             }
         });
     }
 
     /**
      * @throws DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
      */
-    private function connectHierarchy(
+    private function connectToHierarchy(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeRelationAnchorPoint $parentNodeAnchorPoint,
-        NodeRelationAnchorPoint $childNodeAnchorPoint,
+        NodeRelationAnchorPoint $parentNodeAnchor,
+        NodeRelationAnchorPoint $childNodeAnchor,
         DimensionSpacePointSet $dimensionSpacePointSet,
-        ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint
+        ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchor
     ): void {
         foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
-            $hierarchyHyperrelationRecord = new HierarchyHyperrelationRecord(
+            $hierarchyRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByParentNodeAnchor(
                 $contentStreamIdentifier,
-                $parentNodeAnchorPoint,
                 $dimensionSpacePoint,
-                [$childNodeAnchorPoint]
+                $parentNodeAnchor
             );
-            $hierarchyHyperrelationRecord->addToDatabase($this->getDatabaseConnection());
+            if ($hierarchyRelation) {
+                $hierarchyRelation->addChildNodeAnchor($childNodeAnchor, $succeedingSiblingNodeAnchor, $this->getDatabaseConnection());
+            } else {
+                $hierarchyRelation = new HierarchyHyperrelationRecord(
+                    $contentStreamIdentifier,
+                    $parentNodeAnchor,
+                    $dimensionSpacePoint,
+                    NodeRelationAnchorPoints::fromArray([$childNodeAnchor])
+                );
+                $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+            }
         }
+    }
+
+    /**
+     * @throws DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
+     */
+    private function connectToRestrictionRelations(
+        NodeAddress $parentNodeAddress,
+        NodeAggregateIdentifier $affectedNodeAggregateIdentifier
+    ): void {
+        foreach ($this->projectionHypergraph->findIngoingRestrictionRelations($parentNodeAddress) as $ingoingRestrictionRelation) {
+            $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier($affectedNodeAggregateIdentifier, $this->getDatabaseConnection());
+        }
+    }
+
+    /**
+     * @param NodeAggregateWasDisabled $event
+     * @throws \Throwable
+     */
+    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    {
+        $this->transactional(function() use($event) {
+            $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint = $this->projectionHypergraph->findDescendantNodeAggregateIdentifiers(
+                $event->getContentStreamIdentifier(),
+                $event->getAffectedDimensionSpacePoints(),
+                $event->getNodeAggregateIdentifier()
+            );
+
+            foreach ($descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint as $dimensionSpacePointHash => $descendantNodeAggregateIdentifiers) {
+                $restrictionRelation = new RestrictionHyperrelationRecord(
+                    $event->getContentStreamIdentifier(),
+                    $dimensionSpacePointHash,
+                    $event->getNodeAggregateIdentifier(),
+                    $descendantNodeAggregateIdentifiers
+                );
+
+                $restrictionRelation->addToDatabase($this->getDatabaseConnection());
+            }
+        });
+    }
+
+    public function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
+    {
+        $this->transactional(function() use($event) {
+            $nodeRecord = $this->projectionHypergraph->findNodeRecordByOrigin(
+                $event->getContentStreamIdentifier(),
+                $event->getSourceOriginDimensionSpacePoint(),
+                $event->getSourceNodeAggregateIdentifier()
+            );
+
+            if ($nodeRecord) {
+                $existingReferenceRelation = $this->projectionHypergraph->findReferenceRelationByOrigin(
+                    $nodeRecord->relationAnchorPoint,
+                    $event->getReferenceName()
+                );
+                if ($existingReferenceRelation) {
+                    $existingReferenceRelation->setDestinationNodeAggregateIdentifiers(
+                        NodeAggregateIdentifiers::fromArray($event->getDestinationNodeAggregateIdentifiers()->getIterator()->getArrayCopy()),
+                        $this->getDatabaseConnection()
+                    );
+                } else {
+                    $referenceRelation = new ReferenceHyperrelationRecord(
+                        $nodeRecord->relationAnchorPoint,
+                        $event->getReferenceName(),
+                        NodeAggregateIdentifiers::fromArray($event->getDestinationNodeAggregateIdentifiers()->getIterator()->getArrayCopy())
+                    );
+                    $referenceRelation->addToDatabase($this->getDatabaseConnection());
+                }
+            } else {
+                // @todo log
+            }
+        });
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
+    {
+        $this->transactional(function() use($event) {
+
+        });
     }
 
     /**

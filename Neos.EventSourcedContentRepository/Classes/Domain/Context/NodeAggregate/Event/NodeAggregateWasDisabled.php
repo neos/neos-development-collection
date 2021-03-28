@@ -32,7 +32,7 @@ final class NodeAggregateWasDisabled implements DomainEventInterface, Publishabl
     private ContentStreamIdentifier $contentStreamIdentifier;
 
     /**
-     * The identifier of the node Aagregate that was disabled
+     * The identifier of the node Aggregate that was disabled
      */
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 

@@ -17,8 +17,11 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -26,25 +29,19 @@ use Neos\Flow\Annotations as Flow;
  */
 final class HypergraphParentQuery implements HypergraphQueryInterface
 {
-    private string $query;
-
-    private array $parameters;
-
-    private function __construct($query, $parameters)
-    {
-        $this->query = $query;
-        $this->parameters = $parameters;
-    }
+    use CommonGraphQueryOperations;
 
     public static function create(ContentStreamIdentifier $contentStreamIdentifier, array $fieldsToFetch = null): self
     {
         $query = /** @lang PostgreSQL */
-            'SELECT pn.origindimensionspacepoint, pn.nodeaggregateidentifier, pn.nodetypename, pn.classification, pn.properties, pn.nodename,
-                ph.contentstreamidentifier, ph.dimensionspacepoint
+            'SELECT ' . ($fieldsToFetch
+                ? implode(', ', $fieldsToFetch)
+                : 'pn.origindimensionspacepoint, pn.nodeaggregateidentifier, pn.nodetypename, pn.classification, pn.properties, pn.nodename,
+                ph.contentstreamidentifier, ph.dimensionspacepoint' ) . '
             FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' ph
-            JOIN ' . NodeRecord::TABLE_NAME .' pn ON ph.childnodeanchors @> jsonb_build_array(pn.relationanchorpoint)::jsonb
+            JOIN ' . NodeRecord::TABLE_NAME .' pn ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
             JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME .' ch ON ch.parentnodeanchor = pn.relationanchorpoint
-            JOIN ' . NodeRecord::TABLE_NAME .' cn ON ch.childnodeanchors @> jsonb_build_array(cn.relationanchorpoint)::jsonb
+            JOIN ' . NodeRecord::TABLE_NAME .' cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
             WHERE ph.contentstreamidentifier = :contentStreamIdentifier';
 
         $parameters = [
@@ -54,7 +51,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         return new self($query, $parameters);
     }
 
-    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    public function withChildNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
     {
         $query = $this->query .= '
             AND cn.nodeaggregateidentifier = :nodeAggregateIdentifier';
@@ -65,8 +62,26 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         return new self($query, $parameters);
     }
 
-    public function execute(Connection $databaseConnection): ResultStatement
+    public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
     {
-        return $databaseConnection->executeQuery($this->query, $this->parameters);
+        $query = $this->query .= '
+            AND ph.dimensionspacepointhash = :dimensionSpacePointHash
+            AND ch.dimensionspacepointhash = :dimensionSpacePointHash';
+
+        $parameters = $this->parameters;
+        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->getHash();
+
+        return new self($query, $parameters);
+    }
+
+    public function withChildOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
+    {
+        $query = $this->query .= '
+            AND cn.origindimensionspacepointhash = :originDimensionSpacePointHash';
+
+        $parameters = $this->parameters;
+        $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->getHash();
+
+        return new self($query, $parameters);
     }
 }

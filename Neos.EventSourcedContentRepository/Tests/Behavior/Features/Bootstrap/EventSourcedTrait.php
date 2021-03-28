@@ -1473,7 +1473,9 @@ trait EventSourcedTrait
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
-        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
+        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(
+            NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier)
+        );
         Assert::assertNull($nodeByAggregateIdentifier, 'A node was found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
     }
 

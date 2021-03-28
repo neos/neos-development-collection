@@ -36,16 +36,14 @@ final class HierarchyHyperrelationRecord
 
     /**
      * The child node relation anchor points, indexed by sorting position
-     *
-     * @var array|NodeRelationAnchorPoint[]
      */
-    public array $childNodeAnchors;
+    public NodeRelationAnchorPoints $childNodeAnchors;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeRelationAnchorPoint $parentNodeAnchor,
         DimensionSpacePoint $dimensionSpacePoint,
-        array $childNodeAnchorPoints
+        NodeRelationAnchorPoints $childNodeAnchorPoints
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->parentNodeAnchor = $parentNodeAnchor;
@@ -55,21 +53,12 @@ final class HierarchyHyperrelationRecord
 
     public static function fromDatabaseRow(array $databaseRow): self
     {
-        $childNodeAnchors = array_map(function (string $childNodeAnchor) {
-            return NodeRelationAnchorPoint::fromString($childNodeAnchor);
-        }, $databaseRow['childnodeanchors'] ? json_decode($databaseRow['childnodeanchors'], true) : []);
-
         return new self(
             ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
             NodeRelationAnchorPoint::fromString($databaseRow['parentnodeanchor']),
-            DimensionSpacePoint::fromArray(json_decode($databaseRow['dimensionspacepoint'])),
-            $childNodeAnchors
+            DimensionSpacePoint::fromJsonString($databaseRow['dimensionspacepoint']),
+            NodeRelationAnchorPoints::fromDatabaseString($databaseRow['childnodeanchors'])
         );
-    }
-
-    public function getDimensionSpacePoints(): DimensionSpacePoint
-    {
-        return $this->dimensionSpacePoint;
     }
 
     public function addChildNodeAnchor(
@@ -77,21 +66,17 @@ final class HierarchyHyperrelationRecord
         ?NodeRelationAnchorPoint $succeedingSiblingAnchor,
         Connection $databaseConnection
     ): void {
-        $childNodeAnchors = $this->childNodeAnchors;
-        if ($succeedingSiblingAnchor) {
-            $pivot = array_search($succeedingSiblingAnchor, $childNodeAnchors);
-            array_splice($childNodeAnchors, $pivot, 0, $childNodeAnchor);
-        } else {
-            $childNodeAnchors[] = $childNodeAnchor;
-        }
+        /** @todo do this directly in the database */
+        $childNodeAnchors = $this->childNodeAnchors->add($childNodeAnchor, $succeedingSiblingAnchor);
 
         $databaseConnection->update(
             self::TABLE_NAME,
             [
-                'childnodeanchors' => \json_encode($childNodeAnchors)
+                'childnodeanchors' => $childNodeAnchors->toDatabaseString()
             ],
             $this->getDatabaseIdentifier()
         );
+        $this->childNodeAnchors = $childNodeAnchors;
     }
 
     /**
@@ -99,13 +84,16 @@ final class HierarchyHyperrelationRecord
      */
     public function addToDatabase(Connection $databaseConnection): void
     {
-        $databaseConnection->insert(self::TABLE_NAME, [
-            'contentstreamidentifier' => $this->contentStreamIdentifier,
-            'parentnodeanchor' => $this->parentNodeAnchor,
-            'dimensionspacepoint' => \json_encode($this->dimensionSpacePoint),
-            'dimensionspacepointhash' => $this->dimensionSpacePoint->getHash(),
-            'childnodeanchors' => \json_encode($this->childNodeAnchors)
-        ]);
+        $databaseConnection->insert(
+            self::TABLE_NAME,
+            [
+                'contentstreamidentifier' => $this->contentStreamIdentifier,
+                'parentnodeanchor' => $this->parentNodeAnchor,
+                'dimensionspacepoint' => \json_encode($this->dimensionSpacePoint),
+                'dimensionspacepointhash' => $this->dimensionSpacePoint->getHash(),
+                'childnodeanchors' => $this->childNodeAnchors->toDatabaseString()
+            ]
+        );
     }
 
     /**

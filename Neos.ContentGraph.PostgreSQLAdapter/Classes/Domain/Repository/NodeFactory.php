@@ -59,6 +59,8 @@ final class NodeFactory
         $coveredDimensionSpacePoints = [];
         $nodesByCoveredDimensionSpacePoint = [];
         $occupationByCovered = [];
+        /** @var DimensionSpacePoint[] $disabledDimensionSpacePoints */
+        $disabledDimensionSpacePoints = [];
         foreach ($nodeRows as $nodeRow) {
             $node = $this->mapNodeRowToNode($nodeRow);
             $contentStreamIdentifier = $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
@@ -71,11 +73,14 @@ final class NodeFactory
             $occupiedDimensionSpacePoints[$node->getOriginDimensionSpacePoint()->getHash()] = $node->getOriginDimensionSpacePoint();
             $nodesByOccupiedDimensionSpacePoint[$node->getOriginDimensionSpacePoint()->getHash()] = $node;
 
-            $coveredDimensionSpacePoint = DimensionSpacePoint::fromArray(\json_decode($nodeRow['dimensionspacepoint'], true));
+            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
             $coverageByOccupant[$node->getOriginDimensionSpacePoint()->getHash()][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
             $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
             $nodesByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->getHash()] = $node;
             $occupationByCovered[$coveredDimensionSpacePoint->getHash()] = $node->getOriginDimensionSpacePoint();
+            if (isset($nodeRow['disableddimensionspacepointhash']) && $nodeRow['disableddimensionspacepointhash']) {
+                $disabledDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']] = $coveredDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']];
+            }
         }
 
         return new NodeAggregate(
@@ -90,7 +95,7 @@ final class NodeFactory
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoint,
             $occupationByCovered,
-            new DimensionSpacePointSet([])
+            new DimensionSpacePointSet($disabledDimensionSpacePoints)
         );
     }
 
@@ -118,14 +123,16 @@ final class NodeFactory
         $occupiedDimensionSpacePoints = [];
         /** @var Node[][] $nodesByOccupiedDimensionSpacePoint */
         $nodesByOccupiedDimensionSpacePoint = [];
-        /** @var DimensionSpacePointSet[][] $coverageByOccupant */
+        /** @var DimensionSpacePoint[][][] $coverageByOccupant */
         $coverageByOccupant = [];
-        /** @var DimensionSpacePointSet[][] $coveredDimensionSpacePoints */
+        /** @var DimensionSpacePoint[][] $coveredDimensionSpacePoints */
         $coveredDimensionSpacePoints = [];
         /** @var Node[][] $nodesByCoveredDimensionSpacePoint */
         $nodesByCoveredDimensionSpacePoint = [];
         /** @var OriginDimensionSpacePoint[][] $occupationByCovered */
         $occupationByCovered = [];
+        /** @var DimensionSpacePoint[][] $disabledDimensionSpacePoints */
+        $disabledDimensionSpacePoints = [];
         foreach ($nodeRows as $nodeRow) {
             $key = $nodeRow['nodeaggregateidentifier'];
             $node = $this->mapNodeRowToNode($nodeRow);
@@ -145,11 +152,14 @@ final class NodeFactory
             $occupiedDimensionSpacePoints[$key][$node->getOriginDimensionSpacePoint()->getHash()] = $node->getOriginDimensionSpacePoint();
             $nodesByOccupiedDimensionSpacePoint[$key][$node->getOriginDimensionSpacePoint()->getHash()] = $node;
 
-            $coveredDimensionSpacePoint = DimensionSpacePoint::fromArray(\json_decode($nodeRow['dimensionspacepoint'], true));
+            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
             $coveredDimensionSpacePoints[$key][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
             $coverageByOccupant[$key][$node->getOriginDimensionSpacePoint()->getHash()][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
             $nodesByCoveredDimensionSpacePoint[$key][$coveredDimensionSpacePoint->getHash()] = $node;
             $occupationByCovered[$key][$coveredDimensionSpacePoint->getHash()] = $node->getOriginDimensionSpacePoint();
+            if (isset($nodeRow['disableddimensionspacepointhash']) && $nodeRow['disableddimensionspacepointhash']) {
+                $disabledDimensionSpacePoints[$key][$nodeRow['disableddimensionspacepointhash']] = $coveredDimensionSpacePoints[$key][$nodeRow['disableddimensionspacepointhash']];
+            }
         }
 
         foreach ($nodeAggregateIdentifiers as $key => $nodeAggregateIdentifier) {
@@ -165,24 +175,39 @@ final class NodeFactory
                 new DimensionSpacePointSet($coveredDimensionSpacePoints[$key]),
                 $nodesByCoveredDimensionSpacePoint[$key],
                 $occupationByCovered[$key],
-                new DimensionSpacePointSet([])
+                new DimensionSpacePointSet($disabledDimensionSpacePoints[$key])
             );
         }
 
         return $nodeAggregates;
     }
 
-    public function mapNodeRowToNode(array $nodeRow): Node
+    public function mapNodeRowToNode(array $nodeRow, ContentStreamIdentifier $contentStreamIdentifier = null): Node
     {
         return new Node(
-            ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
+            $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
-            OriginDimensionSpacePoint::fromArray(\json_decode($nodeRow['origindimensionspacepoint'], true)),
+            OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']),
             !empty($nodeRow['nodename']) ? NodeName::fromString($nodeRow['nodename']) : null,
-            SerializedPropertyValues::fromArray(\json_decode($nodeRow['properties'], true)),
+            SerializedPropertyValues::fromJsonString($nodeRow['properties']),
             NodeAggregateClassification::fromString($nodeRow['classification'])
         );
+    }
+
+    public function mapNodeRowsToSubtree(array $nodeRows): Subtree
+    {
+        $subtreesByParentNodeAggregateIdentifier = [];
+        foreach ($nodeRows as $nodeRow) {
+            $node = $this->mapNodeRowToNode($nodeRow);
+            $subtreesByParentNodeAggregateIdentifier[$nodeRow['parentnodeaggregateidentifier']][] = new Subtree(
+                $nodeRow['level'],
+                $node,
+                $subtreesByParentNodeAggregateIdentifier[$nodeRow['nodeaggregateidentifier']] ?? []
+            );
+        }
+
+        return $subtreesByParentNodeAggregateIdentifier['ROOT'][0];
     }
 }

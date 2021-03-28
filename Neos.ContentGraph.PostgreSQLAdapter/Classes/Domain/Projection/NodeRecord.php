@@ -78,7 +78,7 @@ final class NodeRecord
             NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['origindimensionspacepoint']),
             $databaseRow['origindimensionspacepointhash'],
-            SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),
+            SerializedPropertyValues::fromJsonString($databaseRow['properties']),
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::fromString($databaseRow['classification']),
             $databaseRow['nodename'] ? NodeName::fromString($databaseRow['nodename']) : null

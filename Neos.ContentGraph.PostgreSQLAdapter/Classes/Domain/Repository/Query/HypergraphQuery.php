@@ -17,11 +17,13 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -29,23 +31,23 @@ use Neos\Flow\Annotations as Flow;
  */
 final class HypergraphQuery implements HypergraphQueryInterface
 {
-    private string $query;
+    use CommonGraphQueryOperations;
 
-    private array $parameters;
-
-    private function __construct($query, $parameters)
-    {
-        $this->query = $query;
-        $this->parameters = $parameters;
-    }
-
-    public static function create(ContentStreamIdentifier $contentStreamIdentifier): self
+    public static function create(ContentStreamIdentifier $contentStreamIdentifier, bool $joinRestrictionRelations = false): self
     {
         $query = /** @lang PostgreSQL */
             'SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename, n.classification, n.properties, n.nodename,
-                h.contentstreamidentifier, h.dimensionspacepoint
+                h.contentstreamidentifier, h.dimensionspacepoint' . ($joinRestrictionRelations ? ',
+                r.dimensionspacepointhash AS disabledDimensionSpacePointHash' : '') . '
             FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' h
-            JOIN ' . NodeRecord::TABLE_NAME .' n ON h.childnodeanchors @> jsonb_build_array(n.relationanchorpoint)::jsonb
+            JOIN ' . NodeRecord::TABLE_NAME .' n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
+            . ($joinRestrictionRelations
+                ? '
+            LEFT JOIN ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r ON n.nodeaggregateidentifier = ANY(r.affectednodeaggregateidentifiers)
+                AND r.contentstreamidentifier = h.contentstreamidentifier
+                AND r.dimensionspacepointhash = h.dimensionspacepointhash'
+                : '')
+            . '
             WHERE h.contentstreamidentifier = :contentStreamIdentifier';
 
         $parameters = [
@@ -55,9 +57,9 @@ final class HypergraphQuery implements HypergraphQueryInterface
         return new self($query, $parameters);
     }
 
-    public static function createForNodeAddress(NodeAddress $nodeAddress): self
+    public static function createForNodeAddress(NodeAddress $nodeAddress, bool $joinRestrictionRelations = false): self
     {
-        $query = self::create($nodeAddress->getContentStreamIdentifier());
+        $query = self::create($nodeAddress->getContentStreamIdentifier(), $joinRestrictionRelations);
         return $query->withDimensionSpacePoint($nodeAddress->getDimensionSpacePoint())
             ->withNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
     }
@@ -95,8 +97,10 @@ final class HypergraphQuery implements HypergraphQueryInterface
         return new self($query, $parameters);
     }
 
-    public function execute(Connection $databaseConnection): ResultStatement
+    public function withRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        return $databaseConnection->executeQuery($this->query, $this->parameters);
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, '');
+
+        return new self($query, $this->parameters, $this->types);
     }
 }

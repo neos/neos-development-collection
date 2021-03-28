@@ -89,13 +89,16 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
             }
         }
 
-        return new static($values);
+        return new self($values);
+    }
+
+    public static function fromJsonString(string $jsonString): self
+    {
+        return self::fromArray(\json_decode($jsonString, true));
     }
 
     public static function fromNode(NodeInterface $node): self
     {
-        $values = [];
-
         $nodeProperties = $node->getProperties();
 
         if (!($nodeProperties instanceof PropertyCollection)) {

@@ -53,11 +53,19 @@ final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \Js
         return new self($nodeAggregateIdentifiers);
     }
 
+    public static function fromJsonString(string $jsonString): self
+    {
+        return new self(\json_decode($jsonString, true));
+    }
+
     public function jsonSerialize(): array
     {
         return $this->nodeAggregateIdentifiers;
     }
 
+    /**
+     * @return \ArrayIterator|NodeAggregateIdentifier[]
+     */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->nodeAggregateIdentifiers);

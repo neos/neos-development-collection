@@ -14,16 +14,17 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
  */
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
-use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -31,18 +32,7 @@ use Neos\Flow\Annotations as Flow;
  */
 final class HypergraphChildQuery implements HypergraphQueryInterface
 {
-    private string $query;
-
-    private array $parameters;
-
-    private array $types;
-
-    private function __construct($query, $parameters, $types = [])
-    {
-        $this->query = $query;
-        $this->parameters = $parameters;
-        $this->types = $types;
-    }
+    use CommonGraphQueryOperations;
 
     public static function create(ContentStreamIdentifier $contentStreamIdentifier, array $fieldsToFetch = null): self
     {
@@ -51,11 +41,13 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
                 ? implode(', ', $fieldsToFetch)
                 : 'cn.origindimensionspacepoint, cn.nodeaggregateidentifier, cn.nodetypename, cn.classification, cn.properties, cn.nodename,
                     ch.contentstreamidentifier, ch.dimensionspacepoint') . '
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' ph
-            JOIN ' . NodeRecord::TABLE_NAME .' pn ON ph.childnodeanchors @> jsonb_build_array(pn.relationanchorpoint)::jsonb
-            JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME .' ch ON ch.parentnodeanchor = pn.relationanchorpoint
-            JOIN ' . NodeRecord::TABLE_NAME .' cn ON ch.childnodeanchors @> jsonb_build_array(cn.relationanchorpoint)::jsonb
-            WHERE ph.contentstreamidentifier = :contentStreamIdentifier';
+            FROM ' . NodeRecord::TABLE_NAME .' pn
+            JOIN (
+                SELECT *, unnest(childnodeanchors) AS childnodeanchor
+                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+            ) ch ON ch.parentnodeanchor = pn.relationanchorpoint
+            JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ch.childnodeanchor
+            WHERE ch.contentstreamidentifier = :contentStreamIdentifier';
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
@@ -64,13 +56,13 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         return new self($query, $parameters);
     }
 
-    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    public function withParentNodeAggregateIdentifier(NodeAggregateIdentifier $parentNodeAggregateIdentifier): self
     {
         $query = $this->query .= '
-            AND pn.nodeaggregateidentifier = :nodeAggregateIdentifier';
+            AND pn.nodeaggregateidentifier = :parentNodeAggregateIdentifier';
 
         $parameters = $this->parameters;
-        $parameters['nodeAggregateIdentifier'] = (string)$nodeAggregateIdentifier;
+        $parameters['parentNodeAggregateIdentifier'] = (string)$parentNodeAggregateIdentifier;
 
         return new self($query, $parameters);
     }
@@ -82,17 +74,6 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
 
         $parameters = $this->parameters;
         $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->getHash();
-
-        return new self($query, $parameters);
-    }
-
-    public function withNodeName(NodeName $nodeName): self
-    {
-        $query = $this->query .= '
-            AND cn.nodename = :nodeName';
-
-        $parameters = $this->parameters;
-        $parameters['nodeName'] = (string)$nodeName;
 
         return new self($query, $parameters);
     }
@@ -116,13 +97,37 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHashes'] = $dimensionSpacePoints->getPointHashes();
         $types = $this->types;
-        $types['dimensionSpacePointHashes'] = Types::SIMPLE_ARRAY;
+        $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $types);
     }
 
-    public function execute(Connection $databaseConnection): ResultStatement
+    public function withChildNodeName(NodeName $childNodeName): self
     {
-        return $databaseConnection->executeQuery($this->query, $this->parameters);
+        $query = $this->query . '
+            AND cn.nodename = :childNodeName';
+
+        $parameters = $this->parameters;
+        $parameters['childNodeName'] = (string)$childNodeName;
+
+        return new self($query, $parameters, $this->types);
+    }
+
+    public function withRestriction(VisibilityConstraints $visibilityConstraints): self
+    {
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, 'c');
+
+        return new self($query, $this->parameters, $this->types);
+    }
+
+    public function withOnlyTethered(): self
+    {
+        $query = $this->query . '
+            AND cn.classification = :classification';
+
+        $parameters = $this->parameters;
+        $parameters['classification'] = NodeAggregateClassification::CLASSIFICATION_TETHERED;
+
+        return new self($query, $parameters, $this->types);
     }
 }
