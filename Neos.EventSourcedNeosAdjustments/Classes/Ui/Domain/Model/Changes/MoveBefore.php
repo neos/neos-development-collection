@@ -79,7 +79,9 @@ class MoveBefore extends AbstractStructuralChange
             );
 
             $this->contentCacheFlusher->registerNodeChange($subject);
-            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)
+            );
 
             $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
             $updateParentNodeInfo->setNode($succeedingSibling->findParentNode());

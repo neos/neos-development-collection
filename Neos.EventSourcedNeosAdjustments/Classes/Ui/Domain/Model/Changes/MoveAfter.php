@@ -81,7 +81,9 @@ class MoveAfter extends AbstractStructuralChange
             );
 
             $this->contentCacheFlusher->registerNodeChange($subject);
-            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)
+            );
 
             $updateParentNodeInfo = new UpdateNodeInfo();
             $updateParentNodeInfo->setNode($parentNodeOfPreviousSibling);

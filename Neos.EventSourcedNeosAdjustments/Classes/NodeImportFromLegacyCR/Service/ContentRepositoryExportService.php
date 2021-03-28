@@ -43,12 +43,14 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Projection\ProjectorRepository;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\EventSourcedNeosAdjustments\Domain\Service\RuntimeBlocker;
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\Helpers\NodeAggregateIdentifierAndNodeTypeForLegacyImport;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -142,6 +144,12 @@ class ContentRepositoryExportService
      * @var DimensionSpacePoint
      */
     private $alreadyCreatedNodeAggregateIdentifiers;
+
+    /**
+     * @Flow\Inject
+     * @var RuntimeBlocker
+     */
+    protected $runtimeBlocker;
 
     /**
      * @var CommandResult
@@ -247,7 +255,7 @@ class ContentRepositoryExportService
         }
         var_dump("NODE DATAS IN NEXT ITER: " . count($nodeDatasToExportAtNextIteration));
 
-        $this->commandResult->blockUntilProjectionsAreUpToDate();
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate($this->commandResult);
     }
 
     protected function exportNodeData(NodeData $nodeData, &$nodeDatasToExportAtNextIteration)
@@ -304,38 +312,41 @@ class ContentRepositoryExportService
             if ($isTethered) {
                 // we KNOW that tethered nodes already exist; so we just set its properties.
                 if (!empty($propertyValues)) {
-                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $command = new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
                         PropertyValuesToWrite::fromArray($propertyValues),
                         UserIdentifier::forSystemUser()
-                    ))->blockUntilProjectionsAreUpToDate();
+                    );
+                    $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                        $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)
+                    );
                 }
             } else {
                 if (isset($this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier])) {
                     $dimensionSpacePointOfAlreadyCreatedNode = $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier];
 
-                    $this->nodeAggregateCommandHandler->handleCreateNodeVariant(new CreateNodeVariant(
+                    $this->runtimeBlocker->blockUntilProjectionsAreUpToDate($this->nodeAggregateCommandHandler->handleCreateNodeVariant(new CreateNodeVariant(
                     // a Node of this NodeAggregate already exists; we create a Node variant
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $dimensionSpacePointOfAlreadyCreatedNode,
                         $originDimensionSpacePoint,
                         UserIdentifier::forSystemUser()
-                    ))->blockUntilProjectionsAreUpToDate();
+                    )));
 
-                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $this->runtimeBlocker->blockUntilProjectionsAreUpToDate($this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
                         PropertyValuesToWrite::fromArray($propertyValues),
                         UserIdentifier::forSystemUser()
-                    ))->blockUntilProjectionsAreUpToDate();
+                    )));
                 } else {
                     $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePath, $nodeTypeName);
 
-                    $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode(new CreateNodeAggregateWithNode(
+                    $command = new CreateNodeAggregateWithNode(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $nodeTypeName,
@@ -346,22 +357,27 @@ class ContentRepositoryExportService
                         $nodeName,
                         PropertyValuesToWrite::fromArray($propertyValues),
                         $nodeAggregateIdentifiersByNodePaths
-                    // TODO: tethered descendant IDs
-                    ))->blockUntilProjectionsAreUpToDate();
+                        // TODO: tethered descendant IDs
+                    );
+                    $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                        $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)
+                    );
                 }
             }
 
 
             // publish reference edges
             foreach ($propertyReferences as $propertyName => $references) {
-                $this->nodeAggregateCommandHandler->handleSetNodeReferences(new SetNodeReferences(
-                    $this->contentStreamIdentifier,
-                    $nodeAggregateIdentifier,
-                    $originDimensionSpacePoint,
-                    NodeAggregateIdentifierCollection::fromArray($references),
-                    PropertyName::fromString($propertyName),
-                    UserIdentifier::forSystemUser()
-                ))->blockUntilProjectionsAreUpToDate();
+                $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                    $this->nodeAggregateCommandHandler->handleSetNodeReferences(new SetNodeReferences(
+                        $this->contentStreamIdentifier,
+                        $nodeAggregateIdentifier,
+                        $originDimensionSpacePoint,
+                        NodeAggregateIdentifierCollection::fromArray($references),
+                        PropertyName::fromString($propertyName),
+                        UserIdentifier::forSystemUser()
+                    ))
+                );
             }
 
             if ($isHidden === true) {
@@ -545,8 +561,8 @@ class ContentRepositoryExportService
         $publishedEvents = DomainEvents::withSingleEvent($event);
         $this->eventStore->commit($streamName, $publishedEvents);
 
-        CommandResult::fromPublishedEvents(
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(CommandResult::fromPublishedEvents(
             $publishedEvents
-        )->blockUntilProjectionsAreUpToDate();
+        ));
     }
 }

@@ -248,7 +248,7 @@ class Property extends AbstractChange
                     PropertyName::fromString($propertyName),
                     $this->getInitiatingUserIdentifier()
                 );
-                $this->nodeAggregateCommandHandler->handleSetNodeReferences($command)->blockUntilProjectionsAreUpToDate();
+                $commandResult = $this->nodeAggregateCommandHandler->handleSetNodeReferences($command);
             } else {
                 $value = $this->nodePropertyConversionService->convert(
                     $node->getNodeType(),
@@ -269,7 +269,7 @@ class Property extends AbstractChange
                         ),
                         $this->getInitiatingUserIdentifier()
                     );
-                    $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
+                    $commandResult = $this->nodeAggregateCommandHandler->handleSetNodeProperties($command);
                 } else {
                     // property starts with "_"
                     if ($propertyName === '_nodeType') {
@@ -280,7 +280,7 @@ class Property extends AbstractChange
                             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete(),
                             $userIdentifier
                         );
-                        $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType($command)->blockUntilProjectionsAreUpToDate();
+                        $commandResult = $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType($command);
                     } elseif ($propertyName === '_hidden') {
                         if ($value === true) {
                             $command = new DisableNodeAggregate(
@@ -290,7 +290,7 @@ class Property extends AbstractChange
                                 NodeVariantSelectionStrategyIdentifier::allSpecializations(),
                                 $userIdentifier
                             );
-                            $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+                            $commandResult = $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command);
                         } else {
                             // unhide
                             $command = new EnableNodeAggregate(
@@ -300,12 +300,16 @@ class Property extends AbstractChange
                                 NodeVariantSelectionStrategyIdentifier::allSpecializations(),
                                 $userIdentifier
                             );
-                            $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+                            $commandResult = $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command);
                         }
                     } else {
                         throw new \Exception("TODO FIX");
                     }
                 }
+            }
+
+            if ($commandResult) {
+                $this->runtimeBlocker->blockUntilProjectionsAreUpToDate($commandResult);
             }
 
             // !!! REMEMBER: we are not allowed to use $node anymore, because it may have been modified by the commands above.

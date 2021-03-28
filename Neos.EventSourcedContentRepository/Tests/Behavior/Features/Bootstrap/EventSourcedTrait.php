@@ -25,6 +25,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\EventSourcedContentRepository\Domain\CommandHandlerRuntimeBlocker;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
@@ -179,6 +180,11 @@ trait EventSourcedTrait
     protected $lastCommandOrEventResult;
 
     /**
+     * @var CommandHandlerRuntimeBlocker
+     */
+    protected $runtimeBlocker;
+
+    /**
      * @var array|\Neos\EventSourcing\Projection\ProjectorInterface[]
      */
     private array $projectorsToBeReset = [];
@@ -200,6 +206,7 @@ trait EventSourcedTrait
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
         $this->eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
+        $this->runtimeBlocker = $this->getObjectManager()->get(CommandHandlerRuntimeBlocker::class);
 
         $configurationManager = $this->getObjectManager()->get(\Neos\Flow\Configuration\ConfigurationManager::class);
         foreach ($configurationManager->getConfiguration(
@@ -1268,7 +1275,9 @@ trait EventSourcedTrait
         if ($this->lastCommandOrEventResult === null) {
             throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');
         }
-        $this->lastCommandOrEventResult->blockUntilProjectionsAreUpToDate();
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+            $this->lastCommandOrEventResult
+        );
         $this->lastCommandOrEventResult = null;
     }
 

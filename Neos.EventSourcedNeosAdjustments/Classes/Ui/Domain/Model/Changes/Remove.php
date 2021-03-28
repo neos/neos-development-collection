@@ -80,7 +80,9 @@ class Remove extends AbstractChange
                 $this->getInitiatingUserIdentifier()
             );
 
-            $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command)
+            );
 
             $removeNode = new RemoveNode($node, $parentNode);
             $this->feedbackCollection->add($removeNode);

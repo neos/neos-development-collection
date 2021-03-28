@@ -26,6 +26,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\Domain\Service\RuntimeBlocker;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -82,6 +83,12 @@ class PublishingService
     protected $workspaceCommandHandler;
 
     /**
+     * @Flow\Inject
+     * @var RuntimeBlocker
+     */
+    protected $runtimeBlocker;
+
+    /**
      * Returns a list of nodes contained in the given workspace which are not yet published
      *
      * @param WorkspaceName $workspaceName
@@ -132,14 +139,18 @@ class PublishingService
         );
 
         // TODO: only rebase if necessary!
-        $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
-            $workspaceName,
-            $userIdentifier
-        ))->blockUntilProjectionsAreUpToDate();
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+            $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
+                $workspaceName,
+                $userIdentifier
+            ))
+        );
 
-        $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace(
-            $workspaceName,
-            $userIdentifier
-        ))->blockUntilProjectionsAreUpToDate();
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+            $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace(
+                $workspaceName,
+                $userIdentifier
+            ))
+        );
     }
 }

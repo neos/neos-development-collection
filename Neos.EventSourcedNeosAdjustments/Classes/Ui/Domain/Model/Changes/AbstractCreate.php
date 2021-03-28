@@ -165,7 +165,9 @@ abstract class AbstractCreate extends AbstractStructuralChange
         $command = $this->applyNodeCreationHandlers($command, $nodeTypeName);
 
         $this->contentCacheFlusher->registerNodeChange($parentNode);
-        $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)->blockUntilProjectionsAreUpToDate();
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+            $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)
+        );
 
         $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
 

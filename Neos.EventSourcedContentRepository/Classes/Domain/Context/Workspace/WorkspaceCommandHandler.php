@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\EventSourcedContentRepository\Domain\CommandHandlerRuntimeBlocker;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\CreateContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
@@ -74,53 +75,32 @@ use Ramsey\Uuid\Uuid;
  */
 final class WorkspaceCommandHandler
 {
-    /**
-     * @var EventStore
-     */
-    protected $eventStore;
+    protected EventStore $eventStore;
 
-    /**
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
+    protected WorkspaceFinder $workspaceFinder;
 
-    /**
-     * @var NodeAggregateCommandHandler
-     */
-    protected $nodeAggregateCommandHandler;
+    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
-    /**
-     * @var ContentStreamCommandHandler
-     */
-    protected $contentStreamCommandHandler;
+    protected ContentStreamCommandHandler $contentStreamCommandHandler;
 
-    /**
-     * @var NodeDuplicationCommandHandler
-     */
-    protected $nodeDuplicationCommandHandler;
+    protected NodeDuplicationCommandHandler $nodeDuplicationCommandHandler;
 
-    /**
-     * @var ReadSideMemoryCacheManager
-     */
-    protected $readSideMemoryCacheManager;
+    protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    /**
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
+    protected ContentGraphInterface $contentGraph;
 
-    /**
-     * WorkspaceCommandHandler constructor.
-     * @param EventStore $eventStore
-     * @param WorkspaceFinder $workspaceFinder
-     * @param NodeAggregateCommandHandler $nodeAggregateCommandHandler
-     * @param ContentStreamCommandHandler $contentStreamCommandHandler
-     * @param NodeDuplicationCommandHandler $nodeDuplicationCommandHandler
-     * @param ReadSideMemoryCacheManager $readSideMemoryCacheManager
-     * @param ContentGraphInterface $contentGraph
-     */
-    public function __construct(EventStore $eventStore, WorkspaceFinder $workspaceFinder, NodeAggregateCommandHandler $nodeAggregateCommandHandler, ContentStreamCommandHandler $contentStreamCommandHandler, NodeDuplicationCommandHandler $nodeDuplicationCommandHandler, ReadSideMemoryCacheManager $readSideMemoryCacheManager, ContentGraphInterface $contentGraph)
-    {
+    protected CommandHandlerRuntimeBlocker $runtimeBlocker;
+
+    public function __construct(
+        EventStore $eventStore,
+        WorkspaceFinder $workspaceFinder,
+        NodeAggregateCommandHandler $nodeAggregateCommandHandler,
+        ContentStreamCommandHandler $contentStreamCommandHandler,
+        NodeDuplicationCommandHandler $nodeDuplicationCommandHandler,
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        ContentGraphInterface $contentGraph,
+        CommandHandlerRuntimeBlocker $runtimeBlocker
+    ) {
         $this->eventStore = $eventStore;
         $this->workspaceFinder = $workspaceFinder;
         $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
@@ -128,6 +108,7 @@ final class WorkspaceCommandHandler
         $this->nodeDuplicationCommandHandler = $nodeDuplicationCommandHandler;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->contentGraph = $contentGraph;
+        $this->runtimeBlocker = $runtimeBlocker;
     }
 
     /**
@@ -262,8 +243,7 @@ final class WorkspaceCommandHandler
                 )
             )
         );
-
-        $commandResult->blockUntilProjectionsAreUpToDate();
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate($commandResult);
 
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
         $events = DomainEvents::withSingleEvent(
@@ -382,13 +362,15 @@ final class WorkspaceCommandHandler
         // - fork a new content stream
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $rebasedContentStream = ContentStreamIdentifier::create();
-        $this->contentStreamCommandHandler->handleForkContentStream(
-            new ForkContentStream(
-                $rebasedContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+            $this->contentStreamCommandHandler->handleForkContentStream(
+                new ForkContentStream(
+                    $rebasedContentStream,
+                    $baseWorkspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
+                )
             )
-        )->blockUntilProjectionsAreUpToDate();
+        );
 
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
 
@@ -402,7 +384,9 @@ final class WorkspaceCommandHandler
             // try to apply the command on the rebased content stream
             $commandToRebase = $originalCommand->createCopyForContentStream($rebasedContentStream);
             try {
-                $this->applyCommand($commandToRebase)->blockUntilProjectionsAreUpToDate();
+                $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                    $this->applyCommand($commandToRebase)
+                );
                 // if we came this far, we know the command was applied successfully.
                 $rebaseStatistics->commandRebaseSuccess();
             } catch (\Exception $e) {
@@ -591,34 +575,42 @@ final class WorkspaceCommandHandler
 
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
         $matchingContentStream = ContentStreamIdentifier::create();
-        $this->contentStreamCommandHandler->handleForkContentStream(
-            new ForkContentStream(
-                $matchingContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+            $this->contentStreamCommandHandler->handleForkContentStream(
+                new ForkContentStream(
+                    $matchingContentStream,
+                    $baseWorkspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
+                )
             )
-        )->blockUntilProjectionsAreUpToDate();
+        );
 
         foreach ($matchingCommands as $matchingCommand) {
             if (!($matchingCommand instanceof RebasableToOtherContentStreamsInterface)) {
                 throw new \RuntimeException('ERROR: The command ' . get_class($matchingCommand) . ' does not implement RebasableToOtherContentStreamsInterface; but it should!');
             }
 
-            $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream))->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream))
+            );
         }
 
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
         $remainingContentStream = ContentStreamIdentifier::create();
-        $this->contentStreamCommandHandler->handleForkContentStream(
-            new ForkContentStream(
-                $remainingContentStream,
-                $matchingContentStream,
-                $command->getInitiatingUserIdentifier()
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+            $this->contentStreamCommandHandler->handleForkContentStream(
+                new ForkContentStream(
+                    $remainingContentStream,
+                    $matchingContentStream,
+                    $command->getInitiatingUserIdentifier()
+                )
             )
-        )->blockUntilProjectionsAreUpToDate();
+        );
 
         foreach ($remainingCommands as $remainingCommand) {
-            $this->applyCommand($remainingCommand->createCopyForContentStream($remainingContentStream))->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $this->applyCommand($remainingCommand->createCopyForContentStream($remainingContentStream))
+            );
         }
 
         // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
@@ -694,16 +686,20 @@ final class WorkspaceCommandHandler
 
         // 2) fork a new contentStream, based on the base WS, and apply the commands to keep
         $newContentStream = ContentStreamIdentifier::create();
-        $this->contentStreamCommandHandler->handleForkContentStream(
-            new ForkContentStream(
-                $newContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+            $this->contentStreamCommandHandler->handleForkContentStream(
+                new ForkContentStream(
+                    $newContentStream,
+                    $baseWorkspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
+                )
             )
-        )->blockUntilProjectionsAreUpToDate();
+        );
 
         foreach ($commandsToKeep as $commandToKeep) {
-            $this->applyCommand($commandToKeep->createCopyForContentStream($newContentStream))->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $this->applyCommand($commandToKeep->createCopyForContentStream($newContentStream))
+            );
         }
 
         // 3) switch content stream to forked WS.
@@ -760,13 +756,15 @@ final class WorkspaceCommandHandler
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
 
         $newContentStream = ContentStreamIdentifier::create();
-        $this->contentStreamCommandHandler->handleForkContentStream(
-            new ForkContentStream(
-                $newContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
+        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+            $this->contentStreamCommandHandler->handleForkContentStream(
+                new ForkContentStream(
+                    $newContentStream,
+                    $baseWorkspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
+                )
             )
-        )->blockUntilProjectionsAreUpToDate();
+        );
 
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
         $events = DomainEvents::withSingleEvent(

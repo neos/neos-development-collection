@@ -1,0 +1,89 @@
+<?php
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Infrastructure\Projection;
+
+/*
+ * This file is part of the Neos.ContentRepositoryMigration package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcing\Event\DecoratedEvent;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvider;
+use Neos\EventSourcing\EventListener\Mapping\EventToListenerMapping;
+use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
+use Neos\Flow\Annotations as Flow;
+
+/**
+ * @Flow\Scope("singleton")
+ */
+final class CoreRuntimeBlocker
+{
+    protected DefaultEventToListenerMappingProvider $eventToListenerMappingProvider;
+
+    protected DeferEventPublisher $eventPublisher;
+
+    public function __construct(
+        DefaultEventToListenerMappingProvider $eventToListenerMappingProvider,
+        DeferEventPublisher $eventPublisher
+    ) {
+        $this->eventToListenerMappingProvider = $eventToListenerMappingProvider;
+        $this->eventPublisher = $eventPublisher;
+    }
+
+    public function blockUntilProjectionsAreUpToDate(
+        CommandResult $commandResult,
+        ProcessedEventsAwareProjectorCollection $projectors
+    ): void {
+        foreach ($projectors as $projector) {
+            $publishedEventsForProjector = $this->filterPublishedEventsByListener(
+                $commandResult->getPublishedEvents(),
+                get_class($projector)
+            );
+            $this->blockProjector($publishedEventsForProjector, $projector);
+        }
+    }
+
+    private function filterPublishedEventsByListener(DomainEvents $publishedEvents, string $listenerClassName): DomainEvents
+    {
+        $eventStoreId = $this->eventToListenerMappingProvider->getEventStoreIdentifierForListenerClassName($listenerClassName);
+        $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)->filter(static function (EventToListenerMapping $mapping) use ($listenerClassName) {
+            return $mapping->getListenerClassName() === $listenerClassName;
+        });
+        $eventClassNames = [];
+        foreach ($listenerMappings as $mapping) {
+            $eventClassNames[$mapping->getEventClassName()] = true;
+        }
+
+        return $publishedEvents->filter(static function (DomainEventInterface $event) use ($eventClassNames) {
+            if ($event instanceof DecoratedEvent) {
+                $event = $event->getWrappedEvent();
+            }
+            return array_key_exists(get_class($event), $eventClassNames);
+        });
+    }
+
+    private function blockProjector(DomainEvents $events, ProcessedEventsAwareProjectorInterface $projector): void
+    {
+        $attempts = 0;
+        while (!$projector->hasProcessed($events)) {
+            usleep(50000); // 50000μs = 50ms
+            if (++$attempts > 300) { // 15 seconds
+                $ids = '';
+                foreach ($events as $p) {
+                    $ids .= '   ' . $p->getIdentifier();
+                }
+
+                throw new \RuntimeException(sprintf('TIMEOUT while waiting for event(s) %s for projector "%s"', $ids, get_class($projector)), 1550232279);
+            }
+        }
+    }
+}

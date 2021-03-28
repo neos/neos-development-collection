@@ -15,7 +15,10 @@ Neos:
         className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
     testing:
       projectorsToBeReset: {}
-
+    projection:
+      projectorsToBeBlocked:
+        'Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector': true
+        'Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector': true
   EventSourcing:
     EventStore:
       stores:

@@ -101,7 +101,9 @@ class CopyInto extends AbstractStructuralChange
 
             $this->contentCacheFlusher->registerNodeChange($subject);
 
-            $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
+            );
 
             $newlyCreatedNode = $this->getParentNode()->findNamedChildNode($command->getTargetNodeName());
             $this->finish($newlyCreatedNode);

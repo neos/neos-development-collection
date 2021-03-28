@@ -23,6 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedNeosAdjustments\Domain\Service\RuntimeBlocker;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
@@ -144,6 +145,12 @@ class BackendServiceController extends ActionController
     protected $propertyMapper;
 
     /**
+     * @Flow\Inject
+     * @var RuntimeBlocker
+     */
+    protected $runtimeBlocker;
+
+    /**
      * Set the controller context on the feedback collection after the controller
      * has been initialized
      *
@@ -223,7 +230,9 @@ class BackendServiceController extends ActionController
                 $nodeAddresses,
                 $this->getCurrentUserIdentifier()
             );
-            $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command)
+            );
 
             $success = new Success();
             $success->setMessage(sprintf('Published %d change(s) to %s.', count($nodeContextPaths), $targetWorkspaceName));
@@ -261,7 +270,9 @@ class BackendServiceController extends ActionController
                 $nodeAddresses,
                 $this->getCurrentUserIdentifier()
             );
-            $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace($command)
+            );
 
             $success = new Success();
             $success->setMessage(sprintf('Discarded %d node(s).', count($nodeContextPaths)));

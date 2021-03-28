@@ -5,6 +5,10 @@ Neos:
         uriPathSegmentDelimiter: '_'
     fusion:
       enableObjectTreeCache: false
+    projection:
+      projectorsToBeBlocked:
+        'Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector': true
+        'Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector': true
   Flow:
     http:
       middlewares:
@@ -89,3 +93,4 @@ Neos:
           'Neos.Neos.Ui:CopyInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyInto
           'Neos.Neos.Ui:CopyAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyAfter
           'Neos.Neos.Ui:CopyBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyBefore
+

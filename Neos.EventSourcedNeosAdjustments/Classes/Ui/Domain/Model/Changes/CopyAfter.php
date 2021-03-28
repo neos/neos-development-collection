@@ -75,7 +75,9 @@ class CopyAfter extends AbstractStructuralChange
 
             $this->contentCacheFlusher->registerNodeChange($subject);
 
-            $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)->blockUntilProjectionsAreUpToDate();
+            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
+                $commandResult = $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
+            );
 
             $newlyCreatedNode = $parentNodeOfPreviousSibling->findNamedChildNode($command->getTargetNodeName());
             $this->finish($newlyCreatedNode);
