@@ -32,11 +32,11 @@ final class CoreRuntimeBlocker
     protected DeferEventPublisher $eventPublisher;
 
     public function __construct(
-        DefaultEventToListenerMappingProvider $eventToListenerMappingProvider,
-        DeferEventPublisher $eventPublisher
+        DeferEventPublisher $eventPublisher,
+        DefaultEventToListenerMappingProvider $eventToListenerMappingProvider
     ) {
-        $this->eventToListenerMappingProvider = $eventToListenerMappingProvider;
         $this->eventPublisher = $eventPublisher;
+        $this->eventToListenerMappingProvider = $eventToListenerMappingProvider;
     }
 
     public function blockUntilProjectionsAreUpToDate(

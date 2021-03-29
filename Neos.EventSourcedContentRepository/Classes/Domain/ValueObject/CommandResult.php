@@ -16,6 +16,9 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Proxy(false)
+ */
 final class CommandResult
 {
     protected DomainEvents $publishedEvents;

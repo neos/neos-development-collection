@@ -100,9 +100,9 @@ Neos\EventSourcedContentRepository\Command\ContentStreamCommandController:
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult:
-  properties:
-    'eventPublisher':
+Neos\EventSourcedContentRepository\Infrastructure\Projection\CoreRuntimeBlocker:
+  arguments:
+    1:
       object:
         factoryObjectName: Neos\EventSourcing\EventPublisher\DefaultEventPublisherFactory
         arguments:
