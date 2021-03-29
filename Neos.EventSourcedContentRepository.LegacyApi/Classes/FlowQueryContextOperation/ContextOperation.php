@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\FlowQueryContextOperation;
 
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
@@ -54,11 +55,17 @@ class ContextOperation extends AbstractOperation
      */
     protected $legacyLogger;
 
+    /**
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
+
     private const SUPPORTED_ADJUSTMENTS = ['invisibleContentShown', 'workspaceName'];
 
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNode));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeBasedReadModelInterface));
     }
 
     public function evaluate(FlowQuery $flowQuery, array $arguments)
@@ -79,7 +86,7 @@ class ContextOperation extends AbstractOperation
 
         $output = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            /** @var TraversableNode $contextNode */
+            /** @var NodeBasedReadModelInterface $contextNode */
 
             // we start modifying the subgraph step-by-step.
             $subgraph = self::getSubgraphFromNode($contextNode);
@@ -101,14 +108,14 @@ class ContextOperation extends AbstractOperation
 
             $nodeInModifiedSubgraph = $subgraph->findNodeByNodeAggregateIdentifier($contextNode->getNodeAggregateIdentifier());
             if ($nodeInModifiedSubgraph !== null) {
-                $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->jsonSerialize()] = new TraversableNode($nodeInModifiedSubgraph, $subgraph);
+                $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->jsonSerialize()] = $this->readModelFactory->createReadModel($nodeInModifiedSubgraph, $subgraph);
             }
         }
 
         $flowQuery->setContext(array_values($output));
     }
 
-    private static function getSubgraphFromNode(TraversableNode $contextNode): ContentSubgraphInterface
+    private static function getSubgraphFromNode(NodeBasedReadModelInterface $contextNode): ContentSubgraphInterface
     {
         return ObjectAccess::getProperty($contextNode, 'subgraph', true);
     }

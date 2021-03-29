@@ -34,7 +34,7 @@ class MoveAfter extends AbstractStructuralChange
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         $parent = $this->getSiblingNode()->findParentNode();
         $nodeType = $this->getSubject()->getNodeType();
@@ -52,7 +52,7 @@ class MoveAfter extends AbstractStructuralChange
      *
      * @return void
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             // "subject" is the to-be-moved node

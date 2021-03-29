@@ -12,8 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
@@ -23,7 +22,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 class UpdateNodeInfo extends AbstractFeedback
 {
     /**
-     * @var TraversableNodeInterface
+     * @var NodeBasedReadModelInterface
      */
     protected $node;
 
@@ -33,21 +32,15 @@ class UpdateNodeInfo extends AbstractFeedback
      */
     protected $nodeInfoHelper;
 
-    /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
     protected $isRecursive = false;
 
     /**
      * Set the node
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @return void
      */
-    public function setNode(TraversableNodeInterface $node)
+    public function setNode(NodeBasedReadModelInterface $node)
     {
         $this->node = $node;
     }
@@ -65,7 +58,7 @@ class UpdateNodeInfo extends AbstractFeedback
     /**
      * Get the node
      *
-     * @return TraversableNodeInterface
+     * @return NodeBasedReadModelInterface
      */
     public function getNode()
     {
@@ -123,14 +116,14 @@ class UpdateNodeInfo extends AbstractFeedback
     /**
      * Serialize node and all child nodes
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function serializeNodeRecursively(TraversableNodeInterface $node, ControllerContext $controllerContext)
+    public function serializeNodeRecursively(NodeBasedReadModelInterface $node, ControllerContext $controllerContext)
     {
         $result = [
-            $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
+            $node->getAddress()->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
         ];
 
         if ($this->isRecursive === true) {

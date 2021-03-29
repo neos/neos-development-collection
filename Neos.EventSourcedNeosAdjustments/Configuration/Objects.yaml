@@ -1,7 +1,7 @@
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
   className: Neos\EventSourcedNeosAdjustments\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
-'Neos\ContentRepository\Domain\Projection\Content\NodeInterface':
-  className: Neos\EventSourcedContentRepository\Domain\Projection\Content\Node
+'Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface':
+  className: Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node
 
 Neos\EventSourcedNeosAdjustments\Ui\View\BackendFusionView:
   properties:

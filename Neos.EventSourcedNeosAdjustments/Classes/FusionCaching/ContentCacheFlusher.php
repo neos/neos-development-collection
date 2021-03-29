@@ -15,10 +15,10 @@ namespace Neos\EventSourcedNeosAdjustments\FusionCaching;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Service\AssetService;
@@ -90,7 +90,7 @@ class ContentCacheFlusher
      */
     protected $contexts = [];
 
-    private static function fetchParentIfExistsForNode(TraversableNodeInterface $node): ?TraversableNodeInterface
+    private static function fetchParentIfExistsForNode(NodeBasedReadModelInterface $node): ?NodeBasedReadModelInterface
     {
         try {
             return $node->findParentNode();
@@ -103,10 +103,10 @@ class ContentCacheFlusher
      * Register a node change for a later cache flush. This method is triggered by a signal sent via ContentRepository's Node
      * model or the Neos Publishing Service.
      *
-     * @param TraversableNodeInterface $node The node which has changed in some way
+     * @param NodeBasedReadModelInterface $node The node which has changed in some way
      * @return void
      */
-    public function registerNodeChange(TraversableNodeInterface $node): void
+    public function registerNodeChange(NodeBasedReadModelInterface $node): void
     {
         $nodeAggregateIdentifier = $node->getNodeAggregateIdentifier();
         $contentStreamIdentifier = $node->getContentStreamIdentifier();

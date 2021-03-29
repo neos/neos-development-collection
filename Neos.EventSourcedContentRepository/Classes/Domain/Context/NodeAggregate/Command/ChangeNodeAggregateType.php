@@ -55,8 +55,7 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
         NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
         UserIdentifier $initiatingUserIdentifier,
         ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null
-    )
-    {
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newNodeTypeName = $newNodeTypeName;

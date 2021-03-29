@@ -38,7 +38,7 @@ class NewNodeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class;
+    protected $targetType = \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface::class;
 
     /**
      * @var integer

@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
  */
 class SiteNodeUtility
 {
-    public static function findSiteNode(TraversableNodeInterface $node): TraversableNodeInterface
+    public static function findSiteNode(NodeBasedReadModelInterface $node): NodeBasedReadModelInterface
     {
         $previousNode = null;
         do {

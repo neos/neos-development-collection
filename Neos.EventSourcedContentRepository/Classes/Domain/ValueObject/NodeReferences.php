@@ -12,7 +12,6 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -64,11 +63,6 @@ final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSeria
         }
 
         return new static($values);
-    }
-
-    public static function fromPropertyCollection(PropertyCollectionInterface $properties): self
-    {
-        return self::fromArray(iterator_to_array($properties));
     }
 
     /**

@@ -14,10 +14,9 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Link;
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -131,12 +130,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
-     * @Flow\Inject
      * @var NodeSiteResolvingService
      */
     protected $nodeSiteResolvingService;
@@ -191,12 +184,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $node = $this->arguments['node'];
         $nodeAddress = null;
 
-        if ($node instanceof TraversableNodeInterface) {
-            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
+        if ($node instanceof NodeBasedReadModelInterface) {
+            $nodeAddress = $node->getAddress();
         } elseif (is_string($node)) {
             $nodeAddress = $this->resolveNodeAddressFromString($node);
         } else {
-            throw new ViewHelperException(sprintf('The "node" argument can only be a string or an instance of %s. Given: %s', TraversableNodeInterface::class, is_object($node) ? get_class($node) : gettype($node)), 1601372376);
+            throw new ViewHelperException(sprintf('The "node" argument can only be a string or an instance of %s. Given: %s', NodeBasedReadModelInterface::class, is_object($node) ? get_class($node) : gettype($node)), 1601372376);
         }
 
         $subgraph = $this->getContentSubgraphForNodeAddress($nodeAddress);
@@ -253,11 +246,11 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      */
     private function resolveNodeAddressFromString(string $path): NodeAddress
     {
-        /* @var TraversableNodeInterface $documentNode */
+        /* @var NodeBasedReadModelInterface $documentNode */
         $documentNode = $this->getContextVariable('documentNode');
-        $documentNodeAddress = $this->nodeAddressFactory->createFromTraversableNode($documentNode);
+        $documentNodeAddress = $documentNode->getAddress();
         if (strncmp($path, 'node://', 7) === 0) {
-            return $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($documentNodeAddress, NodeAggregateIdentifier::fromString(\mb_substr($path, 7)));
+            return $documentNodeAddress->withNodeAggregateIdentifier(NodeAggregateIdentifier::fromString(\mb_substr($path, 7)));
         }
         $subgraph = $this->getContentSubgraphForNodeAddress($documentNodeAddress);
         if (strncmp($path, '~', 1) === 0) {

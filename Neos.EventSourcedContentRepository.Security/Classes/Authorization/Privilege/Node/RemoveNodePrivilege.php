@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
@@ -38,7 +38,7 @@ class RemoveNodePrivilege extends AbstractNodePrivilege
             if ($this->methodPrivilege->matchesSubject($subject) === false) {
                 return false;
             }
-            /** @var TraversableNodeInterface $node */
+            /** @var NodeBasedReadModelInterface $node */
             $node = $subject->getJoinPoint()->getProxy();
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
             return parent::matchesSubject($nodePrivilegeSubject);

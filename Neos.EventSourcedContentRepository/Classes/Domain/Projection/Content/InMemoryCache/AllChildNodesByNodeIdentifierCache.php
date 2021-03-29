@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 

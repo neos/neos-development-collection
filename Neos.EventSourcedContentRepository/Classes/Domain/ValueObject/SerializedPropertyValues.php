@@ -12,8 +12,8 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -31,17 +31,57 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     /**
      * @var array|SerializedPropertyValue[]
      */
-    private $values = [];
+    private array $values = [];
 
-    /**
-     * @var \ArrayIterator
-     */
-    protected $iterator;
+    protected \ArrayIterator $iterator;
 
     private function __construct(array $values)
     {
         $this->values = $values;
         $this->iterator = new \ArrayIterator($this->values);
+    }
+
+    public static function fromArray(array $propertyValues): self
+    {
+        $values = [];
+        foreach ($propertyValues as $propertyName => $propertyValue) {
+            if ($propertyValue === null) {
+                // this case means we want to un-set a property.
+                $values[$propertyName] = null;
+            } elseif (is_array($propertyValue)) {
+                $values[$propertyName] = SerializedPropertyValue::fromArray($propertyValue);
+            } elseif ($propertyValue instanceof SerializedPropertyValue) {
+                $values[$propertyName] = $propertyValue;
+            } else {
+                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', SerializedPropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
+            }
+        }
+
+        return new self($values);
+    }
+
+    public static function defaultFromNodeType(NodeType $nodeType): self
+    {
+        $values = [];
+        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
+            if ($defaultValue instanceof \DateTimeInterface) {
+                $defaultValue = json_encode($defaultValue);
+            }
+
+            $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
+            self::assertTypeIsNoReference($propertyTypeFromSchema);
+
+            $values[$propertyName] = new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
+        }
+
+        return new self($values);
+    }
+
+    private static function assertTypeIsNoReference(string $propertyTypeFromSchema)
+    {
+        if ($propertyTypeFromSchema === 'reference' || $propertyTypeFromSchema === 'references') {
+            throw new \RuntimeException('TODO: references cannot be serialized; you need to use the SetNodeReferences command instead.');
+        }
     }
 
     public function merge(SerializedPropertyValues $other): SerializedPropertyValues
@@ -66,42 +106,16 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
 
     /**
      * @param SerializedPropertyValue[] values
-     *@return array|SerializedPropertyValue[]
+     * @return array|SerializedPropertyValue[]
      */
     public function getValues(): array
     {
         return $this->values;
     }
 
-    public static function fromArray(array $propertyValues): self
-    {
-        $values = [];
-        foreach ($propertyValues as $propertyName => $propertyValue) {
-            if ($propertyValue === null) {
-                // this case means we want to un-set a property.
-                $values[$propertyName] = null;
-            } elseif (is_array($propertyValue)) {
-                $values[$propertyName] = SerializedPropertyValue::fromArray($propertyValue);
-            } elseif ($propertyValue instanceof SerializedPropertyValue) {
-                $values[$propertyName] = $propertyValue;
-            } else {
-                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', SerializedPropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
-            }
-        }
-
-        return new static($values);
-    }
-
     public static function fromNode(NodeInterface $node): self
     {
-        $values = [];
-
-        $nodeProperties = $node->getProperties();
-
-        if (!($nodeProperties instanceof PropertyCollection)) {
-            throw new \RuntimeException('TODO: Node properties are no Property Collection');
-        }
-        return $nodeProperties->getSerializedPropertyValues();
+        return $node->getProperties();
     }
 
     /**

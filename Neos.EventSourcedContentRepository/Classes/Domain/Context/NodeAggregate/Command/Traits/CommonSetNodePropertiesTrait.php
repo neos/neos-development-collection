@@ -11,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -19,8 +18,8 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
- * Helper which contains common fields for {@see SetNodeProperties}
- * and {@see SetSerializedNodeProperties}
+ * Helper which contains common fields for {@see SetSerializedNodeProperties}
+ * and derived commands
  */
 trait CommonSetNodePropertiesTrait
 {

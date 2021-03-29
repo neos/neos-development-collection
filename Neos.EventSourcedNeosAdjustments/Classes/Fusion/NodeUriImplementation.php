@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  */
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
@@ -28,12 +28,6 @@ class NodeUriImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
-     * @Flow\Inject
      * @var NodeSiteResolvingService
      */
     protected $nodeSiteResolvingService;
@@ -43,7 +37,7 @@ class NodeUriImplementation extends AbstractFusionObject
      *
      * @return mixed
      */
-    public function getNode(): ?TraversableNodeInterface
+    public function getNode(): ?NodeBasedReadModelInterface
     {
         return $this->fusionValue('node');
     }
@@ -135,20 +129,21 @@ class NodeUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $node = $this->getNode();
-        if ($node instanceof TraversableNodeInterface) {
-            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
-            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $node->getNodeAggregateIdentifier());
+        if ($node instanceof NodeBasedReadModelInterface) {
+            $nodeAddress = $node->getAddress();
         } elseif ($node === '~') {
-            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
-            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
+            // @todo fix me
+            $nodeAddress = $node->geAddress();
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
-            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
-            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, NodeAggregateIdentifier::fromString(\mb_substr($node, 7)));
+            // @todo fix me
+            $nodeAddress = $node->getAddress();
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(NodeAggregateIdentifier::fromString(\mb_substr($node, 7)));
         } else {
             return '';
         }
         if ($this->getSubgraph()) {
-            $nodeAddress = $this->nodeAddressFactory->adjustWithDimensionSpacePoint($nodeAddress, $this->getSubgraph()->getDimensionSpacePoint());
+            $nodeAddress = $nodeAddress->withDimensionSpacePoint($this->getSubgraph()->getDimensionSpacePoint());
         }
 
         $uriBuilder = new UriBuilder();

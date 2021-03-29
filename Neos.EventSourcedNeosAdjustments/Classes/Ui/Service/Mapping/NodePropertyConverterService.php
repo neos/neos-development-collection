@@ -13,8 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModels;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
@@ -96,11 +96,11 @@ class NodePropertyConverterService
     /**
      * Get a single property reduced to a simple type (no objects) representation
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param string $propertyName
      * @return mixed
      */
-    public function getProperty(TraversableNodeInterface $node, $propertyName)
+    public function getProperty(NodeBasedReadModelInterface $node, $propertyName)
     {
         if ($propertyName === '_hidden') {
             return $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden();
@@ -152,7 +152,7 @@ class NodePropertyConverterService
         return $convertedValue;
     }
 
-    private function toNodeIdentifierStrings(TraversableNodes $nodes)
+    private function toNodeIdentifierStrings(NodeBasedReadModels $nodes)
     {
         $identifiers = [];
         foreach ($nodes as $node) {
@@ -164,10 +164,10 @@ class NodePropertyConverterService
     /**
      * Get all properties reduced to simple type (no objects) representations in an array
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @return array
      */
-    public function getPropertiesArray(TraversableNodeInterface $node)
+    public function getPropertiesArray(NodeBasedReadModelInterface $node)
     {
         $properties = [];
         foreach ($node->getNodeType()->getProperties() as $propertyName => $propertyConfiguration) {

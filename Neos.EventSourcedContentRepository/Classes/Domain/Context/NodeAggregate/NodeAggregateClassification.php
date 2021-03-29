@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

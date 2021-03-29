@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph;
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
  * Interface SubtreeInterface

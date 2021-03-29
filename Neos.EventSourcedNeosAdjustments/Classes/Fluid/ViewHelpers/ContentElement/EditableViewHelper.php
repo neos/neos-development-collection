@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedNeosAdjustments\ContentElementWrapping\ContentElementEditableService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -70,11 +70,11 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
      *
      * @param string $property Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
      * @param string $tag The name of the tag that should be wrapped around the property. By default this is a <div>
-     * @param TraversableNodeInterface $node The node of the content element. Optional, will be resolved from the Fusion context by default.
+     * @param NodeBasedReadModelInterface $node The node of the content element. Optional, will be resolved from the Fusion context by default.
      * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
      * @throws ViewHelperException
      */
-    public function render($property, $tag = 'div', TraversableNodeInterface $node = null)
+    public function render($property, $tag = 'div', NodeBasedReadModelInterface $node = null)
     {
         $this->tag->setTagName($tag);
         $this->tag->forceClosingTag(true);
@@ -100,7 +100,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * @return TraversableNodeInterface
+     * @return NodeBasedReadModelInterface
      * @throws ViewHelperException
      */
     protected function getNodeFromFusionContext()

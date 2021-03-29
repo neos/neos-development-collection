@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  */
 
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\TypeHandling;
 
@@ -24,7 +24,6 @@ use Neos\Utility\TypeHandling;
  */
 class CreationDialogPropertiesCreationHandler implements NodeCreationHandlerInterface
 {
-
     /**
      * @Flow\Inject
      * @var NodeTypeManager
@@ -49,6 +48,7 @@ class CreationDialogPropertiesCreationHandler implements NodeCreationHandlerInte
             }
             $propertyValues = $propertyValues->withValue($propertyName, $propertyValue);
         }
+
         return $command->withInitialPropertyValues($propertyValues);
     }
 }

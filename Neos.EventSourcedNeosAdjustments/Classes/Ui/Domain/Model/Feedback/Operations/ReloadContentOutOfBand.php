@@ -12,8 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
@@ -27,9 +26,8 @@ use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 
 class ReloadContentOutOfBand extends AbstractFeedback
 {
-
     /**
-     * @var TraversableNodeInterface
+     * @var NodeBasedReadModelInterface
      */
     protected $node;
 
@@ -48,12 +46,6 @@ class ReloadContentOutOfBand extends AbstractFeedback
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
-     * @Flow\Inject
      * @var ContentGraphInterface
      */
     protected $contentGraph;
@@ -61,10 +53,10 @@ class ReloadContentOutOfBand extends AbstractFeedback
     /**
      * Set the node
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @return void
      */
-    public function setNode(TraversableNodeInterface $node)
+    public function setNode(NodeBasedReadModelInterface $node)
     {
         $this->node = $node;
     }
@@ -72,9 +64,9 @@ class ReloadContentOutOfBand extends AbstractFeedback
     /**
      * Get the node
      *
-     * @return TraversableNodeInterface
+     * @return NodeBasedReadModelInterface
      */
-    public function getNode()
+    public function getNode(): ?NodeBasedReadModelInterface
     {
         return $this->node;
     }
@@ -149,7 +141,7 @@ class ReloadContentOutOfBand extends AbstractFeedback
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->getNode())->serializeForUri(),
+            'contextPath' => $this->getNode()->getAddress()->serializeForUri(),
             'nodeDomAddress' => $this->getNodeDomAddress(),
             'renderedContent' => $this->renderContent($controllerContext)
         ];

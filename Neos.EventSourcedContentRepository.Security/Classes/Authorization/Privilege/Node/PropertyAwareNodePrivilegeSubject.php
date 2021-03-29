@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Flow\Aop\JoinPointInterface;
 
 /**
@@ -20,7 +20,7 @@ use Neos\Flow\Aop\JoinPointInterface;
 class PropertyAwareNodePrivilegeSubject extends NodePrivilegeSubject
 {
     /**
-     * @var TraversableNodeInterface
+     * @var NodeBasedReadModelInterface
      */
     protected $node;
 
@@ -35,11 +35,11 @@ class PropertyAwareNodePrivilegeSubject extends NodePrivilegeSubject
     protected $joinPoint = null;
 
     /**
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param JoinPointInterface $joinPoint
      * @param string $propertyName
      */
-    public function __construct(TraversableNodeInterface $node, JoinPointInterface $joinPoint = null, $propertyName = null)
+    public function __construct(NodeBasedReadModelInterface $node, JoinPointInterface $joinPoint = null, $propertyName = null)
     {
         $this->propertyName = $propertyName;
         parent::__construct($node, $joinPoint);

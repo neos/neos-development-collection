@@ -1,0 +1,6 @@
+Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\ContentRepository\Intermediary\Domain\Property\PropertyConversionSerializerFactory
+        factoryMethodName: buildSerializer

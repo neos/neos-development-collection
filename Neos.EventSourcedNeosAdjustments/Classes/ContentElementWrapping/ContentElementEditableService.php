@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -48,21 +48,13 @@ class ContentElementEditableService
      */
     protected $htmlAugmenter;
 
-
     /**
      * @Flow\Inject
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    public function wrapContentProperty(TraversableNodeInterface $node, $property, $content)
+    public function wrapContentProperty(NodeBasedReadModelInterface $node, $property, $content)
     {
         if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
@@ -75,7 +67,7 @@ class ContentElementEditableService
 
         $attributes = [
             'data-__neos-property' => $property,
-            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri()
+            'data-__neos-editable-node-contextpath' => $node->getAddress()->serializeForUri()
         ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
