@@ -54,19 +54,17 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
 
     const RELATION_DEFAULT_OFFSET = 128;
 
-    /**
-     * @Flow\Inject
-     * @var ProjectionContentGraph
-     */
     protected ProjectionContentGraph $projectionContentGraph;
 
     private DbalClient $databaseClient;
 
     public function __construct(
         DbalClient $eventStorageDatabaseClient,
-        VariableFrontend $processedEventsCache
+        VariableFrontend $processedEventsCache,
+        ProjectionContentGraph $projectionContentGraph
     ) {
         $this->databaseClient = $eventStorageDatabaseClient;
+        $this->projectionContentGraph = $projectionContentGraph;
         parent::__construct($eventStorageDatabaseClient, $processedEventsCache);
     }
 
