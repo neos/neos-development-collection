@@ -41,6 +41,30 @@ final class ProjectionHypergraph
     }
 
     /**
+     * @param NodeRelationAnchorPoint $relationAnchorPoint
+     * @return NodeRecord|null
+     * @throws DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
+     */
+    public function findNodeRecordByRelationAnchorPoint(
+        NodeRelationAnchorPoint $relationAnchorPoint
+    ): ?NodeRecord
+    {
+        $query = /** @lang PostgreSQL */
+            'SELECT n.*
+            FROM ' . NodeRecord::TABLE_NAME .' n
+            WHERE n.relationanchorpoint = :relationAnchorPoint';
+
+        $parameters = [
+            'relationanchorpoint' => (string)$relationAnchorPoint
+        ];
+
+        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
+
+        return $result ? NodeRecord::fromDatabaseRow($result) : null;
+    }
+
+    /**
      * @param NodeAddress $nodeAddress
      * @return NodeRecord|null
      * @throws \Exception
@@ -121,6 +145,59 @@ final class ProjectionHypergraph
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
 
         return $result ? HierarchyHyperrelationRecord::fromDatabaseRow($result) : null;
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws DBALException
+     */
+    public function findHierarchyHyperrelationRecordByChildNodeAnchor(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeRelationAnchorPoint $childNodeAnchor
+    ): ?HierarchyHyperrelationRecord {
+        $query = /** @lang PostgreSQL */
+            'SELECT h.*
+            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' h
+            WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                AND :childNodeAnchor = ANY(h.childnodeanchors)';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'childNodeAnchor' => (string)$childNodeAnchor
+        ];
+
+        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
+
+        return $result ? HierarchyHyperrelationRecord::fromDatabaseRow($result) : null;
+    }
+
+    /**
+     * @return array|HierarchyHyperrelationRecord[]
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws DBALException
+     */
+    public function findHierarchyHyperrelationRecordsByChildNodeAnchor(
+        NodeRelationAnchorPoint $childNodeAnchor
+    ): array {
+        $query = /** @lang PostgreSQL */
+            'SELECT h.*
+            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' h
+            WHERE :childNodeAnchor = ANY(h.childnodeanchors)';
+
+        $parameters = [
+            'childNodeAnchor' => (string)$childNodeAnchor
+        ];
+
+        $hierarchyRelationRecords = [];
+        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAllAssociative();
+        foreach ($result as $row) {
+            $hierarchyRelationRecords[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
+        }
+
+        return $hierarchyRelationRecords;
     }
 
     /**

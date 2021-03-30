@@ -61,6 +61,17 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
         return self::fromArray($childNodeAnchors);
     }
 
+    public function remove(NodeRelationAnchorPoint $nodeRelationAnchorPoint): self
+    {
+        $childNodeAnchors = $this->getArrayCopy();
+        $pivot = array_search($nodeRelationAnchorPoint, $childNodeAnchors);
+        if ($pivot !== false) {
+            unset($childNodeAnchors[$pivot]);
+        }
+
+        return new self($childNodeAnchors);
+    }
+
     /**
      * @param mixed $key
      * @return NodeRelationAnchorPoint|false

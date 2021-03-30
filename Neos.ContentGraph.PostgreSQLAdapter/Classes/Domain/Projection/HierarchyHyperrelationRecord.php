@@ -68,7 +68,24 @@ final class HierarchyHyperrelationRecord
     ): void {
         /** @todo do this directly in the database */
         $childNodeAnchors = $this->childNodeAnchors->add($childNodeAnchor, $succeedingSiblingAnchor);
+        $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
+    }
 
+    public function removeChildNodeAnchor(
+        NodeRelationAnchorPoint $childNodeAnchor,
+        Connection $databaseConnection
+    ): void {
+        /** @todo do this directly in the database */
+        $childNodeAnchors = $this->childNodeAnchors->remove($childNodeAnchor);
+        if (count($childNodeAnchors) === 0) {
+            $this->removeFromDatabase($databaseConnection);
+        } else {
+            $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
+        }
+    }
+
+    private function updateChildNodeAnchors(NodeRelationAnchorPoints $childNodeAnchors, Connection $databaseConnection): void
+    {
         $databaseConnection->update(
             self::TABLE_NAME,
             [
