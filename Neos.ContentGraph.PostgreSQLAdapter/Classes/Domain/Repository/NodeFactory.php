@@ -25,6 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
 /**
@@ -182,7 +183,7 @@ final class NodeFactory
         return $nodeAggregates;
     }
 
-    public function mapNodeRowToNode(array $nodeRow, ContentStreamIdentifier $contentStreamIdentifier = null): Node
+    public function mapNodeRowToNode(array $nodeRow, ContentStreamIdentifier $contentStreamIdentifier = null): NodeInterface
     {
         return new Node(
             $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),

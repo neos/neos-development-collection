@@ -12,16 +12,14 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\ArrayPropertyCollection;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
 /**
@@ -111,9 +109,9 @@ final class Node implements NodeInterface
         return $this->nodeName;
     }
 
-    public function getProperties(): PropertyCollectionInterface
+    public function getProperties(): SerializedPropertyValues
     {
-        return new ArrayPropertyCollection([]);
+        return $this->properties;
     }
 
     /**

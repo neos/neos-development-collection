@@ -14,7 +14,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
