@@ -258,33 +258,39 @@ final class ProjectionHypergraph
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePointSet $dimensionSpacePoints
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return RestrictionHyperrelationRecord|null
+     * @return array|RestrictionHyperrelationRecord[]
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
      */
-    public function findOutgoingRestrictionRelation(
+    public function findOutgoingRestrictionRelations(
         ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
+        DimensionSpacePointSet $dimensionSpacePoints,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): ?RestrictionHyperrelationRecord {
+    ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
             FROM ' . RestrictionHyperrelationRecord::TABLE_NAME .' r
             WHERE r.contentstreamidentifier = :contentStreamIdentifier
-            AND r.dimensionspacepointhash = :dimensionSpacePointHash
+            AND r.dimensionspacepointhash IN :dimensionSpacePointHashes
             AND r.originnodeaggregateidentifier = :nodeAggregateIdentifier';
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHashes' => $dimensionSpacePoints->getPointHashes(),
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
         ];
+        $types = [
+            'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+        ];
 
-        $row = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
+        $restrictionRelationRecords = [];
+        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative() as $row) {
+            $restrictionRelationRecords = RestrictionHyperrelationRecord::fromDatabaseRow($row);
+        }
 
-        return $row ? RestrictionHyperrelationRecord::fromDatabaseRow($row) : null;
+        return $restrictionRelationRecords;
     }
 
     /**

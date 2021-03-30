@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -47,6 +48,20 @@ trait NodeDisabling
                 );
 
                 $restrictionRelation->addToDatabase($this->getDatabaseConnection());
+            }
+        });
+    }
+
+    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
+    {
+        $this->transactional(function() use($event) {
+            $restrictionRelations = $this->projectionHypergraph->findOutgoingRestrictionRelations(
+                $event->getContentStreamIdentifier(),
+                $event->getAffectedDimensionSpacePoints(),
+                $event->getNodeAggregateIdentifier(),
+            );
+            foreach ($restrictionRelations as $restrictionRelation) {
+                $restrictionRelation->removeFromDatabase($this->getDatabaseConnection());
             }
         });
     }
