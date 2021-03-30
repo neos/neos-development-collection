@@ -20,7 +20,8 @@
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
         "neos/eventsourcedcontentrepository-security": "self.version",
         "neos/event-sourced-content-repository": "self.version",
-        "neos/event-sourced-neos-adjustments": "self.version"
+        "neos/event-sourced-neos-adjustments": "self.version",
+        "neos/contentrepository-intermediary": "self.version"
     },
     "suggest": [],
     "autoload": {
@@ -42,6 +43,9 @@
             ],
             "Neos\\EventSourcedNeosAdjustments\\": [
                 "Neos.EventSourcedNeosAdjustments/Classes"
+            ],
+            "Neos\\ContentRepository\\Intermediary\\": [
+                "Neos.ContentRepository.Intermediary/Classes"
             ]
         }
     },
@@ -61,6 +65,9 @@
             ],
             "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": [
                 "Neos.ContentGraph.PostgreSQLAdapter/Tests"
+            ],
+            "Neos\\ContentRepository\\Intermediary\\Tests\\": [
+                "Neos.EventSourcedContentRepository/Tests"
             ]
         }
     }

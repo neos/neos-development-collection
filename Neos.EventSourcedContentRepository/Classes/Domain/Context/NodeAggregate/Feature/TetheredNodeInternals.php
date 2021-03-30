@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
@@ -34,8 +34,6 @@ trait TetheredNodeInternals
     use NodeVariationInternals;
 
     abstract protected function getContentGraph(): ContentGraphInterface;
-
-    abstract protected function getDefaultPropertyValues(NodeType $nodeType): SerializedPropertyValues;
 
     abstract protected function createEventsForVariations(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -80,7 +78,7 @@ trait TetheredNodeInternals
                         $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),
                         $parentNode->getNodeAggregateIdentifier(),
                         $tetheredNodeName,
-                        $this->getDefaultPropertyValues($expectedTetheredNodeType),
+                        SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
                         NodeAggregateClassification::tethered(),
                         $initiatingUserIdentifier
                     ),

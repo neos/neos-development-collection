@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Backend;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -27,12 +27,11 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
      */
     protected $escapeOutput = false;
 
-    public function render(TraversableNodeInterface $node)
+    public function render(NodeBasedReadModelInterface $node)
     {
         $documentNodes = [];
         $flowQuery = new FlowQuery([$node]);
         $nodes = array_reverse($flowQuery->parents('[instanceof Neos.Neos:Document]')->get());
-        /** @var TraversableNodeInterface $node */
         foreach ($nodes as $documentNode) {
             $documentNodes[] = $documentNode;
         }

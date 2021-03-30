@@ -34,7 +34,7 @@ class CopyBefore extends AbstractStructuralChange
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         $nodeType = $this->getSubject()->getNodeType();
 
@@ -51,7 +51,7 @@ class CopyBefore extends AbstractStructuralChange
      *
      * @return void
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             $subject = $this->getSubject();

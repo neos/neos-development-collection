@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
@@ -57,7 +57,6 @@ class ContentElementWrappingService
      */
     protected $nodePropertyConverterService;
 
-
     /**
      * @Flow\Inject
      * @var SessionInterface
@@ -99,21 +98,15 @@ class ContentElementWrappingService
     protected $nonRenderedContentNodeMetadata;
 
     /**
-     * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
      * Wrap the $content identified by $node with the needed markup for the backend.
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @param string $content
      * @param string $fusionPath
      * @return string
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    public function wrapContentObject(TraversableNodeInterface $node, $content, $fusionPath): ?string
+    public function wrapContentObject(NodeBasedReadModelInterface $node, $content, $fusionPath): ?string
     {
         if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
@@ -125,7 +118,7 @@ class ContentElementWrappingService
         //    return $content;
         //}
 
-        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
+        $nodeAddress = $node->getAddress();
         $attributes = [
             'data-__neos-node-contextpath' => $nodeAddress->serializeForUri(),
             'data-__neos-fusion-path' => $fusionPath
@@ -151,12 +144,12 @@ class ContentElementWrappingService
      * within the current document node. This way we can show e.g. content collections
      * within the structure tree which are not actually rendered.
      *
-     * @param TraversableNodeInterface $documentNode
+     * @param NodeBasedReadModelInterface $documentNode
      * @return mixed
      * @throws \Neos\Eel\Exception
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    protected function appendNonRenderedContentNodeMetadata(TraversableNodeInterface $documentNode)
+    protected function appendNonRenderedContentNodeMetadata(NodeBasedReadModelInterface $documentNode)
     {
         if ($this->isContentStreamOfLiveWorkspace($documentNode->getContentStreamIdentifier())) {
             return '';
@@ -170,7 +163,7 @@ class ContentElementWrappingService
 
             if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
-                $nodeContextPath = $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri();
+                $nodeContextPath = $node->getAddress()->serializeForUri();
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
             }
 
@@ -197,12 +190,12 @@ class ContentElementWrappingService
     }
 
     /**
-     * @param TraversableNodeInterface $documentNode
+     * @param NodeBasedReadModelInterface $documentNode
      * @return string
      * @throws \Neos\Eel\Exception
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    public function getNonRenderedContentNodeMetadata(TraversableNodeInterface $documentNode)
+    public function getNonRenderedContentNodeMetadata(NodeBasedReadModelInterface $documentNode)
     {
         $this->userLocaleService->switchToUILocale();
 

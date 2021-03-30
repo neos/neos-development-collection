@@ -13,11 +13,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -37,7 +37,7 @@ class CopyInto extends AbstractStructuralChange
     protected $parentContextPath;
 
     /**
-     * @var TraversableNodeInterface
+     * @var NodeBasedReadModelInterface
      */
     protected $cachedParentNode;
 
@@ -50,7 +50,7 @@ class CopyInto extends AbstractStructuralChange
     }
 
     /**
-     * @return TraversableNodeInterface
+     * @return NodeBasedReadModelInterface
      */
     public function getParentNode()
     {
@@ -68,7 +68,7 @@ class CopyInto extends AbstractStructuralChange
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         $nodeType = $this->getSubject()->getNodeType();
 
@@ -85,7 +85,7 @@ class CopyInto extends AbstractStructuralChange
      *
      * @return void
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             $subject = $this->getSubject();

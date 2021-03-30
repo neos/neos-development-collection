@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege;
 use Neos\EventSourcedContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;

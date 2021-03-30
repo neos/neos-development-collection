@@ -13,15 +13,16 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
@@ -35,6 +36,12 @@ abstract class AbstractCreate extends AbstractStructuralChange
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var PropertyConverter
+     */
+    protected $propertyConverter;
 
     /**
      * The type of the node that will be created
@@ -138,12 +145,12 @@ abstract class AbstractCreate extends AbstractStructuralChange
     }
 
     /**
-     * @param TraversableNodeInterface $parentNode
+     * @param NodeBasedReadModelInterface $parentNode
      * @param NodeAggregateIdentifier|null $succeedingSiblingNodeAggregateIdentifier
-     * @return TraversableNodeInterface
+     * @return NodeBasedReadModelInterface
      * @throws InvalidNodeCreationHandlerException|NodeNameIsAlreadyOccupied|NodeException
      */
-    protected function createNode(TraversableNodeInterface $parentNode, NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null): TraversableNodeInterface
+    protected function createNode(NodeBasedReadModelInterface $parentNode, NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null): NodeBasedReadModelInterface
     {
         // TODO: the $name=... line should be as expressed below
         // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());

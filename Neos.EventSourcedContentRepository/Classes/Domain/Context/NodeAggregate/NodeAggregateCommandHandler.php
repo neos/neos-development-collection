@@ -30,7 +30,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\Node
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRetyping;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeVariation;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\TetheredNodeInternals;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -62,13 +61,6 @@ final class NodeAggregateCommandHandler
     protected $nodeTypeManager;
 
     /**
-     * Used for constraint checks against the current outside configuration state of content dimensions
-     *
-     * @var DimensionSpacePointSet
-     */
-    protected $allowedDimensionSubspace;
-
-    /**
      * The graph projection used for soft constraint checks
      *
      * @var ContentGraphInterface
@@ -83,6 +75,11 @@ final class NodeAggregateCommandHandler
     protected $interDimensionalVariationGraph;
 
     /**
+     * Used for constraint checks against the current outside configuration state of content dimensions
+     */
+    protected DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper;
+
+    /**
      * Used for publishing events
      *
      * @var NodeAggregateEventPublisher
@@ -93,8 +90,6 @@ final class NodeAggregateCommandHandler
      * @var ReadSideMemoryCacheManager
      */
     protected $readSideMemoryCacheManager;
-
-    protected PropertyConversionService $propertyConversionService;
 
     /**
      * can be disabled in {@see NodeAggregateCommandHandler::withoutAnchestorNodeTypeConstraintChecks()}
@@ -109,17 +104,15 @@ final class NodeAggregateCommandHandler
         ContentGraphInterface $contentGraph,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         NodeAggregateEventPublisher $nodeEventPublisher,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        PropertyConversionService $propertyConversionService
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
-        $this->allowedDimensionSubspace = $contentDimensionZookeeper->getAllowedDimensionSubspace();
+        $this->contentDimensionZookeeper = $contentDimensionZookeeper;
         $this->contentGraph = $contentGraph;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->nodeEventPublisher = $nodeEventPublisher;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->propertyConversionService = $propertyConversionService;
     }
 
     protected function getContentGraph(): ContentGraphInterface
@@ -142,11 +135,6 @@ final class NodeAggregateCommandHandler
         return $this->readSideMemoryCacheManager;
     }
 
-    protected function getPropertyConversionService(): PropertyConversionService
-    {
-        return $this->propertyConversionService;
-    }
-
     protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher
     {
         return $this->nodeEventPublisher;
@@ -154,7 +142,7 @@ final class NodeAggregateCommandHandler
 
     protected function getAllowedDimensionSubspace(): DimensionSpacePointSet
     {
-        return $this->allowedDimensionSubspace;
+        return $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
     }
 
     protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph
@@ -168,11 +156,11 @@ final class NodeAggregateCommandHandler
     }
 
     /**
-     * Use this closure to run code with the Anchestor Node Type Checks disabled; e.g.
+     * Use this closure to run code with the Ancestor Node Type Checks disabled; e.g.
      * during imports.
      *
      * You can disable this because many old sites have this constraint violated more or less;
-     * and it's easy to fix lateron; as it does not touch the fundamental integrity of the CR.
+     * and it's easy to fix later on; as it does not touch the fundamental integrity of the CR.
      *
      * @param \Closure $callback
      */

@@ -28,7 +28,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * The property values contain the serialized types already, and include type information.
  *
  * @Flow\Proxy(false)
- * @internal you most likely want to use {@see SetNodeProperties} instead
  */
 final class SetSerializedNodeProperties implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
@@ -36,9 +35,6 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
 
     private SerializedPropertyValues $propertyValues;
 
-    /**
-     * @internal use {@see SetNodeProperties::__construct} for the public API
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -55,12 +51,12 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
             SerializedPropertyValues::fromArray($array['propertyValues']),
-            UserIdentifier::fromString($array['$initiatingUserIdentifier'])
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -83,7 +79,7 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
             'propertyValues' => $this->propertyValues,
-            '$initiatingUserIdentifier' => $this->initiatingUserIdentifier
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 

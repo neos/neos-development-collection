@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -33,15 +32,17 @@ class PropertyAdjustment
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected NodeTypeManager $nodeTypeManager;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-    protected PropertyConversionService $propertyConversionService;
 
-    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, ReadSideMemoryCacheManager $readSideMemoryCacheManager, PropertyConversionService $propertyConversionService)
-    {
+    public function __construct(
+        EventStore $eventStore,
+        ProjectedNodeIterator $projectedNodeIterator,
+        NodeTypeManager $nodeTypeManager,
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager
+    ) {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->propertyConversionService = $propertyConversionService;
     }
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
@@ -57,7 +58,7 @@ class PropertyAdjustment
             foreach ($nodeAggregate->getNodes() as $node) {
                 $propertyKeysInNode = [];
 
-                foreach ($node->getProperties() as $propertyKey => $property) {
+                foreach ($node->getProperties()->getValues() as $propertyKey => $property) {
                     $propertyKeysInNode[$propertyKey] = $propertyKey;
 
                     // detect obsolete properties
@@ -68,7 +69,8 @@ class PropertyAdjustment
                         });
                     }
 
-                    // detect non-deserializable properties
+                    // detect non-deserializable properties: move to intermediary if necessary
+                    /*
                     try {
                         $node->getProperties()->offsetGet($propertyKey);
                     } catch (\Exception $e) {
@@ -77,11 +79,14 @@ class PropertyAdjustment
                             $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeProperty($node, $propertyKey);
                         });
-                    }
+                    }*/
                 }
 
                 // detect missing default values
                 foreach ($nodeType->getDefaultValuesForProperties() as $propertyKey => $defaultValue) {
+                    if ($defaultValue instanceof \DateTimeInterface) {
+                        $propertyValue = json_encode($propertyValue);
+                    }
                     if (!array_key_exists($propertyKey, $propertyKeysInNode)) {
                         yield StructureAdjustment::createForNode($node, StructureAdjustment::MISSING_DEFAULT_VALUE, 'The property "' . $propertyKey . '" is is missing in the node. Suggesting to add it.', function () use ($node, $propertyKey, $defaultValue) {
                             $this->readSideMemoryCacheManager->disableCache();
@@ -101,8 +106,10 @@ class PropertyAdjustment
 
     protected function addProperty(NodeInterface $node, string $propertyKey, $defaultValue): CommandResult
     {
-        $rawDefaultPropertyValues = PropertyValuesToWrite::fromArray([$propertyKey => $defaultValue]);
-        $serializedPropertyValues = $this->propertyConversionService->serializePropertyValues($rawDefaultPropertyValues, $node->getNodeType());
+        $propertyType = $node->getNodeType()->getPropertyType($propertyKey);
+        $serializedPropertyValues = SerializedPropertyValues::fromArray([
+            $propertyKey => new SerializedPropertyValue($defaultValue, $propertyType)
+        ]);
 
         return $this->publishNodePropertiesWereSet($node, $serializedPropertyValues);
     }

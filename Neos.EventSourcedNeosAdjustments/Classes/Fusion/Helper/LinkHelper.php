@@ -15,13 +15,12 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelRepository;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
@@ -48,12 +47,6 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
-     * @Flow\Inject
      * @var AssetRepository
      */
     protected $assetRepository;
@@ -69,6 +62,12 @@ class LinkHelper implements ProtectedContextAwareInterface
      * @var ContentGraphInterface
      */
     protected $contentGraph;
+
+    /**
+     * @Flow\Inject
+     * @var ReadModelRepository
+     */
+    protected $readModelRepository;
 
     /**
      * @param string|Uri $uri
@@ -93,18 +92,18 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string|Uri $uri
-     * @param TraversableNodeInterface $contextNode
+     * @param NodeBasedReadModelInterface $contextNode
      * @param ControllerContext $controllerContext
      * @return string
      */
-    public function resolveNodeUri($uri, TraversableNodeInterface $contextNode, ControllerContext $controllerContext): ?string
+    public function resolveNodeUri($uri, NodeBasedReadModelInterface $contextNode, ControllerContext $controllerContext): ?string
     {
         $targetNode = $this->convertUriToObject($uri, $contextNode);
-        if (!$targetNode instanceof TraversableNodeInterface) {
+        if (!$targetNode instanceof NodeBasedReadModelInterface) {
             $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
-        $targetNodeAddress = $this->nodeAddressFactory->createFromTraversableNode($targetNode);
+        $targetNodeAddress = $targetNode->getAddress();
         if ($targetNodeAddress === null) {
             $this->systemLogger->info(sprintf('Could not create node address from node "%s".', $targetNode->getNodeAggregateIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
             return null;
@@ -139,10 +138,10 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string|Uri $uri
-     * @param TraversableNodeInterface|null $contextNode
-     * @return TraversableNodeInterface|AssetInterface|NULL
+     * @param NodeBasedReadModelInterface|null $contextNode
+     * @return NodeBasedReadModelInterface|AssetInterface|NULL
      */
-    public function convertUriToObject($uri, TraversableNodeInterface $contextNode = null)
+    public function convertUriToObject($uri, NodeBasedReadModelInterface $contextNode = null)
     {
         if (empty($uri)) {
             return null;
@@ -156,25 +155,13 @@ class LinkHelper implements ProtectedContextAwareInterface
                 if ($contextNode === null) {
                     throw new \RuntimeException('node:// URI conversion requires a context node to be passed', 1409734235);
                 }
-                $contextNodeAddress = $this->nodeAddressFactory->createFromTraversableNode($contextNode)->getWorkspaceName();
-                if ($contextNodeAddress === null) {
-                    throw new \RuntimeException(sprintf('Failed to create node address for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
-                }
-                $visibilityConstraints = $contextNodeAddress->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
-                $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-                    $contextNode->getContentStreamIdentifier(),
-                    $contextNode->getDimensionSpacePoint(),
-                    $visibilityConstraints
-                );
-                if ($subgraph === null) {
-                    throw new \RuntimeException(sprintf('Failed to get SubContentGraph for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
-                }
+                $contextNodeAddress = $contextNode->getAddress();
+                $visibilityConstraints = $contextNodeAddress->getWorkspaceName()->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
 
-                $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($uri->getHost()));
-                if ($node === null) {
-                    return null;
-                }
-                return new TraversableNode($node, $subgraph);
+                $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($uri->getHost());
+                $nodeAddress = $contextNodeAddress->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+
+                return $this->readModelRepository->findByNodeAddress($nodeAddress, $visibilityConstraints);
             case 'asset':
                 /** @var AssetInterface|null $asset */
                 /** @noinspection OneTimeUseVariablesInspection */

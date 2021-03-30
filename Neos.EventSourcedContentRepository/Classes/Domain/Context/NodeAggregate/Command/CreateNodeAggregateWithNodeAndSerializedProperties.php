@@ -26,10 +26,9 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
 /**
- * CreateNodeAggregateWithNode command - INTERNAL implementation, where TODO describe
+ * CreateNodeAggregateWithNode command
  *
  * @Flow\Proxy(false)
- * @internal
  */
 final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
@@ -37,14 +36,9 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
 
     /**
      * The node's initial property values. Will be merged over the node type's default property values
-     *
-     * @var SerializedPropertyValues
      */
-    private $initialPropertyValues;
+    private SerializedPropertyValues $initialPropertyValues;
 
-    /**
-     * @internal use {@see CreateNodeAggregateWithNode::__construct} instead
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -71,7 +65,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['nodeTypeName']),
@@ -105,7 +99,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
      * Is needed to make this command fully deterministic before storing it at the events
      * - we need this
      * @param NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
-     * @return CreateNodeAggregateWithNode
+     * @return self
      */
     public function withTetheredDescendantNodeAggregateIdentifiers(NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers): self
     {

@@ -15,11 +15,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RebasableToOtherContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeAggregateIdentifierMapping;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeSubtreeSnapshot;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -110,12 +111,19 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         $this->nodeAggregateIdentifierMapping = $nodeAggregateIdentifierMapping;
     }
 
-    public static function create(TraversableNodeInterface $sourceNode, OriginDimensionSpacePoint $dimensionSpacePoint, UserIdentifier $initiatingUserIdentifier, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier, ?NodeName $targetNodeName)
-    {
-        $nodeSubtreeSnapshot = NodeSubtreeSnapshot::fromTraversableNode($sourceNode);
+    public static function create(
+        ContentSubgraphInterface $subgraph,
+        NodeInterface $startNode,
+        OriginDimensionSpacePoint $dimensionSpacePoint,
+        UserIdentifier $initiatingUserIdentifier,
+        NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
+        ?NodeName $targetNodeName
+    ) {
+        $nodeSubtreeSnapshot = NodeSubtreeSnapshot::fromSubgraphAndStartNode($subgraph, $startNode);
 
         return new static(
-            $sourceNode->getContentStreamIdentifier(),
+            $subgraph->getContentStreamIdentifier(),
             $nodeSubtreeSnapshot,
             $dimensionSpacePoint,
             $initiatingUserIdentifier,
@@ -199,7 +207,7 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
     {
         $targetNodeAggregateIdentifier = $this->getNodeAggregateIdentifierMapping()->getNewNodeAggregateIdentifier($this->getNodeToInsert()->getNodeAggregateIdentifier());
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+            $this->getContentStreamIdentifier()->equals($nodeAddress->getContentStreamIdentifier())
             && $this->getTargetDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
             && $targetNodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
         );
@@ -207,7 +215,7 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new static(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeToInsert,
             $this->targetDimensionSpacePoint,

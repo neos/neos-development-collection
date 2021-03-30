@@ -12,12 +12,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelRepository;
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Error\Messages\Error;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -38,12 +37,15 @@ class NodeService
     protected $contentGraph;
 
     /**
-     * Helper method to retrieve the closest document for a node
-     *
-     * @param TraversableNodeInterface $node
-     * @return TraversableNodeInterface
+     * @Flow\Inject
+     * @var ReadModelRepository
      */
-    public function getClosestDocument(TraversableNodeInterface $node)
+    protected $readModelRepository;
+
+    /**
+     * Helper method to retrieve the closest document for a node
+     */
+    public function getClosestDocument(NodeBasedReadModelInterface $node): NodeBasedReadModelInterface
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return $node;
@@ -57,26 +59,21 @@ class NodeService
     /**
      * Helper method to check if a given node is a document node.
      *
-     * @param  TraversableNodeInterface $node The node to check
+     * @param  NodeBasedReadModelInterface $node The node to check
      * @return boolean             A boolean which indicates if the given node is a document node.
      */
-    public function isDocument(TraversableNodeInterface $node)
+    public function isDocument(NodeBasedReadModelInterface $node): bool
     {
         return ($this->getClosestDocument($node) === $node);
     }
 
     /**
      * Converts a given context path to a node object
-     *
-     * @param string $contextPath
-     * @return TraversableNode|Error
      */
-    public function getNodeFromContextPath($contextPath)
+    public function getNodeFromContextPath(string $contextPath): NodeBasedReadModelInterface
     {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextPath);
-        $subgraph = $this->contentGraph
-            ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-        return new TraversableNode($node, $subgraph);
+
+        return $this->readModelRepository->findByNodeAddress($nodeAddress, VisibilityConstraints::withoutRestrictions());
     }
 }

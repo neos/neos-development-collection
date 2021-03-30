@@ -11,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -22,8 +21,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
- * Helper which contains common fields for {@see CreateNodeAggregateWithNode}
- * and {@see CreateNodeAggregateWithNodeAndSerializedProperties}
+ * Helper which contains common fields for {@see CreateNodeAggregateWithNodeAndSerializedProperties}
+ * and other derived commands
  */
 trait CommonCreateNodeAggregateWithNodeTrait
 {

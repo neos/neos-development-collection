@@ -12,10 +12,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveNode;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
@@ -44,9 +45,9 @@ class MoveInto extends AbstractStructuralChange
     /**
      * Get the sibling node
      *
-     * @return TraversableNodeInterface
+     * @return NodeBasedReadModelInterface
      */
-    public function getParentNode(): ?TraversableNodeInterface
+    public function getParentNode(): ?NodeBasedReadModelInterface
     {
         if ($this->parentContextPath === null) {
             return null;
@@ -73,7 +74,7 @@ class MoveInto extends AbstractStructuralChange
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         $parent = $this->getParentNode();
         $nodeType = $this->getSubject()->getNodeType();
@@ -86,7 +87,7 @@ class MoveInto extends AbstractStructuralChange
      *
      * @return void
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             // "subject" is the to-be-moved node
@@ -110,7 +111,7 @@ class MoveInto extends AbstractStructuralChange
                 $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)
             );
 
-            $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
+            $updateParentNodeInfo = new UpdateNodeInfo();
             $updateParentNodeInfo->setNode($this->getParentNode());
 
             $this->feedbackCollection->add($updateParentNodeInfo);

@@ -15,8 +15,9 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModels;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
@@ -24,7 +25,6 @@ use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 
@@ -90,6 +90,12 @@ class FindOperation extends AbstractOperation
     protected $nodeTypeConstraintFactory;
 
     /**
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
+
+    /**
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
@@ -98,7 +104,7 @@ class FindOperation extends AbstractOperation
     public function canEvaluate($context)
     {
         foreach ($context as $contextNode) {
-            if (!$contextNode instanceof TraversableNodeInterface) {
+            if (!$contextNode instanceof NodeBasedReadModelInterface) {
                 return false;
             }
         }
@@ -119,12 +125,12 @@ class FindOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $contextNodes = TraversableNodes::fromArray($flowQuery->getContext());
+        $contextNodes = NodeBasedReadModels::fromArray($flowQuery->getContext());
         if ($contextNodes->isEmpty() || empty($arguments[0])) {
             return;
         }
 
-        /** @var TraversableNodeInterface[] $result */
+        /** @var NodeBasedReadModelInterface[] $result */
         $result = [];
         $selectorAndFilter = $arguments[0];
 
@@ -180,7 +186,7 @@ class FindOperation extends AbstractOperation
         $flowQuery->setContext($uniqueResult);
     }
 
-    protected function getEntryPoints(TraversableNodes $contextNodes, VisibilityConstraints $visibilityConstraints): array
+    protected function getEntryPoints(NodeBasedReadModels $contextNodes, VisibilityConstraints $visibilityConstraints): array
     {
         $entryPoints = [];
         foreach ($contextNodes as $contextNode) {
@@ -209,7 +215,7 @@ class FindOperation extends AbstractOperation
             $subgraph = $entryPoint['subgraph'];
             $nodeByIdentifier = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
             if ($nodeByIdentifier) {
-                $result[] = new TraversableNode($nodeByIdentifier, $subgraph);
+                $result[] = $this->readModelFactory->createReadModel($nodeByIdentifier, $subgraph);
             }
         }
 
@@ -222,7 +228,7 @@ class FindOperation extends AbstractOperation
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
             foreach ($entryPoint['nodes'] as $node) {
-                /** @var TraversableNodeInterface $node */
+                /** @var NodeBasedReadModelInterface $node */
                 if ($nodePath->isAbsolute()) {
                     $rootNode = $node;
                     while (!$rootNode->isRoot()) {
@@ -233,7 +239,7 @@ class FindOperation extends AbstractOperation
                     $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->getNodeAggregateIdentifier());
                 }
                 if ($nodeByPath) {
-                    $result[] = new TraversableNode($nodeByPath, $subgraph);
+                    $result[] = $this->readModelFactory->createReadModel($nodeByPath, $subgraph);
                 }
             }
         }
@@ -246,12 +252,12 @@ class FindOperation extends AbstractOperation
         foreach ($entryPoints as $entryPoint) {
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
-            $entryIdentifiers = array_map(function (TraversableNodeInterface $node) {
+            $entryIdentifiers = array_map(function (NodeBasedReadModelInterface $node) {
                 return $node->getNodeAggregateIdentifier();
             }, $entryPoint['nodes']);
 
             foreach ($subgraph->findDescendants($entryIdentifiers, $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeName->jsonSerialize()), null) as $descendant) {
-                $result[] = new TraversableNode($descendant, $subgraph);
+                $result[] = $this->readModelFactory->createReadModel($descendant, $subgraph);
             }
         }
 

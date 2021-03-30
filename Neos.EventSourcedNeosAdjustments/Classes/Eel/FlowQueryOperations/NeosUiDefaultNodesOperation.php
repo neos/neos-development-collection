@@ -12,14 +12,14 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Exception\NodeException;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Flow\Annotations as Flow;
 
 class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\NeosUiDefaultNodesOperation
@@ -50,7 +50,11 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
      */
     protected $nodeTypeConstraintFactory;
 
-
+    /**
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
 
     /**
      * {@inheritdoc}
@@ -61,22 +65,19 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        /** @var TraversableNodeInterface $siteNode */
-        /** @var TraversableNodeInterface $documentNode */
+        /** @var NodeBasedReadModelInterface $siteNode */
+        /** @var NodeBasedReadModelInterface $documentNode */
         list($siteNode, $documentNode) = $flowQuery->getContext();
-        /** @var TraversableNodeInterface $toggledNodes */
+        /** @var NodeBasedReadModelInterface $toggledNodes */
         list($baseNodeType, $loadingDepth, $toggledNodes, $clipboardNodesContextPaths) = $arguments;
-
 
         $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($baseNodeType);
 
-
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($documentNode->getContentStreamIdentifier(), $documentNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-
 
         // Collect all parents of documentNode up to siteNode
         $nodes = [
-            ((string)$siteNode->getNodeAggregateIdentifier()) => new TraversableNode($siteNode, $subgraph)
+            ((string)$siteNode->getNodeAggregateIdentifier()) => $siteNode
         ];
         $currentNode = null;
         try {
@@ -87,7 +88,7 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
         if ($currentNode) {
             $parentNodeIsUnderneathSiteNode = strpos((string)$currentNode->findNodePath(), (string)$siteNode->findNodePath()) === 0;
             while ((string)$currentNode->getNodeAggregateIdentifier() !== (string)$siteNode->getNodeAggregateIdentifier() && $parentNodeIsUnderneathSiteNode) {
-                $nodes[(string)$currentNode->getNodeAggregateIdentifier()] = new TraversableNode($currentNode, $subgraph);
+                $nodes[(string)$currentNode->getNodeAggregateIdentifier()] = $currentNode;
                 $currentNode = $currentNode->findParentNode();
             }
         }
@@ -100,7 +101,7 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
         }
         $subtree = $subgraph->findSubtrees([$siteNode->getNodeAggregateIdentifier()], $loadingDepth, $nodeTypeConstraints);
         $subtree = $subtree->getChildren()[0];
-        self::flattenSubtreeToNodeList($subgraph, $subtree, $nodes);
+        $this->flattenSubtreeToNodeList($subgraph, $subtree, $nodes);
 
         // TODO: Clipboard nodes
 
@@ -108,15 +109,14 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
     }
 
 
-    private static function flattenSubtreeToNodeList(ContentSubgraphInterface $subgraph, SubtreeInterface $subtree, array &$nodes)
+    private function flattenSubtreeToNodeList(ContentSubgraphInterface $subgraph, SubtreeInterface $subtree, array &$nodes)
     {
         $currentNode = $subtree->getNode();
 
-
-        $nodes[(string)$currentNode->getNodeAggregateIdentifier()] = new TraversableNode($currentNode, $subgraph);
+        $nodes[(string)$currentNode->getNodeAggregateIdentifier()] = $this->readModelFactory->createReadModel($currentNode, $subgraph);
 
         foreach ($subtree->getChildren() as $childSubtree) {
-            self::flattenSubtreeToNodeList($subgraph, $childSubtree, $nodes);
+            $this->flattenSubtreeToNodeList($subgraph, $childSubtree, $nodes);
         }
     }
 }
