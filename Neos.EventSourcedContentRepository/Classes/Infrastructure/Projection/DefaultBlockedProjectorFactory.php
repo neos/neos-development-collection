@@ -16,12 +16,14 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 final class DefaultBlockedProjectorFactory
 {
-    private ObjectManagerInterface $objectManager;
-
     private array $projectorClassNames;
 
-    public function __construct(array $projectorClassNames, ObjectManagerInterface $objectManager)
-    {
+    private ObjectManagerInterface $objectManager;
+
+    public function __construct(
+        array $projectorClassNames,
+        ObjectManagerInterface $objectManager
+    ) {
         $this->projectorClassNames = $projectorClassNames;
         $this->objectManager = $objectManager;
     }
@@ -29,8 +31,10 @@ final class DefaultBlockedProjectorFactory
     public function create(): array
     {
         $projectors = [];
-        foreach ($this->projectorClassNames as $projectorClassName) {
-            $projectors[] = $this->objectManager->get($projectorClassName);
+        foreach ($this->projectorClassNames as $projectorClassName => $isToBeBlocked) {
+            if ($isToBeBlocked) {
+                $projectors[] = $this->objectManager->get($projectorClassName);
+            }
         }
 
         return $projectors;

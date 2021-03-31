@@ -36,7 +36,7 @@ final class RuntimeBlocker
     public function __construct(
         DeferEventPublisher $eventPublisher,
         DefaultEventToListenerMappingProvider $eventToListenerMappingProvider,
-        \Iterable $defaultProjectorsToBeBlocked
+        Iterable $defaultProjectorsToBeBlocked
     ) {
         $this->eventPublisher = $eventPublisher;
         $this->eventToListenerMappingProvider = $eventToListenerMappingProvider;

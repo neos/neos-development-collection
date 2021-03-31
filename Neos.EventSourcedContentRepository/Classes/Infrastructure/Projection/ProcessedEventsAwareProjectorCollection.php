@@ -6,7 +6,7 @@ use Neos\EventSourcedContentRepository\Domain\ImmutableArrayObject;
 
 final class ProcessedEventsAwareProjectorCollection extends ImmutableArrayObject
 {
-    public function __construct(\Iterable $projectors)
+    public function __construct(Iterable $projectors)
     {
         $processedEventsAwareProjectors = [];
         foreach ($projectors as $projector) {

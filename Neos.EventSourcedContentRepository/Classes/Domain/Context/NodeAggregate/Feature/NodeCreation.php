@@ -55,7 +55,7 @@ trait NodeCreation
 
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
-    abstract protected function getRuntimeBlocker(RuntimeBlocker $runtimeBlocker): RuntimeBlocker;
+    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
      * @param CreateRootNodeAggregateWithNode $command
