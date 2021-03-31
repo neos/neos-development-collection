@@ -1069,7 +1069,7 @@ trait EventSourcedTrait
      * @param int|null $expectedCode
      * @throws ReflectionException
      */
-    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode)
+    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode = null)
     {
         Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
         $lastCommandExceptionShortName = (new \ReflectionClass($this->lastCommandException))->getShortName();

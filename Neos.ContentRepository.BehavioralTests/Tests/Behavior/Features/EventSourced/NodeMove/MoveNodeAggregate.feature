@@ -6,6 +6,12 @@ Feature: Move node to a new parent / within the current parent before a sibling 
 
   These are the base test cases for the NodeAggregateCommandHandler to block invalid commands
 
+  Content Structure:
+    - lady-eleonode-rootford (Neos.ContentRepository:Root)
+      - sir-david-nodenborough (Neos.ContentRepository.Testing:DocumentWithTetheredChildNode)
+        - "tethered" nodewyn-tetherton (Neos.ContentRepository.Testing:Content)
+        - sir-nodeward-nodington-iii (Neos.ContentRepository.Testing:Document)
+
   Background:
     Given I have the following content dimensions:
       | Identifier | Default | Values      | Generalizations |
