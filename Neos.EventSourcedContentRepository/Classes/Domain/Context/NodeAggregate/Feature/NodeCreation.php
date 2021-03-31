@@ -33,8 +33,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNo
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -53,6 +54,8 @@ trait NodeCreation
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
 
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
+
+    abstract protected function getRuntimeBlocker(RuntimeBlocker $runtimeBlocker): RuntimeBlocker;
 
     /**
      * @param CreateRootNodeAggregateWithNode $command
@@ -80,7 +83,7 @@ trait NodeCreation
             );
         });
 
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 
     /**
@@ -185,7 +188,7 @@ trait NodeCreation
             );
         });
 
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 
     /**

@@ -23,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\EventSourcedNeosAdjustments\Domain\Service\RuntimeBlocker;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
@@ -145,12 +144,6 @@ class BackendServiceController extends ActionController
     protected $propertyMapper;
 
     /**
-     * @Flow\Inject
-     * @var RuntimeBlocker
-     */
-    protected $runtimeBlocker;
-
-    /**
      * Set the controller context on the feedback collection after the controller
      * has been initialized
      *
@@ -225,14 +218,13 @@ class BackendServiceController extends ActionController
             foreach ($nodeContextPaths as $contextPath) {
                 $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
             }
-            $command = new PublishIndividualNodesFromWorkspace(
-                $workspaceName,
-                $nodeAddresses,
-                $this->getCurrentUserIdentifier()
-            );
-            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-                $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command)
-            );
+            $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace(
+                new PublishIndividualNodesFromWorkspace(
+                    $workspaceName,
+                    $nodeAddresses,
+                    $this->getCurrentUserIdentifier()
+                )
+            )->blockUntilProjectionsAreUpToDate();
 
             $success = new Success();
             $success->setMessage(sprintf('Published %d change(s) to %s.', count($nodeContextPaths), $targetWorkspaceName));
@@ -265,14 +257,13 @@ class BackendServiceController extends ActionController
             foreach ($nodeContextPaths as $contextPath) {
                 $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
             }
-            $command = new DiscardIndividualNodesFromWorkspace(
-                $workspaceName,
-                $nodeAddresses,
-                $this->getCurrentUserIdentifier()
-            );
-            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-                $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace($command)
-            );
+            $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace(
+                new DiscardIndividualNodesFromWorkspace(
+                    $workspaceName,
+                    $nodeAddresses,
+                    $this->getCurrentUserIdentifier()
+                )
+            )->blockUntilProjectionsAreUpToDate();
 
             $success = new Success();
             $success->setMessage(sprintf('Discarded %d node(s).', count($nodeContextPaths)));

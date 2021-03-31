@@ -1,5 +1,5 @@
 Neos:
   EventSourcedContentRepository:
     projection:
-      projectorsToBeBlocked:
+      defaultProjectorsToBeBlocked:
         'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': true

@@ -16,7 +16,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -27,6 +28,8 @@ trait NodeReferencing
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
+
+    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
      * @param SetNodeReferences $command
@@ -57,6 +60,6 @@ trait NodeReferencing
             );
         });
 
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 }

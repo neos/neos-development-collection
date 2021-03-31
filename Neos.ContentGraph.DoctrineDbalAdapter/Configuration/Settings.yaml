@@ -9,4 +9,4 @@ Neos:
       stores:
         'ContentRepository':
           listeners:
-            'Neos\ContentGraph\DoctrineDbalAdapter.*': true
+            'Neos\ContentGraph\DoctrineDbalAdapter\.*': true

@@ -26,7 +26,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedNeosAdjustments\Domain\Service\RuntimeBlocker;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -81,12 +80,6 @@ class PublishingService
      * @var WorkspaceCommandHandler
      */
     protected $workspaceCommandHandler;
-
-    /**
-     * @Flow\Inject
-     * @var RuntimeBlocker
-     */
-    protected $runtimeBlocker;
 
     /**
      * @Flow\Inject
@@ -145,18 +138,18 @@ class PublishingService
         );
 
         // TODO: only rebase if necessary!
-        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-            $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
+        $this->workspaceCommandHandler->handleRebaseWorkspace(
+            new RebaseWorkspace(
                 $workspaceName,
                 $userIdentifier
-            ))
-        );
+            )
+        )->blockUntilProjectionsAreUpToDate();
 
-        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-            $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace(
+        $this->workspaceCommandHandler->handlePublishWorkspace(
+            new PublishWorkspace(
                 $workspaceName,
                 $userIdentifier
-            ))
+            )
         );
     }
 }

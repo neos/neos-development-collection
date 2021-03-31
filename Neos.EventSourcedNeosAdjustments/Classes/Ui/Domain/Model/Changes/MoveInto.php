@@ -95,21 +95,19 @@ class MoveInto extends AbstractStructuralChange
 
             $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($this->getParentNode()->getNodeAggregateIdentifier());
 
-            $command = new MoveNodeAggregate(
-                $subject->getContentStreamIdentifier(),
-                $subject->getDimensionSpacePoint(),
-                $subject->getNodeAggregateIdentifier(),
-                $hasEqualParentNode ? null : $this->getParentNode()->getNodeAggregateIdentifier(),
-                null,
-                null,
-                RelationDistributionStrategy::gatherAll(),
-                $this->getInitiatingUserIdentifier()
-            );
-
             $this->contentCacheFlusher->registerNodeChange($subject);
-            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-                $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)
-            );
+            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
+                new MoveNodeAggregate(
+                    $subject->getContentStreamIdentifier(),
+                    $subject->getDimensionSpacePoint(),
+                    $subject->getNodeAggregateIdentifier(),
+                    $hasEqualParentNode ? null : $this->getParentNode()->getNodeAggregateIdentifier(),
+                    null,
+                    null,
+                    RelationDistributionStrategy::gatherAll(),
+                    $this->getInitiatingUserIdentifier()
+                )
+            )->blockUntilProjectionsAreUpToDate();
 
             $updateParentNodeInfo = new UpdateNodeInfo();
             $updateParentNodeInfo->setNode($this->getParentNode());

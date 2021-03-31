@@ -4,5 +4,5 @@ Neos:
       projectorsToBeReset:
         'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
     projection:
-      projectorsToBeBlocked:
+      defaultProjectorsToBeBlocked:
         'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true

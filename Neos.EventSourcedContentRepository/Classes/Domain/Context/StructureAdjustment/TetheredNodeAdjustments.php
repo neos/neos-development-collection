@@ -13,6 +13,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
@@ -26,7 +27,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\Node
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
@@ -48,6 +49,7 @@ class TetheredNodeAdjustments
     protected DimensionSpace\InterDimensionalVariationGraph  $interDimensionalVariationGraph;
     protected ContentGraphInterface $contentGraph;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
+    protected RuntimeBlocker $runtimeBlocker;
 
     public function __construct(
         EventStore $eventStore,
@@ -55,7 +57,8 @@ class TetheredNodeAdjustments
         NodeTypeManager $nodeTypeManager,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         ContentGraphInterface $contentGraph,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        RuntimeBlocker $runtimeBlocker
     ) {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
@@ -63,6 +66,12 @@ class TetheredNodeAdjustments
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->contentGraph = $contentGraph;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
+        $this->runtimeBlocker = $runtimeBlocker;
+    }
+
+    public function getRuntimeBlocker(): RuntimeBlocker
+    {
+        return $this->runtimeBlocker;
     }
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
@@ -86,15 +95,20 @@ class TetheredNodeAdjustments
                     if ($tetheredNode === null) {
                         $foundMissingOrDisallowedTetheredNodes = true;
                         // $nestedNode not found - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
-                        yield StructureAdjustment::createForNode($node, StructureAdjustment::TETHERED_NODE_MISSING, 'The tethered child node "' . $tetheredNodeName . '" is missing.', function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
-                            $this->readSideMemoryCacheManager->disableCache();
+                        yield StructureAdjustment::createForNode(
+                            $node,
+                            StructureAdjustment::TETHERED_NODE_MISSING, 'The tethered child node "' . $tetheredNodeName . '" is missing.',
+                            $this->runtimeBlocker,
+                            function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
+                                $this->readSideMemoryCacheManager->disableCache();
 
-                            $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType, UserIdentifier::forSystemUser());
+                                $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType, UserIdentifier::forSystemUser());
 
-                            $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
-                            $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
-                            return CommandResult::fromPublishedEvents($events);
-                        });
+                                $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
+                                $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
+                                return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
+                            }
+                        );
                     } else {
                         yield from $this->ensureNodeIsTethered($tetheredNode);
                         yield from $this->ensureNodeIsOfType($tetheredNode, $expectedTetheredNodeType);
@@ -107,10 +121,16 @@ class TetheredNodeAdjustments
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->getNodeName()])) {
                     $foundMissingOrDisallowedTetheredNodes = true;
-                    yield StructureAdjustment::createForNodeAggregate($tetheredNodeAggregate, StructureAdjustment::DISALLOWED_TETHERED_NODE, 'The tethered child node "' . $tetheredNodeAggregate->getNodeName()->jsonSerialize() . '" should be removed.', function () use ($tetheredNodeAggregate) {
-                        $this->readSideMemoryCacheManager->disableCache();
-                        return $this->removeNodeAggregate($tetheredNodeAggregate);
-                    });
+                    yield StructureAdjustment::createForNodeAggregate(
+                        $tetheredNodeAggregate,
+                        StructureAdjustment::DISALLOWED_TETHERED_NODE,
+                        'The tethered child node "' . $tetheredNodeAggregate->getNodeName()->jsonSerialize() . '" should be removed.',
+                        $this->runtimeBlocker,
+                        function () use ($tetheredNodeAggregate) {
+                            $this->readSideMemoryCacheManager->disableCache();
+                            return $this->removeNodeAggregate($tetheredNodeAggregate);
+                        }
+                    );
                 }
             }
 
@@ -130,10 +150,20 @@ class TetheredNodeAdjustments
 
                     if (array_keys($actualTetheredChildNodes) !== array_keys($expectedTetheredNodes)) {
                         // we need to re-order: We go from the last to the first
-                        yield StructureAdjustment::createForNode($node, StructureAdjustment::TETHERED_NODE_WRONGLY_ORDERED, 'Tethered nodes wrongly ordered, expected: ' . implode(', ', array_keys($expectedTetheredNodes)) . ' - actual: ' . implode(', ', array_keys($actualTetheredChildNodes)), function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
-                            $this->readSideMemoryCacheManager->disableCache();
-                            return $this->reorderNodes($node->getContentStreamIdentifier(), $actualTetheredChildNodes, array_keys($expectedTetheredNodes));
-                        });
+                        yield StructureAdjustment::createForNode(
+                            $node,
+                            StructureAdjustment::TETHERED_NODE_WRONGLY_ORDERED,
+                            'Tethered nodes wrongly ordered, expected: ' . implode(', ', array_keys($expectedTetheredNodes)) . ' - actual: ' . implode(', ', array_keys($actualTetheredChildNodes)),
+                            $this->runtimeBlocker,
+                            function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
+                                $this->readSideMemoryCacheManager->disableCache();
+                                return $this->reorderNodes(
+                                    $node->getContentStreamIdentifier(),
+                                    $actualTetheredChildNodes,
+                                    array_keys($expectedTetheredNodes)
+                                );
+                            }
+                        );
                     }
                 }
             }
@@ -143,14 +173,24 @@ class TetheredNodeAdjustments
     private function ensureNodeIsTethered(NodeInterface $node): \Generator
     {
         if (!$node->isTethered()) {
-            yield StructureAdjustment::createForNode($node, StructureAdjustment::NODE_IS_NOT_TETHERED_BUT_SHOULD_BE, 'This node should be a tethered node, but is not.');
+            yield StructureAdjustment::createForNode(
+                $node,
+                StructureAdjustment::NODE_IS_NOT_TETHERED_BUT_SHOULD_BE,
+                'This node should be a tethered node, but is not.',
+                $this->runtimeBlocker
+            );
         }
     }
 
     private function ensureNodeIsOfType(NodeInterface $node, NodeType $expectedNodeType): \Generator
     {
         if ($node->getNodeTypeName()->getValue() !== $expectedNodeType->getName()) {
-            yield StructureAdjustment::createForNode($node, StructureAdjustment::TETHERED_NODE_TYPE_WRONG, 'should be of type "' . $expectedNodeType . '", but was "' . $node->getNodeTypeName()->getValue() . '".');
+            yield StructureAdjustment::createForNode(
+                $node,
+                StructureAdjustment::TETHERED_NODE_TYPE_WRONG,
+                'should be of type "' . $expectedNodeType . '", but was "' . $node->getNodeTypeName()->getValue() . '".',
+                $this->runtimeBlocker
+            );
         }
     }
 
@@ -223,6 +263,7 @@ class TetheredNodeAdjustments
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
         $this->eventStore->commit($streamName->getEventStreamName(), $events);
-        return CommandResult::fromPublishedEvents($events);
+
+        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 }

@@ -4,7 +4,7 @@ Neos:
     testing:
       projectorsToBeReset: {}
     projection:
-      projectorsToBeBlocked:
+      defaultProjectorsToBeBlocked:
         'Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector': true
         'Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector': true
   EventSourcing:

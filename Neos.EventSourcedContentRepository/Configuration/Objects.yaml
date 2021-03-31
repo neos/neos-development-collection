@@ -93,7 +93,8 @@ Neos\EventSourcedContentRepository\Command\ContentStreamCommandController:
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Infrastructure\Projection\CoreRuntimeBlocker:
+Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker:
+  scope: singleton
   arguments:
     1:
       object:
@@ -101,6 +102,12 @@ Neos\EventSourcedContentRepository\Infrastructure\Projection\CoreRuntimeBlocker:
         arguments:
           1:
             value: 'ContentRepository'
+    3:
+      object:
+        factoryObjectName: Neos\EventSourcedContentRepository\Infrastructure\Projection\DefaultBlockedProjectorFactory
+        arguments:
+          1:
+            setting: "Neos.EventSourcedContentRepository.projection.defaultProjectorsToBeBlocked"
 
 Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\TetheredNodeAdjustments:
   arguments:

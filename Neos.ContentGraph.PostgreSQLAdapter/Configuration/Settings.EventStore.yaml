@@ -4,4 +4,4 @@ Neos:
       stores:
         'ContentRepository':
           listeners:
-            'Neos\ContentGraph\PostgreSQLAdapter.*': true
+            'Neos\ContentGraph\PostgreSQLAdapter\.*': true

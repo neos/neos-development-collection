@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Infrastructure\Projection;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -23,27 +23,31 @@ use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Scope("singleton")
+ * @internal
  */
-final class CoreRuntimeBlocker
+final class RuntimeBlocker
 {
     protected DefaultEventToListenerMappingProvider $eventToListenerMappingProvider;
 
     protected DeferEventPublisher $eventPublisher;
 
+    protected ProcessedEventsAwareProjectorCollection $defaultProjectorsToBeBlocked;
+
     public function __construct(
         DeferEventPublisher $eventPublisher,
-        DefaultEventToListenerMappingProvider $eventToListenerMappingProvider
+        DefaultEventToListenerMappingProvider $eventToListenerMappingProvider,
+        \Iterable $defaultProjectorsToBeBlocked
     ) {
         $this->eventPublisher = $eventPublisher;
         $this->eventToListenerMappingProvider = $eventToListenerMappingProvider;
+        $this->defaultProjectorsToBeBlocked = new ProcessedEventsAwareProjectorCollection($defaultProjectorsToBeBlocked);
     }
 
     public function blockUntilProjectionsAreUpToDate(
         CommandResult $commandResult,
-        ProcessedEventsAwareProjectorCollection $projectors
+        ProcessedEventsAwareProjectorCollection $projectorsToBeBlocked = null
     ): void {
-        foreach ($projectors as $projector) {
+        foreach ($projectorsToBeBlocked ?: $this->defaultProjectorsToBeBlocked as $projector) {
             $publishedEventsForProjector = $this->filterPublishedEventsByListener(
                 $commandResult->getPublishedEvents(),
                 get_class($projector)
@@ -78,8 +82,8 @@ final class CoreRuntimeBlocker
             usleep(50000); // 50000μs = 50ms
             if (++$attempts > 300) { // 15 seconds
                 $ids = '';
-                foreach ($events as $p) {
-                    $ids .= '   ' . $p->getIdentifier();
+                foreach ($events as $event) {
+                    $ids .= '   ' . $event->getIdentifier();
                 }
 
                 throw new \RuntimeException(sprintf('TIMEOUT while waiting for event(s) %s for projector "%s"', $ids, get_class($projector)), 1550232279);

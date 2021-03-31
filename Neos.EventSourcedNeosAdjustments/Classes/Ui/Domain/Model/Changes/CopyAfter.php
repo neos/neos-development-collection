@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
@@ -22,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 class CopyAfter extends AbstractStructuralChange
 {
-
     /**
      * @Flow\Inject
      * @var NodeDuplicationCommandHandler
@@ -65,9 +65,14 @@ class CopyAfter extends AbstractStructuralChange
             }
 
             $command = CopyNodesRecursively::create(
+                $this->contentGraph->getSubgraphByIdentifier(
+                    $subject->getContentStreamIdentifier(),
+                    $subject->getDimensionSpacePoint(),
+                    VisibilityConstraints::withoutRestrictions()
+                ),
                 $subject,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($subject->getDimensionSpacePoint()),
-                UserIdentifier::forSystemUser(), // TODO
+                $this->getInitiatingUserIdentifier(),
                 $parentNodeOfPreviousSibling->getNodeAggregateIdentifier(),
                 $succeedingSibling ? $succeedingSibling->getNodeAggregateIdentifier() : null,
                 NodeName::fromString(uniqid('node-'))
@@ -75,9 +80,8 @@ class CopyAfter extends AbstractStructuralChange
 
             $this->contentCacheFlusher->registerNodeChange($subject);
 
-            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-                $commandResult = $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
-            );
+            $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
+                ->blockUntilProjectionsAreUpToDate();
 
             $newlyCreatedNode = $parentNodeOfPreviousSibling->findNamedChildNode($command->getTargetNodeName());
             $this->finish($newlyCreatedNode);

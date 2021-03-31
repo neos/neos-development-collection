@@ -35,8 +35,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNode
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -80,6 +81,8 @@ trait NodeRetyping
         NodeType $expectedTetheredNodeType,
         UserIdentifier $initiatingUserIdentifier
     ): DomainEvents;
+
+    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
      * @param ChangeNodeAggregateType $command
@@ -182,7 +185,7 @@ trait NodeRetyping
         });
 
 
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 
 

@@ -16,7 +16,6 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\EventSourcedContentRepository\Domain\CommandHandlerRuntimeBlocker;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\StructureAdjustmentService;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -33,11 +32,6 @@ trait StructureAdjustmentsTrait
     protected $structureAdjustmentService;
 
     /**
-     * @var CommandHandlerRuntimeBlocker
-     */
-    protected $runtimeBlocker;
-
-    /**
      * @return ObjectManagerInterface
      */
     abstract protected function getObjectManager();
@@ -45,7 +39,6 @@ trait StructureAdjustmentsTrait
     protected function setupIntegrityViolationTrait(): void
     {
         $this->structureAdjustmentService = $this->getObjectManager()->get(StructureAdjustmentService::class);
-        $this->runtimeBlocker = $this->getObjectManager()->get(CommandHandlerRuntimeBlocker::class);
     }
 
     /**
@@ -58,9 +51,7 @@ trait StructureAdjustmentsTrait
     {
         $errors = $this->structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         foreach ($errors as $error) {
-            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-                $error->fix()
-            );
+            $error->fix()->blockUntilProjectionsAreUpToDate();
         }
     }
 

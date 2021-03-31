@@ -24,7 +24,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAg
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -37,6 +38,8 @@ trait NodeDisabling
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
+
+    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
      * @param DisableNodeAggregate $command
@@ -83,7 +86,7 @@ trait NodeDisabling
             );
         });
 
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 
     /**
@@ -131,6 +134,7 @@ trait NodeDisabling
                 $events
             );
         });
-        return CommandResult::fromPublishedEvents($events);
+
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 }

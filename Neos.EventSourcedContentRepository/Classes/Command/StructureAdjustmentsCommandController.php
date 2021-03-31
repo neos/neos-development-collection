@@ -13,7 +13,6 @@ namespace Neos\EventSourcedContentRepository\Command;
  */
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\CommandHandlerRuntimeBlocker;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\StructureAdjustmentService;
 use Neos\Flow\Cli\CommandController;
@@ -26,12 +25,6 @@ final class StructureAdjustmentsCommandController extends CommandController
      * @var StructureAdjustmentService
      */
     protected $structureAdjustmentService;
-
-    /**
-     * @Flow\Inject
-     * @var CommandHandlerRuntimeBlocker
-     */
-    protected $runtimeBlocker;
 
     public function detectCommand(string $nodeType = null): void
     {
@@ -55,9 +48,7 @@ final class StructureAdjustmentsCommandController extends CommandController
         foreach ($errors as $error) {
             assert($error instanceof StructureAdjustment);
             $this->outputLine($error->render());
-            $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-                $error->fix()
-            );
+            $error->fix()->blockUntilProjectionsAreUpToDate();
         }
         $this->outputLine('Fixed all.');
     }

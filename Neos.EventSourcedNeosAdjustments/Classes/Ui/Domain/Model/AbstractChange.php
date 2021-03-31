@@ -18,7 +18,6 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedNeosAdjustments\Domain\Service\RuntimeBlocker;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\NodeCreated;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
@@ -63,12 +62,6 @@ abstract class AbstractChange implements ChangeInterface
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
-
-    /**
-     * @Flow\Inject
-     * @var RuntimeBlocker
-     */
-    protected $runtimeBlocker;
 
     /**
      * Set the subject

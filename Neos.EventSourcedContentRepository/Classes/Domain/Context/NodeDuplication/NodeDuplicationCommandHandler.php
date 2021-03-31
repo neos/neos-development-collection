@@ -27,8 +27,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\Cons
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeAggregateIdentifierMapping;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -58,6 +59,8 @@ final class NodeDuplicationCommandHandler
 
     protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
+    protected RuntimeBlocker $runtimeBlocker;
+
     public function __construct(
         NodeAggregateCommandHandler $nodeAggregateCommandHandler,
         ContentGraphInterface $contentGraph,
@@ -66,7 +69,8 @@ final class NodeDuplicationCommandHandler
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         NodeAggregateEventPublisher $nodeAggregateEventPublisher,
         ContentDimensionZookeeper $contentDimensionZookeeper,
-        InterDimensionalVariationGraph $interDimensionalVariationGraph
+        InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        RuntimeBlocker $runtimeBlocker
     ) {
         $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
         $this->contentGraph = $contentGraph;
@@ -76,6 +80,7 @@ final class NodeDuplicationCommandHandler
         $this->nodeAggregateEventPublisher = $nodeAggregateEventPublisher;
         $this->allowedDimensionSubspace = $contentDimensionZookeeper->getAllowedDimensionSubspace();
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
+        $this->runtimeBlocker = $runtimeBlocker;
     }
 
     protected function getContentGraph(): ContentGraphInterface
@@ -168,7 +173,7 @@ final class NodeDuplicationCommandHandler
             );
         });
 
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     private function requireNewNodeAggregateIdentifiersToNotExist(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping)

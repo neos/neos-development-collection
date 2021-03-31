@@ -12,11 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -37,11 +38,18 @@ final class ContentStreamCommandHandler
 
     private ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    public function __construct(ContentStreamRepository $contentStreamRepository, EventStore $eventStore, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
-    {
+    private RuntimeBlocker $runtimeBlocker;
+
+    public function __construct(
+        ContentStreamRepository $contentStreamRepository,
+        EventStore $eventStore,
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        RuntimeBlocker $runtimeBlocker
+    ) {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->eventStore = $eventStore;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
+        $this->runtimeBlocker = $runtimeBlocker;
     }
 
     /**
@@ -65,7 +73,8 @@ final class ContentStreamCommandHandler
             )
         );
         $this->eventStore->commit($streamName, $events);
-        return CommandResult::fromPublishedEvents($events);
+
+        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     /**
@@ -98,7 +107,8 @@ final class ContentStreamCommandHandler
             )
         );
         $this->eventStore->commit($streamName, $events);
-        return CommandResult::fromPublishedEvents($events);
+
+        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     public function handleRemoveContentStream(Command\RemoveContentStream $command): CommandResult
@@ -117,7 +127,8 @@ final class ContentStreamCommandHandler
             )
         );
         $this->eventStore->commit($streamName, $events);
-        return CommandResult::fromPublishedEvents($events);
+
+        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     /**

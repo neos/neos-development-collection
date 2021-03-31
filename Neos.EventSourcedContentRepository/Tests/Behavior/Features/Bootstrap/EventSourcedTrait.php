@@ -24,7 +24,6 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Service\AuthorizationService;
-use Neos\EventSourcedContentRepository\Domain\CommandHandlerRuntimeBlocker;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
@@ -67,7 +66,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraph
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
@@ -80,6 +79,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
@@ -167,7 +167,7 @@ trait EventSourcedTrait
     protected $lastCommandOrEventResult;
 
     /**
-     * @var CommandHandlerRuntimeBlocker
+     * @var RuntimeBlocker
      */
     protected $runtimeBlocker;
 
@@ -193,7 +193,7 @@ trait EventSourcedTrait
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
         $this->eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
-        $this->runtimeBlocker = $this->getObjectManager()->get(CommandHandlerRuntimeBlocker::class);
+        $this->runtimeBlocker = $this->getObjectManager()->get(RuntimeBlocker::class);
 
         $configurationManager = $this->getObjectManager()->get(\Neos\Flow\Configuration\ConfigurationManager::class);
         foreach ($configurationManager->getConfiguration(
@@ -486,7 +486,7 @@ trait EventSourcedTrait
         $events = DomainEvents::withSingleEvent($event);
         $this->getObjectManager()->get(ReadSideMemoryCacheManager::class)->disableCache();
         $this->eventStore->commit($streamName, $events);
-        $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events);
+        $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     /**
@@ -1264,9 +1264,7 @@ trait EventSourcedTrait
         if ($this->lastCommandOrEventResult === null) {
             throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');
         }
-        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-            $this->lastCommandOrEventResult
-        );
+        $this->lastCommandOrEventResult->blockUntilProjectionsAreUpToDate();
         $this->lastCommandOrEventResult = null;
     }
 

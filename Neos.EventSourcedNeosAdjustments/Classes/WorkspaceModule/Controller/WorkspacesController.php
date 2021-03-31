@@ -33,7 +33,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
-use Neos\EventSourcedNeosAdjustments\Domain\Service\RuntimeBlocker;
 use Neos\EventSourcedNeosAdjustments\WorkspaceModule\WorkspaceUserService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
@@ -260,18 +259,17 @@ class WorkspacesController extends AbstractModuleController
             $owner = null;
         }
 
-        $command = new CreateWorkspace(
-            $workspaceName,
-            $baseWorkspace,
-            $title,
-            $description,
-            UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser())),
-            ContentStreamIdentifier::create(),
-            $owner
-        );
-        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-            $this->workspaceCommandHandler->handleCreateWorkspace($command)
-        );
+        $this->workspaceCommandHandler->handleCreateWorkspace(
+            new CreateWorkspace(
+                $workspaceName,
+                $baseWorkspace,
+                $title,
+                $description,
+                UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser())),
+                ContentStreamIdentifier::create(),
+                $owner
+            )
+        )->blockUntilProjectionsAreUpToDate();
 
         $this->redirect('index');
     }
@@ -479,11 +477,12 @@ class WorkspacesController extends AbstractModuleController
         $workspace = $this->workspaceFinder->findOneByName($workspace);
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
 
-        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-            $this->workspaceCommandHandler->handlePublishWorkspace(
-                new PublishWorkspace($workspace->getWorkspaceName(), $this->getCurrentUserIdentifier())
+        $this->workspaceCommandHandler->handlePublishWorkspace(
+            new PublishWorkspace(
+                $workspace->getWorkspaceName(),
+                $this->getCurrentUserIdentifier()
             )
-        );
+        )->blockUntilProjectionsAreUpToDate();
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getWorkspaceName()->getName()), htmlspecialchars($baseWorkspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
@@ -495,11 +494,12 @@ class WorkspacesController extends AbstractModuleController
      */
     public function discardWorkspaceAction(WorkspaceName $workspace)
     {
-        $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-            $this->workspaceCommandHandler->handleDiscardWorkspace(
-                new DiscardWorkspace($workspace, $this->getCurrentUserIdentifier())
+        $this->workspaceCommandHandler->handleDiscardWorkspace(
+            new DiscardWorkspace(
+                $workspace,
+                $this->getCurrentUserIdentifier()
             )
-        );
+        )->blockUntilProjectionsAreUpToDate();
 
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');

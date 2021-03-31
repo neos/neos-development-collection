@@ -23,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
-use Neos\EventSourcedNeosAdjustments\Domain\Service\RuntimeBlocker;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authentication;
@@ -72,12 +71,6 @@ final class EditorContentStreamZookeeper
     protected $workspaceCommandHandler;
 
     /**
-     * @Flow\Inject
-     * @var RuntimeBlocker
-     */
-    protected $runtimeBlocker;
-
-    /**
      * This method is called whenever a login happens (AuthenticationProviderManager::class, 'authenticatedToken'), using
      * Signal/Slot
      *
@@ -116,8 +109,8 @@ final class EditorContentStreamZookeeper
                         $workspaceName = $workspaceName->increment($similarlyNamedWorkspaces);
                     }
 
-                    $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-                        $this->workspaceCommandHandler->handleCreateWorkspace(new CreateWorkspace(
+                    $this->workspaceCommandHandler->handleCreateWorkspace(
+                        new CreateWorkspace(
                             $workspaceName->toContentRepositoryWorkspaceName(),
                             $baseWorkspace->getWorkspaceName(),
                             new WorkspaceTitle((string) $user->getName()),
@@ -125,15 +118,15 @@ final class EditorContentStreamZookeeper
                             $userIdentifier,
                             $editorsNewContentStreamIdentifier,
                             $userIdentifier
-                        ))
-                    );
+                        )
+                    )->blockUntilProjectionsAreUpToDate();
                 } else {
-                    $this->runtimeBlocker->blockUntilProjectionsAreUpToDate(
-                        $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
+                    $this->workspaceCommandHandler->handleRebaseWorkspace(
+                        new RebaseWorkspace(
                             $workspace->getWorkspaceName(),
                             $userIdentifier
-                        ))
-                    );
+                        )
+                    )->blockUntilProjectionsAreUpToDate();
                 }
             }
         }

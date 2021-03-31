@@ -13,8 +13,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -34,18 +35,36 @@ class DisallowedChildNodeAdjustment
     use LoadNodeTypeTrait;
 
     protected EventStore $eventStore;
+
     protected ProjectedNodeIterator $projectedNodeIterator;
+
     protected NodeTypeManager $nodeTypeManager;
+
     protected ContentGraphInterface $contentGraph;
+
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
-    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, ContentGraphInterface $contentGraph, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
-    {
+    protected RuntimeBlocker $runtimeBlocker;
+
+    public function __construct(
+        EventStore $eventStore,
+        ProjectedNodeIterator $projectedNodeIterator,
+        NodeTypeManager $nodeTypeManager,
+        ContentGraphInterface $contentGraph,
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        RuntimeBlocker $runtimeBlocker
+    ) {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->contentGraph = $contentGraph;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
+        $this->runtimeBlocker = $runtimeBlocker;
+    }
+
+    public function getRuntimeBlocker(): RuntimeBlocker
+    {
+        return $this->runtimeBlocker;
     }
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
@@ -106,10 +125,16 @@ class DisallowedChildNodeAdjustment
                         $node->getNodeTypeName()->jsonSerialize(),
                     );
 
-                    yield StructureAdjustment::createForNode($node, StructureAdjustment::DISALLOWED_CHILD_NODE, $message, function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
-                        $this->readSideMemoryCacheManager->disableCache();
-                        return $this->removeNodeInSingleDimensionSpacePoint($nodeAggregate, $coveredDimensionSpacePoint);
-                    });
+                    yield StructureAdjustment::createForNode(
+                        $node,
+                        StructureAdjustment::DISALLOWED_CHILD_NODE,
+                        $message,
+                        $this->runtimeBlocker,
+                        function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
+                            $this->readSideMemoryCacheManager->disableCache();
+                            return $this->removeNodeInSingleDimensionSpacePoint($nodeAggregate, $coveredDimensionSpacePoint);
+                        }
+                    );
                 }
             }
         }
@@ -142,7 +167,8 @@ class DisallowedChildNodeAdjustment
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($nodeAggregate->getContentStreamIdentifier());
         $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
-        return CommandResult::fromPublishedEvents($events);
+
+        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     protected function getNodeTypeManager(): NodeTypeManager

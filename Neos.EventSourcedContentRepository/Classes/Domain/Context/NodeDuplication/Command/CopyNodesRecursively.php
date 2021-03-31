@@ -111,6 +111,9 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         $this->nodeAggregateIdentifierMapping = $nodeAggregateIdentifierMapping;
     }
 
+    /**
+     * @todo reference start node by address instead of passing it
+     */
     public static function create(
         ContentSubgraphInterface $subgraph,
         NodeInterface $startNode,

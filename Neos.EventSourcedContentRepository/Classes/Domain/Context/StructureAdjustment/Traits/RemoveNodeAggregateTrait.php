@@ -8,8 +8,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedCove
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\AffectedOccupiedDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
@@ -18,6 +19,8 @@ use Ramsey\Uuid\Uuid;
 trait RemoveNodeAggregateTrait
 {
     abstract protected function getEventStore(): EventStore;
+
+    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     private function removeNodeAggregate(ReadableNodeAggregateInterface $tetheredNodeAggregate): CommandResult
     {
@@ -40,6 +43,7 @@ trait RemoveNodeAggregateTrait
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($tetheredNodeAggregate->getContentStreamIdentifier());
         $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
-        return CommandResult::fromPublishedEvents($events);
+
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 }
