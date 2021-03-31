@@ -21,7 +21,7 @@ Feature: Routing functionality with multiple content dimensions
       | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     And the graph projection is fully up to date
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin '{"market":"DE", "language":"en"}':
+    And the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin '{"market":"DE", "language":"en"}':
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues           | nodeName |
       | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
       | nody-mc-nodeface        | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nody"}      | node2    |
@@ -33,7 +33,7 @@ Feature: Routing functionality with multiple content dimensions
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"DE", "language":"de"} |
     And the graph projection is fully up to date
-    And the command "SetNodeProperties" is executed with payload:
+    And the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
       | nodeAggregateIdentifier   | "carl-destinode"                 |

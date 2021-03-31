@@ -217,6 +217,10 @@ trait ConstraintChecks
 
     protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, ?NodeName $parentNodeName, NodeType $nodeType): bool
     {
+        // WORKAROUND: $nodeType->hasAutoCreatedChildNode() is missing the "initialize" call, so we need to trigger another method beforehand.
+        $grandParentsNodeType->getFullConfiguration();
+        $nodeType->getFullConfiguration();
+
         if ($parentNodeName
             && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
             && !$grandParentsNodeType->allowsGrandchildNodeType((string)$parentNodeName, $nodeType)) {

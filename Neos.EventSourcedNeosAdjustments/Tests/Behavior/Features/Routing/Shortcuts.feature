@@ -32,7 +32,7 @@ Feature: Routing behavior of shortcut nodes
     #        sir-nodeward-nodington-iii
     #
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier    | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues                                                                                                       | nodeName |
       | shernode-homes             | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}                                                                                             | node1    |
       | sir-david-nodenborough     | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"}                                                                                    | node2    |
@@ -67,7 +67,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "https://neos.io/"
 
   Scenario: Shortcut selected target relative URL
-    When the command "SetNodeProperties" is executed with payload:
+    When the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
       | nodeAggregateIdentifier   | "shortcut-external-url"          |
@@ -78,7 +78,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/some/relative/url"
 
   Scenario: Shortcut selected target URL keeps schema, port, query and fragment of absolute target URLs
-    When the command "SetNodeProperties" is executed with payload:
+    When the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                                  |
       | nodeAggregateIdentifier   | "shortcut-external-url"                                                          |
@@ -93,7 +93,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Shortcut first child node is updated when a new first child node aggregate is created
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                      | Value                                                |
       | contentStreamIdentifier                  | "cs-identifier"                                      |
       | nodeAggregateIdentifier                  | "nody-mc-newface"                                    |
@@ -143,7 +143,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Shortcut first child node is not updated when a node aggregate gets moved behind an existing first child node on the same leve
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                      | Value                                                |
       | contentStreamIdentifier                  | "cs-identifier"                                      |
       | nodeAggregateIdentifier                  | "nody-mc-newface"                                    |
@@ -187,7 +187,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child"
 
   Scenario: Change shortcut targetMode from "firstChildNode" to "parentNode"
-    When the command "SetNodeProperties" is executed with payload:
+    When the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "cs-identifier"              |
       | nodeAggregateIdentifier   | "shortcut-first-child-node"  |
@@ -198,7 +198,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts"
 
   Scenario: Change shortcut targetMode from "firstChildNode" to "selectedTarget" (URL)
-    When the command "SetNodeProperties" is executed with payload:
+    When the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                  |
       | nodeAggregateIdentifier   | "shortcut-first-child-node"                                      |
@@ -209,10 +209,10 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://www.neos.io/"
 
   Scenario: Change shortcut targetMode from "parentNode" to "firstChildNode"
-    When the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    When the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues           | nodeName |
       | new-child-node          | shortcut-parent-node          | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "new-child"} | new      |
-    When the command "SetNodeProperties" is executed with payload:
+    When the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
       | nodeAggregateIdentifier   | "shortcut-parent-node"           |
@@ -223,7 +223,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-parent-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-parent-node/new-child"
 
   Scenario: Change shortcut targetMode from "parentNode" to "selectedTarget" (URL)
-    When the command "SetNodeProperties" is executed with payload:
+    When the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                                                          |
       | contentStreamIdentifier   | "cs-identifier"                                                |
       | nodeAggregateIdentifier   | "shortcut-parent-node"                                         |
@@ -234,7 +234,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-parent-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "https://neos.io/"
 
   Scenario: Shortcut node with an invalid targetMode
-    Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    Given the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                                                  |
       | contentStreamIdentifier       | "cs-identifier"                                                        |
       | nodeAggregateIdentifier       | "invalid-target-mode"                                                  |
@@ -248,7 +248,7 @@ Feature: Routing behavior of shortcut nodes
     Then The node "invalid-target-mode" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node with targetMode "selectedTarget" but without target
-    Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    Given the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                                                        |
       | contentStreamIdentifier       | "cs-identifier"                                                              |
       | nodeAggregateIdentifier       | "invalid-missing-target"                                                     |
@@ -262,7 +262,7 @@ Feature: Routing behavior of shortcut nodes
     Then The node "invalid-missing-target" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node without child nodes and targetMode "firstChildNode"
-    Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    Given the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                    |
       | nodeAggregateIdentifier       | "invalid-shortcut-first-child-node"                                                |
@@ -276,7 +276,7 @@ Feature: Routing behavior of shortcut nodes
     Then The node "invalid-shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node with targetMode "selectedTarget" and a non-existing target node
-    Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    Given the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                                                                                                      |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                            |
       | nodeAggregateIdentifier       | "invalid-shortcut-selected-node"                                                                                           |
@@ -290,7 +290,7 @@ Feature: Routing behavior of shortcut nodes
     Then The node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node with targetMode "selectedTarget" and a empty target node
-    Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    Given the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                                                                                     |
       | contentStreamIdentifier       | "cs-identifier"                                                                                           |
       | nodeAggregateIdentifier       | "invalid-shortcut-selected-node"                                                                          |
@@ -304,7 +304,7 @@ Feature: Routing behavior of shortcut nodes
     Then The node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Recursive shortcuts
-    Given the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    Given the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName       | initialPropertyValues                                                                                      | nodeName |
       | level-1                 | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "level1", "targetMode": "selectedTarget", "target": "node://level-2"}                   | level1   |
       | level-2                 | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "level2", "targetMode": "selectedTarget", "target": "node://shortcut-first-child-node"} | level2   |
@@ -314,7 +314,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "level-2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Unlimited recursive shortcuts
-    Given the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    Given the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName       | initialPropertyValues                                                              | nodeName |
       | node-a                  | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "a", "targetMode": "selectedTarget", "target": "node://node-b"} | node-a   |
       | node-b                  | shortcuts                     | Neos.Neos:Shortcut | {"uriPathSegment": "b", "targetMode": "selectedTarget", "target": "node://node-a"} | node-b   |

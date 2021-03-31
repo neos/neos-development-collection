@@ -103,6 +103,41 @@ trait IntermediaryCommandTrait
         }
     }
 
+
+    /**
+     * @When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream :contentStreamIdentifier and origin :originSpacePoint:
+     * @throws JsonException
+     */
+    public function theFollowingCreateNodeAggregateWithNodeAndSerializedPropertiesCommandsAreExecuted(string $contentStreamIdentifier, string $originSpacePoint, TableNode $table): void
+    {
+        foreach ($table->getHash() as $row) {
+            $command = new CreateNodeAggregateWithNode(
+                ContentStreamIdentifier::fromString($contentStreamIdentifier),
+                NodeAggregateIdentifier::fromString($row['nodeAggregateIdentifier']),
+                NodeTypeName::fromString($row['nodeTypeName']),
+                OriginDimensionSpacePoint::fromJsonString($originSpacePoint),
+                UserIdentifier::forSystemUser(),
+                NodeAggregateIdentifier::fromString($row['parentNodeAggregateIdentifier']),
+                !empty($row['succeedingSiblingNodeAggregateIdentifier'])
+                    ? NodeAggregateIdentifier::fromString($row['succeedingSiblingNodeAggregateIdentifier'])
+                    : null,
+                !empty($row['nodeName'])
+                    ? NodeName::fromString($row['nodeName'])
+                    : null,
+                !empty($row['initialPropertyValues'])
+                    ? PropertyValuesToWrite::fromArray(json_decode($row['initialPropertyValues'], true, 512, JSON_THROW_ON_ERROR))
+                    : null,
+                !empty($row['tetheredDescendantNodeAggregateIdentifiers'])
+                    ? NodeAggregateIdentifiersByNodePaths::fromArray(json_decode($row['tetheredDescendantNodeAggregateIdentifiers'], true, 512, JSON_THROW_ON_ERROR))
+                    : null
+            );
+            $this->lastCommandOrEventResult = $this->intermediaryNodeAggregateCommandHandler
+                ->handleCreateNodeAggregateWithNode($command);
+            $this->theGraphProjectionIsFullyUpToDate();
+        }
+    }
+
+
     /**
      * @When /^the intermediary command SetNodeProperties is executed with payload:$/
      * @param TableNode $payloadTable
