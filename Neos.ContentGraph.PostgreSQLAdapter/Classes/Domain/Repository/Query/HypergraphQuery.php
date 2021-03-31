@@ -40,7 +40,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
             JOIN ' . NodeRecord::TABLE_NAME .' n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
             . ($joinRestrictionRelations
                 ? '
-            LEFT JOIN ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r ON n.nodeaggregateidentifier = ANY(r.affectednodeaggregateidentifiers)
+            LEFT JOIN ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r ON n.nodeaggregateidentifier = r.originnodeaggregateidentifier
                 AND r.contentstreamidentifier = h.contentstreamidentifier
                 AND r.dimensionspacepointhash = h.dimensionspacepointhash'
                 : '')

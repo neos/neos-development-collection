@@ -18,6 +18,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\Flow\Annotations as Flow;
 
@@ -46,6 +47,11 @@ trait NodeRemoval
                     $nodeRecord->relationAnchorPoint
                 );
                 $ingoingHierarchyRelation->removeChildNodeAnchor($nodeRecord->relationAnchorPoint, $this->getDatabaseConnection());
+                $this->removeFromRestrictions(
+                    $event->getContentStreamIdentifier(),
+                    $dimensionSpacePoint,
+                    $event->getNodeAggregateIdentifier()
+                );
 
                 if ($event->getAffectedOccupiedDimensionSpacePoints()->contains($nodeRecord->originDimensionSpacePoint)) {
                     $nodeRecordsToBeRemoved[$nodeRecord->originDimensionSpacePoint->getHash()] = $nodeRecord;
@@ -59,6 +65,10 @@ trait NodeRemoval
         });
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
     private function cascadeHierarchy(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
@@ -69,15 +79,43 @@ trait NodeRemoval
             $dimensionSpacePoint,
             $nodeRelationAnchorPoint
         );
-        $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
+        if ($childHierarchyRelation) {
+            $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
 
-        foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
-            $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByRelationAnchorPoint($childNodeAnchor);
-            $ingoingHierarchyRelations = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
-            if (empty($ingoingHierarchyRelations)) {
-                $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
+            foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
+                $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByRelationAnchorPoint($childNodeAnchor);
+                $ingoingHierarchyRelations = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
+                if (empty($ingoingHierarchyRelations)) {
+                    $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
+                }
+                $this->removeFromRestrictions(
+                    $contentStreamIdentifier,
+                    $dimensionSpacePoint,
+                    $nodeRecord->nodeAggregateIdentifier
+                );
+                $this->cascadeHierarchy($contentStreamIdentifier, $dimensionSpacePoint, $nodeRecord->relationAnchorPoint);
             }
-            $this->cascadeHierarchy($contentStreamIdentifier, $dimensionSpacePoint, $nodeRecord->relationAnchorPoint);
+        }
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    private function removeFromRestrictions(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): void {
+        foreach ($this->getProjectionHypergraph()->findIngoingRestrictionRelations(
+            $contentStreamIdentifier,
+            $dimensionSpacePoint,
+            $nodeAggregateIdentifier
+        ) as $restrictionRelation) {
+            $restrictionRelation->removeAffectedNodeAggregateIdentifier($nodeAggregateIdentifier, $this->getDatabaseConnection());
         }
     }
 

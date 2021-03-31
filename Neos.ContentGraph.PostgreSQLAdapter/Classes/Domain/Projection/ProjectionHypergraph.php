@@ -260,7 +260,7 @@ final class ProjectionHypergraph
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePoints
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $originNodeAggregateIdentifier
      * @return array|RestrictionHyperrelationRecord[]
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
@@ -268,19 +268,19 @@ final class ProjectionHypergraph
     public function findOutgoingRestrictionRelations(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePoints,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $originNodeAggregateIdentifier
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
             FROM ' . RestrictionHyperrelationRecord::TABLE_NAME .' r
             WHERE r.contentstreamidentifier = :contentStreamIdentifier
-            AND r.dimensionspacepointhash IN :dimensionSpacePointHashes
-            AND r.originnodeaggregateidentifier = :nodeAggregateIdentifier';
+            AND r.dimensionspacepointhash IN (:dimensionSpacePointHashes)
+            AND r.originnodeaggregateidentifier = :originNodeAggregateIdentifier';
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             'dimensionSpacePointHashes' => $dimensionSpacePoints->getPointHashes(),
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+            'originNodeAggregateIdentifier' => (string)$originNodeAggregateIdentifier
         ];
         $types = [
             'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
@@ -288,7 +288,7 @@ final class ProjectionHypergraph
 
         $restrictionRelationRecords = [];
         foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative() as $row) {
-            $restrictionRelationRecords = RestrictionHyperrelationRecord::fromDatabaseRow($row);
+            $restrictionRelationRecords[] = RestrictionHyperrelationRecord::fromDatabaseRow($row);
         }
 
         return $restrictionRelationRecords;

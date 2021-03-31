@@ -50,6 +50,9 @@ trait NodeDisabling
         });
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
         $this->transactional(function() use($event) {

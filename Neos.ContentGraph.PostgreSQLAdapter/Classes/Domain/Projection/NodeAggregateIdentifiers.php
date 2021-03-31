@@ -62,6 +62,17 @@ final class NodeAggregateIdentifiers extends ImmutableArrayObject
         return self::fromArray($nodeAggregateIdentifiers);
     }
 
+    public function remove(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    {
+        $nodeAggregateIdentifiers = $this->getArrayCopy();
+        $pivot = array_search($nodeAggregateIdentifier, $nodeAggregateIdentifiers);
+        if ($pivot !== false) {
+            unset($nodeAggregateIdentifiers[$pivot]);
+        }
+
+        return new self($nodeAggregateIdentifiers);
+    }
+
     /**
      * @param mixed $key
      * @return NodeAggregateIdentifier|false

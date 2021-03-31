@@ -58,21 +58,31 @@ final class RestrictionHyperrelationRecord
         );
     }
 
+    /**
+     * @throws DBALException
+     */
     public function addAffectedNodeAggregateIdentifier(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         Connection $databaseConnection
     ): void {
         $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->add($nodeAggregateIdentifier);
 
-        $databaseConnection->update(
-            self::TABLE_NAME,
-            [
-                'affectednodeaggregateidentifiers' => $affectedNodeAggregateIdentifiers->toDatabaseString()
-            ],
-            $this->getDatabaseIdentifier()
-        );
+        $this->updateAffectedNodeAggregateIdentifiers($affectedNodeAggregateIdentifiers, $databaseConnection);
+    }
 
-        $this->affectedNodeAggregateIdentifiers = $affectedNodeAggregateIdentifiers;
+    /**
+     * @throws DBALException
+     */
+    public function removeAffectedNodeAggregateIdentifier(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        Connection $databaseConnection
+    ): void {
+        $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->remove($nodeAggregateIdentifier);
+        if (empty($affectedNodeAggregateIdentifiers)) {
+            $this->removeFromDatabase($databaseConnection);
+        } else {
+            $this->updateAffectedNodeAggregateIdentifiers($affectedNodeAggregateIdentifiers, $databaseConnection);
+        }
     }
 
     /**
@@ -86,6 +96,23 @@ final class RestrictionHyperrelationRecord
             'originnodeaggregateidentifier' => (string)$this->originNodeAggregateIdentifier,
             'affectednodeaggregateidentifiers' => $this->affectedNodeAggregateIdentifiers->toDatabaseString()
         ]);
+    }
+
+    /**
+     * @throws DBALException
+     */
+    private function updateAffectedNodeAggregateIdentifiers(
+        NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers,
+        Connection $databaseConnection
+    ) {
+        $databaseConnection->update(
+            self::TABLE_NAME,
+            [
+                'affectednodeaggregateidentifiers' => $affectedNodeAggregateIdentifiers->toDatabaseString()
+            ],
+            $this->getDatabaseIdentifier()
+        );
+        $this->affectedNodeAggregateIdentifiers = $affectedNodeAggregateIdentifiers;
     }
 
     /**
