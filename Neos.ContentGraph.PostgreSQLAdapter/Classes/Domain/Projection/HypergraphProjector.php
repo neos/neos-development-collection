@@ -38,6 +38,8 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
 
     private DbalClient $databaseClient;
 
+    private ProjectionHypergraph $projectionHypergraph;
+
     public function __construct(
         DbalClient $databaseClient,
         EventStorageDbalClient $eventStorageDatabaseClient,
@@ -60,6 +62,11 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . RestrictionHyperrelationRecord::TABLE_NAME);
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table ' . ReferenceHyperrelationRecord::TABLE_NAME);
         });
+    }
+
+    protected function getProjectionHypergraph(): ProjectionHypergraph
+    {
+        return $this->projectionHypergraph;
     }
 
     /**

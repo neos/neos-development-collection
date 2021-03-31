@@ -35,8 +35,6 @@ use Neos\Flow\Annotations as Flow;
  */
 trait NodeCreation
 {
-    protected ProjectionHypergraph $projectionHypergraph;
-
     /**
      * @throws \Throwable
      */
@@ -95,19 +93,19 @@ trait NodeCreation
                     $event->getParentNodeAggregateIdentifier(),
                     null
                 );
-                $hierarchyRelation = $this->projectionHypergraph->findChildHierarchyHyperrelationRecordByAddress($parentNodeAddress);
+                $hierarchyRelation = $this->getProjectionHypergraph()->findChildHierarchyHyperrelationRecordByAddress($parentNodeAddress);
                 if ($hierarchyRelation) {
                     $succeedingSiblingNodeAnchor = null;
                     if ($event->getSucceedingNodeAggregateIdentifier()) {
                         $succeedingSiblingNodeAddress = $parentNodeAddress->withNodeAggregateIdentifier($event->getSucceedingNodeAggregateIdentifier());
-                        $succeedingSiblingNode = $this->projectionHypergraph->findNodeRecordByAddress($succeedingSiblingNodeAddress);
+                        $succeedingSiblingNode = $this->getProjectionHypergraph()->findNodeRecordByAddress($succeedingSiblingNodeAddress);
                         if ($succeedingSiblingNode) {
                             $succeedingSiblingNodeAnchor = $succeedingSiblingNode->relationAnchorPoint;
                         }
                     }
                     $hierarchyRelation->addChildNodeAnchor($node->relationAnchorPoint, $succeedingSiblingNodeAnchor, $this->getDatabaseConnection());
                 } else {
-                    $parentNode = $this->projectionHypergraph->findNodeRecordByAddress($parentNodeAddress);
+                    $parentNode = $this->getProjectionHypergraph()->findNodeRecordByAddress($parentNodeAddress);
                     $hierarchyRelation = new HierarchyHyperrelationRecord(
                         $event->getContentStreamIdentifier(),
                         $parentNode->relationAnchorPoint,
@@ -133,7 +131,7 @@ trait NodeCreation
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchor
     ): void {
         foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
-            $hierarchyRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByParentNodeAnchor(
+            $hierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByParentNodeAnchor(
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,
                 $parentNodeAnchor
@@ -160,10 +158,12 @@ trait NodeCreation
         NodeAddress $parentNodeAddress,
         NodeAggregateIdentifier $affectedNodeAggregateIdentifier
     ): void {
-        foreach ($this->projectionHypergraph->findIngoingRestrictionRelations($parentNodeAddress) as $ingoingRestrictionRelation) {
+        foreach ($this->getProjectionHypergraph()->findIngoingRestrictionRelations($parentNodeAddress) as $ingoingRestrictionRelation) {
             $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier($affectedNodeAggregateIdentifier, $this->getDatabaseConnection());
         }
     }
+
+    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
 
     /**
      * @throws \Throwable

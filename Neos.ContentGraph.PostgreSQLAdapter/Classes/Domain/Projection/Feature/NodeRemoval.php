@@ -27,8 +27,6 @@ use Neos\Flow\Annotations as Flow;
  */
 trait NodeRemoval
 {
-    protected ProjectionHypergraph $projectionHypergraph;
-
     /**
      * @throws \Throwable
      */
@@ -43,9 +41,9 @@ trait NodeRemoval
                     $event->getNodeAggregateIdentifier(),
                     null
                 );
-                $nodeRecord = $this->projectionHypergraph->findNodeRecordByAddress($nodeAddress);
+                $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByAddress($nodeAddress);
 
-                $ingoingHierarchyRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByChildNodeAnchor(
+                $ingoingHierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByChildNodeAnchor(
                     $event->getContentStreamIdentifier(),
                     $dimensionSpacePoint,
                     $nodeRecord->relationAnchorPoint
@@ -69,7 +67,7 @@ trait NodeRemoval
         DimensionSpacePoint $dimensionSpacePoint,
         NodeRelationAnchorPoint $nodeRelationAnchorPoint
     ): void {
-        $childHierarchyRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByParentNodeAnchor(
+        $childHierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByParentNodeAnchor(
             $contentStreamIdentifier,
             $dimensionSpacePoint,
             $nodeRelationAnchorPoint
@@ -77,14 +75,16 @@ trait NodeRemoval
         $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
 
         foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
-            $nodeRecord = $this->projectionHypergraph->findNodeRecordByRelationAnchorPoint($childNodeAnchor);
-            $ingoingHierarchyRelations = $this->projectionHypergraph->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
+            $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByRelationAnchorPoint($childNodeAnchor);
+            $ingoingHierarchyRelations = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordsByChildNodeAnchor($childNodeAnchor);
             if (empty($ingoingHierarchyRelations)) {
                 $nodeRecord->removeFromDatabase($this->getDatabaseConnection());
             }
             $this->cascadeHierarchy($contentStreamIdentifier, $dimensionSpacePoint, $nodeRecord->relationAnchorPoint);
         }
     }
+
+    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
 
     /**
      * @throws \Throwable

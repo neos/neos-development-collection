@@ -25,22 +25,20 @@ use Neos\Flow\Annotations as Flow;
  */
 trait NodeReferencing
 {
-    protected ProjectionHypergraph $projectionHypergraph;
-
     /**
      * @throws \Throwable
      */
     public function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
         $this->transactional(function() use($event) {
-            $nodeRecord = $this->projectionHypergraph->findNodeRecordByOrigin(
+            $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
                 $event->getContentStreamIdentifier(),
                 $event->getSourceOriginDimensionSpacePoint(),
                 $event->getSourceNodeAggregateIdentifier()
             );
 
             if ($nodeRecord) {
-                $existingReferenceRelation = $this->projectionHypergraph->findReferenceRelationByOrigin(
+                $existingReferenceRelation = $this->getProjectionHypergraph()->findReferenceRelationByOrigin(
                     $nodeRecord->relationAnchorPoint,
                     $event->getReferenceName()
                 );
@@ -62,6 +60,8 @@ trait NodeReferencing
             }
         });
     }
+
+    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
 
     /**
      * @throws \Throwable

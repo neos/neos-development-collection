@@ -25,15 +25,13 @@ use Neos\Flow\Annotations as Flow;
  */
 trait NodeDisabling
 {
-    protected ProjectionHypergraph $projectionHypergraph;
-
     /**
      * @throws \Throwable
      */
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function() use($event) {
-            $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint = $this->projectionHypergraph->findDescendantNodeAggregateIdentifiers(
+            $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint = $this->getProjectionHypergraph()->findDescendantNodeAggregateIdentifiers(
                 $event->getContentStreamIdentifier(),
                 $event->getAffectedDimensionSpacePoints(),
                 $event->getNodeAggregateIdentifier()
@@ -55,7 +53,7 @@ trait NodeDisabling
     public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
         $this->transactional(function() use($event) {
-            $restrictionRelations = $this->projectionHypergraph->findOutgoingRestrictionRelations(
+            $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(
                 $event->getContentStreamIdentifier(),
                 $event->getAffectedDimensionSpacePoints(),
                 $event->getNodeAggregateIdentifier(),
@@ -65,6 +63,8 @@ trait NodeDisabling
             }
         });
     }
+
+    abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
 
     /**
      * @throws \Throwable
