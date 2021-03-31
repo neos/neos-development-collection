@@ -52,6 +52,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $this->setupFlowSubcommandTrait();
         $this->setupEventSourcedTrait();
         $this->setupMigrationsTrait();
+        $this->readModelFactory = $this->objectManager->get(\Neos\ContentRepository\Intermediary\Domain\ReadModelFactory::class);
     }
 
     /**

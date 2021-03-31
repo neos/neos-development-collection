@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 
 /**
  * ViewHelper to find out if Neos is rendering the backend.
@@ -37,14 +37,12 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 class InBackendViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @return boolean
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(TraversableNodeInterface $node = null)
+    public function render(NodeBasedReadModelInterface $node = null)
     {
-        $nodeAddress = $this->getNodeAddressOfContextNode($node);
-
-        return (!$nodeAddress->isInLiveWorkspace() && $this->hasAccessToBackend());
+        return (!$node->getAddress()->isInLiveWorkspace() && $this->hasAccessToBackend());
     }
 }

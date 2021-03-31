@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
@@ -22,10 +22,7 @@ use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
 class ReloadDocument extends AbstractFeedback
 {
-    /**
-     * @var TraversableNodeInterface
-     */
-    protected $node;
+    protected NodeBasedReadModelInterface $node;
 
     /**
      * @Flow\Inject
@@ -45,29 +42,22 @@ class ReloadDocument extends AbstractFeedback
 
     /**
      * Set the node
-     *
-     * @param TraversableNodeInterface $node
-     * @return void
      */
-    public function setNode(TraversableNodeInterface $node)
+    public function setNode(NodeBasedReadModelInterface $node): void
     {
         $this->node = $node;
     }
 
     /**
      * Get the node
-     *
-     * @return TraversableNodeInterface
      */
-    public function getNode()
+    public function getNode(): NodeBasedReadModelInterface
     {
         return $this->node;
     }
 
     /**
      * Get the description
-     *
-     * @return string
      */
     public function getDescription(): string
     {
@@ -76,9 +66,6 @@ class ReloadDocument extends AbstractFeedback
 
     /**
      * Checks whether this feedback is similar to another
-     *
-     * @param FeedbackInterface $feedback
-     * @return boolean
      */
     public function isSimilarTo(FeedbackInterface $feedback)
     {

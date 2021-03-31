@@ -55,7 +55,8 @@ trait NodeReferencing
                         $command->getSourceNodeAggregateIdentifier(),
                         $command->getSourceOriginDimensionSpacePoint(),
                         $command->getDestinationNodeAggregateIdentifiers(),
-                        $command->getReferenceName()
+                        $command->getReferenceName(),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

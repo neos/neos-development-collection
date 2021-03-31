@@ -14,6 +14,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -132,7 +133,8 @@ class DisallowedChildNodeAdjustment
                     ),
                     AffectedCoveredDimensionSpacePointSet::onlyGivenVariant(
                         $dimensionSpacePoint
-                    )
+                    ),
+                    UserIdentifier::forSystemUser()
                 ),
                 Uuid::uuid4()->toString()
             )

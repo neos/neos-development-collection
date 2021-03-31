@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -22,72 +23,56 @@ use Neos\Flow\Annotations as Flow;
  */
 class WorkspaceRebaseFailed implements DomainEventInterface
 {
-    /**
-     * @var WorkspaceName
-     */
-    private $workspaceName;
+    private WorkspaceName $workspaceName;
 
     /**
      * The content stream on which we could not apply the source content stream's commands -- i.e. the "failed" state.
-     *
-     * @var ContentStreamIdentifier
      */
-    private $candidateContentStreamIdentifier;
+    private ContentStreamIdentifier $candidateContentStreamIdentifier;
 
     /**
      * The content stream which we tried to rebase
-     *
-     * @var ContentStreamIdentifier
      */
-    private $sourceContentStreamIdentifier;
+    private ContentStreamIdentifier $sourceContentStreamIdentifier;
 
-    /**
-     * @var array
-     */
-    private $errors;
+    private UserIdentifier $initiatingUserIdentifier;
 
-    /**
-     * WorkspaceRebaseFailed constructor.
-     * @param WorkspaceName $workspaceName
-     * @param ContentStreamIdentifier $candidateContentStreamIdentifier
-     * @param ContentStreamIdentifier $sourceContentStreamIdentifier
-     * @param array $errors
-     */
-    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $candidateContentStreamIdentifier, ContentStreamIdentifier $sourceContentStreamIdentifier, array $errors)
-    {
+    private array $errors;
+
+    public function __construct(
+        WorkspaceName $workspaceName,
+        ContentStreamIdentifier $candidateContentStreamIdentifier,
+        ContentStreamIdentifier $sourceContentStreamIdentifier,
+        UserIdentifier $initiatingUserIdentifier,
+        array $errors
+    ) {
         $this->workspaceName = $workspaceName;
         $this->candidateContentStreamIdentifier = $candidateContentStreamIdentifier;
         $this->sourceContentStreamIdentifier = $sourceContentStreamIdentifier;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
         $this->errors = $errors;
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getCandidateContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->candidateContentStreamIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->sourceContentStreamIdentifier;
     }
 
-    /**
-     * @return array
-     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function getErrors(): array
     {
         return $this->errors;

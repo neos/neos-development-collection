@@ -157,7 +157,8 @@ final class WorkspaceCommandHandler
         $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $command->getNewContentStreamIdentifier(),
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         ));
 
@@ -230,9 +231,11 @@ final class WorkspaceCommandHandler
      * @param PublishWorkspace $command
      * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
+     * @throws ContentStreamAlreadyExists
+     * @throws ContentStreamDoesNotExistYet
      * @throws WorkspaceDoesNotExist
-     * @throws EventStreamNotFoundException
-     * @throws \Exception
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function handlePublishWorkspace(PublishWorkspace $command): CommandResult
     {
@@ -254,7 +257,8 @@ final class WorkspaceCommandHandler
             $this->contentStreamCommandHandler->handleForkContentStream(
                 new ForkContentStream(
                     $newContentStream,
-                    $baseWorkspace->getCurrentContentStreamIdentifier()
+                    $baseWorkspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 )
             )
         );
@@ -268,7 +272,8 @@ final class WorkspaceCommandHandler
                     $command->getWorkspaceName(),
                     $workspace->getBaseWorkspaceName(),
                     $newContentStream,
-                    $workspace->getCurrentContentStreamIdentifier()
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
             )
@@ -380,7 +385,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $rebasedContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -430,7 +436,8 @@ final class WorkspaceCommandHandler
                     new WorkspaceWasRebased(
                         $command->getWorkspaceName(),
                         $rebasedContentStream,
-                        $workspace->getCurrentContentStreamIdentifier()
+                        $workspace->getCurrentContentStreamIdentifier(),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )
@@ -447,6 +454,7 @@ final class WorkspaceCommandHandler
                         $command->getWorkspaceName(),
                         $rebasedContentStream,
                         $workspace->getCurrentContentStreamIdentifier(),
+                        $command->getInitiatingUserIdentifier(),
                         $rebaseStatistics->getErrors()
                     ),
                     Uuid::uuid4()->toString()
@@ -586,7 +594,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $matchingContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -603,7 +612,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $remainingContentStream,
-                $matchingContentStream
+                $matchingContentStream,
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -625,7 +635,8 @@ final class WorkspaceCommandHandler
                     $command->getWorkspaceName(),
                     $workspace->getBaseWorkspaceName(),
                     $remainingContentStream,
-                    $workspace->getCurrentContentStreamIdentifier()
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
             )
@@ -640,7 +651,7 @@ final class WorkspaceCommandHandler
     /**
      * This method is like a Rebase while dropping some modifications!
      *
-     * @param Command\PublishIndividualNodesFromWorkspace $command
+     * @param Command\DiscardIndividualNodesFromWorkspace $command
      * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
      * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
@@ -686,7 +697,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $newContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -702,7 +714,8 @@ final class WorkspaceCommandHandler
                 new WorkspaceWasPartiallyDiscarded(
                     $command->getWorkspaceName(),
                     $newContentStream,
-                    $workspace->getCurrentContentStreamIdentifier()
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
             )
@@ -750,7 +763,8 @@ final class WorkspaceCommandHandler
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $newContentStream,
-                $baseWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier(),
+                $command->getInitiatingUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
 
@@ -760,7 +774,8 @@ final class WorkspaceCommandHandler
                 new WorkspaceWasDiscarded(
                     $command->getWorkspaceName(),
                     $newContentStream,
-                    $workspace->getCurrentContentStreamIdentifier()
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
             )

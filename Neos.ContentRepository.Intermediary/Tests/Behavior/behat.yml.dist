@@ -1,0 +1,17 @@
+# Behat distribution configuration
+#
+# Override with behat.yml for local configuration.
+#
+
+default:
+  autoload:
+    '': "%paths.base%/Features/Bootstrap"
+  suites:
+    cr:
+      paths:
+        - "%paths.base%/Features/ReadModelInstantiation/"
+        - "%paths.base%/Features/NodeCreation/"
+        - "%paths.base%/Features/NodeModification/"
+      contexts:
+        - FeatureContext:
+

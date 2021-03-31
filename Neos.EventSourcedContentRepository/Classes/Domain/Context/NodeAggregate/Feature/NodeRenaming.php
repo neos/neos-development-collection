@@ -28,10 +28,6 @@ trait NodeRenaming
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
-    /**
-     * @param ChangeNodeAggregateName $command
-     * @return CommandResult
-     */
     public function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): CommandResult
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
@@ -45,7 +41,8 @@ trait NodeRenaming
                     new NodeAggregateNameWasChanged(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
-                        $command->getNewNodeName()
+                        $command->getNewNodeName(),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

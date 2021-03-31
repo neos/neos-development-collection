@@ -13,30 +13,30 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Comman
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
+ * Command to remove an existing content stream
  */
 final class RemoveContentStream
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * RemoveContentStream constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier)
+    private UserIdentifier $initiatingUserIdentifier;
+
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 }

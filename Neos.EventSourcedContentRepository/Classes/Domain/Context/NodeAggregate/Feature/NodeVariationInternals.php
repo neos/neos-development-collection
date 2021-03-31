@@ -21,6 +21,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSp
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Ramsey\Uuid\Uuid;
@@ -31,40 +32,45 @@ trait NodeVariationInternals
 
     abstract protected function getContentGraph(): ContentGraphInterface;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param OriginDimensionSpacePoint $sourceOrigin
-     * @param OriginDimensionSpacePoint $targetOrigin
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @return DomainEvents
-     */
-    protected function createEventsForVariations(ContentStreamIdentifier $contentStreamIdentifier, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin, ReadableNodeAggregateInterface $nodeAggregate): DomainEvents
-    {
+    protected function createEventsForVariations(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        OriginDimensionSpacePoint $sourceOrigin,
+        OriginDimensionSpacePoint $targetOrigin,
+        ReadableNodeAggregateInterface $nodeAggregate,
+        UserIdentifier $initiatingUserIdentifier
+    ): DomainEvents {
         switch ($this->getInterDimensionalVariationGraph()->getVariantType($targetOrigin, $sourceOrigin)->getType()) {
             case DimensionSpace\VariantType::TYPE_SPECIALIZATION:
-                $events = $this->handleCreateNodeSpecializationVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate);
+                $events = $this->handleCreateNodeSpecializationVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate, $initiatingUserIdentifier);
             break;
             case DimensionSpace\VariantType::TYPE_GENERALIZATION:
-                $events = $this->handleCreateNodeGeneralizationVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate);
+                $events = $this->handleCreateNodeGeneralizationVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate, $initiatingUserIdentifier);
             break;
             case DimensionSpace\VariantType::TYPE_PEER:
             default:
-                $events = $this->handleCreateNodePeerVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate);
+                $events = $this->handleCreateNodePeerVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate, $initiatingUserIdentifier);
         }
         return $events;
     }
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param OriginDimensionSpacePoint $sourceOrigin
-     * @param OriginDimensionSpacePoint $targetOrigin
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @return DomainEvents
-     */
-    protected function handleCreateNodeSpecializationVariant(ContentStreamIdentifier $contentStreamIdentifier, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin, ReadableNodeAggregateInterface $nodeAggregate): DomainEvents
-    {
+    protected function handleCreateNodeSpecializationVariant(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        OriginDimensionSpacePoint $sourceOrigin,
+        OriginDimensionSpacePoint $targetOrigin,
+        ReadableNodeAggregateInterface $nodeAggregate,
+        UserIdentifier $initiatingUserIdentifier
+    ): DomainEvents {
         $specializationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
-        $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate, $specializationVisibility, []);
+        $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
+            $contentStreamIdentifier,
+            $sourceOrigin,
+            $targetOrigin,
+            $nodeAggregate,
+            $specializationVisibility,
+            $initiatingUserIdentifier,
+            []
+        );
+
         return DomainEvents::fromArray($events);
     }
 
@@ -74,6 +80,7 @@ trait NodeVariationInternals
      * @param OriginDimensionSpacePoint $targetOrigin
      * @param ReadableNodeAggregateInterface $nodeAggregate
      * @param DimensionSpacePointSet $specializationVisibility
+     * @param UserIdentifier $initiatingUserIdentifier
      * @param array $events
      * @return array|NodeSpecializationVariantWasCreated[]
      */
@@ -83,6 +90,7 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $specializationVisibility,
+        UserIdentifier $initiatingUserIdentifier,
         array $events
     ): array {
         $events[] = DecoratedEvent::addIdentifier(
@@ -91,29 +99,45 @@ trait NodeVariationInternals
                 $nodeAggregate->getIdentifier(),
                 $sourceOrigin,
                 $targetOrigin,
-                $specializationVisibility
+                $specializationVisibility,
+                $initiatingUserIdentifier
             ),
             Uuid::uuid4()->toString()
         );
 
         foreach ($this->getContentGraph()->findTetheredChildNodeAggregates($contentStreamIdentifier, $nodeAggregate->getIdentifier()) as $tetheredChildNodeAggregate) {
-            $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $tetheredChildNodeAggregate, $specializationVisibility, $events);
+            $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
+                $contentStreamIdentifier,
+                $sourceOrigin,
+                $targetOrigin,
+                $tetheredChildNodeAggregate,
+                $specializationVisibility,
+                $initiatingUserIdentifier,
+                $events
+            );
         }
 
         return $events;
     }
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param OriginDimensionSpacePoint $sourceOrigin
-     * @param OriginDimensionSpacePoint $targetOrigin
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @return DomainEvents
-     */
-    protected function handleCreateNodeGeneralizationVariant(ContentStreamIdentifier $contentStreamIdentifier, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin, ReadableNodeAggregateInterface $nodeAggregate): DomainEvents
-    {
+    protected function handleCreateNodeGeneralizationVariant(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        OriginDimensionSpacePoint $sourceOrigin,
+        OriginDimensionSpacePoint $targetOrigin,
+        ReadableNodeAggregateInterface $nodeAggregate,
+        UserIdentifier $initiatingUserIdentifier
+    ): DomainEvents {
         $generalizationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
-        $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate, $generalizationVisibility, []);
+        $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
+            $contentStreamIdentifier,
+            $sourceOrigin,
+            $targetOrigin,
+            $nodeAggregate,
+            $generalizationVisibility,
+            $initiatingUserIdentifier,
+            []
+        );
+
         return DomainEvents::fromArray($events);
     }
 
@@ -123,6 +147,7 @@ trait NodeVariationInternals
      * @param OriginDimensionSpacePoint $targetOrigin
      * @param ReadableNodeAggregateInterface $nodeAggregate
      * @param DimensionSpacePointSet $generalizationVisibility
+     * @param UserIdentifier $initiatingUserIdentifier
      * @param array $events
      * @return array|NodeSpecializationVariantWasCreated[]
      */
@@ -132,6 +157,7 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $generalizationVisibility,
+        UserIdentifier $initiatingUserIdentifier,
         array $events
     ): array {
         $events[] = DecoratedEvent::addIdentifier(
@@ -140,29 +166,45 @@ trait NodeVariationInternals
                 $nodeAggregate->getIdentifier(),
                 $sourceOrigin,
                 $targetOrigin,
-                $generalizationVisibility
+                $generalizationVisibility,
+                $initiatingUserIdentifier
             ),
             Uuid::uuid4()->toString()
         );
 
         foreach ($this->getContentGraph()->findTetheredChildNodeAggregates($contentStreamIdentifier, $nodeAggregate->getIdentifier()) as $tetheredChildNodeAggregate) {
-            $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $tetheredChildNodeAggregate, $generalizationVisibility, $events);
+            $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
+                $contentStreamIdentifier,
+                $sourceOrigin,
+                $targetOrigin,
+                $tetheredChildNodeAggregate,
+                $generalizationVisibility,
+                $initiatingUserIdentifier,
+                $events
+            );
         }
 
         return $events;
     }
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param OriginDimensionSpacePoint $sourceOrigin
-     * @param OriginDimensionSpacePoint $targetOrigin
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @return DomainEvents
-     */
-    protected function handleCreateNodePeerVariant(ContentStreamIdentifier $contentStreamIdentifier, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin, ReadableNodeAggregateInterface $nodeAggregate): DomainEvents
-    {
+    protected function handleCreateNodePeerVariant(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        OriginDimensionSpacePoint $sourceOrigin,
+        OriginDimensionSpacePoint $targetOrigin,
+        ReadableNodeAggregateInterface $nodeAggregate,
+        UserIdentifier $initiatingUserIdentifier
+    ): DomainEvents {
         $peerVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
-        $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate, $peerVisibility, []);
+        $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
+            $contentStreamIdentifier,
+            $sourceOrigin,
+            $targetOrigin,
+            $nodeAggregate,
+            $peerVisibility,
+            $initiatingUserIdentifier,
+            []
+        );
+
         return DomainEvents::fromArray($events);
     }
 
@@ -172,6 +214,7 @@ trait NodeVariationInternals
      * @param OriginDimensionSpacePoint $targetOrigin
      * @param ReadableNodeAggregateInterface $nodeAggregate
      * @param DimensionSpacePointSet $peerVisibility
+     * @param UserIdentifier $initiatingUserIdentifier
      * @param array $events
      * @return array|NodePeerVariantWasCreated[]
      */
@@ -181,6 +224,7 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $peerVisibility,
+        UserIdentifier $initiatingUserIdentifier,
         array $events
     ): array {
         $events[] = DecoratedEvent::addIdentifier(
@@ -189,23 +233,27 @@ trait NodeVariationInternals
                 $nodeAggregate->getIdentifier(),
                 $sourceOrigin,
                 $targetOrigin,
-                $peerVisibility
+                $peerVisibility,
+                $initiatingUserIdentifier
             ),
             Uuid::uuid4()->toString()
         );
 
         foreach ($this->getContentGraph()->findTetheredChildNodeAggregates($contentStreamIdentifier, $nodeAggregate->getIdentifier()) as $tetheredChildNodeAggregate) {
-            $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $tetheredChildNodeAggregate, $peerVisibility, $events);
+            $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
+                $contentStreamIdentifier,
+                $sourceOrigin,
+                $targetOrigin,
+                $tetheredChildNodeAggregate,
+                $peerVisibility,
+                $initiatingUserIdentifier,
+                $events
+            );
         }
 
         return $events;
     }
 
-    /**
-     * @param OriginDimensionSpacePoint $targetOrigin
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @return DimensionSpacePointSet
-     */
     private function calculateEffectiveVisibility(OriginDimensionSpacePoint $targetOrigin, ReadableNodeAggregateInterface $nodeAggregate): DimensionSpacePointSet
     {
         $specializations = $this->getInterDimensionalVariationGraph()->getIndexedSpecializations($targetOrigin);

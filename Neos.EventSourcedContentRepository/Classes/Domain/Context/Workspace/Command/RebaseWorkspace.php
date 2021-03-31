@@ -12,35 +12,42 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Rebase a workspace
+ *
+ * @Flow\Proxy(false)
  */
 final class RebaseWorkspace
 {
-    /**
-     * @var WorkspaceName
-     */
-    private $workspaceName;
+    private WorkspaceName $workspaceName;
 
-    public function __construct(WorkspaceName $workspaceName)
+    private UserIdentifier $initiatingUserIdentifier;
+
+    public function __construct(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier)
     {
         $this->workspaceName = $workspaceName;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
     {
-        return new static(
-            new WorkspaceName($array['workspaceName'])
+        return new self(
+            new WorkspaceName($array['workspaceName']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 }

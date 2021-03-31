@@ -12,9 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
@@ -22,11 +23,13 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommand
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\Change;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Service\UserService;
 
 /**
  * A generic ContentRepository Publishing Service
@@ -36,7 +39,6 @@ use Neos\ContentRepository\Domain\Model\Workspace;
  */
 class PublishingService
 {
-
     /**
      * @Flow\Inject
      * @var ContentDimensionPresetSourceInterface
@@ -62,10 +64,34 @@ class PublishingService
     protected $changeFinder;
 
     /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceCommandHandler
+     */
+    protected $workspaceCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
+
+    /**
      * Returns a list of nodes contained in the given workspace which are not yet published
      *
      * @param WorkspaceName $workspaceName
-     * @return TraversableNodeInterface[]
+     * @return NodeBasedReadModelInterface[]
      * @api
      */
     public function getUnpublishedNodes(WorkspaceName $workspaceName)
@@ -86,7 +112,7 @@ class PublishingService
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
 
             if ($node instanceof NodeInterface) {
-                $unpublishedNodes[] = new TraversableNode($node, $subgraph);
+                $unpublishedNodes[] = $this->readModelFactory->createReadModel($node, $subgraph);
             }
         }
         return $unpublishedNodes;
@@ -105,28 +131,21 @@ class PublishingService
         return $this->changeFinder->countByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
     }
 
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceCommandHandler
-     */
-    protected $workspaceCommandHandler;
-
-    /**
-     * @param WorkspaceName $workspaceName
-     */
-    public function publishWorkspace(WorkspaceName $workspaceName)
+    public function publishWorkspace(WorkspaceName $workspaceName): void
     {
-        $command = new RebaseWorkspace(
-            $workspaceName
+        $userIdentifier = UserIdentifier::fromString(
+            $this->persistenceManager->getIdentifierByObject($this->userService->getBackendUser())
         );
 
         // TODO: only rebase if necessary!
-        $this->workspaceCommandHandler->handleRebaseWorkspace($command)->blockUntilProjectionsAreUpToDate();
+        $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
+            $workspaceName,
+            $userIdentifier
+        ))->blockUntilProjectionsAreUpToDate();
 
-        $command = new PublishWorkspace(
-            $workspaceName
-        );
-        $this->workspaceCommandHandler->handlePublishWorkspace($command)->blockUntilProjectionsAreUpToDate();
+        $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace(
+            $workspaceName,
+            $userIdentifier
+        ))->blockUntilProjectionsAreUpToDate();
     }
 }

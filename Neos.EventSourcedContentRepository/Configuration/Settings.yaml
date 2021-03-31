@@ -1,18 +1,6 @@
 Neos:
   EventSourcedContentRepository:
     contentDimensions: {}
-    propertyConverters:
-      CollectionTypeDenormalizer:
-        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\CollectionTypeDenormalizer
-      ScalarNormalizer:
-        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\ScalarNormalizer
-      DateTime:
-        className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
-        position: 'start'
-      DoctrinePersistentObjectNormalizer:
-        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\DoctrinePersistentObjectNormalizer
-      ProxyAwareObjectNormalizer:
-        className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
 
   EventSourcing:
     EventStore:

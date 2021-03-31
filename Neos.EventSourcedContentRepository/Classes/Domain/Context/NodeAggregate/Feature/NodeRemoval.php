@@ -75,7 +75,8 @@ trait NodeRemoval
                             $nodeAggregate,
                             $command->getCoveredDimensionSpacePoint(),
                             $this->getInterDimensionalVariationGraph()
-                        )
+                        ),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

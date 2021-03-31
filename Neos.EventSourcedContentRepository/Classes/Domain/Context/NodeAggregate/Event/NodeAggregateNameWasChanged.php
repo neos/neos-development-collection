@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -23,61 +24,44 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeAggregateNameWasChanged implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    private $nodeAggregateIdentifier;
+    private NodeName $newNodeName;
 
-    /**
-     * @var NodeName
-     */
-    private $newNodeName;
+    private UserIdentifier $initiatingUserIdentifier;
 
-    /**
-     * NodeNameWasChanged constructor.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeName $newNodeName
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeName $newNodeName
+        NodeName $newNodeName,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newNodeName = $newNodeName;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return NodeName
-     */
     public function getNewNodeName(): NodeName
     {
         return $this->newNodeName;
+    }
+
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
@@ -85,7 +69,8 @@ final class NodeAggregateNameWasChanged implements DomainEventInterface, Publish
         return new NodeAggregateNameWasChanged(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
-            $this->newNodeName
+            $this->newNodeName,
+            $this->initiatingUserIdentifier
         );
     }
 }

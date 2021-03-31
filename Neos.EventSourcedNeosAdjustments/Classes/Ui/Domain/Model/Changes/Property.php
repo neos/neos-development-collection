@@ -16,19 +16,21 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
+use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
+use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler as IntermediaryNodeAggregateCommandHandlerAlias;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -44,7 +46,6 @@ use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
  */
 class Property extends AbstractChange
 {
-
     /**
      * @Flow\Inject
      * @var NodePropertyConversionService
@@ -99,9 +100,21 @@ class Property extends AbstractChange
 
     /**
      * @Flow\Inject
+     * @var IntermediaryNodeAggregateCommandHandlerAlias
+     */
+    protected $intermediaryNodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
      * @var ContentCacheFlusher
      */
     protected $contentCacheFlusher;
+
+    /**
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
 
     /**
      * Set the property name
@@ -190,7 +203,7 @@ class Property extends AbstractChange
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         $nodeType = $this->getSubject()->getNodeType();
         $propertyName = $this->getPropertyName();
@@ -209,7 +222,7 @@ class Property extends AbstractChange
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws DimensionSpacePointNotFound
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             $node = $this->getSubject();
@@ -218,6 +231,7 @@ class Property extends AbstractChange
             $propertyName = $this->getPropertyName();
 
             $propertyType = $node->getNodeType()->getPropertyType($propertyName);
+            $userIdentifier = $this->getInitiatingUserIdentifier();
 
             // Use extra commands for reference handling
             if ($propertyType === 'reference' || $propertyType === 'references') {
@@ -243,8 +257,9 @@ class Property extends AbstractChange
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
-                    $destinationNodeAggregateIdentifiers,
-                    PropertyName::fromString($propertyName)
+                    new NodeAggregateIdentifierCollection($destinationNodeAggregateIdentifiers),
+                    PropertyName::fromString($propertyName),
+                    $this->getInitiatingUserIdentifier()
                 );
                 $this->nodeAggregateCommandHandler->handleSetNodeReferences($command)->blockUntilProjectionsAreUpToDate();
             } else {
@@ -264,9 +279,10 @@ class Property extends AbstractChange
                             [
                                 $propertyName => $value
                             ]
-                        )
+                        ),
+                        $this->getInitiatingUserIdentifier()
                     );
-                    $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
+                    $this->intermediaryNodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
                 } else {
                     // property starts with "_"
                     if ($propertyName === '_nodeType') {
@@ -274,7 +290,8 @@ class Property extends AbstractChange
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
                             NodeTypeName::fromString($value),
-                            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete()
+                            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete(),
+                            $userIdentifier
                         );
                         $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType($command)->blockUntilProjectionsAreUpToDate();
                     } elseif ($propertyName === '_hidden') {
@@ -283,7 +300,8 @@ class Property extends AbstractChange
                                 $node->getContentStreamIdentifier(),
                                 $node->getNodeAggregateIdentifier(),
                                 $node->getOriginDimensionSpacePoint(),
-                                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                $userIdentifier
                             );
                             $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                         } else {
@@ -292,7 +310,8 @@ class Property extends AbstractChange
                                 $node->getContentStreamIdentifier(),
                                 $node->getNodeAggregateIdentifier(),
                                 $node->getOriginDimensionSpacePoint(),
-                                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                $userIdentifier
                             );
                             $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                         }
@@ -306,7 +325,7 @@ class Property extends AbstractChange
             // Thus, we need to re-fetch it (as a workaround; until we do not need this anymore)
             $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
             $node = $subgraph->findNodeByNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
-            $node = new TraversableNode($node, $subgraph);
+            $node = $this->readModelFactory->createReadModel($node, $subgraph);
 
             $this->updateWorkspaceInfo();
 

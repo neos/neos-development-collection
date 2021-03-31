@@ -101,38 +101,41 @@ Feature: Properties
           defaultValue: "foo"
     """
     And the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                    |
-      | contentStreamIdentifier   | "cs-identifier"          |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough" |
-      | originDimensionSpacePoint | {}                       |
-      | propertyValues            | {"otherProp": ""}        |
+      | Key                       | Value                                          |
+      | contentStreamIdentifier   | "cs-identifier"                                |
+      | nodeAggregateIdentifier   | "sir-david-nodenborough"                       |
+      | originDimensionSpacePoint | {}                                             |
+      | propertyValues            | {"otherProp": {"type": "string", "value": ""}} |
+      | initiatingUserIdentifier  | "initiating-user-identifier"                   |
     And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-  Scenario: a broken property (which cannot be deserialized) is detected and removed
+  # move to intermediary if necessary
+  #Scenario: a broken property (which cannot be deserialized) is detected and removed
 
-    Given I have the following additional NodeTypes configuration:
-    """
-    'Neos.ContentRepository.Testing:Document':
-      properties:
-        myProp:
-          # we need to disable the default value; as otherwise, the "MISSING_DEFAULT_VALUE" check will trigger after the property has been removed.
-          defaultValue: ~
-    """
+    #Given I have the following additional NodeTypes configuration:
+    #"""
+    #'Neos.ContentRepository.Testing:Document':
+    #  properties:
+    #    myProp:
+    #      # we need to disable the default value; as otherwise, the "MISSING_DEFAULT_VALUE" check will trigger after the property has been removed.
+    #      defaultValue: ~
+    #"""
 
-    And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
-      | Key                       | Value                                                                       |
-      | contentStreamIdentifier   | "cs-identifier"                                                             |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                    |
-      | originDimensionSpacePoint | {}                                                                          |
-      | propertyValues            | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
-    And the graph projection is fully up to date
-    Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                        | nodeAggregateIdentifier |
-      | NON_DESERIALIZABLE_PROPERTY | sir-david-nodenborough  |
-    When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
-    Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
+    #And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
+    #  | Key                       | Value                                                                       |
+    #  | contentStreamIdentifier   | "cs-identifier"                                                             |
+    #  | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                    |
+    #  | originDimensionSpacePoint | {}                                                                          |
+    #  | propertyValues            | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
+    #  | initiatingUserIdentifier  | "initiating-user-identifier"                                                |
+    #And the graph projection is fully up to date
+    #Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
+    #  | Type                        | nodeAggregateIdentifier |
+    #  | NON_DESERIALIZABLE_PROPERTY | sir-david-nodenborough  |
+    #When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
+    #Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have no properties
+    #When I am in content stream "cs-identifier" and Dimension Space Point {}
+    #Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    #And I expect this node to have no properties

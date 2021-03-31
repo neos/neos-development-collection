@@ -77,17 +77,16 @@ Feature: Routing behavior of shortcut nodes
     When I am on URL "https://current.host/"
     Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/some/relative/url"
 
-# TODO: Re-activate the following test once https://github.com/neos/flow-development-collection/issues/2140 is resolved
-#  Scenario: Shortcut selected target URL keeps schema, port, query and fragment of absolute target URLs
-#    When the command "SetNodeProperties" is executed with payload:
-#      | Key                       | Value                                                                            |
-#      | contentStreamIdentifier   | "cs-identifier"                                                                  |
-#      | nodeAggregateIdentifier   | "shortcut-external-url"                                                          |
-#      | originDimensionSpacePoint | {}                                                                               |
-#      | propertyValues            | {"target": "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"} |
-#    And The documenturipath projection is up to date
-#    When I am on URL "http://current.host/"
-#    Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"
+  Scenario: Shortcut selected target URL keeps schema, port, query and fragment of absolute target URLs
+    When the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                                                            |
+      | contentStreamIdentifier   | "cs-identifier"                                                                  |
+      | nodeAggregateIdentifier   | "shortcut-external-url"                                                          |
+      | originDimensionSpacePoint | {}                                                                               |
+      | propertyValues            | {"target": "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"} |
+    And The documenturipath projection is up to date
+    When I am on URL "http://current.host/"
+    Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"
 
   Scenario: Shortcut first child node
     When I am on URL "/"

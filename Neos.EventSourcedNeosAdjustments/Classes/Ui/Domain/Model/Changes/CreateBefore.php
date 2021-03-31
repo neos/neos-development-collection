@@ -31,7 +31,7 @@ class CreateBefore extends AbstractCreate
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         $parent = $this->getSubject()->findParentNode();
         $nodeType = $this->getNodeType();
@@ -44,7 +44,7 @@ class CreateBefore extends AbstractCreate
      *
      * @return void
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             $subject = $this->getSubject();

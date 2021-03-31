@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 
@@ -27,23 +27,23 @@ class NodePrivilegeContext
     protected $securityContext;
 
     /**
-     * @var TraversableNodeInterface
+     * @var NodeBasedReadModelInterface
      */
     protected $node;
 
     /**
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      */
-    public function __construct(TraversableNodeInterface $node = null)
+    public function __construct(NodeBasedReadModelInterface $node = null)
     {
         $this->node = $node;
     }
 
     /**
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @return void
      */
-    public function setNode(TraversableNodeInterface $node)
+    public function setNode(NodeBasedReadModelInterface $node)
     {
         $this->node = $node;
     }

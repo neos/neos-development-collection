@@ -33,7 +33,7 @@ class MoveBefore extends AbstractStructuralChange
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         $parent = $this->getSiblingNode()->findParentNode();
         $nodeType = $this->getSubject()->getNodeType();
@@ -51,7 +51,7 @@ class MoveBefore extends AbstractStructuralChange
      *
      * @return void
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             // "subject" is the to-be-moved node
@@ -74,7 +74,8 @@ class MoveBefore extends AbstractStructuralChange
                 $hasEqualParentNode ? null : $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
                 $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
                 $succeedingSibling->getNodeAggregateIdentifier(),
-                RelationDistributionStrategy::gatherAll()
+                RelationDistributionStrategy::gatherAll(),
+                $this->getInitiatingUserIdentifier()
             );
 
             $this->contentCacheFlusher->registerNodeChange($subject);

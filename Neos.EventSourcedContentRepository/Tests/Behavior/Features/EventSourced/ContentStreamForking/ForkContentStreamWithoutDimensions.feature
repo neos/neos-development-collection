@@ -45,12 +45,14 @@ Feature: ForkContentStream Without Dimensions
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint | {}                                                      |
       | propertyValues            | {"text": {"value": "original value", "type": "string"}} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
 
   Scenario: Ensure that the node is available in the forked content stream
     When the command "ForkContentStream" is executed with payload:
       | Key                           | Value                |
       | contentStreamIdentifier       | "user-cs-identifier" |
       | sourceContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
     And I am in content stream "user-cs-identifier" and Dimension Space Point {}
 
@@ -61,12 +63,14 @@ Feature: ForkContentStream Without Dimensions
       | Key                           | Value                |
       | contentStreamIdentifier       | "user-cs-identifier" |
       | sourceContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:user-cs-identifier" with payload:
       | Key                       | Value                                                   |
       | contentStreamIdentifier   | "user-cs-identifier"                                    |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint | {}                                                      |
       | propertyValues            | {"text": {"value": "modified value", "type": "string"}} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
       # live
@@ -89,12 +93,14 @@ Feature: ForkContentStream Without Dimensions
       | Key                           | Value                |
       | contentStreamIdentifier       | "user-cs-identifier" |
       | sourceContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
       | Key                       | Value                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint | {}                                                      |
       | propertyValues            | {"text": {"value": "modified value", "type": "string"}} |
+      | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     # live

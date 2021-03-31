@@ -15,14 +15,14 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
@@ -116,6 +116,12 @@ class EventSourcedNodeController extends ActionController
     protected $nodeSiteResolvingService;
 
     /**
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
+
+    /**
      * @param NodeAddress $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
@@ -151,8 +157,8 @@ class EventSourcedNodeController extends ActionController
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
         }
 
-        $traversableNode = new TraversableNode($nodeInstance, $subgraph);
-        $traversableSite = new TraversableNode($site, $subgraph);
+        $traversableNode = $this->readModelFactory->createReadModel($nodeInstance, $subgraph);
+        $traversableSite = $this->readModelFactory->createReadModel($site, $subgraph);
 
         $this->view->assignMultiple([
             'value' => $traversableNode,
@@ -215,8 +221,8 @@ class EventSourcedNodeController extends ActionController
             $this->handleShortcutNode($nodeAddress);
         }
 
-        $traversableNode = new TraversableNode($nodeInstance, $subgraph);
-        $traversableSite = new TraversableNode($site, $subgraph);
+        $traversableNode = $this->readModelFactory->createReadModel($nodeInstance, $subgraph);
+        $traversableSite = $this->readModelFactory->createReadModel($site, $subgraph);
 
         $this->view->assignMultiple([
             'value' => $traversableNode,

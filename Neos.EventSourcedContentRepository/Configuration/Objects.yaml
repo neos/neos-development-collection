@@ -93,13 +93,6 @@ Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEve
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService:
-  arguments:
-    1:
-      object:
-        factoryObjectName: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionSerializerFactory
-        factoryMethodName: buildSerializer
-
 Neos\EventSourcedContentRepository\Command\ContentStreamCommandController:
   arguments:
     1:

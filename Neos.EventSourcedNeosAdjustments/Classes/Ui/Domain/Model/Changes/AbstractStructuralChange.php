@@ -12,8 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -50,18 +49,12 @@ abstract class AbstractStructuralChange extends AbstractChange
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
-     * @Flow\Inject
      * @var ContentCacheFlusher
      */
     protected $contentCacheFlusher;
 
     /**
-     * @var TraversableNodeInterface
+     * @var NodeBasedReadModelInterface
      */
     protected $cachedSiblingNode = null;
 
@@ -119,7 +112,7 @@ abstract class AbstractStructuralChange extends AbstractChange
     /**
      * Get the sibling node
      *
-     * @return TraversableNodeInterface
+     * @return NodeBasedReadModelInterface
      */
     public function getSiblingNode()
     {
@@ -139,10 +132,10 @@ abstract class AbstractStructuralChange extends AbstractChange
     /**
      * Perform finish tasks - needs to be called from inheriting class on `apply`
      *
-     * @param TraversableNodeInterface $node
+     * @param NodeBasedReadModelInterface $node
      * @return void
      */
-    protected function finish(TraversableNodeInterface $node)
+    protected function finish(NodeBasedReadModelInterface $node)
     {
         $updateNodeInfo = new UpdateNodeInfo();
         $updateNodeInfo->setNode($node);
@@ -167,7 +160,7 @@ abstract class AbstractStructuralChange extends AbstractChange
                 //    no other node in between
                 $this->getParentDomAddress() &&
                 $this->getParentDomAddress()->getFusionPath() &&
-                $this->getParentDomAddress()->getContextPath() === $this->nodeAddressFactory->createFromTraversableNode($node->findParentNode())->serializeForUri()
+                $this->getParentDomAddress()->getContextPath() === $node->findParentNode()->getAddress()->serializeForUri()
             ) {
                 $renderContentOutOfBand = new RenderContentOutOfBand();
                 $renderContentOutOfBand->setNode($node);

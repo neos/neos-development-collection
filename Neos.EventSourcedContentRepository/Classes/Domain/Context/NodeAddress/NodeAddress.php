@@ -31,77 +31,51 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
  */
 final class NodeAddress
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    protected $contentStreamIdentifier;
+    protected ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    protected $dimensionSpacePoint;
+    protected DimensionSpacePoint $dimensionSpacePoint;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    protected $nodeAggregateIdentifier;
+    protected NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var WorkspaceName
-     */
-    protected $workspaceName;
+    protected ?WorkspaceName $workspaceName;
 
-    /**
-     * NodeAddress constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param WorkspaceName $workspaceName
-     */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, ?WorkspaceName $workspaceName)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ?WorkspaceName $workspaceName
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->workspaceName = $workspaceName;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
+    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    {
+        return new self($this->contentStreamIdentifier, $this->dimensionSpacePoint, $nodeAggregateIdentifier, $this->workspaceName);
+    }
+
+    public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
+    {
+        return new self($this->contentStreamIdentifier, $dimensionSpacePoint, $this->nodeAggregateIdentifier, $this->workspaceName);
+    }
+
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeAddress
-     */
-    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAddress
-    {
-        return new NodeAddress($this->contentStreamIdentifier, $this->dimensionSpacePoint, $nodeAggregateIdentifier, $this->workspaceName);
-    }
-
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): ?WorkspaceName
     {
         return $this->workspaceName;
@@ -122,7 +96,7 @@ final class NodeAddress
         return $this->workspaceName != null && $this->workspaceName->isLive();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf(
             'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateIdentifier=%s, workspaceName=%s]',

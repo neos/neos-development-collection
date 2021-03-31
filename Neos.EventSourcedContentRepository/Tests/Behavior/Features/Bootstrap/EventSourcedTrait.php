@@ -19,7 +19,6 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -31,12 +30,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
@@ -64,13 +63,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -78,6 +76,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommand
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
@@ -113,10 +112,7 @@ trait EventSourcedTrait
      */
     private $eventStore;
 
-    /**
-     * @var ContentGraphInterface
-     */
-    private $contentGraph;
+    private ContentGraphInterface $contentGraph;
 
     /**
      * @var WorkspaceFinder
@@ -133,20 +129,11 @@ trait EventSourcedTrait
      */
     private $currentEventStreamAsArray = null;
 
-    /**
-     * @var \Exception
-     */
-    private $lastCommandException = null;
+    private ?\Exception $lastCommandException = null;
 
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ?ContentStreamIdentifier $contentStreamIdentifier = null;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    private $dimensionSpacePoint;
+    private ?DimensionSpacePoint $dimensionSpacePoint = null;
 
     /**
      * @var NodeAggregateIdentifier
@@ -227,6 +214,9 @@ trait EventSourcedTrait
     public function theEventRootWorkspaceWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $newContentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['newContentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($newContentStreamIdentifier);
         $this->publishEvent('Neos.EventSourcedContentRepository:RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
@@ -240,6 +230,9 @@ trait EventSourcedTrait
     public function theEventRootNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
@@ -268,6 +261,9 @@ trait EventSourcedTrait
         if (!isset($eventPayload['nodeName'])) {
             $eventPayload['nodeName'] = null;
         }
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
 
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
@@ -283,6 +279,9 @@ trait EventSourcedTrait
     public function theEventNodeSpecializationWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $contentStreamIdentifier
@@ -299,6 +298,9 @@ trait EventSourcedTrait
     public function theEventNodeGeneralizationVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $contentStreamIdentifier
@@ -315,6 +317,9 @@ trait EventSourcedTrait
     public function theEventNodeSpecializationVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $contentStreamIdentifier
@@ -331,6 +336,9 @@ trait EventSourcedTrait
     public function theEventNodePeerVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $contentStreamIdentifier
@@ -347,6 +355,9 @@ trait EventSourcedTrait
     public function theEventNodePropertiesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $contentStreamIdentifier
@@ -363,6 +374,9 @@ trait EventSourcedTrait
     public function theEventNodeReferencesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
             $contentStreamIdentifier
@@ -379,6 +393,9 @@ trait EventSourcedTrait
     public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
@@ -393,6 +410,9 @@ trait EventSourcedTrait
     public function theEventNodeAggregateWasRemovedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
@@ -407,6 +427,9 @@ trait EventSourcedTrait
     public function theEventNodeAggregateWasMovedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (!isset($eventPayload['initiatingUserIdentifier'])) {
+            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
@@ -590,12 +613,7 @@ trait EventSourcedTrait
             $commandArguments['originDimensionSpacePoint'] = [];
         }
 
-        if (isset($commandArguments['initialPropertyValues.dateProperty'])) {
-            // special case to test Date type conversion
-            $commandArguments['initialPropertyValues']['dateProperty'] = \DateTime::createFromFormat(\DateTime::W3C, $commandArguments['initialPropertyValues.dateProperty']);
-        }
-
-        $command = new CreateNodeAggregateWithNode(
+        $command = new CreateNodeAggregateWithNodeAndSerializedProperties(
             ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
@@ -609,7 +627,7 @@ trait EventSourcedTrait
                 ? NodeName::fromString($commandArguments['nodeName'])
                 : null,
             isset($commandArguments['initialPropertyValues'])
-                ? PropertyValuesToWrite::fromArray($commandArguments['initialPropertyValues'])
+                ? SerializedPropertyValues::fromArray($commandArguments['initialPropertyValues'])
                 : null,
             isset($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
                 ? NodeAggregateIdentifiersByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
@@ -617,7 +635,7 @@ trait EventSourcedTrait
         );
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeAggregateWithNode($command);
+            ->handleCreateNodeAggregateWithNodeAndSerializedProperties($command);
     }
 
     /**
@@ -627,7 +645,7 @@ trait EventSourcedTrait
     public function theFollowingCreateNodeAggregateWithNodeCommandsAreExecuted(string $contentStreamIdentifier, string $originSpacePoint, TableNode $table): void
     {
         foreach ($table->getHash() as $row) {
-            $command = new CreateNodeAggregateWithNode(
+            $command = new CreateNodeAggregateWithNodeAndSerializedProperties(
                 ContentStreamIdentifier::fromString($contentStreamIdentifier),
                 NodeAggregateIdentifier::fromString($row['nodeAggregateIdentifier']),
                 NodeTypeName::fromString($row['nodeTypeName']),
@@ -641,14 +659,14 @@ trait EventSourcedTrait
                     ? NodeName::fromString($row['nodeName'])
                     : null,
                 !empty($row['initialPropertyValues'])
-                    ? PropertyValuesToWrite::fromArray(json_decode($row['initialPropertyValues'], true, 512, JSON_THROW_ON_ERROR))
+                    ? SerializedPropertyValues::fromArray(json_decode($row['initialPropertyValues'], true, 512, JSON_THROW_ON_ERROR))
                     : null,
                 !empty($row['tetheredDescendantNodeAggregateIdentifiers'])
                     ? NodeAggregateIdentifiersByNodePaths::fromArray(json_decode($row['tetheredDescendantNodeAggregateIdentifiers'], true, 512, JSON_THROW_ON_ERROR))
                     : null
             );
             $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-                ->handleCreateNodeAggregateWithNode($command);
+                ->handleCreateNodeAggregateWithNodeAndSerializedProperties($command);
             $this->theGraphProjectionIsFullyUpToDate();
         }
     }
@@ -681,6 +699,9 @@ trait EventSourcedTrait
     public function theCommandCreateNodeVariantIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
 
         $command = CreateNodeVariant::fromArray($commandArguments);
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
@@ -712,6 +733,9 @@ trait EventSourcedTrait
         if (!isset($commandArguments['sourceOriginDimensionSpacePoint'])) {
             $commandArguments['sourceOriginDimensionSpacePoint'] = [];
         }
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = SetNodeReferences::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
@@ -739,6 +763,9 @@ trait EventSourcedTrait
     public function theCommandRemoveNodeAggregateIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = RemoveNodeAggregate::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
@@ -767,6 +794,9 @@ trait EventSourcedTrait
     public function theCommandChangeNodeAggregateTypeIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
 
         $command = ChangeNodeAggregateType::fromArray($commandArguments);
 
@@ -801,6 +831,9 @@ trait EventSourcedTrait
         if (!isset($commandArguments['relationDistributionStrategy'])) {
             $commandArguments['relationDistributionStrategy'] = RelationDistributionStrategy::STRATEGY_GATHER_ALL;
         }
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = MoveNodeAggregate::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
@@ -834,6 +867,9 @@ trait EventSourcedTrait
     public function theCommandDiscardWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = DiscardWorkspace::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
@@ -854,6 +890,9 @@ trait EventSourcedTrait
     public function theCommandPublishIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = PublishIndividualNodesFromWorkspace::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
@@ -874,6 +913,9 @@ trait EventSourcedTrait
     public function theCommandDiscardIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = DiscardIndividualNodesFromWorkspace::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
@@ -888,6 +930,9 @@ trait EventSourcedTrait
     public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = DisableNodeAggregate::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
@@ -915,6 +960,9 @@ trait EventSourcedTrait
     public function theCommandEnableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = EnableNodeAggregate::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
@@ -944,6 +992,9 @@ trait EventSourcedTrait
     public function theCommandForkContentStreamIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = ForkContentStream::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getContentStreamCommandHandler()
@@ -953,12 +1004,11 @@ trait EventSourcedTrait
     /**
      * @When /^the command CopyNodesRecursively is executed, copying the current node aggregate with payload:$/
      */
-    public function theCommandCopynodesrecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
+    public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
-        $currentTraversableNode = new TraversableNode($this->currentNode, $subgraph);
-        $commandArguments['nodeToInsert'] = json_decode(json_encode(NodeSubtreeSnapshot::fromTraversableNode($currentTraversableNode)), true);
+        $commandArguments['nodeToInsert'] = json_decode(json_encode(NodeSubtreeSnapshot::fromSubgraphAndStartNode($subgraph, $this->currentNode)), true);
         $command = CopyNodesRecursively::fromArray($commandArguments);
         $this->lastCommandOrEventResult = $this->getNodeDuplicationCommandHandler()
             ->handleCopyNodesRecursively($command);
@@ -1014,15 +1064,23 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^the last command should have thrown an exception of type "([^"]*)"$/
+     * @Then /^the last command should have thrown an exception of type "([^"]*)"(?: with code (\d*))?$/
      * @param string $shortExceptionName
+     * @param int|null $expectedCode
      * @throws ReflectionException
      */
-    public function theLastCommandShouldHaveThrown(string $shortExceptionName)
+    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode)
     {
         Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
         $lastCommandExceptionShortName = (new \ReflectionClass($this->lastCommandException))->getShortName();
         Assert::assertSame($shortExceptionName, $lastCommandExceptionShortName, sprintf('Actual exception: %s (%s): %s', get_class($this->lastCommandException), $this->lastCommandException->getCode(), $this->lastCommandException->getMessage()));
+        if (!is_null($expectedCode)) {
+            Assert::assertSame($expectedCode, $this->lastCommandException->getCode(), sprintf(
+                'Expected exception code %s, got exception code %s instead',
+                $expectedCode,
+                $this->lastCommandException->getCode()
+            ));
+        }
     }
 
     /**
@@ -1065,7 +1123,7 @@ trait EventSourcedTrait
                 ];
             case 'CreateNodeAggregateWithNode':
                 return [
-                    CreateNodeAggregateWithNode::class,
+                    CreateNodeAggregateWithNodeAndSerializedProperties::class,
                     NodeAggregateCommandHandler::class,
                     'handleCreateNodeAggregateWithNode'
                 ];
@@ -1083,9 +1141,9 @@ trait EventSourcedTrait
                 ];
             case 'SetNodeProperties':
                 return [
-                    SetNodeProperties::class,
+                    SetSerializedNodeProperties::class,
                     NodeAggregateCommandHandler::class,
-                    'handleSetNodeProperties'
+                    'handleSetSerializedNodeProperties'
                 ];
             case 'DisableNodeAggregate':
                 return [
@@ -1614,11 +1672,8 @@ trait EventSourcedTrait
 
         $properties = $this->currentNode->getProperties();
         foreach ($expectedProperties->getHash() as $row) {
-            Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
-            $actualProperty = $properties[$row['Key']];
-            if (isset($row['Type']) && $row['Type'] === 'DateTime') {
-                $row['Value'] = \DateTime::createFromFormat(\DateTime::W3C, $row['Value']);
-            }
+            Assert::assertTrue($properties->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
+            $actualProperty = $properties->getProperty($row['Key'])->getValue();
             Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
         }
     }

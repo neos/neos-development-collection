@@ -83,6 +83,7 @@ Feature: Disable a node aggregate
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "initiating-user-identifier" |
 
     Then I expect exactly 8 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasDisabled" with payload:
@@ -90,6 +91,7 @@ Feature: Disable a node aggregate
       | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [[]]                     |
+      | initiatingUserIdentifier     | "initiating-user-identifier" |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"

@@ -22,39 +22,21 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ContentStreamWasCreated implements DomainEventInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var UserIdentifier
-     */
-    private $initiatingUserIdentifier;
+    private UserIdentifier $initiatingUserIdentifier;
 
-    /**
-     * ContentStreamWasCreated constructor.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param UserIdentifier $initiatingUserIdentifier
-     */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return UserIdentifier
-     */
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;

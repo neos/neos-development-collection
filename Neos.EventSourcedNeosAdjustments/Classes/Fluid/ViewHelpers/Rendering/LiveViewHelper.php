@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 
 /**
  * ViewHelper to find out if Neos is rendering the live website.
@@ -39,14 +39,12 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 class LiveViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
-     * @param TraversableNodeInterface|null $node
+     * @param NodeBasedReadModelInterface|null $node
      * @return boolean
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(?TraversableNodeInterface $node = null)
+    public function render(?NodeBasedReadModelInterface $node = null)
     {
-        $nodeAddress = $this->getNodeAddressOfContextNode($node);
-
-        return $nodeAddress->isInLiveWorkspace();
+        return $node->getAddress()->isInLiveWorkspace();
     }
 }

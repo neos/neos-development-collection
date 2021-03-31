@@ -13,33 +13,26 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsNotOfTypeRoot;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -52,8 +45,6 @@ trait NodeCreation
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
-
-    abstract protected function getPropertyConversionService(): PropertyConversionService;
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
@@ -126,40 +117,13 @@ trait NodeCreation
         return $events;
     }
 
-    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
-    {
-        $nodeType = $this->requireNodeType($command->getNodeTypeName());
-        $serializedPropertyValues = $this->getPropertyConversionService()->serializePropertyValues($command->getInitialPropertyValues(), $nodeType);
-
-        $newCommand = new CreateNodeAggregateWithNodeAndSerializedProperties(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier(),
-            $command->getNodeTypeName(),
-            $command->getOriginDimensionSpacePoint(),
-            $command->getInitiatingUserIdentifier(),
-            $command->getParentNodeAggregateIdentifier(),
-            $command->getSucceedingSiblingNodeAggregateIdentifier(),
-            $command->getNodeName(),
-            $serializedPropertyValues,
-            $command->getTetheredDescendantNodeAggregateIdentifiers()
-        );
-
-        return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($newCommand);
-    }
-
     /**
-     * @param CreateNodeAggregateWithNode $command
+     * @param CreateNodeAggregateWithNodeAndSerializedProperties $command
      * @return CommandResult
      * @throws ContentStreamDoesNotExistYet
-     * @throws DimensionSpacePointNotFound
-     * @throws NodeTypeNotFound
-     * @throws NodeTypeIsOfTypeRoot
      * @throws NodeTypeNotFoundException
-     * @throws NodeConstraintException
-     * @throws NodeAggregateCurrentlyDoesNotExist
-     * @throws NodeAggregateCurrentlyExists
-     *
-     * @internal instead, use {@see self::handleCreateNodeAggregateWithNode} instead publicly.
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function handleCreateNodeAggregateWithNodeAndSerializedProperties(CreateNodeAggregateWithNodeAndSerializedProperties $command): CommandResult
     {
@@ -202,7 +166,7 @@ trait NodeCreation
 
         $events = DomainEvents::createEmpty();
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $nodeType, $parentNodeAggregate, $coveredDimensionSpacePoints, $descendantNodeAggregateIdentifiers, &$events) {
-            $defaultPropertyValues = $this->getDefaultPropertyValues($nodeType);
+            $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType);
             $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());
 
             $events = $this->createRegularWithNode(
@@ -249,6 +213,7 @@ trait NodeCreation
                     $command->getNodeName(),
                     $initialPropertyValues,
                     NodeAggregateClassification::regular(),
+                    $command->getInitiatingUserIdentifier(),
                     $command->getSucceedingSiblingNodeAggregateIdentifier()
                 ),
                 Uuid::uuid4()->toString()
@@ -291,7 +256,7 @@ trait NodeCreation
             $nodeName = NodeName::fromString($rawNodeName);
             $childNodePath = $nodePath ? $nodePath->appendPathSegment($nodeName) : NodePath::fromString((string) $nodeName);
             $childNodeAggregateIdentifier = $nodeAggregateIdentifiers->getNodeAggregateIdentifier($childNodePath) ?? NodeAggregateIdentifier::create();
-            $initialPropertyValues = $this->getDefaultPropertyValues($childNodeType);
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType);
 
             $this->requireContentStreamToExist($command->getContentStreamIdentifier());
             $events = $events->appendEvents($this->createTetheredWithNode(
@@ -353,6 +318,7 @@ trait NodeCreation
                     $nodeName,
                     $initialPropertyValues,
                     NodeAggregateClassification::tethered(),
+                    $command->getInitiatingUserIdentifier(),
                     $precedingNodeAggregateIdentifier
                 ),
                 Uuid::uuid4()->toString()
@@ -366,12 +332,6 @@ trait NodeCreation
         );
 
         return $events;
-    }
-
-    private function getDefaultPropertyValues(NodeType $nodeType): SerializedPropertyValues
-    {
-        $rawDefaultPropertyValues = PropertyValuesToWrite::fromArray($nodeType->getDefaultValuesForProperties());
-        return $this->getPropertyConversionService()->serializePropertyValues($rawDefaultPropertyValues, $nodeType);
     }
 
     /**

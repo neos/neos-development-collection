@@ -70,7 +70,8 @@ trait NodeDisabling
                     new NodeAggregateWasDisabled(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
-                        $affectedDimensionSpacePoints
+                        $affectedDimensionSpacePoints,
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )
@@ -118,7 +119,8 @@ trait NodeDisabling
                     new NodeAggregateWasEnabled(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
-                        $affectedDimensionSpacePoints
+                        $affectedDimensionSpacePoints,
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

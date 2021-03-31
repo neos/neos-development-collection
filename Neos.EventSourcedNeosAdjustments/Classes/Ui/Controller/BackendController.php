@@ -18,16 +18,15 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
 use Neos\EventSourcedNeosAdjustments\Ui\View\BackendFusionView;
 use Neos\Flow\Annotations as Flow;
-
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Session\SessionInterface;
@@ -140,6 +139,12 @@ class BackendController extends ActionController
     protected $contentDimensionSource;
 
     /**
+     * @Flow\Inject
+     * @var ReadModelFactory
+     */
+    protected $readModelFactory;
+
+    /**
      * @Flow\InjectConfiguration(package="Neos.Neos.Ui", path="splashScreen.partial")
      * @var string
      */
@@ -172,14 +177,14 @@ class BackendController extends ActionController
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier($workspace->getCurrentContentStreamIdentifier()), NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
-        $siteNode = new TraversableNode($siteNode, $subgraph);
+        $siteNode = $this->readModelFactory->createReadModel($siteNode, $subgraph);
 
         if (!$nodeAddress) {
             // TODO: fix resolving node address from session?
             $node = $siteNode;
         } else {
             $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-            $node = new TraversableNode($node, $subgraph);
+            $node = $this->readModelFactory->createReadModel($node, $subgraph);
         }
 
         $this->view->assign('user', $user);

@@ -17,11 +17,9 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -35,8 +33,6 @@ trait NodeModification
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
-    abstract protected function getPropertyConversionService(): PropertyConversionService;
-
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     abstract protected function requireProjectedNodeAggregate(
@@ -44,32 +40,6 @@ trait NodeModification
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ReadableNodeAggregateInterface;
 
-    /**
-     * @param SetNodeProperties $command
-     * @return CommandResult
-     */
-    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
-    {
-        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
-
-        $serializedPropertyValues = $this->getPropertyConversionService()->serializePropertyValues($command->getPropertyValues(), $nodeType);
-
-        $newCommand = new SetSerializedNodeProperties(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier(),
-            $command->getOriginDimensionSpacePoint(),
-            $serializedPropertyValues
-        );
-
-        return $this->handleSetSerializedNodeProperties($newCommand);
-    }
-
-    /**
-     * @param SetNodeProperties $command
-     * @return CommandResult
-     * @internal instead, use {@see self::handleSetNodeProperties} instead publicly.
-     */
     public function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command): CommandResult
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
@@ -88,7 +58,8 @@ trait NodeModification
                         $contentStreamIdentifier,
                         $command->getNodeAggregateIdentifier(),
                         $command->getOriginDimensionSpacePoint(),
-                        $command->getPropertyValues()
+                        $command->getPropertyValues(),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

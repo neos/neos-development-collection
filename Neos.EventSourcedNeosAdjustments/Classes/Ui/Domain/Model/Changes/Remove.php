@@ -46,7 +46,7 @@ class Remove extends AbstractChange
      *
      * @return boolean
      */
-    public function canApply()
+    public function canApply(): bool
     {
         return true;
     }
@@ -60,7 +60,7 @@ class Remove extends AbstractChange
      * @throws DimensionSpacePointNotFound
      * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    public function apply()
+    public function apply(): void
     {
         if ($this->canApply()) {
             $node = $this->getSubject();
@@ -76,7 +76,8 @@ class Remove extends AbstractChange
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getDimensionSpacePoint(),
-                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                $this->getInitiatingUserIdentifier()
             );
 
             $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
