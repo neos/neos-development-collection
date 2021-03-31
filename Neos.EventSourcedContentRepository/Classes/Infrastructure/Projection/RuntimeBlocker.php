@@ -47,6 +47,8 @@ final class RuntimeBlocker
         CommandResult $commandResult,
         ProcessedEventsAwareProjectorCollection $projectorsToBeBlocked = null
     ): void {
+        $this->eventPublisher->invoke();
+
         foreach ($projectorsToBeBlocked ?: $this->defaultProjectorsToBeBlocked as $projector) {
             $publishedEventsForProjector = $this->filterPublishedEventsByListener(
                 $commandResult->getPublishedEvents(),
