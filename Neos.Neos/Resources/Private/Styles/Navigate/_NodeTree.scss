@@ -55,7 +55,7 @@
 	top: -$unit * 2 - 2;
 	box-sizing: border-box;
 
-	@import "Shared/Chosen";
+	@import "../Shared/Chosen";
 	.chosen-container {
 		.chosen-single {
 			background-color: $grayDark;
