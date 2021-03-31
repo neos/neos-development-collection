@@ -75,7 +75,7 @@
             ],
             "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": [
                 "Neos.ContentGraph.PostgreSQLAdapter/Tests"
-            ],
+            ]
         }
     }
 }
