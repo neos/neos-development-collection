@@ -34,7 +34,7 @@ Feature: Tethered Nodes Reordering Structure changes
       | initiatingUserIdentifier    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
+    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                                                                                                                      |
       | contentStreamIdentifier                    | "cs-identifier"                                                                                                                            |
       | nodeAggregateIdentifier                    | "sir-david-nodenborough"                                                                                                                   |

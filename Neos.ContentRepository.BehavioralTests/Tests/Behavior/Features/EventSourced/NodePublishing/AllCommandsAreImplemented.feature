@@ -363,7 +363,7 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: set two new nodes in USER workspace
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "user-cs-identifier"                     |
       | nodeAggregateIdentifier       | "new1-agg"                               |
@@ -371,7 +371,7 @@ Feature: Publishing hide/show scenario of nodes
       | originDimensionSpacePoint     | {}                                       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "foo"                                    |
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "user-cs-identifier"                     |
       | nodeAggregateIdentifier       | "new2-agg"                               |

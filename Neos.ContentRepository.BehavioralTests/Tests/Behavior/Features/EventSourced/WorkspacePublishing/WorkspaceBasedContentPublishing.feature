@@ -44,13 +44,13 @@ Feature: Workspace based content publishing
 
     And the graph projection is fully up to date
 
-    And the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                             |
-      | contentStreamIdentifier   | "cs-identifier"                                   |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                |
-      | originDimensionSpacePoint | {}                                                |
-      | propertyValues            | {"text": {"type": "string", "value": "Original"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                      |
+    And the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | contentStreamIdentifier   | "cs-identifier"              |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "Original"}         |
+      | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
@@ -96,13 +96,13 @@ Feature: Workspace based content publishing
       | workspaceOwner             | "owner-identifier"            |
 
   Scenario: modify the property in the nested workspace and publish afterwards works
-    When the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                             |
-      | contentStreamIdentifier   | "user-cs-identifier"                              |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                |
-      | originDimensionSpacePoint | {}                                                |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                      |
+    When the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | contentStreamIdentifier   | "user-cs-identifier"         |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "Modified"}         |
+      | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
@@ -132,21 +132,21 @@ Feature: Workspace based content publishing
 
   Scenario: modify the property in the nested workspace, do modification in live workspace; publish afterwards will not work because rebase is missing; then rebase and publish
 
-    When the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                                               |
-      | contentStreamIdentifier   | "user-cs-identifier"                                                |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                  |
-      | originDimensionSpacePoint | {}                                                                  |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified in user workspace"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                                        |
+    When the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                                  |
+      | contentStreamIdentifier   | "user-cs-identifier"                   |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
+      | originDimensionSpacePoint | {}                                     |
+      | propertyValues            | {"text": "Modified in user workspace"} |
+      | initiatingUserIdentifier  | "initiating-user-identifier"           |
     And the graph projection is fully up to date
-    And the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                                               |
-      | contentStreamIdentifier   | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                  |
-      | originDimensionSpacePoint | {}                                                                  |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified in live workspace"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                                        |
+    And the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                                  |
+      | contentStreamIdentifier   | "cs-identifier"                        |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
+      | originDimensionSpacePoint | {}                                     |
+      | propertyValues            | {"text": "Modified in live workspace"} |
+      | initiatingUserIdentifier  | "initiating-user-identifier"           |
     And the graph projection is fully up to date
 
     # PUBLISHING without rebase: error
@@ -180,13 +180,13 @@ Feature: Workspace based content publishing
 
   Scenario: modify the property in the nested workspace, publish, modify again and publish again (e.g. a workspace can be re-used after publishing for other changes)
 
-    When the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                             |
-      | contentStreamIdentifier   | "user-cs-identifier"                              |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                |
-      | originDimensionSpacePoint | {}                                                |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                      |
+    When the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | contentStreamIdentifier   | "user-cs-identifier"         |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "Modified"}         |
+      | initiatingUserIdentifier  | "initiating-user-identifier" |
 
     And the graph projection is fully up to date
 
@@ -198,13 +198,13 @@ Feature: Workspace based content publishing
     And the graph projection is fully up to date
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
 
-    When the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                                  |
-      | contentStreamIdentifier   | $this->contentStreamIdentifier                         |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                     |
-      | originDimensionSpacePoint | {}                                                     |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified anew"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                           |
+    When the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                          |
+      | contentStreamIdentifier   | $this->contentStreamIdentifier |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"             |
+      | originDimensionSpacePoint | {}                             |
+      | propertyValues            | {"text": "Modified anew"}      |
+      | initiatingUserIdentifier  | "initiating-user-identifier"   |
 
     And the graph projection is fully up to date
 
@@ -222,13 +222,13 @@ Feature: Workspace based content publishing
       | text | Modified anew |
 
   Scenario: Discarding a full workspace works
-    When the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                             |
-      | contentStreamIdentifier   | "user-cs-identifier"                              |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                |
-      | originDimensionSpacePoint | {}                                                |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                      |
+    When the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | contentStreamIdentifier   | "user-cs-identifier"         |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "Modified"}         |
+      | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
@@ -251,22 +251,22 @@ Feature: Workspace based content publishing
       | text | Original |
 
   Scenario: Discarding a full workspace shows the most up-to-date base workspace when the base WS was modified in the meantime
-    When the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                             |
-      | contentStreamIdentifier   | "user-cs-identifier"                              |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                |
-      | originDimensionSpacePoint | {}                                                |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                      |
+    When the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | contentStreamIdentifier   | "user-cs-identifier"         |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "Modified"}         |
+      | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    And the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                                               |
-      | contentStreamIdentifier   | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                  |
-      | originDimensionSpacePoint | {}                                                                  |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified in live workspace"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                                        |
+    And the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                                  |
+      | contentStreamIdentifier   | "cs-identifier"                        |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
+      | originDimensionSpacePoint | {}                                     |
+      | propertyValues            | {"text": "Modified in live workspace"} |
+      | initiatingUserIdentifier  | "initiating-user-identifier"           |
     And the graph projection is fully up to date
 
     # Discarding

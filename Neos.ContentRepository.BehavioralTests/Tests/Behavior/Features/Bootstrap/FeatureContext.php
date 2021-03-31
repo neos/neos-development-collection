@@ -16,13 +16,17 @@ require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/ReadModelInstantiationTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/IntermediaryCommandTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\IntermediaryCommandTrait;
+use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\ReadModelInstantiationTrait;
+use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
@@ -43,6 +47,9 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use EventSourcedTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use StructureAdjustmentsTrait;
+    use ReadModelInstantiationTrait;
+    use IntermediaryCommandTrait;
+
 
     /**
      * @var string
@@ -60,12 +67,14 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $this->setupEventSourcedTrait();
         $this->setupIntegrityViolationTrait();
         $this->setupProjectionIntegrityViolationDetectionTrait();
+        $this->setupReadModelInstantiationTrait();
+        $this->setupIntermediaryCommandTrait();
     }
 
     /**
      * @return ObjectManagerInterface
      */
-    protected function getObjectManager()
+    protected function getObjectManager(): ObjectManagerInterface
     {
         return $this->objectManager;
     }

@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Command;
  */
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
-use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\StructureAdjustmentService;
+use Neos\ContentRepository\Intermediary\StructureAdjustment\Dto\StructureAdjustment;
+use Neos\ContentRepository\Intermediary\StructureAdjustment\StructureAdjustmentService;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
 

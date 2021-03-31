@@ -42,7 +42,7 @@ Feature: Provide and configure a custom read model
     And the graph projection is fully up to date
 
   Scenario: Try to instantiate a non-existing read model
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                                                  |
       | contentStreamIdentifier       | "cs-identifier"                                                        |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                     |
@@ -56,7 +56,7 @@ Feature: Provide and configure a custom read model
     Then I expect the instantiation to have thrown an exception of type "NodeImplementationClassNameIsInvalid" with code 1615415122
 
   Scenario: Try to instantiate a read model not implementing the required interface
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                                                  |
       | contentStreamIdentifier       | "cs-identifier"                                                        |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                     |
@@ -70,7 +70,7 @@ Feature: Provide and configure a custom read model
     Then I expect the instantiation to have thrown an exception of type "NodeImplementationClassNameIsInvalid" with code 1615415501
 
   Scenario: Try to instantiate a read model implementing the deprecated node interface
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                                                     |
       | contentStreamIdentifier       | "cs-identifier"                                                           |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                        |
@@ -84,7 +84,7 @@ Feature: Provide and configure a custom read model
     Then I expect the instantiation to have thrown an exception of type "NodeImplementationClassNameIsInvalid" with code 1615415586
 
   Scenario: Try to instantiate a read model with a non-existing content collection implementation
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                                                                |
       | contentStreamIdentifier       | "cs-identifier"                                                                      |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                   |
@@ -98,7 +98,7 @@ Feature: Provide and configure a custom read model
     Then I expect the instantiation to have thrown an exception of type "PropertyCollectionImplementationClassNameIsInvalid" with code 1615416178
 
   Scenario: Try to instantiate a read model not implementing the required interface
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                                                                |
       | contentStreamIdentifier       | "cs-identifier"                                                                      |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                   |

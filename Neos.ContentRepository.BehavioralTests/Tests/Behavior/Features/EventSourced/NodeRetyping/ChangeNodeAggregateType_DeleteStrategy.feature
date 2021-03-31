@@ -47,7 +47,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | nodeAggregateClassification | "root"                                    |
     And the graph projection is fully up to date
 
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                           |
       | contentStreamIdentifier       | "cs-identifier"                                 |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                        |
@@ -68,7 +68,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
           '*': TRUE
           'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
@@ -116,7 +116,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
               '*': TRUE
               'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                           |
       | contentStreamIdentifier                    | "cs-identifier"                                 |
       | nodeAggregateIdentifier                    | "parent2-na"                                    |
@@ -127,7 +127,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | tetheredDescendantNodeAggregateIdentifiers | {"autocreated": "autocreated-child"}            |
     And the graph projection is fully up to date
 
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
@@ -163,7 +163,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
 
   Scenario: Change node type successfully
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
       | nodeAggregateIdentifier       | "nodea-identifier-de"                      |
@@ -217,7 +217,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
           'Neos.ContentRepository.Testing:ChildOfNodeTypeA': false
           'Neos.ContentRepository.Testing:ChildOfNodeTypeB': false
     """
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
       | nodeAggregateIdentifier       | "nodea-identifier-de"                      |

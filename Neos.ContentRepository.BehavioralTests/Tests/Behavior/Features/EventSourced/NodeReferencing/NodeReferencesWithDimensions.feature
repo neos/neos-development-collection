@@ -36,7 +36,7 @@ Feature: Node References with Dimensions
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
       | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
+    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
       | nodeAggregateIdentifier       | "source-nodandaise"                                 |
@@ -45,7 +45,7 @@ Feature: Node References with Dimensions
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"              |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
     And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNode is executed with payload:
+    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
       | nodeAggregateIdentifier       | "anthony-destinode"                                 |

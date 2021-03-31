@@ -18,7 +18,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | nodeAggregateClassification | "root"                       |
     And the graph projection is fully up to date
 
-    And the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues           | nodeName |
       | shernode-homes          | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | site     |
       | a                       | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "a"}         | a        |
@@ -164,7 +164,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"     | "lady-eleonode-rootford/shernode-homes/c"   | "c"                      | "shernode-homes"              | "a"                              | null                              |
 
   Scenario: ab(> b1)c => a(> b > b1)c (moving b & b1 below a)
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                      | Value                                                |
       | contentStreamIdentifier                  | "cs-identifier"                                      |
       | nodeAggregateIdentifier                  | "b1"                                                 |
@@ -192,7 +192,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"      | "lady-eleonode-rootford/shernode-homes/c"      | "c"                      | "shernode-homes"              | "a"                              | null                              |
 
   Scenario: ab(> b1)c => a(> b1)bc (moving b1 below a)
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                      | Value                                                |
       | contentStreamIdentifier                  | "cs-identifier"                                      |
       | nodeAggregateIdentifier                  | "b1"                                                 |
@@ -220,7 +220,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"     | "lady-eleonode-rootford/shernode-homes/c"    | "c"                      | "shernode-homes"              | "b"                              | null                              |
 
   Scenario: ab(> b1, b2 > b2a)c => a(> b2 > b2a)b(> b1)c (moving b1 below a)
-    Given the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    Given the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues     | nodeName |
       | b1                      | b                             | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
       | b2                      | b                             | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
@@ -245,7 +245,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"              | "b"                              | null                              |
 
   Scenario: ab(> b1, b2 > b2a)c => b(> b1, a, b2 > b2a)c (moving a below b)
-    Given the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    Given the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues     | nodeName |
       | b1                      | b                             | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
       | b2                      | b                             | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
+namespace Neos\ContentRepository\Intermediary\StructureAdjustment;
 
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
+use Neos\ContentRepository\Intermediary\StructureAdjustment\Dto\StructureAdjustment;
 
 /**
  * @Flow\Scope("singleton")

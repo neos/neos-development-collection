@@ -30,7 +30,7 @@ Feature: Node References without Dimensions
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
       | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
-    And the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                      |
       | source-nodandaise       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
       | anthony-destinode       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |

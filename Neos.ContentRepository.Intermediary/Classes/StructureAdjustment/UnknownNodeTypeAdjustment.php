@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
+namespace Neos\ContentRepository\Intermediary\StructureAdjustment;
 
-use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
-use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
+use Neos\ContentRepository\Intermediary\StructureAdjustment\Traits\LoadNodeTypeTrait;
+use Neos\ContentRepository\Intermediary\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
+use Neos\ContentRepository\Intermediary\StructureAdjustment\Dto\StructureAdjustment;
 use Neos\EventSourcing\EventStore\EventStore;
 
 /**

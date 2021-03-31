@@ -27,15 +27,15 @@ Feature: Node Property Conversion
     And the graph projection is fully up to date
 
   Scenario: DateTime objects at Node Creation
-    When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                                                        |
-      | contentStreamIdentifier       | "cs-identifier"                                                              |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                     |
-      | originDimensionSpacePoint     | {}                                                                           |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                       |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                     |
-      | initialPropertyValues         | {"dateProperty": {"type": "DateTime", "value": "1997-07-16T19:20:30+05:00"}} |
+    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+      | Key                           | Value                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                    |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                 |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
+      | originDimensionSpacePoint     | {}                                                 |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"             |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
+      | initialPropertyValues         | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
 
     And the graph projection is fully up to date
 
@@ -46,24 +46,24 @@ Feature: Node Property Conversion
       | dateProperty | 1997-07-16T19:20:30+05:00 | DateTime |
 
   Scenario: DateTime objects at Node Property Updating
-    Given the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                                                        |
-      | contentStreamIdentifier       | "cs-identifier"                                                              |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                     |
-      | originDimensionSpacePoint     | {}                                                                           |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                       |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                     |
-      | initialPropertyValues         | {"dateProperty": {"type": "DateTime", "value": "1997-07-16T19:20:30+05:00"}} |
+    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+      | Key                           | Value                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                    |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                 |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
+      | originDimensionSpacePoint     | {}                                                 |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"             |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
+      | initialPropertyValues         | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
     And the graph projection is fully up to date
 
-    When the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                                                        |
-      | contentStreamIdentifier   | "cs-identifier"                                                              |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                           |
-      | originDimensionSpacePoint | {}                                                                           |
-      | propertyValues            | {"dateProperty": {"type": "DateTime", "value": "1997-07-19T19:20:30+05:00"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                                                 |
+    When the intermediary command SetNodeProperties is executed with payload:
+      | Key                       | Value                                              |
+      | contentStreamIdentifier   | "cs-identifier"                                    |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                 |
+      | originDimensionSpacePoint | {}                                                 |
+      | propertyValues            | {"dateProperty": "Date:1997-07-19T19:20:30+05:00"} |
+      | initiatingUserIdentifier  | "initiating-user-identifier"                       |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}

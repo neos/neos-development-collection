@@ -52,7 +52,7 @@ Feature: Rebasing auto-created nodes works
 
   Scenario: complex scenario (to reproduce the bug) -- see the feature description
     # USER workspace: create a new node with auto-created child nodes
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "user-cs-identifier"                     |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                       |
@@ -68,7 +68,7 @@ Feature: Rebasing auto-created nodes works
     And I expect this node to be a child of node {"contentStreamIdentifier":"user-cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {}}
 
     # - then, for the auto-created child node, set a property.
-    When the command "SetNodeProperties" is executed with payload:
+    When the command "SetSerializedNodeProperties" is executed with payload:
       | Key                       | Value                                          |
       | contentStreamIdentifier   | "user-cs-identifier"                           |
       | nodeAggregateIdentifier   | $this->currentNodeAggregateIdentifier          |

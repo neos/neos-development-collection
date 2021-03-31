@@ -1,12 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
+namespace Neos\ContentRepository\Intermediary\StructureAdjustment;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
+use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Traits\LoadNodeTypeTrait;
+use Neos\ContentRepository\Intermediary\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
@@ -17,7 +20,7 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
+use Neos\ContentRepository\Intermediary\StructureAdjustment\Dto\StructureAdjustment;
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
@@ -32,17 +35,23 @@ class PropertyAdjustment
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected NodeTypeManager $nodeTypeManager;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
+    protected ReadModelFactory $readModelFactory;
+    protected ContentGraph $contentGraph;
 
     public function __construct(
         EventStore $eventStore,
         ProjectedNodeIterator $projectedNodeIterator,
         NodeTypeManager $nodeTypeManager,
-        ReadSideMemoryCacheManager $readSideMemoryCacheManager
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        ReadModelFactory $readModelFactory,
+        ContentGraph $contentGraph
     ) {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
+        $this->readModelFactory = $readModelFactory;
+        $this->contentGraph = $contentGraph;
     }
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
@@ -58,6 +67,8 @@ class PropertyAdjustment
             foreach ($nodeAggregate->getNodes() as $node) {
                 $propertyKeysInNode = [];
 
+                $nodeReadModel = $this->readModelFactory->createReadModel($node, $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions()));
+
                 foreach ($node->getProperties()->getValues() as $propertyKey => $property) {
                     $propertyKeysInNode[$propertyKey] = $propertyKey;
 
@@ -69,17 +80,16 @@ class PropertyAdjustment
                         });
                     }
 
-                    // detect non-deserializable properties: move to intermediary if necessary
-                    /*
+                    // detect non-deserializable properties
                     try {
-                        $node->getProperties()->offsetGet($propertyKey);
+                        $nodeReadModel->getProperties()->offsetGet($propertyKey);
                     } catch (\Exception $e) {
                         $message = sprintf('The property "%s" was not deserializable. Error was: %s %s. Remove the property?', $propertyKey, get_class($e), $e->getMessage());
                         yield StructureAdjustment::createForNode($node, StructureAdjustment::NON_DESERIALIZABLE_PROPERTY, $message, function () use ($node, $propertyKey) {
                             $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeProperty($node, $propertyKey);
                         });
-                    }*/
+                    }
                 }
 
                 // detect missing default values

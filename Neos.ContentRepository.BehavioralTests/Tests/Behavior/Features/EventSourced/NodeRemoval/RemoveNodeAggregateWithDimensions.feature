@@ -29,7 +29,7 @@ Feature: Remove NodeAggregate
     And the graph projection is fully up to date
     # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
     # Node /document
-    And the command CreateNodeAggregateWithNode is executed with payload:
+    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "live-cs-identifier"                      |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
@@ -41,7 +41,7 @@ Feature: Remove NodeAggregate
     And the graph projection is fully up to date
     # We also want to add a child node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document
-    And the command CreateNodeAggregateWithNode is executed with payload:
+    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "live-cs-identifier"                      |
       | nodeAggregateIdentifier       | "nodimus-prime"                           |

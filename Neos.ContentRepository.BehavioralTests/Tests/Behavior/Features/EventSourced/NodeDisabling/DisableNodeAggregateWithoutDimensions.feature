@@ -177,7 +177,7 @@ Feature: Disable a node aggregate
       | affectedCoveredDimensionSpacePoints  | [{}]               |
     And the graph projection is fully up to date
 
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |

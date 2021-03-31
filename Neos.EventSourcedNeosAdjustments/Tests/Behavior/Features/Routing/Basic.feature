@@ -57,7 +57,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Change uri path segment
-    When the command "SetNodeProperties" is executed with payload:
+    When the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                                            |
       | contentStreamIdentifier   | "cs-identifier"                                  |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                         |

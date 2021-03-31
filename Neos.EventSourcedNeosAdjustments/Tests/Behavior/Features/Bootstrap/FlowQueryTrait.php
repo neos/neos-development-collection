@@ -35,7 +35,7 @@ trait FlowQueryTrait
     /**
      * @var ContentGraphInterface
      */
-    private $contentGraph;
+    private ContentGraphInterface $contentGraph;
 
     /**
      * @var ReadModelFactory
@@ -45,12 +45,12 @@ trait FlowQueryTrait
     /**
      * @var ContentStreamIdentifier
      */
-    private $contentStreamIdentifier;
+    private ?ContentStreamIdentifier $contentStreamIdentifier = null;
 
     /**
      * @var DimensionSpacePoint
      */
-    private $dimensionSpacePoint;
+    private ?DimensionSpacePoint $dimensionSpacePoint = null;
 
     /**
      * @When /^I have a FlowQuery with node "([^"]*)"$/

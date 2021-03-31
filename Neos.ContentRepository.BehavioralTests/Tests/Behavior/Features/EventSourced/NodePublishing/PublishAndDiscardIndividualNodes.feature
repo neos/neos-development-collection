@@ -76,26 +76,26 @@ Feature: Publishing and discard individual nodes (basics)
       | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
     # modify nodes in user WS
-    And the command "SetNodeProperties" is executed with payload:
+    And the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                                                |
       | contentStreamIdentifier   | "user-cs-identifier"                                 |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                             |
       | originDimensionSpacePoint | {}                                                   |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified t1"}} |
+      | propertyValues            | {"text": "Modified t1"} |
       | initiatingUserIdentifier  | "initiating-user-identifier"                         |
-    And the command "SetNodeProperties" is executed with payload:
+    And the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                                                |
       | contentStreamIdentifier   | "user-cs-identifier"                                 |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                   |
       | originDimensionSpacePoint | {}                                                   |
-      | propertyValues            | {"text": {"type": "string", "value": "Modified t2"}} |
+      | propertyValues            | {"text": "Modified t2"} |
       | initiatingUserIdentifier  | "initiating-user-identifier"                         |
-    And the command "SetNodeProperties" is executed with payload:
+    And the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                                                    |
       | contentStreamIdentifier   | "user-cs-identifier"                                     |
       | nodeAggregateIdentifier   | "sir-nodeward-nodington-iii"                             |
       | originDimensionSpacePoint | {}                                                       |
-      | propertyValues            | {"image": {"type": "string", "value": "Modified image"}} |
+      | propertyValues            | {"image": "Modified image"} |
       | initiatingUserIdentifier  | "initiating-user-identifier"                             |
     And the graph projection is fully up to date
 

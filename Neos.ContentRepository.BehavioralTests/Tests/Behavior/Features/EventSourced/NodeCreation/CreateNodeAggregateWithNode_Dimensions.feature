@@ -35,7 +35,7 @@ Feature: Create node aggregate with node
     And the graph projection is fully up to date
 
   Scenario:  Create node aggregate with node with content dimensions
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                                          |
       | contentStreamIdentifier       | "cs-identifier"                                                |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                             |

@@ -32,7 +32,7 @@ Feature: Create node aggregate with node
     And the graph projection is fully up to date
 
   Scenario: Try to create a node aggregate in a content stream that currently does not exist:
-    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                                          |
       | contentStreamIdentifier       | "non-existent-cs-identifier"                                   |
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                   |
@@ -45,7 +45,7 @@ Feature: Create node aggregate with node
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to create a node aggregate in a content stream where it is already present:
-    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                                          |
       | contentStreamIdentifier       | "cs-identifier"                                                |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                                       |
@@ -57,7 +57,7 @@ Feature: Create node aggregate with node
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyExists"
 
   Scenario: Try to create a (non-root) node aggregate of a root node type:
-    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                  |
       | contentStreamIdentifier       | "cs-identifier"                        |
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"           |
@@ -70,7 +70,7 @@ Feature: Create node aggregate with node
     Then the last command should have thrown an exception of type "NodeTypeIsOfTypeRoot"
 
   Scenario: Try to create a node aggregate in an origin dimension space point not within the allowed dimension subspace:
-    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                                          |
       | contentStreamIdentifier       | "cs-identifier"                                                |
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                   |
@@ -81,7 +81,7 @@ Feature: Create node aggregate with node
       | nodeName                      | "esquire"                                                      |
 
   Scenario: Try to create a node aggregate in an origin dimension space point not within the allowed dimension subspace:
-    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:
       | Key                           | Value                                                          |
       | contentStreamIdentifier       | "cs-identifier"                                                |
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                   |
@@ -106,7 +106,7 @@ Feature: Create node aggregate with node
           type: string
     """
 
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                                          |
       | contentStreamIdentifier       | "cs-identifier"                                                |
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                   |
@@ -149,7 +149,7 @@ Feature: Create node aggregate with node
           type: 'Neos.ContentRepository.Testing:SubNode'
     """
 
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                                       |
       | contentStreamIdentifier                    | "cs-identifier"                                             |
       | nodeAggregateIdentifier                    | "sir-nodeward-nodington-iii"                                |

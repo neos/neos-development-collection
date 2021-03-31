@@ -47,7 +47,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeAggregateClassification | "root"                                    |
     And the graph projection is fully up to date
 
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                           |
       | contentStreamIdentifier       | "cs-identifier"                                 |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                        |
@@ -68,7 +68,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
           '*': TRUE
           'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
@@ -106,7 +106,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
               '*': TRUE
               'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                           |
       | contentStreamIdentifier                    | "cs-identifier"                                 |
       | nodeAggregateIdentifier                    | "parent2-na"                                    |
@@ -117,7 +117,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | tetheredDescendantNodeAggregateIdentifiers | {"autocreated": "autocreated-child"}            |
     And the graph projection is fully up to date
 
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
@@ -136,7 +136,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Change node type successfully
-    When the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
       | nodeAggregateIdentifier       | "nodea-identifier-de"                      |
