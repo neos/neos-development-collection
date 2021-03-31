@@ -21,7 +21,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
@@ -65,23 +64,23 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @param NodeAddress $nodeAddress
-     * @return NodeRecord|null
      * @throws \Exception
      */
-    public function findNodeRecordByAddress(
-        NodeAddress $nodeAddress
+    public function findNodeRecordByCoverage(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeRecord
     {
-        $query = ProjectionHypergraphQuery::createForNodeAddress($nodeAddress);
+        $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
+        $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
+            ->withNodeAggregateIdentifier($nodeAggregateIdentifier);
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
 
     /**
-     * @param NodeAddress $nodeAddress
-     * @return NodeRecord|null
      * @throws \Exception
      */
     public function findNodeRecordByOrigin(
@@ -204,8 +203,10 @@ final class ProjectionHypergraph
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
-    public function findChildHierarchyHyperrelationRecordByAddress(
-        NodeAddress $nodeAddress
+    public function findChildHierarchyHyperrelationRecord(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?HierarchyHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             'SELECT h.*
@@ -216,9 +217,9 @@ final class ProjectionHypergraph
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$nodeAddress->getContentStreamIdentifier(),
-            'nodeAggregateIdentifier' => (string)$nodeAddress->getNodeAggregateIdentifier(),
-            'dimensionSpacePointHash' => $nodeAddress->getDimensionSpacePoint()->getHash()
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
         ];
 
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
@@ -294,13 +295,14 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @param NodeAddress $nodeAddress
      * @return array|RestrictionHyperrelationRecord[]
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findIngoingRestrictionRelations(
-        NodeAddress $nodeAddress
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
@@ -310,9 +312,9 @@ final class ProjectionHypergraph
             AND :nodeAggregateIdentifier = ANY(r.affectednodeaggregateidentifiers)';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$nodeAddress->getContentStreamIdentifier(),
-            'dimensionSpacePointHash' => $nodeAddress->getDimensionSpacePoint()->getHash(),
-            'nodeAggregateIdentifier' => (string)$nodeAddress->getNodeAggregateIdentifier()
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
         ];
 
         $restrictionRelations = [];

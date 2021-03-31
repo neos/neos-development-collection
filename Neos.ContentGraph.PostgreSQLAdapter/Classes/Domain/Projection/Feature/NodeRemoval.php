@@ -18,7 +18,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\Flow\Annotations as Flow;
 
@@ -35,13 +34,11 @@ trait NodeRemoval
         $this->transactional(function() use($event) {
             $nodeRecordsToBeRemoved = [];
             foreach ($event->getAffectedCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
-                $nodeAddress = new NodeAddress(
+                $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
                     $event->getContentStreamIdentifier(),
                     $dimensionSpacePoint,
-                    $event->getNodeAggregateIdentifier(),
-                    null
+                    $event->getNodeAggregateIdentifier()
                 );
-                $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByAddress($nodeAddress);
 
                 $ingoingHierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByChildNodeAnchor(
                     $event->getContentStreamIdentifier(),

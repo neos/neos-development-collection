@@ -22,7 +22,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 
@@ -57,13 +56,6 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         ];
 
         return new self($query, $parameters, []);
-    }
-
-    public static function createForNodeAddress(NodeAddress $nodeAddress): self
-    {
-        $query = self::create($nodeAddress->getContentStreamIdentifier());
-        return $query->withDimensionSpacePoint($nodeAddress->getDimensionSpacePoint())
-            ->withNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
