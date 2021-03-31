@@ -622,13 +622,13 @@ trait EventSourcedTrait
     }
 
     /**
-     * @When /^the command CreateNodeAggregateWithNode is executed with payload:$/
+     * @When /^the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function theCommandCreateNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
+    public function theCommandCreateNodeAggregateWithNodeAndSerializedPropertiesIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         if (!isset($commandArguments['initiatingUserIdentifier'])) {
@@ -664,46 +664,13 @@ trait EventSourcedTrait
     }
 
     /**
-     * @When the following CreateNodeAggregateWithNode commands are executed for content stream :contentStreamIdentifier and origin :originSpacePoint:
-     * @throws JsonException
-     */
-    public function theFollowingCreateNodeAggregateWithNodeCommandsAreExecuted(string $contentStreamIdentifier, string $originSpacePoint, TableNode $table): void
-    {
-        foreach ($table->getHash() as $row) {
-            $command = new CreateNodeAggregateWithNodeAndSerializedProperties(
-                ContentStreamIdentifier::fromString($contentStreamIdentifier),
-                NodeAggregateIdentifier::fromString($row['nodeAggregateIdentifier']),
-                NodeTypeName::fromString($row['nodeTypeName']),
-                OriginDimensionSpacePoint::fromJsonString($originSpacePoint),
-                UserIdentifier::forSystemUser(),
-                NodeAggregateIdentifier::fromString($row['parentNodeAggregateIdentifier']),
-                !empty($row['succeedingSiblingNodeAggregateIdentifier'])
-                    ? NodeAggregateIdentifier::fromString($row['succeedingSiblingNodeAggregateIdentifier'])
-                    : null,
-                !empty($row['nodeName'])
-                    ? NodeName::fromString($row['nodeName'])
-                    : null,
-                !empty($row['initialPropertyValues'])
-                    ? SerializedPropertyValues::fromArray(json_decode($row['initialPropertyValues'], true, 512, JSON_THROW_ON_ERROR))
-                    : null,
-                !empty($row['tetheredDescendantNodeAggregateIdentifiers'])
-                    ? NodeAggregateIdentifiersByNodePaths::fromArray(json_decode($row['tetheredDescendantNodeAggregateIdentifiers'], true, 512, JSON_THROW_ON_ERROR))
-                    : null
-            );
-            $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-                ->handleCreateNodeAggregateWithNodeAndSerializedProperties($command);
-            $this->theGraphProjectionIsFullyUpToDate();
-        }
-    }
-
-    /**
-     * @When /^the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:$/
+     * @When /^the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      */
-    public function theCommandCreateNodeAggregateWithNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    public function theCommandCreateNodeAggregateWithNodeAndSerializedPropertiesIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
     {
         try {
-            $this->theCommandCreateNodeAggregateWithNodeIsExecutedWithPayload($payloadTable);
+            $this->theCommandCreateNodeAggregateWithNodeAndSerializedPropertiesIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -1094,7 +1061,7 @@ trait EventSourcedTrait
      * @param int|null $expectedCode
      * @throws ReflectionException
      */
-    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode)
+    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode = null)
     {
         Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
         $lastCommandExceptionShortName = (new \ReflectionClass($this->lastCommandException))->getShortName();
@@ -1146,7 +1113,7 @@ trait EventSourcedTrait
                     WorkspaceCommandHandler::class,
                     'handleRebaseWorkspace'
                 ];
-            case 'CreateNodeAggregateWithNode':
+            case 'CreateNodeAggregateWithNodeAndSerializedProperties':
                 return [
                     CreateNodeAggregateWithNodeAndSerializedProperties::class,
                     NodeAggregateCommandHandler::class,
@@ -1164,7 +1131,7 @@ trait EventSourcedTrait
                     NodeAggregateCommandHandler::class,
                     'handleChangeNodeAggregateName'
                 ];
-            case 'SetNodeProperties':
+            case 'SetSerializedNodeProperties':
                 return [
                     SetSerializedNodeProperties::class,
                     NodeAggregateCommandHandler::class,

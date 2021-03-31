@@ -108,39 +108,3 @@ Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker:
         arguments:
           1:
             setting: "Neos.EventSourcedContentRepository.projection.defaultProjectorsToBeBlocked"
-
-Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\TetheredNodeAdjustments:
-  arguments:
-    1:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-        arguments:
-          1:
-            value: 'ContentRepository'
-
-Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\UnknownNodeTypeAdjustment:
-  arguments:
-    1:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-        arguments:
-          1:
-            value: 'ContentRepository'
-
-Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\DisallowedChildNodeAdjustment:
-  arguments:
-    1:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-        arguments:
-          1:
-            value: 'ContentRepository'
-
-Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\PropertyAdjustment:
-  arguments:
-    1:
-      object:
-        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-        arguments:
-          1:
-            value: 'ContentRepository'

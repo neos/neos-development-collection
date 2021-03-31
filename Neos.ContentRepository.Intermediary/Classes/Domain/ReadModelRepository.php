@@ -27,13 +27,13 @@ final class ReadModelRepository
      * @Flow\Inject
      * @var ContentGraphInterface
      */
-    protected ContentGraphInterface $contentGraph;
+    protected $contentGraph;
 
     /**
      * @Flow\Inject
      * @var ReadModelFactory
      */
-    protected ReadModelFactory $readModelFactory;
+    protected $readModelFactory;
 
     public function findByNodeAddress(NodeAddress $nodeAddress, VisibilityConstraints $visibilityConstraints): ?NodeBasedReadModelInterface
     {

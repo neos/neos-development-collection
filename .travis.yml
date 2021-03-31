@@ -30,6 +30,6 @@ before_script:
 script:
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedContentRepository/Tests/Functional
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Functional
-  - bin/behat -f progress -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
+  - bin/behat -f progress -c Packages/CR/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
   - bin/behat -f progress -c Packages/CR/Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist
 #  - Packages/CR/.run-e2e-test.sh

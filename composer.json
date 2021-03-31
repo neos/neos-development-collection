@@ -17,11 +17,12 @@
     "replace": {
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
+        "neos/contentrepository-behavioraltests": "self.version",
+        "neos/contentrepository-intermediary": "self.version",
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
         "neos/eventsourcedcontentrepository-security": "self.version",
         "neos/event-sourced-content-repository": "self.version",
-        "neos/event-sourced-neos-adjustments": "self.version",
-        "neos/contentrepository-intermediary": "self.version"
+        "neos/event-sourced-neos-adjustments": "self.version"
     },
     "suggest": [],
     "autoload": {
@@ -31,6 +32,12 @@
             ],
             "Neos\\ContentGraph\\PostgreSQLAdapter\\": [
                 "Neos.ContentGraph.PostgreSQLAdapter/Classes"
+              ],
+            "Neos\\ContentRepository\\BehavioralTests\\": [
+                "Neos.ContentRepository.BehavioralTests/Classes"
+            ],
+            "Neos\\ContentRepository\\Intermediary\\": [
+                "Neos.ContentRepository.Intermediary/Classes"
             ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Classes"
@@ -43,9 +50,6 @@
             ],
             "Neos\\EventSourcedNeosAdjustments\\": [
                 "Neos.EventSourcedNeosAdjustments/Classes"
-            ],
-            "Neos\\ContentRepository\\Intermediary\\": [
-                "Neos.ContentRepository.Intermediary/Classes"
             ]
         }
     },
@@ -57,6 +61,12 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
+                "Neos.ContentRepository.BehavioralTests/Tests"
+            ],
+            "Neos\\ContentRepository\\Intermediary\\Tests\\": [
+                "Neos.ContentRepository.Intermediary/Tests"
+            ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\Tests\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Tests"
             ],
@@ -66,9 +76,6 @@
             "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": [
                 "Neos.ContentGraph.PostgreSQLAdapter/Tests"
             ],
-            "Neos\\ContentRepository\\Intermediary\\Tests\\": [
-                "Neos.EventSourcedContentRepository/Tests"
-            ]
         }
     }
 }
