@@ -1091,6 +1091,68 @@ insert ignore into neos_contentgraph_restrictionrelation
             // TODO: Routing Projection!
 
         });
+    }
 
+    public function whenDimensionShineThroughWasAdded(ContentRepository\Context\DimensionSpace\Event\DimensionShineThroughWasAdded $event)
+    {
+        $this->transactional(function () use ($event) {
+            // 1) hierarchy relations
+            $this->getDatabaseConnection()->executeStatement(
+                '
+                INSERT INTO neos_contentgraph_hierarchyrelation (
+                  parentnodeanchor,
+                  childnodeanchor,
+                  `name`,
+                  position,
+                  dimensionspacepoint,
+                  dimensionspacepointhash,
+                  contentstreamidentifier
+                )
+                SELECT
+                  h.parentnodeanchor,
+                  h.childnodeanchor,
+                  h.name,
+                  h.position,
+                 :newDimensionSpacePoint AS dimensionspacepoint,
+                 :newDimensionSpacePointHash AS dimensionspacepointhash,
+                  h.contentstreamidentifier
+                FROM
+                    neos_contentgraph_hierarchyrelation h
+                    WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                    AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash',
+                [
+                    'contentStreamIdentifier' => $event->getContentStreamIdentifier()->jsonSerialize(),
+                    'sourceDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
+                ]
+            );
+
+            // 2) restriction relations
+            $this->getDatabaseConnection()->executeUpdate('
+                INSERT INTO neos_contentgraph_restrictionrelation (
+                  contentstreamidentifier,
+                  dimensionspacepointhash,
+                  originnodeaggregateidentifier,
+                  affectednodeaggregateidentifier
+                )
+                SELECT
+                  r.contentstreamidentifier,
+                  :targetDimensionSpacePointHash,
+                  r.originnodeaggregateidentifier,
+                  r.affectednodeaggregateidentifier
+                FROM
+                    neos_contentgraph_restrictionrelation r
+                    WHERE r.contentstreamidentifier = :contentStreamIdentifier
+                    AND r.dimensionspacepointhash = :sourceDimensionSpacePointHash
+
+            ', [
+                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
+                'sourceDimensionSpacePointHash' => (string)$event->getSource()->getHash(),
+                'targetDimensionSpacePointHash' => (string)$event->getTarget()->getHash()
+            ]);
+
+            // TODO: Routing Projection!
+        });
     }
 }

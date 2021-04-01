@@ -17,9 +17,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeep
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Exception\DimensionSpacePointAlreadyExists;
+use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\Flow\Annotations as Flow;
@@ -52,15 +55,19 @@ final class DimensionSpaceCommandHandler
      */
     protected $contentGraph;
 
+    protected ContentDimensionZookeeper $contentDImensionZookeeper;
+
     protected DimensionSpacePointSet $allowedDimensionSubspace;
 
+    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
-    public function __construct(EventStore $eventStore, ReadSideMemoryCacheManager $readSideMemoryCacheManager, ContentGraphInterface $contentGraph, ContentDimensionZookeeper $contentDimensionZookeeper)
+    public function __construct(EventStore $eventStore, ReadSideMemoryCacheManager $readSideMemoryCacheManager, ContentGraphInterface $contentGraph, ContentDimensionZookeeper $contentDimensionZookeeper, InterDimensionalVariationGraph $interDimensionalVariationGraph)
     {
         $this->eventStore = $eventStore;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->contentGraph = $contentGraph;
-        $this->allowedDimensionSubspace = $contentDimensionZookeeper->getAllowedDimensionSubspace();
+        $this->contentDimensionZookeeper = $contentDimensionZookeeper;
+        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
     }
 
 
@@ -90,6 +97,29 @@ final class DimensionSpaceCommandHandler
         return CommandResult::fromPublishedEvents($events);
     }
 
+    public function handleAddDimensionShineThrough(Command\AddDimensionShineThrough $command): CommandResult
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
+
+        $this->requireDimensionSpacePointToBeEmptyInContentStream($command->getTarget(), $command->getContentStreamIdentifier());
+        $this->requireDimensionSpacePointToExistInConfiguration($command->getTarget());
+
+        $this->requireDimensionSpacePointToBeSpecialization($command->getTarget(), $command->getSource());
+
+        $events = DomainEvents::withSingleEvent(
+            DecoratedEvent::addIdentifier(
+                new Event\DimensionShineThroughWasAdded(
+                    $command->getContentStreamIdentifier(),
+                    $command->getSource(),
+                    $command->getTarget()
+                ),
+                Uuid::uuid4()->toString()
+            )
+        );
+        $this->eventStore->commit($streamName, $events);
+        return CommandResult::fromPublishedEvents($events);
+    }
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
@@ -97,7 +127,8 @@ final class DimensionSpaceCommandHandler
      */
     protected function requireDimensionSpacePointToExistInConfiguration(DimensionSpacePoint $dimensionSpacePoint): void
     {
-        if (!$this->allowedDimensionSubspace->contains($dimensionSpacePoint)) {
+        $allowedDimensionSubspace = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
+        if (!$allowedDimensionSubspace->contains($dimensionSpacePoint)) {
             throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $dimensionSpacePoint), 1520260137);
         }
     }
@@ -108,6 +139,13 @@ final class DimensionSpaceCommandHandler
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
         if ($subgraph->countNodes() > 0) {
             throw new DimensionSpacePointAlreadyExists(sprintf('the content stream %s already contained nodes in dimension space point %s - this is not allowed.', $contentStreamIdentifier, $dimensionSpacePoint), 1612898126);
+        }
+    }
+
+    private function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $target, DimensionSpacePoint $source)
+    {
+        if (!$this->interDimensionalVariationGraph->getVariantType($target, $source)->equals(VariantType::specialization())) {
+            throw new DimensionSpacePointIsNoSpecialization(sprintf('The Dimension space point %s is no specialization of %s.', $target, $source), 1617275140);
         }
     }
 }
