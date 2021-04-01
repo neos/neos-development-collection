@@ -17,11 +17,11 @@ privilegeTargets:
       matcher: 'method(Neos\Media\Browser\Controller\TagController->(create|edit|update|delete)Action())'
 
     'Neos.Media.Browser:AssetProxyService':
-      label: Allowed to use asset proxoes
+      label: Allowed to use asset proxies
       matcher: 'method(Neos\Media\Browser\Controller\AssetProxyController->(index|import)Action())'
 
     'Neos.Media.Browser:ManageAssetCollections':
-      label: Allowed to manage Asset Collections
+      label: Allowed to manage asset collections
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action()) || method(Neos\Media\Browser\Controller\AssetCollectionController->(create|edit|update|delete)Action())'
 
     'Neos.Media.Browser:ReplaceAssetResource':

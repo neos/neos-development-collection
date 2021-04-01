@@ -28,7 +28,7 @@
 
 	<f:if condition="{showRoles}">
 		<fieldset class="neos-span6">
-			<label class="neos-control-label">{neos:backend.translate(source: 'Modules', id: 'users.roles')}</label>
+			<legend class="neos-control-label">{neos:backend.translate(source: 'Modules', id: 'users.roles')}</legend>
 			<table class="neos-table" data-neos-expandable="dropdown-group">
 				<thead>
 				<tr>
@@ -43,7 +43,7 @@
 					<tr>
 						<td>
 							<div class="neos-controls">
-								<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.packageKey}" data-neos-toggle="tooltip" data-placement="right">
+								<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.identifier}" data-neos-toggle="tooltip" data-placement="right">
 									<f:form.checkbox name="roleIdentifiers" multiple="true" value="{role.identifier}" id="roles-{rolesIteration.cycle}" checked="{f:security.ifHasRole(role: role, account: account, then: true, else: false)}"/>
 									<span></span>
 								</label>
@@ -51,7 +51,7 @@
 						</td>
 						<td>
 							<div class="neos-controls">
-								<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.packageKey}" data-neos-toggle="tooltip" data-placement="right">
+								<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.identifier}" data-neos-toggle="tooltip" data-placement="right">
 									{role.label}
 								</label>
 							</div>

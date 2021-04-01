@@ -121,7 +121,7 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Service\ContentDimensionsController->(index|show|error)Action())'
 
     'Neos.Neos:Backend.DataSource':
-      label: General access to data sources
+      label: General access to data-sources
       matcher: 'method(Neos\Neos\Service\Controller\DataSourceController->(index|error)Action())'
 
   #
@@ -159,19 +159,19 @@ privilegeTargets:
       matcher: 'administration/users'
 
     'Neos.Neos:Backend.Module.Administration.Packages':
-      label: General access the user packages module
+      label: General access to the packages module
       matcher: 'administration/packages'
 
     'Neos.Neos:Backend.Module.Administration.Sites':
-      label: General access the sites module
+      label: General access to the sites module
       matcher: 'administration/sites'
 
     'Neos.Neos:Backend.Module.Administration.Configuration':
-      label: General access the configuration module
+      label: General access to the configuration module
       matcher: 'administration/configuration'
 
     'Neos.Neos:Backend.Module.Administration.Dimensions':
-      label: General access the dimensions module
+      label: General access to the dimensions module
       matcher: 'administration/dimensions'
 
 roles:
