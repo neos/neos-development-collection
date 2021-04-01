@@ -89,7 +89,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
             type: 'ChangePropertyValue'
             settings:
               property: 'text'
-              newValue: 'fixed value'
+              newSerializedValue: 'fixed value'
     """
 
 
@@ -161,7 +161,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
             type: 'ChangePropertyValue'
             settings:
               property: 'text'
-              newValue: 'fixed value'
+              newSerializedValue: 'fixed value'
     """
 
     # the node was changed inside the new content stream, but only in DE
@@ -209,7 +209,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
             type: 'ChangePropertyValue'
             settings:
               property: 'text'
-              newValue: 'fixed value'
+              newSerializedValue: 'fixed value'
     """
 
     # the node was changed inside the new content stream in DE and EN
@@ -248,7 +248,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
             type: 'ChangePropertyValue'
             settings:
               property: 'text'
-              newValue: 'fixed value'
+              newSerializedValue: 'fixed value'
     """
 
     # neither DE or CH is modified
@@ -286,7 +286,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
             type: 'ChangePropertyValue'
             settings:
               property: 'text'
-              newValue: 'fixed value'
+              newSerializedValue: 'fixed value'
     """
 
     # neither DE or CH is modified

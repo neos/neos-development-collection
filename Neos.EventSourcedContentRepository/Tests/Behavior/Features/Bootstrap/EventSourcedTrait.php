@@ -1627,25 +1627,6 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the current Node to have the properties:$/
-     * @param TableNode $expectedProperties
-     */
-    public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
-    {
-        Assert::assertNotNull($this->currentNode, 'current node not found');
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
-
-        $properties = $this->currentNode->getProperties();
-        foreach ($expectedProperties->getHash() as $row) {
-            Assert::assertTrue($properties->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
-            $actualProperty = $properties->getProperty($row['Key'])->getValue();
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
-        }
-    }
-
-    /**
      * @Then /^I expect this node to have no properties$/
      */
     public function iExpectThisNodeToHaveNoProperties()

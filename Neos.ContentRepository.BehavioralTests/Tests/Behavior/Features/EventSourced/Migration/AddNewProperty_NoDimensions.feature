@@ -80,7 +80,14 @@ Feature: Add New Property
             type: 'AddNewProperty'
             settings:
               newPropertyName: 'text'
-              value: 'fixed value'
+              serializedValue: 'fixed value'
+              type: 'string'
+          -
+            type: 'AddNewProperty'
+            settings:
+              newPropertyName: 'aDateOutsideSchema'
+              serializedValue: '2013-09-09T12:04:12'
+              type: 'DateTime'
     """
     # the original content stream has not been touched
     When I am in content stream "cs-identifier" and Dimension Space Point {}
@@ -96,5 +103,6 @@ Feature: Add New Property
       | text | Original text | string |
     Then I expect a node identified by aggregate identifier "other" to exist in the subgraph
     And I expect this node to have the properties:
-      | Key  | Value       | Type   |
-      | text | fixed value | string |
+      | Key                | Value                     | Type     |
+      | text               | fixed value               | string   |
+      | aDateOutsideSchema | 2013-09-09T12:04:12+00:00 | DateTime |

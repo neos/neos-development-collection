@@ -14,11 +14,11 @@ namespace Neos\ContentRepository\Intermediary\Migration\Transformations;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
-use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
-use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
@@ -59,11 +59,11 @@ class RemoveProperty implements NodeBasedTransformationInterface
     public function execute(NodeInterface $node, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if ($node->hasProperty($this->propertyName)) {
-            return $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
                 $contentStreamForWriting,
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
-                PropertyValuesToWrite::fromArray([
+                SerializedPropertyValues::fromArray([
                     $this->propertyName => null
                 ]),
                 UserIdentifier::forSystemUser()

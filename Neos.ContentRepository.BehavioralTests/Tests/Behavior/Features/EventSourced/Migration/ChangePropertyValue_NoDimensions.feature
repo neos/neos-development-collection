@@ -68,7 +68,7 @@ Feature: Change Property
             type: 'ChangePropertyValue'
             settings:
               property: 'text'
-              newValue: 'fixed value'
+              newSerializedValue: 'fixed value'
     """
     # the original content stream has not been touched
     When I am in content stream "cs-identifier" and Dimension Space Point {}
@@ -99,7 +99,7 @@ Feature: Change Property
             type: 'ChangePropertyValue'
             settings:
               property: 'notExisting'
-              newValue: 'fixed value'
+              newSerializedValue: 'fixed value'
     """
     # we did not change anything because notExisting does not exist
     When I am in content stream "migration-cs" and Dimension Space Point {}
@@ -123,7 +123,7 @@ Feature: Change Property
             type: 'ChangePropertyValue'
             settings:
               property: 'text'
-              newValue: 'bla {current}'
+              newSerializedValue: 'bla {current}'
     """
     When I am in content stream "migration-cs" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
@@ -147,7 +147,7 @@ Feature: Change Property
             settings:
               property: 'text'
               currentValuePlaceholder: '{otherPlaceholder}'
-              newValue: 'bla {otherPlaceholder}'
+              newSerializedValue: 'bla {otherPlaceholder}'
     """
     When I am in content stream "migration-cs" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
@@ -194,7 +194,7 @@ Feature: Change Property
             type: 'ChangePropertyValue'
             settings:
               property: 'text'
-              newValue: 'bla {current}'
+              newSerializedValue: 'bla {current}'
               search: 'Original'
               replace: 'alternative'
     """

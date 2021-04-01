@@ -13,11 +13,12 @@ namespace Neos\ContentRepository\Intermediary\Migration\Transformations;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
-use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
-use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
@@ -51,12 +52,13 @@ class StripTagsOnProperty implements NodeBasedTransformationInterface
     public function execute(NodeInterface $node, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if ($node->hasProperty($this->propertyName)) {
-            return $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+            $newValue = strip_tags($node->getProperty($this->propertyName));
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
                 $contentStreamForWriting,
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
-                PropertyValuesToWrite::fromArray([
-                    $this->propertyName => strip_tags($node->getProperty($this->propertyName))
+                SerializedPropertyValues::fromArray([
+                    $this->propertyName => new SerializedPropertyValue($newValue, $node->getProperties()->getProperty($this->propertyName)->getType())
                 ]),
                 UserIdentifier::forSystemUser()
             ));

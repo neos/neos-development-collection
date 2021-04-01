@@ -94,7 +94,7 @@ Feature: Filter - Node Name
             type: 'ChangePropertyValue'
             settings:
               property: 'text'
-              newValue: 'fixed value'
+              newSerializedValue: 'fixed value'
     """
     # the original content stream has not been touched
     When I am in content stream "cs-identifier" and Dimension Space Point {}

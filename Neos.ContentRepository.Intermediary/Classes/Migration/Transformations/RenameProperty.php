@@ -13,11 +13,11 @@ namespace Neos\ContentRepository\Intermediary\Migration\Transformations;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
-use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
-use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
@@ -70,12 +70,12 @@ class RenameProperty implements NodeBasedTransformationInterface
     public function execute(NodeInterface $node, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if ($node->hasProperty($this->oldPropertyName)) {
-            return $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
                 $contentStreamForWriting,
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
-                PropertyValuesToWrite::fromArray([
-                    $this->newPropertyName => $node->getProperty($this->oldPropertyName),
+                SerializedPropertyValues::fromArray([
+                    $this->newPropertyName => $node->getProperties()->getProperty($this->oldPropertyName),
                     $this->oldPropertyName => null
                 ]),
                 UserIdentifier::forSystemUser()

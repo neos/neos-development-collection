@@ -15,14 +15,15 @@ namespace Neos\ContentRepository\Intermediary\Migration\Transformations;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
-use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
-use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -40,9 +41,14 @@ class AddNewProperty implements NodeBasedTransformationInterface
     protected string $newPropertyName;
 
     /**
+     * @var string
+     */
+    protected $type;
+
+    /**
      * @var mixed
      */
-    protected $value;
+    protected $serializedValue;
 
     public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
     {
@@ -60,26 +66,31 @@ class AddNewProperty implements NodeBasedTransformationInterface
         $this->newPropertyName = $newPropertyName;
     }
 
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
     /**
-     * Property value to be set.
+     * Serialized Property value to be set.
      *
      * @param mixed $value
      * @return void
      */
-    public function setValue($value): void
+    public function setSerializedValue($value): void
     {
-        $this->value = $value;
+        $this->serializedValue = $value;
     }
 
     public function execute(NodeInterface $node, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if (!$node->hasProperty($this->newPropertyName)) {
-            return $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
                 $contentStreamForWriting,
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
-                PropertyValuesToWrite::fromArray([
-                    $this->newPropertyName => $this->value
+                SerializedPropertyValues::fromArray([
+                    $this->newPropertyName => new SerializedPropertyValue($this->serializedValue, $this->type)
                 ]),
                 UserIdentifier::forSystemUser()
             ));
