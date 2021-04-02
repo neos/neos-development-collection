@@ -197,14 +197,14 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
      * @return array|NodeAggregate[]
      * @throws DBALException
      * @throws \Exception
      */
     public function findParentNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $childNodeAggregateIdentifier
     ): array {
         $connection = $this->client->getConnection();
 
@@ -224,7 +224,7 @@ final class ContentGraph implements ContentGraphInterface
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'nodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
         ];
 

@@ -105,12 +105,10 @@ final class ProjectionHypergraph
      */
     public function findNodeRecordsForNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePointSet $coveredDimensionSpacePoints
+        NodeAggregateIdentifier $nodeAggregateIdentifier
     ): array {
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
-        $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier)
-            ->withDimensionSpacePoints($coveredDimensionSpacePoints);
+        $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
 
         $result = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 

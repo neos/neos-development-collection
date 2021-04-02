@@ -92,7 +92,9 @@ final class NodeFactory
             $nodeName,
             new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints),
             $nodesByOccupiedDimensionSpacePoint,
-            $coverageByOccupant,
+            array_map(function (array $dimensionSpacePoints) {
+                return DimensionSpacePointSet::fromArray($dimensionSpacePoints);
+            }, $coverageByOccupant),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoint,
             $occupationByCovered,

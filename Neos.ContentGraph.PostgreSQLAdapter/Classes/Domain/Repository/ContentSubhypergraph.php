@@ -109,15 +109,14 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     }
 
     public function findChildNodes(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
     ): array {
         $childNodes = [];
-        $query = HypergraphChildQuery::create($this->contentStreamIdentifier);
+        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withParentNodeAggregateIdentifier($nodeAggregateIdentifier)
             ->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
             $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
@@ -140,9 +139,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null
     ): int {
-        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, ['COUNT(*)']);
+        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier, ['COUNT(*)']);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withParentNodeAggregateIdentifier($parentNodeAggregateIdentifier)
             ->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
             $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
@@ -201,11 +199,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $referencedNodes;
     }
 
-    public function findParentNode(NodeAggregateIdentifier $childAggregateIdentifier): ?NodeInterface
+    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
     {
         $query = HypergraphParentQuery::create($this->contentStreamIdentifier);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withChildNodeAggregateIdentifier($childAggregateIdentifier);
+            ->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -237,9 +235,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
     ): ?NodeInterface {
-        $query = HypergraphChildQuery::create($this->contentStreamIdentifier);
+        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withParentNodeAggregateIdentifier($parentNodeAggregateIdentifier)
             ->withRestriction($this->visibilityConstraints)
             ->withChildNodeName($edgeName);
 

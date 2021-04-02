@@ -34,8 +34,11 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
 {
     use CommonGraphQueryOperations;
 
-    public static function create(ContentStreamIdentifier $contentStreamIdentifier, array $fieldsToFetch = null): self
-    {
+    public static function create(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        array $fieldsToFetch = null
+    ): self {
         $query = /** @lang PostgreSQL */
             'SELECT ' . ($fieldsToFetch
                 ? implode(', ', $fieldsToFetch)
@@ -47,22 +50,13 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
                 FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . '
             ) ch ON ch.parentnodeanchor = pn.relationanchorpoint
             JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ch.childnodeanchor
-            WHERE ch.contentstreamidentifier = :contentStreamIdentifier';
+            WHERE ch.contentstreamidentifier = :contentStreamIdentifier
+                AND pn.nodeaggregateidentifier = :parentNodeAggregateIdentifier';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier
         ];
-
-        return new self($query, $parameters);
-    }
-
-    public function withParentNodeAggregateIdentifier(NodeAggregateIdentifier $parentNodeAggregateIdentifier): self
-    {
-        $query = $this->query .= '
-            AND pn.nodeaggregateidentifier = :parentNodeAggregateIdentifier';
-
-        $parameters = $this->parameters;
-        $parameters['parentNodeAggregateIdentifier'] = (string)$parentNodeAggregateIdentifier;
 
         return new self($query, $parameters);
     }

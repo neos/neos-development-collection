@@ -84,12 +84,12 @@ interface ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
      * @return array|NodeAggregate[]
      */
     public function findParentNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateIdentifier $childNodeAggregateIdentifier
     ): array;
 
     /**
