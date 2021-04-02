@@ -103,7 +103,7 @@
 
 	<script>
 		window.addEventListener('DOMContentLoaded', (event) => {
-			jQuery(function() {
+			jQuery(function($) {
 				jQuery('.fold-toggle').click(function() {
 					jQuery(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
 					jQuery('tr.' + jQuery(this).data('toggle')).toggle();

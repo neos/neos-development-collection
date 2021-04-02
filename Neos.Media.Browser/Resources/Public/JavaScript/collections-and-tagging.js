@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', (event) => {
-	jQuery(function() {
+	jQuery(function($) {
 			$('.draggable-asset').each(function () {
 					$(this).draggable({
 							helper: 'clone',
