@@ -120,6 +120,84 @@ final class ProjectionHypergraph
     }
 
     /**
+     * @return array|HierarchyHyperrelationRecord[]
+     * @throws DBALException
+     */
+    public function findIngoingHierarchyHyperrelationRecords(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeRelationAnchorPoint $childNodeAnchor
+    ): array {
+        $query = /** @lang PostgreSQL */
+            'SELECT h.*
+            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' h
+            WHERE h.contentstreamidentifier = :contentStreamIdentifier
+            AND :childNodeAnchor = ANY(h.childnodeanchors)';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'childNodeAnchor' => (string)$childNodeAnchor
+        ];
+
+        $hierarchyHyperrelations = [];
+        foreach($this->getDatabaseConnection()->executeQuery($query, $parameters) as $row) {
+            $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
+        }
+
+        return $hierarchyHyperrelations;
+    }
+
+    /**
+     * @return array|HierarchyHyperrelationRecord[]
+     * @throws DBALException
+     */
+    public function findOutgoingHierarchyHyperrelationRecords(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeRelationAnchorPoint $parentNodeAnchor
+    ): array {
+        $query = /** @lang PostgreSQL */
+            'SELECT h.*
+            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' h
+            WHERE h.contentstreamidentifier = :contentStreamIdentifier
+            AND h.parentnodeanchor = :parentNodeAnchor';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'parentNodeAnchor' => (string)$parentNodeAnchor
+        ];
+
+        $hierarchyHyperrelations = [];
+        foreach($this->getDatabaseConnection()->executeQuery($query, $parameters) as $row) {
+            $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
+        }
+
+        return $hierarchyHyperrelations;
+    }
+
+    /**
+     * @return array|ReferenceHyperrelationRecord[]
+     * @throws DBALException
+     */
+    public function findOutgoingReferenceHyperrelationRecords(
+        NodeRelationAnchorPoint $originNodeAnchor
+    ): array {
+        $query = /** @lang PostgreSQL */
+            'SELECT r.*
+            FROM ' . ReferenceHyperrelationRecord::TABLE_NAME .' r
+            WHERE r.originnodeanchor = :originNodeAnchor';
+
+        $parameters = [
+            'originNodeAnchor' => (string)$originNodeAnchor
+        ];
+
+        $referenceHyperrelations = [];
+        foreach($this->getDatabaseConnection()->executeQuery($query, $parameters) as $row) {
+            $referenceHyperrelations[] = ReferenceHyperrelationRecord::fromDatabaseRow($row);
+        }
+
+        return $referenceHyperrelations;
+    }
+
+    /**
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
@@ -410,6 +488,20 @@ final class ProjectionHypergraph
         $row = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
 
         return $row ? ReferenceHyperrelationRecord::fromDatabaseRow($row) : null;
+    }
+
+    public function countContentStreamCoverage(NodeRelationAnchorPoint $anchorPoint): int
+    {
+        $query = /** @lang PostgreSQL */
+            'SELECT DISTINCT contentstreamidentifier
+            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .'
+            WHERE :anchorPoint = ANY(childnodeanchors)';
+
+        $parameters = [
+            'anchorPoint' => (string)$anchorPoint
+        ];
+
+        return $this->getDatabaseConnection()->executeQuery($query, $parameters)->rowCount();
     }
 
     protected function getDatabaseConnection(): Connection

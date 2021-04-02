@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeDisabling;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeModification;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeReferencing;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
@@ -35,6 +36,7 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
     use NodeDisabling;
     use NodeReferencing;
     use NodeRemoval;
+    use NodeModification;
 
     private DbalClient $databaseClient;
 

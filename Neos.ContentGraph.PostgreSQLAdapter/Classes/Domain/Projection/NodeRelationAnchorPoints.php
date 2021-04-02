@@ -61,6 +61,15 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
         return self::fromArray($childNodeAnchors);
     }
 
+    public function replace(NodeRelationAnchorPoint $nodeRelationAnchorPoint, NodeRelationAnchorPoint $replacement): self
+    {
+        $childNodeAnchors = $this->getArrayCopy();
+        $position = array_search($nodeRelationAnchorPoint, $childNodeAnchors);
+        array_splice($childNodeAnchors, $position, 1, $replacement);
+
+        return self::fromArray($childNodeAnchors);
+    }
+
     public function remove(NodeRelationAnchorPoint $nodeRelationAnchorPoint): self
     {
         $childNodeAnchors = $this->getArrayCopy();

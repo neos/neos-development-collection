@@ -61,6 +61,31 @@ final class HierarchyHyperrelationRecord
         );
     }
 
+    public function replaceParentNodeAnchor(
+        NodeRelationAnchorPoint $newParentNodeAnchor,
+        Connection $databaseConnection
+    ) {
+        /** @todo do this directly in the database */
+        $databaseConnection->update(
+            self::TABLE_NAME,
+            [
+                'parentnodeanchor' => (string)$newParentNodeAnchor
+            ],
+            $this->getDatabaseIdentifier()
+        );
+        $this->parentNodeAnchor = $newParentNodeAnchor;
+    }
+
+    public function replaceChildNodeAnchor(
+        NodeRelationAnchorPoint $oldChildNodeAnchor,
+        NodeRelationAnchorPoint $newChildNodeAnchor,
+        Connection $databaseConnection
+    ) {
+        /** @todo do this directly in the database */
+        $childNodeAnchors = $this->childNodeAnchors->replace($oldChildNodeAnchor, $newChildNodeAnchor);
+        $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
+    }
+
     public function addChildNodeAnchor(
         NodeRelationAnchorPoint $childNodeAnchor,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchor,
