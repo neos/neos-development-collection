@@ -55,7 +55,7 @@ final class ProjectionHypergraph
             WHERE n.relationanchorpoint = :relationAnchorPoint';
 
         $parameters = [
-            'relationanchorpoint' => (string)$relationAnchorPoint
+            'relationAnchorPoint' => (string)$relationAnchorPoint
         ];
 
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
