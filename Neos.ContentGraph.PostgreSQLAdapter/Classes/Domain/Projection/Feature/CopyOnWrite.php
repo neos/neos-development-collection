@@ -43,38 +43,81 @@ trait CopyOnWrite
             $preprocessor($copiedNode);
             $copiedNode->addToDatabase($this->getDatabaseConnection());
 
-            foreach ($this->getProjectionHypergraph()->findIngoingHierarchyHyperrelationRecords(
+            $this->reassignIngoingHierarchyRelations(
                 $originContentStreamIdentifier,
-                $originNode->relationAnchorPoint
-            ) as $ingoingHierarchyRelation) {
-                $ingoingHierarchyRelation->replaceChildNodeAnchor(
-                    $originNode->relationAnchorPoint,
-                    $copiedNode->relationAnchorPoint,
-                    $this->getDatabaseConnection()
-                );
-            }
+                $originNode->relationAnchorPoint,
+                $copiedNodeRelationAnchorPoint
+            );
 
-            foreach ($this->getProjectionHypergraph()->findOutgoingHierarchyHyperrelationRecords(
+            $this->reassignOutgoingHierarchyRelations(
                 $originContentStreamIdentifier,
-                $originNode->relationAnchorPoint
-            ) as $outgoingHierarchyRelation) {
-                $outgoingHierarchyRelation->replaceParentNodeAnchor(
-                    $copiedNode->relationAnchorPoint,
-                    $this->getDatabaseConnection()
-                );
-            }
+                $originNode->relationAnchorPoint,
+                $copiedNodeRelationAnchorPoint
+            );
 
-            foreach ($this->getProjectionHypergraph()->findOutgoingReferenceHyperrelationRecords(
-                $originNode->relationAnchorPoint
-            ) as $outgoingReferenceRelation) {
-                $copiedReferenceRelation = clone $outgoingReferenceRelation;
-                $copiedReferenceRelation->originNodeAnchor = $copiedNode->relationAnchorPoint;
-                $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection());
-            }
+            $this->copyOutgoingReferenceRelations(
+                $originNode->relationAnchorPoint,
+                $copiedNodeRelationAnchorPoint
+            );
         } else {
             // no reason to create a copy
             $preprocessor($originNode);
             $originNode->updateToDatabase($this->getDatabaseConnection());
+        }
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    private function reassignIngoingHierarchyRelations(
+        ContentStreamIdentifier $originContentStreamIdentifier,
+        NodeRelationAnchorPoint $originRelationAnchorPoint,
+        NodeRelationAnchorPoint $targetRelationAnchorPoint
+    ): void {
+        foreach ($this->getProjectionHypergraph()->findIngoingHierarchyHyperrelationRecords(
+            $originContentStreamIdentifier,
+            $originRelationAnchorPoint
+        ) as $ingoingHierarchyRelation) {
+            $ingoingHierarchyRelation->replaceChildNodeAnchor(
+                $originRelationAnchorPoint,
+                $targetRelationAnchorPoint,
+                $this->getDatabaseConnection()
+            );
+        }
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    private function reassignOutgoingHierarchyRelations(
+        ContentStreamIdentifier $originContentStreamIdentifier,
+        NodeRelationAnchorPoint $originRelationAnchorPoint,
+        NodeRelationAnchorPoint $targetRelationAnchorPoint
+    ): void {
+        foreach ($this->getProjectionHypergraph()->findOutgoingHierarchyHyperrelationRecords(
+            $originContentStreamIdentifier,
+            $originRelationAnchorPoint
+        ) as $outgoingHierarchyRelation) {
+            $outgoingHierarchyRelation->replaceParentNodeAnchor(
+                $targetRelationAnchorPoint,
+                $this->getDatabaseConnection()
+            );
+        }
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    private function copyOutgoingReferenceRelations(
+        NodeRelationAnchorPoint $originRelationAnchorPoint,
+        NodeRelationAnchorPoint $targetRelationAnchorPoint
+    ): void {
+        foreach ($this->getProjectionHypergraph()->findOutgoingReferenceHyperrelationRecords(
+            $originRelationAnchorPoint
+        ) as $outgoingReferenceRelation) {
+            $copiedReferenceRelation = clone $outgoingReferenceRelation;
+            $copiedReferenceRelation->originNodeAnchor = $targetRelationAnchorPoint;
+            $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection());
         }
     }
 

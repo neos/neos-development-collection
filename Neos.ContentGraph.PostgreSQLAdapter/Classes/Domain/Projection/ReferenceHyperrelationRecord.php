@@ -74,7 +74,7 @@ final class ReferenceHyperrelationRecord
         $databaseConnection->update(
             self::TABLE_NAME,
             [
-                'destinationNodeAggregateIdentifiers' => $this->destinationNodeAggregateIdentifiers->toDatabaseString()
+                'destinationNodeAggregateIdentifiers' => $nodeAggregateIdentifiers->toDatabaseString()
             ],
             $this->getDatabaseIdentifier()
         );
