@@ -12,34 +12,34 @@ export default class Expandable {
     this.root = _root;
     this.trigger = Array.from(this.root.querySelectorAll(_triggerClassName));
     this.onStateChange = _onStateChange;
-    this._setupEventListeners();
-    this._initialize(initialState);
+    this.setupEventListeners();
+    this.initialize(initialState);
   }
 
-  _setupEventListeners() {
+  private setupEventListeners(): void {
     this.trigger.forEach((_toggleButton) => {
-      _toggleButton.addEventListener("click", this._toggle.bind(this));
+      _toggleButton.addEventListener("click", this.toggle.bind(this));
     });
   }
 
-  _initialize(initialState: Boolean) {
+  private initialize(initialState: Boolean): void {
     const header = this.root.querySelector("[aria-expanded]");
     header.setAttribute("aria-expanded", String(initialState));
 
     if (initialState) {
       // default is closed
       this.root.classList.add("neos-open");
-      this._changeToogleIcon();
+      this.changeToogleIcon();
     }
   }
 
-  _toggle() {
-    this._changeToogleIcon();
+  private toggle(): void {
+    this.changeToogleIcon();
     this.root.classList.toggle("neos-open");
-    this._toogleAriaExpandable();
+    this.toogleAriaExpandable();
   }
 
-  _toogleAriaExpandable() {
+  private toogleAriaExpandable(): void {
     const header = this.root.querySelector("[aria-expanded]");
     const expanded = this.root.classList.contains("neos-open");
     header.setAttribute("aria-expanded", String(expanded));
@@ -49,7 +49,7 @@ export default class Expandable {
     }
   }
 
-  _changeToogleIcon() {
+  private changeToogleIcon(): void {
     const openIcon = this.root.querySelector(".fa-chevron-circle-down");
     const closeIcon = this.root.querySelector(".fa-chevron-circle-up");
     if (openIcon) {

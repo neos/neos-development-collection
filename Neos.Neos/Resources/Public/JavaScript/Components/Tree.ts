@@ -11,31 +11,31 @@ export default class Tree {
   constructor(_root: HTMLElement) {
     this.root = _root;
     this.type = this.root.getAttribute("data-type");
-    this.treeBranchStates = this._loadTreeBranchStates(true);
+    this.treeBranchStates = this.loadTreeBranchStates(true);
     this.nodes = Array.from(this.root.querySelectorAll(".neos-tree-node"));
-    this._initializeTree();
-    this._setupEventListeners();
+    this.initializeTree();
+    this.setupEventListeners();
   }
 
-  _initializeTree() {
+  private initializeTree(): void {
     this.nodes.forEach((_node: HTMLElement) => {
       if (_node.firstChild.nodeName.toLowerCase() !== "ul") {
         // @ts-ignore
-        this._wrapElementWithNodeTitle(_node.firstChild);
+        this.wrapElementWithNodeTitle(_node.firstChild);
       }
       const hasSubnodes = _node.querySelectorAll(".neos-tree-node");
       if (
-        this._isFolder(_node) &&
+        this.isFolder(_node) &&
         !isNil(hasSubnodes) &&
         hasSubnodes.length > 0
       ) {
-        const expandIcon = this._createExpandIcon();
+        const expandIcon = this.createExpandIcon();
         _node.insertBefore(expandIcon, _node.firstChild);
       }
     });
   }
 
-  _initializeTreeState(items: Array<string>) {
+  private initializeTreeState(items: Array<string>): void {
     if (!Array.isArray(items)) {
       return;
     }
@@ -48,79 +48,79 @@ export default class Tree {
     });
   }
 
-  _setupEventListeners() {
+  private setupEventListeners(): void {
     this.nodes.forEach((_node) => {
-      _node.addEventListener("click", this._onNodeClick.bind(this));
+      _node.addEventListener("click", this.onNodeClick.bind(this));
     });
   }
 
-  _onNodeClick(event: Event) {
+  private onNodeClick(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
     const target = <HTMLElement>event.target;
     const node: HTMLElement = target.closest(".neos-tree-node");
     if (!isNil(node)) {
-      this._deselectCurrentActiveNode();
+      this.deselectCurrentActiveNode();
       node.classList.toggle("neos-tree-active");
     }
 
-    if (this._isFolder(node)) {
-      this._toggle(node);
+    if (this.isFolder(node)) {
+      this.toggle(node);
     }
   }
 
-  _deselectCurrentActiveNode() {
+  private deselectCurrentActiveNode(): void {
     this.root.querySelectorAll(".neos-tree-active").forEach((_node) => {
       _node.classList.remove("neos-tree-active");
     });
   }
 
-  _createExpandIcon() {
+  private createExpandIcon(): HTMLElement {
     const expandIcon = document.createElement("span");
     expandIcon.classList.add("neos-tree-expander");
     return expandIcon;
   }
 
-  _wrapElementWithNodeTitle(element: HTMLElement) {
+  private wrapElementWithNodeTitle(element: HTMLElement): void {
     const nodeTitle = document.createElement("span");
     nodeTitle.classList.add("neos-tree-title");
     element.parentNode.insertBefore(nodeTitle, element);
     nodeTitle.appendChild(element);
   }
 
-  _isFolder(node: HTMLElement) {
+  private isFolder(node: HTMLElement): boolean {
     return !isNil(node) && node.classList.contains("neos-tree-folder");
   }
 
-  _toggle(node: HTMLElement) {
+  private toggle(node: HTMLElement): void {
     node.classList.toggle("neos-tree-open");
-    this._changeTreeBranchState(node.getAttribute("title"));
+    this.changeTreeBranchState(node.getAttribute("title"));
   }
 
-  _getPathForType() {
+  private getPathForType(): string {
     const path = VALUE_PATH + (!isEmpty(this.type) ? "." + this.type : "");
     return path.toLowerCase();
   }
 
-  _loadTreeBranchStates(init: Boolean) {
-    const pathWithType = this._getPathForType();
+  private loadTreeBranchStates(init: Boolean) {
+    const pathWithType = this.getPathForType();
     const storageData = loadStorageData(pathWithType);
     if (!isNil(init) && init === true) {
-      this._initializeTreeState(storageData);
+      this.initializeTreeState(storageData);
     }
 
     this.treeBranchStates = Array.isArray(storageData) ? storageData : [];
     return this.treeBranchStates;
   }
 
-  _saveTreeBranchStates() {
-    const pathWithType = this._getPathForType();
+  private saveTreeBranchStates(): void {
+    const pathWithType = this.getPathForType();
     if (Array.isArray(this.treeBranchStates)) {
       saveStorageData(pathWithType, this.treeBranchStates);
     }
   }
 
-  _changeTreeBranchState(path: string) {
+  private changeTreeBranchState(path: string): void {
     if (isEmpty(path) || !Array.isArray(this.treeBranchStates)) {
       return;
     }
@@ -133,6 +133,6 @@ export default class Tree {
       this.treeBranchStates.push(path);
     }
 
-    this._saveTreeBranchStates();
+    this.saveTreeBranchStates();
   }
 }

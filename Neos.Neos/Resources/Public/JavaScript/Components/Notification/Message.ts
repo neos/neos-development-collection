@@ -13,11 +13,11 @@ export default class Message {
     this.message = null;
     this.container = _container;
     this.options = _options;
-    this._initialize();
-    this._setupEventListeners();
+    this.initialize();
+    this.setupEventListeners();
   }
 
-  _initialize() {
+  private initialize(): void {
     const milliseconds = Date.now();
     const timestamp = Math.floor(milliseconds / 1000);
     const { title, message, type, closeButton } = this.options;
@@ -35,35 +35,35 @@ export default class Message {
     messageElement.id = "neos-notification-message-" + timestamp;
     this.message = messageElement;
     this.container.appendChild(messageElement);
-    this._registerCloseButton(messageElement);
-    this._registerExpandHandling(messageElement);
+    this.registerCloseButton(messageElement);
+    this.registerExpandHandling(messageElement);
   }
 
-  _registerExpandHandling(message: HTMLElement) {
+  private registerExpandHandling(message: HTMLElement): void {
     const contentSection = message.querySelector(".neos-notification-content");
     if (
       !isNil(contentSection) &&
       contentSection.classList.contains("expandable")
     ) {
-      contentSection.addEventListener("click", this._toggle.bind(this));
+      contentSection.addEventListener("click", this.toggle.bind(this));
     }
   }
 
-  _registerCloseButton(message: HTMLElement) {
+  private registerCloseButton(message: HTMLElement): void {
     const closeButton = message.querySelector(".neos-close-button");
     if (!isNil(closeButton)) {
-      closeButton.addEventListener("click", this._close.bind(this));
+      closeButton.addEventListener("click", this.close.bind(this));
     }
   }
 
-  _setupEventListeners() {
+  private setupEventListeners(): void {
     const timeout: number = this.options.timeout;
     if (timeout > 0) {
-      setTimeout(this._close.bind(this), timeout);
+      setTimeout(this.close.bind(this), timeout);
     }
   }
 
-  _close() {
+  private close(): void {
     if (!isNil(this.message)) {
       this.message.classList.add("fade-out");
       setTimeout(() => {
@@ -72,9 +72,9 @@ export default class Message {
     }
   }
 
-  _toggle() {
+  private toggle(): void {
     if (isNil(this.message)) {
-      return false;
+      return;
     }
 
     const contentSection: HTMLElement = this.message.querySelector(

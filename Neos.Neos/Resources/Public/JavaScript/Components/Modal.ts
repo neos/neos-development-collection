@@ -15,27 +15,27 @@ export default class Modal {
       this.root.querySelectorAll('[data-dismiss="modal"]')
     );
     this.header = _root.querySelector(".neos-header");
-    this._setupEventListeners();
+    this.setupEventListeners();
   }
 
-  _setupEventListeners() {
+  private setupEventListeners(): void {
     this.triggers.forEach((_trigger) => {
-      _trigger.addEventListener("click", this._open.bind(this));
+      _trigger.addEventListener("click", this.open.bind(this));
     });
 
     this.closeButtons.forEach((_closeButton) => {
-      _closeButton.addEventListener("click", this._close.bind(this));
+      _closeButton.addEventListener("click", this.close.bind(this));
     });
 
-    document.addEventListener("keyup", this._onKeyPress.bind(this));
+    document.addEventListener("keyup", this.onKeyPress.bind(this));
   }
 
-  _open(_event: Event) {
+  private open(_event: Event): void {
     _event.preventDefault();
-    const targetElement = <HTMLElement> _event.target;
-    const trigger = this._getTriggerElement(targetElement);
+    const targetElement = <HTMLElement>_event.target;
+    const trigger = this.getTriggerElement(targetElement);
 
-    this._handleDynamicHeader(trigger);
+    this.handleDynamicHeader(trigger);
     this.root.classList.add("open");
     this.root.classList.remove("neos-hide");
 
@@ -52,10 +52,10 @@ export default class Modal {
    * button element. So this function checks for the data-toggle attribute and if this does not
    * exists we try to find the closest matching element.
    *
-   * @param {object} _element
-   * @return {object}
+   * @param {HTMLElement} _element
+   * @return {HTMLElement}
    */
-  _getTriggerElement(_element: HTMLElement) {
+  private getTriggerElement(_element: HTMLElement): HTMLElement {
     if (isNil(_element)) {
       return null;
     }
@@ -66,7 +66,7 @@ export default class Modal {
     return _element;
   }
 
-  _close() {
+  private close(): void {
     this.root.classList.remove("open");
     this.root.classList.add("neos-hide");
 
@@ -77,15 +77,15 @@ export default class Modal {
     );
   }
 
-  _onKeyPress(_event: KeyboardEvent) {
+  private onKeyPress(_event: KeyboardEvent): void {
     if (_event.key === "Escape") {
-      this._close();
+      this.close();
     }
   }
 
-  _handleDynamicHeader(_trigger: HTMLElement) {
+  private handleDynamicHeader(_trigger: HTMLElement): void {
     if (isNil(_trigger) || isNil(this.header)) {
-      return false;
+      return;
     }
 
     const dynamicHeader = _trigger.getAttribute("data-modal-header");

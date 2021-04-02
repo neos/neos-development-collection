@@ -13,10 +13,10 @@ export default class Toast {
 
   constructor() {
     this.container = document.getElementById("neos-notification-container");
-    this._initialize();
+    this.initialize();
   }
 
-  _initialize() {
+  private initialize(): void {
     if (isNil(this.container)) {
       const applicationContainer = document.getElementById("neos-application");
       if (!isNil(applicationContainer)) {
@@ -30,10 +30,10 @@ export default class Toast {
   /**
    * Internal function to creates a Message and adds them to the notification container
    *
-   * @param {Object} options
+   * @param {MessageOptions} options
    * @returns {void}
    */
-  _create(options: MessageOptions) {
+  private create(options: MessageOptions): void {
     const toastOptions: any = { ...defaultOptions, ...options };
     if (!isNil(toastOptions.position)) {
       this.container.classList.add(toastOptions.position);
@@ -45,14 +45,14 @@ export default class Toast {
   /**
    * Creates a new notification as Message
    *
-   * @param {Object} options
+   * @param {MessageOptions} options
    * @returns {void}
    */
-  static create(options: MessageOptions) {
+  public static create(options: MessageOptions): void {
     // @ts-ignore
     if (isNil(this._container)) {
       const toast = new Toast();
-      toast._create(options);
+      toast.create(options);
     } else {
       // @ts-ignore
       this._create(options);
@@ -64,7 +64,7 @@ export default class Toast {
    *
    * @returns {void}
    */
-  static removeAll() {
+  public static removeAll(): void {
     // @ts-ignore
     const messages: Array<HTMLElement> = Array.from(this._container.childNodes);
     messages.forEach((messageElement: HTMLElement) => {

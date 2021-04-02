@@ -13,15 +13,15 @@ export default class MenuPanel {
     this.root = _root;
     this.button = Array.from(this.root.querySelectorAll(".neos-menu-button"));
     this.panel = Array.from(this.root.querySelectorAll(".neos-menu-panel"));
-    this.menuSectionStates = this._loadMenuSectionStates();
-    this._setupEventListeners();
+    this.menuSectionStates = this.loadMenuSectionStates();
+    this.setupEventListeners();
 
     if (this.panel) {
-      this._initializeMenuSections();
+      this.initializeMenuSections();
     }
   }
 
-  _initializeMenuSections() {
+  private initializeMenuSections(): void {
     this.panel.forEach((_panel) => {
       const menuSectionElements = _panel.querySelectorAll(".neos-menu-section");
       const sections = this.menuSectionStates;
@@ -31,31 +31,34 @@ export default class MenuPanel {
         new Expandable(
           <HTMLElement>menuSectionElement,
           ".neos-menu-panel-toggle",
-          this._onMenuSectionStateChange.bind(this),
+          this.onMenuSectionStateChange.bind(this),
           sectionState
         );
       });
     });
   }
 
-  _setupEventListeners() {
+  private setupEventListeners(): void {
     this.button.forEach((_toggleButton) => {
-      _toggleButton.addEventListener("click", this._toggle.bind(this));
+      _toggleButton.addEventListener("click", this.toggle.bind(this));
     });
   }
 
-  _loadMenuSectionStates() {
+  private loadMenuSectionStates(): Array<any> {
     const storageData = loadStorageData(VALUE_PATH);
     return Array.isArray(storageData) ? storageData : [];
   }
 
-  _saveMenuSectionStates() {
+  private saveMenuSectionStates(): void {
     if (Array.isArray(this.menuSectionStates)) {
       saveStorageData(VALUE_PATH, this.menuSectionStates);
     }
   }
 
-  _onMenuSectionStateChange(sectionName: string, newValue: Boolean) {
+  private onMenuSectionStateChange(
+    sectionName: string,
+    newValue: Boolean
+  ): void {
     if (this.menuSectionStates.includes(sectionName) && newValue === true) {
       this.menuSectionStates = this.menuSectionStates.filter(
         (item: string) => item !== sectionName
@@ -66,10 +69,10 @@ export default class MenuPanel {
       this.menuSectionStates.push(sectionName);
     }
 
-    this._saveMenuSectionStates();
+    this.saveMenuSectionStates();
   }
 
-  _toggle(_event: Event) {
+  private toggle(_event: Event): void {
     this.button.forEach((_toggleButton) => {
       _toggleButton.classList.toggle("neos-pressed");
     });
