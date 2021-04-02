@@ -4,10 +4,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Intermediary\Migration;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
+use Neos\ContentRepository\Intermediary\Migration\Exception\InvalidMigrationFilterSpecified;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\ContentRepository\Intermediary\Migration\Command\ExecuteMigration;
 use Neos\ContentRepository\Intermediary\Migration\Filters\FilterFactory;
 use Neos\ContentRepository\Intermediary\Migration\Transformations\TransformationFactory;
@@ -112,15 +110,15 @@ class MigrationCommandHandler
         $transformations = $this->transformationFactory->buildTransformation($migrationDescription['transformations'] ?? []);
 
         if ($transformations->containsMoreThanOneTransformationType()) {
-            throw new \Exception("TODO: more than one transformation type");
+            throw new InvalidMigrationFilterSpecified('more than one transformation type', 1617389468);
         }
 
         if ($transformations->containsGlobal() && ($filters->containsNodeAggregateBased() || $filters->containsNodeBased())) {
-            throw new \Exception("TODO: Global transformations are only supported without any filters");
+            throw new InvalidMigrationFilterSpecified('Global transformations are only supported without any filters', 1617389474);
         }
 
         if ($transformations->containsNodeAggregateBased() && $filters->containsNodeBased()) {
-            throw new \Exception("TODO: NodeAggregate Based transformations are only supported without any node based filters");
+            throw new InvalidMigrationFilterSpecified('NodeAggregate Based transformations are only supported without any node based filters', 1617389479);
         }
 
         $commandResult = CommandResult::createEmpty();

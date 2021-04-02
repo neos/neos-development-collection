@@ -1591,6 +1591,19 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^I expect the node "([^"]*)" to have the name "([^"]*)"$/
+     * @param string $nodeAggregateIdentifier
+     * @param string $nodeName
+     */
+    public function iExpectTheNodeToHaveTheName(string $nodeAggregateIdentifier, string $nodeName)
+    {
+        $node = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+        Assert::assertEquals($nodeName, (string)$node->getNodeName(), 'Node Names do not match');
+    }
+
+    /**
      * @Then /^I expect this node to have the properties:$/
      * @param TableNode $expectedProperties
      */
