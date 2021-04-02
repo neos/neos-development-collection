@@ -32,7 +32,7 @@ trait CopyOnWrite
         ContentStreamIdentifier $originContentStreamIdentifier,
         NodeRecord $originNode,
         callable $preprocessor
-    ) {
+    ): NodeRelationAnchorPoint {
         $numberOfContentStreamsNodeDoesCover = $this->getProjectionHypergraph()
             ->countContentStreamCoverage($originNode->relationAnchorPoint);
 
@@ -59,10 +59,14 @@ trait CopyOnWrite
                 $originNode->relationAnchorPoint,
                 $copiedNodeRelationAnchorPoint
             );
+
+            return $copiedNodeRelationAnchorPoint;
         } else {
             // no reason to create a copy
             $preprocessor($originNode);
             $originNode->updateToDatabase($this->getDatabaseConnection());
+
+            return $originNode->relationAnchorPoint;
         }
     }
 

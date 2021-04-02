@@ -15,6 +15,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\ImmutableArrayObject;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -39,6 +40,15 @@ final class NodeAggregateIdentifiers extends ImmutableArrayObject
 
         return new self($values);
     }
+
+    public static function fromCollection(
+        NodeAggregateIdentifierCollection $collection
+    ): self {
+        return new self(
+            $collection->getIterator()->getArrayCopy()
+        );
+    }
+
     public static function fromDatabaseString(string $databaseString): self
     {
         return self::fromArray(\explode(',', \trim($databaseString, '{}')));
