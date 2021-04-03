@@ -84,6 +84,12 @@ class RemoveNode implements NodeBasedTransformationInterface
 
         $coveredDimensionSpacePoint = $this->overriddenDimensionSpacePoint ?? $node->getOriginDimensionSpacePoint();
 
+        if (!$coveredDimensionSpacePoints->contains($coveredDimensionSpacePoint)) {
+            // we are currently in a Node which has other covered dimension space points than the target ones, so we do not need
+            // to do anything.
+            return CommandResult::createEmpty();
+        }
+
         return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(new RemoveNodeAggregate(
             $contentStreamForWriting,
             $node->getNodeAggregateIdentifier(),

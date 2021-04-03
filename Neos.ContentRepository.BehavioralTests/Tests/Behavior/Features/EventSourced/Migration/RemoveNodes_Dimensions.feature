@@ -226,6 +226,48 @@ Feature: Remove Nodes
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
 
+  Scenario: Remove nodes in a shine-through dimension space point (CH)
+    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    """
+    migration:
+      -
+        filters:
+          -
+            type: 'NodeType'
+            settings:
+              nodeType: 'Neos.ContentRepository.Testing:Document'
+        transformations:
+          -
+            type: 'RemoveNode'
+            settings:
+              overriddenDimensionSpacePoint: {"language": "ch"}
+    """
+
+    # the original content stream has not been touched
+    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+
+    # the node was removed inside the new content stream, but only in CH
+    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+
+    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+
+    When I am in content stream "migration-cs" and Dimension Space Point {"language": "en"}
+    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+
+    When I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 0 errors
+
+
+
   Scenario: Remove nodes in a shine-through dimension space point (DE,CH)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
