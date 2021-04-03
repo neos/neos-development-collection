@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Intermediary\Migration\Transformations;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
@@ -56,7 +57,7 @@ class RemoveProperty implements NodeBasedTransformationInterface
      * @return void
      * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    public function execute(NodeInterface $node, ContentStreamIdentifier $contentStreamForWriting): CommandResult
+    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if ($node->hasProperty($this->propertyName)) {
             return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(

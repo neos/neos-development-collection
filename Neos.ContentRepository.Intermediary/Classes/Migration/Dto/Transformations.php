@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Intermediary\Migration\Dto;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Intermediary\Migration\Transformations\GlobalTransformationInterface;
@@ -102,12 +103,12 @@ final class Transformations
         return $commandResult;
     }
 
-    public function executeNodeBased(NodeInterface $node, ContentStreamIdentifier $contentStreamForWriting): CommandResult
+    public function executeNodeBased(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         $commandResult = CommandResult::createEmpty();
         foreach ($this->nodeBasedTransformations as $nodeBasedTransformation) {
             $commandResult = $commandResult->merge(
-                $nodeBasedTransformation->execute($node, $contentStreamForWriting)
+                $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $contentStreamForWriting)
             );
         }
         return $commandResult;

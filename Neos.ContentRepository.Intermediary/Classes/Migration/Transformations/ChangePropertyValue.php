@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Intermediary\Migration\Transformations;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
@@ -128,7 +129,7 @@ class ChangePropertyValue implements NodeBasedTransformationInterface
         $this->currentValuePlaceholder = $currentValuePlaceholder;
     }
 
-    public function execute(NodeInterface $node, ContentStreamIdentifier $contentStreamForWriting): CommandResult
+    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if ($node->hasProperty($this->propertyName)) {
             $currentProperty = $node->getProperties()->getProperty($this->propertyName);

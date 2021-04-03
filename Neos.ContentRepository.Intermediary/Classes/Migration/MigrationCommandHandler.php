@@ -146,9 +146,11 @@ class MigrationCommandHandler
                             // The node at $contentStreamIdentifier and $originDimensionSpacePoint *really* exists at this point,
                             // and is no shine-through.
 
+                            $coveredDimensionSpacePoints = $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint);
+
                             if ($filters->matchesNode($node)) {
                                 $commandResult = $commandResult->merge(
-                                    $transformations->executeNodeBased($node, $contentStreamForWriting)
+                                    $transformations->executeNodeBased($node, $coveredDimensionSpacePoints, $contentStreamForWriting)
                                 );
                             }
                         }

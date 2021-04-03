@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Intermediary\Migration\Transformations;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
@@ -82,7 +83,7 @@ class AddNewProperty implements NodeBasedTransformationInterface
         $this->serializedValue = $value;
     }
 
-    public function execute(NodeInterface $node, ContentStreamIdentifier $contentStreamForWriting): CommandResult
+    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if (!$node->hasProperty($this->newPropertyName)) {
             return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
