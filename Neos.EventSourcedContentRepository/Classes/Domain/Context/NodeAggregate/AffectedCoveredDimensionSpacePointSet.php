@@ -93,7 +93,7 @@ final class AffectedCoveredDimensionSpacePointSet
             }
         }
 
-        return new DimensionSpacePointSet([$referenceDimensionSpacePoint]);
+        return $affectedDimensionSpacePoints;
     }
 
     /**
