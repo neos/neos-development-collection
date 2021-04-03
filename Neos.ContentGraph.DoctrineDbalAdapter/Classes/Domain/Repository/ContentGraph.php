@@ -123,10 +123,8 @@ final class ContentGraph implements ContentGraphInterface
             'nodeTypeName' => (string)$nodeTypeName,
         ];
 
-        $resultStatement = $connection->executeQuery($query, $parameters);
-        while ($nodeRow = $resultStatement->fetch()) {
-            yield $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
-        }
+        $resultStatement = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($resultStatement);
     }
 
     /**
