@@ -569,8 +569,11 @@ WHERE
         foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
             $nodeRecordsWithMissingOriginCoverage = $this->client->getConnection()->executeQuery(
                 'SELECT nodeaggregateidentifier, origindimensionspacepoint
-                    FROM neos_contentgraph_node
-                    WHERE nodeaggregateidentifier NOT IN (
+                    FROM neos_contentgraph_node n
+                    INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                    WHERE
+                        h.contentstreamidentifier = :contentStreamIdentifier
+                    AND nodeaggregateidentifier NOT IN (
                         SELECT n.nodeaggregateidentifier
                         FROM neos_contentgraph_node n
                         LEFT JOIN neos_contentgraph_hierarchyrelation p
