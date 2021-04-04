@@ -814,14 +814,16 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
     }
 
-    private function routeTagsFromNode(TraversableNodeInterface $node): RouteTags
+    private function routeTagsFromNode(NodeInterface $node): RouteTags
     {
-        $tags = [(string)$node->getNodeAggregateIdentifier()];
-        while ($node = $node->findParentNode()) {
-            if ((string)$node->findNodePath() === SiteService::SITES_ROOT_PATH) {
-                break;
+        $tags = [$node->getIdentifier()];
+        if ($node instanceof TraversableNodeInterface) {
+            while ($node = $node->findParentNode()) {
+                if ((string)$node->findNodePath() === SiteService::SITES_ROOT_PATH) {
+                    break;
+                }
+                $tags[] = (string)$node->getNodeAggregateIdentifier();
             }
-            $tags[] = (string)$node->getNodeAggregateIdentifier();
         }
         return RouteTags::createFromArray($tags);
     }

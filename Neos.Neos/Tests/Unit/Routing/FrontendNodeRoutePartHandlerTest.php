@@ -189,6 +189,26 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function matchWithParametersSetsNodeIdentifiersAsRouteTags()
+    {
+        $mockContext = $this->buildMockContext(['workspaceName' => 'live']);
+        $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
+        $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home', 'Neos.Neos:Document', 'some-node-id');
+        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+
+        $routePath = 'home';
+        $matchResult = $this->matchForHost($routePath, 'localhost');
+
+        self::assertInstanceOf(MatchResult::class, $matchResult);
+        $expectedTags = ['some-node-id'];
+        self::assertSame($expectedTags, $matchResult->getTags()->getTags());
+    }
+
+    /**
      * If convertRequestPathToNode() throws any exception and the request path is '' a "missing homepage" message should appear.
      *
      * @test
@@ -488,6 +508,28 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $resolveResult = $this->resolveForHost($routeValues, 'localhost');
         self::assertInstanceOf(ResolveResult::class, $resolveResult);
         self::assertSame('home/coffee-brands@user-robert', $resolveResult->getResolvedValue());
+    }
+
+    /**
+     * @test
+     */
+    public function resolveSetsNodeIdentifiersAsRouteTags()
+    {
+        $mockContext = $this->buildMockContext(['workspaceName' => 'user-robert']);
+        $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
+        $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+
+        $mockSubSubNode = $this->buildSubNode($mockSubNode, 'ae178bc9184', 'Neos.Neos:Document', 'some-node-id');
+        $mockSubSubNode->mockProperties['uriPathSegment'] = 'coffee-brands';
+
+        $routeValues = ['node' => $mockSubSubNode];
+        $resolveResult = $this->resolveForHost($routeValues, 'localhost');
+        self::assertInstanceOf(ResolveResult::class, $resolveResult);
+        $expectedTags = ['some-node-id'];
+        self::assertSame($expectedTags, $resolveResult->getTags()->getTags());
     }
 
     /**
@@ -933,10 +975,11 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @param ContentContext $mockContext
      * @param string $nodeName
      * @param string $nodeTypeName
+     * @param string|null $mockNodeIdentifier
      * @return \PHPUnit\Framework\MockObject\MockObject
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    protected function buildNode(ContentContext $mockContext, $nodeName, $nodeTypeName = 'Neos.Neos:Document')
+    protected function buildNode(ContentContext $mockContext, $nodeName, $nodeTypeName = 'Neos.Neos:Document', $mockNodeIdentifier = null)
     {
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockNodeType->expects(self::any())->method('isOfType')->will(self::returnCallback(function ($expectedNodeTypeName) use ($nodeTypeName) {
@@ -949,7 +992,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockNode->expects(self::any())->method('getNodeType')->will(self::returnValue($mockNodeType));
         $mockNode->expects(self::any())->method('getWorkspace')->will(self::returnValue($mockContext->getWorkspace()));
 
-        $mockNodeIdentifier = Algorithms::generateUUID();
+        $mockNodeIdentifier = $mockNodeIdentifier ?? Algorithms::generateUUID();
         $mockNode->expects(self::any())->method('getIdentifier')->will(self::returnValue($mockNodeIdentifier));
         $mockContext->mockNodesByIdentifier[$mockNodeIdentifier] = $mockNode;
 
@@ -1015,12 +1058,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @param NodeInterface $mockParentNode
      * @param string $nodeName
      * @param string $nodeTypeName
+     * @param string|null $mockNodeIdentifier
      * @return NodeInterface|MockObject
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    protected function buildSubNode($mockParentNode, $nodeName, $nodeTypeName = 'Neos.Neos:Document')
+    protected function buildSubNode($mockParentNode, $nodeName, $nodeTypeName = 'Neos.Neos:Document', $mockNodeIdentifier = null)
     {
-        $mockNode = $this->buildNode($mockParentNode->getContext(), $nodeName, $nodeTypeName);
+        $mockNode = $this->buildNode($mockParentNode->getContext(), $nodeName, $nodeTypeName, $mockNodeIdentifier);
         $mockNode->mockParentNode = $mockParentNode;
 
         $mockParentNode->mockChildNodes[$nodeName] = $mockNode;
