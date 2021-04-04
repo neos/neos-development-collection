@@ -13,10 +13,12 @@ namespace Neos\Neos\Routing;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
@@ -163,7 +165,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
 
-        return new MatchResult($node->getContextPath());
+        return new MatchResult($node->getContextPath(), $this->routeTagsFromNode($node));
     }
 
     /**
@@ -283,7 +285,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
         $uriPath = $this->resolveRoutePathForNode($nodeOrUri);
-        return new ResolveResult($uriPath, $uriConstraints);
+        return new ResolveResult($uriPath, $uriConstraints, $this->routeTagsFromNode($node));
     }
 
     /**
@@ -810,5 +812,17 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         } else {
             return ltrim(trim($uriSegment, '_') . '/', '/');
         }
+    }
+
+    private function routeTagsFromNode(TraversableNodeInterface $node): RouteTags
+    {
+        $tags = [(string)$node->getNodeAggregateIdentifier()];
+        while ($node = $node->findParentNode()) {
+            if ((string)$node->findNodePath() === SiteService::SITES_ROOT_PATH) {
+                break;
+            }
+            $tags[] = (string)$node->getNodeAggregateIdentifier();
+        }
+        return RouteTags::createFromArray($tags);
     }
 }
