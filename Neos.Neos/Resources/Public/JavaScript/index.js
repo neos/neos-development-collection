@@ -3,7 +3,7 @@ import jQuery from "jquery";
 import { DropDownMenu, MenuPanel } from "./Components/TopBar";
 import Tree from "./Components/Tree";
 import Modal from "./Components/Modal";
-import { Configuration, Notification, Localization, Tools } from "./Services";
+import { Configuration, Notification, Localization, Helper } from "./Services";
 import { cachedFetch } from "./Services/ResourceCache";
 import { isNil } from "./Helper";
 
@@ -12,7 +12,7 @@ window.jQuery = jQuery;
 window.$ = jQuery;
 
 // init API's
-Tools.init();
+Helper.init();
 Configuration.init();
 Notification.init();
 
