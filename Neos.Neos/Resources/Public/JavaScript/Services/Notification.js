@@ -92,8 +92,7 @@ const init = () => {
 		window.NeosCMS.Notification = {
 			init: init,
 			ok: ok,
-			info,
-			info,
+			info: info,
 			notice: notice,
 			warning: warning,
 			error: error,
