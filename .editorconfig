@@ -17,6 +17,10 @@ indent_size = 4
 [*.js]
 indent_style = tab
 
+# TypeScript should use tabs, to reduce conflicts
+[*.ts]
+indent_style = tab
+
 # SASS should use tabs, to reduce conflicts
 [*.scss]
 indent_style = tab

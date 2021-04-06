@@ -1,3 +1,3 @@
-import IconTypes from './IconTypes'
+import IconTypes from "./IconTypes";
 
 export type IconTypesKeys = keyof IconTypes;
