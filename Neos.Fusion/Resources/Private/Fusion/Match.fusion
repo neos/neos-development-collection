@@ -1,0 +1,12 @@
+##
+# Provides match functionality similar to `match` in PHP 8 https://www.php.net/manual/tr/control-structures.match.php
+#
+# cssClass = Neos.Fusion:Match {
+#     @subject = ${q(node).property('layout')}
+#     @default = 'my-module--centered'
+#     left = 'my-module--left'
+#     right = 'my-module--right'
+# }
+prototype(Neos.Fusion:Match) {
+  @class = 'Neos\\Fusion\\FusionObjects\\MatchImplementation'
+}

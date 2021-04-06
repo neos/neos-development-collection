@@ -1,0 +1,29 @@
+prototype(Neos.Fusion:Match) {
+  @class = 'Neos\\Fusion\\FusionObjects\\MatchImplementation'
+}
+
+match.empty = Neos.Fusion:Match {
+  @subject = ''
+  @default = 'empty'
+  left = 'module--left'
+  right = 'module--right'
+}
+
+match.foundMatch = Neos.Fusion:Match {
+  @subject = 'left'
+  left = 'module--left'
+  right = 'module--right'
+}
+
+match.default = Neos.Fusion:Match {
+  @subject = 'foo'
+  @default = 'module--centered'
+  left = 'module--left'
+  right = 'module--right'
+}
+
+match.errorWithoutMatch = Neos.Fusion:Match {
+  @subject = 'foo'
+  left = 'module--left'
+  right = 'module--right'
+}
