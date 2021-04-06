@@ -7,11 +7,11 @@ import NeosI18n from "./NeosI18n";
 import Window from "./Window";
 
 export {
-	IconTypes,
-	IconTypesKeys,
-	ToastDefaultOptions,
-	MessageOptions,
-	NeosI18n,
-	NeosNotification,
-	Window,
+  IconTypes,
+  IconTypesKeys,
+  ToastDefaultOptions,
+  MessageOptions,
+  NeosI18n,
+  NeosNotification,
+  Window,
 };

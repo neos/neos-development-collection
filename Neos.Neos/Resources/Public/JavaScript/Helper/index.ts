@@ -5,9 +5,9 @@ import getCollectionValueByPath from "./getCollectionValueByPath";
 import createCollectionByPath from "./createCollectionByPath";
 
 export {
-	isNil,
-	isEmpty,
-	getItemByKeyValue,
-	getCollectionValueByPath,
-	createCollectionByPath,
+  isNil,
+  isEmpty,
+  getItemByKeyValue,
+  getCollectionValueByPath,
+  createCollectionByPath,
 };

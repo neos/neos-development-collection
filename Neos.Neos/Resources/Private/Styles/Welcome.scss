@@ -17,8 +17,8 @@
     position: relative;
     display: block;
     &:before {
-      content: '▼';
-      padding-right: .4rem;
+      content: "▼";
+      padding-right: 0.4rem;
       font-size: $fontSizeSmall;
     }
   }
@@ -28,7 +28,7 @@
 
   &--closed {
     .neos-error-details-toggle__header:before {
-      content: '▶';
+      content: "▶";
     }
     .neos-error-details-toggle__body {
       height: 0;

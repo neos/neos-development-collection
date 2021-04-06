@@ -1,10 +1,10 @@
 import i18next from "i18next";
 
 import {
-	isNil,
-	isEmpty,
-	getCollectionValueByPath,
-	createCollectionByPath,
+  isNil,
+  isEmpty,
+  getCollectionValueByPath,
+  createCollectionByPath,
 } from "../Helper";
 
 const DEFAULT_PACKAGE = "Neos.Neos";
@@ -20,13 +20,13 @@ const EXISTING_NAMESPACES = [];
  * @returns {string}
  */
 const getTransformedNamespace = (packageName, sourceName) => {
-	const dottedPackageName = isEmpty(packageName)
-		? DEFAULT_PACKAGE
-		: packageName.replace(/\_/g, ".");
-	const dottedSourceName = isEmpty(sourceName)
-		? DEFAULT_SOURCE
-		: sourceName.replace(/\_/g, ".");
-	return dottedPackageName + "/" + dottedSourceName;
+  const dottedPackageName = isEmpty(packageName)
+    ? DEFAULT_PACKAGE
+    : packageName.replace(/\_/g, ".");
+  const dottedSourceName = isEmpty(sourceName)
+    ? DEFAULT_SOURCE
+    : sourceName.replace(/\_/g, ".");
+  return dottedPackageName + "/" + dottedSourceName;
 };
 
 /**
@@ -37,13 +37,13 @@ const getTransformedNamespace = (packageName, sourceName) => {
  * @returns {string}
  */
 const getNamespace = (packageName, sourceName) => {
-	const dottedPackageName = isEmpty(packageName)
-		? DEFAULT_PACKAGE
-		: packageName.trim();
-	const dottedSourceName = isEmpty(sourceName)
-		? DEFAULT_SOURCE
-		: sourceName.trim();
-	return dottedPackageName + "/" + dottedSourceName;
+  const dottedPackageName = isEmpty(packageName)
+    ? DEFAULT_PACKAGE
+    : packageName.trim();
+  const dottedSourceName = isEmpty(sourceName)
+    ? DEFAULT_SOURCE
+    : sourceName.trim();
+  return dottedPackageName + "/" + dottedSourceName;
 };
 
 /**
@@ -52,15 +52,15 @@ const getNamespace = (packageName, sourceName) => {
  * @returns {string}
  */
 const getCurrentLanguage = () => {
-	const xliffUri = getCollectionValueByPath(
-		window.NeosCMS,
-		"Configuration.XliffUri"
-	);
-	if (isNil(xliffUri)) {
-		return "";
-	}
-	const parameter = new URL(xliffUri).searchParams;
-	return parameter.get("locale");
+  const xliffUri = getCollectionValueByPath(
+    window.NeosCMS,
+    "Configuration.XliffUri"
+  );
+  if (isNil(xliffUri)) {
+    return "";
+  }
+  const parameter = new URL(xliffUri).searchParams;
+  return parameter.get("locale");
 };
 
 /**
@@ -71,18 +71,18 @@ const getCurrentLanguage = () => {
  * @returns {void}
  */
 const setInitialized = (initialised) => {
-	createCollectionByPath(
-		window,
-		"NeosCMS.I18n.initialized",
-		Boolean(initialised)
-	);
+  createCollectionByPath(
+    window,
+    "NeosCMS.I18n.initialized",
+    Boolean(initialised)
+  );
 
-	// deprecated - to be removed in 8.0
-	createCollectionByPath(
-		window,
-		"Typo3Neos.I18n.initialized",
-		Boolean(initialised)
-	);
+  // deprecated - to be removed in 8.0
+  createCollectionByPath(
+    window,
+    "Typo3Neos.I18n.initialized",
+    Boolean(initialised)
+  );
 };
 
 /**
@@ -97,20 +97,20 @@ const setInitialized = (initialised) => {
  * @returns {object}
  */
 const flattenPluralItems = (translations) => {
-	const translationKeys = Object.keys(translations);
-	translationKeys.forEach((key) => {
-		if (Array.isArray(translations[key])) {
-			translations[key].forEach((pluralItem, index) => {
-				let newKey = key;
-				if (Number.isInteger(index) && index === 1) {
-					newKey = `${key}_plural`;
-				}
-				translations[newKey] = pluralItem;
-			});
-		}
-	});
+  const translationKeys = Object.keys(translations);
+  translationKeys.forEach((key) => {
+    if (Array.isArray(translations[key])) {
+      translations[key].forEach((pluralItem, index) => {
+        let newKey = key;
+        if (Number.isInteger(index) && index === 1) {
+          newKey = `${key}_plural`;
+        }
+        translations[newKey] = pluralItem;
+      });
+    }
+  });
 
-	return translations;
+  return translations;
 };
 
 /**
@@ -120,20 +120,20 @@ const flattenPluralItems = (translations) => {
  * @returns {void}
  */
 const initializeExistingNamespaces = (xliffData) => {
-	if (isNil(xliffData)) {
-		return false;
-	}
-	const packageNames = Object.keys(xliffData);
-	packageNames.forEach((packageName) => {
-		const Sources = Object.keys(xliffData[packageName]);
-		Sources.forEach((sourceName) => {
-			const namespace = getTransformedNamespace(packageName, sourceName);
-			const translations = xliffData[packageName][sourceName];
-			if (!isNil(translations)) {
-				EXISTING_NAMESPACES.push({ name: namespace, initialized: false });
-			}
-		});
-	});
+  if (isNil(xliffData)) {
+    return false;
+  }
+  const packageNames = Object.keys(xliffData);
+  packageNames.forEach((packageName) => {
+    const Sources = Object.keys(xliffData[packageName]);
+    Sources.forEach((sourceName) => {
+      const namespace = getTransformedNamespace(packageName, sourceName);
+      const translations = xliffData[packageName][sourceName];
+      if (!isNil(translations)) {
+        EXISTING_NAMESPACES.push({ name: namespace, initialized: false });
+      }
+    });
+  });
 };
 
 /**
@@ -143,22 +143,22 @@ const initializeExistingNamespaces = (xliffData) => {
  * @returns {void}
  */
 const checkInitialisedNamespaces = () => {
-	const hasNonInitializedNamespaces =
-		EXISTING_NAMESPACES.findIndex(
-			(namespace) => namespace.initialized === false
-		) >= 0;
+  const hasNonInitializedNamespaces =
+    EXISTING_NAMESPACES.findIndex(
+      (namespace) => namespace.initialized === false
+    ) >= 0;
 
-	if (!hasNonInitializedNamespaces) {
-		setInitialized(true);
+  if (!hasNonInitializedNamespaces) {
+    setInitialized(true);
 
-		window.dispatchEvent(
-			new CustomEvent("neoscms-i18n-initialized", {
-				bubbles: true,
-			})
-		);
-	}
+    window.dispatchEvent(
+      new CustomEvent("neoscms-i18n-initialized", {
+        bubbles: true,
+      })
+    );
+  }
 
-	return !hasNonInitializedNamespaces;
+  return !hasNonInitializedNamespaces;
 };
 
 /**
@@ -172,37 +172,37 @@ const checkInitialisedNamespaces = () => {
  * @returns {void}
  */
 const transformAndAppendXliffData = (xliffData) => {
-	const language = i18next.languages[0];
-	if (isNil(xliffData)) {
-		return false;
-	}
+  const language = i18next.languages[0];
+  if (isNil(xliffData)) {
+    return false;
+  }
 
-	const packageNames = Object.keys(xliffData);
+  const packageNames = Object.keys(xliffData);
 
-	i18next.store.on("added", (lng, ns) => {
-		// set namespace as initialized
-		EXISTING_NAMESPACES.find((entry) => entry.name === ns)[
-			"initialized"
-		] = true;
-		checkInitialisedNamespaces();
-	});
+  i18next.store.on("added", (lng, ns) => {
+    // set namespace as initialized
+    EXISTING_NAMESPACES.find((entry) => entry.name === ns)[
+      "initialized"
+    ] = true;
+    checkInitialisedNamespaces();
+  });
 
-	packageNames.forEach((packageName) => {
-		const Sources = Object.keys(xliffData[packageName]);
-		Sources.forEach((sourceName) => {
-			const namespace = getTransformedNamespace(packageName, sourceName);
-			const translations = xliffData[packageName][sourceName];
-			if (!isNil(translations)) {
-				i18next.addResourceBundle(
-					language,
-					namespace,
-					flattenPluralItems(translations),
-					true,
-					true
-				);
-			}
-		});
-	});
+  packageNames.forEach((packageName) => {
+    const Sources = Object.keys(xliffData[packageName]);
+    Sources.forEach((sourceName) => {
+      const namespace = getTransformedNamespace(packageName, sourceName);
+      const translations = xliffData[packageName][sourceName];
+      if (!isNil(translations)) {
+        i18next.addResourceBundle(
+          language,
+          namespace,
+          flattenPluralItems(translations),
+          true,
+          true
+        );
+      }
+    });
+  });
 };
 
 /**
@@ -221,79 +221,79 @@ const transformAndAppendXliffData = (xliffData) => {
  * @returns {string}
  */
 const translate = (
-	id,
-	fallback,
-	packageKey,
-	source,
-	parameters,
-	context,
-	quantity
+  id,
+  fallback,
+  packageKey,
+  source,
+  parameters,
+  context,
+  quantity
 ) => {
-	id = id.replace(/\./g, '_');
-	const namespace = getNamespace(packageKey, source);
-	const identifier = namespace + ":" + id.trim();
+  id = id.replace(/\./g, "_");
+  const namespace = getNamespace(packageKey, source);
+  const identifier = namespace + ":" + id.trim();
 
-	let options = {};
-	if (!isNil(quantity)) {
-		options["count"] = quantity;
-	}
+  let options = {};
+  if (!isNil(quantity)) {
+    options["count"] = quantity;
+  }
 
-	if (!isNil(parameters)) {
-		options["replace"] = parameters;
-	}
+  if (!isNil(parameters)) {
+    options["replace"] = parameters;
+  }
 
-	if (!isEmpty(fallback)) {
-		options["defaultValue"] = fallback;
-	}
+  if (!isEmpty(fallback)) {
+    options["defaultValue"] = fallback;
+  }
 
-	return i18next.t(identifier, options);
+  return i18next.t(identifier, options);
 };
 
 const init = (xliffData) => {
-	if (isNil(window.NeosCMS)) {
-		window.NeosCMS = {};
-	}
+  if (isNil(window.NeosCMS)) {
+    window.NeosCMS = {};
+  }
 
-	if (isNil(window.Typo3Neos)) {
-		window.Typo3Neos = {};
-	}
+  if (isNil(window.Typo3Neos)) {
+    window.Typo3Neos = {};
+  }
 
-	if (isNil(window.NeosCMS.I18n)) {
-		// default options
-		const options = {
-			interpolation: {
-				prefix: "{",
-				suffix: "}",
-			},
-			resources: {},
-		};
+  if (isNil(window.NeosCMS.I18n)) {
+    // default options
+    const options = {
+      interpolation: {
+        prefix: "{",
+        suffix: "}",
+      },
+      resources: {},
+    };
 
-		window.NeosCMS.I18n = {
-			init: init,
-			translate: translate,
-			initialized: false,
-		};
+    window.NeosCMS.I18n = {
+      init: init,
+      translate: translate,
+      initialized: false,
+    };
 
-		// deprecated - to be removed in 8.0
-		window.Typo3Neos.I18n = window.NeosCMS.I18n;
+    // deprecated - to be removed in 8.0
+    window.Typo3Neos.I18n = window.NeosCMS.I18n;
 
-		// configure language
-		const currentLangauge = getCurrentLanguage();
-		if (!isEmpty(currentLangauge)) {
-			// If the current language is not ISO-2 then we can not use the preferred language
-			const languageOption = currentLangauge.match("[a-z]{2}(-[A-Z]{2})")
-				? "lng"
-				: "fallbackLng";
-			options[languageOption] = currentLangauge;
-		}
+    // configure language
+    const currentLangauge = getCurrentLanguage();
+    if (!isEmpty(currentLangauge)) {
+      // If the current language is not ISO-2 then we can not use the preferred language
+      const languageOption = currentLangauge.match("[a-z]{2}(-[A-Z]{2})")
+        ? "lng"
+        : "fallbackLng";
+      options[languageOption] = currentLangauge;
+    }
 
-		initializeExistingNamespaces(xliffData);
+    initializeExistingNamespaces(xliffData);
 
-		// append translation resources
-		i18next.init(options, (err, t) => {
-			transformAndAppendXliffData(xliffData);
-		});
-	}
+    // append translation resources
+    i18next.init(options, (err, t) => {
+      transformAndAppendXliffData(xliffData);
+    });
+  }
 };
 
 export default { init, translate };

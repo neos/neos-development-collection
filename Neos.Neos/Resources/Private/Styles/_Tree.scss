@@ -1,179 +1,179 @@
 ul.neos-tree-container {
-	padding: 0;
-	margin: 0;
-	background-color: transparent;
-	border: none;
-	width: 100%;
-	height: 100%;
-	white-space: nowrap;
-	display: table;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  height: 100%;
+  white-space: nowrap;
+  display: table;
 
-	.neos-tree-node {
-		min-width: 100%;
-		position: relative;
-		height: 24px;
-		line-height: 24px;
-		box-sizing: border-box;
-		border-left: 3px solid transparent;
-		z-index: 10;
+  .neos-tree-node {
+    min-width: 100%;
+    position: relative;
+    height: 24px;
+    line-height: 24px;
+    box-sizing: border-box;
+    border-left: 3px solid transparent;
+    z-index: 10;
 
-		&.neos-hidden {
-			span + span:after {
-				@extend .fas;
-				content: fa-content($fa-var-times-circle);
-				position: absolute;
-				left: 12px;
-				top: 0px;
-				font-size: 12px;
-				color: $warning;
-				background: #fff;
-				height: 8px;
-				width: 8px;
-				margin-top: 11px;
-				line-height: 9px;
-				border-radius: 10px;
-			}
-		}
+    &.neos-hidden {
+      span + span:after {
+        @extend .fas;
+        content: fa-content($fa-var-times-circle);
+        position: absolute;
+        left: 12px;
+        top: 0px;
+        font-size: 12px;
+        color: $warning;
+        background: #fff;
+        height: 8px;
+        width: 8px;
+        margin-top: 11px;
+        line-height: 9px;
+        border-radius: 10px;
+      }
+    }
 
-		&.neos-timedVisibility {
-			span + span:after {
-				@extend .fas;
-				content: fa-content($fa-var-clock);
-				font-weight: 400;
-				position: absolute;
-				left: 12px;
-				top: 0px;
-				font-size: 12px;
-				color: $blue;
-				background: #fff;
-				height: 8px;
-				width: 10px;
-				margin-top: 11px;
-				line-height: 9px;
-				border-radius: 10px;
-			}
-		}
+    &.neos-timedVisibility {
+      span + span:after {
+        @extend .fas;
+        content: fa-content($fa-var-clock);
+        font-weight: 400;
+        position: absolute;
+        left: 12px;
+        top: 0px;
+        font-size: 12px;
+        color: $blue;
+        background: #fff;
+        height: 8px;
+        width: 10px;
+        margin-top: 11px;
+        line-height: 9px;
+        border-radius: 10px;
+      }
+    }
 
-		&.neos-hiddenInIndex {
-			span + span {
-				opacity: 0.5;
-			}
-		}
+    &.neos-hiddenInIndex {
+      span + span {
+        opacity: 0.5;
+      }
+    }
 
-		&.neos-tree-focused {
-			background-color: $grayMedium;
+    &.neos-tree-focused {
+      background-color: $grayMedium;
 
-			span + span,
-			a {
-				color: $textSubtleLight;
-			}
-		}
+      span + span,
+      a {
+        color: $textSubtleLight;
+      }
+    }
 
-		&.neos-tree-active {
-			background: linear-gradient(
-				to bottom,
-				$grayMedium ($generalFontSize + $unit/4),
-				$grayDark ($generalFontSize + $unit/4)
-			);
+    &.neos-tree-active {
+      background: linear-gradient(
+        to bottom,
+        $grayMedium ($generalFontSize + $unit/4),
+        $grayDark ($generalFontSize + $unit/4)
+      );
 
-			span + span,
-			a {
-				color: $textOnGray;
-			}
-		}
+      span + span,
+      a {
+        color: $textOnGray;
+      }
+    }
 
-		&.neos-tree-dirty {
-			border-left: 3px solid $orange;
-		}
+    &.neos-tree-dirty {
+      border-left: 3px solid $orange;
+    }
 
-		.neos-tree-empty,
-		.neos-tree-vline,
-		.neos-tree-connector,
-		.neos-tree-expander,
-		.neos-tree-icon,
-		.neos-tree-checkbox,
-		.neos-tree-radio,
-		.neos-tree-drag-helper-img,
-		#neos-tree-drop-marker {
-			display: inline-block;
-			width: 24px;
-			height: 24px;
-			vertical-align: top;
-			color: $textSubtleLight;
-		}
+    .neos-tree-empty,
+    .neos-tree-vline,
+    .neos-tree-connector,
+    .neos-tree-expander,
+    .neos-tree-icon,
+    .neos-tree-checkbox,
+    .neos-tree-radio,
+    .neos-tree-drag-helper-img,
+    #neos-tree-drop-marker {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      vertical-align: top;
+      color: $textSubtleLight;
+    }
 
-		&.neos-tree-open > .neos-tree-expander {
-			display: inline-block;
-			line-height: 24px;
-			@extend .#{$fa-css-prefix}-caret-down;
-			@extend .fas;
+    &.neos-tree-open > .neos-tree-expander {
+      display: inline-block;
+      line-height: 24px;
+      @extend .#{$fa-css-prefix}-caret-down;
+      @extend .fas;
 
-			&:before {
-				left: 7px;
-			}
-		}
+      &:before {
+        left: 7px;
+      }
+    }
 
-		.neos-tree-node {
-			display: none;
-		}
+    .neos-tree-node {
+      display: none;
+    }
 
-		&.neos-tree-open > ul > .neos-tree-node {
-			display: block;
-		}
+    &.neos-tree-open > ul > .neos-tree-node {
+      display: block;
+    }
 
-		.neos-tree-expander {
-			line-height: 24px;
-			@extend .#{$fa-css-prefix}-caret-right;
-			@extend .fas;
-			cursor: pointer;
-			font-size: 16px;
+    .neos-tree-expander {
+      line-height: 24px;
+      @extend .#{$fa-css-prefix}-caret-right;
+      @extend .fas;
+      cursor: pointer;
+      font-size: 16px;
 
-			&:before {
-				position: relative;
-				left: 10px;
-			}
+      &:before {
+        position: relative;
+        left: 10px;
+      }
 
-			&:hover {
-				color: $blue;
-			}
-		}
+      &:hover {
+        color: $blue;
+      }
+    }
 
-		span + span {
-			display: inline-block;
-			width: 24px;
-			height: 24px;
-			line-height: 20px;
-			vertical-align: middle;
-			text-align: center;
-			cursor: pointer;
-			position: relative;
-		}
+    span + span {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      line-height: 20px;
+      vertical-align: middle;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+    }
 
-		&.neos-tree-selected {
-			a {
-				color: $blue;
-			}
-		}
+    &.neos-tree-selected {
+      a {
+        color: $blue;
+      }
+    }
 
-		a {
-			display: inline-block;
-			color: #fff;
-			vertical-align: top;
-			line-height: 24px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			max-width: $unit * 5.5;
-			padding-right: $relatedMargin;
-			font-size: $generalFontSize;
-			text-shadow: none;
-			&:hover,
-			&:focus {
-				text-decoration: none;
-				outline: none;
-			}
-		}
-	}
+    a {
+      display: inline-block;
+      color: #fff;
+      vertical-align: top;
+      line-height: 24px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: $unit * 5.5;
+      padding-right: $relatedMargin;
+      font-size: $generalFontSize;
+      text-shadow: none;
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        outline: none;
+      }
+    }
+  }
 }
 
 // For some reason this sass is not nesting right. On sassmeister.com it works :(
@@ -198,226 +198,226 @@ ul.neos-tree-container {
 //     }
 // }
 ul.neos-tree-container ul .neos-tree-node {
-	z-index: 10;
+  z-index: 10;
 }
 
 ul.neos-tree-container ul .neos-tree-node > span:first-child {
-	padding-left: 0px;
+  padding-left: 0px;
 }
 
 ul.neos-tree-container ul .neos-tree-node > span:first-child.neos-tree-title {
-	padding-left: 24px;
+  padding-left: 24px;
 }
 
 ul.neos-tree-container ul ul .neos-tree-node {
-	z-index: 20;
+  z-index: 20;
 }
 
 ul.neos-tree-container ul ul .neos-tree-node > span:first-child {
-	padding-left: 9px;
+  padding-left: 9px;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child.neos-tree-title {
-	padding-left: 33px;
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child.neos-tree-title {
+  padding-left: 33px;
 }
 
 ul.neos-tree-container ul ul ul .neos-tree-node {
-	z-index: 30;
+  z-index: 30;
 }
 
 ul.neos-tree-container ul ul ul .neos-tree-node > span:first-child {
-	padding-left: 21px;
+  padding-left: 21px;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child.neos-tree-title {
-	padding-left: 45px;
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child.neos-tree-title {
+  padding-left: 45px;
 }
 
 ul.neos-tree-container ul ul ul ul .neos-tree-node {
-	z-index: 40;
+  z-index: 40;
 }
 
 ul.neos-tree-container ul ul ul ul .neos-tree-node > span:first-child {
-	padding-left: 33px;
+  padding-left: 33px;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child.neos-tree-title {
-	padding-left: 57px;
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child.neos-tree-title {
+  padding-left: 57px;
 }
 
 ul.neos-tree-container ul ul ul ul ul .neos-tree-node {
-	z-index: 50;
+  z-index: 50;
 }
 
 ul.neos-tree-container ul ul ul ul ul .neos-tree-node > span:first-child {
-	padding-left: 45px;
+  padding-left: 45px;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child.neos-tree-title {
-	padding-left: 69px;
+  ul
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child.neos-tree-title {
+  padding-left: 69px;
 }
 
 ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node {
-	z-index: 60;
+  z-index: 60;
 }
 
 ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node > span:first-child {
-	padding-left: 57px;
+  padding-left: 57px;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child.neos-tree-title {
-	padding-left: 81px;
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child.neos-tree-title {
+  padding-left: 81px;
 }
 
 ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node {
-	z-index: 70;
+  z-index: 70;
 }
 
 ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
-	padding-left: 69px;
+  padding-left: 69px;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child.neos-tree-title {
-	padding-left: 93px;
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child.neos-tree-title {
+  padding-left: 93px;
 }
 
 ul.neos-tree-container ul ul ul ul ul ul ul ul .neos-tree-node {
-	z-index: 80;
+  z-index: 80;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child {
-	padding-left: 81px;
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child {
+  padding-left: 81px;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child.neos-tree-title {
-	padding-left: 105px;
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child.neos-tree-title {
+  padding-left: 105px;
 }
 
 ul.neos-tree-container ul ul ul ul ul ul ul ul ul .neos-tree-node {
-	z-index: 90;
+  z-index: 90;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child {
-	padding-left: 93px;
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child {
+  padding-left: 93px;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child.neos-tree-title {
-	padding-left: 117px;
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child.neos-tree-title {
+  padding-left: 117px;
 }
 
 ul.neos-tree-container ul ul ul ul ul ul ul ul ul ul .neos-tree-node {
-	z-index: 100;
+  z-index: 100;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child {
-	padding-left: 105px;
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child {
+  padding-left: 105px;
 }
 
 ul.neos-tree-container
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	ul
-	.neos-tree-node
-	> span:first-child.neos-tree-title {
-	padding-left: 129px;
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  ul
+  .neos-tree-node
+  > span:first-child.neos-tree-title {
+  padding-left: 129px;
 }

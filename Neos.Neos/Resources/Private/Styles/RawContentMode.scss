@@ -5,96 +5,96 @@
 @import "Typeplate/Typeplate";
 
 body {
-	margin: 0;
+  margin: 0;
 }
 
 .neos-raw-content-mode {
-	background-color: #f5f5f5;
+  background-color: #f5f5f5;
 }
 
 #neos-raw-content-container {
-	padding: 1px 10%;
+  padding: 1px 10%;
 }
 
 .neos-raw-content-contentcollections {
-	margin: 0 auto;
-	max-width: 720px;
+  margin: 0 auto;
+  max-width: 720px;
 }
 
 img {
-	max-width: 100%;
-	height: auto;
+  max-width: 100%;
+  height: auto;
 }
 
 .neos-raw-content-contentcollection-container > header {
-	font-size: 160%;
-	color: $textSubtle;
-	text-transform: uppercase;
-	margin: 60px 0 20px;
-	border-bottom: 1px solid #ddd;
+  font-size: 160%;
+  color: $textSubtle;
+  text-transform: uppercase;
+  margin: 60px 0 20px;
+  border-bottom: 1px solid #ddd;
 }
 
 a {
-	color: $blueDark;
+  color: $blueDark;
 }
 
 // Inline image alignments
 .typo3-image-alignment-right {
-	float: right;
-	margin-left: 1em;
-	margin-bottom: 0.5em;
+  float: right;
+  margin-left: 1em;
+  margin-bottom: 0.5em;
 }
 
 .typo3-image-alignment-left {
-	float: left;
-	margin-right: 1em;
-	margin-bottom: 0.5em;
+  float: left;
+  margin-right: 1em;
+  margin-bottom: 0.5em;
 }
 
 .neos-raw-content-hidden {
-	display: none;
+  display: none;
 }
 
 ol {
-	&.neos-list-decimal {
-		list-style-type: decimal;
-	}
+  &.neos-list-decimal {
+    list-style-type: decimal;
+  }
 
-	&.neos-list-decimal-leading-zero {
-		list-style-type: decimal-leading-zero;
-	}
+  &.neos-list-decimal-leading-zero {
+    list-style-type: decimal-leading-zero;
+  }
 
-	&.neos-list-lower-roman {
-		list-style-type: lower-roman;
-	}
+  &.neos-list-lower-roman {
+    list-style-type: lower-roman;
+  }
 
-	&.neos-list-upper-roman {
-		list-style-type: upper-roman;
-	}
+  &.neos-list-upper-roman {
+    list-style-type: upper-roman;
+  }
 
-	&.neos-list-lower-greek {
-		list-style-type: lower-greek;
-	}
+  &.neos-list-lower-greek {
+    list-style-type: lower-greek;
+  }
 
-	&.neos-list-lower-latin {
-		list-style-type: lower-latin;
-	}
+  &.neos-list-lower-latin {
+    list-style-type: lower-latin;
+  }
 
-	&.neos-list-upper-latin {
-		list-style-type: upper-latin;
-	}
+  &.neos-list-upper-latin {
+    list-style-type: upper-latin;
+  }
 }
 
 ul {
-	&.neos-list-disc {
-		list-style-type: disc;
-	}
+  &.neos-list-disc {
+    list-style-type: disc;
+  }
 
-	&.neos-list-circle {
-		list-style-type: circle;
-	}
+  &.neos-list-circle {
+    list-style-type: circle;
+  }
 
-	&.neos-list-square {
-		list-style-type: square;
-	}
+  &.neos-list-square {
+    list-style-type: square;
+  }
 }

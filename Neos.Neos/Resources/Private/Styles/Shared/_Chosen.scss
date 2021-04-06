@@ -1,167 +1,167 @@
 .chosen-container {
-	color: #fff;
-	line-height: $unit;
-	font-size: 14px;
+  color: #fff;
+  line-height: $unit;
+  font-size: 14px;
 
-	.chosen-single {
-		height: $unit;
-		border: none;
-		background-color: $grayMedium;
-		background-image: none;
-		padding-left: $defaultMargin;
-		border-radius: 0;
-		box-shadow: none;
-		color: inherit;
-		line-height: inherit;
-		text-decoration: none;
+  .chosen-single {
+    height: $unit;
+    border: none;
+    background-color: $grayMedium;
+    background-image: none;
+    padding-left: $defaultMargin;
+    border-radius: 0;
+    box-shadow: none;
+    color: inherit;
+    line-height: inherit;
+    text-decoration: none;
 
-		&.chosen-default {
-			color: $textSubtleLight;
+    &.chosen-default {
+      color: $textSubtleLight;
 
-			div {
-				color: #fff;
-			}
-		}
+      div {
+        color: #fff;
+      }
+    }
 
-		&.chosen-single-with-deselect span {
-			margin-right: $unit + 1px + 18px + $defaultMargin;
-		}
+    &.chosen-single-with-deselect span {
+      margin-right: $unit + 1px + 18px + $defaultMargin;
+    }
 
-		span {
-			margin-right: $unit + 1px + $defaultMargin;
-		}
+    span {
+      margin-right: $unit + 1px + $defaultMargin;
+    }
 
-		div {
-			width: $unit;
+    div {
+      width: $unit;
 
-			&:before {
-				display: block;
-				content: '';
-				position: absolute;
-				width: 1px;
-				height: $relatedMargin * 3;
-				top: $relatedMargin;
-				left: 0;
-				background-color: #fff;
-				opacity: .15;
-			}
+      &:before {
+        display: block;
+        content: "";
+        position: absolute;
+        width: 1px;
+        height: $relatedMargin * 3;
+        top: $relatedMargin;
+        left: 0;
+        background-color: #fff;
+        opacity: 0.15;
+      }
 
-			&:after {
-				@extend .fas;
-				content: fa-content($fa-var-caret-down);
-				display: block;
-				position: absolute;
-				width: $unit;
-				text-align: center;
-				line-height: $unit;
-			}
+      &:after {
+        @extend .fas;
+        content: fa-content($fa-var-caret-down);
+        display: block;
+        position: absolute;
+        width: $unit;
+        text-align: center;
+        line-height: $unit;
+      }
 
-			b {
-				display: none;
-				background-image: none !important;
-			}
-		}
+      b {
+        display: none;
+        background-image: none !important;
+      }
+    }
 
-		abbr {
-			top: 12px;
-			right: $unit + $relatedMargin + $tightMargin;;
-			color: #fff;
-			font-size: 16px;
-			line-height: 1;
+    abbr {
+      top: 12px;
+      right: $unit + $relatedMargin + $tightMargin;
+      color: #fff;
+      font-size: 16px;
+      line-height: 1;
 
-			&:hover {
-				color: $blue;
-			}
+      &:hover {
+        color: $blue;
+      }
 
-			&::after {
-				@extend .fas;
-				content: fa-content($fa-var-times-circle);
-			}
-		}
-	}
+      &::after {
+        @extend .fas;
+        content: fa-content($fa-var-times-circle);
+      }
+    }
+  }
 
-	.chosen-drop {
-		border: none;
-		background-color: $grayMedium;
-		background-image: none;
-		border-radius: 0;
-		box-shadow: 1px 2px 5px $grayDark;
-		color: inherit;
-		margin-top: 0;
+  .chosen-drop {
+    border: none;
+    background-color: $grayMedium;
+    background-image: none;
+    border-radius: 0;
+    box-shadow: 1px 2px 5px $grayDark;
+    color: inherit;
+    margin-top: 0;
 
-		.chosen-search {
-			@extend .fas;
-			padding: 0;
-			color: $black;
-			font-size: 0;
+    .chosen-search {
+      @extend .fas;
+      padding: 0;
+      color: $black;
+      font-size: 0;
 
-			input {
-				min-width: 0px;
-				width: 100%;
-				height: $unit;
-				border: none;
-				color: $textOnGray;
-				@include font;
-				font-size: 14px;
-				margin: 0;
-				padding: 0 $defaultMargin;
-				box-sizing: border-box;
-				box-shadow: none;
-				background: none;
-				background-image: none !important;
-				background-color: #fff;
-			}
+      input {
+        min-width: 0px;
+        width: 100%;
+        height: $unit;
+        border: none;
+        color: $textOnGray;
+        @include font;
+        font-size: 14px;
+        margin: 0;
+        padding: 0 $defaultMargin;
+        box-sizing: border-box;
+        box-shadow: none;
+        background: none;
+        background-image: none !important;
+        background-color: #fff;
+      }
 
-			&:after {
-				position: absolute;
-				top: 14px;
-				right: 12px;
-				width: 16px;
-				height: 16px;
-				text-decoration: inherit;
-				display: inline-block;
-				speak: none;
-				content: fa-content($fa-var-search);
-				line-height: 100%;
-				font-size: 12px;
-			}
-		}
+      &:after {
+        position: absolute;
+        top: 14px;
+        right: 12px;
+        width: 16px;
+        height: 16px;
+        text-decoration: inherit;
+        display: inline-block;
+        speak: none;
+        content: fa-content($fa-var-search);
+        line-height: 100%;
+        font-size: 12px;
+      }
+    }
 
-		.chosen-results {
-			margin: 0;
-			padding: 0;
-			max-height: 247px;
+    .chosen-results {
+      margin: 0;
+      padding: 0;
+      max-height: 247px;
 
-			li {
-				width: 100%;
-				border-bottom: 1px solid $grayDark;
-				line-height: $unit - $defaultMargin;
-				padding: ($unit - $defaultMargin * 2) $defaultMargin;
-				box-sizing: border-box;
+      li {
+        width: 100%;
+        border-bottom: 1px solid $grayDark;
+        line-height: $unit - $defaultMargin;
+        padding: ($unit - $defaultMargin * 2) $defaultMargin;
+        box-sizing: border-box;
 
-				&:first-child {
-					border-top: 1px solid $grayDark;
-				}
+        &:first-child {
+          border-top: 1px solid $grayDark;
+        }
 
-				&.highlighted {
-					background-color: $blue;
-					background-image: none;
-				}
+        &.highlighted {
+          background-color: $blue;
+          background-image: none;
+        }
 
-				&.no-results {
-					background-color: $grayMedium;
-				}
+        &.no-results {
+          background-color: $grayMedium;
+        }
 
-				&.disabled-result {
-					color: $textSubtle;
-				}
+        &.disabled-result {
+          color: $textSubtle;
+        }
 
-				em {
-					background: none;
-					font-weight: bold;
-					line-height: $unit - 2px;
-				}
-			}
-		}
-	}
+        em {
+          background: none;
+          font-weight: bold;
+          line-height: $unit - 2px;
+        }
+      }
+    }
+  }
 }

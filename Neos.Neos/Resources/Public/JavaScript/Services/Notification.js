@@ -4,12 +4,12 @@ import { isNil } from "../Helper";
 const allowedTypes = ["ok", "info", "notice", "warning", "error"];
 
 const _renderNotification = (title, message, type, additionalOptions) => {
-	const options = { title: title, message: message, ...additionalOptions };
-	if (allowedTypes.includes(type)) {
-		options.type = type;
-	}
+  const options = { title: title, message: message, ...additionalOptions };
+  if (allowedTypes.includes(type)) {
+    options.type = type;
+  }
 
-	Toast.create(options);
+  Toast.create(options);
 };
 
 /**
@@ -19,7 +19,7 @@ const _renderNotification = (title, message, type, additionalOptions) => {
  * @return {void}
  */
 const ok = (title) => {
-	_renderNotification(title, "", "ok");
+  _renderNotification(title, "", "ok");
 };
 
 /**
@@ -29,7 +29,7 @@ const ok = (title) => {
  * @return {void}
  */
 const info = (title) => {
-	_renderNotification(title, "", "info");
+  _renderNotification(title, "", "info");
 };
 
 /**
@@ -39,7 +39,7 @@ const info = (title) => {
  * @return {void}
  */
 const notice = (title) => {
-	_renderNotification(title, "", "notice");
+  _renderNotification(title, "", "notice");
 };
 
 /**
@@ -50,10 +50,10 @@ const notice = (title) => {
  * @return {void}
  */
 const warning = (title, message) => {
-	_renderNotification(title, message, "warning", {
-		timeout: 0,
-		closeButton: true,
-	});
+  _renderNotification(title, message, "warning", {
+    timeout: 0,
+    closeButton: true,
+  });
 };
 
 /**
@@ -64,10 +64,10 @@ const warning = (title, message) => {
  * @return {void}
  */
 const error = (title, message) => {
-	_renderNotification(title, message, "error", {
-		timeout: 0,
-		closeButton: true,
-	});
+  _renderNotification(title, message, "error", {
+    timeout: 0,
+    closeButton: true,
+  });
 };
 
 /**
@@ -76,42 +76,42 @@ const error = (title, message) => {
  * @return {void}
  */
 const clear = () => {
-	Toast.removeAll();
+  Toast.removeAll();
 };
 
 const init = () => {
-	if (isNil(window.NeosCMS)) {
-		window.NeosCMS = {};
-	}
+  if (isNil(window.NeosCMS)) {
+    window.NeosCMS = {};
+  }
 
-	if (isNil(window.Typo3Neos)) {
-		window.Typo3Neos = {};
-	}
+  if (isNil(window.Typo3Neos)) {
+    window.Typo3Neos = {};
+  }
 
-	if (isNil(window.NeosCMS.Notification)) {
-		window.NeosCMS.Notification = {
-			init: init,
-			ok: ok,
-			info: info,
-			notice: notice,
-			warning: warning,
-			error: error,
-			clear: clear,
-		};
+  if (isNil(window.NeosCMS.Notification)) {
+    window.NeosCMS.Notification = {
+      init: init,
+      ok: ok,
+      info: info,
+      notice: notice,
+      warning: warning,
+      error: error,
+      clear: clear,
+    };
 
-		// deprecated - to be removed in 8.0
-		window.Typo3Neos.Notification = window.NeosCMS.Notification
-	}
+    // deprecated - to be removed in 8.0
+    window.Typo3Neos.Notification = window.NeosCMS.Notification;
+  }
 
-	const notifications = Array.from(
-		document.querySelectorAll("#neos-notifications-inline li")
-	);
-	notifications.forEach((notificationElement) => {
-		const type = notificationElement.getAttribute("data-type");
-		const title = notificationElement.textContent;
+  const notifications = Array.from(
+    document.querySelectorAll("#neos-notifications-inline li")
+  );
+  notifications.forEach((notificationElement) => {
+    const type = notificationElement.getAttribute("data-type");
+    const title = notificationElement.textContent;
 
-		_renderNotification(title, "", type);
-	});
+    _renderNotification(title, "", type);
+  });
 };
 
 export default { init, ok, info, notice, warning, error, clear };

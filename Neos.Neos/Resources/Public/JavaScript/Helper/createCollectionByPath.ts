@@ -15,29 +15,29 @@
  * @return {object}
  */
 const createCollectionByPath = (collection: any, path: string, value: any) => {
-	collection = typeof collection === "object" ? collection : {};
-	const keys = Array.isArray(path) ? path : path.split(".");
-	let currentStep: object = collection;
-	for (let i = 0; i < keys.length - 1; i++) {
-		const key = keys[i];
-		if (
-			// @ts-ignore
-			!currentStep[key] &&
-			!Object.prototype.hasOwnProperty.call(currentStep, key)
-		) {
-			const nextKey = keys[i + 1];
-			const useArray = /^\+?(0|[1-9]\d*)$/.test(nextKey);
-			// @ts-ignore
-			currentStep[key] = useArray ? [] : {};
-		}
-		// @ts-ignore
-		currentStep = currentStep[key];
-	}
-	const finalStep = keys[keys.length - 1];
-	// @ts-ignore
-	currentStep[finalStep] = value;
+  collection = typeof collection === "object" ? collection : {};
+  const keys = Array.isArray(path) ? path : path.split(".");
+  let currentStep: object = collection;
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i];
+    if (
+      // @ts-ignore
+      !currentStep[key] &&
+      !Object.prototype.hasOwnProperty.call(currentStep, key)
+    ) {
+      const nextKey = keys[i + 1];
+      const useArray = /^\+?(0|[1-9]\d*)$/.test(nextKey);
+      // @ts-ignore
+      currentStep[key] = useArray ? [] : {};
+    }
+    // @ts-ignore
+    currentStep = currentStep[key];
+  }
+  const finalStep = keys[keys.length - 1];
+  // @ts-ignore
+  currentStep[finalStep] = value;
 
-	return collection;
+  return collection;
 };
 
 export default createCollectionByPath;

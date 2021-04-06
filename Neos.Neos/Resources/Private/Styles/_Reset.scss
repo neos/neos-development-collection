@@ -1,35 +1,76 @@
-div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td {
-	margin:0;padding:0;
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+fieldset,
+input,
+p,
+blockquote,
+th,
+td {
+  margin: 0;
+  padding: 0;
 }
-img{
-	border:0;
+img {
+  border: 0;
 }
-address,caption,cite,code,dfn,em,strong,th,var {
-	font-style:normal;font-weight:normal;
+address,
+caption,
+cite,
+code,
+dfn,
+em,
+strong,
+th,
+var {
+  font-style: normal;
+  font-weight: normal;
 }
-ol, ul, ol li, ul li {
-	list-style:none;
+ol,
+ul,
+ol li,
+ul li {
+  list-style: none;
 }
-caption,th {
-	text-align:left;
+caption,
+th {
+  text-align: left;
 }
-h1,h2,h3,h4,h5,h6 {
-	font-size:14px;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 14px;
 }
 q:before,
 q:after {
-	content:'';
+  content: "";
 }
 
-
 // Play well with zurb foundation
-*, *:before, *:after {
-	box-sizing: content-box;
+*,
+*:before,
+*:after {
+  box-sizing: content-box;
 }
 
 @media only screen {
-	button, .button {
-		transition: none;
-		box-shadow: none;
-	}
+  button,
+  .button {
+    transition: none;
+    box-shadow: none;
+  }
 }

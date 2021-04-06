@@ -1,600 +1,600 @@
 &.neos-module {
-	@import "Administration/Configuration";
-	@import "Administration/Packages";
-	@import "Administration/Sites";
-	@import "Management/History";
-	@import "Management/Workspaces";
-	@include font;
-
-	background-color: $grayDarker;
-	color: #fff;
-	margin: 0;
-
-	&.neos-menu-panel-sticky .neos-footer.fixedsticky-on {
-		width: calc(100% - #{$menuButtonWidth});
-	}
-
-	/* wrapper for dark background */
-	> .neos-module-wrap {
-		position: relative;
-		background: $grayDark;
-		padding: ($unit * 2) $menuButtonWidth $unit $menuButtonWidth;
-	}
-
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
-		text-rendering: optimizelegibility;
-	}
-
-	p {
-		line-height: 1.6em;
-	}
-
-	a {
-		color: $blue;
-
-		&,
-		&:hover {
-			color: #fff;
-			text-decoration: none;
-		}
-	}
-
-	.neos-button {
-		color: #fff;
-	}
-
-	label {
-		font-size: 14px;
-	}
-
-	#neos-notifications-inline {
-		display: none;
-	}
-
-	form.neos-inline {
-		display: inline-block;
-	}
-
-	.neos-help-block {
-		margin-top: $relatedMargin;
-		margin-bottom: $defaultMargin;
-
-		em {
-			padding: 2px 4px;
-			color: $blueDark;
-			background-color: $grayMedium;
-			border: 1px solid $grayLight;
-			white-space: nowrap;
-		}
-	}
-
-	&.neos-module-user-usersettings,
-	&.neos-module-administration-users {
-		.neos-content {
-			#electronicAddresses {
-				input[type="text"] {
-					width: 100%;
-				}
-
-				input[type="radio"] {
-					margin: 0;
-				}
-			}
-
-			i.fa-user {
-				margin-right: 11px;
-			}
-		}
-
-		.neos-search-bar {
-			button.neos-button {
-				border-right: 1px solid $grayDark;
-			}
-
-			a.neos-button {
-				border-left: 1px solid $grayDark;
-			}
-		}
-	}
-
-	.neos-breadcrumb {
-		border-radius: 0;
-		background-color: transparent;
-		padding: 0;
-		border-bottom: 1px solid $grayLight;
-
-		a {
-			color: #fff;
-			line-height: $unit;
-			text-shadow: none;
-
-			&.active {
-				color: $blue;
-			}
-
-			&:hover,
-			&:active,
-			&:focus {
-				color: #fff;
-				text-decoration: none;
-			}
-
-			i {
-				line-height: 20px;
-				padding-right: 5px;
-			}
-		}
-	}
-
-	.neos-content {
-		padding: 0;
-
-		// Styles with Fluid Grids
-		&.fluid-container {
-			h1 {
-				margin-left: 20px;
-			}
-		}
-
-		&.neos-well {
-			background-color: #777;
-			border-color: #666;
-			box-shadow: 0 0 5px rgba(#000, 0.2) inset;
-			border-radius: 0;
-			padding: 0px;
-
-			h1 {
-				padding: 10px 50px 0px 50px;
-			}
-
-			p {
-				color: $grayLight;
-			}
-		}
-
-		.widget {
-			border-radius: 0;
-		}
-	}
-
-	fieldset {
-		padding-bottom: $wideMargin;
-	}
-
-	legend {
-		border: none;
-		padding-top: $defaultMargin;
-		margin-bottom: 0;
-	}
-
-	select,
-	input[type="text"],
-	input[type="password"],
-	input[type="datetime"],
-	input[type="datetime-local"],
-	input[type="date"],
-	input[type="month"],
-	input[type="time"],
-	input[type="week"],
-	input[type="number"],
-	input[type="range"],
-	input[type="date"],
-	input[type="email"],
-	input[type="url"],
-	input[type="search"],
-	input[type="tel"],
-	input[type="color"],
-	input[type="number"],
-	.neos-uneditable-input {
-		height: $unit;
-		line-height: $unit - 4px;
-		border: 2px solid $grayLight;
-		background-color: $grayLight;
-		color: $textOnGray;
-		@include font;
-		font-size: 14px;
-		padding: 0 ($defaultMargin - 2px);
-		margin: 0;
-		box-sizing: border-box;
-		box-shadow: none;
-		transition: none;
-		border-radius: 0px;
-
-		&:focus {
-			background-color: #fff;
-			border: 2px solid #fff;
-			color: $textOnWhite;
-			outline: none;
-			box-shadow: none;
-		}
-
-		// Highlight changed elements in the Property Panel
-		&.neos-modified {
-			border: 2px solid $green;
-		}
-	}
-
-	textarea {
-		border: 2px solid $grayLight;
-		background-color: $grayLight;
-		color: $textOnGray;
-		@include font;
-		font-size: 14px;
-		padding: 0 ($defaultMargin - 2px);
-		margin: 0;
-		box-sizing: border-box;
-		box-shadow: none;
-		transition: none;
-		border-radius: 0px;
-
-		&:focus {
-			background-color: #fff;
-			border: 2px solid #fff;
-			color: $textOnWhite;
-			outline: none;
-			box-shadow: none;
-		}
-
-		// Highlight changed elements in the Property Panel
-		&.neos-modified {
-			border: 2px solid $green;
-		}
-	}
-
-	.neos-select {
-		position: relative;
-		background-color: $grayLight;
-
-		&:focus {
-			outline: none;
-
-			&:after {
-				color: $textOnWhite;
-			}
-		}
-
-		&:before {
-			display: block;
-			content: "";
-			position: absolute;
-			width: 1px;
-			height: $relatedMargin * 3;
-			top: $relatedMargin;
-			right: $unit + 1;
-			background-color: #fff;
-			opacity: 0.15;
-		}
-
-		&:after {
-			@extend .fas;
-			content: fa-content($fa-var-caret-down);
-			display: block;
-			position: absolute;
-			right: 0;
-			top: 0;
-			width: 40px;
-			line-height: $unit;
-			text-align: center;
-		}
-
-		select {
-			appearance: none;
-			-webkit-border-radius: 0px;
-			-o-appearance: window;
-			-moz-appearance: window;
-			background-color: transparent;
-			line-height: 1;
-			padding: 7px 14px;
-			width: 100%;
-			position: relative;
-			z-index: 1;
-
-			&:focus {
-				color: #fff;
-				background-color: transparent;
-				border-color: transparent;
-			}
-		}
-
-		option {
-			appearance: none;
-			-webkit-border-radius: 0px;
-			background-color: $grayLight;
-		}
-	}
-
-	.neos-footer {
-		position: sticky;
-		height: $unit + ($defaultMargin * 2);
-		background-color: $grayDarker;
-		margin: $unit (-$menuButtonWidth) (-$unit);
-		border-top: 1px solid $grayLight;
-		padding: $defaultMargin;
-		font-size: 0;
-		bottom: 0;
-		z-index: 100;
-		overflow: hidden;
-		box-sizing: border-box;
-		@include clearfix();
-
-		&.fixedsticky-on {
-			width: 100%;
-			position: -webkit-sticky;
-			position: -moz-sticky;
-			position: -ms-sticky;
-			position: -o-sticky;
-			position: sticky;
-			margin-bottom: 0;
-
-			.fixedsticky-withoutfixedfixed &,
-			.fixed-supported & {
-				position: fixed;
-			}
-		}
-
-		/* When position: sticky is supported but native behavior is ignored */
-		&.fixedsticky-off {
-			.fixedsticky-withoutfixedfixed &,
-			.fixed-supported & {
-				position: static;
-			}
-		}
-
-		&.fixedsticky-on + .fixedsticky-dummy {
-			display: block;
-		}
-
-		@media screen and (max-width: 1024px) and (max-height: 768px) {
-			padding: 0;
-		}
-
-		.neos-button {
-			margin-right: $relatedMargin;
-		}
-
-		.neos-modal .neos-button {
-			margin-right: 0;
-		}
-	}
-
-	.fixedsticky-dummy {
-		display: none;
-	}
-
-	@import "../Shared/Checkboxes";
-
-	// Tables within Modules
-	table {
-		&.table-bordered {
-			border-radius: 0;
-			border-left: none;
-			border-right: none;
-			border-top: 1px solid $grayLight;
-			border-bottom: 1px solid $grayLight;
-
-			tr,
-			th {
-				border-radius: 0;
-			}
-
-			th,
-			td {
-				border-left: 1px solid $grayLight;
-			}
-		}
-
-		&.neos-table {
-			td {
-				border-top: 1px solid $grayDark;
-			}
-
-			th {
-				text-shadow: none;
-			}
-
-			td,
-			th {
-				height: $unit;
-				padding: 0 $defaultMargin;
-				line-height: $unit;
-				box-sizing: border-box;
-
-				i {
-					vertical-align: baseline;
-					text-align: center;
-				}
-
-				&:first-child {
-					padding-left: $defaultMargin !important;
-				}
-
-				&:last-child {
-					padding-right: $defaultMargin !important;
-				}
-
-				&.neos-action {
-					padding-left: 0 !important;
-					padding-right: 0 !important;
-				}
-			}
-
-			// special styling for "folder"-td
-			tr.neos-folder td {
-				background: $grayDark;
-				padding-left: 0 !important;
-				padding-right: 0 !important;
-				border-top: 1px solid $grayMedium;
-
-				i[class*="icon"] {
-					height: $unit;
-					line-height: $unit;
-					padding: 0 $defaultMargin;
-					margin: 0;
-					text-align: center;
-					font-size: $unit / 4;
-					vertical-align: middle;
-
-					&:hover {
-						background: $blue;
-					}
-				}
-			}
-
-			// custom checkboxes and radiobuttons in tables
-			th.check,
-			td.check {
-				padding-right: $relatedMargin !important;
-			}
-
-			.neos-label {
-				background-color: $grayLight;
-				box-shadow: 0 0 3px 2px rgba(0, 0, 0, .1);
-				font-weight: normal;
-				letter-spacing: 0.05em;
-				padding: 2px 0.5em;
-			}
-		}
-
-		&.neos-info-table {
-			width: 100%;
-			margin-bottom: $wideMargin;
-
-			thead {
-				th {
-					padding: 0 16px !important;
-					height: 40px;
-					font-weight: bold;
-				}
-			}
-
-			tbody {
-				th,
-				td {
-					height: auto;
-					vertical-align: top;
-					line-height: 20px;
-					padding: 10px 16px !important;
-					border-top: 1px solid $grayMedium;
-				}
-
-				th {
-					font-weight: bold;
-					text-align: left;
-					width: 30%;
-
-					span {
-						font-weight: normal;
-						color: $grayLighter;
-						font-size: 0.9em;
-					}
-				}
-				tr:first-child {
-					th,
-					td {
-						border-top: 0;
-					}
-				}
-			}
-		}
-
-		td > .neos-button,
-		td > form > .neos-button,
-		td div.neos-pull-right > .neos-button,
-		td div.neos-pull-right > form .neos-button {
-			background-color: $grayMedium;
-
-			&:not([disabled]),
-			&:not(.neos-disabled) {
-				&:hover,
-				&:active,
-				&.neos-active,
-				&.neos-pressed {
-					background-color: $blue;
-				}
-			}
-
-			&.neos-button-success {
-				background-color: $grayMedium;
-
-				&:hover,
-				&:active {
-					background-color: $grayMedium;
-				}
-
-				&:not([disabled]):not(.neos-disabled) {
-					&:hover,
-					&:active,
-					&.neos-active,
-					&.neos-pressed {
-						background-color: $green;
-					}
-				}
-			}
-
-			&.neos-button-warning {
-				background-color: $grayMedium;
-
-				&:hover,
-				&:active {
-					background-color: $grayMedium;
-				}
-
-				&:not([disabled]):not(.neos-disabled) {
-					&:hover,
-					&:active,
-					&.neos-active,
-					&.neos-pressed {
-						background-color: $orange;
-					}
-				}
-			}
-
-			&.neos-button-danger {
-				background-color: $grayMedium;
-
-				&:hover,
-				&:active {
-					background-color: $grayMedium;
-				}
-
-				&:not([disabled]):not(.neos-disabled) {
-					&:hover,
-					&:active,
-					&.neos-active,
-					&.neos-pressed {
-						background-color: $warning;
-					}
-				}
-			}
-
-			&.neos-button-primary {
-				background-color: $grayMedium;
-
-				&:hover,
-				&:active {
-					background-color: $grayMedium;
-				}
-
-				&:not([disabled]):not(.neos-disabled) {
-					&:hover,
-					&:active,
-					&.neos-active,
-					&.neos-pressed {
-						background-color: $blue;
-					}
-				}
-			}
-		}
-	}
-
-	legend + table,
-	legend + .neos-alert {
-		margin-top: $baseLineHeight;
-		-webkit-margin-top-collapse: separate;
-	}
+  @import "Administration/Configuration";
+  @import "Administration/Packages";
+  @import "Administration/Sites";
+  @import "Management/History";
+  @import "Management/Workspaces";
+  @include font;
+
+  background-color: $grayDarker;
+  color: #fff;
+  margin: 0;
+
+  &.neos-menu-panel-sticky .neos-footer.fixedsticky-on {
+    width: calc(100% - #{$menuButtonWidth});
+  }
+
+  /* wrapper for dark background */
+  > .neos-module-wrap {
+    position: relative;
+    background: $grayDark;
+    padding: ($unit * 2) $menuButtonWidth $unit $menuButtonWidth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-rendering: optimizelegibility;
+  }
+
+  p {
+    line-height: 1.6em;
+  }
+
+  a {
+    color: $blue;
+
+    &,
+    &:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+
+  .neos-button {
+    color: #fff;
+  }
+
+  label {
+    font-size: 14px;
+  }
+
+  #neos-notifications-inline {
+    display: none;
+  }
+
+  form.neos-inline {
+    display: inline-block;
+  }
+
+  .neos-help-block {
+    margin-top: $relatedMargin;
+    margin-bottom: $defaultMargin;
+
+    em {
+      padding: 2px 4px;
+      color: $blueDark;
+      background-color: $grayMedium;
+      border: 1px solid $grayLight;
+      white-space: nowrap;
+    }
+  }
+
+  &.neos-module-user-usersettings,
+  &.neos-module-administration-users {
+    .neos-content {
+      #electronicAddresses {
+        input[type="text"] {
+          width: 100%;
+        }
+
+        input[type="radio"] {
+          margin: 0;
+        }
+      }
+
+      i.fa-user {
+        margin-right: 11px;
+      }
+    }
+
+    .neos-search-bar {
+      button.neos-button {
+        border-right: 1px solid $grayDark;
+      }
+
+      a.neos-button {
+        border-left: 1px solid $grayDark;
+      }
+    }
+  }
+
+  .neos-breadcrumb {
+    border-radius: 0;
+    background-color: transparent;
+    padding: 0;
+    border-bottom: 1px solid $grayLight;
+
+    a {
+      color: #fff;
+      line-height: $unit;
+      text-shadow: none;
+
+      &.active {
+        color: $blue;
+      }
+
+      &:hover,
+      &:active,
+      &:focus {
+        color: #fff;
+        text-decoration: none;
+      }
+
+      i {
+        line-height: 20px;
+        padding-right: 5px;
+      }
+    }
+  }
+
+  .neos-content {
+    padding: 0;
+
+    // Styles with Fluid Grids
+    &.fluid-container {
+      h1 {
+        margin-left: 20px;
+      }
+    }
+
+    &.neos-well {
+      background-color: #777;
+      border-color: #666;
+      box-shadow: 0 0 5px rgba(#000, 0.2) inset;
+      border-radius: 0;
+      padding: 0px;
+
+      h1 {
+        padding: 10px 50px 0px 50px;
+      }
+
+      p {
+        color: $grayLight;
+      }
+    }
+
+    .widget {
+      border-radius: 0;
+    }
+  }
+
+  fieldset {
+    padding-bottom: $wideMargin;
+  }
+
+  legend {
+    border: none;
+    padding-top: $defaultMargin;
+    margin-bottom: 0;
+  }
+
+  select,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="range"],
+  input[type="date"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="color"],
+  input[type="number"],
+  .neos-uneditable-input {
+    height: $unit;
+    line-height: $unit - 4px;
+    border: 2px solid $grayLight;
+    background-color: $grayLight;
+    color: $textOnGray;
+    @include font;
+    font-size: 14px;
+    padding: 0 ($defaultMargin - 2px);
+    margin: 0;
+    box-sizing: border-box;
+    box-shadow: none;
+    transition: none;
+    border-radius: 0px;
+
+    &:focus {
+      background-color: #fff;
+      border: 2px solid #fff;
+      color: $textOnWhite;
+      outline: none;
+      box-shadow: none;
+    }
+
+    // Highlight changed elements in the Property Panel
+    &.neos-modified {
+      border: 2px solid $green;
+    }
+  }
+
+  textarea {
+    border: 2px solid $grayLight;
+    background-color: $grayLight;
+    color: $textOnGray;
+    @include font;
+    font-size: 14px;
+    padding: 0 ($defaultMargin - 2px);
+    margin: 0;
+    box-sizing: border-box;
+    box-shadow: none;
+    transition: none;
+    border-radius: 0px;
+
+    &:focus {
+      background-color: #fff;
+      border: 2px solid #fff;
+      color: $textOnWhite;
+      outline: none;
+      box-shadow: none;
+    }
+
+    // Highlight changed elements in the Property Panel
+    &.neos-modified {
+      border: 2px solid $green;
+    }
+  }
+
+  .neos-select {
+    position: relative;
+    background-color: $grayLight;
+
+    &:focus {
+      outline: none;
+
+      &:after {
+        color: $textOnWhite;
+      }
+    }
+
+    &:before {
+      display: block;
+      content: "";
+      position: absolute;
+      width: 1px;
+      height: $relatedMargin * 3;
+      top: $relatedMargin;
+      right: $unit + 1;
+      background-color: #fff;
+      opacity: 0.15;
+    }
+
+    &:after {
+      @extend .fas;
+      content: fa-content($fa-var-caret-down);
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 40px;
+      line-height: $unit;
+      text-align: center;
+    }
+
+    select {
+      appearance: none;
+      -webkit-border-radius: 0px;
+      -o-appearance: window;
+      -moz-appearance: window;
+      background-color: transparent;
+      line-height: 1;
+      padding: 7px 14px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+
+      &:focus {
+        color: #fff;
+        background-color: transparent;
+        border-color: transparent;
+      }
+    }
+
+    option {
+      appearance: none;
+      -webkit-border-radius: 0px;
+      background-color: $grayLight;
+    }
+  }
+
+  .neos-footer {
+    position: sticky;
+    height: $unit + ($defaultMargin * 2);
+    background-color: $grayDarker;
+    margin: $unit (-$menuButtonWidth) (-$unit);
+    border-top: 1px solid $grayLight;
+    padding: $defaultMargin;
+    font-size: 0;
+    bottom: 0;
+    z-index: 100;
+    overflow: hidden;
+    box-sizing: border-box;
+    @include clearfix();
+
+    &.fixedsticky-on {
+      width: 100%;
+      position: -webkit-sticky;
+      position: -moz-sticky;
+      position: -ms-sticky;
+      position: -o-sticky;
+      position: sticky;
+      margin-bottom: 0;
+
+      .fixedsticky-withoutfixedfixed &,
+      .fixed-supported & {
+        position: fixed;
+      }
+    }
+
+    /* When position: sticky is supported but native behavior is ignored */
+    &.fixedsticky-off {
+      .fixedsticky-withoutfixedfixed &,
+      .fixed-supported & {
+        position: static;
+      }
+    }
+
+    &.fixedsticky-on + .fixedsticky-dummy {
+      display: block;
+    }
+
+    @media screen and (max-width: 1024px) and (max-height: 768px) {
+      padding: 0;
+    }
+
+    .neos-button {
+      margin-right: $relatedMargin;
+    }
+
+    .neos-modal .neos-button {
+      margin-right: 0;
+    }
+  }
+
+  .fixedsticky-dummy {
+    display: none;
+  }
+
+  @import "../Shared/Checkboxes";
+
+  // Tables within Modules
+  table {
+    &.table-bordered {
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      border-top: 1px solid $grayLight;
+      border-bottom: 1px solid $grayLight;
+
+      tr,
+      th {
+        border-radius: 0;
+      }
+
+      th,
+      td {
+        border-left: 1px solid $grayLight;
+      }
+    }
+
+    &.neos-table {
+      td {
+        border-top: 1px solid $grayDark;
+      }
+
+      th {
+        text-shadow: none;
+      }
+
+      td,
+      th {
+        height: $unit;
+        padding: 0 $defaultMargin;
+        line-height: $unit;
+        box-sizing: border-box;
+
+        i {
+          vertical-align: baseline;
+          text-align: center;
+        }
+
+        &:first-child {
+          padding-left: $defaultMargin !important;
+        }
+
+        &:last-child {
+          padding-right: $defaultMargin !important;
+        }
+
+        &.neos-action {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+      }
+
+      // special styling for "folder"-td
+      tr.neos-folder td {
+        background: $grayDark;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        border-top: 1px solid $grayMedium;
+
+        i[class*="icon"] {
+          height: $unit;
+          line-height: $unit;
+          padding: 0 $defaultMargin;
+          margin: 0;
+          text-align: center;
+          font-size: $unit / 4;
+          vertical-align: middle;
+
+          &:hover {
+            background: $blue;
+          }
+        }
+      }
+
+      // custom checkboxes and radiobuttons in tables
+      th.check,
+      td.check {
+        padding-right: $relatedMargin !important;
+      }
+
+      .neos-label {
+        background-color: $grayLight;
+        box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.1);
+        font-weight: normal;
+        letter-spacing: 0.05em;
+        padding: 2px 0.5em;
+      }
+    }
+
+    &.neos-info-table {
+      width: 100%;
+      margin-bottom: $wideMargin;
+
+      thead {
+        th {
+          padding: 0 16px !important;
+          height: 40px;
+          font-weight: bold;
+        }
+      }
+
+      tbody {
+        th,
+        td {
+          height: auto;
+          vertical-align: top;
+          line-height: 20px;
+          padding: 10px 16px !important;
+          border-top: 1px solid $grayMedium;
+        }
+
+        th {
+          font-weight: bold;
+          text-align: left;
+          width: 30%;
+
+          span {
+            font-weight: normal;
+            color: $grayLighter;
+            font-size: 0.9em;
+          }
+        }
+        tr:first-child {
+          th,
+          td {
+            border-top: 0;
+          }
+        }
+      }
+    }
+
+    td > .neos-button,
+    td > form > .neos-button,
+    td div.neos-pull-right > .neos-button,
+    td div.neos-pull-right > form .neos-button {
+      background-color: $grayMedium;
+
+      &:not([disabled]),
+      &:not(.neos-disabled) {
+        &:hover,
+        &:active,
+        &.neos-active,
+        &.neos-pressed {
+          background-color: $blue;
+        }
+      }
+
+      &.neos-button-success {
+        background-color: $grayMedium;
+
+        &:hover,
+        &:active {
+          background-color: $grayMedium;
+        }
+
+        &:not([disabled]):not(.neos-disabled) {
+          &:hover,
+          &:active,
+          &.neos-active,
+          &.neos-pressed {
+            background-color: $green;
+          }
+        }
+      }
+
+      &.neos-button-warning {
+        background-color: $grayMedium;
+
+        &:hover,
+        &:active {
+          background-color: $grayMedium;
+        }
+
+        &:not([disabled]):not(.neos-disabled) {
+          &:hover,
+          &:active,
+          &.neos-active,
+          &.neos-pressed {
+            background-color: $orange;
+          }
+        }
+      }
+
+      &.neos-button-danger {
+        background-color: $grayMedium;
+
+        &:hover,
+        &:active {
+          background-color: $grayMedium;
+        }
+
+        &:not([disabled]):not(.neos-disabled) {
+          &:hover,
+          &:active,
+          &.neos-active,
+          &.neos-pressed {
+            background-color: $warning;
+          }
+        }
+      }
+
+      &.neos-button-primary {
+        background-color: $grayMedium;
+
+        &:hover,
+        &:active {
+          background-color: $grayMedium;
+        }
+
+        &:not([disabled]):not(.neos-disabled) {
+          &:hover,
+          &:active,
+          &.neos-active,
+          &.neos-pressed {
+            background-color: $blue;
+          }
+        }
+      }
+    }
+  }
+
+  legend + table,
+  legend + .neos-alert {
+    margin-top: $baseLineHeight;
+    -webkit-margin-top-collapse: separate;
+  }
 }

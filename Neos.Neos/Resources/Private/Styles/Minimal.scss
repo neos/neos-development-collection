@@ -18,26 +18,26 @@
 @import "Reset";
 
 .neos {
-	// Essentials from Foundation for the top and bottom bar
-	@import "Foundation/breadcrumbs";
-	@import "Foundation/buttons";
-	@import "Foundation/button-groups";
-	@import "Foundation/layouts";
-	@import "Foundation/dropdowns";
+  // Essentials from Foundation for the top and bottom bar
+  @import "Foundation/breadcrumbs";
+  @import "Foundation/buttons";
+  @import "Foundation/button-groups";
+  @import "Foundation/layouts";
+  @import "Foundation/dropdowns";
 
-	// Neos font definition
-	font-size: 14px;
-	line-height: 1em;
-	text-align: left;
-	color: $textOnGray;
-	@include font;
+  // Neos font definition
+  font-size: 14px;
+  line-height: 1em;
+  text-align: left;
+  color: $textOnGray;
+  @include font;
 
-	// Essential Neos styles for the top bar and notifications
-	@import "TopBar/TopBar";
-	@import "TopBar/UserMenu";
-	@import "Menu/MenuPanel";
-	@import "Modules/Modules";
-	@import "Notifications";
+  // Essential Neos styles for the top bar and notifications
+  @import "TopBar/TopBar";
+  @import "TopBar/UserMenu";
+  @import "Menu/MenuPanel";
+  @import "Modules/Modules";
+  @import "Notifications";
 }
 
 @import "Global";

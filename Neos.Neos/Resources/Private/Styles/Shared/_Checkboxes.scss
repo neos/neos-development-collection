@@ -1,106 +1,106 @@
 .neos-checkbox,
 .neos-radio {
-	position: relative;
-	display: inline-block;
-	overflow: hidden;
-	min-height: 22px;
-	min-width: 22px;
-	line-height: 22px;
-	vertical-align: middle;
-	padding: 0 !important;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  min-height: 22px;
+  min-width: 22px;
+  line-height: 22px;
+  vertical-align: middle;
+  padding: 0 !important;
 
-	&.neos-inline {
-		margin-bottom: $relatedMargin;
-		margin-right: $wideMargin;
+  &.neos-inline {
+    margin-bottom: $relatedMargin;
+    margin-right: $wideMargin;
 
-		& + .neos-inline {
-			margin-left: 0;
-			margin-right: $wideMargin;
-		}
-	}
+    & + .neos-inline {
+      margin-left: 0;
+      margin-right: $wideMargin;
+    }
+  }
 
-	input {
-		position: absolute;
-		left: -9999px;
-		vertical-align: top;
+  input {
+    position: absolute;
+    left: -9999px;
+    vertical-align: top;
 
-		& + span {
-			width: 22px;
-			height: 22px;
-			margin-right: $relatedMargin;
-			overflow: hidden;
-			float: left;
-			position: relative;
+    & + span {
+      width: 22px;
+      height: 22px;
+      margin-right: $relatedMargin;
+      overflow: hidden;
+      float: left;
+      position: relative;
 
-			&::before {
-				@extend .fas;
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: $unit / 2;
-				height: $unit / 2;
-				background-color: $grayLight;
-				border: 1px solid $textSubtleLight;
-				color: $textSubtle;
-				cursor: pointer;
-				content: fa-content($fa-var-check);
-				line-height: $unit / 2;
-				text-align: center;
-			}
-		}
+      &::before {
+        @extend .fas;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: $unit / 2;
+        height: $unit / 2;
+        background-color: $grayLight;
+        border: 1px solid $textSubtleLight;
+        color: $textSubtle;
+        cursor: pointer;
+        content: fa-content($fa-var-check);
+        line-height: $unit / 2;
+        text-align: center;
+      }
+    }
 
-		&:checked {
-			& + span::before {
-				background-color: $blueLight;
-				border: 1px solid $blueLight;
-				text-align: center;
-				color: #fff;
-			}
+    &:checked {
+      & + span::before {
+        background-color: $blueLight;
+        border: 1px solid $blueLight;
+        text-align: center;
+        color: #fff;
+      }
 
-			&:hover + span::before {
-				background-color: $grayLight;
-			}
-		}
+      &:hover + span::before {
+        background-color: $grayLight;
+      }
+    }
 
-		&[type='radio'] {
-			& + span::before {
-				content: "";
-				border-radius: 50%;
-			}
+    &[type="radio"] {
+      & + span::before {
+        content: "";
+        border-radius: 50%;
+      }
 
-			& + span::after {
-				content: "";
-				position: absolute;
-				background: $textSubtle;
-				border-radius: 50%;
-				width: 8px;
-				height: 8px;
-				left: 7px;
-				top: 7px;
-			}
+      & + span::after {
+        content: "";
+        position: absolute;
+        background: $textSubtle;
+        border-radius: 50%;
+        width: 8px;
+        height: 8px;
+        left: 7px;
+        top: 7px;
+      }
 
-			&:checked + span::after {
-				background: #fff;
-			}
-		}
+      &:checked + span::after {
+        background: #fff;
+      }
+    }
 
-		&:hover + span::before {
-			border-color: $blueLight;
-		}
+    &:hover + span::before {
+      border-color: $blueLight;
+    }
 
-		&[disabled] {
-			& + span {
-				opacity: .35;
-				cursor: not-allowed;
+    &[disabled] {
+      & + span {
+        opacity: 0.35;
+        cursor: not-allowed;
 
-				&::before {
-					border-color: $textSubtleLight;
-				}
-			}
-		}
-	}
+        &::before {
+          border-color: $textSubtleLight;
+        }
+      }
+    }
+  }
 }
 
 label.neos-inline + label:not(.neos-inline) {
-	margin-top: $defaultMargin - $tightMargin;
+  margin-top: $defaultMargin - $tightMargin;
 }

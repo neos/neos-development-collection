@@ -8,367 +8,372 @@
 $loginBoxWidth: $unit * 8;
 
 body {
-	background-color: #141414;
-	margin: 0;
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-attachment: fixed;
+  background-color: #141414;
+  margin: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 .neos {
-	// CSS Reset
-	@import "Foundation/reset";
-	@import "Foundation/grid";
-	@import "Foundation/forms";
-	@import "Foundation/tooltip";
-	@import "Shared/Ellipsis";
+  // CSS Reset
+  @import "Foundation/reset";
+  @import "Foundation/grid";
+  @import "Foundation/forms";
+  @import "Foundation/tooltip";
+  @import "Shared/Ellipsis";
 
-	@include font;
+  @include font;
 
+  &[style] {
+    .neos-login-box {
+      padding: $unit;
+      position: relative;
+      overflow: hidden;
 
-	&[style] {
-		.neos-login-box {
-			padding: $unit;
-			position: relative;
-			overflow: hidden;
+      &.background-image-active {
+        &:before,
+        &:after {
+          z-index: -1;
+          display: block;
+          position: absolute;
+          content: " ";
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+        }
 
-			&.background-image-active {
-				&:before,
-				&:after {
-					z-index: -1;
-					display: block;
-					position: absolute;
-					content: ' ';
-					top: 0;
-					left: 0;
-					height: 100%;
-					width: 100%;
-				}
+        &:before {
+          // the `background-image` property is set within the template
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-attachment: fixed;
+          -webkit-filter: blur(10px); /* Chrome, Opera, etc. */
+          -moz-filter: blur(10px);
+          -o-filter: blur(10px);
+          -ms-filter: blur(10px);
+          filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='10');
+          filter: url("../../Public/Images/blur.svg#blur"); /* Older FF and others - http://jordanhollinger.com/media/blur.svg */
+          filter: blur(10px); /* Firefox 35+, eventually all */
+          padding: $unit;
+        }
 
-				&:before {
-					// the `background-image` property is set within the template
-					background-size: cover;
-					background-repeat: no-repeat;
-					background-position: center;
-					background-attachment: fixed;
-					-webkit-filter: blur(10px); /* Chrome, Opera, etc. */
-					-moz-filter: blur(10px);
-					-o-filter: blur(10px);
-					-ms-filter: blur(10px);
-					filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='10');
-					filter: url('../../Public/Images/blur.svg#blur'); /* Older FF and others - http://jordanhollinger.com/media/blur.svg */
-					filter: blur(10px); /* Firefox 35+, eventually all */
-					padding: $unit;
-				}
+        &:after {
+          background: rgba(#fff, 0.25);
+        }
+      }
+      &-logo {
+        margin: 0 0 $unit/2 0;
+        &-resource {
+          margin: 0 auto 0 auto;
+          display: block;
+        }
+      }
+    }
 
-				&:after {
-					background: rgba(#fff, .25);
-				}
-			}
-			&-logo {
-				margin: 0 0 $unit/2 0;
-				&-resource {
-					margin: 0 auto 0 auto;
-					display: block;
-				}
-			}
-		}
+    input[type="text"],
+    input[type="password"] {
+      background-color: rgba(#fff, 0.75);
+      color: $textOnWhite;
 
-		input[type="text"],
-		input[type="password"] {
-			background-color: rgba(#fff, .75);
-			color: $textOnWhite;
+      &:focus,
+      &:invalid:focus {
+        background-color: rgba(#fff, 0.9);
+        box-shadow: none;
+      }
 
-			&:focus,
-			&:invalid:focus {
-				background-color: rgba(#fff, .9);
-				box-shadow: none;
-			}
+      &:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 50px #fff inset;
+        -webkit-text-fill-color: $textOnWhite;
 
-			&:-webkit-autofill {
-				-webkit-box-shadow: 0 0 0 50px #fff inset;
-				-webkit-text-fill-color: $textOnWhite;
+        &:focus {
+          -webkit-box-shadow: 0 0 0 50px #fff inset;
+          -webkit-text-fill-color: $textOnWhite;
+        }
+      }
+    }
 
-				&:focus {
-					-webkit-box-shadow: 0 0 0 50px #fff inset;
-					-webkit-text-fill-color: $textOnWhite;
-				}
-			}
-		}
+    .neos-login-footer {
+      p,
+      a {
+        color: rgba(#fff, 0.75);
+        text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.75);
+      }
+    }
+  }
 
-		.neos-login-footer {
-			p,
-			a {
-				color: rgba(#fff, .75);
-				text-shadow: 1px 1px 0 rgba(0, 0, 0, .75);
-			}
-		}
-	}
+  form {
+    margin-bottom: 0;
+  }
 
-	form {
-		margin-bottom: 0;
-	}
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    min-width: $inspectorWidth - $defaultMargin * 2;
+    height: $unit;
+    border: none;
+    background-color: $grayMedium;
+    color: $textOnGray;
+    font-size: 14px;
+    padding: 0 ($defaultMargin - 2px);
+    margin: 0;
+    border-radius: 0;
+    box-sizing: border-box;
+    box-shadow: none;
+    transition: none;
+    @include font;
 
-	input[type="text"],
-	input[type="password"] {
-		width: 100%;
-		min-width: $inspectorWidth - $defaultMargin * 2;
-		height: $unit;
-		border: none;
-		background-color: $grayMedium;
-		color: $textOnGray;
-		font-size: 14px;
-		padding: 0 ($defaultMargin - 2px);
-		margin: 0;
-		border-radius: 0;
-		box-sizing: border-box;
-		box-shadow: none;
-		transition: none;
-		@include font;
+    &:focus,
+    &:invalid:focus {
+      background-color: #fff;
+      color: $textOnWhite;
+      box-shadow: none;
+    }
 
-		&:focus,
-		&:invalid:focus {
-			background-color: #fff;
-			color: $textOnWhite;
-			box-shadow: none;
-		}
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 50px $grayMedium inset;
+      -webkit-text-fill-color: $textOnGray;
 
-		&:-webkit-autofill {
-			-webkit-box-shadow: 0 0 0 50px $grayMedium inset;
-			-webkit-text-fill-color: $textOnGray;
+      &:focus {
+        -webkit-box-shadow: 0 0 0 50px #fff inset;
+        -webkit-text-fill-color: $textOnWhite;
+      }
+    }
+  }
 
-			&:focus {
-				-webkit-box-shadow: 0 0 0 50px #fff inset;
-				-webkit-text-fill-color: $textOnWhite;
-			}
-		}
-	}
+  .neos-modal-centered {
+    @include flex();
+    @include flex-align(center);
+    @include flex-justify(center);
+    @include flex-direction(column);
+    min-height: 100vh;
+  }
 
-	.neos-modal-centered {
-		@include flex();
-		@include flex-align(center);
-		@include flex-justify(center);
-		@include flex-direction(column);
-		min-height: 100vh;
-	}
+  .neos-login-main {
+    @include flex();
+    @include flex-align(center);
+    @include flex-justify(center);
+    flex: 1 0 auto;
+    width: 100%;
+  }
 
-	.neos-login-main {
-		@include flex();
-		@include flex-align(center);
-		@include flex-justify(center);
-		flex: 1 0 auto;
-		width: 100%;
-	}
+  .neos-login-box {
+    background: transparent;
+    border: none;
+    width: $loginBoxWidth;
+    z-index: 10;
 
-	.neos-login-box {
-		background: transparent;
-		border: none;
-		width: $loginBoxWidth;
-		z-index: 10;
+    box-shadow: none;
+    border-radius: none;
 
-		box-shadow: none;
-		border-radius: none;
+    svg {
+      margin: 0 auto;
+      display: block;
+    }
 
-		svg {
-			margin: 0 auto;
-			display: block;
-		}
+    .neos-login-heading {
+      color: #fff;
+      font-size: 16px;
+      margin-bottom: $defaultMargin;
+      text-align: center;
+      font-weight: normal;
+    }
 
-		.neos-login-heading {
-			color: #fff;
-			font-size: 16px;
-			margin-bottom: $defaultMargin;
-			text-align: center;
-			font-weight: normal;
-		}
+    .neos-login-body {
+      padding: 0;
+      overflow: visible;
+    }
 
-		.neos-login-body {
-			padding: 0;
-			overflow: visible;
-		}
+    .neos-actions {
+      bottom: 0;
+      width: 100%;
+      min-height: $unit;
 
-		.neos-actions {
-			bottom: 0;
-			width: 100%;
-			min-height: $unit;
+      button,
+      .btn {
+        text-align: center;
+        text-decoration: none !important;
+        display: block;
+        height: $unit;
+        line-height: $unit;
+        color: #fff;
+        border: none;
+        background-image: none;
+        font-size: 14px;
+        text-shadow: none;
+        box-shadow: none;
+        box-sizing: border-box;
+        @include font;
 
-			button, .btn {
-				text-align: center;
-				text-decoration: none !important;
-				display: block;
-				height: $unit;
-				line-height: $unit;
-				color: #fff;
-				border: none;
-				background-image: none;
-				font-size: 14px;
-				text-shadow: none;
-				box-shadow: none;
-				box-sizing: border-box;
-				@include font;
+        &:focus {
+          outline: none;
+        }
 
-				&:focus {
-					outline: none;
-				}
+        &.neos-login-btn {
+          background-color: $blue;
+          width: 100%;
+        }
 
-				&.neos-login-btn {
-					background-color: $blue;
-					width: 100%;
-				}
+        &.neos-hidden {
+          display: none;
+        }
 
-				&.neos-hidden {
-					display: none;
-				}
+        &.neos-disabled {
+          cursor: not-allowed;
+          opacity: 0.65;
+        }
+      }
+    }
 
-				&.neos-disabled {
-					cursor: not-allowed;
-					opacity: .65;
-				}
-			}
-		}
+    .neos-controls {
+      height: $unit;
+      margin-bottom: 15px;
+    }
 
-		.neos-controls {
-			height: $unit;
-			margin-bottom: 15px;
-		}
+    .neos-tooltip {
+      left: -4px;
+      top: 0;
+      width: 100%;
+      position: relative;
+      clear: both;
+      float: none;
 
-		.neos-tooltip {
-			left: -4px;
-			top: 0;
-			width: 100%;
-			position: relative;
-			clear: both;
-			float: none;
+      &.neos-bottom {
+        padding: $relatedMargin 0 0 0;
+        margin-left: $tightMargin;
+        margin-top: -1px;
+      }
 
-			&.neos-bottom {
-				padding: $relatedMargin 0 0 0;
-				margin-left: $tightMargin;
-				margin-top: -1px;
-			}
+      &.neos-in {
+        opacity: 1;
+      }
 
-			&.neos-in {
-				opacity: 1;
-			}
+      .neos-tooltip-arrow {
+        margin-left: -$relatedMargin;
+        border-width: 0 $relatedMargin $relatedMargin $relatedMargin;
+      }
 
-			.neos-tooltip-arrow {
-				margin-left: -$relatedMargin;
-				border-width: 0 $relatedMargin $relatedMargin $relatedMargin;
-			}
+      .neos-tooltip-inner {
+        max-width: $loginBoxWidth;
+        font-size: 13px;
+        color: #fff;
+        border-radius: 0;
+        box-sizing: border-box;
+      }
+    }
 
-			.neos-tooltip-inner {
-				max-width: $loginBoxWidth;
-				font-size: 13px;
-				color: #fff;
-				border-radius: 0;
-				box-sizing: border-box;
-			}
-		}
+    .neos-tooltip-error {
+      .neos-tooltip-arrow {
+        border-bottom-color: $warning;
+      }
 
-		.neos-tooltip-error {
-			.neos-tooltip-arrow {
-				border-bottom-color: $warning;
-			}
+      .neos-tooltip-inner {
+        background-color: $warning;
+      }
+    }
 
-			.neos-tooltip-inner {
-				background-color: $warning;
-			}
-		}
+    .neos-tooltip-notice {
+      .neos-tooltip-arrow {
+        border-bottom-color: $green;
+      }
 
-		.neos-tooltip-notice {
-			.neos-tooltip-arrow {
-				border-bottom-color: $green;
-			}
+      .neos-tooltip-inner {
+        background-color: $green;
+      }
+    }
+  }
 
-			.neos-tooltip-inner {
-				background-color: $green;
-			}
-		}
-	}
+  .neos-login-footer {
+    width: 50%;
+    padding: $unit / 2;
+    @include font;
+    box-sizing: border-box;
 
-	.neos-login-footer {
-		width: 50%;
-		padding: $unit /2;
-		@include font;
-		box-sizing: border-box;
+    p {
+      font-size: 12px;
+      color: #535353;
+      line-height: 1.3em;
+      margin: 0;
+    }
 
-		p {
-			font-size: 12px;
-			color: #535353;
-			line-height: 1.3em;
-			margin: 0;
-		}
-
-		a {
-			color: #535353;
-			&:hover {
-				text-decoration: none;
-			}
-		}
-	}
+    a {
+      color: #535353;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
 }
 
 @media (max-width: 1400px) {
-	.neos {
-		&[style] {
-			.neos-login-footer {
-				width: 70%;
-			}
-		}
-	}
+  .neos {
+    &[style] {
+      .neos-login-footer {
+        width: 70%;
+      }
+    }
+  }
 }
 
 @media (max-width: 1000px) {
-	.neos {
-		&[style] {
-			.neos-login-footer {
-				width: 90%;
-			}
-		}
-	}
+  .neos {
+    &[style] {
+      .neos-login-footer {
+        width: 90%;
+      }
+    }
+  }
 }
 
 @media (max-width: 480px) {
-	.neos {
-		&[style] {
-			.neos-login-box {
-				width: 100%;
-				padding: $unit/2;
-			}
+  .neos {
+    &[style] {
+      .neos-login-box {
+        width: 100%;
+        padding: $unit/2;
+      }
 
-			.neos-login-footer {
-				width: 100%;
-			}
-		}
+      .neos-login-footer {
+        width: 100%;
+      }
+    }
 
-		input[type="text"],
-		input[type="password"] {
-			min-width: 0;
-		}
-	}
+    input[type="text"],
+    input[type="password"] {
+      min-width: 0;
+    }
+  }
 }
 
 .effect--shake {
-	animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
-	transform: translate3d(0, 0, 0);
-	backface-visibility: hidden;
-	perspective: 1000px;
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 @keyframes shake {
-	10%, 90% {
-		transform: translate3d(-1px, 0, 0);
-	}
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
 
-	20%, 80% {
-		transform: translate3d(2px, 0, 0);
-	}
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
 
-	30%, 50%, 70% {
-		transform: translate3d(-4px, 0, 0);
-	}
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
 
-	40%, 60% {
-		transform: translate3d(4px, 0, 0);
-	}
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }

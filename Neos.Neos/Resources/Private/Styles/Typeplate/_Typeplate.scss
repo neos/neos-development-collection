@@ -21,14 +21,11 @@
  *
  */
 
-
-
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
 //
 // $Variables
 //
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
-
 
 // $Variable $BaseType
 // -------------------------------------//
@@ -36,7 +33,11 @@
 //the var must be placed after your @import "typeplate.scss";
 $serif-boolean: true !default;
 
-$font-family: if($serif-boolean, serif, sans-serif) !default; // Non-font-face font-stack
+$font-family: if(
+  $serif-boolean,
+  serif,
+  sans-serif
+) !default; // Non-font-face font-stack
 
 $font-weight: normal !default;
 $line-height: 1.65 !default;
@@ -45,12 +46,10 @@ $font-base: 16 * ($font-size/100) !default; // converts our percentage to a pixe
 $custom-font-family: false !default; // Custom font-face stack, if set will be added to the $font-family
 $measure: $font-base * $line-height;
 
-
 // $Variable $Small-Print
 // -------------------------------------//
 
 $small-print-size: 65% !default;
-
 
 // $Variable $Base-Color
 // -------------------------------------//
@@ -58,25 +57,23 @@ $small-print-size: 65% !default;
 $body-copy-color: #444 !default;
 $heading-color: #222 !default;
 
-
 // $Variable $Ampersand
 // -------------------------------------//
 
 $amp-fontface-name: Ampersand !default;
-$amp-fontface-source: local('Georgia'), local('Garamond'), local('Palatino'), local('Book Antiqua') !default;
-$amp-fontface-fallback: local('Georgia') !default;
+$amp-fontface-source: local("Georgia"), local("Garamond"), local("Palatino"),
+  local("Book Antiqua") !default;
+$amp-fontface-fallback: local("Georgia") !default;
 
 // Allows for our ampersand element to have differing
 // font-family from the ampersand unicode font-family.
 $amp-font-family: Verdana, sans-serif !default;
-
 
 // $Variable $Icon-Font-Helper
 // -------------------------------------//
 // ex.1) $icon-fonts: (icon-name);
 // ex.2) $icon-fonts: (icon-name1, icon-name2, icon-name3);
 $icon-fonts: null !default;
-
 
 // $Variable $Typescale
 // -------------------------------------//
@@ -91,18 +88,15 @@ $delta: 24 !default; // 24 = 18 × 1.3333
 $epsilon: 21 !default; // 21 = 18 × 1.1667
 $zeta: 18 !default; // 18 = 18 × 1
 
-
 // $Variable $Typescale-Unit
 // -------------------------------------//
 
 $type-scale-unit-value: rem !default;
 
-
 // $Variable $Text-Indentation
 // -------------------------------------//
 
 $indent-val: 1.5em !default;
-
 
 // $Variable $Pull-Quotes
 // -------------------------------------//
@@ -111,7 +105,6 @@ $pull-quote-fontsize: 4em !default;
 $pull-quote-opacity: 0.5 !default;
 $pull-quote-color: #dc976e !default;
 
-
 // $Variable $Citation
 // -------------------------------------//
 
@@ -119,13 +112,11 @@ $cite-display: block !default;
 $cite-text-align: right !default;
 $cite-font-size: inherit !default;
 
-
 // $Variable $Small-Caps
 // -------------------------------------//
 
 $small-caps-color: gray !default;
 $small-caps-weight: 600 !default;
-
 
 // $Variable $DropCap
 // -------------------------------------//
@@ -140,30 +131,27 @@ $dropcap-color: inherit !default;
 $dropcap-line-height: 1 !default;
 $dropcap-bg: transparent !default;
 
-
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
 //
 // $Fontfaces
 //
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
 
-
 // $Fontface $Unicode-Range-Ampersand
 // -------------------------------------//
 
 @font-face {
-	font-family: '#{$amp-fontface-name}';
-	src: $amp-fontface-source;
-	unicode-range: U+0026;
+  font-family: "#{$amp-fontface-name}";
+  src: $amp-fontface-source;
+  unicode-range: U+0026;
 }
 
 // Ampersand fallback font for unicode range
 @font-face {
-	font-family: '#{$amp-fontface-name}';
-	src: $amp-fontface-fallback;
-	unicode-range: U+270C;
+  font-family: "#{$amp-fontface-name}";
+  src: $amp-fontface-fallback;
+  unicode-range: U+270C;
 }
-
 
 // $Fontface $Icon-Font-Helper
 // -------------------------------------//
@@ -185,18 +173,19 @@ $dropcap-bg: transparent !default;
 // https://gist.github.com/4469518
 
 @if ($icon-fonts != null) {
-	@each $font in $icon-fonts {
-		@include font-face( $font,
-			font-files(
-				'#{$font}/#{$font}.woff',
-				'#{$font}/#{$font}.ttf',
-				'#{$font}/#{$font}.svg', svg
-			),
-			'#{$font}/#{$font}.eot'
-			)
-	}
+  @each $font in $icon-fonts {
+    @include font-face(
+      $font,
+      font-files(
+        "#{$font}/#{$font}.woff",
+        "#{$font}/#{$font}.ttf",
+        "#{$font}/#{$font}.svg",
+        svg
+      ),
+      "#{$font}/#{$font}.eot"
+    );
+  }
 }
-
 
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
 //
@@ -204,24 +193,21 @@ $dropcap-bg: transparent !default;
 //
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
 
-
 // $Function $Context Calculator
 // -------------------------------------//
 // divide a given font-size by base font-size & return a relative value
 
 @function context-calc($scale, $base, $value) {
-	@return ($scale/$base)#{$value};
+  @return ($scale/$base) #{$value};
 }
-
 
 // $Function $Measure-Margin
 // -------------------------------------//
 // divide 1 unit of measure by given font-size & return a relative em value
 
 @function measure-margin($scale, $measure, $value) {
-	@return ($measure/$scale)#{$value};
+  @return ($measure/$scale) #{$value};
 }
-
 
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
 //
@@ -229,21 +215,20 @@ $dropcap-bg: transparent !default;
 //
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
 
-
 // $Mixin $Type-Scale
 // -------------------------------------//
 // provides a pixel fallback if you decide
 // to use 'rems' as a unit over ems.
 
-@mixin type-scale($scale, $base, $value, $measure:"") {
-	// If 'rem' is used as a $value then provide a px fallback.
-	@if $value == rem {
-		font-size: $scale#{px};
-	}
-	font-size: context-calc($scale, $base, $value);
-	@if $measure != "" {
-		margin-bottom: measure-margin($scale, $measure, $value);
-	}
+@mixin type-scale($scale, $base, $value, $measure: "") {
+  // If 'rem' is used as a $value then provide a px fallback.
+  @if $value == rem {
+    font-size: $scale#{px};
+  }
+  font-size: context-calc($scale, $base, $value);
+  @if $measure != "" {
+    margin-bottom: measure-margin($scale, $measure, $value);
+  }
 }
 
 // $Mixin $Hypens
@@ -251,10 +236,9 @@ $dropcap-bg: transparent !default;
 //http://trentwalton.com/2011/09/07/css-hyphenation
 
 @mixin css-hyphens($val) {
-	// Accepted values: [ none | manual | auto ]
-	hyphens: $val; // W3C standard
+  // Accepted values: [ none | manual | auto ]
+  hyphens: $val; // W3C standard
 }
-
 
 // $Mixin $Smallcaps
 // -------------------------------------//
@@ -262,15 +246,14 @@ $dropcap-bg: transparent !default;
 // ISSUE #1 : https://github.com/typeplate/typeplate.github.com/issues/1
 
 @mixin smallcaps($color, $font-weight) {
-	// depends on the font family.
-	// some font-families don't support small caps
-	// or don't provide them with their web font.
-	font-variant: small-caps;
-	font-weight: $font-weight;
-	text-transform: lowercase;
-	color: $color;
+  // depends on the font family.
+  // some font-families don't support small caps
+  // or don't provide them with their web font.
+  font-variant: small-caps;
+  font-weight: $font-weight;
+  text-transform: lowercase;
+  color: $color;
 }
-
 
 // $Mixin $Fontsize-Adjust
 // -------------------------------------//
@@ -279,20 +262,19 @@ $dropcap-bg: transparent !default;
 // wisely grasshopper.
 
 @mixin font-size-adjust($adjust-value) {
-	// firefox 17+ only (as of Feb. 2013)
-	font-size-adjust: $adjust-value;
+  // firefox 17+ only (as of Feb. 2013)
+  font-size-adjust: $adjust-value;
 }
-
 
 // $Mixin $Ampersand
 // -------------------------------------//
 
 @mixin ampersand($amp-font-family...) {
-	font-family: $amp-font-family;
+  font-family: $amp-font-family;
 }
 
 %ampersand-placeholder {
-	@include ampersand($amp-fontface-name, $amp-font-family);
+  @include ampersand($amp-fontface-name, $amp-font-family);
 }
 
 // Call your ampersand on any element you wish from another stylesheet
@@ -301,7 +283,6 @@ $dropcap-bg: transparent !default;
 // <h6 class="ampersand">Dewey Cheat 'em & Howe</h6>
 //
 // .ampersand { @extend %ampersand-placeholder; }
-
 
 // $Mixin $Blockquote
 // -------------------------------------//
@@ -320,56 +301,58 @@ $dropcap-bg: transparent !default;
 
 // Citation Mixin for Custom Styling
 @mixin cite-style($display, $text-align, $font-size) {
-	display: $display;
-	font-size: $font-size;
-	text-align: $text-align;
+  display: $display;
+  font-size: $font-size;
+  text-align: $text-align;
 }
 
 %cite {
-	@include cite-style($cite-display, $cite-text-align, $cite-font-size);
+  @include cite-style($cite-display, $cite-text-align, $cite-font-size);
 }
 
 @mixin blockquote($citation-flourish) {
-	p {
-		&:last-of-type {
-			margin-bottom: -#{$line-height/2}em;
-		}
-	}
-	+ figcaption {
-		@extend %cite;
-		&:before {
-			content: $citation-flourish;
-		}
-	}
+  p {
+    &:last-of-type {
+      margin-bottom: -#{$line-height/2}em;
+    }
+  }
+  + figcaption {
+    @extend %cite;
+    &:before {
+      content: $citation-flourish;
+    }
+  }
 }
-
 
 // $Mixin $Pull-Quotes
 // -------------------------------------//
 
-@mixin pull-quotes($pull-quote-fontsize, $pull-quote-opacity, $pull-quote-color) {
-	position: relative;
-	padding: context-calc($pull-quote-fontsize, $pull-quote-fontsize, em);
-	&:before,
-	&:after {
-		height: context-calc($pull-quote-fontsize, $pull-quote-fontsize, em);
-		opacity: $pull-quote-opacity;
-		position: absolute;
-		font-size: $pull-quote-fontsize;
-		color: $pull-quote-color;
-	}
-	&:before {
-		content: '“';
-		top:  0;
-		left: 0;
-	}
-	&:after {
-		content: '”';
-		bottom: 0;
-		right: 0;
-	}
+@mixin pull-quotes(
+  $pull-quote-fontsize,
+  $pull-quote-opacity,
+  $pull-quote-color
+) {
+  position: relative;
+  padding: context-calc($pull-quote-fontsize, $pull-quote-fontsize, em);
+  &:before,
+  &:after {
+    height: context-calc($pull-quote-fontsize, $pull-quote-fontsize, em);
+    opacity: $pull-quote-opacity;
+    position: absolute;
+    font-size: $pull-quote-fontsize;
+    color: $pull-quote-color;
+  }
+  &:before {
+    content: "“";
+    top: 0;
+    left: 0;
+  }
+  &:after {
+    content: "”";
+    bottom: 0;
+    right: 0;
+  }
 }
-
 
 // $Placeholder $Wordwrap
 // -------------------------------------//
@@ -380,17 +363,16 @@ $dropcap-bg: transparent !default;
 // arbitrary points if there are no otherwise acceptable break points in the line.
 
 %breakword {
-	word-wrap: break-word;
+  word-wrap: break-word;
 }
 
 %normal-wrap {
-	word-wrap: normal;
+  word-wrap: normal;
 }
 
 %inherit-wrap {
-	word-wrap: auto;
+  word-wrap: auto;
 }
-
 
 // $Mixin $Dropcaps
 // -------------------------------------//
@@ -409,33 +391,41 @@ $dropcap-bg: transparent !default;
 // values for the variables we've provided.
 //
 // Make sure you add the class “drop-cap” to your markup in order to operate.
-@mixin dropcap($dropcap-float-position, $dropcap-font-size, $dropcap-font-family, $dropcap-txt-indent, $dropcap-margin, $dropcap-padding, $dropcap-color, $dropcap-line-height, $dropcap-bg) {
-	&:first-letter {
-		float: $dropcap-float-position;
-		margin: $dropcap-margin;
-		padding: $dropcap-padding;
-		font-size: $dropcap-font-size;
-		font-family: $dropcap-font-family;
-		line-height: $dropcap-line-height;
-		text-indent: $dropcap-txt-indent;
-		background: $dropcap-bg;
-		color: $dropcap-color;
-	}
+@mixin dropcap(
+  $dropcap-float-position,
+  $dropcap-font-size,
+  $dropcap-font-family,
+  $dropcap-txt-indent,
+  $dropcap-margin,
+  $dropcap-padding,
+  $dropcap-color,
+  $dropcap-line-height,
+  $dropcap-bg
+) {
+  &:first-letter {
+    float: $dropcap-float-position;
+    margin: $dropcap-margin;
+    padding: $dropcap-padding;
+    font-size: $dropcap-font-size;
+    font-family: $dropcap-font-family;
+    line-height: $dropcap-line-height;
+    text-indent: $dropcap-txt-indent;
+    background: $dropcap-bg;
+    color: $dropcap-color;
+  }
 }
-
 
 // $Mixin $Codeblocks
 // -------------------------------------//
 
 @mixin white-space($wrap-space) {
-	@if $wrap-space == 'pre-wrap' {
-		white-space: #{-moz-}$wrap-space; // Firefox 1.0-2.0
-		white-space: $wrap-space;       // current browsers
-	} @else {
-		white-space: $wrap-space;
-	}
+  @if $wrap-space == "pre-wrap" {
+    white-space: #{-moz-}$wrap-space; // Firefox 1.0-2.0
+    white-space: $wrap-space; // current browsers
+  } @else {
+    white-space: $wrap-space;
+  }
 }
-
 
 // $Mixin $Definition-Lists
 // -------------------------------------//
@@ -446,57 +436,55 @@ $dropcap-bg: transparent !default;
 // http://lea.verou.me/2012/02/flexible-multiline-definition-lists-with-2-lines-of-css
 
 @mixin definition-list-style($style) {
-	// lining style
-	@if $style == lining {
-		dt,
-		dd {
-			display: inline;
-			margin: 0;
-		}
-		dt,
-		dd {
-			& + dt {
-				&:before {
-					content: "\A";
-					white-space: pre;
-				}
-			}
-		}
-		dd {
-			& + dd {
-				&:before {
-					content: ", ";
-				}
-			}
-			&:before {
-					content: ": ";
-					margin-left: -0.2rem; //removes extra space between the dt and the colon
-			}
-		}
-	}
-	// dictionary-style
-	@if $style == dictionary-style {
-		dt {
-			display: inline;
-			counter-reset: definitions;
-			& + dt {
-				&:before {
-					content: ", ";
-					margin-left: -0.2rem; // removes extra space between the dt and the comma
-				}
-			}
-		}
-		dd {
-			display: block;
-			counter-increment: definitions;
-			&:before {
-				content: counter(definitions, decimal) ". ";
-			}
-		}
-	}
+  // lining style
+  @if $style == lining {
+    dt,
+    dd {
+      display: inline;
+      margin: 0;
+    }
+    dt,
+    dd {
+      & + dt {
+        &:before {
+          content: "\A";
+          white-space: pre;
+        }
+      }
+    }
+    dd {
+      & + dd {
+        &:before {
+          content: ", ";
+        }
+      }
+      &:before {
+        content: ": ";
+        margin-left: -0.2rem; //removes extra space between the dt and the colon
+      }
+    }
+  }
+  // dictionary-style
+  @if $style == dictionary-style {
+    dt {
+      display: inline;
+      counter-reset: definitions;
+      & + dt {
+        &:before {
+          content: ", ";
+          margin-left: -0.2rem; // removes extra space between the dt and the comma
+        }
+      }
+    }
+    dd {
+      display: block;
+      counter-increment: definitions;
+      &:before {
+        content: counter(definitions, decimal) ". ";
+      }
+    }
+  }
 }
-
-
 
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
 //
@@ -504,33 +492,32 @@ $dropcap-bg: transparent !default;
 //
 // .x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x //
 
-
 // $Styles $Globals
 // -------------------------------------//
 
 html {
-	@if $custom-font-family {
-		font: $font-weight #{$font-size}%/#{$line-height} $custom-font-family, $font-family;
-	} @else {
-		font: $font-weight #{$font-size}%/#{$line-height} $font-family;
-	}
+  @if $custom-font-family {
+    font: $font-weight #{$font-size}%/#{$line-height} $custom-font-family,
+      $font-family;
+  } @else {
+    font: $font-weight #{$font-size}%/#{$line-height} $font-family;
+  }
 }
 
 body {
-	// Ala Trent Walton
-	@include css-hyphens(auto);
+  // Ala Trent Walton
+  @include css-hyphens(auto);
 
-	// normal: Indicates that lines may only break at normal word break points.
-	// break-word : Indicates that normally unbreakable words may be broken at ...
-	// arbitrary points if there are no otherwise acceptable break points in the line.
-	@extend %breakword;
-	color: $body-copy-color;
+  // normal: Indicates that lines may only break at normal word break points.
+  // break-word : Indicates that normally unbreakable words may be broken at ...
+  // arbitrary points if there are no otherwise acceptable break points in the line.
+  @extend %breakword;
+  color: $body-copy-color;
 }
 
 small {
-	font-size: $small-print-size;
+  font-size: $small-print-size;
 }
-
 
 // $Styles $Headings
 // -------------------------------------//
@@ -551,69 +538,73 @@ small {
 
 // styles for all headings, in the style of @csswizardry
 %hN {
-	text-rendering: optimizeLegibility; // voodoo to enable ligatures and kerning
-	line-height: 1; // this fixes huge spaces when a heading wraps onto two lines
-	margin-top: 0;
+  text-rendering: optimizeLegibility; // voodoo to enable ligatures and kerning
+  line-height: 1; // this fixes huge spaces when a heading wraps onto two lines
+  margin-top: 0;
 }
 
 // Multi-dimensional array, where:
 // the first value is the name of the class
 // and the second value is the variable for the size
-$sizes: tera $tera, giga $giga, mega $mega, alpha $alpha, beta $beta, gamma $gamma, delta $delta, epsilon $epsilon, zeta $zeta;
+$sizes: tera $tera, giga $giga, mega $mega, alpha $alpha, beta $beta,
+  gamma $gamma, delta $delta, epsilon $epsilon, zeta $zeta;
 
 // Sass loop to associate h1-h6 tags with their appropriate greek
 // heading based on a modular scale.
 // for each size in the scale, create a class
 @each $size in $sizes {
-	.#{nth($size, 1)} {
-		@include type-scale(nth($size, 2), $font-base, '#{$type-scale-unit-value}', $measure);
-	}
+  .#{nth($size, 1)} {
+    @include type-scale(
+      nth($size, 2),
+      $font-base,
+      "#{$type-scale-unit-value}",
+      $measure
+    );
+  }
 }
 
 // associate h1-h6 tags with their appropriate greek heading
 h1 {
-	@extend .alpha;
-	@extend %hN;
+  @extend .alpha;
+  @extend %hN;
 }
 
 h2 {
-	@extend .beta;
-	@extend %hN;
+  @extend .beta;
+  @extend %hN;
 }
 
 h3 {
-	@extend .gamma;
-	@extend %hN;
+  @extend .gamma;
+  @extend %hN;
 }
 
 h4 {
-	@extend .delta;
-	@extend %hN;
+  @extend .delta;
+  @extend %hN;
 }
 
 h5 {
-	@extend .epsilon;
-	@extend %hN;
+  @extend .epsilon;
+  @extend %hN;
 }
 
 h6 {
-	@extend .zeta;
-	@extend %hN;
+  @extend .zeta;
+  @extend %hN;
 }
-
 
 // $Styles $Parargraphs
 // -------------------------------------//
 
 p {
-	margin: auto auto $indent-val;
-	& + p {
-		//siblings indentation
-		text-indent: $indent-val;
-		margin-top: -$indent-val;
-	}
+  margin: auto auto $indent-val;
+  & + p {
+    //siblings indentation
+    text-indent: $indent-val;
+    margin-top: -$indent-val;
+  }
 }
-
 
 // $Styles $Hyphenation
 // -------------------------------------//
@@ -632,27 +623,25 @@ samp,
 tt,
 var,
 xmp {
-	@include css-hyphens(none);
+  @include css-hyphens(none);
 }
-
 
 // $Styles $Codeblocks
 // -------------------------------------//
 
 pre code {
-	@extend %normal-wrap;
-	@include white-space(pre-wrap);
+  @extend %normal-wrap;
+  @include white-space(pre-wrap);
 }
 
 pre {
-	@include white-space(pre);
+  @include white-space(pre);
 }
 
 code {
-	@include white-space(pre);
-	font-family: monospace;
+  @include white-space(pre);
+  font-family: monospace;
 }
-
 
 // $Styles $Smallcaps
 // -------------------------------------//
@@ -665,12 +654,11 @@ code {
  *
  */
 abbr {
-	@include smallcaps($small-caps-color, $small-caps-weight);
-	&[title]:hover {
-		cursor: help;
-	}
+  @include smallcaps($small-caps-color, $small-caps-weight);
+  &[title]:hover {
+    cursor: help;
+  }
 }
-
 
 // $Styles $Headings-Color
 // -------------------------------------//
@@ -681,9 +669,8 @@ h3,
 h4,
 h5,
 h6 {
-	color: $heading-color;
+  color: $heading-color;
 }
-
 
 // $Styles $Dropcap
 // -------------------------------------//
@@ -691,14 +678,23 @@ h6 {
 // Combats our sibling paragraphs syling and indentation
 // As not to ruin our beautiful drop caps.
 p + .drop-cap {
-	text-indent: 0;
-	margin-top: 0;
+  text-indent: 0;
+  margin-top: 0;
 }
 
 .drop-cap {
-	@include dropcap($dropcap-float-position, $dropcap-font-size, $dropcap-font-family, $dropcap-txt-indent, $dropcap-margin, $dropcap-padding, $dropcap-color, $dropcap-line-height, $dropcap-bg);
+  @include dropcap(
+    $dropcap-float-position,
+    $dropcap-font-size,
+    $dropcap-font-family,
+    $dropcap-txt-indent,
+    $dropcap-margin,
+    $dropcap-padding,
+    $dropcap-color,
+    $dropcap-line-height,
+    $dropcap-bg
+  );
 }
-
 
 // $Styles $Definition-Lists
 // -------------------------------------//
@@ -714,7 +710,7 @@ p + .drop-cap {
  *
  */
 .lining {
-	@include definition-list-style(lining);
+  @include definition-list-style(lining);
 }
 
 /**
@@ -729,9 +725,8 @@ p + .drop-cap {
  *
  */
 .dictionary-style {
-	@include definition-list-style(dictionary-style);
+  @include definition-list-style(dictionary-style);
 }
-
 
 // $Styles $Blockquote-Markup
 // -------------------------------------//
@@ -752,7 +747,6 @@ p + .drop-cap {
  * Extend this object into your markup.
  *
  */
-
 
 // $Styles $Pull-Quotes
 // -------------------------------------//
@@ -775,9 +769,12 @@ p + .drop-cap {
  */
 
 .pull-quote {
-	 @include pull-quotes($pull-quote-fontsize, $pull-quote-opacity, $pull-quote-color);
+  @include pull-quotes(
+    $pull-quote-fontsize,
+    $pull-quote-opacity,
+    $pull-quote-color
+  );
 }
-
 
 // $Styles $Figures
 // -------------------------------------//
@@ -793,7 +790,6 @@ p + .drop-cap {
  * Extend this object into your markup.
  *
  */
-
 
 // $Styles $Footnotes
 // -------------------------------------//

@@ -2,19 +2,18 @@
 // Labels and badges
 // --------------------------------------------------
 
-
 // Base classes
 .neos-label,
 .neos-badge {
   display: inline-block;
   padding: 2px 4px;
-  font-size: $baseFontSize * .846;
+  font-size: $baseFontSize * 0.846;
   font-weight: bold;
   line-height: 14px; // ensure proper line-height if floated
   color: $white;
   vertical-align: baseline;
   white-space: nowrap;
-  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: $grayLight;
 }
 // Set unique padding and border-radius
@@ -48,15 +47,25 @@ a {
 // Only give background-color difference to links (and to simplify, we don't qualifty with `a` but [href] attribute)
 @each $item in neos-label, neos-badge {
   // Important (red)
-  .#{$item}-important         { background-color: $warning; }
+  .#{$item}-important {
+    background-color: $warning;
+  }
   // Warnings (orange)
-  .#{$item}-warning           { background-color: $orange; }
+  .#{$item}-warning {
+    background-color: $orange;
+  }
   // Success (green)
-  .#{$item}-success           { background-color: $green; }
+  .#{$item}-success {
+    background-color: $green;
+  }
   // Info (turquoise)
-  .#{$item}-info              { background-color: $blue; }
+  .#{$item}-info {
+    background-color: $blue;
+  }
   // Inverse (black)
-  .#{$item}-inverse           { background-color: $grayDark; }
+  .#{$item}-inverse {
+    background-color: $grayDark;
+  }
 }
 
 // Quick fix for labels/badges in buttons

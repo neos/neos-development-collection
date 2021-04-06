@@ -5,15 +5,15 @@
 @import "variables";
 
 @font-face {
-	font-family: "Font Awesome 5 Free";
-	font-style: normal;
-	font-weight: 900;
-	font-display: $fa-font-display;
-	src: url("#{$fa-font-path}/fa-solid-900.woff2") format("woff2");
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-display: $fa-font-display;
+  src: url("#{$fa-font-path}/fa-solid-900.woff2") format("woff2");
 }
 
 .fa,
 .fas {
-	font-family: "Font Awesome 5 Free";
-	font-weight: 900;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
 }

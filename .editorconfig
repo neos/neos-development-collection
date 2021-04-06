@@ -12,23 +12,3 @@ insert_final_newline = true
 # PHP should follow the PSR-2 standard
 [*.php]
 indent_size = 4
-
-# JS should use tabs, to reduce conflicts
-[*.js]
-indent_style = tab
-
-# TypeScript should use tabs, to reduce conflicts
-[*.ts]
-indent_style = tab
-
-# SASS should use tabs, to reduce conflicts
-[*.scss]
-indent_style = tab
-
-# HTML should use tabs, to reduce conflicts
-[*.html]
-indent_style = tab
-
-# SASS should use tabs, to reduce conflicts
-[*.scss]
-indent_style = tab
