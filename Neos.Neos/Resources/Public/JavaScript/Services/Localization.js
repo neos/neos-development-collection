@@ -93,7 +93,7 @@ const setInitialized = (initialised) => {
  * "key": "singular",
  * "key_plural": "plural",
  *
- * @param {object} xliffData JSON object with xliff data
+ * @param {object} translations
  * @returns {object}
  */
 const flattenPluralItems = (translations) => {
@@ -140,7 +140,6 @@ const initializeExistingNamespaces = (xliffData) => {
  * Checks if we have language namespaces that has not been added to the i18next resources.
  * Also fires the neoscms-i18n-initialized event when all resources are available.
  *
- * @param {object} xliffData JSON object with xliff data
  * @returns {void}
  */
 const checkInitialisedNamespaces = () => {
