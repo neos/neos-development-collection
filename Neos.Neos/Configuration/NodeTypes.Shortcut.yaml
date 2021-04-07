@@ -14,7 +14,7 @@
   properties:
     targetMode:
       type: string
-      defaultValue: 'firstChildNode'
+      defaultValue: 'parentNode'
       ui:
         label: i18n
         reloadPageIfChanged: true
