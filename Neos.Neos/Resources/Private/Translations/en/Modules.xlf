@@ -416,14 +416,14 @@
 			<trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
 			</trans-unit>
-      <trans-unit id="users.roles.directlyAssignedPrivileges" xml:space="preserve">
-        <source>Directly assigned privilege</source>
-      </trans-unit>
+			<trans-unit id="users.roles.directlyAssignedPrivileges" xml:space="preserve">
+				<source>Directly assigned privilege</source>
+			</trans-unit>
 			<trans-unit id="users.name" xml:space="preserve">
 				<source>Name</source>
-				</trans-unit>
-      <trans-unit id="users.roles.fromParentRole" xml:space="preserve">
-        <source>From Parent Role "{role}"</source>
+			</trans-unit>
+			<trans-unit id="users.roles.fromParentRole" xml:space="preserve">
+				<source>From Parent Role "{role}"</source>
 			</trans-unit>
 			<trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
