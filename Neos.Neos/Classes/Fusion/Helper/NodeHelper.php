@@ -48,6 +48,18 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
+     *
+     * @param string|null $label
+     * @param NodeInterface|null $node
+     * @return string
+     */
+    public function labelForNode(string $label = null, NodeInterface $node = null): NodeLabelToken
+    {
+        return new NodeLabelToken($node, $label);
+    }
+
+    /**
      * If this node type or any of the direct or indirect super types
      * has the given name.
      *

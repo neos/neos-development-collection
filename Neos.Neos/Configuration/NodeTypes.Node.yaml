@@ -1,6 +1,6 @@
 # Base node, which just configures the "removed" property of the node.
 'Neos.Neos:Node':
-  label: "${String.cropAtWord(String.trim(String.stripTags(String.pregReplace(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + (node.autoCreated ? ' (' + node.name + ')' : '')), '/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' '))), 100, '...')}"
+  label: "${Neos.Node.labelForNode(q(node).property('title'), node).or(q(node).property('text'))}"
   abstract: true
   options:
     fusion:

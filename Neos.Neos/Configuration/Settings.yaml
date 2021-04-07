@@ -545,6 +545,11 @@ Neos:
     #        values: ['de_DE', 'de_ZZ', 'mul_ZZ']
     #        uriSegment: 'de'
 
+    labelGenerator:
+      eel:
+        defaultContext:
+          Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
+
   Fusion:
     rendering:
       exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler
