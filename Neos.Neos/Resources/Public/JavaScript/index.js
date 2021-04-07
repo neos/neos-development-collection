@@ -51,16 +51,16 @@ modalTrigger.forEach((_modalTrigger) => {
   }
 });
 
-const expanableElements = document.querySelectorAll(
+const expandableElements = document.querySelectorAll(
   "[data-neos-expandable=dropdown]"
 );
-expanableElements.forEach((expanableElement) => {
-  new DropDown(expanableElement);
+expandableElements.forEach((expandableElement) => {
+  new DropDown(expandableElement);
 });
 
-const expanableGroupElements = document.querySelectorAll(
+const expandableGroupElements = document.querySelectorAll(
   "[data-neos-expandable=dropdown-group]"
 );
-expanableGroupElements.forEach((expanableElement) => {
-  new DropDownGroup(expanableElement);
+expandableGroupElements.forEach((expandableElement) => {
+  new DropDownGroup(expandableElement);
 });
