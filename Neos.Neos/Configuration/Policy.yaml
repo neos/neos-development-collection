@@ -12,11 +12,11 @@ privilegeTargets:
     #
 
     'Neos.Neos:AllControllerActions':
-      label: Generall access to all actions
+      label: General access to all actions
       matcher: 'within(Neos\Flow\Mvc\Controller\AbstractController) && method(public .*->(?!initialize).*Action())'
 
     'Neos.Neos:WidgetControllers':
-      label: Generall access to Fluid widget controllers
+      label: General access to Fluid widget controllers
       matcher: 'method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\ContentRepository\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
 
     'Neos.Neos:PublicFrontendAccess':
