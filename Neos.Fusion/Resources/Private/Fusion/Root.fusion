@@ -183,7 +183,7 @@ prototype(Neos.Fusion:Link.Action) < prototype(Neos.Fusion:Component) {
     renderer = Neos.Fusion:Tag {
         tagName = 'a'
         attributes {
-            @ignoreProperties=${['content']}
+            @ignoreProperties = ${['content']}
             @apply.props = ${props}
         }
         content = ${props.content}
@@ -208,7 +208,7 @@ prototype(Neos.Fusion:Link.Resource) < prototype(Neos.Fusion:Component) {
     renderer = Neos.Fusion:Tag {
         tagName = 'a'
         attributes {
-            @ignoreProperties=${['content']}
+            @ignoreProperties = ${['content']}
             @apply.props = ${props}
         }
         content = ${props.content}
