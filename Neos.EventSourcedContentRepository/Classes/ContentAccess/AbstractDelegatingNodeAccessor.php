@@ -23,12 +23,17 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\SearchTerm;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
- * Trait which implements delegation. Compose this into your own custom NodeAccessors. See {@see NodeAccessorInterface} for a full
+ * Base abstract class which implements delegation. Use this as basis to build custom NodeAccessors. See {@see NodeAccessorInterface} for a full
  * usage description.
  */
-trait DelegatingNodeAccessorTrait
+abstract class AbstractDelegatingNodeAccessor
 {
     protected NodeAccessorInterface $nextAccessor;
+
+    public function __construct(NodeAccessorInterface $nextAccessor)
+    {
+        $this->nextAccessor = $nextAccessor;
+    }
 
     public function findByIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
     {
@@ -79,5 +84,4 @@ trait DelegatingNodeAccessorTrait
     {
         return $this->nextAccessor->findDescendants($entryNodes, $nodeTypeConstraints, $searchTerm);
     }
-
 }

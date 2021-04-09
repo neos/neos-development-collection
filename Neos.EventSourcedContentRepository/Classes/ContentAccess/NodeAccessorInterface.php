@@ -42,7 +42,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  *
  * To build an own NodeAccessor, the following things need to be done:
  *
- * 1) Create a custom implementation of {@see NodeAccessorInterface}. We recommend to use the {@see DelegatingNodeAccessorTrait}
+ * 1) Create a custom implementation of {@see NodeAccessorInterface}. We recommend to use the {@see AbstractDelegatingNodeAccessor}
  *    for a base implementation of the full {@see NodeAccessorInterface} which delegates every call to the next accessor,
  *    and then overriding the methods selectively where you want to hook in.
  *

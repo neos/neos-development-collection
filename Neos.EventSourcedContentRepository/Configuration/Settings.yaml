@@ -1,6 +1,35 @@
 Neos:
   EventSourcedContentRepository:
     contentDimensions: {}
+    nodeAccessorFactories:
+
+    propertyConverters:
+      ScalarNormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\ScalarNormalizer
+      ArrayNormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\ArrayNormalizer
+      DateTimeNormalizer:
+        className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+        position: 'start'
+      UriNormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\UriNormalizer
+      ValueObjectArrayDenormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\ValueObjectArrayDenormalizer
+      ValueObjectBoolDenormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\ValueObjectBoolDenormalizer
+      ValueObjectFloatDenormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\ValueObjectFloatDenormalizer
+      ValueObjectIntDenormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\ValueObjectIntDenormalizer
+      ValueObjectStringDenormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\ValueObjectStringDenormalizer
+      DoctrinePersistentObjectNormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\DoctrinePersistentObjectNormalizer
+      CollectionTypeDenormalizer:
+        className: Neos\ContentRepository\Intermediary\Domain\Property\Normalizer\CollectionTypeDenormalizer
+      ProxyAwareObjectNormalizer:
+        className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
+
 
   EventSourcing:
     EventStore:

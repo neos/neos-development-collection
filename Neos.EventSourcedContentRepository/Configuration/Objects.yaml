@@ -101,3 +101,47 @@ Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult:
         arguments:
           1:
             value: 'ContentRepository'
+
+
+Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\ContentRepository\Intermediary\Domain\Property\PropertyConversionSerializerFactory
+        factoryMethodName: buildSerializer
+
+Neos\ContentRepository\Intermediary\StructureAdjustment\TetheredNodeAdjustments:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\Intermediary\StructureAdjustment\UnknownNodeTypeAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\Intermediary\StructureAdjustment\DisallowedChildNodeAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\ContentRepository\Intermediary\StructureAdjustment\PropertyAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
