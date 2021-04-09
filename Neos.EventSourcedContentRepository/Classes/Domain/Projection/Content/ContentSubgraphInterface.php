@@ -33,27 +33,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
     // -> API-mäßig ist der sehr nah am aktuellen Subgraph dran
 // 3) noch radikalere Ansätze (Query Model)
 
-class DispatchingAccessor implements Accessor implements FindChildNodes, FindReferencedNodes, FindByIdentifier {
-    public function findChildNodes(NodeInterface $node, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array {
-
-
-        // TODO: ContentStreamIdentifier, DimensionSpacePoint muss im Constructor hier rein
-        // TODO: CONTEXT?? Presets?? (Jahr, Monat)
-        $subAccessor = $this->findChildNodesAccessorRegistry->findMatchingAccessor($node, $this->context /* ;-) */); // Entscheidung bspw. basierend auf NodeType
-        assert($subAccessor instanceof FindChildNodes);
-        return $subAccessor->findChildNodes($node, $nodeTypeConstraints, ...);
-    }
-}
-
-class MysqlContentSubgraph implements FindChildNodes, FindReferencedNodes, FindByIdentifier {
-    // alte Impl. des Content Subgraphen
-}
-
-class VirtualizedChildren implements FindChildNodes {
-    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface {
-    }
-}
-
 /**
  * The interface to be implemented by content subgraphs
  */

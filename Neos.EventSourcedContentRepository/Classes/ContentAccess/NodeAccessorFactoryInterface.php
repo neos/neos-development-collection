@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\ContentAccess\Parts;
+namespace Neos\EventSourcedContentRepository\ContentAccess;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -19,15 +19,7 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
-interface FindChildNodesInterface
+interface NodeAccessorFactoryInterface
 {
-
-    /**
-     * @param NodeInterface $parentNode
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return iterable<NodeInterface>
-     */
-    public function findChildNodes(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints, NodeInterface $parentNode, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): ?\Closure
+    public function build(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints, ?NodeAccessorInterface $nextAccessor = null): NodeAccessorInterface;
 }

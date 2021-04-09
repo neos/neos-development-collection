@@ -15,10 +15,7 @@ namespace Neos\EventSourcedContentRepository\ContentAccess;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\ContentAccess\Delegating\AccessorRegistry;
-use Neos\EventSourcedContentRepository\ContentAccess\Delegating\DelegatingAccessor;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 
 /**
  * @Flow\Scope("singleton")
@@ -27,29 +24,34 @@ class NodeAccessorManager
 {
 
     /**
+     * Accessors indexed by ContentStreamIdentifier, DimensionSpacePoint and VisibilityConstraints.
+     *
+     * For each of the above combinations, only one accessor chain exists.
+     *
      * @var array|NodeAccessorInterface[]
      */
     protected $accessors;
 
-    protected $accessorRegistry;
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorChainFactory
+     */
+    protected $nodeAccessorChainFactory;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param VisibilityConstraints $visibilityConstraints
-     * @return ContentSubgraphInterface
+     * @return NodeAccessorInterface
      */
-    public function getAccessor(
+    public function accessorFor(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): NodeAccessorInterface {
         $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash() . '-' . $visibilityConstraints->getHash();
         if (!isset($this->accessors[$index])) {
-            // TODO: always "DelegatingAccessor" here is correct IMHO
-            $this->accessors[$index] = new DelegatingAccessor(
-                new AccessorRegistry($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints)
-            );
+            $this->accessors[$index] = $this->nodeAccessorChainFactory->build($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints);
         }
 
         return $this->accessors[$index];
