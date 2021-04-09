@@ -49,7 +49,7 @@ class NodeLabelToken implements ProtectedContextAwareInterface
     /**
      * @var string
      */
-    protected $suffix = '...';
+    protected $suffix = '…';
 
     /**
      * @var string
