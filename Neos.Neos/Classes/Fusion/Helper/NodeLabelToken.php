@@ -44,7 +44,7 @@ class NodeLabelToken implements ProtectedContextAwareInterface
     /**
      * @var int
      */
-    protected $limit = 100;
+    protected $length = 100;
 
     /**
      * @var string
@@ -52,33 +52,66 @@ class NodeLabelToken implements ProtectedContextAwareInterface
     protected $suffix = '...';
 
     /**
+     * @var string
+     */
+    protected $prefix = '';
+
+    /**
+     * @var string
+     */
+    protected $postfix = '';
+
+    /**
      * @var NodeInterface
      */
     protected $node = null;
 
-    public function __construct(NodeInterface $node = null, string $value = null)
+    public function __construct(NodeInterface $node)
     {
         $this->node = $node;
-        $this->label = $value;
     }
 
-    public function or(string $fallback = null): NodeLabelToken
+    public function override(string $override = null): NodeLabelToken
     {
-        if (!$this->label && $fallback) {
-            $this->label = $fallback;
+        if (empty($this->label) && $override) {
+            $this->label = $override;
         }
         return $this;
     }
 
-    public function limit(int $limit): NodeLabelToken
+    public function crop(int $length, string $suffix = '...'): NodeLabelToken
     {
-        $this->limit = $limit;
+        $this->length = $length;
+        $this->suffix = $suffix;
         return $this;
     }
 
-    public function suffix(string $suffix): NodeLabelToken
+    /**
+     * Add a text before the main label
+     */
+    public function prefix(string $prefix): NodeLabelToken
     {
-        $this->suffix = $suffix;
+        $this->prefix = $prefix;
+        return $this;
+    }
+
+    /**
+     * Add a text after the main label (can will be cropped)
+     */
+    public function postfix(string $postfix): NodeLabelToken
+    {
+        $this->postfix = $postfix;
+        return $this;
+    }
+
+    public function properties(string ...$propertyNames): NodeLabelToken
+    {
+        foreach ($propertyNames as $propertyName) {
+            if ($this->node->hasProperty($propertyName) && !empty($this->node->getProperty($propertyName))) {
+                $this->label = $this->node->getProperty($propertyName);
+                break;
+            }
+        }
         return $this;
     }
 
@@ -96,32 +129,34 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     public function evaluate(): string
     {
-        $label = $this->label;
-
-        if (!$label && $this->node) {
-            $label = $this->getNodeTypeFallbackLabel();
+        if (empty($this->label)) {
+            $this->resolveLabelFromNodeType();
         }
-        $label = preg_replace('/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' ', $label);
-        $label = strip_tags($label);
-        $label = trim($label);
-        $label = $this->stringHelper->cropAtWord($label, $this->limit, $this->suffix);
 
-        return $label;
+        return $this->sanitiseLabel($this->prefix . $this->label . $this->postfix);
     }
 
     /**
-     * Returns a label based on the nodetype
+     * Sets the label and postfix based on the nodetype
      */
-    protected function getNodeTypeFallbackLabel(): string
+    protected function resolveLabelFromNodeType(): void
     {
-        if (!$this->node) {
-            return '';
+        $this->label = $this->translationHelper->translate($this->node->getNodeType()->getLabel());
+        if (empty($this->label)) {
+            $this->label = $this->node->getNodeType()->getName();
         }
-        $nodeTypeLabel = $this->translationHelper->translate($this->node->getNodeType()->getLabel());
-        if (!$nodeTypeLabel) {
-            $nodeTypeLabel = $this->node->getNodeType()->getName();
+        if (empty($this->postfix) && $this->node->isAutoCreated()) {
+            $this->postfix =  ' (' . $this->node->getName() . ')';
         }
-        return $nodeTypeLabel . ($this->node->isAutoCreated() ? ' (' . $this->node->getName() . ')' : '');
+    }
+
+    protected function sanitiseLabel(string $label): string
+    {
+        $label = preg_replace('/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' ', $label);
+        $label = strip_tags($label);
+        $label = trim($label);
+        $label = $this->stringHelper->cropAtWord($label, $this->length, $this->suffix);
+        return $label;
     }
 
     /**
@@ -130,7 +165,7 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }

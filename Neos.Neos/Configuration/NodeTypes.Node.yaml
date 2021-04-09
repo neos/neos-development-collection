@@ -1,6 +1,6 @@
 # Base node, which just configures the "removed" property of the node.
 'Neos.Neos:Node':
-  label: "${Neos.Node.labelForNode(q(node).property('title'), node).or(q(node).property('text'))}"
+  label: "${Neos.Node.labelForNode(node).properties('title', 'text')}"
   abstract: true
   options:
     fusion:
