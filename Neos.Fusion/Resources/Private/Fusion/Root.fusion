@@ -170,6 +170,54 @@ prototype(Neos.Fusion:ResourceUri) {
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
+# Renders a link pointing to a controller/action
+#
+# Usage:
+# link = afx`
+#    <Neos.Fusion:Link.Action class="action-link" href.package="Some.Package" href.controller="Standard" href.action="index">
+#        Some Link
+#    </Neos.Fusion:Link.Action>
+# `
+#
+prototype(Neos.Fusion:Link.Action) < prototype(Neos.Fusion:Component) {
+    href = Neos.Fusion:UriBuilder
+    content = ''
+
+    renderer = Neos.Fusion:Tag {
+        tagName = 'a'
+        attributes {
+            @ignoreProperties = ${['content']}
+            @apply.props = ${props}
+        }
+        content = ${props.content}
+    }
+}
+
+# Renders a link pointing to a resource
+#
+# Usage:
+# link = afx`
+#    <Neos.Fusion:Link.Resource class="action-link" href.path="resource://Some.Package/Public/Images/SomeImage.png">
+#        Some Link
+#    </Neos.Fusion:Link.Resource>
+# `
+#
+prototype(Neos.Fusion:Link.Resource) < prototype(Neos.Fusion:Component) {
+    href = Neos.Fusion:ResourceUri {
+        localize = true
+    }
+    content = ''
+
+    renderer = Neos.Fusion:Tag {
+        tagName = 'a'
+        attributes {
+            @ignoreProperties = ${['content']}
+            @apply.props = ${props}
+        }
+        content = ${props.content}
+    }
+}
+
 # Render a content fragment without any additional markup
 # to allow placing conditions for multiple tags at once.
 #
