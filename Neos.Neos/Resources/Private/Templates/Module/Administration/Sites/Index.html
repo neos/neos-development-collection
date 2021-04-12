@@ -8,13 +8,14 @@
 				<th>{neos:backend.translate(id: 'name', value: 'Name')}</th>
 				<th>{neos:backend.translate(id: 'sites.rootNodeName', value: 'Rootnode name', source: 'Modules')}</th>
 				<th>{neos:backend.translate(id: 'sites.domains', value: 'Domains', source: 'Modules')}</th>
+				<th>{neos:backend.translate(id: 'sites.defaultAssetCollection', value: 'Default Asset Collection', source: 'Modules')}</th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody>
 			<f:for each="{sitePackagesAndSites}" as="sitePackageAndSite" key="sitePackageKey">
 				<tr class="neos-folder">
-					<td class="neos-priority1" colspan="3">
+					<td class="neos-priority1" colspan="4">
 						{neos:backend.translate(id: 'package', value: 'Package')}:
 						<neos:link.module path="administration/packages" section="Sites" class="neos-label" title="{sitePackageAndSite.package.packageMetaData.description}" additionalAttributes="{data-neos-toggle: 'tooltip'}">{sitePackageAndSite.packageKey}</neos:link.module>
 						<f:if condition="{sitePackageAndSite.package}">
@@ -39,6 +40,7 @@
 								</td>
 								<td><span class="neos-label">{site.nodeName}</span></td>
 								<td><span class="neos-badge neos-badge-{f:if(condition: '{site.activeDomains -> f:count()} > 0', then: 'info', else: '{f:if(condition: multipleSites, then: \'important\', else: \'inverse\')}')}">{site.domains -> f:count()}</span><f:if condition="{site.activeDomains}"> <span class="neos-label neos-label-inverse">{site.primaryDomain}</span></f:if></td>
+								<td><span class="neos-label">{site.assetCollection.title}</span></td>
 								<td class="neos-action">
 									<div class="neos-pull-right">
 										<f:link.action action="edit" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
@@ -90,7 +92,7 @@
 					</f:then>
 					<f:else>
 						<tr class="fold-{sitePackageKey}">
-							<td colspan="4"><i>{neos:backend.translate(id: 'sites.noSitesAvailable', value: 'No sites available', source: 'Modules')}</i></td>
+							<td colspan="5"><i>{neos:backend.translate(id: 'sites.noSitesAvailable', value: 'No sites available', source: 'Modules')}</i></td>
 						</tr>
 					</f:else>
 				</f:if>
