@@ -1,25 +1,25 @@
 .neos [class^="fa-"],
 .neos [class*=" fa-"] {
-	vertical-align: baseline;
+  vertical-align: baseline;
 
-	&.fa-review {
-		position: relative;
-		padding-right: 4px;
+  &.fa-review {
+    position: relative;
+    padding-right: 4px;
 
-		&:before {
-			content: fa-content($fa-var-file-alt);
-			font-weight: 400;
-		}
+    &:before {
+      content: fa-content($fa-var-file-alt);
+      font-weight: 400;
+    }
 
-		&:after {
-			content: fa-content($fa-var-check-circle);
-			text-decoration: inherit;
-			display: inline-block;
-			speak: none;
-			position: absolute;
-			font-size: 12px;
-			top: 8px;
-			left: 7px;
-		}
-	}
+    &:after {
+      content: fa-content($fa-var-check-circle);
+      text-decoration: inherit;
+      display: inline-block;
+      speak: none;
+      position: absolute;
+      font-size: 12px;
+      top: 8px;
+      left: 7px;
+    }
+  }
 }

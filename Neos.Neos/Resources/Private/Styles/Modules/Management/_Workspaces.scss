@@ -1,186 +1,187 @@
 // Hide from screenreaders and browsers
 // Credit: HTML5 Boilerplate
 .neos-hidden {
-	display: none;
-	visibility: hidden;
+  display: none;
+  visibility: hidden;
 }
 
 &.neos-module-management-workspaces {
+  .neos-footer p {
+    font-size: $fontSizeSmall;
+    margin-right: 8px;
+  }
 
-	.neos-footer p {
-		font-size: $fontSizeSmall;
-		margin-right: 8px;
-	}
+  tr.neos-change + tr.neos-change td.neos-content-change {
+    border-top: 1px solid #ddd;
+  }
 
-	tr.neos-change + tr.neos-change td.neos-content-change {
-		border-top: 1px solid #ddd;
-	}
+  td {
+    white-space: nowrap;
 
-	td {
-		white-space: nowrap;
+    &.description {
+      white-space: normal;
+      line-height: 20px;
+      padding: 10px 0 5px 0;
+    }
 
-		&.description {
-			white-space: normal;
-			line-height: 20px;
-			padding: 10px 0 5px 0;
-		}
+    &.node-type {
+      img {
+        vertical-align: baseline;
+      }
+    }
 
-		&.node-type {
-			img {
-				vertical-align: baseline;
-			}
-		}
+    &.path-caption .neos-aRight {
+      border-right: 1px solid $grayDark;
+    }
 
-		&.path-caption .neos-aRight {
-			border-right: 1px solid $grayDark;
-		}
+    label {
+      padding: 0;
+      margin-bottom: 0;
+      font-size: inherit;
+      line-height: $unit;
+      user-select: none;
+    }
+  }
 
-		label {
-			padding: 0;
-			margin-bottom: 0;
-			font-size: inherit;
-			line-height: $unit;
-			user-select: none;
-		}
-	}
+  td.neos-content-change {
+    background-color: $grayLighter;
+    color: $textOnWhite;
+  }
 
-	td.neos-content-change {
-		background-color: $grayLighter;
-		color: $textOnWhite;
-	}
+  .neos-content-diff {
+    line-height: $unit / 1.7;
 
-	.neos-content-diff {
-		line-height: $unit / 1.7;
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
 
-		table {
-			table-layout: fixed;
-			width: 100%;
-		}
+    table.neos-content-diff {
+      td,
+      th {
+        height: auto;
+        width: 50%;
+        vertical-align: top;
+        line-height: 20px;
+        padding: 10px 20px 10px 10px !important;
+        border-top: none;
+        white-space: normal;
+        background-color: $grayLighter;
+        color: $textOnWhite;
 
-		table.neos-content-diff {
+        img {
+          max-width: 100%;
+          min-width: 50%;
+          max-height: 500px;
+          border: 20px solid $white;
+          box-sizing: border-box;
+        }
+      }
+    }
+  }
 
-			td, th {
-				height: auto;
-				width: 50%;
-				vertical-align: top;
-				line-height: 20px;
-				padding: 10px 20px 10px 10px !important;
-				border-top: none;
-				white-space: normal;
-				background-color: $grayLighter;
-				color: $textOnWhite;
+  td.neos-folder {
+    i[class*="icon"] {
+      height: $unit;
+      line-height: $unit;
+      padding: 0 $defaultMargin;
+      margin: 0;
+      text-align: center;
+      font-size: $unit / 4;
+      vertical-align: middle;
 
-				img {
-					max-width: 100%;
-					min-width: 50%;
-					max-height: 500px;
-					border: 20px solid $white;
-					box-sizing: border-box;
-				}
-			}
-		}
-	}
+      &:hover {
+        background: $blue;
+      }
+    }
+  }
 
-	td.neos-folder {
-		i[class*='icon'] {
-			height: $unit;
-			line-height: $unit;
-			padding: 0 $defaultMargin;
-			margin: 0;
-			text-align: center;
-			font-size: $unit / 4;
-			vertical-align: middle;
+  .path-caption {
+    padding-left: 15px !important;
+    padding-right: 0;
+  }
 
-			&:hover {
-				background: $blue;
-			}
-		}
-	}
+  .fold-toggle {
+    cursor: pointer;
+    margin-top: -1px;
+    margin-right: 11px;
+  }
 
-	.path-caption {
-		padding-left: 15px !important;
-		padding-right: 0;
-	}
+  .legend-edited {
+    border-left: 8px solid $orange;
+  }
+  .legend-deleted {
+    border-left: 8px solid $warning;
+  }
+  .legend-created {
+    border-left: 8px solid $green;
+  }
+  .legend-moved {
+    border-left: 8px solid $blue;
+  }
+  .legend-hidden {
+    border-left: 8px solid $white;
+  }
 
-	.fold-toggle {
-		cursor: pointer;
-		margin-top: -1px;
-		margin-right: 11px;
-	}
+  td.actions {
+    width: 144px;
 
-	.legend-edited {
-		border-left: 8px solid $orange;
-	}
-	.legend-deleted {
-		border-left: 8px solid $warning;
-	}
-	.legend-created {
-		border-left: 8px solid $green;
-	}
-	.legend-moved {
-		border-left: 8px solid $blue;
-	}
-	.legend-hidden {
-		border-left: 8px solid $white;
-	}
+    button {
+      display: inline-block;
+    }
+  }
 
-	td.actions {
-		width: 144px;
+  tfoot {
+    font-size: $fontSizeSmall;
+    color: $textSubtle;
 
-		button {
-			display: inline-block;
-		}
-	}
+    .legend {
+      margin-left: 15px;
+      text-align: center;
+      padding-right: $tightMargin;
+    }
+  }
 
-	tfoot {
-		font-size: $fontSizeSmall;
-		color: $textSubtle;
+  .neos-change-stats {
+    width: 100px;
+    height: 40px;
+    position: relative;
+    display: inline-block;
 
-		.legend {
-			margin-left: 15px;
-			text-align: center;
-			padding-right: $tightMargin;
-		}
-	}
+    span {
+      display: inline-block;
+      height: 8px;
+      position: relative;
+      overflow: hidden;
+    }
 
-	.neos-change-stats {
-		width: 100px;
-		height: 40px;
-		position: relative;
-		display: inline-block;
+    .new {
+      background-color: $green;
+    }
 
-		span {
-			display: inline-block;
-			height: 8px;
-			position: relative;
-			overflow: hidden;
-		}
+    .changed {
+      background-color: $orange;
+    }
 
-		.new {
-			background-color: $green;
-		}
+    .removed {
+      background-color: $warning;
+    }
 
-		.changed {
-			background-color: $orange;
-		}
+    .unchanged {
+      background-color: $grayLight;
+      width: 100%;
+    }
+  }
 
-		.removed {
-			background-color: $warning;
-		}
+  ins,
+  ins a {
+    color: $green;
+    text-decoration: none;
+  }
 
-		.unchanged {
-			background-color: $grayLight;
-			width: 100%;
-		}
-	}
-
-	ins, ins a {
-		color: $green;
-		text-decoration: none;
-	}
-
-	del, del a {
-		color: $red;
-		text-decoration: none;
-	}
+  del,
+  del a {
+    color: $red;
+    text-decoration: none;
+  }
 }

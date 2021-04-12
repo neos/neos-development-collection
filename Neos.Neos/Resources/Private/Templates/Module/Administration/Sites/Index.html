@@ -102,11 +102,13 @@
 	</div>
 
 	<script>
-		(function($) {
-			$('.fold-toggle').click(function() {
-				$(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
-				$('tr.' + $(this).data('toggle')).toggle();
+		window.addEventListener('DOMContentLoaded', (event) => {
+			jQuery(function($) {
+				jQuery('.fold-toggle').click(function() {
+					jQuery(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
+					jQuery('tr.' + jQuery(this).data('toggle')).toggle();
+				});
 			});
-		})(jQuery);
+		});
 	</script>
 </f:section>

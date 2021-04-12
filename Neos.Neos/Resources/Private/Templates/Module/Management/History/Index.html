@@ -45,38 +45,40 @@
 </f:if>
 
 <script>
-	$(function() {
+	window.addEventListener('DOMContentLoaded', (event) => {
+		jQuery(function($) {
 
-		var nextPage = '{nextPage}';
-		var historyContainer = $('.neos-history');
-		$('.loadMore button').click(function() {
+			var nextPage = '{nextPage}';
+			var historyContainer = $('.neos-history');
+			$('.loadMore button').click(function() {
 
-			$.ajax({
-				url: nextPage,
-				type: 'GET'
-			}).done(function(data) {
+				$.ajax({
+					url: nextPage,
+					type: 'GET'
+				}).done(function(data) {
 
-				nextPage = $(data).find('div.loadMore').data('neos-history-nextpage');
-				if (typeof nextPage === 'undefined') {
-					$('.loadMore').hide();
-				}
-
-				var days = $(data).find('.neos-history-day');
-				days.each(function(index, day) {
-					var date = $(day).data('date');
-					var $existingDay = $('[data-date="' + date + '"]');
-
-					if ($existingDay.length > 0) {
-						$(day).find('.neos-history-event').each(function(index, event) {
-							$existingDay.find('.neos-history-events').append(event);
-						});
-
-					} else {
-						historyContainer.append(day);
+					nextPage = jQuery(data).find('div.loadMore').data('neos-history-nextpage');
+					if (typeof nextPage === 'undefined') {
+						$('.loadMore').hide();
 					}
-				});
 
+					var days = $(data).find('.neos-history-day');
+					days.each(function(index, day) {
+						var date = $(day).data('date');
+						var $existingDay = $('[data-date="' + date + '"]');
+
+						if ($existingDay.length > 0) {
+							$(day).find('.neos-history-event').each(function(index, event) {
+								$existingDay.find('.neos-history-events').append(event);
+							});
+
+						} else {
+							historyContainer.append(day);
+						}
+					});
+
+				});
 			});
-		});
-	})
+		})
+	});
 </script>

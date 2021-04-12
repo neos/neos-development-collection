@@ -1,35 +1,35 @@
 @mixin font() {
-	font-family: 'Noto Sans', sans-serif;
-	-webkit-font-smoothing: antialiased;
+  font-family: "Noto Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 @mixin icon-font($fontFamily, $width: 14px) {
-	font-family: $fontFamily;
-	display: inline-block;
-	width: $width;
-	height: $width;
-	line-height: $width;
-	font-size: $width;
-	vertical-align: baseline;
-	*margin-right: .3em;
-	margin: 1px 0 0 0;
-	background-image: none;
-	-webkit-font-smoothing: antialiased;
-	-moz-font-smoothing: antialiased;
-	-ms-font-smoothing: antialiased;
-	-o-font-smoothing: antialiased;
-	font-smoothing: antialiased;
+  font-family: $fontFamily;
+  display: inline-block;
+  width: $width;
+  height: $width;
+  line-height: $width;
+  font-size: $width;
+  vertical-align: baseline;
+  *margin-right: 0.3em;
+  margin: 1px 0 0 0;
+  background-image: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -ms-font-smoothing: antialiased;
+  -o-font-smoothing: antialiased;
+  font-smoothing: antialiased;
 
-	&:before,
-	&:after {
-		font-family: inherit;
-	}
+  &:before,
+  &:after {
+    font-family: inherit;
+  }
 }
 
 @mixin clearfix {
-	&:after {
-		content: "";
-		display: table;
-		clear: both;
-	}
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
 }

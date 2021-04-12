@@ -2,9 +2,7 @@
 // Responsive: Landscape phone to desktop/tablet
 // --------------------------------------------------
 
-
 @media (max-width: 767px) {
-
   // Padding to set content in a bit
   body {
     padding-left: 20px;
@@ -97,24 +95,24 @@
   // Modals
   .neos-modal {
     position: fixed;
-    top:   20px;
-    left:  20px;
+    top: 20px;
+    left: 20px;
     right: 20px;
     width: auto;
     margin: 0;
-    &.neos-fade  { top: -100px; }
-    &.neos-fade.neos-in { top: 20px; }
+    &.neos-fade {
+      top: -100px;
+    }
+    &.neos-fade.neos-in {
+      top: 20px;
+    }
   }
-
 }
-
-
 
 // UP TO LANDSCAPE PHONE
 // ---------------------
 
 @media (max-width: 480px) {
-
   // Block level the page header small tag for readability
   neos-page-header h1 small {
     display: block;
@@ -152,13 +150,12 @@
 
   // Modals
   .neos-modal {
-    top:   10px;
-    left:  10px;
+    top: 10px;
+    left: 10px;
     right: 10px;
   }
   .neos-modal-header .neos-close {
     padding: 10px;
     margin: -10px;
   }
-
 }

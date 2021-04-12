@@ -1,182 +1,182 @@
 #neos-node-tree {
-	position: relative;
+  position: relative;
 
-	&.neos-node-tree-filtering {
-		.neos-dynatree-node {
-			span + span,
-			a {
-				color: $textSubtle;
-			}
+  &.neos-node-tree-filtering {
+    .neos-dynatree-node {
+      span + span,
+      a {
+        color: $textSubtle;
+      }
 
-			&.neos-matched {
-				span + span,
-				a {
-					color: #fff;
-				}
+      &.neos-matched {
+        span + span,
+        a {
+          color: #fff;
+        }
 
-				&.neos-dynatree-selected {
-					span + span,
-					a {
-						color: $blue;
-					}
-				}
-			}
-		}
-	}
+        &.neos-dynatree-selected {
+          span + span,
+          a {
+            color: $blue;
+          }
+        }
+      }
+    }
+  }
 
-	#neos-node-tree-container {
-		position: relative;
-		white-space: nowrap;
-		margin: 0;
-		width: 100%;
-		height: 100%;
-		overflow: auto;
-		padding: $relatedMargin 0;
-		box-sizing: border-box;
+  #neos-node-tree-container {
+    position: relative;
+    white-space: nowrap;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: $relatedMargin 0;
+    box-sizing: border-box;
 
-		input {
-			padding: 0px 3px;
-			margin: 0 -3px;
-			width: 100%;
-			height: 24px;
-			vertical-align: top;
-			outline: none;
-			border: none;
-			background-color: #fff;
-			color: $grayDarker;
-			@include font;
-		}
-	}
+    input {
+      padding: 0px 3px;
+      margin: 0 -3px;
+      width: 100%;
+      height: 24px;
+      vertical-align: top;
+      outline: none;
+      border: none;
+      background-color: #fff;
+      color: $grayDarker;
+      @include font;
+    }
+  }
 }
 
 .neos-node-tree-toolbar {
-	width: 100%;
-	position: absolute;
-	top: -$unit * 2 - 2;
-	box-sizing: border-box;
+  width: 100%;
+  position: absolute;
+  top: -$unit * 2 - 2;
+  box-sizing: border-box;
 
-	@import "../Shared/Chosen";
-	.chosen-container {
-		.chosen-single {
-			background-color: $grayDark;
-		}
+  @import "../Shared/Chosen";
+  .chosen-container {
+    .chosen-single {
+      background-color: $grayDark;
+    }
 
-		.chosen-drop {
-			margin-top: 1px;
+    .chosen-drop {
+      margin-top: 1px;
 
-			.chosen-results li:first-child {
-				border-top: none;
-			}
-		}
-	}
+      .chosen-results li:first-child {
+        border-top: none;
+      }
+    }
+  }
 
-	.neos-node-tree-toolbar-top,
-	.neos-node-tree-toolbar-bottom {
-		height: $unit;
-		border-bottom: 1px solid $grayLight;
-	}
+  .neos-node-tree-toolbar-top,
+  .neos-node-tree-toolbar-bottom {
+    height: $unit;
+    border-bottom: 1px solid $grayLight;
+  }
 
-	#neos-node-tree-chooser {
-		float: left;
-		font-size: 14px;
-		line-height: $unit;
-		padding-left: $defaultMargin;
-	}
+  #neos-node-tree-chooser {
+    float: left;
+    font-size: 14px;
+    line-height: $unit;
+    padding-left: $defaultMargin;
+  }
 
-	.neos-button {
-		float: right;
-		width: $unit;
-		color: $textOnGray;
-		background-color: transparent;
-		text-align: center;
+  .neos-button {
+    float: right;
+    width: $unit;
+    color: $textOnGray;
+    background-color: transparent;
+    text-align: center;
 
-		i {
-			margin-left: -3px;
-		}
+    i {
+      margin-left: -3px;
+    }
 
-		&[disabled],
-		&[disabled]:hover {
-			color: $textSubtle;
-		}
+    &[disabled],
+    &[disabled]:hover {
+      color: $textSubtle;
+    }
 
-		&.neos-pressed,
-		&:hover {
-			color: $blue;
-		}
-	}
+    &.neos-pressed,
+    &:hover {
+      color: $blue;
+    }
+  }
 
-	#neos-node-tree-search {
-		overflow: hidden;
-		position: relative;
+  #neos-node-tree-search {
+    overflow: hidden;
+    position: relative;
 
-		input {
-			width: 100%;
-			height: $unit;
-			float: left;
-			background-color: $grayDark;
-			color: $textOnGray;
-			@include font;
-			font-size: 14px;
-			padding-left: $defaultMargin - 2px;
-			padding-right: $defaultMargin * 2 - 2px;
-			padding-top: 0;
-			padding-bottom: 0;
-			margin: 0;
-			border: none;
-			box-sizing: border-box;
-			box-shadow: none;
-			transition: none;
+    input {
+      width: 100%;
+      height: $unit;
+      float: left;
+      background-color: $grayDark;
+      color: $textOnGray;
+      @include font;
+      font-size: 14px;
+      padding-left: $defaultMargin - 2px;
+      padding-right: $defaultMargin * 2 - 2px;
+      padding-top: 0;
+      padding-bottom: 0;
+      margin: 0;
+      border: none;
+      box-sizing: border-box;
+      box-shadow: none;
+      transition: none;
 
-			&:focus {
-				background-color: #fff;
-				color: $textOnWhite;
-				box-shadow: none;
+      &:focus {
+        background-color: #fff;
+        color: $textOnWhite;
+        box-shadow: none;
 
-				& + span {
-					color: $textOnWhite;
-				}
-			}
-		}
+        & + span {
+          color: $textOnWhite;
+        }
+      }
+    }
 
-		span {
-			position: absolute;
-			top: 0;
-			right: 9px;
-			width: 16px;
-			height: 16px;
-			display: block;
-			font-size: 14px;
-			line-height: $unit;
+    span {
+      position: absolute;
+      top: 0;
+      right: 9px;
+      width: 16px;
+      height: 16px;
+      display: block;
+      font-size: 14px;
+      line-height: $unit;
 
-			&.fa-remove-sign {
-				cursor: pointer;
-				font-size: 16px;
+      &.fa-remove-sign {
+        cursor: pointer;
+        font-size: 16px;
 
-				&:hover {
-					color: $blue;
-				}
-			}
-		}
-	}
+        &:hover {
+          color: $blue;
+        }
+      }
+    }
+  }
 
-	#neos-node-tree-sorting {
-		width: $unit;
-		height: $unit;
-		line-height: $unit;
-		border-left: 1px solid $grayMedium;
-		float: right;
-		text-align: center;
-		display: none;
-	}
+  #neos-node-tree-sorting {
+    width: $unit;
+    height: $unit;
+    line-height: $unit;
+    border-left: 1px solid $grayMedium;
+    float: right;
+    text-align: center;
+    display: none;
+  }
 
-	#neos-node-tree-filter {
-		width: 50%;
-		float: right;
-		border-left: 1px solid $grayMedium;
+  #neos-node-tree-filter {
+    width: 50%;
+    float: right;
+    border-left: 1px solid $grayMedium;
 
-		select {
-			width: 100%;
-			padding: 0;
-		}
-	}
+    select {
+      width: 100%;
+      padding: 0;
+    }
+  }
 }

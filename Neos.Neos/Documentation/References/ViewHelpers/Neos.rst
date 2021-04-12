@@ -215,19 +215,6 @@ the Neos backend.
 
 
 
-.. _`Neos ViewHelper Reference: neos:backend.shouldLoadMinifiedJavascript`:
-
-neos:backend.shouldLoadMinifiedJavascript
------------------------------------------
-
-Returns true if the minified Neos JavaScript sources should be loaded, false otherwise.
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ShouldLoadMinifiedJavascriptViewHelper
-
-
-
-
-
 .. _`Neos ViewHelper Reference: neos:backend.translate`:
 
 neos:backend.translate

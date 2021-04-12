@@ -2,14 +2,6 @@
 // Responsive: Utility classes
 // --------------------------------------------------
 
-
-// IE10 Metro responsive
-// Required for Windows 8 Metro split-screen snapping with IE10
-// Source: http://timkadlec.com/2012/10/ie10-snap-mode-and-responsive-design/
-@-ms-viewport{
-  width: device-width;
-}
-
 // Hide from screenreaders and browsers
 // Credit: HTML5 Boilerplate
 .neos-hidden {
@@ -20,42 +12,75 @@
 // Visibility utilities
 
 // For desktops
-.neos-visible-phone     { display: none !important; }
-.neos-visible-tablet    { display: none !important; }
-.neos-hidden-phone      { }
-.neos-hidden-tablet     { }
-.neos-hidden-desktop    { display: none !important; }
-.neos-visible-desktop   { display: inherit !important; }
+.neos-visible-phone {
+  display: none !important;
+}
+.neos-visible-tablet {
+  display: none !important;
+}
+.neos-hidden-phone {
+}
+.neos-hidden-tablet {
+}
+.neos-hidden-desktop {
+  display: none !important;
+}
+.neos-visible-desktop {
+  display: inherit !important;
+}
 
 // Tablets & small desktops only
 @media (min-width: 768px) and (max-width: 979px) {
   // Hide everything else
-  .neos-hidden-desktop    { display: inherit !important; }
-  .neos-visible-desktop   { display: none !important ; }
+  .neos-hidden-desktop {
+    display: inherit !important;
+  }
+  .neos-visible-desktop {
+    display: none !important ;
+  }
   // Show
-  .neos-visible-tablet    { display: inherit !important; }
+  .neos-visible-tablet {
+    display: inherit !important;
+  }
   // Hide
-  .neos-hidden-tablet     { display: none !important; }
+  .neos-hidden-tablet {
+    display: none !important;
+  }
 }
 
 // Phones only
 @media (max-width: 767px) {
   // Hide everything else
-  .neos-hidden-desktop    { display: inherit !important; }
-  .neos-visible-desktop   { display: none !important; }
+  .neos-hidden-desktop {
+    display: inherit !important;
+  }
+  .neos-visible-desktop {
+    display: none !important;
+  }
   // Show
-  .neos-visible-phone     { display: inherit !important; } // Use inherit to restore previous behavior
+  .neos-visible-phone {
+    display: inherit !important;
+  } // Use inherit to restore previous behavior
   // Hide
-  .neos-hidden-phone      { display: none !important; }
+  .neos-hidden-phone {
+    display: none !important;
+  }
 }
 
 // Print utilities
-.neos-visible-print    { display: none !important; }
-.neos-hidden-print     { }
+.neos-visible-print {
+  display: none !important;
+}
+.neos-hidden-print {
+}
 
 @media print {
-  .neos-visible-print  { display: inherit !important; }
-  .neos-hidden-print   { display: none !important; }
+  .neos-visible-print {
+    display: inherit !important;
+  }
+  .neos-hidden-print {
+    display: none !important;
+  }
 }
 
 // Clearing floats

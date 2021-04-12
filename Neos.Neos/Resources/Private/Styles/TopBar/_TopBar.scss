@@ -57,7 +57,7 @@
     }
 
     .neos-dropdown-menu {
-      @import '../Shared/Checkboxes';
+      @import "../Shared/Checkboxes";
       border: 0;
       right: 0;
       background: none;
@@ -107,6 +107,14 @@
 
       label {
         font-size: $generalFontSize;
+      }
+    }
+
+    .neos-user-menu {
+      &.neos-dropdown-open {
+        .neos-dropdown-menu {
+          display: block;
+        }
       }
     }
   }

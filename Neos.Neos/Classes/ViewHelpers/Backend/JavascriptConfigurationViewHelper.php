@@ -16,7 +16,6 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Files;
@@ -105,27 +104,39 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     public function render()
     {
         $configuration = [
-            'window.T3Configuration = {};',
-            'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
-            'window.T3Configuration.nodeTypes = {};',
-            'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
-            'window.T3Configuration.requirejs = {};',
-            'window.T3Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
-            'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';',
-            'window.T3Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
+            'window.NeosCMS = !!window.NeosCMS ? window.NeosCMS : {};',
+            'window.NeosCMS.Configuration = {};',
+            'window.NeosCMS.Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
+            'window.NeosCMS.Configuration.nodeTypes = {};',
+            'window.NeosCMS.Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
+            'window.NeosCMS.Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
+            'window.NeosCMS.Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
         ];
 
         $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://Neos.Neos/Public/JavaScript');
 
-        $configuration[] = 'window.T3Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
+        $configuration[] = 'window.NeosCMS.Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
 
         if ($this->bootstrap->getContext()->isDevelopment()) {
-            $configuration[] = 'window.T3Configuration.DevelopmentMode = true;';
+            $configuration[] = 'window.NeosCMS.Configuration.DevelopmentMode = true;';
         }
 
         if ($activeDomain = $this->domainRepository->findOneByActiveRequest()) {
-            $configuration[] = 'window.T3Configuration.site = "' . $activeDomain->getSite()->getNodeName() . '";';
+            $configuration[] = 'window.NeosCMS.Configuration.site = "' . $activeDomain->getSite()->getNodeName() . '";';
         }
+
+        /**
+         * create backwards compatibility
+         * @deprecated Can be removed with Neos 8.0
+         */
+        $configuration[] = 'window.T3Configuration = Object.assign({}, window.NeosCMS.Configuration);';
+
+        /**
+         * Add empty requireJS pathes. Don`t remove the whole path to break the external API.
+         * @deprecated Can be removed with Neos 8.0
+         */
+        $configuration[] = 'window.NeosCMS.Configuration.requirejs = {};';
+        $configuration[] = 'window.NeosCMS.Configuration.requirejs.paths = [];';
 
         return implode("\n", $configuration);
     }
@@ -150,41 +161,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
         }
         return '';
-    }
-
-    /**
-     * @return array
-     */
-    protected function getRequireJsPathMapping()
-    {
-        $pathMappings = [];
-
-        $validatorSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.validators');
-        if (is_array($validatorSettings)) {
-            foreach ($validatorSettings as $validatorName => $validatorConfiguration) {
-                if (isset($validatorConfiguration['path'])) {
-                    $pathMappings[$validatorName] = $this->getStaticResourceWebBaseUri($validatorConfiguration['path']);
-                }
-            }
-        }
-
-        $editorSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.inspector.editors');
-        if (is_array($editorSettings)) {
-            foreach ($editorSettings as $editorName => $editorConfiguration) {
-                if (isset($editorConfiguration['path'])) {
-                    $pathMappings[$editorName] = $this->getStaticResourceWebBaseUri($editorConfiguration['path']);
-                }
-            }
-        }
-
-        $requireJsPathMappingSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.requireJsPathMapping');
-        if (is_array($requireJsPathMappingSettings)) {
-            foreach ($requireJsPathMappingSettings as $namespace => $path) {
-                $pathMappings[$namespace] = $this->getStaticResourceWebBaseUri($path);
-            }
-        }
-
-        return $pathMappings;
     }
 
     /**

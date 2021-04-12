@@ -20,7 +20,17 @@ const javascriptConfig = {
 					loader: "babel-loader",
 				},
 			},
+			{
+				test: /\.ts(x)?$/,
+				use: {
+					loader: "ts-loader",
+				},
+				exclude: /node_modules/,
+			},
 		],
+	},
+	resolve: {
+		extensions: [".tsx", ".ts", ".js"],
 	},
 	plugins: [
 		// @deprecated Will remove jQuery support with neos 8.0
