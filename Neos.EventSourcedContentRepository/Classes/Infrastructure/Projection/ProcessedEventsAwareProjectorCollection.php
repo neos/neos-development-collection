@@ -6,10 +6,10 @@ use Neos\EventSourcedContentRepository\Domain\ImmutableArrayObject;
 
 final class ProcessedEventsAwareProjectorCollection extends ImmutableArrayObject
 {
-    public function __construct(Iterable $projectors)
+    public function __construct(Iterable $collection)
     {
         $processedEventsAwareProjectors = [];
-        foreach ($projectors as $projector) {
+        foreach ($collection as $projector) {
             if (!$projector instanceof ProcessedEventsAwareProjectorInterface) {
                 throw new \InvalidArgumentException(get_class() . ' can only consist of ' . ProcessedEventsAwareProjectorInterface::class . ' objects.', 1616950763);
             }

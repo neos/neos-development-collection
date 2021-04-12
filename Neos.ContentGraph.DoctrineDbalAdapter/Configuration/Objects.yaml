@@ -6,4 +6,4 @@ Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
         factoryMethodName: getCache
         arguments:
           1:
-            value: Neos_ContentGraph_ProcessedEvents
+            value: Neos_ContentGraph_DoctrineDbalAdapter_ProcessedEvents

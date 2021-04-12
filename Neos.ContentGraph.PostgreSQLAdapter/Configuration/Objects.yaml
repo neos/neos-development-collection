@@ -6,4 +6,4 @@ Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector:
         factoryMethodName: getCache
         arguments:
           1:
-            value: Neos_ContentGraph_ProcessedEvents
+            value: Neos_ContentGraph_PostgreSQLAdapter_ProcessedEvents

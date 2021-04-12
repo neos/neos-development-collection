@@ -140,7 +140,7 @@ final class NodeFactory
             $key = $nodeRow['nodeaggregateidentifier'];
             $node = $this->mapNodeRowToNode($nodeRow);
             $contentStreamIdentifier = $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
-            $nodeAggregateIdentifier[$key] = NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
+            $nodeAggregateIdentifiers[$key] = NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
             if (!isset($nodeAggregateClassifications[$key])) {
                 $nodeAggregateClassifications[$key] = NodeAggregateClassification::fromString($nodeRow['classification']);
             }
@@ -160,6 +160,9 @@ final class NodeFactory
             $coverageByOccupant[$key][$node->getOriginDimensionSpacePoint()->getHash()][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
             $nodesByCoveredDimensionSpacePoint[$key][$coveredDimensionSpacePoint->getHash()] = $node;
             $occupationByCovered[$key][$coveredDimensionSpacePoint->getHash()] = $node->getOriginDimensionSpacePoint();
+            if (!isset($disabledDimensionSpacePoints[$key])) {
+                $disabledDimensionSpacePoints[$key] = [];
+            }
             if (isset($nodeRow['disableddimensionspacepointhash']) && $nodeRow['disableddimensionspacepointhash']) {
                 $disabledDimensionSpacePoints[$key][$nodeRow['disableddimensionspacepointhash']] = $coveredDimensionSpacePoints[$key][$nodeRow['disableddimensionspacepointhash']];
             }

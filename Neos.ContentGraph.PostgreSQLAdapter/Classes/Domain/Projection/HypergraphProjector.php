@@ -22,15 +22,13 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeModificati
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeReferencing;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRenaming;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient as EventStorageDbalClient;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
- *
- * @Flow\Scope("singleton")
  */
 final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
 {
@@ -41,6 +39,7 @@ final class HypergraphProjector extends AbstractProcessedEventsAwareProjector
     use NodeReferencing;
     use NodeRemoval;
     use NodeRenaming;
+    use NodeTypeChange;
 
     private DbalClient $databaseClient;
 
