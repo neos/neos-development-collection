@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\FlowQueryContextOperation;
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -57,7 +58,7 @@ class ContextOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var ReadModelFactory
+     * @var NodeInterface
      */
     protected $readModelFactory;
 
@@ -65,7 +66,7 @@ class ContextOperation extends AbstractOperation
 
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeBasedReadModelInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
     public function evaluate(FlowQuery $flowQuery, array $arguments)
@@ -86,7 +87,7 @@ class ContextOperation extends AbstractOperation
 
         $output = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            /** @var NodeBasedReadModelInterface $contextNode */
+            /** @var NodeInterface $contextNode */
 
             // we start modifying the subgraph step-by-step.
             $subgraph = self::getSubgraphFromNode($contextNode);

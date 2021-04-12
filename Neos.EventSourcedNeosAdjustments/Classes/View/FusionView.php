@@ -24,6 +24,12 @@ use Neos\Fusion\Exception\RuntimeException;
 class FusionView extends \Neos\Neos\View\FusionView
 {
     /**
+     * @Flow\Inject
+     * @var SiteNodeUtility
+     */
+    protected $siteNodeUtility;
+
+    /**
      * Renders the view
      *
      * @return string The rendered view
@@ -33,7 +39,7 @@ class FusionView extends \Neos\Neos\View\FusionView
     public function render()
     {
         $currentNode = $this->getCurrentNode();
-        $currentSiteNode = SiteNodeUtility::findSiteNode($currentNode);
+        $currentSiteNode = $this->siteNodeUtility->findSiteNode($currentNode);
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         if ($currentNode instanceof LegacyNodeInterface) {

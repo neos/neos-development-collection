@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Intermediary\Infrastructure;
+namespace Neos\EventSourcedContentRepository\Infrastructure;
 
 /*
  * This file is part of the Neos.ContentRepository package.

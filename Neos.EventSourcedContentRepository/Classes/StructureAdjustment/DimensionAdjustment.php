@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\StructureAdjustment;
+namespace Neos\EventSourcedContentRepository\StructureAdjustment;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\StructureAdjustment\Dto\StructureAdjustment;
+use Neos\EventSourcedContentRepository\StructureAdjustment\Dto\StructureAdjustment;
 
 /**
  * @Flow\Scope("singleton")

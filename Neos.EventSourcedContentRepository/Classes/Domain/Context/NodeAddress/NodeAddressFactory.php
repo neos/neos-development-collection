@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -40,6 +41,20 @@ class NodeAddressFactory
      * @var ContentGraphInterface
      */
     protected $contentGraph;
+
+    public function createFromNode(NodeInterface $node): NodeAddress
+    {
+        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($node->getContentStreamIdentifier());
+        if ($workspace === null) {
+            throw new \RuntimeException('Cannot build a NodeAddress for traversable node of aggregate ' . $node->getNodeAggregateIdentifier() . ', because the content stream ' . $node->getContentStreamIdentifier() . ' is not assigned to a workspace.');
+        }
+        return new NodeAddress(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getNodeAggregateIdentifier(),
+            $workspace->getWorkspaceName()
+        );
+    }
 
     public function createFromUriString(string $nodeAddressSerialized): NodeAddress
     {

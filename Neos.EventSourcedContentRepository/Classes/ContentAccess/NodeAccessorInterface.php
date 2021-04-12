@@ -82,44 +82,45 @@ interface NodeAccessorInterface
      */
     public function findChildNodes(NodeInterface $parentNode, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): iterable;
 
+    // TODO: DO NOT RETURN SIMPLY ITERABLE, BUT A TYPED OBJECT
     /**
-     * @param NodeAggregateIdentifier $nodeAggregateAggregateIdentifier
+     * @param NodeAggregateIdentifier $node
      * @param PropertyName|null $name
      * @return NodeInterface[]
      */
-    public function findReferencedNodes(NodeInterface $nodeAggregateAggregateIdentifier, PropertyName $name = null): iterable;
+    public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): iterable;
 
     /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $node
      * @param PropertyName $name
      * @return NodeInterface[]
      */
-    public function findReferencingNodes(NodeInterface $nodeAggregateIdentifier, PropertyName $name = null): iterable;
+    public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): iterable;
 
     /**
-     * @param NodeAggregateIdentifier $childAggregateIdentifier
+     * @param NodeInterface $childNode
      * @return NodeInterface|null
      */
     public function findParentNode(NodeInterface $childNode): ?NodeInterface;
 
     /**
      * @param NodePath $path
-     * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $startingNode
      * @return NodeInterface|null
      */
-    public function findNodeByPath(NodePath $path, NodeInterface $startingNodeAggregateIdentifier): ?NodeInterface;
+    public function findNodeByPath(NodePath $path, NodeInterface $startingNode): ?NodeInterface;
 
     /**
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $parentNode
      * @param NodeName $edgeName
      * @return NodeInterface|null
      */
-    public function findChildNodeConnectedThroughEdgeName(NodeInterface $parentNodeAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
+    public function findChildNodeConnectedThroughEdgeName(NodeInterface $parentNode, NodeName $edgeName): ?NodeInterface;
 
     // NO SIBLING methods - as we do not use them except in constraint checks
 
     /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeInterface $node
      * @return NodePath
      */
     public function findNodePath(NodeInterface $node): NodePath;

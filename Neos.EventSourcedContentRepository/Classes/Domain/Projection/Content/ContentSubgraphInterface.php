@@ -45,21 +45,21 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param int|null $offset
      * @return array|NodeInterface[]
      */
-    public function findChildNodes(NodeInterface $nodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findChildNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateAggregateIdentifier
      * @param PropertyName|null $name
      * @return NodeInterface[]
      */
-    public function findReferencedNodes(NodeInterface $nodeAggregateAggregateIdentifier, PropertyName $name = null): array;
+    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateAggregateIdentifier, PropertyName $name = null): array;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param PropertyName $name
      * @return NodeInterface[]
      */
-    public function findReferencingNodes(NodeInterface $nodeAggregateIdentifier, PropertyName $name = null): array;
+    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): array;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
@@ -72,27 +72,27 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @return int
      */
-    public function countChildNodes(NodeInterface $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null): int;
+    public function countChildNodes(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null): int;
 
     /**
      * @param NodeAggregateIdentifier $childAggregateIdentifier
      * @return NodeInterface|null
      */
-    public function findParentNode(NodeInterface $childAggregateIdentifier): ?NodeInterface;
+    public function findParentNode(NodeAggregateIdentifier $childAggregateIdentifier): ?NodeInterface;
 
     /**
      * @param NodePath $path
      * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
      * @return NodeInterface|null
      */
-    public function findNodeByPath(NodePath $path, NodeInterface $startingNodeAggregateIdentifier): ?NodeInterface;
+    public function findNodeByPath(NodePath $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $edgeName
      * @return NodeInterface|null
      */
-    public function findChildNodeConnectedThroughEdgeName(NodeInterface $parentNodeAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
+    public function findChildNodeConnectedThroughEdgeName(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $sibling
@@ -101,7 +101,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param int|null $offset
      * @return array|NodeInterface[]
      */
-    public function findSiblings(NodeInterface $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findSiblings(NodeAggregateIdentifier $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
 
     /**
      * @param NodeAggregateIdentifier $sibling
@@ -110,7 +110,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param int|null $offset
      * @return array|NodeInterface[]
      */
-    public function findSucceedingSiblings(NodeInterface $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findSucceedingSiblings(NodeAggregateIdentifier $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
 
     /**
      * @param NodeAggregateIdentifier $sibling
@@ -119,7 +119,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param int|null $offset
      * @return array|NodeInterface[]
      */
-    public function findPrecedingSiblings(NodeInterface $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findPrecedingSiblings(NodeAggregateIdentifier $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier

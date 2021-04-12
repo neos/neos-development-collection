@@ -16,8 +16,8 @@ namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Intermediary\StructureAdjustment\Dto\StructureAdjustment;
-use Neos\ContentRepository\Intermediary\StructureAdjustment\StructureAdjustmentService;
+use Neos\EventSourcedContentRepository\StructureAdjustment\Dto\StructureAdjustment;
+use Neos\EventSourcedContentRepository\StructureAdjustment\StructureAdjustmentService;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 

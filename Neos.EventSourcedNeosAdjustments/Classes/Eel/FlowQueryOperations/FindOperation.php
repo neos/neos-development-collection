@@ -15,17 +15,15 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModels;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -79,21 +77,15 @@ class FindOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var NodeAccessorManager
      */
-    protected $contentGraph;
+    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject
      * @var NodeTypeConstraintFactory
      */
     protected $nodeTypeConstraintFactory;
-
-    /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
 
     /**
      * {@inheritdoc}
@@ -104,7 +96,7 @@ class FindOperation extends AbstractOperation
     public function canEvaluate($context)
     {
         foreach ($context as $contextNode) {
-            if (!$contextNode instanceof NodeBasedReadModelInterface) {
+            if (!$contextNode instanceof NodeInterface) {
                 return false;
             }
         }
@@ -125,12 +117,12 @@ class FindOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $contextNodes = NodeBasedReadModels::fromArray($flowQuery->getContext());
-        if ($contextNodes->isEmpty() || empty($arguments[0])) {
+        $contextNodes = $flowQuery->getContext();
+        if (count($contextNodes) === 0 || empty($arguments[0])) {
             return;
         }
 
-        /** @var NodeBasedReadModelInterface[] $result */
+        /** @var NodeInterface[] $result */
         $result = [];
         $selectorAndFilter = $arguments[0];
 
@@ -186,19 +178,19 @@ class FindOperation extends AbstractOperation
         $flowQuery->setContext($uniqueResult);
     }
 
-    protected function getEntryPoints(NodeBasedReadModels $contextNodes, VisibilityConstraints $visibilityConstraints): array
+    protected function getEntryPoints(array $contextNodes, VisibilityConstraints $visibilityConstraints): array
     {
         $entryPoints = [];
         foreach ($contextNodes as $contextNode) {
-            $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $contextNode->getContentStreamIdentifier(),
                 $contextNode->getDimensionSpacePoint(),
                 $visibilityConstraints
             );
-            $subgraphIdentifier = md5($subgraph->getContentStreamIdentifier() . '@' . $subgraph->getDimensionSpacePoint());
+            $subgraphIdentifier = md5($nodeAccessor->getContentStreamIdentifier() . '@' . $nodeAccessor->getDimensionSpacePoint());
             if (!isset($entryPoints[(string) $subgraphIdentifier])) {
                 $entryPoints[(string) $subgraphIdentifier] = [
-                    'subgraph' => $subgraph,
+                    'subgraph' => $nodeAccessor,
                     'nodes' => []
                 ];
             }
@@ -211,11 +203,11 @@ class FindOperation extends AbstractOperation
     protected function addNodesByIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier, array $entryPoints, array $result): array
     {
         foreach ($entryPoints as $entryPoint) {
-            /** @var ContentSubgraphInterface $subgraph */
-            $subgraph = $entryPoint['subgraph'];
-            $nodeByIdentifier = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+            /** @var NodeAccessorInterface $nodeAccessor */
+            $nodeAccessor = $entryPoint['subgraph'];
+            $nodeByIdentifier = $nodeAccessor->findByIdentifier($nodeAggregateIdentifier);
             if ($nodeByIdentifier) {
-                $result[] = $this->readModelFactory->createReadModel($nodeByIdentifier, $subgraph);
+                $result[] = $nodeByIdentifier;
             }
         }
 
@@ -225,21 +217,21 @@ class FindOperation extends AbstractOperation
     protected function addNodesByPath(NodePath $nodePath, array $entryPoints, array $result): array
     {
         foreach ($entryPoints as $entryPoint) {
-            /** @var ContentSubgraphInterface $subgraph */
-            $subgraph = $entryPoint['subgraph'];
+            /** @var NodeAccessorInterface $nodeAccessor */
+            $nodeAccessor = $entryPoint['subgraph'];
             foreach ($entryPoint['nodes'] as $node) {
-                /** @var NodeBasedReadModelInterface $node */
+                /** @var NodeInterface $node */
                 if ($nodePath->isAbsolute()) {
                     $rootNode = $node;
                     while (!$rootNode->isRoot()) {
                         $rootNode = $rootNode->findParentNode();
                     }
-                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $rootNode->getNodeAggregateIdentifier());
+                    $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $rootNode);
                 } else {
-                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->getNodeAggregateIdentifier());
+                    $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $node);
                 }
                 if ($nodeByPath) {
-                    $result[] = $this->readModelFactory->createReadModel($nodeByPath, $subgraph);
+                    $result[] = $nodeByPath;
                 }
             }
         }
@@ -250,14 +242,11 @@ class FindOperation extends AbstractOperation
     protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result): array
     {
         foreach ($entryPoints as $entryPoint) {
-            /** @var ContentSubgraphInterface $subgraph */
-            $subgraph = $entryPoint['subgraph'];
-            $entryIdentifiers = array_map(function (NodeBasedReadModelInterface $node) {
-                return $node->getNodeAggregateIdentifier();
-            }, $entryPoint['nodes']);
+            /** @var NodeAccessorInterface $nodeAccessor */
+            $nodeAccessor = $entryPoint['subgraph'];
 
-            foreach ($subgraph->findDescendants($entryIdentifiers, $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeName->jsonSerialize()), null) as $descendant) {
-                $result[] = $this->readModelFactory->createReadModel($descendant, $subgraph);
+            foreach ($nodeAccessor->findDescendants($entryPoint['nodes'], $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeName->jsonSerialize()), null) as $descendant) {
+                $result[] = $descendant;
             }
         }
 

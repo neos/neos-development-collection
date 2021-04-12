@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Intermediary\Domain\Property;
+namespace Neos\EventSourcedContentRepository\Infrastructure\Property;
 
 /*
  * This file is part of the Neos.ContentRepository.Intermediary package.

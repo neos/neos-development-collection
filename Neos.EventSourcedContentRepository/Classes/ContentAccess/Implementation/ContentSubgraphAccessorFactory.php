@@ -13,16 +13,15 @@ namespace Neos\EventSourcedContentRepository\ContentAccess\Implementation;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\EventSourcedContentRepository\ContentAccess\Exception\InvalidAccessorConfiguration;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorFactoryInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\Parts\FindChildNodesInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
  * @Flow\Scope("singleton")

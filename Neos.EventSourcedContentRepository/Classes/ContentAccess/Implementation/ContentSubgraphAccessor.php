@@ -71,12 +71,12 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
         return $this->subgraph->findParentNode($childNode->getNodeAggregateIdentifier());
     }
 
-    public function findNodeByPath(NodePath $path, NodeInterface $startingNodeAggregateIdentifier): ?NodeInterface
+    public function findNodeByPath(NodePath $path, NodeInterface $startingNode): ?NodeInterface
     {
         // TODO: Implement findNodeByPath() method.
     }
 
-    public function findChildNodeConnectedThroughEdgeName(NodeInterface $parentNodeAggregateIdentifier, NodeName $edgeName): ?NodeInterface
+    public function findChildNodeConnectedThroughEdgeName(NodeInterface $parentNode, NodeName $edgeName): ?NodeInterface
     {
         // TODO: Implement findChildNodeConnectedThroughEdgeName() method.
     }

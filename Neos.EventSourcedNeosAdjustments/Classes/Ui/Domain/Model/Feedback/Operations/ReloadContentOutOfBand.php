@@ -12,9 +12,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -27,7 +29,7 @@ use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 class ReloadContentOutOfBand extends AbstractFeedback
 {
     /**
-     * @var NodeBasedReadModelInterface
+     * @var NodeInterface
      */
     protected $node;
 
@@ -46,17 +48,23 @@ class ReloadContentOutOfBand extends AbstractFeedback
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var NodeAddressFactory
      */
-    protected $contentGraph;
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * Set the node
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @return void
      */
-    public function setNode(NodeBasedReadModelInterface $node)
+    public function setNode(NodeInterface $node)
     {
         $this->node = $node;
     }
@@ -64,9 +72,9 @@ class ReloadContentOutOfBand extends AbstractFeedback
     /**
      * Get the node
      *
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      */
-    public function getNode(): ?NodeBasedReadModelInterface
+    public function getNode(): ?NodeInterface
     {
         return $this->node;
     }
@@ -141,7 +149,7 @@ class ReloadContentOutOfBand extends AbstractFeedback
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'contextPath' => $this->getNode()->getAddress()->serializeForUri(),
+            'contextPath' => $this->nodeAddressFactory->createFromNode($this->getNode())->serializeForUri(),
             'nodeDomAddress' => $this->getNodeDomAddress(),
             'renderedContent' => $this->renderContent($controllerContext)
         ];
@@ -163,7 +171,7 @@ class ReloadContentOutOfBand extends AbstractFeedback
         $fusionView->setControllerContext($controllerContext);
 
         $fusionView->assign('value', $this->getNode());
-        $fusionView->assign('subgraph', $this->contentGraph->getSubgraphByIdentifier(
+        $fusionView->assign('subgraph', $this->nodeAccessorManager->accessorFor(
             $this->getNode()->getContentStreamIdentifier(),
             $this->getNode()->getDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()

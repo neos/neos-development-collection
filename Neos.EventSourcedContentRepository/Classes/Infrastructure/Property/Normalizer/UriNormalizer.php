@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\Domain\Property\Normalizer;
+namespace Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer;
 
 use GuzzleHttp\Psr7\Uri;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;

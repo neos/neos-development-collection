@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\StructureAdjustment;
+namespace Neos\EventSourcedContentRepository\StructureAdjustment;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
@@ -9,7 +9,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\Intermediary\StructureAdjustment\Traits\LoadNodeTypeTrait;
+use Neos\EventSourcedContentRepository\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
@@ -20,7 +20,7 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Intermediary\StructureAdjustment\Dto\StructureAdjustment;
+use Neos\EventSourcedContentRepository\StructureAdjustment\Dto\StructureAdjustment;
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
@@ -35,7 +35,6 @@ class PropertyAdjustment
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected NodeTypeManager $nodeTypeManager;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
-    protected ReadModelFactory $readModelFactory;
     protected ContentGraph $contentGraph;
 
     public function __construct(
@@ -43,14 +42,12 @@ class PropertyAdjustment
         ProjectedNodeIterator $projectedNodeIterator,
         NodeTypeManager $nodeTypeManager,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        ReadModelFactory $readModelFactory,
         ContentGraph $contentGraph
     ) {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
-        $this->readModelFactory = $readModelFactory;
         $this->contentGraph = $contentGraph;
     }
 
@@ -67,8 +64,6 @@ class PropertyAdjustment
             foreach ($nodeAggregate->getNodes() as $node) {
                 $propertyKeysInNode = [];
 
-                $nodeReadModel = $this->readModelFactory->createReadModel($node, $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions()));
-
                 foreach ($node->getProperties()->getValues() as $propertyKey => $property) {
                     $propertyKeysInNode[$propertyKey] = $propertyKey;
 
@@ -82,7 +77,7 @@ class PropertyAdjustment
 
                     // detect non-deserializable properties
                     try {
-                        $nodeReadModel->getProperties()->offsetGet($propertyKey);
+                        $node->getProperty($propertyKey);
                     } catch (\Exception $e) {
                         $message = sprintf('The property "%s" was not deserializable. Error was: %s %s. Remove the property?', $propertyKey, get_class($e), $e->getMessage());
                         yield StructureAdjustment::createForNode($node, StructureAdjustment::NON_DESERIALIZABLE_PROPERTY, $message, function () use ($node, $propertyKey) {

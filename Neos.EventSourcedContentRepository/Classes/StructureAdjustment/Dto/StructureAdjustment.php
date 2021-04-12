@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\StructureAdjustment\Dto;
+namespace Neos\EventSourcedContentRepository\StructureAdjustment\Dto;
 
 use Neos\Error\Messages\Message;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;

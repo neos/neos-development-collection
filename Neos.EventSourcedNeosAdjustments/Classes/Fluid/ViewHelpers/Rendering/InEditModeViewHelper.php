@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
  * ViewHelper to find out if Neos is rendering an edit mode.
@@ -55,11 +55,11 @@ use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 class InEditModeViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
-     * @param NodeBasedReadModelInterface $node Optional Node to use context from
+     * @param NodeInterface $node Optional Node to use context from
      * @param string $mode Optional rendering mode name to check if this specific mode is active
      * @return boolean
      */
-    public function render(NodeBasedReadModelInterface $node = null, $mode = null)
+    public function render(NodeInterface $node = null, $mode = null)
     {
         // TODO: implement
         return false;

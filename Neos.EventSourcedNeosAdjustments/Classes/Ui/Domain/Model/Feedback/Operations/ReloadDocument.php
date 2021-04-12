@@ -13,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  */
 
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
@@ -22,7 +23,7 @@ use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
 class ReloadDocument extends AbstractFeedback
 {
-    protected NodeBasedReadModelInterface $node;
+    protected NodeInterface $node;
 
     /**
      * @Flow\Inject
@@ -43,7 +44,7 @@ class ReloadDocument extends AbstractFeedback
     /**
      * Set the node
      */
-    public function setNode(NodeBasedReadModelInterface $node): void
+    public function setNode(NodeInterface $node): void
     {
         $this->node = $node;
     }
@@ -51,7 +52,7 @@ class ReloadDocument extends AbstractFeedback
     /**
      * Get the node
      */
-    public function getNode(): NodeBasedReadModelInterface
+    public function getNode(): NodeInterface
     {
         return $this->node;
     }

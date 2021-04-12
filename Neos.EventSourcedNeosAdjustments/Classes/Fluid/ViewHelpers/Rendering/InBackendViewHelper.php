@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
  * ViewHelper to find out if Neos is rendering the backend.
@@ -37,12 +37,13 @@ use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 class InBackendViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @return boolean
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(NodeBasedReadModelInterface $node = null)
+    public function render(NodeInterface $node = null)
     {
-        return (!$node->getAddress()->isInLiveWorkspace() && $this->hasAccessToBackend());
+        $nodeAddress = $this->getNodeAddressOfContextNode($node);
+        return (!$nodeAddress->isInLiveWorkspace() && $this->hasAccessToBackend());
     }
 }

@@ -1,5 +1,6 @@
 <?php
-namespace Neos\ContentRepository\Intermediary\Domain\Command;
+declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository.Intermediary package.
@@ -11,6 +12,7 @@ namespace Neos\ContentRepository\Intermediary\Domain\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonCreateNodeAggregateWithNodeTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;

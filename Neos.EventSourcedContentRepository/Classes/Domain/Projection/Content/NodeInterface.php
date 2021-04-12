@@ -12,61 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
-/**
- * This is a NEW interface, introduced in Neos 4.3.
- *
- * The new Event-Sourced core NodeInterface used for READING. It contains only information
- * local to a node; i.e. all properties in this interface can be accessed extremely fast.
- *
- * The NodeInterface is *immutable*, meaning its contents never change after creation.
- * It is *only used for reading*.
- *
- * Starting with version 5.0 (when backed by the Event Sourced CR), it is
- * *completely detached from storage*; so it will not auto-update after a property changed in
- * storage.
- */
-interface NodeInterface
+interface NodeInterface extends \Neos\ContentRepository\Domain\Projection\Content\NodeInterface
 {
-    /**
-     * Whether or not this node is a root of the graph, i.e. has no parent node
-     */
-    public function isRoot(): bool;
+    public function getSerializedProperties(): SerializedPropertyValues;
 
-    /**
-     * Whether or not this node is tethered to its parent, fka auto created child node
-     */
-    public function isTethered(): bool;
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier;
-
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier;
-
-    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint;
-
-    public function getNodeTypeName(): NodeTypeName;
-
-    public function getNodeType(): NodeType;
-
-    public function getNodeName(): ?NodeName;
-
-    public function getProperties(): SerializedPropertyValues;
-
-    /**
-     * Returns the specified property.
-     *
-     * @param string $propertyName Name of the property
-     * @return mixed value of the property
-     * @api
-     */
-    public function getProperty(string $propertyName);
-
-    public function hasProperty($propertyName): bool;
+    public function getDimensionSpacePoint(): DimensionSpacePoint;
 }

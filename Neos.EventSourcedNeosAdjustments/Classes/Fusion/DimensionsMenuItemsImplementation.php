@@ -67,13 +67,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected $contentGraph;
 
     /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
-
-    /**
-     * @var NodeBasedReadModelInterface
+     * @var NodeInterface
      */
     protected $currentNode;
 

@@ -4,6 +4,7 @@
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\SiteNodeUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
@@ -26,11 +27,13 @@ class EmulatedLegacySite
     protected $siteRepository;
 
     /**
-     * @var NodeBasedReadModelInterface
+     * @Flow\Inject
+     * @var SiteNodeUtility
      */
-    protected $contextNode;
+    protected $siteNodeUtility;
 
-    public function __construct(NodeBasedReadModelInterface $traversableNode)
+
+    public function __construct(NodeInterface $traversableNode)
     {
         $this->contextNode = $traversableNode;
     }
@@ -39,7 +42,7 @@ class EmulatedLegacySite
     {
         $this->legacyLogger->info('context.currentSite.siteResourcesPackageKey called', LogEnvironment::fromMethodName(__METHOD__));
 
-        $siteNode = SiteNodeUtility::findSiteNode($this->contextNode);
+        $siteNode = $this->siteNodeUtility->findSiteNode($this->contextNode);
 
         /* @var $site \Neos\Neos\Domain\Model\Site */
         $site = $this->siteRepository->findOneByNodeName($siteNode->getNodeName()->jsonSerialize());

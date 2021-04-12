@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\Domain\Property;
+namespace Neos\EventSourcedContentRepository\Infrastructure\Property;
 
 /*
  * This file is part of the Neos.ContentRepository package.

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Intermediary\Domain;
+namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -15,19 +15,17 @@ namespace Neos\ContentRepository\Intermediary\Domain;
 
 use Neos\ContentRepository\Intermediary\Domain\Exception\NodeImplementationClassNameIsInvalid;
 use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyCollectionImplementationClassNameIsInvalid;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Intermediary\Domain\NodeImplementationClassName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Scope("singleton")
  */
-final class ReadModelFactory
+final class NodeFactory
 {
     protected ContentGraphInterface $contentGraph;
 

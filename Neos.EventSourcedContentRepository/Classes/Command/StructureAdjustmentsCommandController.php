@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Intermediary\Command;
+namespace Neos\EventSourcedContentRepository\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +13,8 @@ namespace Neos\ContentRepository\Intermediary\Command;
  */
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\StructureAdjustment\Dto\StructureAdjustment;
-use Neos\ContentRepository\Intermediary\StructureAdjustment\StructureAdjustmentService;
+use Neos\EventSourcedContentRepository\StructureAdjustment\Dto\StructureAdjustment;
+use Neos\EventSourcedContentRepository\StructureAdjustment\StructureAdjustmentService;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
 

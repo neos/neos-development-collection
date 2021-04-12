@@ -16,7 +16,10 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping\NodePropertyConverterService;
@@ -44,6 +47,18 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      * @var UserLocaleService
      */
     protected $userLocaleService;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject
@@ -100,14 +115,14 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     protected $ignoredNodeTypeRole;
 
     /**
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param ControllerContext $controllerContext
      * @param bool $omitMostPropertiesForTreeState
      * @param string $nodeTypeFilterOverride
      * @return array
      * @deprecated See methods with specific names for different behaviors
      */
-    public function renderNode(NodeBasedReadModelInterface $node, ControllerContext $controllerContext = null, $omitMostPropertiesForTreeState = false, $nodeTypeFilterOverride = null)
+    public function renderNode(NodeInterface $node, ControllerContext $controllerContext = null, $omitMostPropertiesForTreeState = false, $nodeTypeFilterOverride = null)
     {
         return ($omitMostPropertiesForTreeState ?
             $this->renderNodeWithMinimalPropertiesAndChildrenInformation($node, $controllerContext, $nodeTypeFilterOverride) :
@@ -116,12 +131,12 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param ControllerContext|null $controllerContext
      * @param string $nodeTypeFilterOverride
      * @return array|null
      */
-    public function renderNodeWithMinimalPropertiesAndChildrenInformation(NodeBasedReadModelInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
+    public function renderNodeWithMinimalPropertiesAndChildrenInformation(NodeInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
     {
         //if (!$this->nodePolicyService->isNodeTreePrivilegeGranted($node)) {
         //    return null;
@@ -152,12 +167,12 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param ControllerContext|null $controllerContext
      * @param string $nodeTypeFilterOverride
      * @return array|null
      */
-    public function renderNodeWithPropertiesAndChildrenInformation(NodeBasedReadModelInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
+    public function renderNodeWithPropertiesAndChildrenInformation(NodeInterface $node, ControllerContext $controllerContext = null, string $nodeTypeFilterOverride = null)
     {
         //if (!$this->nodePolicyService->isNodeTreePrivilegeGranted($node)) {
         //    return null;
@@ -201,13 +216,14 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     /**
      * Get the basic information about a node.
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @return array
      */
-    protected function getBasicNodeInformation(NodeBasedReadModelInterface $node): array
+    protected function getBasicNodeInformation(NodeInterface $node): array
     {
+        $this->nodeAcc
         return [
-            'contextPath' => $node->getAddress()->serializeForUri(),
+            'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
             'name' => $node->getNodeName() ? $node->getNodeName()->jsonSerialize() : null,
             'identifier' => $node->getNodeAggregateIdentifier()->jsonSerialize(),
             'nodeType' => $node->getNodeType()->getName(),
@@ -388,17 +404,17 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param ControllerContext $controllerContext
      * @return string
      */
-    public function previewUri(NodeBasedReadModelInterface $node, ControllerContext $controllerContext)
+    public function previewUri(NodeInterface $node, ControllerContext $controllerContext)
     {
         $nodeAddress = $node->getAddress();
         return (string)NodeUriBuilder::fromRequest($controllerContext->getRequest())->previewUriFor($nodeAddress);
     }
 
-    public function redirectUri(NodeBasedReadModelInterface $node, ControllerContext $controllerContext): string
+    public function redirectUri(NodeInterface $node, ControllerContext $controllerContext): string
     {
         $nodeAddress = $node->getAddress();
         return $controllerContext->getUriBuilder()
