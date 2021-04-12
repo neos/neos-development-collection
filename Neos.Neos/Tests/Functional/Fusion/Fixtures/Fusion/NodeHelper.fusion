@@ -1,0 +1,9 @@
+nodeHelper.defaultLabel = ${Neos.Node.labelForNode(node).properties('title', 'text')}
+
+nodeHelper.propertyFallback = ${Neos.Node.labelForNode(node).properties('foo', 'text')}
+
+nodeHelper.withPrefixOverrideAndPostfix = ${Neos.Node.labelForNode(node).prefix('Hello').override(' world ').postfix(' how are you')}
+
+nodeHelper.nodeTypeFallback = ${Neos.Node.labelForNode(node).properties('foo')}
+
+nodeHelper.crop = ${Neos.Node.labelForNode(node).override('Some long text').crop(6, '-')}
