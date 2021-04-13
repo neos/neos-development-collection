@@ -9,6 +9,7 @@
       '*': false
   postprocessors:
     'CreationDialogPostprocessor':
+      position: 'after NodeTypePresetPostprocessor'
       postprocessor: 'Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor'
   options:
     nodeCreationHandlers:
