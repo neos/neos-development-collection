@@ -12,24 +12,31 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
 class RemoveNode extends AbstractFeedback
 {
-    protected NodeBasedReadModelInterface $node;
+    protected NodeInterface $node;
 
-    protected NodeBasedReadModelInterface $parentNode;
+    protected NodeInterface $parentNode;
 
-    public function __construct(NodeBasedReadModelInterface $node, NodeBasedReadModelInterface $parentNode)
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    public function __construct(NodeInterface $node, NodeInterface $parentNode)
     {
         $this->node = $node;
         $this->parentNode = $parentNode;
     }
 
-    public function getNode(): NodeBasedReadModelInterface
+    public function getNode(): NodeInterface
     {
         return $this->node;
     }
@@ -78,8 +85,8 @@ class RemoveNode extends AbstractFeedback
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'contextPath' => $this->node->getAddress()->serializeForUri(),
-            'parentContextPath' => $this->parentNode->getAddress()->serializeForUri()
+            'contextPath' => $this->nodeAddressFactory->createFromNode($this->node)->serializeForUri(),
+            'parentContextPath' => $this->nodeAddressFactory->createFromNode($this->parentNode)->serializeForUri()
         ];
     }
 }

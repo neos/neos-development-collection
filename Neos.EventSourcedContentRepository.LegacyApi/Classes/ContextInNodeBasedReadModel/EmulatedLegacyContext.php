@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -14,7 +15,7 @@ use Neos\Flow\Security\Exception;
 class EmulatedLegacyContext
 {
     /**
-     * @var NodeBasedReadModelInterface
+     * @var NodeInterface
      */
     protected $traversableNode;
 
@@ -36,7 +37,7 @@ class EmulatedLegacyContext
      */
     protected $privilegeManager;
 
-    public function __construct(NodeBasedReadModelInterface $traversableNode)
+    public function __construct(NodeInterface $traversableNode)
     {
         $this->traversableNode = $traversableNode;
     }
@@ -49,7 +50,7 @@ class EmulatedLegacyContext
     public function getInBackend(): bool
     {
         $this->legacyLogger->info('context.inBackend called', LogEnvironment::fromMethodName(__METHOD__));
-        $nodeAddress = $this->traversableNode->getAddress();
+        $nodeAddress = $this->getNodeAddressOfContextNode();
 
         return (!$nodeAddress->isInLiveWorkspace() && $this->hasAccessToBackend());
     }
@@ -63,7 +64,7 @@ class EmulatedLegacyContext
     public function getLive(): bool
     {
         $this->legacyLogger->info('context.live called', LogEnvironment::fromMethodName(__METHOD__));
-        $nodeAddress = $this->traversableNode->getAddress();
+        $nodeAddress = $this->getNodeAddressOfContextNode();
 
         return $nodeAddress->isInLiveWorkspace();
     }
@@ -73,7 +74,7 @@ class EmulatedLegacyContext
     {
         $this->legacyLogger->info('context.workspaceName called', LogEnvironment::fromMethodName(__METHOD__));
 
-        $workspaceName = $this->traversableNode->getAddress()->getWorkspaceName();
+        $workspaceName = $this->getNodeAddressOfContextNode()->getWorkspaceName();
         if ($workspaceName) {
             return $workspaceName->getName();
         }
@@ -84,7 +85,7 @@ class EmulatedLegacyContext
     {
         $this->legacyLogger->info('context.workspace called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return new EmulatedLegacyWorkspace($this->traversableNode->getAddress());
+        return new EmulatedLegacyWorkspace($this->getNodeAddressOfContextNode());
     }
 
     public function __call($methodName, $args)
@@ -98,6 +99,11 @@ class EmulatedLegacyContext
         $this->legacyLogger->info('context.currentSite called', LogEnvironment::fromMethodName(__METHOD__));
 
         return new EmulatedLegacySite($this->traversableNode);
+    }
+
+    private function getNodeAddressOfContextNode(): NodeAddress
+    {
+        return $this->nodeAddressFactory->createFromNode($this->traversableNode);
     }
 
     private function hasAccessToBackend(): bool

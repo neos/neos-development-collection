@@ -107,7 +107,7 @@ abstract class AbstractChange implements ChangeInterface
     /**
      * Inform the client that a node has been created, the client decides if and which tree should react to this change.
      */
-    protected function addNodeCreatedFeedback(NodeBasedReadModelInterface $subject = null): void
+    protected function addNodeCreatedFeedback(NodeInterface $subject = null): void
     {
         $node = $subject ?: $this->getSubject();
         $nodeCreated = new NodeCreated();

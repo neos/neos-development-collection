@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 
@@ -21,7 +21,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 class NodePrivilegeSubject implements PrivilegeSubjectInterface
 {
     /**
-     * @var NodeBasedReadModelInterface
+     * @var NodeInterface
      */
     protected $node;
 
@@ -31,17 +31,17 @@ class NodePrivilegeSubject implements PrivilegeSubjectInterface
     protected $joinPoint;
 
     /**
-     * @param NodeBasedReadModelInterface $node The node we will check privileges for
+     * @param NodeInterface $node The node we will check privileges for
      * @param JoinPointInterface $joinPoint If we intercept node operations, this joinpoint represents the method called on the node and holds a reference to the node we will check privileges for
      */
-    public function __construct(NodeBasedReadModelInterface $node, JoinPointInterface $joinPoint = null)
+    public function __construct(NodeInterface $node, JoinPointInterface $joinPoint = null)
     {
         $this->node = $node;
         $this->joinPoint = $joinPoint;
     }
 
     /**
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      */
     public function getNode()
     {

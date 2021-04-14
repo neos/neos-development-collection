@@ -13,8 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  */
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
@@ -33,11 +33,17 @@ class NodeUriImplementation extends AbstractFusionObject
     protected $nodeSiteResolvingService;
 
     /**
+     * @Flow\Inject
+     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
      * A node object or a string node path or NULL to resolve the current document node
      *
      * @return mixed
      */
-    public function getNode(): ?NodeBasedReadModelInterface
+    public function getNode(): ?NodeInterface
     {
         return $this->fusionValue('node');
     }
@@ -129,15 +135,15 @@ class NodeUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $node = $this->getNode();
-        if ($node instanceof NodeBasedReadModelInterface) {
-            $nodeAddress = $node->getAddress();
+        if ($node instanceof NodeInterface) {
+            $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         } elseif ($node === '~') {
             // @todo fix me
-            $nodeAddress = $node->geAddress();
+            $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
             // @todo fix me
-            $nodeAddress = $node->getAddress();
+            $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(NodeAggregateIdentifier::fromString(\mb_substr($node, 7)));
         } else {
             return '';

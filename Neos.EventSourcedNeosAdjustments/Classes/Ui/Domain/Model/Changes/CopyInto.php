@@ -13,8 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -37,7 +37,7 @@ class CopyInto extends AbstractStructuralChange
     protected $parentContextPath;
 
     /**
-     * @var NodeBasedReadModelInterface
+     * @var NodeInterface
      */
     protected $cachedParentNode;
 
@@ -50,7 +50,7 @@ class CopyInto extends AbstractStructuralChange
     }
 
     /**
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      */
     public function getParentNode()
     {

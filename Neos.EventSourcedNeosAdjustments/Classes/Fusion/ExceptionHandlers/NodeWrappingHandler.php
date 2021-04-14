@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\ExceptionHandlers;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\ContentElementWrapping\ContentElementWrappingService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -62,7 +62,7 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 
         $currentContext = $this->getRuntime()->getCurrentContext();
         if (isset($currentContext['node'])) {
-            /** @var NodeBasedReadModelInterface $node */
+            /** @var NodeInterface $node */
             $node = $currentContext['node'];
             $applicationContext = $this->environment->getContext();
             if ($applicationContext->isProduction() && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess') && $node->getContext()->getWorkspaceName() !== 'live') {

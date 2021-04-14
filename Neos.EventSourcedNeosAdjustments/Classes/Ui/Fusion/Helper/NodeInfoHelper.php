@@ -14,11 +14,12 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
@@ -199,11 +200,11 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     /**
      * Get the "uri" and "previewUri" for the given node
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param ControllerContext $controllerContext
      * @return array
      */
-    protected function getUriInformation(NodeBasedReadModelInterface $node, ControllerContext $controllerContext): array
+    protected function getUriInformation(NodeInterface $node, ControllerContext $controllerContext): array
     {
         $nodeInfo = [];
         if (!$node->getNodeType()->isOfType($this->documentNodeTypeRole)) {
@@ -221,24 +222,24 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      */
     protected function getBasicNodeInformation(NodeInterface $node): array
     {
-        $this->nodeAcc
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         return [
             'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
             'name' => $node->getNodeName() ? $node->getNodeName()->jsonSerialize() : null,
             'identifier' => $node->getNodeAggregateIdentifier()->jsonSerialize(),
             'nodeType' => $node->getNodeType()->getName(),
             'label' => $node->getLabel(),
-            'isAutoCreated' => self::isAutoCreated($node),
-            'depth' => $node->findNodePath()->getDepth(),
+            'isAutoCreated' => self::isAutoCreated($node, $nodeAccessor),
+            'depth' => $nodeAccessor->$node->findNodePath()->getDepth(),
             'children' => [],
-            'parent' => $node->findParentNode()->getAddress()->serializeForUri(),
+            'parent' => $this->nodeAddressFactory->createFromNode($nodeAccessor->findParentNode($node))->serializeForUri(),
             'matchesCurrentDimensions' => $node->getDimensionSpacePoint()->equals($node->getOriginDimensionSpacePoint())
         ];
     }
 
-    private static function isAutoCreated(NodeBasedReadModelInterface $node)
+    private static function isAutoCreated(NodeInterface $node, NodeAccessorInterface $nodeAccessor)
     {
-        $parent = $node->findParentNode();
+        $parent = $nodeAccessor->findParentNode($node);
         if ($parent) {
             if (array_key_exists((string)$node->getNodeName(), $parent->getNodeType()->getAutoCreatedChildNodes())) {
                 return true;
@@ -260,22 +261,24 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     /**
      * Get information for all children of the given parent node.
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param string $nodeTypeFilterString
      * @return array
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    protected function renderChildrenInformation(NodeBasedReadModelInterface $node, string $nodeTypeFilterString): array
+    protected function renderChildrenInformation(NodeInterface $node, string $nodeTypeFilterString): array
     {
-        $documentChildNodes = $node->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString($nodeTypeFilterString));
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+
+        $documentChildNodes = $nodeAccessor->findChildNodes($node, $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeFilterString));
         // child nodes for content tree, must not include those nodes filtered out by `baseNodeType`
-        $contentChildNodes = $node->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString($this->buildContentChildNodeFilterString()));
+        $contentChildNodes = $nodeAccessor->findChildNodes($node, $this->nodeTypeConstraintFactory->parseFilterString($this->buildContentChildNodeFilterString()));
         $childNodes = $documentChildNodes->merge($contentChildNodes);
 
         $infos = [];
         foreach ($childNodes as $childNode) {
             $infos[] = [
-                'contextPath' => $childNode->getAddress()->serializeForUri(),
+                'contextPath' => $this->nodeAddressFactory->createFromNode($childNode)->serializeForUri(),
                 'nodeType' => $childNode->getNodeType()->getName() // TODO: DUPLICATED; should NOT be needed!!!
             ];
         };
@@ -291,7 +294,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     public function renderNodes(array $nodes, ControllerContext $controllerContext, $omitMostPropertiesForTreeState = false): array
     {
         $methodName = $omitMostPropertiesForTreeState ? 'renderNodeWithMinimalPropertiesAndChildrenInformation' : 'renderNodeWithPropertiesAndChildrenInformation';
-        $mapper = function (NodeBasedReadModelInterface $node) use ($controllerContext, $methodName) {
+        $mapper = function (NodeInterface $node) use ($controllerContext, $methodName) {
             return $this->$methodName($node, $controllerContext);
         };
 
@@ -309,21 +312,25 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         $baseNodeTypeOverride = $this->documentNodeTypeRole;
         $renderedNodes = [];
 
-        /** @var NodeBasedReadModelInterface $node */
+        /** @var NodeInterface $node */
         foreach ($nodes as $node) {
-            if (array_key_exists($node->getPath(), $renderedNodes)) {
-                $renderedNodes[$node->getPath()]['matched'] = true;
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+
+            $nodePath = $nodeAccessor->findNodePath($node);
+            if (array_key_exists($nodePath, $renderedNodes)) {
+                $renderedNodes[(string)$nodePath]['matched'] = true;
             } elseif ($renderedNode = $this->renderNodeWithMinimalPropertiesAndChildrenInformation($node, $controllerContext, $baseNodeTypeOverride)) {
                 $renderedNode['matched'] = true;
-                $renderedNodes[$node->getPath()] = $renderedNode;
+                $renderedNodes[(string)$nodePath] = $renderedNode;
             } else {
                 continue;
             }
 
             /* @var $contentContext ContentContext */
             $contentContext = $node->getContext();
+            // TODO: $node->getContext() not supported anymore
             $siteNodePath = $contentContext->getCurrentSiteNode()->getPath();
-            $parentNode = $node->getParent();
+            $parentNode = $nodeAccessor->findParentNode($node);
             if ($parentNode === null) {
                 // There are a multitude of reasons why a node might not have a parent and we should ignore these gracefully.
                 continue;
@@ -331,15 +338,16 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
 
             // we additionally need to check that our parent nodes are underneath the site node; otherwise it might happen that
             // we try to send the "/sites" node to the UI (which we cannot do, because this does not have an URL)
-            $parentNodeIsUnderneathSiteNode = (strpos($parentNode->getPath(), $siteNodePath) === 0);
+            $parentNodePath = $nodeAccessor->findNodePath($parentNode);
+            $parentNodeIsUnderneathSiteNode = (strpos((string)$parentNodePath, $siteNodePath) === 0);
             while ($parentNode->getNodeType()->isOfType($baseNodeTypeOverride) && $parentNodeIsUnderneathSiteNode) {
-                if (array_key_exists($parentNode->getPath(), $renderedNodes)) {
-                    $renderedNodes[$parentNode->getPath()]['intermediate'] = true;
+                if (array_key_exists((string)$parentNodePath, $renderedNodes)) {
+                    $renderedNodes[(string)$parentNodePath]['intermediate'] = true;
                 } else {
                     $renderedParentNode = $this->renderNodeWithMinimalPropertiesAndChildrenInformation($parentNode, $controllerContext, $baseNodeTypeOverride);
                     if ($renderedParentNode) {
                         $renderedParentNode['intermediate'] = true;
-                        $renderedNodes[$parentNode->getPath()] = $renderedParentNode;
+                        $renderedNodes[(string)$parentNodePath] = $renderedParentNode;
                     }
                 }
                 $parentNode = $parentNode->getParent();
@@ -354,21 +362,21 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param NodeBasedReadModelInterface $documentNode
+     * @param NodeInterface $documentNode
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function renderDocumentNodeAndChildContent(NodeBasedReadModelInterface $documentNode, ControllerContext $controllerContext)
+    public function renderDocumentNodeAndChildContent(NodeInterface $documentNode, ControllerContext $controllerContext)
     {
         return $this->renderNodeAndChildContent($documentNode, $controllerContext);
     }
 
     /**
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param ControllerContext $controllerContext
      * @return array
      */
-    protected function renderNodeAndChildContent(NodeBasedReadModelInterface $node, ControllerContext $controllerContext)
+    protected function renderNodeAndChildContent(NodeInterface $node, ControllerContext $controllerContext)
     {
         $reducer = function ($nodes, $node) use ($controllerContext) {
             $nodes = array_merge($nodes, $this->renderNodeAndChildContent($node, $controllerContext));
@@ -376,20 +384,20 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             return $nodes;
         };
 
-        return array_reduce($node->getChildNodes($this->buildContentChildNodeFilterString()), $reducer, [$node->getContextPath() => $this->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)]);
+        return array_reduce($node->getChildNodes($this->buildContentChildNodeFilterString()), $reducer, [$this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)]);
     }
 
     /**
-     * @param NodeBasedReadModelInterface $site
-     * @param NodeBasedReadModelInterface $documentNode
+     * @param NodeInterface $site
+     * @param NodeInterface $documentNode
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function defaultNodesForBackend(NodeBasedReadModelInterface $site, NodeBasedReadModelInterface $documentNode, ControllerContext $controllerContext): array
+    public function defaultNodesForBackend(NodeInterface $site, NodeInterface $documentNode, ControllerContext $controllerContext): array
     {
         return [
-            ($site->getAddress()->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($site, $controllerContext),
-            ($documentNode->getAddress()->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($documentNode, $controllerContext)
+            ($this->nodeAddressFactory->createFromNode($site)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($site, $controllerContext),
+            ($this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($documentNode, $controllerContext)
         ];
     }
 
@@ -410,13 +418,13 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      */
     public function previewUri(NodeInterface $node, ControllerContext $controllerContext)
     {
-        $nodeAddress = $node->getAddress();
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         return (string)NodeUriBuilder::fromRequest($controllerContext->getRequest())->previewUriFor($nodeAddress);
     }
 
     public function redirectUri(NodeInterface $node, ControllerContext $controllerContext): string
     {
-        $nodeAddress = $node->getAddress();
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         return $controllerContext->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)

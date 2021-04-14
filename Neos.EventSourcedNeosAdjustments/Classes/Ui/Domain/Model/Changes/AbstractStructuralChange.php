@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -54,7 +54,7 @@ abstract class AbstractStructuralChange extends AbstractChange
     protected $contentCacheFlusher;
 
     /**
-     * @var NodeBasedReadModelInterface
+     * @var NodeInterface
      */
     protected $cachedSiblingNode = null;
 
@@ -112,7 +112,7 @@ abstract class AbstractStructuralChange extends AbstractChange
     /**
      * Get the sibling node
      *
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      */
     public function getSiblingNode()
     {
@@ -132,10 +132,10 @@ abstract class AbstractStructuralChange extends AbstractChange
     /**
      * Perform finish tasks - needs to be called from inheriting class on `apply`
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @return void
      */
-    protected function finish(NodeBasedReadModelInterface $node)
+    protected function finish(NodeInterface $node)
     {
         $updateNodeInfo = new UpdateNodeInfo();
         $updateNodeInfo->setNode($node);

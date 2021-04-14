@@ -85,13 +85,13 @@ final class NodeFactory
         return $node ? $this->createReadModel($node, $subgraph) : null;
     }
 
-    public function createReadModels(array $nodes, ContentSubgraphInterface $subgraph): NodeBasedReadModels
+    public function createReadModels(array $nodes, ContentSubgraphInterface $subgraph): NodeList
     {
         $readModels = [];
         foreach ($nodes as $node) {
             $readModels = $this->createReadModel($node, $subgraph);
         }
 
-        return NodeBasedReadModels::fromArray($readModels);
+        return NodeList::fromArray($readModels);
     }
 }

@@ -16,14 +16,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The collection value object for NodeBasedReadModel objects
+ * The collection value object for NodeInterface objects
  *
  * @Flow\Proxy(false)
  */
-final class NodeBasedReadModels implements \IteratorAggregate, \Countable
+final class NodeList implements \IteratorAggregate, \Countable
 {
     /**
-     * @var NodeBasedReadModelInterface[]
+     * @var NodeInterface[]
      */
     private array $nodes;
 
@@ -35,8 +35,8 @@ final class NodeBasedReadModels implements \IteratorAggregate, \Countable
     public static function fromArray(array $nodes): self
     {
         foreach ($nodes as $node) {
-            if (!$node instanceof NodeBasedReadModelInterface) {
-                throw new \InvalidArgumentException(sprintf('NodeBasedReadModels only support instances of %s, given: %s', NodeBasedReadModelInterface::class, is_object($node) ? get_class($node): gettype($node)), 1542893076);
+            if (!$node instanceof NodeInterface) {
+                throw new \InvalidArgumentException(sprintf('Nodes only support instances of %s, given: %s', NodeInterface::class, is_object($node) ? get_class($node): gettype($node)), 1542893076);
             }
         }
 
@@ -58,12 +58,12 @@ final class NodeBasedReadModels implements \IteratorAggregate, \Countable
         return count($this->nodes);
     }
 
-    public function getFirst(): ?NodeBasedReadModelInterface
+    public function getFirst(): ?NodeInterface
     {
         return reset($this->nodes) ?? null;
     }
 
-    private function getNodeIndex(NodeBasedReadModelInterface $subject): int
+    private function getNodeIndex(NodeInterface $subject): int
     {
         foreach ($this->nodes as $index => $node) {
             if ($node->equals($subject)) {
@@ -76,10 +76,10 @@ final class NodeBasedReadModels implements \IteratorAggregate, \Countable
     /**
      * Returns the node before the given $referenceNode in this set - or throws an exception if $referenceNode does not exist or is the first node in the set
      *
-     * @param NodeBasedReadModelInterface $referenceNode
-     * @return NodeBasedReadModelInterface
+     * @param NodeInterface $referenceNode
+     * @return NodeInterface
      */
-    public function previous(NodeBasedReadModelInterface $referenceNode): NodeBasedReadModelInterface
+    public function previous(NodeInterface $referenceNode): NodeInterface
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
         if ($referenceNodeIndex === 0) {
@@ -91,7 +91,7 @@ final class NodeBasedReadModels implements \IteratorAggregate, \Countable
     /**
      * Returns all nodes before the given $referenceNode in this set
      */
-    public function previousAll(NodeBasedReadModelInterface $referenceNode): self
+    public function previousAll(NodeInterface $referenceNode): self
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
@@ -101,7 +101,7 @@ final class NodeBasedReadModels implements \IteratorAggregate, \Countable
     /**
      * Returns the node after the given $referenceNode in this set - or throws an exception if $referenceNode does not exist or is the last node in the set
      */
-    public function next(NodeBasedReadModelInterface $referenceNode): NodeBasedReadModelInterface
+    public function next(NodeInterface $referenceNode): NodeInterface
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
         if ($referenceNodeIndex === $this->count() - 1) {
@@ -114,7 +114,7 @@ final class NodeBasedReadModels implements \IteratorAggregate, \Countable
     /**
      * Returns all nodes after the given $referenceNode in this set
      */
-    public function nextAll(NodeBasedReadModelInterface $referenceNode): self
+    public function nextAll(NodeInterface $referenceNode): self
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
@@ -124,14 +124,14 @@ final class NodeBasedReadModels implements \IteratorAggregate, \Countable
     /**
      * Returns all nodes after the given $referenceNode in this set
      */
-    public function until(NodeBasedReadModelInterface $referenceNode): self
+    public function until(NodeInterface $referenceNode): self
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
         return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
     }
 
     /**
-     * @return NodeBasedReadModelInterface[]|\ArrayIterator<NodeBasedReadModelInterface>
+     * @return NodeInterface[]|\ArrayIterator<NodeInterface>
      */
     public function getIterator(): \ArrayIterator
     {
@@ -139,7 +139,7 @@ final class NodeBasedReadModels implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return NodeBasedReadModelInterface[]|array<NodeBasedReadModelInterface>
+     * @return NodeInterface[]|array<NodeInterface>
      */
     public function toArray(): array
     {

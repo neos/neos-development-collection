@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\FusionCaching;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Cache\Frontend\VariableFrontend;
@@ -35,7 +35,7 @@ class FusionCachingAspect
      */
     public function cacheGetMergedFusionObjectTree(JoinPointInterface $joinPoint)
     {
-        /* @var NodeBasedReadModelInterface $currentSiteNode */
+        /* @var NodeInterface $currentSiteNode */
         $currentSiteNode = $joinPoint->getMethodArgument('startNode');
         $cacheIdentifier = $currentSiteNode->getNodeAggregateIdentifier()->jsonSerialize();
 

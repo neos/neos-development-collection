@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\ContentElementWrapping\ContentElementEditableService;
 use Neos\Flow\Annotations as Flow;

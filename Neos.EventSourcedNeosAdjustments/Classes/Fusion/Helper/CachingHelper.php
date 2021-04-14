@@ -14,8 +14,8 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Neos\Exception;
 use Neos\ContentRepository\Domain\Model\NodeType;
 
@@ -38,7 +38,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodes = [];
         }
 
-        if (!is_array($nodes) && ($nodes instanceof NodeBasedReadModelInterface)) {
+        if (!is_array($nodes) && ($nodes instanceof NodeInterface)) {
             $nodes = [$nodes];
         }
 
@@ -48,7 +48,7 @@ class CachingHelper implements ProtectedContextAwareInterface
 
         $prefixedNodeIdentifiers = [];
         foreach ($nodes as $node) {
-            if ($node instanceof NodeBasedReadModelInterface) {
+            if ($node instanceof NodeInterface) {
                 $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderContentStreamIdentifierTag($node->getContentStreamIdentifier()) . '_' . $node->getNodeAggregateIdentifier();
             } else {
                 throw new Exception(sprintf('One of the elements in array passed to this helper was not a Node, but of type: "%s".', gettype($node)), 1437169991);
@@ -76,13 +76,13 @@ class CachingHelper implements ProtectedContextAwareInterface
      * entry tag will respect the workspace hash.
      *
      * @param string $identifier
-     * @param ?NodeBasedReadModelInterface $contextNode
+     * @param ?NodeInterface $contextNode
      * @return string
      */
-    public function nodeTagForIdentifier(string $identifier, NodeBasedReadModelInterface $contextNode = null): string
+    public function nodeTagForIdentifier(string $identifier, NodeInterface $contextNode = null): string
     {
         $contentStreamTag = '';
-        if ($contextNode instanceof NodeBasedReadModelInterface) {
+        if ($contextNode instanceof NodeInterface) {
             $contentStreamTag = $this->renderContentStreamIdentifierTag($contextNode->getContentStreamIdentifier()) .'_';
         }
 
@@ -96,10 +96,10 @@ class CachingHelper implements ProtectedContextAwareInterface
      * (including inheritance) is updated.
      *
      * @param string|NodeType|string[]|NodeType[] $nodeType
-     * @param NodeBasedReadModelInterface|null $contextNode
+     * @param NodeInterface|null $contextNode
      * @return string|string[]
      */
-    public function nodeTypeTag($nodeType, NodeBasedReadModelInterface $contextNode = null)
+    public function nodeTypeTag($nodeType, NodeInterface $contextNode = null)
     {
         if (!is_array($nodeType) && !($nodeType instanceof \Traversable)) {
             return $this->getNodeTypeTagFor($nodeType, $contextNode);
@@ -115,15 +115,15 @@ class CachingHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string|NodeType $nodeType
-     * @param ?NodeBasedReadModelInterface $contextNode
+     * @param ?NodeInterface $contextNode
      * @return string
      */
-    protected function getNodeTypeTagFor($nodeType, NodeBasedReadModelInterface $contextNode = null)
+    protected function getNodeTypeTagFor($nodeType, NodeInterface $contextNode = null)
     {
         $nodeTypeName = '';
         $contentStreamTag = '';
 
-        if ($contextNode instanceof NodeBasedReadModelInterface) {
+        if ($contextNode instanceof NodeInterface) {
             $contentStreamTag = $this->renderContentStreamIdentifierTag($contextNode->getContentStreamIdentifier()) .'_';
         }
 

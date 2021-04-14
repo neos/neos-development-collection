@@ -92,7 +92,7 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string|Uri $uri
-     * @param NodeBasedReadModelInterface $contextNode
+     * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
      * @return string
      */

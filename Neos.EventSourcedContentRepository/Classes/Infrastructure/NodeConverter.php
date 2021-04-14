@@ -12,7 +12,8 @@ namespace Neos\EventSourcedContentRepository\Infrastructure;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
@@ -24,12 +25,18 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
  * @Flow\Scope("singleton")
  * @deprecated
  */
-class NodeBasedReadModelConverter extends AbstractTypeConverter
+class NodeConverter extends AbstractTypeConverter
 {
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
     /**
      * @var array
      */
-    protected $sourceTypes = [NodeBasedReadModelInterface::class];
+    protected $sourceTypes = [NodeInterface::class];
 
     /**
      * @var string
@@ -43,6 +50,6 @@ class NodeBasedReadModelConverter extends AbstractTypeConverter
 
     public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        return $source->getAddress()->serializeForUri();
+        $this->nodeAddressFactory->createFromNode($source)->serializeForUri();
     }
 }
