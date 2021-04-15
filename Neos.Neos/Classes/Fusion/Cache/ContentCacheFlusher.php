@@ -25,6 +25,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Fusion\Core\Cache\ContentCache;
+use Neos\Neos\Domain\Strategy\AssetUsageInNodePropertiesStrategy;
 use Neos\Neos\Fusion\Helper\CachingHelper;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\ContentContextFactory;
@@ -76,9 +77,9 @@ class ContentCacheFlusher
 
     /**
      * @Flow\Inject
-     * @var AssetService
+     * @var AssetUsageInNodePropertiesStrategy
      */
-    protected $assetService;
+    protected $assetUsageInNodePropertiesStrategy;
 
     /**
      * @Flow\Inject
@@ -272,11 +273,7 @@ class ContentCacheFlusher
 
         $cachingHelper = $this->getCachingHelper();
 
-        foreach ($this->assetService->getUsageReferences($asset) as $reference) {
-            if (!$reference instanceof AssetUsageInNodeProperties) {
-                continue;
-            }
-
+        foreach ($this->assetUsageInNodePropertiesStrategy->getUsageReferences($asset) as $reference) {
             $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
             $this->securityContext->withoutAuthorizationChecks(function () use ($reference, &$node) {
                 $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());

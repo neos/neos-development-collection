@@ -6,11 +6,11 @@ privilegeTargets:
 
     'Neos.Media.Browser:ManageAssets':
       label: Allowed to manage assets
-      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(index|new|show|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes|variants)Action()) || method(Neos\Media\Browser\Controller\ImageVariantController->(update)Action())'
+      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(index|new|show|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|usages|variants)Action()) || method(Neos\Media\Browser\Controller\ImageVariantController->(update)Action())'
 
     'Neos.Media.Browser:AssetUsage':
       label: Allowed to calculate asset usages
-      matcher: 'method(Neos\Media\Browser\Controller\UsageController->relatedNodesAction())'
+      matcher: 'method(Neos\Media\Browser\Controller\UsageController->indexAction())'
 
     'Neos.Media.Browser:ManageTags':
       label: Allowed to mange tags

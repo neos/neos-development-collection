@@ -335,19 +335,19 @@
 			<trans-unit id="creating" xml:space="preserve">
 				<source>Creating</source>
 			</trans-unit>
-			<trans-unit id="deleteRelatedNodes" xml:space="preserve">
-				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<trans-unit id="assetInUseWarning" xml:space="preserve">
+				<source>Asset may not be deleted, because it is still in use</source>
 			</trans-unit>
-			<group id="relatedNodes" restype="x-gettext-plurals">
-				<trans-unit id="relatedNodes[0]">
-					<source>{0} usages</source>
+			<group id="usages" restype="x-gettext-plurals">
+				<trans-unit id="usages[0]">
+					<source>{0} usage</source>
 				</trans-unit>
-				<trans-unit id="relatedNodes[1]">
+				<trans-unit id="usages[1]">
 					<source>{0} usages</source>
 				</trans-unit>
 			</group>
-			<trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
-				<source>References to "{asset}"</source>
+			<trans-unit id="usages.label" xml:space="preserve">
+				<source>Usages of "{asset}"</source>
 			</trans-unit>
 			<trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
@@ -364,9 +364,14 @@
 			<trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
 				<source>Choose a new file</source>
 			</trans-unit>
-			<trans-unit id="replace.usageCount" xml:space="preserve">
-				<source>Currently the asset is used {usageCount} times.</source>
-			</trans-unit>
+			<group id="replace.usageCount" restype="x-gettext-plurals">
+				<trans-unit id="replace.usageCount[0]">
+					<source>Currently the asset is used {usageCount} time.</source>
+				</trans-unit>
+				<trans-unit id="replace.usageCount[1]">
+					<source>Currently the asset is used {usageCount} times.</source>
+				</trans-unit>
+			</group>
 			<trans-unit id="replace.allUsages" xml:space="preserve">
 				<source>Show all usages</source>
 			</trans-unit>

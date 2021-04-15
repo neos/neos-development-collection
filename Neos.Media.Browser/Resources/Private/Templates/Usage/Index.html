@@ -1,0 +1,59 @@
+{namespace m=Neos\Media\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="EditImage"/>
+
+<f:section name="Title">Related nodes</f:section>
+
+<f:section name="Content">
+    <div class="neos-media-options">
+        <legend>{neos:backend.translate(id: 'usages.label', package: 'Neos.Media.Browser', arguments: {asset: asset.label})}
+            ({neos:backend.translate(id: 'usages', quantity: '{asset.usageCount}', arguments: {0:asset.usageCount}, package: 'Neos.Media.Browser')})
+        </legend>
+    </div>
+
+    <table class="neos-table neos-no-hover">
+        <thead>
+        <tr>
+            <th>Label</th>
+            <th class="neos-aRight">Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <f:for each="{usageStrategiesAndReferences}" as="usageStrategyAndReferences" key="index">
+            <tr class="neos-folder">
+                <td>{neos:backend.translate(id: 'usages')}</td>
+                <td class="neos-aRight"><i class="fold-toggle fas fa-chevron-up icon-white" data-toggle=".fold-{index}"></i></td>
+            </tr>
+            <f:for each="{usageStrategyAndReferences.usageReferences}" as="usageReference">
+                <tr class="fold-{index}">
+                    <td>{usageReference.label}</td>
+                    <td class="neos-aRight">
+                        <f:if condition="{usageReference.url}">
+                            <a class="neos-button neos-button-primary" href="{usageReference.url}">
+                                <i class="fas fa-eye icon-white"></i>
+                            </a>
+                        </f:if>
+                    </td>
+                </tr>
+            </f:for>
+        </f:for>
+        </tbody>
+    </table>
+
+    <div class="neos-footer">
+        <!-- TODO: Find a nicer way to send the referer for a get request -->
+        <a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'back', package: 'Neos.Neos')}</a>
+    </div>
+
+</f:section>
+
+<f:section name="Scripts">
+    <script>
+        (function ($) {
+            $('.fold-toggle').click(function () {
+                $(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
+                $($(this).data('toggle')).toggle();
+            });
+        })(jQuery);
+    </script>
+</f:section>

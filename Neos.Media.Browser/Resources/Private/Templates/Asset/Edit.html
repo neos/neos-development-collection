@@ -111,8 +111,8 @@
                                         </tbody>
                                     </table>
                                     <f:if condition="{assetProxy.asset.inUse}">
-                                        <f:link.action action="relatedNodes" arguments="{asset:assetProxy.asset}" addQueryString="true" class="neos-button">
-                                            {neos:backend.translate(id: 'relatedNodes', quantity: '{assetProxy.asset.usageCount}', arguments: {0: assetProxy.asset.usageCount}, package: 'Neos.Media.Browser')}
+                                        <f:link.action controller="Usage" action="index" arguments="{asset:assetProxy.asset}" addQueryString="true" class="neos-button">
+                                            {neos:backend.translate(id: 'usages', quantity: '{assetProxy.asset.usageCount}', arguments: {0: assetProxy.asset.usageCount}, package: 'Neos.Media.Browser')}
                                         </f:link.action>
                                     </f:if>
                                 </fieldset>
@@ -131,7 +131,7 @@
                                 </f:security.ifAccess>
                                 <f:if condition="{assetProxy.asset.inUse}">
                                     <f:then>
-                                        <a title="{neos:backend.translate(id: 'deleteRelatedNodes', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip" data-container="body" class="neos-button neos-button-danger neos-disabled">{neos:backend.translate(id: 'delete', package: 'Neos.Neos')}</a>
+                                        <a title="{neos:backend.translate(id: 'assetInUseWarning', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip" data-container="body" class="neos-button neos-button-danger neos-disabled">{neos:backend.translate(id: 'delete', package: 'Neos.Neos')}</a>
                                     </f:then>
                                     <f:else>
                                         <a data-toggle="modal" href="#asset-{assetProxy.asset -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'delete', package: 'Neos.Neos')}</a>

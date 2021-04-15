@@ -616,9 +616,8 @@ class AssetController extends ActionController
      */
     public function deleteAction(Asset $asset): void
     {
-        $usageReferences = $this->assetService->getUsageReferences($asset);
-        if (count($usageReferences) > 0) {
-            $this->addFlashMessage('deleteRelatedNodes', '', Message::SEVERITY_WARNING, [], 1412422767);
+        if ($this->assetService->isInUse($asset)) {
+            $this->addFlashMessage('assetInUseWarning', '', Message::SEVERITY_WARNING, [], 1412422767);
             $this->redirectToIndex();
         }
 
@@ -668,15 +667,15 @@ class AssetController extends ActionController
     }
 
     /**
-     * Get Related Nodes for an asset (proxy action)
+     * Get Usages for an asset (proxy action)
      *
      * @param AssetInterface $asset
      * @return void
      * @throws ForwardException
      */
-    public function relatedNodesAction(AssetInterface $asset): void
+    public function usagesAction(AssetInterface $asset): void
     {
-        $this->forwardWithConstraints('relatedNodes', 'Usage', ['asset' => $asset]);
+        $this->forwardWithConstraints('index', 'Usage', ['asset' => $asset]);
     }
 
     /**

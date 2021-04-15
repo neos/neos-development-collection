@@ -13,32 +13,38 @@ namespace Neos\Media\Domain\Model\Dto;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * A DTO for storing information related to a usage of an asset.
  */
-class UsageReference
+final class UsageReference
 {
 
     /**
-     * @var AssetInterface
+     * @var string
      */
-    protected $asset;
+    private $label;
 
     /**
-     * @param AssetInterface $asset
+     * @var UriInterface|null
      */
-    public function __construct(AssetInterface $asset)
+    private $url;
+
+    public function __construct(string $label, ?UriInterface $url)
     {
-        $this->asset = $asset;
+        $this->label = $label;
+        $this->url = $url;
     }
 
-    /**
-     * @return AssetInterface
-     */
-    public function getAsset()
+    public function getLabel(): string
     {
-        return $this->asset;
+        return $this->label;
     }
+
+    public function getUrl(): ?UriInterface
+    {
+        return $this->url;
+    }
+
 }
