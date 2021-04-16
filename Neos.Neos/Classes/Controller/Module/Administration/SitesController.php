@@ -13,6 +13,7 @@ namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
+use Neos\Flow\I18n\Translator;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Package\PackageInterface;
@@ -114,6 +115,12 @@ class SitesController extends AbstractModuleController
     protected $session;
 
     /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
      * @var ThrowableStorageInterface
      */
     private $throwableStorage;
@@ -165,7 +172,11 @@ class SitesController extends AbstractModuleController
         try {
             $sitePackage = $this->packageManager->getPackage($site->getSiteResourcesPackageKey());
         } catch (\Exception $e) {
-            $this->addFlashMessage('The site package with key "%s" was not found.', 'Site package not found', Message::SEVERITY_ERROR, [htmlspecialchars($site->getSiteResourcesPackageKey())]);
+            $this->addFlashMessage(
+                $this->translator->translateById('sites.sitePackageNotFound.body', [htmlspecialchars($site->getSiteResourcesPackageKey())], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById('sites.sitePackageNotFound.title', [], null, null, 'Modules', 'Neos.Neos'),
+                Message::SEVERITY_ERROR
+            );
         }
 
         $this->view->assignMultiple([
@@ -203,7 +214,13 @@ class SitesController extends AbstractModuleController
             $this->nodeDataRepository->persistEntities();
         }
         $this->siteRepository->update($site);
-        $this->addFlashMessage('The site "%s" has been updated.', 'Update', null, [htmlspecialchars($site->getName())], 1412371798);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.update.body', [htmlspecialchars($site->getName())], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('sites.update.title', [], null, null, 'Modules', 'Neos.Neos'),
+            null,
+            [],
+            1412371798
+        );
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -255,12 +272,24 @@ class SitesController extends AbstractModuleController
     public function createSitePackageAction(string $packageKey, string $generatorClass, string $siteName) : void
     {
         if ($this->packageManager->isPackageAvailable('Neos.SiteKickstarter') === false) {
-            $this->addFlashMessage('The package "%s" is required to create new site packages.', 'Missing Package', Message::SEVERITY_ERROR, ['Neos.SiteKickstarter'], 1475736232);
+            $this->addFlashMessage(
+                $this->translator->translateById('sites.missingPackage.body', ['Neos.SiteKickstarter'], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById('sites.missingPackage.title', [], null, null, 'Modules', 'Neos.Neos'),
+                Message::SEVERITY_ERROR,
+                [],
+                1475736232
+            );
             $this->redirect('index');
         }
 
         if ($this->packageManager->isPackageAvailable($packageKey)) {
-            $this->addFlashMessage('The package key "%s" already exists.', 'Invalid package key', Message::SEVERITY_ERROR, [htmlspecialchars($packageKey)], 1412372021);
+            $this->addFlashMessage(
+                $this->translator->translateById('sites.invalidPackageKey.body', [htmlspecialchars($packageKey)], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById('sites.invalidPackageKey.title', [], null, null, 'Modules', 'Neos.Neos'),
+                Message::SEVERITY_ERROR,
+                [],
+                1412372021
+            );
             $this->redirect('index');
         }
         // this should never happen, but if somebody posts unexpected data to the form, it should stop here and return some readable error message
@@ -272,7 +301,11 @@ class SitesController extends AbstractModuleController
         $generatorService = $this->objectManager->get($generatorClass);
         $generatorService->generateSitePackage($packageKey, $siteName);
 
-        $this->controllerContext->getFlashMessageContainer()->addMessage(new Message(sprintf('Site Packages "%s" was created.', htmlspecialchars($packageKey))));
+        $this->controllerContext->getFlashMessageContainer()->addMessage(new Message(sprintf(
+            $this->translator->translateById('sites.sitePackagesWasCreated.body', [htmlspecialchars($packageKey)], null, null, 'Modules', 'Neos.Neos'),
+            '',
+            null
+        )));
         $this->forward('importSite', null, null, ['packageKey' => $packageKey]);
     }
 
@@ -287,11 +320,23 @@ class SitesController extends AbstractModuleController
     {
         try {
             $this->siteImportService->importFromPackage($packageKey);
-            $this->addFlashMessage('The site has been imported.', '', null, [], 1412372266);
+            $this->addFlashMessage(
+                $this->translator->translateById('sites.theSiteHasBeenImported.body', [], null, null, 'Modules', 'Neos.Neos'),
+                '',
+                null,
+                [],
+                1412372266
+            );
         } catch (\Exception $exception) {
             $logMessage = $this->throwableStorage->logThrowable($exception);
             $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
-            $this->addFlashMessage('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', 'Import error', Message::SEVERITY_ERROR, [htmlspecialchars($packageKey), htmlspecialchars($exception->getMessage())], 1412372375);
+            $this->addFlashMessage(
+                $this->translator->translateById('sites.importError.body', [htmlspecialchars($packageKey), htmlspecialchars($exception->getMessage())], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById('sites.importError.title', [], null, null, 'Modules', 'Neos.Neos'),
+                Message::SEVERITY_ERROR,
+                [],
+                1412372375
+            );
         }
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
@@ -310,19 +355,37 @@ class SitesController extends AbstractModuleController
         $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $siteName);
 
         if ($this->siteRepository->findOneByNodeName($nodeName)) {
-            $this->addFlashMessage('Error: A site with siteNodeName "%s" already exists', 'Site creation error', Message::SEVERITY_ERROR, [$nodeName], 1412372375);
+            $this->addFlashMessage(
+                $this->translator->translateById('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$nodeName], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.title', [], null, null, 'Modules', 'Neos.Neos'),
+                Message::SEVERITY_ERROR,
+                [],
+                1412372375
+            );
             $this->redirect('createSiteNode');
         }
 
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
 
         if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
-            $this->addFlashMessage('Error: The given node type "%s" was not found', 'Site creation error', Message::SEVERITY_ERROR, [$nodeType], 1412372375);
+            $this->addFlashMessage(
+                $this->translator->translateById('sites.siteCreationError.givenNodeTypeNotFound.body', [$nodeType], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById('sites.siteCreationError.givenNodeTypeNotFound.title', [], null, null, 'Modules', 'Neos.Neos'),
+                Message::SEVERITY_ERROR,
+                [],
+                1412372375
+            );
             $this->redirect('createSiteNode');
         }
 
         if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
-            $this->addFlashMessage('Error: The given node type "%s" is not based on the superType "%s"', 'Site creation error', Message::SEVERITY_ERROR, [$nodeType, 'Neos.Neos:Document'], 1412372375);
+            $this->addFlashMessage(
+                $this->translator->translateById('sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body', [$nodeType, 'Neos.Neos:Document'], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById('sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title', [], null, null, 'Modules', 'Neos.Neos'),
+                Message::SEVERITY_ERROR,
+                [],
+                1412372375
+            );
             $this->redirect('createSiteNode');
         }
 
@@ -344,7 +407,13 @@ class SitesController extends AbstractModuleController
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
-        $this->addFlashMessage('Successfully created site "%s" with siteNode "%s", type "%s" and packageKey "%s"', '', null, [$siteName, $nodeName, $nodeType, $packageKey], 1412372266);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.successfullyCreatedSite.body', [$siteName, $nodeName, $nodeType, $packageKey], null, null, 'Modules', 'Neos.Neos'),
+            '',
+            null,
+            [],
+            1412372266
+        );
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -358,7 +427,13 @@ class SitesController extends AbstractModuleController
     public function deleteSiteAction(Site $site)
     {
         $this->siteService->pruneSite($site);
-        $this->addFlashMessage('The site "%s" has been deleted.', 'Site deleted', Message::SEVERITY_OK, [htmlspecialchars($site->getName())], 1412372689);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.siteDeleted.body', [htmlspecialchars($site->getName())], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('sites.siteDeleted.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK,
+            [],
+            1412372689
+        );
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -372,7 +447,13 @@ class SitesController extends AbstractModuleController
     {
         $site->setState($site::STATE_ONLINE);
         $this->siteRepository->update($site);
-        $this->addFlashMessage('The site "%s" has been activated.', 'Site activated', Message::SEVERITY_OK, [htmlspecialchars($site->getName())], 1412372881);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.siteActivated.body', [htmlspecialchars($site->getName())], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('sites.siteActivated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK,
+            [],
+            1412372881
+        );
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -386,7 +467,13 @@ class SitesController extends AbstractModuleController
     {
         $site->setState($site::STATE_OFFLINE);
         $this->siteRepository->update($site);
-        $this->addFlashMessage('The site "%s" has been deactivated.', 'Site deactivated', Message::SEVERITY_OK, [htmlspecialchars($site->getName())], 1412372975);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.siteDeactivated.body', [htmlspecialchars($site->getName())], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('sites.siteDeactivated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK,
+            [],
+            1412372975
+        );
         $this->unsetLastVisitedNodeAndRedirect('index');
     }
 
@@ -412,7 +499,13 @@ class SitesController extends AbstractModuleController
     public function updateDomainAction(Domain $domain)
     {
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been updated.', 'Domain updated', Message::SEVERITY_OK, [htmlspecialchars($domain)], 1412373069);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.domainUpdated.body', [htmlspecialchars($domain)], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('sites.domainUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK,
+            [],
+            1412373069
+        );
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
     }
 
@@ -443,7 +536,13 @@ class SitesController extends AbstractModuleController
     public function createDomainAction(Domain $domain)
     {
         $this->domainRepository->add($domain);
-        $this->addFlashMessage('The domain "%s" has been created.', 'Domain created', Message::SEVERITY_OK, [htmlspecialchars($domain)], 1412373192);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.domainCreated.body', [htmlspecialchars($domain)], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('sites.domainCreated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK,
+            [],
+            1412373192
+        );
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
     }
 
@@ -462,7 +561,13 @@ class SitesController extends AbstractModuleController
             $this->siteRepository->update($site);
         }
         $this->domainRepository->remove($domain);
-        $this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, [htmlspecialchars($domain)], 1412373310);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.domainDeleted.body', [htmlspecialchars($domain)], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('sites.domainDeleted.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK,
+            [],
+            1412373310
+        );
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $site]);
     }
 
@@ -477,7 +582,13 @@ class SitesController extends AbstractModuleController
     {
         $domain->setActive(true);
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been activated.', 'Domain activated', Message::SEVERITY_OK, [htmlspecialchars($domain)], 1412373539);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.domainActivated.body', [htmlspecialchars($domain)], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('sites.domainActivated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK,
+            [],
+            1412373539
+        );
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
     }
 
@@ -492,7 +603,13 @@ class SitesController extends AbstractModuleController
     {
         $domain->setActive(false);
         $this->domainRepository->update($domain);
-        $this->addFlashMessage('The domain "%s" has been deactivated.', 'Domain deactivated', Message::SEVERITY_OK, [htmlspecialchars($domain)], 1412373425);
+        $this->addFlashMessage(
+            $this->translator->translateById('sites.domainDeactivated.body', [htmlspecialchars($domain)], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('sites.domainDeactivated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK,
+            [],
+            1412373425
+        );
         $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
     }
 
