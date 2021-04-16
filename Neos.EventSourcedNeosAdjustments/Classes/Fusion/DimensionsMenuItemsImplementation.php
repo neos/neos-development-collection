@@ -103,7 +103,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 if ($variant === null || !$this->isNodeHidden($variant)) {
                     $menuItems[] = [
                         'subgraph' => $subgraph,
-                        'node' => $variant ? $this->readModelFactory->createReadModel($variant, $subgraph) : null,
+                        'node' => $variant,
                         'state' => $this->calculateItemState($variant),
                         'label' => $this->determineLabel($variant, $metadata),
                         'targetDimensions' => $metadata

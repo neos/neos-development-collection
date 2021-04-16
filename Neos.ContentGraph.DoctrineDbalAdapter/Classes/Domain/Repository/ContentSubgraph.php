@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
@@ -183,7 +184,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): Nodes {
         if ($limit !== null || $offset !== null) {
             throw new \RuntimeException("TODO: Limit/Offset not yet supported in findChildNodes");
         }
@@ -225,7 +226,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             $cache->add($nodeAggregateIdentifier, $nodeTypeConstraints, $result);
         }
 
-        return $result;
+        return Nodes::fromArray($result);
     }
 
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
@@ -317,7 +318,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
      * @return NodeInterface[]
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): array
+    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): Nodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
@@ -360,7 +361,7 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
         }
 
-        return $result;
+        return Nodes::fromArray($result);
     }
 
     /**
@@ -369,7 +370,7 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
      * @return NodeInterface[]
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null) :array
+    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null) :Nodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
@@ -403,7 +404,7 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
         }
 
-        return $result;
+        return Nodes::fromArray($result);
     }
 
     /**
@@ -558,7 +559,7 @@ WHERE
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    public function findSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
+    public function findSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): Nodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
@@ -583,7 +584,7 @@ WHERE
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
         }
 
-        return $result;
+        return Nodes::fromArray($result);
     }
 
     /**
@@ -600,7 +601,7 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): Nodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -633,7 +634,7 @@ WHERE
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
         }
 
-        return $result;
+        return Nodes::fromArray($result);
     }
 
     /**
@@ -650,7 +651,7 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): Nodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -683,7 +684,7 @@ WHERE
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
         }
 
-        return $result;
+        return Nodes::fromArray($result);
     }
 
     protected function getSiblingBaseQuery(): string
@@ -882,7 +883,7 @@ order by level asc, position asc;')
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?ContentRepository\Projection\Content\SearchTerm $searchTerm): array
+    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?ContentRepository\Projection\Content\SearchTerm $searchTerm): Nodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
@@ -965,7 +966,7 @@ order by level asc, position asc;')
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
         }
 
-        return $result;
+        return Nodes::fromArray($result);
     }
 
     /**

@@ -141,12 +141,6 @@ class WorkspacesController extends AbstractModuleController
     protected $workspaceCommandHandler;
 
     /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
-
-    /**
      * @return void
      */
     /*protected function initializeAction()
@@ -540,7 +534,6 @@ class WorkspacesController extends AbstractModuleController
             $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $change->originDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
 
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
-            $node = $this->readModelFactory->createReadModel($node, $subgraph);
             $pathParts = explode('/', (string)$node->findNodePath());
             if (count($pathParts) > 2) {
                 $siteNodeName = $pathParts[2];

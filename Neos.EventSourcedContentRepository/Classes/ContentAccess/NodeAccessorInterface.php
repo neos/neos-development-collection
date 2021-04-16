@@ -22,6 +22,7 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\SearchTerm;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
@@ -54,7 +55,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 interface NodeAccessorInterface
 {
 
-    // IDENTITY of this NodeAccessor. TODO: do we need this? probably yes, so one can fetch the Subgraph directly should one need it.
+    // IDENTITY of this NodeAccessor.
     /**
      * @return ContentStreamIdentifier
      */
@@ -80,7 +81,9 @@ interface NodeAccessorInterface
      * @param int|null $offset
      * @return iterable<NodeInterface>
      */
-    public function findChildNodes(NodeInterface $parentNode, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): iterable;
+    public function findChildNodes(NodeInterface $parentNode, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): Nodes;
+
+    // Nodes implements IteratorAggregate oÄ
 
     // TODO: DO NOT RETURN SIMPLY ITERABLE, BUT A TYPED OBJECT
     /**
@@ -88,14 +91,14 @@ interface NodeAccessorInterface
      * @param PropertyName|null $name
      * @return NodeInterface[]
      */
-    public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): iterable;
+    public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): Nodes;
 
     /**
      * @param NodeAggregateIdentifier $node
      * @param PropertyName $name
      * @return NodeInterface[]
      */
-    public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): iterable;
+    public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): Nodes;
 
     /**
      * @param NodeInterface $childNode
@@ -143,6 +146,6 @@ interface NodeAccessorInterface
      * @param SearchTerm|null $searchTerm
      * @return array|NodeInterface[]
      */
-    public function findDescendants(array $entryNodes, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): iterable;
+    public function findDescendants(array $entryNodes, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): Nodes;
 
 }

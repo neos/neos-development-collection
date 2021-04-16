@@ -16,7 +16,6 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
@@ -66,12 +65,6 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      * @var NodeTypeConstraints
      */
     protected $nodeTypeConstraints;
-
-    /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
 
     /**
      * The last navigation level which should be rendered.
@@ -212,7 +205,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             }
         }
 
-        $traversableNode = $this->readModelFactory->createReadModel($subtree->getNode(), $this->getSubgraph());
+        $traversableNode = $subtree->getNode();
         return new MenuItem($traversableNode, MenuItemState::normal(), $subtree->getNode()->getLabel(), $subtree->getLevel(), $children);
     }
 

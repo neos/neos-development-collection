@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-namespace Neos\ContentRepository\Intermediary\Domain;
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentRepository.Intermediary package.
@@ -13,8 +12,9 @@ namespace Neos\ContentRepository\Intermediary\Domain;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 
 /**
  * The property collection implementation
@@ -77,10 +77,5 @@ final class PropertyCollection implements PropertyCollectionInterface
     public function getIterator()
     {
         return $this->iterator;
-    }
-
-    public function getSerializedPropertyValues(): SerializedPropertyValues
-    {
-        return $this->serializedPropertyValues;
     }
 }

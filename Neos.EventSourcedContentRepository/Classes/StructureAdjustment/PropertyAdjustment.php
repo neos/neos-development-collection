@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\StructureAdjustment;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;

@@ -1,8 +1,7 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
-
-use Neos\ContentRepository\Intermediary\Domain\AbstractReadModel;
 use Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel\EmulatedLegacyContext;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\AOP\JoinPointInterface;
@@ -14,7 +13,7 @@ use Neos\Flow\AOP\JoinPointInterface;
 class AddContextToNodeBasedReadModelInterfaceAspect
 {
     /**
-     * @Flow\Around("method(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface->getContext())")
+     * @Flow\Around("method(Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node->getContext())")
      */
     public function newMethodImplementation(JoinPointInterface $joinPoint): EmulatedLegacyContext
     {

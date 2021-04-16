@@ -21,23 +21,22 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeep
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler as IntermediaryNodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -116,12 +115,6 @@ class ContentRepositoryExportService
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
-
-    /**
-     * @Flow\Inject
-     * @var IntermediaryNodeAggregateCommandHandler
-     */
-    protected $intermediaryNodeAggregateCommandHandler;
 
     /**
      * @var EventStore
@@ -311,7 +304,7 @@ class ContentRepositoryExportService
             if ($isTethered) {
                 // we KNOW that tethered nodes already exist; so we just set its properties.
                 if (!empty($propertyValues)) {
-                    $this->intermediaryNodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
@@ -332,7 +325,7 @@ class ContentRepositoryExportService
                         UserIdentifier::forSystemUser()
                     ))->blockUntilProjectionsAreUpToDate();
 
-                    $this->intermediaryNodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
@@ -355,7 +348,7 @@ class ContentRepositoryExportService
                         // TODO: tethered descendant IDs
                     );
 
-                    $this->intermediaryNodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)
+                    $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)
                         ->blockUntilProjectionsAreUpToDate();
                 }
             }

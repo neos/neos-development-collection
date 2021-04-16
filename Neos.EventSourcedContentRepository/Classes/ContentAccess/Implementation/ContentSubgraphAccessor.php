@@ -20,10 +20,10 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\Parts\FindChildNodesInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\SearchTerm;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
@@ -36,7 +36,7 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
         $this->subgraph = $subgraph;
     }
 
-    public function findChildNodes(NodeInterface $parentNode, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): iterable
+    public function findChildNodes(NodeInterface $parentNode, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): Nodes
     {
         return $this->subgraph->findChildNodes($parentNode->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
     }
@@ -56,12 +56,12 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
         return $this->subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
     }
 
-    public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): iterable
+    public function findReferencedNodes(NodeInterface $node, PropertyName $name = null): Nodes
     {
         return $this->subgraph->findReferencedNodes($node->getNodeAggregateIdentifier(), $name);
     }
 
-    public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): iterable
+    public function findReferencingNodes(NodeInterface $node, PropertyName $name = null): Nodes
     {
         return $this->subgraph->findReferencingNodes($node->getNodeAggregateIdentifier(), $name);
     }
@@ -91,7 +91,7 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
         // TODO: Implement findSubtrees() method.
     }
 
-    public function findDescendants(array $entryNodes, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): iterable
+    public function findDescendants(array $entryNodes, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): Nodes
     {
         // TODO: Implement findDescendants() method.
     }

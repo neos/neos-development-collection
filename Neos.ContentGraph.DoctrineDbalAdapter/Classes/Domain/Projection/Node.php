@@ -12,8 +12,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -21,6 +23,7 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
@@ -39,7 +42,7 @@ final class Node implements NodeInterface
 
     protected ?NodeName $nodeName;
 
-    protected SerializedPropertyValues $properties;
+    protected SerializedPropertyValues $serializedProperties;
 
     protected NodeAggregateClassification $classification;
 
@@ -50,7 +53,8 @@ final class Node implements NodeInterface
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        SerializedPropertyValues $properties,
+        SerializedPropertyValues $serializedProperties,
+        PropertyConverter $propertyConverter,
         NodeAggregateClassification $classification
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -59,7 +63,8 @@ final class Node implements NodeInterface
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
-        $this->properties = $properties;
+        $this->serializedProperties = $serializedProperties;
+        $this->properties = new PropertyCollection($serializedProperties, $propertyConverter);
         $this->classification = $classification;
     }
 
@@ -109,7 +114,7 @@ final class Node implements NodeInterface
         return $this->nodeName;
     }
 
-    public function getProperties(): SerializedPropertyValues
+    public function getProperties(): PropertyCollectionInterface
     {
         return $this->properties;
     }
@@ -121,13 +126,35 @@ final class Node implements NodeInterface
      * @return mixed value of the property
      * @api
      */
-    public function getProperty(string $propertyName)
+    public function getProperty($propertyName)
     {
-        return $this->properties->getProperty($propertyName)->getValue();
+        return $this->properties->getProperty($propertyName);
     }
 
     public function hasProperty($propertyName): bool
     {
         return $this->properties->propertyExists($propertyName);
+    }
+
+
+
+    public function getCacheEntryIdentifier(): string
+    {
+        throw new \RuntimeException('Not supported');
+    }
+
+    public function getLabel(): string
+    {
+        throw new \RuntimeException('Not supported');
+    }
+
+    public function getSerializedProperties(): SerializedPropertyValues
+    {
+        return $this->serializedProperties;
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
     }
 }
