@@ -307,10 +307,10 @@
 			<target state="translated">Download</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="translated">Weiter</target></trans-unit>
+			<target state="translated">Nächster</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="translated">Zurück</target></trans-unit>
+			<target state="translated">Vorheriger</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="final">Datei kann nicht hochgeladen werden</target></trans-unit>
