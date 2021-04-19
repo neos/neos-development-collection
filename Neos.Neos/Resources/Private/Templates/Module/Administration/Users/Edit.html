@@ -30,7 +30,7 @@
 	</f:form>
 	<f:form action="index" id="postHelper" method="post"></f:form>
 
-	<f:if condition="{currentUser} === {user}">
+	<f:if condition="{currentUser} !== {user}">
 		<div class="neos-hide" id="delete">
 			<div class="neos-modal-centered">
 				<div class="neos-modal-content">
