@@ -28,12 +28,7 @@
         "doctrine/dbal": "^2.8",
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
-<<<<<<< HEAD
-        "neos/fusion-form": "^1.0",
-=======
-        "neos/fusion-afx": "^1.4",
         "neos/fusion-form": "^1.0 || ^2.0",
->>>>>>> 5.3
         "neos/form": "*",
         "neos/kickstarter": "~7.0.0"
     },
