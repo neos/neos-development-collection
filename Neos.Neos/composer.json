@@ -15,7 +15,7 @@
         "neos/content-repository": "~7.0.0",
         "neos/fusion": "~7.0.0",
         "neos/fusion-afx": "*",
-        "neos/fusion-form": "^1.0",
+        "neos/fusion-form": "^1.0 || ^2.0",
         "neos/fluid-adaptor": "~7.0.0",
         "behat/transliterator": "~1.0",
         "neos/media": "~7.0.0"
