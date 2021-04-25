@@ -152,7 +152,7 @@ This can be easily fixed in custom packages, but it makes sense to just have thi
 Upgrade Instructions
 ********************
 
-See https://www.neos.io/download-and-extend/upgrade-instructions-7-0-7-1.html
+See https://docs.neos.io/cms/references/upgrade-instructions/upgrade-instructions-7-0-7-1
 
 .. note::
 
