@@ -4,7 +4,7 @@ Neos 7.1
 
 This release of Neos comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
 
-As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+As usual, we worked hard to keep this release as backwards compatible as possible but some of the changes might require manual
 adjustments. So please make sure to carefully read the upgrade instructions below.
 
 
@@ -15,15 +15,16 @@ New Features
 FEATURE: Add missing translation to flash messages
 --------------------------------------------------
 
-added translation to all flash messages
-added translator and translation units to all flash messages
-
-
+- added translation to all flash messages
+- added translator and translation units to all flash messages
 
 Related issue: `#3334 <https://github.com/neos/neos-development-collection/issues/3334>`_
 
+
 FEATURE: Show the default asset-collection in the sites listing
 ---------------------------------------------------------------
+
+The default asset collection for every site is now listed in the site management module.
 
 !`image <https://user-images.githubusercontent.com/642226/113774886-2af33500-9728-11eb-9cfa-3c61f9a4eee3.png>`_
 
@@ -38,6 +39,7 @@ This feature improves the policy selection in the account editing by making use 
 
 **After:**
 !`image <https://user-images.githubusercontent.com/642226/112342788-d0d38800-8cc2-11eb-95e4-4c374ddf92dc.png>`_
+
 
 FEATURE: Add node label helper
 ------------------------------
@@ -99,6 +101,7 @@ This allows to use a single tag in AFX to render links to actions or resources l
 ``<Neos.Fusion:Link.Action href.action="show" href.controller="SomeOther" href.arguments={{ object: myObjectValue }}>Link text</Neos.Fusion:Link.Action>``
 ``<Neos.Fusion:Link.Resource href.path="resource://Some.Package/Public/Images/SomeImage.png">Download</Neos.Fusion:Link.Action>``
 
+
 FEATURE: Fusion match object
 ----------------------------
 
@@ -106,8 +109,8 @@ This change adds a new Fusion object to replace many situations where the Case o
 
 The idea is based on the new match method in PHP 8 https://www.php.net/manual/tr/control-structures.match.php.
 
-
 Related issue: `#3318 <https://github.com/neos/neos-development-collection/issues/3318>`_
+
 
 FEATURE: Fusion debug to browser console
 ----------------------------------------
@@ -124,13 +127,14 @@ renderer.@process.debug = Neos.Fusion:Debug.Console {
 }
 ```
 
-
 Related issue: `#3319 <https://github.com/neos/neos-development-collection/issues/3319>`_
+
 
 FEATURE: Add favicons and app icons for backend modules
 -------------------------------------------------------
 
 Related issue: `#3304 <https://github.com/neos/neos-development-collection/issues/3304>`_
+
 
 FEATURE: Allow http image urls as login wallpapers
 --------------------------------------------------
@@ -147,6 +151,7 @@ While experimenting with PSR-15 middlewares I found out that no content type is 
 This keeps those middlewares from applying their effects as they do not know what kind of content they get.
 
 This can be easily fixed in custom packages, but it makes sense to just have this as default for the future.
+
 
 ********************
 Upgrade Instructions
