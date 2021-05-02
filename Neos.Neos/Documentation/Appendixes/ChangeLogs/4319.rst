@@ -1,0 +1,72 @@
+`4.3.19 (2021-05-02) <https://github.com/neos/neos-development-collection/releases/tag/4.3.19>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: getAssetProxy failed for local assets <https://github.com/neos/neos-development-collection/pull/2924>`_
+----------------------------------------------------------------------------------------------------------------
+
+With `836d739fa4f92b3c87c0fcaccd54f2909e188773 <https://github.com/neos/neos-development-collection/commit/836d739fa4f92b3c87c0fcaccd54f2909e188773>`_ a condition was added that prevented getting an AssetProxy for assets in the Neos AssetSource. But they all have one and therefore the query for an imported AssetProxy is not skipped for local assets.
+
+**What I did**
+
+Return AssetProxy for local assets.
+
+**How I did it**
+
+Check if the AssetSource is Neos itself.
+
+**How to verify it**
+
+Added functional test
+
+* Packages: ``Media``
+
+`BUGFIX: Use "stable" identifier when auto-creating child nodes <https://github.com/neos/neos-development-collection/pull/3336>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Since ``node:repair`` uses the ``buildAutoCreatedChildNodeIdentifier``, it would
+best to ensure the ``identifier`` is already correct when auto-creating child nodes.
+
+Otherwise the identifier will be changed to a so called "stable"
+identifier during a ``node:repair`` run which can lead to unwanted
+behaviour in certain applications.
+
+* Packages: ``Browser`` ``ContentRepository``
+
+`BUGFIX: Open delete dialog on edit user view <https://github.com/neos/neos-development-collection/pull/3316>`_
+---------------------------------------------------------------------------------------------------------------
+
+On the edit view of the user management module it was not possible to delete the user caused by the missing confirmation dialog. This has not been open caused by a wrong if condition.
+
+* Fixes: `#3310 <https://github.com/neos/neos-development-collection/issues/3310>`_
+* Packages: ``Neos``
+
+`TASK: Mark migrations as applied after behat setup <https://github.com/neos/neos-development-collection/pull/3314>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This should work around an edge-case regression in doctrine/migrations 3.1.1 - see https://github.com/neos/neos-development-collection/pull/3311#issuecomment-803560353
+
+* Packages: ``github`` ``Neos``
+
+`BUGFIX: Adjust user menu dropdown width <https://github.com/neos/neos-development-collection/pull/3298>`_
+----------------------------------------------------------------------------------------------------------
+
+Limit the minimum width of the dropdown to the width of the trigger button
+and make it possible to become wider and float from right side of the trigger button to the left.
+
+* Fixes: `#3297 <https://github.com/neos/neos-development-collection/issues/3297>`_
+* Packages: ``github`` ``Neos``
+
+`TASK: Add GH action for builds <https://github.com/neos/neos-development-collection/pull/3291>`_
+-------------------------------------------------------------------------------------------------
+
+See https://github.com/neos/flow-development-collection/pull/2390 and https://github.com/neos/flow-development-collection/pull/2273
+
+Resolves neos/team#54
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.3.18...4.3.19>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
