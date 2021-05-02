@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2021-02-23
+This reference was automatically generated from code on 2021-05-02
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -696,6 +696,91 @@ Get file information like creation and modification times as well as size.
 
 
 
+.. _`Eel Helpers Reference: Form.Schema`:
+
+Form.Schema
+-----------
+
+
+
+Implemented in: ``Neos\Fusion\Form\Runtime\Helper\SchemaHelper``
+
+Form.Schema.array()
+^^^^^^^^^^^^^^^^^^^
+
+Create an array schema.
+
+**Return** (SchemaInterface)
+
+Form.Schema.arrayOf(schema)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create a date schema for an array by providing a schema for all items
+
+* ``schema`` (SchemaInterface) The schema for the items of the array
+
+**Return** (SchemaInterface)
+
+Form.Schema.boolean()
+^^^^^^^^^^^^^^^^^^^^^
+
+Create a boolean schema
+
+**Return** (SchemaInterface)
+
+Form.Schema.date(format)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create a date schema. The php value will be DateTime
+
+* ``format`` (string, *optional*) The format default is "Y-m-d
+
+**Return** (SchemaInterface)
+
+Form.Schema.float()
+^^^^^^^^^^^^^^^^^^^
+
+Create a float schema
+
+**Return** (SchemaInterface)
+
+Form.Schema.forType(type)
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create a schema for the given type
+
+* ``type`` (string) The type or className that is expected
+
+**Return** (SchemaInterface)
+
+Form.Schema.integer()
+^^^^^^^^^^^^^^^^^^^^^
+
+Create a integer schema
+
+**Return** (SchemaInterface)
+
+Form.Schema.resource(collection)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create a resource schema
+
+* ``collection`` (string, *optional*) The collection new resources are put into
+
+**Return** (SchemaInterface)
+
+Form.Schema.string()
+^^^^^^^^^^^^^^^^^^^^
+
+Create a string schema
+
+**Return** (SchemaInterface)
+
+
+
+
+
+
 .. _`Eel Helpers Reference: Json`:
 
 Json
@@ -1273,6 +1358,15 @@ has the given name.
 * ``nodeType`` (string)
 
 **Return** (bool)
+
+Neos.Node.labelForNode(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
+
+* ``node`` (NodeInterface|null, *optional*)
+
+**Return** (NodeLabelToken)
 
 Neos.Node.nearestContentCollection(node, nodePath)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2173,7 +2267,7 @@ translated label.
 * ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms
 * ``locale`` (string, *optional*) An identifier of locale to use (NULL for use the default locale)
 
-**Return** (string) Translated label or source label / ID key
+**Return** (string|null) Translated label or source label / ID key
 
 Translation.value(value)
 ^^^^^^^^^^^^^^^^^^^^^^^^
