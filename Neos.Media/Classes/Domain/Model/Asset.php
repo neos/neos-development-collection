@@ -23,6 +23,7 @@ use Neos\Media\Domain\Model\AssetSource\AssetNotFoundExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionExceptionInterface;
+use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetSource;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetService;
@@ -495,10 +496,15 @@ class Asset implements AssetInterface
             $this->systemLogger->notice(sprintf('Asset %s: Invalid asset source "%s"', $this->getIdentifier(), $this->getAssetSourceIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
-        $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($this->getIdentifier());
-        if ($importedAsset === null) {
-            $this->systemLogger->notice(sprintf('Asset %s: Imported asset not found for asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LogEnvironment::fromMethodName(__METHOD__));
-            return null;
+
+        if (!$assetSource instanceof NeosAssetSource) {
+            $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($this->getIdentifier());
+            if ($importedAsset === null) {
+                $this->systemLogger->notice(sprintf('Asset %s: Imported asset not found for asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LogEnvironment::fromMethodName(__METHOD__));
+                return null;
+            }
+        } else {
+            $importedAsset = null;
         }
 
         try {
