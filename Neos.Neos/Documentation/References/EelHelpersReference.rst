@@ -3,7 +3,34 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2019-03-05
+This reference was automatically generated from code on 2021-05-13
+
+
+.. _`Eel Helpers Reference: Api`:
+
+Api
+---
+
+
+
+Implemented in: ``Neos\Neos\Ui\Fusion\Helper\ApiHelper``
+
+Api.emptyArrayToObject(array)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Converts an empty array to an empty object. Does nothing if array is not empty.
+
+Use this helper to prevent associative arrays from being converted to non-associative arrays by json_encode.
+This is an internal helper and might change without further notice
+FIXME: Probably better to produce objects in the first place "upstream".
+
+* ``array`` (array) Associative array which may be empty
+
+**Return** (array|\stdClass) Non-empty associative array or empty object
+
+
+
+
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -122,6 +149,15 @@ Get the array keys
 * ``array`` (array) The array
 
 **Return** (array)
+
+Array.ksort(array)
+^^^^^^^^^^^^^^^^^^
+
+Sort an array by key
+
+* ``array`` (array) The array to sort
+
+**Return** (array) The sorted array
 
 Array.last(array)
 ^^^^^^^^^^^^^^^^^
@@ -325,6 +361,15 @@ Allows to give multiple replacements at once::
 
 **Return** (array) The array with removed and replaced elements
 
+Array.unique(array)
+^^^^^^^^^^^^^^^^^^^
+
+Removes duplicate values from an array
+
+* ``array`` (array) The input array
+
+**Return** (array) The filtered array.
+
 Array.unshift(array, element)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -338,6 +383,29 @@ Allows to insert multiple elements at once::
 * ``element`` (mixed)
 
 **Return** (array) The array with the inserted elements
+
+
+
+
+
+
+.. _`Eel Helpers Reference: BaseUri`:
+
+BaseUri
+-------
+
+This is a purely internal helper to provide baseUris for Caching.
+It will be moved to a more sensible package in the future so do
+not rely on the classname for now.
+
+Implemented in: ``Neos\Fusion\Eel\BaseUriHelper``
+
+BaseUri.getConfiguredBaseUriOrFallbackToCurrentRequest(fallbackRequest)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``fallbackRequest`` (ServerRequestInterface|null, *optional*)
+
+**Return** (UriInterface)
 
 
 
@@ -1128,7 +1196,7 @@ Implemented in: ``Neos\Neos\Fusion\Helper\LinkHelper``
 Neos.Link.convertUriToObject(uri, contextNode)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|Uri)
+* ``uri`` (string|UriInterface)
 * ``contextNode`` (NodeInterface, *optional*)
 
 **Return** (NodeInterface|AssetInterface|NULL)
@@ -1136,28 +1204,28 @@ Neos.Link.convertUriToObject(uri, contextNode)
 Neos.Link.getScheme(uri)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|Uri)
+* ``uri`` (string|UriInterface)
 
 **Return** (string)
 
 Neos.Link.hasSupportedScheme(uri)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|Uri)
+* ``uri`` (string|UriInterface)
 
 **Return** (boolean)
 
 Neos.Link.resolveAssetUri(uri)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|Uri)
+* ``uri`` (string|UriInterface)
 
 **Return** (string)
 
 Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|Uri)
+* ``uri`` (string|UriInterface)
 * ``contextNode`` (NodeInterface)
 * ``controllerContext`` (ControllerContext)
 
@@ -1239,6 +1307,37 @@ Render a human-readable description for the passed $dimensions
 * ``dimensions`` (array)
 
 **Return** (string)
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Seo.Image`:
+
+Neos.Seo.Image
+--------------
+
+
+
+Implemented in: ``Neos\Seo\Fusion\Helper\ImageHelper``
+
+Neos.Seo.Image.createThumbnail(asset, preset, width, maximumWidth, height, maximumHeight, allowCropping, allowUpScaling, async, quality, format)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``asset`` (AssetInterface)
+* ``preset`` (string, *optional*) Name of the preset that should be used as basis for the configuration
+* ``width`` (integer, *optional*) Desired width of the image
+* ``maximumWidth`` (integer, *optional*) Desired maximum width of the image
+* ``height`` (integer, *optional*) Desired height of the image
+* ``maximumHeight`` (integer, *optional*) Desired maximum height of the image
+* ``allowCropping`` (boolean, *optional*) Whether the image should be cropped if the given sizes would hurt the aspect ratio
+* ``allowUpScaling`` (boolean, *optional*) Whether the resulting image size might exceed the size of the original image
+* ``async`` (boolean, *optional*) Whether the thumbnail can be generated asynchronously
+* ``quality`` (integer, *optional*) Quality of the processed image
+* ``format`` (string, *optional*) Format for the image, only jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported.
+
+**Return** (null|ImageInterface)
 
 
 
@@ -1381,8 +1480,10 @@ Implemented in: ``Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper``
 NodeInfo.createRedirectToNode(controllerContext, node)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Creates a URL that will redirect to the given $node in live or base workspace, or returns an empty string if that doesn't exist or is inaccessible
+
 * ``controllerContext`` (ControllerContext)
-* ``node`` (NodeInterface, *optional*)
+* ``node`` (NodeInterface|null, *optional*)
 
 **Return** (string)
 
@@ -1785,19 +1886,21 @@ Example::
 
 **Return** (array) The matches as array or NULL if not matched
 
-String.pregReplace(string, pattern, replace)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+String.pregReplace(string, pattern, replace, limit)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Replace occurrences of a search string inside the string using regular expression matching (PREG style)
 
 Examples::
 
     String.pregReplace("Some.String with sp:cial characters", "/[[:^alnum:]]/", "-") == "Some-String-with-sp-cial-characters"
+    String.pregReplace("Some.String with sp:cial characters", "/[[:^alnum:]]/", "-", 1) == "Some-String with sp:cial characters"
     String.pregReplace("2016-08-31", "/([0-9]+)-([0-9]+)-([0-9]+)/", "$3.$2.$1") == "31.08.2016"
 
 * ``string`` (string) The input string
 * ``pattern`` (string) A PREG pattern
 * ``replace`` (string) A replacement string, can contain references to capture groups with "\\n" or "$n
+* ``limit`` (integer, *optional*) The maximum possible replacements for each pattern in each subject string. Defaults to -1 (no limit).
 
 **Return** (string) The string with all occurrences replaced
 
@@ -2074,7 +2177,7 @@ translated label.
 * ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms
 * ``locale`` (string, *optional*) An identifier of locale to use (NULL for use the default locale)
 
-**Return** (string) Translated label or source label / ID key
+**Return** (string|null) Translated label or source label / ID key
 
 Translation.value(value)
 ^^^^^^^^^^^^^^^^^^^^^^^^

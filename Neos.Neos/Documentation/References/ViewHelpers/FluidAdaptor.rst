@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2019-11-06
+This reference was automatically generated from code on 2021-05-13
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -1243,6 +1243,8 @@ Formats an integer with a byte count into human-readable form.
 Arguments
 *********
 
+* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \Neos\Flow\I18n\Locale
+
 * ``value`` (integer, *optional*): The incoming data to convert, or NULL if VH children should be used
 
 * ``decimals`` (integer, *optional*): The number of digits after the decimal point
@@ -1250,6 +1252,8 @@ Arguments
 * ``decimalSeparator`` (string, *optional*): The decimal point character
 
 * ``thousandsSeparator`` (string, *optional*): The character for grouping the thousand digits
+
+* ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*'s constants.
 
 
 
@@ -1268,7 +1272,7 @@ Expected result::
 	// depending on the value of {fileSize}
 
 
-**Defaults**::
+**With all parameters**::
 
 	{fileSize -> f:format.bytes(decimals: 2, decimalSeparator: ',', thousandsSeparator: ',')}
 
@@ -1276,6 +1280,28 @@ Expected result::
 Expected result::
 
 	1,023.00 B
+	// depending on the value of {fileSize}
+
+
+**Inline notation with current locale used**::
+
+	{fileSize -> f:format.bytes(forceLocale: true)}
+
+
+Expected result::
+
+	6.543,21 KB
+	// depending on the value of {fileSize} and the current locale
+
+
+**Inline notation with specific locale used**::
+
+	{fileSize -> f:format.bytes(forceLocale: 'de_CH')}
+
+
+Expected result::
+
+	1'337.42 MB
 	// depending on the value of {fileSize}
 
 
