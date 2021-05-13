@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2019-09-02
+This reference was automatically generated from code on 2021-05-13
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -159,6 +159,36 @@ Arguments
 
 
 
+.. _`Neos ViewHelper Reference: neos:backend.ifModuleAccessible`:
+
+neos:backend.ifModuleAccessible
+-------------------------------
+
+Condition ViewHelper that can evaluate whether the currently authenticated user can access a given Backend module
+
+Note: This is a quick fix for https://github.com/neos/neos-development-collection/issues/2854 that will be obsolete once the whole Backend module logic is rewritten
+
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\IfModuleAccessibleViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``then`` (mixed, *optional*): Value to be returned if the condition if met.
+
+* ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
+
+* ``condition`` (boolean, *optional*): Condition expression conforming to Fluid boolean rules
+
+* ``modulePath`` (string): Path of the module to evaluate
+
+* ``moduleConfiguration`` (array): Configuration of the module to evaluate
+
+
+
+
 .. _`Neos ViewHelper Reference: neos:backend.interfaceLanguage`:
 
 neos:backend.interfaceLanguage
@@ -167,19 +197,6 @@ neos:backend.interfaceLanguage
 ViewHelper for rendering the current backend users interface language.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Backend\\InterfaceLanguageViewHelper
-
-
-
-
-
-.. _`Neos ViewHelper Reference: neos:backend.javascriptBuiltVersion`:
-
-neos:backend.javascriptBuiltVersion
------------------------------------
-
-Returns a shortened md5 of the built JavaScript file
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\JavascriptBuiltVersionViewHelper
 
 
 
