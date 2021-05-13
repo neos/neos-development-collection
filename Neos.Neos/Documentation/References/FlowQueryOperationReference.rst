@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2019-03-05
+This reference was automatically generated from code on 2021-05-13
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -209,7 +209,7 @@ nodes. It will not evaluate any elements that are not instances of the
 The implementation changes the behavior of the `instanceof` operator to
 work on node types instead of PHP object types, so that::
 
-	[instanceof Neos.NodeTypes:Page]
+	[instanceof Acme.Com:Page]
 
 will in fact use `isOfType()` on the `NodeType` of context elements to
 filter. This filter allow also to filter the current context by a given
@@ -250,15 +250,19 @@ Example (identifier):
 
 Example (node type):
 
-	q(node).find('[instanceof Neos.NodeTypes:Text]')
+	q(node).find('[instanceof Acme.Com:Text]')
 
 Example (multiple node types):
 
-	q(node).find('[instanceof Neos.NodeTypes:Text],[instanceof Neos.NodeTypes:Image]')
+	q(node).find('[instanceof Acme.Com:Text],[instanceof Acme.Com:Image]')
 
 Example (node type with filter):
 
-	q(node).find('[instanceof Neos.NodeTypes:Text][text*="Neos"]')
+	q(node).find('[instanceof Acme.Com:Text][text*="Neos"]')
+
+This operation operates rather on the given Context object than on the given node
+and thus may work with the legacy node interface until subgraphs are available
+{@inheritdoc}
 
 :Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\FindOperation
 :Priority: 100
@@ -727,7 +731,7 @@ Second argument is the sort direction (ASC or DESC).
 :Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\SortOperation
 :Priority: 1
 :Final: No
-:Returns: mixed
+:Returns: void
 
 
 
