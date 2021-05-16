@@ -15,7 +15,7 @@
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
-        "doctrine/common": "^2.7",
+        "doctrine/common": "^2.7 || ^3.0",
         "doctrine/orm": "^2.6"
     },
     "autoload": {

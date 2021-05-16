@@ -14,7 +14,7 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
         "imagine/imagine": "*",
-        "doctrine/common": "^2.7",
+        "doctrine/common": "^2.7 || ^3.0",
         "doctrine/orm": "^2.6",
         "doctrine/dbal": "^2.8"
     },
