@@ -815,6 +815,18 @@
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
 			<target state="translated">Voer ###CHARACTERS### meer karakter in</target></trans-unit>
+      <trans-unit id="login.wrongCredentials.title" xml:space="preserve">
+				<source>Wrong Credentials</source>
+			<target state="needs-translation">Wrong Credentials</target></trans-unit>
+      <trans-unit id="login.wrongCredentials.body" xml:space="preserve" approved="yes">
+				<source>The entered username or password was wrong</source>
+			<target state="final">De gebruikersnaam of het wachtwoord is onjuist</target></trans-unit>
+      <trans-unit id="login.loggedOut.title" xml:space="preserve">
+				<source>Logged Out</source>
+			<target state="needs-translation">Logged Out</target></trans-unit>
+      <trans-unit id="login.loggedOut.body" xml:space="preserve">
+				<source>Successfully logged out</source>
+			<target state="needs-translation">Successfully logged out</target></trans-unit>
     </body>
   </file>
 </xliff>
