@@ -815,6 +815,18 @@
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
 			<target state="translated">请输入 # # # CHARACTERS# # # 更多的字符</target></trans-unit>
+      <trans-unit id="login.wrongCredentials.title" xml:space="preserve">
+				<source>Wrong Credentials</source>
+			<target state="needs-translation">Wrong Credentials</target></trans-unit>
+      <trans-unit id="login.wrongCredentials.body" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+			<target state="translated">输入的用户名或密码错误</target></trans-unit>
+      <trans-unit id="login.loggedOut.title" xml:space="preserve">
+				<source>Logged Out</source>
+			<target state="needs-translation">Logged Out</target></trans-unit>
+      <trans-unit id="login.loggedOut.body" xml:space="preserve">
+				<source>Successfully logged out</source>
+			<target state="needs-translation">Successfully logged out</target></trans-unit>
     </body>
   </file>
 </xliff>
