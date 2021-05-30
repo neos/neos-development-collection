@@ -5,97 +5,102 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target state="needs-translation">Auto-Publish</target></trans-unit>
+			<target state="translated">Outo-publiseer</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target state="translated">Outo-publiseer aan {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target state="needs-translation">Review changes</target></trans-unit>
+			<target state="translated">wysigings hersien</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target state="needs-translation">Apply</target></trans-unit>
+			<target state="translated">toepas</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target state="needs-translation">Apply changes</target></trans-unit>
+			<target state="translated">Pas veranderinge toe</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="needs-translation">Cancel</target></trans-unit>
+			<target state="translated">Kanselleer</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target state="needs-translation">Back</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target state="needs-translation">Choose</target></trans-unit>
+			<target state="translated">Kies</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target state="needs-translation">Type to search</target></trans-unit>
+			<target state="translated">Tik om te soek</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target state="needs-translation">Content</target></trans-unit>
+			<target state="translated">Inhoud</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target state="needs-translation">Node</target></trans-unit>
+			<target state="translated">
+Knooppunt</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target state="needs-translation">Content View</target></trans-unit>
+			<target state="translated">
+inhoudskyk</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target state="needs-translation">Create after</target></trans-unit>
+			<target state="translated">Skep na</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target state="needs-translation">Create new</target></trans-unit>
+			<target state="translated">Skep 'n nuwe</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target state="needs-translation">Close</target></trans-unit>
+			<target state="translated">
+Naby</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target state="needs-translation">Copy</target></trans-unit>
+			<target state="translated">
+Kopieer</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target state="needs-translation">Cut</target></trans-unit>
+			<target state="translated">Sny</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target state="needs-translation">Delete</target></trans-unit>
+			<target state="translated">verwyder</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target state="needs-translation">Yes, delete the element</target></trans-unit>
+			<target state="translated">Ja, verwyder die element</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target state="needs-translation">Delete the element</target></trans-unit>
+			<target state="translated">verwyder die element</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target state="needs-translation">Discard</target></trans-unit>
+			<target state="translated">weggooi</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target state="needs-translation">Discard changes</target></trans-unit>
+			<target state="translated">Ignoreer veranderinge</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target state="needs-translation">Edit title</target></trans-unit>
+			<target state="translated">Wysig titel</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target state="needs-translation">Edit / Preview</target></trans-unit>
+			<target state="translated">Wysig / Voorskou</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target state="needs-translation">Edit</target></trans-unit>
+			<target state="translated">Wysig</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target state="needs-translation">Hide / Unhide</target></trans-unit>
+			<target state="translated">Versteek / onthul</target></trans-unit>
       <trans-unit id="hide" xml:space="preserve">
 				<source>Hide</source>
 			<target state="needs-translation">Hide</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target state="needs-translation">Unhide</target></trans-unit>
+			<target state="translated">
+onthul</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target state="needs-translation">into</target></trans-unit>
+			<target state="translated">in</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target state="needs-translation">before</target></trans-unit>
+			<target state="translated">voor</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target state="needs-translation">after</target></trans-unit>
+			<target state="translated">Na</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target state="needs-translation">Loading</target></trans-unit>
@@ -444,7 +449,7 @@
 			<target state="needs-translation">Throw away</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target state="needs-translation">Apply</target></trans-unit>
+			<target state="translated">toepas</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target state="needs-translation">Select a Plugin</target></trans-unit>
@@ -567,7 +572,7 @@
 			<target state="needs-translation">Create and copy</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target state="needs-translation">Content</target></trans-unit>
+			<target state="translated">Inhoud</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
 			<target state="needs-translation">Toggle menu group</target></trans-unit>
@@ -808,7 +813,7 @@
 			<target state="needs-translation">Indent</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target state="needs-translation">Create new</target></trans-unit>
+			<target state="translated">Skep 'n nuwe</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
 			<target state="needs-translation">No matches found</target></trans-unit>
