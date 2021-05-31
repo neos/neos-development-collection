@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Testcase for the NodeService
@@ -196,7 +197,7 @@ class NodeServiceTest extends UnitTestCase
     {
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
+        $mockNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->onlyMethods(['getNodeType', 'createNode', 'getIdentifier'])->getMock();
 
         $mockNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:Content');
         $firstChildNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:Content');
@@ -208,6 +209,8 @@ class NodeServiceTest extends UnitTestCase
                 'first-child-node-name' => $firstChildNodeType,
                 'second-child-node-name' => $secondChildNodeType
             ]));
+
+        $mockNode->method('getIdentifier')->willReturn(Uuid::uuid4());
 
         $mockNode->expects(self::once())
             ->method('getNodeType')
