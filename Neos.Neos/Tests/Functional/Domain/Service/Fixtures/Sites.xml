@@ -8,8 +8,8 @@
       <language>en_US</language>
      </dimensions>
      <accessRoles __type="array"/>
-     <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+00:00</creationDateTime>
-     <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+00:00</lastModificationDateTime>
+     <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+01:00</creationDateTime>
+     <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+01:00</lastModificationDateTime>
      <properties>
       <title __type="string">example.org</title>
      </properties>
@@ -20,8 +20,8 @@
        <language>en_US</language>
       </dimensions>
       <accessRoles __type="array"/>
-      <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+00:00</creationDateTime>
-      <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+00:00</lastModificationDateTime>
+      <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+01:00</creationDateTime>
+      <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+01:00</lastModificationDateTime>
       <properties>
        <title __type="string">&lt;h1&gt;Home&lt;/h1&gt;</title>
        <uriPathSegment __type="string">home</uriPathSegment>
@@ -36,8 +36,8 @@
         <entry0 __type="string">Neos.Neos:Editor</entry0>
         <entry1 __type="string">Neos.Neos:Administrator</entry1>
        </accessRoles>
-       <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+00:00</creationDateTime>
-       <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+00:00</lastModificationDateTime>
+       <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+01:00</creationDateTime>
+       <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+01:00</lastModificationDateTime>
        <properties>
         <title __type="string">&lt;h1&gt;This node is protected&lt;/h1&gt;</title>
         <uriPathSegment __type="string">protected</uriPathSegment>
