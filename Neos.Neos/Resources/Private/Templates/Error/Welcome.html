@@ -47,8 +47,8 @@
     </main>
   </div>
   <script>
-    $('.neos-error-details-toggle').click(function() {
-      $(this).toggleClass('neos-error-details-toggle--closed');
+    document.querySelector('.neos-error-details-toggle').addEventListener('click', function() {
+      document.querySelector('.neos-error-details-toggle').classList.toggle('neos-error-details-toggle--closed');
     });
   </script>
   </body>
