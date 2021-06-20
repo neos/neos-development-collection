@@ -15,7 +15,6 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connection as DatabaseConnection;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content\Node;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
@@ -32,6 +31,7 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\SearchTerm;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
@@ -113,8 +113,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
-        $childNodes = [];
+    ): Nodes {
         $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
@@ -128,11 +127,9 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withOffset($offset);
         }
 
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $childNodeRow) {
-            $childNodes[] = $this->nodeFactory->mapNodeRowToNode($childNodeRow);
-        }
+        $childNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $childNodes;
+        return $this->nodeFactory->mapNodeRowsToNodes($childNodeRows);
     }
 
     public function countChildNodes(
@@ -154,7 +151,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     public function findReferencedNodes(
         NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
         PropertyName $name = null
-    ): array {
+    ): Nodes {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
             'destn.*, desth.contentstreamidentifier, desth.dimensionspacepoint'
@@ -167,18 +164,15 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         }
         $query = $query->ordered();
 
-        $referencedNodes = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $referencedNodeRow) {
-            $referencedNodes[] = $this->nodeFactory->mapNodeRowToNode($referencedNodeRow);
-        }
+        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $referencedNodes;
+        return $this->nodeFactory->mapNodeRowsToNodes($nodeRows);
     }
 
     public function findReferencingNodes(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         PropertyName $name = null
-    ): array {
+    ): Nodes {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
             'orgn.*, orgh.contentstreamidentifier, orgh.dimensionspacepoint'
@@ -191,12 +185,9 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         }
         $query = $query->ordered();
 
-        $referencedNodes = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $referencedNodeRow) {
-            $referencedNodes[] = $this->nodeFactory->mapNodeRowToNode($referencedNodeRow);
-        }
+        $referencedNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $referencedNodes;
+        return $this->nodeFactory->mapNodeRowsToNodes($referencedNodeRows);
     }
 
     public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
@@ -245,15 +236,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
     }
 
-    /**
-     * @return array|Node[]
-     */
     public function findSiblings(
         NodeAggregateIdentifier $sibling,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): Nodes {
         return $this->findAnySiblings(
             $sibling,
             HypergraphSiblingQueryMode::all(),
@@ -263,15 +251,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         );
     }
 
-    /**
-     * @return array|Node[]
-     */
     public function findSucceedingSiblings(
         NodeAggregateIdentifier $sibling,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): Nodes {
         return $this->findAnySiblings(
             $sibling,
             HypergraphSiblingQueryMode::onlySucceeding(),
@@ -281,34 +266,28 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         );
     }
 
-    /**
-     * @return array|Node[]
-     */
     public function findPrecedingSiblings(
         NodeAggregateIdentifier $sibling,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
-        return array_reverse($this->findAnySiblings(
+    ): Nodes {
+        return $this->findAnySiblings(
             $sibling,
             HypergraphSiblingQueryMode::onlyPreceding(),
             $nodeTypeConstraints,
             $limit,
             $offset
-        ));
+        )->reverse();
     }
 
-    /**
-     * @return array|Node[]
-     */
     private function findAnySiblings(
         NodeAggregateIdentifier $sibling,
         HypergraphSiblingQueryMode $mode,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): Nodes {
         $query = HypergraphSiblingQuery::create(
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
@@ -326,15 +305,9 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withOffset($offset);
         }
 
-        $siblings = [];
-        $rows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
-        if (!empty($rows)) {
-            foreach ($rows as $row) {
-                $siblings[] = $this->nodeFactory->mapNodeRowToNode($row, $this->contentStreamIdentifier);
-            }
-        }
+        $siblingsRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $siblings;
+        return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows);
     }
 
     public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath
@@ -404,15 +377,30 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         array $entryNodeAggregateIdentifiers,
         NodeTypeConstraints $nodeTypeConstraints,
         ?SearchTerm $searchTerm
-    ): array {
+    ): Nodes {
         // TODO: Implement findDescendants() method.
     }
 
+    /**
+     * @return int
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function countNodes(): int
     {
-        $query = 'SELECT COUNT(*) FROM ' . NodeRecord::TABLE_NAME;
+        $query = /** @lang PostgreSQL */
+        'SELECT COUNT(*)
+            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' h
+            JOIN ' . NodeRecord::TABLE_NAME .' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            WHERE h.contentstreamidentifier = :contentStreamIdentifier
+            AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 
-        return $this->getDatabaseConnection()->executeQuery($query)->fetchOne();
+        $parameters = [
+            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->getHash()
+        ];
+
+        return $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric()[0];
     }
 
     public function getInMemoryCache(): InMemoryCache

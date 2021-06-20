@@ -43,10 +43,7 @@ final class NodeAggregateClassification implements \JsonSerializable
      */
     const CLASSIFICATION_TETHERED = 'tethered';
 
-    /**
-     * @var string
-     */
-    private $value;
+    private string $value;
 
     private function __construct(string $value)
     {
@@ -59,7 +56,7 @@ final class NodeAggregateClassification implements \JsonSerializable
             throw new \DomainException('Invalid node aggregate classification "' . $value . '", must be one of the defined constants.', 1554556942);
         }
 
-        return new static($value);
+        return new self($value);
     }
 
     public static function fromNode(NodeInterface $node): self
@@ -77,17 +74,17 @@ final class NodeAggregateClassification implements \JsonSerializable
 
     public static function root(): self
     {
-        return new static(self::CLASSIFICATION_ROOT);
+        return new self(self::CLASSIFICATION_ROOT);
     }
 
     public static function regular(): self
     {
-        return new static(self::CLASSIFICATION_REGULAR);
+        return new self(self::CLASSIFICATION_REGULAR);
     }
 
     public static function tethered(): self
     {
-        return new static(self::CLASSIFICATION_TETHERED);
+        return new self(self::CLASSIFICATION_TETHERED);
     }
 
     public function isRoot(): bool
@@ -103,6 +100,16 @@ final class NodeAggregateClassification implements \JsonSerializable
     public function isTethered(): bool
     {
         return $this->value === self::CLASSIFICATION_TETHERED;
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    public function equals(NodeAggregateClassification $other): bool
+    {
+        return $this->value === $other->getValue();
     }
 
     public function __toString(): string

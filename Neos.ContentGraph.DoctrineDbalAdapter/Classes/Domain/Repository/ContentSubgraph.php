@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
@@ -175,7 +176,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array|NodeInterface[]
+     * @return Nodes
      * @throws \Exception
      */
     public function findChildNodes(
@@ -183,7 +184,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): Nodes {
         if ($limit !== null || $offset !== null) {
             throw new \RuntimeException("TODO: Limit/Offset not yet supported in findChildNodes");
         }
@@ -193,7 +194,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $parentNodeIdentifierCache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
 
         if ($cache->contains($parentNodeAggregateIdentifier, $nodeTypeConstraints)) {
-            return $cache->findChildNodes($parentNodeAggregateIdentifier, $nodeTypeConstraints, $limit, $offset);
+            return new Nodes($cache->findChildNodes($parentNodeAggregateIdentifier, $nodeTypeConstraints, $limit, $offset));
         }
         $query = new SqlQueryBuilder();
         $query->addToQuery('
@@ -225,7 +226,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             $cache->add($parentNodeAggregateIdentifier, $nodeTypeConstraints, $result);
         }
 
-        return $result;
+        return new Nodes($result);
     }
 
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
@@ -314,10 +315,10 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param PropertyName $name
-     * @return NodeInterface[]
+     * @return Nodes
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): array
+    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): Nodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
@@ -360,16 +361,16 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
         }
 
-        return $result;
+        return new Nodes($result);
     }
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param PropertyName $name
-     * @return NodeInterface[]
+     * @return Nodes
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null) :array
+    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null) :Nodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
@@ -403,23 +404,21 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
         }
 
-        return $result;
+        return new Nodes($result);
     }
 
     /**
-     * @param NodeAggregateIdentifier $childNodeNodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
      * @return NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findParentNode(NodeAggregateIdentifier $childNodeNodeAggregateIdentifier): ?NodeInterface
+    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
     {
         $cache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
 
-        if ($cache->knowsAbout($childNodeNodeAggregateIdentifier)) {
-            $possibleParentIdentifier = $cache->get($childNodeNodeAggregateIdentifier);
+        if ($cache->knowsAbout($childNodeAggregateIdentifier)) {
+            $possibleParentIdentifier = $cache->get($childNodeAggregateIdentifier);
 
             if ($possibleParentIdentifier === null) {
                 return null;
@@ -443,7 +442,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
  AND h.dimensionspacepointhash = :dimensionSpacePointHash
  AND hp.dimensionspacepointhash = :dimensionSpacePointHash'
         )
-            ->parameter('childNodeAggregateIdentifier', (string)$childNodeNodeAggregateIdentifier)
+            ->parameter('childNodeAggregateIdentifier', (string)$childNodeAggregateIdentifier)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
@@ -453,12 +452,12 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
 
         $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
         if ($node) {
-            $cache->add($childNodeNodeAggregateIdentifier, $node->getNodeAggregateIdentifier());
+            $cache->add($childNodeAggregateIdentifier, $node->getNodeAggregateIdentifier());
 
             // we also add the parent node to the NodeAggregateIdentifier => Node cache; as this might improve cache hit rates as well.
             $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
         } else {
-            $cache->rememberNonExistingParentNode($childNodeNodeAggregateIdentifier);
+            $cache->rememberNonExistingParentNode($childNodeAggregateIdentifier);
         }
 
         return $node;
@@ -554,11 +553,11 @@ WHERE
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array
+     * @return Nodes
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    public function findSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
+    public function findSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): Nodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
@@ -583,7 +582,7 @@ WHERE
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
         }
 
-        return $result;
+        return new Nodes($result);
     }
 
     /**
@@ -591,7 +590,7 @@ WHERE
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array|NodeInterface[]
+     * @return Nodes
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
@@ -600,7 +599,7 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): Nodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -633,7 +632,7 @@ WHERE
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
         }
 
-        return $result;
+        return new Nodes($result);
     }
 
     /**
@@ -641,7 +640,7 @@ WHERE
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array|NodeInterface[]
+     * @return Nodes
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
@@ -650,7 +649,7 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): Nodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -683,7 +682,7 @@ WHERE
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
         }
 
-        return $result;
+        return new Nodes($result);
     }
 
     protected function getSiblingBaseQuery(): string
@@ -877,13 +876,16 @@ order by level asc, position asc;')
      * @param array $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param ContentRepository\Projection\Content\SearchTerm|null $searchTerm
-     * @return array
+     * @return Nodes
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?ContentRepository\Projection\Content\SearchTerm $searchTerm): array
-    {
+    public function findDescendants(
+        array $entryNodeAggregateIdentifiers,
+        NodeTypeConstraints $nodeTypeConstraints,
+        ?ContentRepository\Projection\Content\SearchTerm $searchTerm
+    ): Nodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 -- ContentSubgraph::findDescendants
@@ -965,7 +967,7 @@ order by level asc, position asc;')
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
         }
 
-        return $result;
+        return new Nodes($result);
     }
 
     /**

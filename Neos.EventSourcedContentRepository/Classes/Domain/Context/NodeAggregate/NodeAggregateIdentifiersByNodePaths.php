@@ -58,6 +58,14 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
         return new NodeAggregateIdentifiersByNodePaths($nodeAggregateIdentifiers);
     }
 
+    /**
+     * @throws \JsonException
+     */
+    public static function fromJsonString(string $jsonString): self
+    {
+        return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+    }
+
     public function merge(NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers): NodeAggregateIdentifiersByNodePaths
     {
         return new NodeAggregateIdentifiersByNodePaths(array_merge($this->nodeAggregateIdentifiers, $nodeAggregateIdentifiers->getNodeAggregateIdentifiers()));

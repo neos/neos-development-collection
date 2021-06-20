@@ -13,7 +13,6 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
  * source code.
  */
 
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\ImmutableArrayObject;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
 use Neos\Flow\Annotations as Flow;
@@ -23,8 +22,18 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeAggregateIdentifiers extends ImmutableArrayObject
+final class NodeAggregateIdentifiers
 {
+    /**
+     * @var array|NodeAggregateIdentifier[]
+     */
+    private array $identifiers;
+
+    private function __construct(array $identifiers)
+    {
+        $this->identifiers = $identifiers;
+    }
+
     public static function fromArray(array $array): self
     {
         $values = [];
@@ -56,12 +65,12 @@ final class NodeAggregateIdentifiers extends ImmutableArrayObject
 
     public function toDatabaseString(): string
     {
-        return '{' . implode(',', $this->getArrayCopy()) .  '}';
+        return '{' . implode(',', $this->identifiers) .  '}';
     }
 
     public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, ?NodeAggregateIdentifier $succeedingSibling = null): self
     {
-        $nodeAggregateIdentifiers = $this->getArrayCopy();
+        $nodeAggregateIdentifiers = $this->identifiers;
         if ($succeedingSibling) {
             $pivot = array_search($succeedingSibling, $nodeAggregateIdentifiers);
             array_splice($nodeAggregateIdentifiers, $pivot, 0, $nodeAggregateIdentifier);
@@ -69,42 +78,16 @@ final class NodeAggregateIdentifiers extends ImmutableArrayObject
             $nodeAggregateIdentifiers[] = $nodeAggregateIdentifier;
         }
 
-        return self::fromArray($nodeAggregateIdentifiers);
+        return new self($nodeAggregateIdentifiers);
     }
 
     public function remove(NodeAggregateIdentifier $nodeAggregateIdentifier): self
     {
-        $nodeAggregateIdentifiers = $this->getArrayCopy();
-        $pivot = array_search($nodeAggregateIdentifier, $nodeAggregateIdentifiers);
-        if ($pivot !== false) {
-            unset($nodeAggregateIdentifiers[$pivot]);
+        $identifiers = $this->identifiers;
+        if (isset($identifiers[(string) $nodeAggregateIdentifier])) {
+            unset($identifiers[(string) $nodeAggregateIdentifier]);
         }
 
-        return new self($nodeAggregateIdentifiers);
-    }
-
-    /**
-     * @param mixed $key
-     * @return NodeAggregateIdentifier|false
-     */
-    public function offsetGet($key)
-    {
-        return parent::offsetGet($key);
-    }
-
-    /**
-     * @return array|NodeAggregateIdentifier[]
-     */
-    public function getArrayCopy(): array
-    {
-        return parent::getArrayCopy();
-    }
-
-    /**
-     * @return \ArrayIterator|NodeAggregateIdentifier[]
-     */
-    public function getIterator(): \ArrayIterator
-    {
-        return parent::getIterator();
+        return new self($identifiers);
     }
 }

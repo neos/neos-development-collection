@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
@@ -44,6 +45,8 @@ interface NodeInterface
      * Whether or not this node is tethered to its parent, fka auto created child node
      */
     public function isTethered(): bool;
+
+    public function getClassification(): NodeAggregateClassification;
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 

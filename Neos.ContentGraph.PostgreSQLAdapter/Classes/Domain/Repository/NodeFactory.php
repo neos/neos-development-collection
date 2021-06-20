@@ -26,6 +26,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
 /**
@@ -200,6 +201,16 @@ final class NodeFactory
             SerializedPropertyValues::fromJsonString($nodeRow['properties']),
             NodeAggregateClassification::fromString($nodeRow['classification'])
         );
+    }
+
+    public function mapNodeRowsToNodes(array $nodeRows, ContentStreamIdentifier $contentStreamIdentifier = null): Nodes
+    {
+        $nodes = [];
+        foreach ($nodeRows as $nodeRow) {
+            $nodes[] = $this->mapNodeRowToNode($nodeRow, $contentStreamIdentifier);
+        }
+
+        return new Nodes($nodes);
     }
 
     public function mapNodeRowsToSubtree(array $nodeRows): Subtree

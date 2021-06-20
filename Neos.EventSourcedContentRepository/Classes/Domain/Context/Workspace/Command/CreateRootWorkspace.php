@@ -52,7 +52,7 @@ final class CreateRootWorkspace
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             new WorkspaceName($array['workspaceName']),
             new WorkspaceTitle($array['workspaceTitle']),
             new WorkspaceDescription($array['workspaceDescription']),

@@ -63,6 +63,11 @@ final class Node implements NodeInterface
         $this->classification = $classification;
     }
 
+    public function getClassification(): NodeAggregateClassification
+    {
+        return $this->classification;
+    }
+
     /**
      * Whether or not this node is a root of the graph, i.e. has no parent node
      */

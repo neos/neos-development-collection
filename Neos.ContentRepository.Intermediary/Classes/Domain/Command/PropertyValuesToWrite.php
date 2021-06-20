@@ -43,6 +43,14 @@ final class PropertyValuesToWrite
         return new self($values);
     }
 
+    /**
+     * @throws \JsonException
+     */
+    public static function fromJsonString(string $jsonString): self
+    {
+        return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+    }
+
     public function withValue(string $valueName, $value): self
     {
         $values = $this->values;

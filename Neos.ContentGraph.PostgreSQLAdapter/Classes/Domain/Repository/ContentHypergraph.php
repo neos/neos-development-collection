@@ -88,7 +88,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
-        return $this->nodeFactory->mapNodeRowToNode($nodeRow);
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
     }
 
     public function findRootNodeAggregateByType(
@@ -193,7 +193,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $occupiedDimensionSpacePoints = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $row) {
-            $occupiedDimensionSpacePoints[$row['ch.dimensionspacepointhash']] = DimensionSpacePoint::fromJsonString($row['ch.dimensionspacepoint']);
+            $occupiedDimensionSpacePoints[$row['dimensionspacepointhash']] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
         }
 
         return new DimensionSpacePointSet($occupiedDimensionSpacePoints);

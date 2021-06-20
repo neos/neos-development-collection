@@ -33,7 +33,7 @@ final class CreateRootNodeAggregateWithNode implements \JsonSerializable, Rebasa
 
     private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    protected NodeTypeName $nodeTypeName;
+    private NodeTypeName $nodeTypeName;
 
     private UserIdentifier $initiatingUserIdentifier;
 
@@ -51,7 +51,7 @@ final class CreateRootNodeAggregateWithNode implements \JsonSerializable, Rebasa
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['nodeTypeName']),

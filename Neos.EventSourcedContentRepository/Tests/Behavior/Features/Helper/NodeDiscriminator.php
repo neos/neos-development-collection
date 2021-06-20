@@ -30,37 +30,30 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
  */
 final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    protected $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var NodeAggregateIdentifier
-     */
-    protected $nodeAggregateIdentifier;
+    private NodeAggregateIdentifier $nodeAggregateIdentifier;
 
-    /**
-     * @var OriginDimensionSpacePoint
-     */
-    protected $originDimensionSpacePoint;
+    private OriginDimensionSpacePoint $originDimensionSpacePoint;
 
     private function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
     }
 
-    public static function fromArray(array $array): self
+    public static function fromShorthand(string $shorthand): self
     {
-        return new NodeDiscriminator(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['originDimensionSpacePoint'])
+        list($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) = explode(';', $shorthand);
+
+        return new self(
+            ContentStreamIdentifier::fromString($contentStreamIdentifier),
+            NodeAggregateIdentifier::fromString($nodeAggregateIdentifier),
+            OriginDimensionSpacePoint::fromJsonString($originDimensionSpacePoint)
         );
     }
 

@@ -12,6 +12,8 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph as DbalContentGraph;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph as PostgreSQLContentHypergraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
@@ -23,6 +25,8 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeException;
+use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
@@ -44,10 +48,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeSubtreeSnapshot;
@@ -62,8 +66,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
@@ -78,12 +80,14 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFind
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -103,6 +107,10 @@ use Ramsey\Uuid\Uuid;
  */
 trait EventSourcedTrait
 {
+    use CurrentSubgraphTrait;
+    use ProjectedNodeAggregateTrait;
+    use ProjectedNodeTrait;
+
     /**
      * @var EventTypeResolver
      */
@@ -113,7 +121,7 @@ trait EventSourcedTrait
      */
     private $eventStore;
 
-    private ContentGraphInterface $contentGraph;
+    protected ContentGraphs $contentGraphs;
 
     /**
      * @var WorkspaceFinder
@@ -130,11 +138,13 @@ trait EventSourcedTrait
      */
     private $currentEventStreamAsArray = null;
 
-    private ?\Exception $lastCommandException = null;
+    protected ?\Exception $lastCommandException = null;
 
-    private ?ContentStreamIdentifier $contentStreamIdentifier = null;
+    protected ?ContentStreamIdentifier $contentStreamIdentifier = null;
 
-    private ?DimensionSpacePoint $dimensionSpacePoint = null;
+    protected ?UserIdentifier $currentUserIdentifier = null;
+
+    protected ?DimensionSpacePoint $dimensionSpacePoint = null;
 
     /**
      * @var NodeAggregateIdentifier
@@ -142,24 +152,11 @@ trait EventSourcedTrait
     protected $rootNodeAggregateIdentifier;
 
     /**
-     * @var NodeInterface
-     */
-    protected $currentNode;
-
-    /**
-     * @var ReadableNodeAggregateInterface
-     */
-    protected $currentNodeAggregate;
-
-    /**
      * @var EventNormalizer
      */
     protected $eventNormalizer;
 
-    /**
-     * @var VisibilityConstraints
-     */
-    protected $visibilityConstraints;
+    protected ?VisibilityConstraints $visibilityConstraints = null;
 
     /**
      * @var CommandResult
@@ -181,6 +178,16 @@ trait EventSourcedTrait
      */
     abstract protected function getObjectManager();
 
+    protected function getWorkspaceFinder(): WorkspaceFinder
+    {
+        return $this->workspaceFinder;
+    }
+
+    protected function getContentGraphs(): ContentGraphs
+    {
+        return $this->contentGraphs;
+    }
+
     protected function setupEventSourcedTrait()
     {
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
@@ -189,7 +196,10 @@ trait EventSourcedTrait
         /* @var $eventStoreFactory EventStoreFactory */
         $eventStoreFactory = $this->getObjectManager()->get(EventStoreFactory::class);
         $this->eventStore = $eventStoreFactory->create('ContentRepository');
-        $this->contentGraph = $this->getObjectManager()->get(ContentGraphInterface::class);
+        $this->contentGraphs = new ContentGraphs([
+            'DoctrineDbal' => $this->getObjectManager()->get(DbalContentGraph::class),
+            'PostgreSQL' => $this->getObjectManager()->get(PostgreSQLContentHypergraph::class)
+        ]);
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
         $this->eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
@@ -216,11 +226,14 @@ trait EventSourcedTrait
      */
     public function beforeEventSourcedScenarioDispatcher()
     {
-        $this->contentGraph->enableCache();
+        foreach ($this->getContentGraphs() as $contentGraph) {
+            $contentGraph->enableCache();
+        }
         $this->visibilityConstraints = VisibilityConstraints::frontend();
         $this->dimensionSpacePoint = null;
         $this->rootNodeAggregateIdentifier = null;
         $this->contentStreamIdentifier = null;
+        $this->currentNodeAggregate = null;
         foreach ($this->projectorsToBeReset as $projector) {
             $projector->reset();
         }
@@ -521,26 +534,6 @@ trait EventSourcedTrait
         return $eventPayload;
     }
 
-    protected function unserializeDimensionSpacePointSet(string $serializedDimensionSpacePoints): DimensionSpacePointSet
-    {
-        $dimensionSpacePoints = [];
-        foreach (json_decode($serializedDimensionSpacePoints, true) as $coordinates) {
-            $dimensionSpacePoints[] = new DimensionSpacePoint($coordinates);
-        }
-
-        return new DimensionSpacePointSet($dimensionSpacePoints);
-    }
-
-    protected function unserializeOriginDimensionSpacePointSet(string $serializedDimensionSpacePoints): OriginDimensionSpacePointSet
-    {
-        $dimensionSpacePoints = [];
-        foreach (json_decode($serializedDimensionSpacePoints, true) as $coordinates) {
-            $dimensionSpacePoints[] = new OriginDimensionSpacePoint($coordinates);
-        }
-
-        return new OriginDimensionSpacePointSet($dimensionSpacePoints);
-    }
-
     /**
      * @When /^the command CreateRootWorkspace is executed with payload:$/
      * @param TableNode $payloadTable
@@ -549,19 +542,18 @@ trait EventSourcedTrait
     public function theCommandCreateRootWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['workspaceTitle'])) {
-            $commandArguments['workspaceTitle'] = ucfirst($commandArguments['workspaceName']);
-        }
-        if (!isset($commandArguments['workspaceDescription'])) {
-            $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '"';
-        }
-        if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-        if (!isset($commandArguments['workspaceOwner'])) {
-            $commandArguments['workspaceOwner'] = 'workspace-owner';
-        }
-        $command = CreateRootWorkspace::fromArray($commandArguments);
+
+        $userIdentifier = isset($commandArguments['initiatingUserIdentifier'])
+            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
+            : $this->currentUserIdentifier;
+
+        $command = new CreateRootWorkspace(
+            new WorkspaceName($commandArguments['workspaceName']),
+            new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
+            new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
+            $userIdentifier,
+            ContentStreamIdentifier::fromString($commandArguments['newContentStreamIdentifier'])
+        );
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
             ->handleCreateRootWorkspace($command);
@@ -601,11 +593,24 @@ trait EventSourcedTrait
     public function theCommandCreateRootNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $command = CreateRootNodeAggregateWithNode::fromArray($commandArguments);
+        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
+            : $this->contentStreamIdentifier;
+        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
+            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
+            : $this->currentUserIdentifier;
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']);
+
+        $command = new CreateRootNodeAggregateWithNode(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            NodeTypeName::fromString($commandArguments['nodeTypeName']),
+            $initiatingUserIdentifier
+        );
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleCreateRootNodeAggregateWithNode($command);
-        $this->rootNodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
+        $this->rootNodeAggregateIdentifier = $nodeAggregateIdentifier;
     }
 
     /**
@@ -622,6 +627,47 @@ trait EventSourcedTrait
     }
 
     /**
+     * @When the following CreateNodeAggregateWithNode commands are executed:
+     */
+    public function theFollowingCreateNodeAggregateWithNodeCommandsAreExecuted(TableNode $table): void
+    {
+        foreach ($table->getHash() as $row) {
+            $contentStreamIdentifier = isset($row['contentStreamIdentifier'])
+                ? ContentStreamIdentifier::fromString($row['contentStreamIdentifier'])
+                : $this->contentStreamIdentifier;
+            $originDimensionSpacePoint = isset($row['originDimensionSpacePoint'])
+                ? OriginDimensionSpacePoint::fromJsonString($row['originDimensionSpacePoint'])
+                : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->dimensionSpacePoint);
+            $initiatingUserIdentifier = isset($row['initiatingUserIdentifier'])
+                ? UserIdentifier::fromString($row['initiatingUserIdentifier'])
+                : $this->currentUserIdentifier;
+            $command = new CreateNodeAggregateWithNode(
+                $contentStreamIdentifier,
+                NodeAggregateIdentifier::fromString($row['nodeAggregateIdentifier']),
+                NodeTypeName::fromString($row['nodeTypeName']),
+                $originDimensionSpacePoint,
+                $initiatingUserIdentifier,
+                NodeAggregateIdentifier::fromString($row['parentNodeAggregateIdentifier']),
+                isset($row['succeedingSiblingNodeAggregateIdentifier'])
+                    ? NodeAggregateIdentifier::fromString($row['succeedingSiblingNodeAggregateIdentifier'])
+                    : null,
+                isset($row['nodeName'])
+                    ? NodeName::fromString($row['nodeName'])
+                    : null,
+                isset($row['initialPropertyValues'])
+                    ? PropertyValuesToWrite::fromJsonString($row['initialPropertyValues'])
+                    : null,
+                isset($row['tetheredDescendantNodeAggregateIdentifiers'])
+                    ? NodeAggregateIdentifiersByNodePaths::fromJsonString($row['tetheredDescendantNodeAggregateIdentifiers'])
+                    : null
+            );
+            $this->lastCommandOrEventResult = $this->intermediaryNodeAggregateCommandHandler
+                ->handleCreateNodeAggregateWithNode($command);
+            $this->theGraphProjectionIsFullyUpToDate();
+        }
+    }
+
+    /**
      * @When /^the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
@@ -631,19 +677,22 @@ trait EventSourcedTrait
     public function theCommandCreateNodeAggregateWithNodeAndSerializedPropertiesIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-        if (!isset($commandArguments['originDimensionSpacePoint'])) {
-            $commandArguments['originDimensionSpacePoint'] = [];
-        }
+        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
+            : $this->contentStreamIdentifier;
+        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
+            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
+            : $this->currentUserIdentifier;
+        $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
+            ? new OriginDimensionSpacePoint($commandArguments['originDimensionSpacePoint'])
+            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->dimensionSpacePoint);
 
         $command = new CreateNodeAggregateWithNodeAndSerializedProperties(
-            ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
+            $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
-            new OriginDimensionSpacePoint($commandArguments['originDimensionSpacePoint']),
-            UserIdentifier::fromString($commandArguments['initiatingUserIdentifier']),
+            $originDimensionSpacePoint,
+            $initiatingUserIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['parentNodeAggregateIdentifier']),
             isset($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
                 ? NodeAggregateIdentifier::fromString($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
@@ -691,11 +740,20 @@ trait EventSourcedTrait
     public function theCommandCreateNodeVariantIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
+        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
+            : $this->contentStreamIdentifier;
+        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
+            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
+            : $this->currentUserIdentifier;
 
-        $command = CreateNodeVariant::fromArray($commandArguments);
+        $command = new CreateNodeVariant(
+            $contentStreamIdentifier,
+            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
+            OriginDimensionSpacePoint::fromArray($commandArguments['sourceOrigin']),
+            OriginDimensionSpacePoint::fromArray($commandArguments['targetOrigin']),
+            $initiatingUserIdentifier
+        );
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleCreateNodeVariant($command);
     }
@@ -722,13 +780,24 @@ trait EventSourcedTrait
     public function theCommandSetNodeReferencesIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['sourceOriginDimensionSpacePoint'])) {
-            $commandArguments['sourceOriginDimensionSpacePoint'] = [];
-        }
-        if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-        $command = SetNodeReferences::fromArray($commandArguments);
+        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
+            : $this->contentStreamIdentifier;
+        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
+            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
+            : $this->currentUserIdentifier;
+        $sourceOriginDimensionSpacePoint = isset($commandArguments['sourceOriginDimensionSpacePoint'])
+            ? OriginDimensionSpacePoint::fromArray($commandArguments['sourceOriginDimensionSpacePoint'])
+            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->dimensionSpacePoint);
+
+        $command = new SetNodeReferences(
+            $contentStreamIdentifier,
+            NodeAggregateIdentifier::fromString($commandArguments['sourceNodeAggregateIdentifier']),
+            $sourceOriginDimensionSpacePoint,
+            NodeAggregateIdentifierCollection::fromArray($commandArguments['destinationNodeAggregateIdentifiers']),
+            PropertyName::fromString($commandArguments['referenceName']),
+            $initiatingUserIdentifier
+        );
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleSetNodeReferences($command);
@@ -922,10 +991,20 @@ trait EventSourcedTrait
     public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-        $command = DisableNodeAggregate::fromArray($commandArguments);
+        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
+            : $this->contentStreamIdentifier;
+        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
+            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
+            : $this->currentUserIdentifier;
+
+        $command = new DisableNodeAggregate(
+            $contentStreamIdentifier,
+            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
+            DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint']),
+            NodeVariantSelectionStrategyIdentifier::fromString($commandArguments['nodeVariantSelectionStrategy']),
+            $initiatingUserIdentifier
+        );
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleDisableNodeAggregate($command);
@@ -1236,40 +1315,12 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^I am in content stream "([^"]*)"$/
-     * @param string $contentStreamIdentifier
+     * @Given /^I am user identified by "([^"]*)"$/
+     * @param string $userIdentifier
      */
-    public function iAmInContentStream(string $contentStreamIdentifier): void
+    public function iAmUserIdentifiedBy(string $userIdentifier): void
     {
-        $this->contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
-    }
-
-    /**
-     * @Given /^I am in the active content stream of workspace "([^"]*)" and Dimension Space Point (.*)$/
-     * @param string $workspaceName
-     * @param string $dimensionSpacePoint
-     * @throws Exception
-     */
-    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint)
-    {
-        $workspaceName = new WorkspaceName($workspaceName);
-        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
-        if ($workspace === null) {
-            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
-        }
-        $this->contentStreamIdentifier = $workspace->getCurrentContentStreamIdentifier();
-        $this->dimensionSpacePoint = DimensionSpacePoint::fromJsonString($dimensionSpacePoint);
-    }
-
-    /**
-     * @Given /^I am in content stream "([^"]*)" and Dimension Space Point (.*)$/
-     * @param string $contentStreamIdentifier
-     * @param string $dimensionSpacePoint
-     */
-    public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamIdentifier, string $dimensionSpacePoint)
-    {
-        $this->contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
-        $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true));
+        $this->currentUserIdentifier = UserIdentifier::fromString($userIdentifier);
     }
 
     /**
@@ -1305,540 +1356,16 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the node aggregate "([^"]*)" to exist$/
-     * @param string $nodeAggregateIdentifier
-     * @throws NodeAggregatesTypeIsAmbiguous
-     */
-    public function iExpectTheNodeAggregateToExist(string $nodeAggregateIdentifier): void
-    {
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifier);
-        $this->currentNodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($this->contentStreamIdentifier, $nodeAggregateIdentifier);
-
-        Assert::assertNotNull($this->currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s".', $nodeAggregateIdentifier, $this->contentStreamIdentifier));
-    }
-
-    /**
-     * @Then /^I expect this node aggregate to occupy dimension space points (.*)$/
-     * @param string $rawDimensionSpacePoints
-     */
-    public function iExpectThisNodeAggregateToOccupyDimensionSpacePoints(string $rawDimensionSpacePoints): void
-    {
-        Assert::assertEquals(
-            $this->unserializeOriginDimensionSpacePointSet($rawDimensionSpacePoints),
-            $this->currentNodeAggregate->getOccupiedDimensionSpacePoints()
-        );
-    }
-
-    /**
-     * @Then /^I expect this node aggregate to cover dimension space points (.*)$/
-     * @param string $rawDimensionSpacePoints
-     */
-    public function iExpectThisNodeAggregateToCoverDimensionSpacePoints(string $rawDimensionSpacePoints): void
-    {
-        $expectedDimensionSpacePointSet = $this->unserializeDimensionSpacePointSet($rawDimensionSpacePoints);
-        Assert::assertEquals(
-            $expectedDimensionSpacePointSet,
-            $this->currentNodeAggregate->getCoveredDimensionSpacePoints(),
-            'Expected covered dimension space point set ' . $expectedDimensionSpacePointSet
-            . ', got ' . $this->currentNodeAggregate->getCoveredDimensionSpacePoints()
-        );
-    }
-
-    /**
-     * @Then /^I expect this node aggregate to disable dimension space points (.*)$/
-     * @param string $rawDimensionSpacePoints
-     */
-    public function iExpectThisNodeAggregateToDisableDimensionSpacePoints(string $rawDimensionSpacePoints): void
-    {
-        $expectedDimensionSpacePointSet = $this->unserializeDimensionSpacePointSet($rawDimensionSpacePoints);
-        Assert::assertEquals(
-            $expectedDimensionSpacePointSet,
-            $this->currentNodeAggregate->getDisabledDimensionSpacePoints(),
-            'Expected disabled dimension space point set ' . $expectedDimensionSpacePointSet
-            . ', got ' . $this->currentNodeAggregate->getDisabledDimensionSpacePoints()
-        );
-    }
-
-    /**
-     * @Then /^I expect this node aggregate to be classified as "([^"]*)"$/
-     * @param string $expectedClassification
-     */
-    public function iExpectThisNodeAggregateToBeClassifiedAs(string $expectedClassification): void
-    {
-        Assert::assertEquals($expectedClassification, $this->currentNodeAggregate->getClassification());
-    }
-
-    /**
-     * @Then /^I expect a node with identifier (.*) to exist in the content graph$/
-     * @param string $serializedNodeIdentifier
-     * @throws Exception
-     */
-    public function iExpectANodeWithIdentifierToExistInTheContentGraph(string $serializedNodeIdentifier)
-    {
-        $nodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
-        $this->currentNode = $this->contentGraph->findNodeByIdentifiers(
-            $nodeIdentifier->getContentStreamIdentifier(),
-            $nodeIdentifier->getNodeAggregateIdentifier(),
-            $nodeIdentifier->getOriginDimensionSpacePoint()
-        );
-        Assert::assertNotNull(
-            $this->currentNode,
-            'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
-            . '" and originating in dimension space point "' . $nodeIdentifier->getOriginDimensionSpacePoint()
-            . '" was not found in content stream "' . $nodeIdentifier->getContentStreamIdentifier() . '"'
-        );
-    }
-
-    /**
-     * @Then /^I expect the graph projection to consist of exactly (\d+) nodes$/
+     * @Then /^I expect the graph projection to consist of exactly (\d+) node(?:s)?$/
      * @param int $expectedNumberOfNodes
      */
     public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes)
     {
-        $actualNumberOfNodes = $this->contentGraph->countNodes();
-        Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
-    }
-
-    /**
-     * @Then /^I expect the subgraph projection to consist of exactly (\d+) nodes$/
-     * @param int $expectedNumberOfNodes
-     */
-    public function iExpectTheSubgraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes)
-    {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-
-        $actualNumberOfNodes = $subgraph->countNodes();
-        Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content subgraph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
-    }
-
-    /**
-     * @Then /^I expect node aggregate identifier "([^"]*)" to lead to node (.*)$/
-     * @param string $serializedNodeAggregateIdentifier
-     * @param string $serializedNodeIdentifier
-     */
-    public function iExpectNodeAggregateIdentifierToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodeIdentifier): void
-    {
-        $expectedDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-
-        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
-        $this->currentNode = $nodeByAggregateIdentifier;
-        Assert::assertInstanceOf(NodeInterface::class, $nodeByAggregateIdentifier, 'No node could be found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-        $actualDiscriminator = NodeDiscriminator::fromNode($nodeByAggregateIdentifier);
-        Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
-    }
-
-    /**
-     * @Then /^I expect node aggregate identifier "([^"]*)" to lead to no node$/
-     * @param string $serializedNodeAggregateIdentifier
-     */
-    public function iExpectNodeAggregateIdentifierToLeadToNoNode(string $serializedNodeAggregateIdentifier): void
-    {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-
-        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(
-            NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier)
-        );
-        Assert::assertNull($nodeByAggregateIdentifier, 'A node was found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-    }
-
-    /**
-     * @Then /^I expect node aggregate identifier "([^"]*)" and path "([^"]*)" to lead to node (.*)$/
-     * @param string $serializedNodeAggregateIdentifier
-     * @param string $serializedNodePath
-     * @param string $serializedNodeIdentifier
-     */
-    public function iExpectNodeAggregateIdentifierAndPathToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath, string $serializedNodeIdentifier): void
-    {
-        $expectedDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-
-        $this->iExpectNodeAggregateIdentifierToLeadToNode($serializedNodeAggregateIdentifier, $serializedNodeIdentifier);
-
-        $nodeByPath = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
-        Assert::assertInstanceOf(NodeInterface::class, $nodeByPath, 'No node could be found by path "' . $serializedNodePath . '"" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-        $actualDiscriminator = NodeDiscriminator::fromNode($nodeByPath);
-        Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ', given was ' . json_encode($actualDiscriminator));
-    }
-
-    /**
-     * @Then /^I expect node aggregate identifier "([^"]*)" and path "([^"]*)" to lead to no node$/
-     * @param string $serializedNodeAggregateIdentifier
-     * @param string $serializedNodePath
-     */
-    public function iExpectNodeAggregateIdentifierAndPathToLeadToNoNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath): void
-    {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-
-        $this->iExpectNodeAggregateIdentifierToLeadToNoNode($serializedNodeAggregateIdentifier);
-
-        $nodeByPath = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
-        Assert::assertNull($nodeByPath, 'A node was found by path "' . $serializedNodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-    }
-
-    /**
-     * @Then /^I expect this node to be a child of node (.*)$/
-     * @param string $serializedNodeDiscriminator
-     */
-    public function iExpectThisNodeToBeTheChildOfNode(string $serializedNodeDiscriminator): void
-    {
-        $expectedParentDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeDiscriminator, true));
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-
-        $parent = $subgraph->findParentNode($this->currentNode->getNodeAggregateIdentifier());
-        Assert::assertInstanceOf(NodeInterface::class, $parent, 'Parent not found.');
-        $actualParentDiscriminator = NodeDiscriminator::fromNode($parent);
-        Assert::assertTrue($expectedParentDiscriminator->equals($actualParentDiscriminator), 'Parent discriminator does not match. Expected was ' . json_encode($expectedParentDiscriminator) . ', given was ' . json_encode($actualParentDiscriminator));
-
-        $expectedChildDiscriminator = NodeDiscriminator::fromNode($this->currentNode);
-        $child = $subgraph->findChildNodeConnectedThroughEdgeName($parent->getNodeAggregateIdentifier(), $this->currentNode->getNodeName());
-        $actualChildDiscriminator = NodeDiscriminator::fromNode($child);
-        Assert::assertTrue($expectedChildDiscriminator->equals($actualChildDiscriminator), 'Child discriminator does not match. Expected was ' . json_encode($expectedChildDiscriminator) . ', given was ' . json_encode($actualChildDiscriminator));
-    }
-
-    /**
-     * @Then /^I expect this node to have the preceding siblings (.*)$/
-     * @param string $serializedExpectedSiblingNodeAggregateIdentifiers
-     */
-    public function iExpectThisNodeToHaveThePrecedingSiblings(string $serializedExpectedSiblingNodeAggregateIdentifiers)
-    {
-        $rawExpectedSiblingNodeAggregateIdentifiers = json_decode($serializedExpectedSiblingNodeAggregateIdentifiers);
-        $expectedSiblingNodeAggregateIdentifiers = array_map(function ($item) {
-            return NodeAggregateIdentifier::fromString($item);
-        }, $rawExpectedSiblingNodeAggregateIdentifiers);
-
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-        $actualSiblings = $subgraph->findPrecedingSiblings($this->currentNode->getNodeAggregateIdentifier());
-        $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
-            return $sibling->getNodeAggregateIdentifier();
-        }, $actualSiblings);
-
-        Assert::assertEquals(
-            $expectedSiblingNodeAggregateIdentifiers,
-            $actualSiblingNodeAggregateIdentifiers,
-            'Expected preceding siblings ' . json_encode($expectedSiblingNodeAggregateIdentifiers) . ', found ' . json_encode($actualSiblingNodeAggregateIdentifiers)
-        );
-    }
-
-    /**
-     * @Then /^I expect this node to have the succeeding siblings (.*)$/
-     * @param string $serializedExpectedSiblingNodeAggregateIdentifiers
-     */
-    public function iExpectThisNodeToHaveTheSucceedingSiblings(string $serializedExpectedSiblingNodeAggregateIdentifiers)
-    {
-        $rawExpectedSiblingNodeAggregateIdentifiers = json_decode($serializedExpectedSiblingNodeAggregateIdentifiers);
-        $expectedSiblingNodeAggregateIdentifiers = array_map(function ($item) {
-            return NodeAggregateIdentifier::fromString($item);
-        }, $rawExpectedSiblingNodeAggregateIdentifiers);
-
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-        $actualSiblings = $subgraph->findSucceedingSiblings($this->currentNode->getNodeAggregateIdentifier());
-        $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
-            return $sibling->getNodeAggregateIdentifier();
-        }, $actualSiblings);
-
-        Assert::assertEquals(
-            $expectedSiblingNodeAggregateIdentifiers,
-            $actualSiblingNodeAggregateIdentifiers,
-            'Expected succeeding siblings ' . json_encode($expectedSiblingNodeAggregateIdentifiers) . ', found ' . json_encode($actualSiblingNodeAggregateIdentifiers)
-        );
-    }
-
-    /**
-     * @Then /^I expect a node identified by aggregate identifier "([^"]*)" to exist in the subgraph$/
-     * @param string $rawNodeAggregateIdentifier
-     * @throws Exception
-     * @deprecated use iExpectNodeAggregateIdentifierAndPathToLeadToNode
-     */
-    public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheSubgraph(string $rawNodeAggregateIdentifier)
-    {
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier));
-        Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $rawNodeAggregateIdentifier . '" was not found in the subgraph with dimension space point "' . $this->dimensionSpacePoint . '" in content stream "' . $this->contentStreamIdentifier . '".');
-    }
-
-    /**
-     * @Then /^I expect a node identified by aggregate identifier "([^"]*)" not to exist in the subgraph$/
-     * @param string $nodeAggregateIdentifier
-     * @deprecated use iExpectNodeAggregateIdentifierAndPathToLeadToNoNode
-     */
-    public function iExpectANodeIdentifiedByAggregateIdentifierNotToExistInTheSubgraph(string $nodeAggregateIdentifier)
-    {
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
-        Assert::assertTrue($node === null, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was found in the current Content Stream / Dimension Space Point, but it SHOULD NOT BE FOUND.');
-    }
-
-    /**
-     * @Then /^I expect the node aggregate "([^"]*)" to have the following child nodes:$/
-     * @param string $rawNodeAggregateIdentifier
-     * @param TableNode $expectedChildNodesTable
-     */
-    public function iExpectTheNodeToHaveTheFollowingChildNodes(string $rawNodeAggregateIdentifier, TableNode $expectedChildNodesTable)
-    {
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
-        $subgraph = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-        $nodes = $subgraph
-            ->findChildNodes($nodeAggregateIdentifier);
-
-        $numberOfChildNodes = $subgraph
-            ->countChildNodes($nodeAggregateIdentifier);
-
-        Assert::assertEquals(count($expectedChildNodesTable->getHash()), $numberOfChildNodes, 'ContentSubgraph::countChildNodes returned a wrong value');
-        Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'ContentSubgraph::findChildNodes: Child Node Count does not match');
-        foreach ($expectedChildNodesTable->getHash() as $index => $row) {
-            $expectedNodeName = NodeName::fromString($row['Name']);
-            $actualNodeName = $nodes[$index]->getNodeName();
-            Assert::assertEquals($expectedNodeName, $actualNodeName, 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName . '" Actual: "' . $actualNodeName . '"');
-            if (isset($row['NodeDiscriminator'])) {
-                $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($row['NodeDiscriminator'], true));
-                $actualNodeDiscriminator = NodeDiscriminator::fromNode($nodes[$index]);
-                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
-            }
+        foreach ($this->getContentGraphs() as $adapterName => $contentGraph) {
+            $actualNumberOfNodes = $contentGraph->countNodes();
+            Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph in adapter "' . $adapterName . '" consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
         }
     }
-
-    /**
-     * @Then /^I expect the node "([^"]*)" to have the type "([^"]*)"$/
-     * @param string $nodeAggregateIdentifier
-     * @param string $nodeType
-     */
-    public function iExpectTheNodeToHaveTheType(string $nodeAggregateIdentifier, string $nodeType)
-    {
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
-        Assert::assertEquals($nodeType, (string)$node->getNodeTypeName(), 'Node Type names do not match');
-    }
-
-    /**
-     * @Then /^I expect this node to have the properties:$/
-     * @param TableNode $expectedProperties
-     */
-    public function iExpectThisNodeToHaveTheProperties(TableNode $expectedProperties)
-    {
-        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
-    }
-
-    /**
-     * @Then /^I expect the node "([^"]*)" to have the properties:$/
-     * @param string $nodeAggregateIdentifier
-     * @param TableNode $expectedProperties
-     */
-    public function iExpectTheNodeToHaveTheProperties(string $nodeAggregateIdentifier, TableNode $expectedProperties)
-    {
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
-        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
-    }
-
-
-    /**
-     * @Then /^I expect the Node Aggregate "([^"]*)" to have the properties:$/
-     * @param $nodeAggregateIdentifier
-     * @param TableNode $expectedProperties
-     */
-    public function iExpectTheNodeAggregateToHaveTheProperties($nodeAggregateIdentifier, TableNode $expectedProperties)
-    {
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
-        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
-    }
-
-    /**
-     * @Then /^I expect the current Node to have the properties:$/
-     * @param TableNode $expectedProperties
-     */
-    public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
-    {
-        Assert::assertNotNull($this->currentNode, 'current node not found');
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
-
-        $properties = $this->currentNode->getProperties();
-        foreach ($expectedProperties->getHash() as $row) {
-            Assert::assertTrue($properties->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
-            $actualProperty = $properties->getProperty($row['Key'])->getValue();
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
-        }
-    }
-
-    /**
-     * @Then /^I expect this node to have no properties$/
-     */
-    public function iExpectThisNodeToHaveNoProperties()
-    {
-        Assert::assertNotNull($this->currentNode, 'current node not found');
-        $properties = $this->currentNode->getProperties();
-        $properties = iterator_to_array($properties);
-        Assert::assertCount(0, $properties, 'I expect no properties');
-    }
-
-    /**
-     * @Then /^I expect this node to be of type "([^"]*)"$/
-     * @param string $nodeTypeName
-     */
-    public function iExpectTheNodeToBeOfType(string $nodeTypeName)
-    {
-        Assert::assertEquals($nodeTypeName, $this->currentNode->getNodeTypeName()->jsonSerialize());
-    }
-
-
-    /**
-     * @Then /^I expect the node aggregate "([^"]*)" to have the references:$/
-     * @param string $nodeAggregateIdentifier
-     * @param TableNode $expectedReferences
-     * @throws Exception
-     */
-    public function iExpectTheNodeToHaveTheReferences(string $nodeAggregateIdentifier, TableNode $expectedReferences)
-    {
-        $expectedReferences = $this->readPayloadTable($expectedReferences);
-
-        /** @var ContentSubgraphInterface $subgraph */
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-
-        foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
-            $destinationNodes = $subgraph->findReferencedNodes(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier), PropertyName::fromString($propertyName));
-            $destinationNodeAggregateIdentifiers = array_map(
-                function ($item) {
-                    if ($item instanceof NodeInterface) {
-                        return (string)$item->getNodeAggregateIdentifier();
-                    } else {
-                        return $item;
-                    }
-                },
-                $destinationNodes
-            );
-            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
-        }
-    }
-
-    /**
-     * @Then /^I expect the node aggregate "([^"]*)" to be referenced by:$/
-     * @param string $nodeAggregateIdentifier
-     * @param TableNode $expectedReferences
-     * @throws Exception
-     */
-    public function iExpectTheNodeToBeReferencedBy(string $nodeAggregateIdentifier, TableNode $expectedReferences)
-    {
-        $expectedReferences = $this->readPayloadTable($expectedReferences);
-
-        /** @var ContentSubgraphInterface $subgraph */
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-
-        foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
-            $destinationNodes = $subgraph->findReferencingNodes(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier), PropertyName::fromString($propertyName));
-            $destinationNodeAggregateIdentifiers = array_map(
-                function ($item) {
-                    if ($item instanceof NodeInterface) {
-                        return (string)$item->getNodeAggregateIdentifier();
-                    } else {
-                        return $item;
-                    }
-                },
-                $destinationNodes
-            );
-
-            // since the order on the target side is not defined we sort
-            // expectation and result before comparison
-            sort($expectedDestinationNodeAggregateIdentifiers);
-            sort($destinationNodeAggregateIdentifiers);
-            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
-        }
-    }
-
-    /**
-     * @Then /^I expect the path "([^"]*)" to lead to the node ([^"]*)$/
-     * @param string $serializedNodePath
-     * @param string $serializedNodeIdentifier
-     * @throws Exception
-     */
-    public function iExpectThePathToLeadToTheNode(string $serializedNodePath, string $serializedNodeIdentifier)
-    {
-        if (!$this->getRootNodeAggregateIdentifier()) {
-            throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
-        }
-        $expectedDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
-        Assert::assertNotNull($this->currentNode, 'Did not find node at path "' . $serializedNodePath . '"');
-        $actualDiscriminator = NodeDiscriminator::fromNode($this->currentNode);
-        Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
-    }
-
-    /**
-     * @When /^I go to the parent node of node aggregate "([^"]*)"$/
-     * @param string $nodeAggregateIdentifier
-     */
-    public function iGoToTheParentNodeOfNode(string $nodeAggregateIdentifier)
-    {
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findParentNode(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
-    }
-
-    /**
-     * @Then /^I do not find any node$/
-     */
-    public function currentNodeIsNull()
-    {
-        if ($this->currentNode) {
-            Assert::fail('Current node was not NULL, but node aggregate: ' . $this->currentNode->getNodeAggregateIdentifier());
-        } else {
-            Assert::assertTrue(true);
-        }
-    }
-
-    /**
-     * @Then /^I find a node with node aggregate "([^"]*)"$/
-     * @param string $nodeAggregateIdentifier
-     */
-    public function currentNodeAggregateShouldBe(string $nodeAggregateIdentifier)
-    {
-        Assert::assertEquals($nodeAggregateIdentifier, (string)$this->currentNode->getNodeAggregateIdentifier());
-    }
-
-    /**
-     * @Then /^I expect the path "([^"]*)" to lead to no node$/
-     * @param string $serializedNodePath
-     * @throws Exception
-     */
-    public function iExpectThePathToLeadToNoNode(string $serializedNodePath)
-    {
-        if (!$this->getRootNodeAggregateIdentifier()) {
-            throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
-        }
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
-        Assert::assertNull($node, 'Did find node at path "' . $serializedNodePath . '"');
-    }
-
-    /**
-     * @When /^VisibilityConstraints are set to "(withoutRestrictions|frontend)"$/
-     * @param string $restrictionType
-     */
-    public function visibilityConstraintsAreSetTo(string $restrictionType)
-    {
-        switch ($restrictionType) {
-            case 'withoutRestrictions':
-                $this->visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-                break;
-            case 'frontend':
-                $this->visibilityConstraints = VisibilityConstraints::frontend();
-                break;
-            default:
-                throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.');
-        }
-    }
-
 
     /**
      * @Then /^the subtree for node aggregate "([^"]*)" with node types "([^"]*)" and (\d+) levels deep should be:$/
@@ -1949,18 +1476,6 @@ trait EventSourcedTrait
             $node->getNodeAggregateIdentifier(),
             $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
         );
-    }
-
-    /**
-     * @Then /^I get the node at path "([^"]*)"$/
-     * @param string $serializedNodePath
-     * @throws Exception
-     */
-    public function iGetTheNodeAtPath(string $serializedNodePath)
-    {
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
     }
 
     protected function getWorkspaceCommandHandler(): WorkspaceCommandHandler
