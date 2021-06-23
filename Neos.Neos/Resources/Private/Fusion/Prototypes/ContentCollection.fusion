@@ -17,21 +17,6 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Loop) {
   itemName = 'node'
   iterationName = 'iterator'
 
-  # Using a processor here and not an Array as ContentCollectionRenderer to not push important userland properties further down.
-  @process.appendRemovedContentForBackend = Neos.Fusion:Join {
-    visibleContent = ${value}
-
-    removedContent = Neos.Fusion:Loop {
-      items = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
-      # Render every item by its own Fusion object
-      itemRenderer = Neos.Neos:ContentElementWrapping
-      itemName = 'node'
-      iterationName = 'iterator'
-    }
-
-    @if.onlyInBackend = ${nodeAvailable && node.context.inBackend}
-  }
-
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\BubblingHandler'
 }
 
