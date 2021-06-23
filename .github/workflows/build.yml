@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.3', '7.4']
+        php-versions: ['7.3', '7.4', '8.0']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
@@ -27,8 +27,8 @@ jobs:
           #  experimental: false
           #  dependencies: 'highest'
 
-          # Experimental build for PHP 8
-          #- php-versions: '8.0'
+          # Experimental build for PHP nightly
+          #- php-versions: 'nightly'
           #  composer-arguments: '--ignore-platform-reqs'
           #  static-analysis: 'no'
           #  experimental: true

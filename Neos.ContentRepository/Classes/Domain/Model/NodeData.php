@@ -558,7 +558,7 @@ class NodeData extends AbstractNodeData
      * @param array $dimensions
      * @return integer The number of child nodes
      */
-    public function getNumberOfChildNodes($nodeTypeFilter = null, Workspace $workspace, array $dimensions)
+    public function getNumberOfChildNodes($nodeTypeFilter, Workspace $workspace, array $dimensions)
     {
         return $this->nodeDataRepository->countByParentAndNodeType($this->path, $nodeTypeFilter, $workspace, $dimensions);
     }

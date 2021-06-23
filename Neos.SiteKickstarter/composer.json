@@ -4,7 +4,7 @@
     "description": "A simple generator for Neos assets, like sites and plugins.",
     "license": ["GPL-3.0-or-later"],
     "require": {
-        "php": "^7.3",
+        "php": "^7.3 || ^8.0",
         "neos/flow": "*",
         "neos/utility-files": "*",
         "neos/fluid-adaptor": "*",

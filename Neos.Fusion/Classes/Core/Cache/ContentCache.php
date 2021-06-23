@@ -157,7 +157,7 @@ class ContentCache
      * @param string $cacheDiscriminator The evaluated cache discriminator value
      * @return string The original content, but with additional markers added
      */
-    public function createDynamicCachedSegment($content, $fusionPath, array $contextVariables, array $cacheIdentifierValues, array $tags = [], $lifetime = null, $cacheDiscriminator)
+    public function createDynamicCachedSegment($content, $fusionPath, array $contextVariables, array $cacheIdentifierValues, array $tags, $lifetime, $cacheDiscriminator)
     {
         $metadata = implode(',', $tags);
         if ($lifetime !== null) {

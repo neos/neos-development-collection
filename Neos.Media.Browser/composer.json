@@ -6,7 +6,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "php": "^7.3",
+        "php": "^7.3 || ^8.0",
         "neos/media": "self.version",
         "neos/content-repository": "self.version",
         "neos/neos": "self.version",
@@ -15,7 +15,7 @@
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
-        "doctrine/common": "^2.7",
+        "doctrine/common": "^2.7 || ^3.0",
         "doctrine/orm": "^2.6"
     },
     "autoload": {
