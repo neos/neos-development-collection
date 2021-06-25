@@ -11,6 +11,9 @@
       background-image: url({f:uri.resource(path: 'Images/Login/Wallpaper.jpg', package: 'Neos.Neos')});
     }
   </style>
+  <script
+    src="{f:uri.resource(path: 'JavaScript/Main.min.js', package: 'Neos.Neos')}"
+  ></script>
 </f:section>
 
 <f:section name="body">
@@ -35,9 +38,9 @@
             <p><a href="/setup" class="btn neos-setup-btn">{neos:backend.translate(id: 'error.exception.goToSetup',
               package: 'Neos.Neos')}</a></p>
           </div>
-          <div class="neos-error-details-toggle neos-error-details-toggle--closed">
-            <h4 class="neos-error-details-toggle__header">{neos:backend.translate(id: 'error.exception.technicalInformation', package: 'Neos.Neos')}</h4>
-            <div class="neos-error-details-toggle__body">
+          <div class="neos-error-details-toggle" data-neos-expandable="dropdown">
+            <h4 class="neos-error-details-toggle__header neos-dropdown-trigger" aria-controls="neos-dropdown-content" aria-expanded="false">{neos:backend.translate(id: 'error.exception.technicalInformation', package: 'Neos.Neos')}</h4>
+            <div id="neos-dropdown-content" class="neos-dropdown-content neos-error-details-toggle__body" hidden="true">
               <h5>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.title', package: 'Neos.Neos')}</h5>
               <p>#{exception.code}: {exception.message}</p>
             </div>
@@ -46,10 +49,5 @@
       </div>
     </main>
   </div>
-  <script>
-    document.querySelector('.neos-error-details-toggle').addEventListener('click', function() {
-      document.querySelector('.neos-error-details-toggle').classList.toggle('neos-error-details-toggle--closed');
-    });
-  </script>
   </body>
 </f:section>
