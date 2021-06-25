@@ -17,8 +17,12 @@ const fetchData = async (uri) => {
  */
 const cachedFetch = async (resourceUri) => {
   const cachedData = SessionStorage.getItem(resourceUri);
+  const noCachedEntry = isNil(cachedData);
+  if (isNil(resourceUri) && noCachedEntry) {
+    return false;
+  }
 
-  if (isNil(cachedData)) {
+  if (noCachedEntry) {
     const responseData = await fetchData(resourceUri);
     SessionStorage.setItem(resourceUri, responseData);
     return responseData;
