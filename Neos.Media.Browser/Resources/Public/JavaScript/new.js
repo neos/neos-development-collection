@@ -15,18 +15,18 @@
                 var readableFileSize = readablizeBytes(filesize);
                 var readableMaximumFileSize = readablizeBytes(maximumFileUploadSize);
                 var message = 'The file size of ' + readableFileSize + ' exceeds the allowed limit of ' + readableMaximumFileSize;
-                if (window.Typo3Neos) {
-                    message = window.Typo3Neos.I18n.translate('fileSizeExceedsAllowedLimit', message, 'Neos.Media.Browser', 'Main', [readableFileSize, readableMaximumFileSize]);
-                    window.Typo3Neos.Notification.error(message);
+                if (window.NeosCMS) {
+                    message = window.NeosCMS.I18n.translate('fileSizeExceedsAllowedLimit', message, 'Neos.Media.Browser', 'Main', [readableFileSize, readableMaximumFileSize]);
+                    window.NeosCMS.Notification.error(message);
                 } else {
                     alert(message);
                 }
                 $(this.form).on('submit.invalidfile', function (e) {
                     e.preventDefault();
                     var message = 'Cannot upload the file';
-                    if (window.Typo3Neos) {
-                        message = window.Typo3Neos.I18n.translate('cannotUploadFile', message, 'Neos.Media.Browser');
-                        window.Typo3Neos.Notification.warning(message);
+                    if (window.NeosCMS) {
+                        message = window.NeosCMS.I18n.translate('cannotUploadFile', message, 'Neos.Media.Browser');
+                        window.NeosCMS.Notification.warning(message);
                     } else {
                         alert(message);
                     }
@@ -42,9 +42,9 @@
                 if (!$resource.val()) {
                     e.preventDefault();
                     var message = 'No file selected';
-                    if (window.Typo3Neos) {
-                        message = window.Typo3Neos.I18n.translate('noFileSelected', message, 'Neos.Media.Browser');
-                        window.Typo3Neos.Notification.warning(message);
+                    if (window.NeosCMS) {
+                        message = window.NeosCMS.I18n.translate('noFileSelected', message, 'Neos.Media.Browser');
+                        window.NeosCMS.Notification.warning(message);
                     } else {
                         alert(message);
                     }
