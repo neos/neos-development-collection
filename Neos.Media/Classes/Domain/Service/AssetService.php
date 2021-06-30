@@ -271,10 +271,12 @@ class AssetService
     public function replaceAssetResource(AssetInterface $asset, PersistentResource $resource, array $options = []): void
     {
         $originalAssetResource = $asset->getResource();
+        $resourceMediaType = $resource->getMediaType();
         $asset->setResource($resource);
 
         if (isset($options['keepOriginalFilename']) && (boolean)$options['keepOriginalFilename'] === true) {
             $asset->getResource()->setFilename($originalAssetResource->getFilename());
+            $asset->getResource()->setMediaType($resourceMediaType);
         }
 
         $uriMapping = [];
