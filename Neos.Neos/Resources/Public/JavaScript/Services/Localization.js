@@ -249,7 +249,7 @@ const translate = (
   return i18next.t(identifier, options);
 };
 
-const init = (xliffData) => {
+const init = () => {
   if (isNil(window.NeosCMS)) {
     window.NeosCMS = {};
   }
@@ -259,15 +259,6 @@ const init = (xliffData) => {
   }
 
   if (isNil(window.NeosCMS.I18n)) {
-    // default options
-    const options = {
-      interpolation: {
-        prefix: "{",
-        suffix: "}",
-      },
-      resources: {},
-    };
-
     window.NeosCMS.I18n = {
       init: init,
       translate: translate,
@@ -276,24 +267,35 @@ const init = (xliffData) => {
 
     // deprecated - to be removed in 8.0
     window.Typo3Neos.I18n = window.NeosCMS.I18n;
-
-    // configure language
-    const currentLangauge = getCurrentLanguage();
-    if (!isEmpty(currentLangauge)) {
-      // If the current language is not ISO-2 then we can not use the preferred language
-      const languageOption = currentLangauge.match("[a-z]{2}(-[A-Z]{2})")
-        ? "lng"
-        : "fallbackLng";
-      options[languageOption] = currentLangauge;
-    }
-
-    initializeExistingNamespaces(xliffData);
-
-    // append translation resources
-    i18next.init(options, (err, t) => {
-      transformAndAppendXliffData(xliffData);
-    });
   }
 };
 
-export default { init, translate };
+const initTranslations = (xliffData) => {
+  // default options
+  const options = {
+    interpolation: {
+      prefix: "{",
+      suffix: "}",
+    },
+    resources: {},
+  };
+
+  // configure language
+  const currentLangauge = getCurrentLanguage();
+  if (!isEmpty(currentLangauge)) {
+    // If the current language is not ISO-2 then we can not use the preferred language
+    const languageOption = currentLangauge.match("[a-z]{2}(-[A-Z]{2})")
+      ? "lng"
+      : "fallbackLng";
+    options[languageOption] = currentLangauge;
+  }
+
+  initializeExistingNamespaces(xliffData);
+
+  // append translation resources
+  i18next.init(options, (err, t) => {
+    transformAndAppendXliffData(xliffData);
+  });
+};
+
+export default { init, initTranslations, translate };
