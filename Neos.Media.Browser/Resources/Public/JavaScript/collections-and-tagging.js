@@ -57,9 +57,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
 											}
 									}).fail(function () {
 											var message = 'Tagging the asset failed.';
-											if (window.Typo3Neos) {
-													message = window.Typo3Neos.I18n.translate('taggingAssetsFailed', message, 'Neos.Media.Browser');
-													window.Typo3Neos.Notification.error(message);
+											if (window.NeosCMS) {
+													message = window.NeosCMS.I18n.translate('taggingAssetsFailed', message, 'Neos.Media.Browser');
+													window.NeosCMS.Notification.error(message);
 											} else {
 													alert(message);
 											}
@@ -100,9 +100,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
 											}
 									}).fail(function () {
 											var message = 'Adding the asset to the collection failed.';
-											if (window.Typo3Neos) {
-													message = window.Typo3Neos.I18n.translate('addingAssetsToCollectionFailed', message, 'Neos.Media.Browser');
-													window.Typo3Neos.Notification.error(message);
+											if (window.NeosCMS) {
+													message = window.NeosCMS.I18n.translate('addingAssetsToCollectionFailed', message, 'Neos.Media.Browser');
+													window.NeosCMS.Notification.error(message);
 											} else {
 													alert(message);
 											}
@@ -122,7 +122,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 							value.focus();
 							e.preventDefault();
 					} else {
-							var label = window.Typo3Neos.I18n.translate('creating', 'Creating', 'Neos.Media.Browser');
+							var label = window.NeosCMS.I18n.translate('creating', 'Creating', 'Neos.Media.Browser');
 							$('button[type="submit"]', this).addClass('neos-disabled').html(label + '<span class="neos-ellipsis" />');
 					}
 			});
