@@ -130,9 +130,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 			const modalOpened = (_event) => {
 				const trigger = _event.target;
-				const modalIdentifier = window.NeosCMS.Tools.getCollectionValueByPath(_event, 'detail.identifier');
+				const modalIdentifier = window.NeosCMS.Helper.getCollectionValueByPath(_event, 'detail.identifier');
 				const modal = document.getElementById(modalIdentifier);
-				if (!window.NeosCMS.Tools.isNil(trigger) && !window.NeosCMS.Tools.isNil(modal)) {
+				if (!window.NeosCMS.Helper.isNil(trigger) && !window.NeosCMS.Helper.isNil(modal)) {
 					const objectIdentifier = trigger.getAttribute('data-object-identifier');
 					modal.querySelector('#modal-form-object').setAttribute('value', objectIdentifier);
 				}

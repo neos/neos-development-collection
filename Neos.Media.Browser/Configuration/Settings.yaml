@@ -12,6 +12,7 @@ Neos:
       scripts:
         - 'resource://Neos.Media.Browser/Public/Libraries/jquery/jquery-3.6.0.min.js'
         - 'resource://Neos.Twitter.Bootstrap/Public/2/js/bootstrap.min.js'
+        - 'resource://Neos.Neos/Public/JavaScript/Main.min.js'
         - 'resource://Neos.Media.Browser/Public/Libraries/bootstrap/bootstrap-components.js'
         - 'resource://Neos.Media.Browser/Public/JavaScript/media-browser.js'
       styles:
