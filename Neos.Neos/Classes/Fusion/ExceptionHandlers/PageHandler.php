@@ -11,7 +11,7 @@ namespace Neos\Neos\Fusion\ExceptionHandlers;
  * source code.
  */
 
-use function GuzzleHttp\Psr7\str;
+use GuzzleHttp\Psr7\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -107,7 +107,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
             $bodyContent
         );
 
-        return str($response);
+        return Message::toString($response);
     }
 
     /**
