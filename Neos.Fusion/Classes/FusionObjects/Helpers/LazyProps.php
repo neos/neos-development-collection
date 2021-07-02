@@ -4,6 +4,7 @@ namespace Neos\Fusion\FusionObjects\Helpers;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\FusionObjects\ComponentImplementation;
 
 /**
  * @Flow\Proxy(false)
@@ -34,7 +35,7 @@ final class LazyProps implements \ArrayAccess, \Iterator, \JsonSerializable
     private $keys;
 
     /**
-     * @var object
+     * @var ComponentImplementation
      */
     private $fusionObject;
 
@@ -43,8 +44,16 @@ final class LazyProps implements \ArrayAccess, \Iterator, \JsonSerializable
      */
     private $effectiveContext;
 
+    /**
+     * LazyProps constructor.
+     * @param ComponentImplementation $fusionObject
+     * @param string $parentPath
+     * @param Runtime $runtime
+     * @param array $keys
+     * @param array $effectiveContext
+     */
     public function __construct(
-        object $fusionObject,
+        ComponentImplementation $fusionObject,
         string $parentPath,
         Runtime $runtime,
         array $keys,
