@@ -7,7 +7,8 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
   targetConverted = ${Neos.Link.hasSupportedScheme(this.target) ? Neos.Link.convertUriToObject(this.target, node) : null}
   targetSchema = ${Neos.Link.getScheme(this.target)}
 
-  i18n = ${q(Neos.BackendUser.get()).property('preferences.interfaceLanguage')}
+  backendLanguage = ${q(Neos.BackendUser.get()).property('preferences.interfaceLanguage')}
+  i18n = ${I18n.id('').package('Neos.Neos').source('Main').locale(this.backendLanguage)}
 
   renderer = Neos.Fusion:Match {
     @subject = ${props.targetMode}
@@ -17,7 +18,7 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
   renderer.selectedTarget = Neos.Fusion:Join {
     generalMessage = Neos.Fusion:Renderer {
       fallback = 'This is a shortcut to a specific target:'
-      renderer = ${I18n.id('shortcut.toSpecificTarget').package('Neos.Neos').source('Main').value(this.fallback).locale(props.i18n).translate()}
+      renderer = ${props.i18n.id('shortcut.toSpecificTarget').value(this.fallback).translate()}
     }
     ifTarget = Neos.Fusion:Case {
       default {
@@ -25,7 +26,7 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
         condition = true
         renderer = Neos.Fusion:Renderer {
           fallback = 'no target has been selected'
-          renderer = ${I18n.id('shortcut.noTargetSelected').package('Neos.Neos').source('Main').value(this.fallback).locale(props.i18n).translate()}
+          renderer = ${props.i18n.id('shortcut.noTargetSelected').value(this.fallback).translate()}
         }
       }
     }
@@ -44,7 +45,7 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
         fallback = afx`
           Click {this.targetUriTag} to continue to the page.
         `
-        renderer = ${I18n.id('shortcut.clickToContinueToPage').package('Neos.Neos').source('Main').arguments([this.targetUriTag]).value(this.fallback).locale(props.i18n).translate()}
+        renderer = ${props.i18n.id('shortcut.clickToContinueToPage').arguments([this.targetUriTag]).value(this.fallback).translate()}
       }
 
       asset = Neos.Fusion:Renderer {
@@ -61,7 +62,7 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
         fallback = afx`
           Click {this.targetUriTag} to see the file.
         `
-        renderer = ${I18n.id('shortcut.clickToContinueToAsset').package('Neos.Neos').source('Main').arguments([this.targetUriTag]).value(this.fallback).locale(props.i18n).translate()}
+        renderer = ${props.i18n.id('shortcut.clickToContinueToAsset').arguments([this.targetUriTag]).value(this.fallback).translate()}
       }
 
       @default = Neos.Fusion:Renderer {
@@ -76,7 +77,7 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
         fallback = afx`
           Click {this.targetUriTag} to open the link.
         `
-        renderer = ${I18n.id('shortcut.clickToContinueToExternalUrl').package('Neos.Neos').source('Main').arguments([this.targetUriTag]).value(this.fallback).locale(props.i18n).translate()}
+        renderer = ${props.i18n.id('shortcut.clickToContinueToExternalUrl').arguments([this.targetUriTag]).value(this.fallback).translate()}
       }
     }
   }
@@ -90,7 +91,7 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
       This is a shortcut to the first child page.<br/>
       Click {this.targetUriTag} to continue to the page.
     `
-    renderer = ${I18n.id('shortcut.clickToContinueToFirstChildNode').package('Neos.Neos').source('Main').arguments([this.targetUriTag]).value(this.fallback).locale(props.i18n).translate()}
+    renderer = ${props.i18n.id('shortcut.clickToContinueToFirstChildNode').arguments([this.targetUriTag]).value(this.fallback).translate()}
   }
 
   // targetMode == 'parentNode'
@@ -102,7 +103,7 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
       This is a shortcut to the parent page.<br/>
       Click {this.targetUriTag} to continue to the page.
     `
-    renderer = ${I18n.id('shortcut.clickToContinueToParentNode').package('Neos.Neos').source('Main').arguments([this.targetUriTag]).value(this.fallback).locale(props.i18n).translate()}
+    renderer = ${props.i18n.id('shortcut.clickToContinueToParentNode').arguments([this.targetUriTag]).value(this.fallback).translate()}
   }
 
   renderer.@process.contentWrap = afx`
