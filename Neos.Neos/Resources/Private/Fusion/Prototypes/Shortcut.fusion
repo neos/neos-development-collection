@@ -1,15 +1,133 @@
 # Neos.Neos.Shortcut is given a representation for editing purposes
 #
-prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Template) {
-  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Shortcut.html'
-
+prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
   targetMode = ${q(node).property('targetMode')}
   firstChildNode = ${q(node).children('[instanceof Neos.Neos:Document]').get(0)}
   target = ${q(node).property('target')}
   targetConverted = ${Neos.Link.hasSupportedScheme(this.target) ? Neos.Link.convertUriToObject(this.target, node) : null}
   targetSchema = ${Neos.Link.getScheme(this.target)}
 
-  node = ${node}
+  backendLanguage = ${q(Neos.BackendUser.get()).property('preferences.interfaceLanguage')}
+  i18n = ${I18n.id('').package('Neos.Neos').source('Main').locale(this.backendLanguage)}
+
+  renderer = Neos.Fusion:Match {
+    @subject = ${props.targetMode}
+  }
+
+  // targetMode == 'selectedTarget'
+  renderer.selectedTarget = Neos.Fusion:Join {
+    generalMessage = Neos.Fusion:Renderer {
+      fallback = 'This is a shortcut to a specific target:'
+      renderer = ${props.i18n.id('shortcut.toSpecificTarget').value(this.fallback).translate()}
+    }
+    ifTarget = Neos.Fusion:Case {
+      default {
+        @position = 'end'
+        condition = true
+        renderer = Neos.Fusion:Renderer {
+          fallback = 'no target has been selected'
+          renderer = ${props.i18n.id('shortcut.noTargetSelected').value(this.fallback).translate()}
+        }
+      }
+    }
+    @glue = "<br/>"
+  }
+
+  renderer.selectedTarget.ifTarget.condition {
+    condition = ${props.target}
+    renderer = Neos.Fusion:Match {
+      @subject = ${props.targetSchema}
+
+      node = Neos.Fusion:Renderer {
+        targetUriTag = Neos.Neos:NodeLink {
+          node = ${props.targetConverted}
+        }
+        fallback = afx`
+          Click {this.targetUriTag} to continue to the page.
+        `
+        renderer = ${props.i18n.id('shortcut.clickToContinueToPage').arguments([this.targetUriTag]).value(this.fallback).translate()}
+      }
+
+      asset = Neos.Fusion:Renderer {
+        targetUriTag = Neos.Fusion:Tag {
+          tagName = 'a'
+          attributes {
+            href = Neos.Fusion:ResourceUri {
+              resource = ${props.targetConverted.resource}
+            }
+            target = "_blank"
+          }
+          content = ${props.targetConverted.label}
+        }
+        fallback = afx`
+          Click {this.targetUriTag} to see the file.
+        `
+        renderer = ${props.i18n.id('shortcut.clickToContinueToAsset').arguments([this.targetUriTag]).value(this.fallback).translate()}
+      }
+
+      @default = Neos.Fusion:Renderer {
+        targetUriTag = Neos.Fusion:Tag {
+          tagName = 'a'
+          attributes {
+            href = ${props.target}
+            target = "_blank"
+          }
+          content = ${props.target}
+        }
+        fallback = afx`
+          Click {this.targetUriTag} to open the link.
+        `
+        renderer = ${props.i18n.id('shortcut.clickToContinueToExternalUrl').arguments([this.targetUriTag]).value(this.fallback).translate()}
+      }
+    }
+  }
+
+  // targetMode == 'firstChildNode'
+  renderer.firstChildNode = Neos.Fusion:Renderer {
+    targetUriTag = Neos.Neos:NodeLink {
+      node = ${props.firstChildNode}
+    }
+    fallback = afx`
+      This is a shortcut to the first child page.<br/>
+      Click {this.targetUriTag} to continue to the page.
+    `
+    renderer = ${props.i18n.id('shortcut.clickToContinueToFirstChildNode').arguments([this.targetUriTag]).value(this.fallback).translate()}
+  }
+
+  // targetMode == 'parentNode'
+  renderer.parentNode = Neos.Fusion:Renderer {
+    targetUriTag = Neos.Neos:NodeLink {
+      node = ${props.node.parent}
+    }
+    fallback = afx`
+      This is a shortcut to the parent page.<br/>
+      Click {this.targetUriTag} to continue to the page.
+    `
+    renderer = ${props.i18n.id('shortcut.clickToContinueToParentNode').arguments([this.targetUriTag]).value(this.fallback).translate()}
+  }
+
+  renderer.@process.contentWrap = afx`
+    <div id="neos-shortcut">
+      <p>
+        {value}
+      </p>
+    </div>
+  `
+
+  @cache {
+    mode = 'dynamic'
+    entryIdentifier {
+      node = ${node}
+		}
+    entryDiscriminator = ${q(Neos.BackendUser.get()).property('preferences.interfaceLanguage')}
+    context {
+        1 = 'node'
+        2 = 'documentNode'
+    }
+    entryTags {
+        1 = ${Neos.Caching.nodeTag(node)}
+    }
+  }
 
   @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }
