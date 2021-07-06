@@ -83,7 +83,7 @@ class Event
      * Child events, of this event
      *
      * @var ArrayCollection<Neos\Neos\EventLog\Domain\Model\Event>
-     * @ORM\OneToMany(targetEntity="Neos\Neos\EventLog\Domain\Model\Event", mappedBy="parentEvent", cascade="persist")
+     * @ORM\OneToMany(targetEntity="Neos\Neos\EventLog\Domain\Model\Event", mappedBy="parentEvent", cascade={"persist"})
      */
     protected $childEvents;
 
