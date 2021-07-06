@@ -44,11 +44,11 @@ class FirstLevelNodeCache
      * Otherwise false is returned.
      *
      * @param string $path
-     * @return NodeInterface
+     * @return NodeInterface|boolean
      */
     public function getByPath($path)
     {
-        if (isset($this->nodesByPath[$path])) {
+        if (array_key_exists($path, $this->nodesByPath)) {
             return $this->nodesByPath[$path];
         }
 
@@ -81,7 +81,7 @@ class FirstLevelNodeCache
      */
     public function getByIdentifier($identifier)
     {
-        if (isset($this->nodesByIdentifier[$identifier])) {
+        if (array_key_exists($identifier, $this->nodesByIdentifier)) {
             return $this->nodesByIdentifier[$identifier];
         }
 
