@@ -1,0 +1,13 @@
+##
+# Returns the result of previous calls with the same "discriminator"
+#
+# prototype(My.Vendor:Expensive.Calculation) < prototype(Neos.Fusion:Memo) {
+#     discriminator = 'expensive-calculation'
+#     value = ${1+2}
+# }
+#
+prototype(Neos.Fusion:Memo) {
+  @class = 'Neos\\Fusion\\FusionObjects\\MemoImplementation'
+  discriminator = ''
+  value = ''
+}
