@@ -506,6 +506,23 @@ Example::
 
 .. note:: This can be used to simplify many usages of :ref:`Neos_Fusion__Case` when the subject is a string.
 
+.. _Neos_Fusion__Memo:
+
+Neos.Fusion:Memo
+-----------------
+
+Returns the result of previous calls with the same "discriminator"
+
+:discriminator: (string, **required**) Cache identifier
+:value: (mixed) The value to evaluate and store for future calls during rendering
+
+Example::
+
+  prototype(My.Vendor:Expensive.Calculation) < prototype(Neos.Fusion:Memo) {
+    discriminator = 'expensive-calculation'
+    value = ${1+2}
+  }
+
 .. _Neos_Fusion__RawArray:
 
 Neos.Fusion:RawArray
