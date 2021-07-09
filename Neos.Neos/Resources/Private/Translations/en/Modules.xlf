@@ -428,6 +428,9 @@
 			<trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
 			</trans-unit>
+			<trans-unit id="users.lastLogin" xml:space="preserve">
+				<source>Last Login</source>
+			</trans-unit>
 			<trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
 			</trans-unit>
