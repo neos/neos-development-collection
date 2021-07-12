@@ -13,10 +13,13 @@ namespace Neos\Neos\Aspects;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Flow\I18n\Translator;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Arrays;
 
 /**
+ * An AOP aspect that intercepts the creation of NodeType instances in order to replace localize their configuration (i.e. replace "i18n" labels and localize icons)
+ *
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
@@ -24,20 +27,8 @@ class NodeTypeConfigurationEnrichmentAspect
 {
 
     /**
-     * @var array
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
-     */
-    protected $dataTypesDefaultConfiguration;
-
-    /**
-     * @var array
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.editors")
-     */
-    protected $editorDefaultConfiguration;
-
-    /**
      * @Flow\Inject
-     * @var \Neos\Flow\I18n\Translator
+     * @var Translator
      */
     protected $translator;
 

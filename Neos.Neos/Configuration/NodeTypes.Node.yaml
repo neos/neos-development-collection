@@ -2,6 +2,13 @@
 'Neos.Neos:Node':
   label: "${Neos.Node.labelForNode(node).properties('title', 'text')}"
   abstract: true
+  postprocessors:
+    'Neos.Neos:ApplyEditorDefaults':
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\ApplyEditorDefaultsPostprocessor'
+      position: start
+    'Neos.Neos:MapIconNames':
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\MapIconNamesPostprocessor'
+      position: end
   options:
     fusion:
       prototypeGenerator: ~
