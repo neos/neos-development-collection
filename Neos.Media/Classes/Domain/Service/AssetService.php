@@ -80,7 +80,7 @@ class AssetService
     protected $reflectionService;
 
     /**
-     * @var array
+     * @var AssetUsageStrategyInterface[]
      */
     protected $usageStrategies;
 
@@ -107,6 +107,11 @@ class AssetService
      * @var AssetVariantGenerator
      */
     protected $assetVariantGenerator;
+
+    public function __construct(array $usageStrategies)
+    {
+        $this->usageStrategies = $usageStrategies;
+    }
 
     /**
      * Returns the repository for an asset
@@ -174,20 +179,10 @@ class AssetService
     /**
      * Returns all registered asset usage strategies
      *
-     * @return array<\Neos\Media\Domain\Strategy\AssetUsageStrategyInterface>
+     * @return AssetUsageStrategyInterface[]
      */
-    protected function getUsageStrategies(): array
+    public function getUsageStrategies(): array
     {
-        if (is_array($this->usageStrategies)) {
-            return $this->usageStrategies;
-        }
-
-        $this->usageStrategies = [];
-        $assetUsageStrategyImplementations = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetUsageStrategyInterface::class);
-        foreach ($assetUsageStrategyImplementations as $assetUsageStrategyImplementationClassName) {
-            $this->usageStrategies[] = $this->objectManager->get($assetUsageStrategyImplementationClassName);
-        }
-
         return $this->usageStrategies;
     }
 
@@ -200,7 +195,6 @@ class AssetService
     public function getUsageReferences(AssetInterface $asset): array
     {
         $usages = [];
-        /** @var AssetUsageStrategyInterface $strategy */
         foreach ($this->getUsageStrategies() as $strategy) {
             $usages = Arrays::arrayMergeRecursiveOverrule($usages, $strategy->getUsageReferences($asset));
         }
@@ -235,7 +229,7 @@ class AssetService
     {
         /** @var AssetUsageStrategyInterface $strategy */
         foreach ($this->getUsageStrategies() as $strategy) {
-            if ($strategy->isInUse($asset) === true) {
+            if ($strategy->getUsageCount($asset) > 0) {
                 return true;
             }
         }

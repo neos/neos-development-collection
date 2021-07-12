@@ -36,11 +36,11 @@
                     </f:if>
                 </fieldset>
                 <fieldset>
-                    <legend>{neos:backend.translate(id: 'relatedNodes.referencesTo', package: 'Neos.Media.Browser', arguments: {asset: asset.label})}</legend>
+                    <legend>{neos:backend.translate(id: 'usages.label', package: 'Neos.Media.Browser', arguments: {asset: asset.label})}</legend>
                     <f:if condition="{asset.inUse}">
                         <f:then>
                             <p class="neos-buffer-below"><i class="fas fa-exclamation-sign"></i> {neos:backend.translate(id: 'replace.usageCount', arguments: {usageCount: asset.usageCount}, package: 'Neos.Media.Browser')}</p>
-                            <f:link.action action="relatedNodes" arguments="{asset:asset}" addQueryString="true" class="neos-button">
+                            <f:link.action controller="Usage" action="index" arguments="{asset:asset}" addQueryString="true" class="neos-button">
                                 {neos:backend.translate(id: 'replace.allUsages', package: 'Neos.Media.Browser')}
                             </f:link.action>
                         </f:then>

@@ -18,21 +18,11 @@ use Neos\Media\Domain\Model\AssetInterface;
  */
 interface AssetUsageStrategyInterface
 {
-    /**
-     * Returns true if the asset is used.
-     *
-     * @param AssetInterface $asset
-     * @return boolean
-     */
-    public function isInUse(AssetInterface $asset);
 
     /**
      * Returns the total count of usages found.
-     *
-     * @param AssetInterface $asset
-     * @return integer
      */
-    public function getUsageCount(AssetInterface $asset);
+    public function getUsageCount(AssetInterface $asset): int;
 
     /**
      * Returns an array of usage reference objects.

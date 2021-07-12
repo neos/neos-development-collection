@@ -11,22 +11,23 @@ namespace Neos\Neos\Domain\Strategy;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\Dto\UsageReference;
 use Neos\Media\Domain\Model\Image;
-use Neos\Media\Domain\Strategy\AbstractAssetUsageStrategy;
+use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Neos\Controller\CreateContentContextTrait;
-use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Utility\TypeHandling;
 
 /**
  * @Flow\Scope("singleton")
  */
-class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
+final class AssetUsageInNodePropertiesStrategy implements AssetUsageStrategyInterface
 {
     use CreateContentContextTrait;
 
@@ -51,7 +52,7 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
      * Returns an array of usage reference objects.
      *
      * @param AssetInterface $asset
-     * @return array<\Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties>
+     * @return array<UsageReference>
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      */
     public function getUsageReferences(AssetInterface $asset)
@@ -61,13 +62,10 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             return $this->firstlevelCache[$assetIdentifier];
         }
 
-        $relatedNodes = array_map(function (NodeData $relatedNodeData) use ($asset) {
-            return new AssetUsageInNodeProperties(
-                $asset,
-                $relatedNodeData->getIdentifier(),
-                $relatedNodeData->getWorkspace()->getName(),
-                $relatedNodeData->getDimensionValues(),
-                $relatedNodeData->getNodeType()->getName()
+        $relatedNodes = array_map(static function (NodeData $node) {
+            return new UsageReference(
+                'TODO: dynamic label for node "' . $node->getName() . '"',
+                new Uri('/todo'),
             );
         }, $this->getRelatedNodes($asset));
 
@@ -97,5 +95,10 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
         }
 
         return $this->nodeDataRepository->findNodesByPathPrefixAndRelatedEntities(SiteService::SITES_ROOT_PATH, $relationMap);
+    }
+
+    public function getUsageCount(AssetInterface $asset): int
+    {
+        return count($this->getRelatedNodes($asset));
     }
 }
