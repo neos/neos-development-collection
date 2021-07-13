@@ -744,7 +744,7 @@ HELPTEXT;
                     }
                 }
                 if ($undefinedProperties !== []) {
-                    $nodesWithUndefinedPropertiesNodes[$node->getIdentifier()] = ['node' => $node, 'undefinedProperties' => $undefinedProperties];
+                    $nodesWithUndefinedPropertiesNodes[] = ['node' => $node, 'undefinedProperties' => $undefinedProperties];
                     foreach ($undefinedProperties as $undefinedProperty) {
                         $undefinedPropertiesCount++;
                         $this->dispatch(self::EVENT_NOTICE, sprintf('Found undefined property named "<i>%s</i>" in "<i>%s</i>" (<i>%s</i>)', $undefinedProperty, $node->getPath(), $node->getNodeType()->getName()));
