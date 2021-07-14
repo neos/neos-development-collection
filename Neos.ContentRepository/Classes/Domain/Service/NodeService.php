@@ -79,7 +79,7 @@ class NodeService implements NodeServiceInterface
                     $childNodeType,
                     Utility::buildAutoCreatedChildNodeIdentifier(
                         $childNodeName,
-                        $node->getNodeAggregateIdentifier()
+                        $node->getIdentifier()
                     )
                 );
             } catch (NodeExistsException $exception) {
