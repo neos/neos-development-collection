@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\Fusion\FusionObjects;
 
 /*
@@ -16,7 +17,7 @@ namespace Neos\Fusion\FusionObjects;
  */
 class MemoImplementation extends AbstractFusionObject
 {
-    static protected $cache = [];
+    protected static $cache = [];
 
     /**
      * Return the processed value or its cached version based on the discriminator
