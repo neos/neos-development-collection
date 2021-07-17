@@ -177,7 +177,7 @@ class ContentElementWrappingService
 
             if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
-                $nodeContextPath = $node->getAddress()->serializeForUri();
+                $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
             }
 

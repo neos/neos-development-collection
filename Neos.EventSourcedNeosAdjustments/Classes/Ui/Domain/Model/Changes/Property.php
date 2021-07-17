@@ -16,6 +16,9 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorFactoryInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
@@ -61,6 +64,12 @@ class Property extends AbstractChange
      * @var NodeServiceInterface
      */
     protected $nodeService;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * The node dom address
@@ -309,14 +318,14 @@ class Property extends AbstractChange
 
             // !!! REMEMBER: we are not allowed to use $node anymore, because it may have been modified by the commands above.
             // Thus, we need to re-fetch it (as a workaround; until we do not need this anymore)
-            $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-            $node = $subgraph->findNodeByNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $node = $nodeAccessor->findByIdentifier($node->getNodeAggregateIdentifier());
 
             $this->updateWorkspaceInfo();
 
             $reloadIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadIfChanged', $propertyName);
             if (!$this->getIsInline() && $node->getNodeType()->getConfiguration($reloadIfChangedConfigurationPath)) {
-                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $node->findParentNode()->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $nodeAccessor->findParentNode($node)->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
                     $reloadContentOutOfBand = new ReloadContentOutOfBand();
                     $reloadContentOutOfBand->setNode($node);
                     $reloadContentOutOfBand->setNodeDomAddress($this->getNodeDomAddress());

@@ -13,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\Flow\Annotations as Flow;
@@ -51,6 +52,12 @@ class WorkspaceService
     protected $domainUserService;
 
     /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
      * Get all publishable node context paths for a workspace
      *
      * @param Workspace $workspaceName
@@ -64,8 +71,8 @@ class WorkspaceService
             $documentNode = (new FlowQuery([$node]))->closest('[instanceof Neos.Neos:Document]')->get(0);
             if ($documentNode) {
                 return [
-                    'contextPath' => $node->getAddress()->serializeForUri(),
-                    'documentContextPath' => $node->getAddress()->serializeForUri()
+                    'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
+                    'documentContextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri()
                 ];
             }
         }, $publishableNodes);

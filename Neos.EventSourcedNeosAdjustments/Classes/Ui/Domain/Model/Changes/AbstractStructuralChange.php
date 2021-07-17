@@ -12,6 +12,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
@@ -52,6 +55,18 @@ abstract class AbstractStructuralChange extends AbstractChange
      * @var ContentCacheFlusher
      */
     protected $contentCacheFlusher;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
 
     /**
      * @var NodeInterface
@@ -142,7 +157,8 @@ abstract class AbstractStructuralChange extends AbstractChange
         $updateNodeInfo->recursive();
 
         $updateParentNodeInfo = new UpdateNodeInfo();
-        $parentNode = $node->findParentNode();
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $parentNode = $nodeAccessor->findParentNode($node);
         $updateParentNodeInfo->setNode($parentNode);
 
         $this->feedbackCollection->add($updateNodeInfo);
@@ -160,7 +176,7 @@ abstract class AbstractStructuralChange extends AbstractChange
                 //    no other node in between
                 $this->getParentDomAddress() &&
                 $this->getParentDomAddress()->getFusionPath() &&
-                $this->getParentDomAddress()->getContextPath() === $node->findParentNode()->getAddress()->serializeForUri()
+                $this->getParentDomAddress()->getContextPath() === $this->nodeAddressFactory->createFromNode($nodeAccessor->findParentNode($node))->serializeForUri()
             ) {
                 $renderContentOutOfBand = new RenderContentOutOfBand();
                 $renderContentOutOfBand->setNode($node);
