@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-namespace Neos\ContentRepository\Intermediary\Domain\Exception;
+namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository.Intermediary package.
@@ -13,7 +12,7 @@ namespace Neos\ContentRepository\Intermediary\Domain\Exception;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -30,7 +29,7 @@ final class NodeImplementationClassNameIsInvalid extends \DomainException
 
     public static function becauseTheClassDoesNotImplementTheRequiredInterface(string $attemptedClassName): self
     {
-        return new self('The given node implementation class "' . $attemptedClassName . '" does not implement the required ' . NodeBasedReadModelInterface::class . '.', 1615415501);
+        return new self('The given node implementation class "' . $attemptedClassName . '" does not implement the required ' . NodeInterface::class . '.', 1615415501);
     }
 
     public static function becauseTheClassImplementsTheDeprecatedLegacyInterface(string $attemptedClassName): self

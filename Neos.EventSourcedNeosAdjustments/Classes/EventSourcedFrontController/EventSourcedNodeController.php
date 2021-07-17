@@ -164,7 +164,6 @@ class EventSourcedNodeController extends ActionController
 
         $this->view->assignMultiple([
             'value' => $nodeInstance,
-            //'subgraph' => $subgraph, TODO
             'site' => $site,
         ]);
 
@@ -231,7 +230,6 @@ class EventSourcedNodeController extends ActionController
 
         $this->view->assignMultiple([
             'value' => $nodeInstance,
-            'subgraph' => $subgraph,
             'site' => $site,
         ]);
     }

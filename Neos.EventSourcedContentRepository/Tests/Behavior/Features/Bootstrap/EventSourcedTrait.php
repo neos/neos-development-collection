@@ -1484,7 +1484,7 @@ trait EventSourcedTrait
         $actualSiblings = $subgraph->findPrecedingSiblings($this->currentNode->getNodeAggregateIdentifier());
         $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
             return $sibling->getNodeAggregateIdentifier();
-        }, $actualSiblings);
+        }, iterator_to_array($actualSiblings));
 
         Assert::assertEquals(
             $expectedSiblingNodeAggregateIdentifiers,
@@ -1508,7 +1508,7 @@ trait EventSourcedTrait
         $actualSiblings = $subgraph->findSucceedingSiblings($this->currentNode->getNodeAggregateIdentifier());
         $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
             return $sibling->getNodeAggregateIdentifier();
-        }, $actualSiblings);
+        }, iterator_to_array($actualSiblings));
 
         Assert::assertEquals(
             $expectedSiblingNodeAggregateIdentifiers,
@@ -1562,6 +1562,7 @@ trait EventSourcedTrait
 
         Assert::assertEquals(count($expectedChildNodesTable->getHash()), $numberOfChildNodes, 'ContentSubgraph::countChildNodes returned a wrong value');
         Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'ContentSubgraph::findChildNodes: Child Node Count does not match');
+        $nodes = iterator_to_array($nodes);
         foreach ($expectedChildNodesTable->getHash() as $index => $row) {
             $expectedNodeName = NodeName::fromString($row['Name']);
             $actualNodeName = $nodes[$index]->getNodeName();
@@ -1634,11 +1635,14 @@ trait EventSourcedTrait
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
 
-        $properties = $this->currentNode->getProperties();
         foreach ($expectedProperties->getHash() as $row) {
-            Assert::assertTrue($properties->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
-            $actualProperty = $properties->getProperty($row['Key'])->getValue();
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
+            Assert::assertTrue($this->currentNode->hasProperty($row['Key']), 'Property "' . $row['Key'] . '" not found');
+            $actualProperty = $this->currentNode->getProperty($row['Key']);
+            $expected = $row['Value'];
+            if (isset($row['Type']) && $row['Type'] === 'DateTime') {
+                $expected = DateTimeImmutable::createFromFormat(DATE_W3C, $expected);
+            }
+            Assert::assertEquals($expected, $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
         }
     }
 
@@ -1686,7 +1690,7 @@ trait EventSourcedTrait
                         return $item;
                     }
                 },
-                $destinationNodes
+                iterator_to_array($destinationNodes)
             );
             Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
         }
@@ -1715,7 +1719,7 @@ trait EventSourcedTrait
                         return $item;
                     }
                 },
-                $destinationNodes
+                iterator_to_array($destinationNodes)
             );
 
             // since the order on the target side is not defined we sort

@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Intermediary\Tests\Unit\Domain\Property;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Intermediary\Domain\Property\PropertyType;
-use Neos\ContentRepository\Intermediary\Tests\Unit\Fixtures\PostalAddress;
+use Neos\EventSourcedContentRepository\Tests\Unit\Fixtures\PostalAddress;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Image;

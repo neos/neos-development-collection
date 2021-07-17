@@ -46,6 +46,10 @@ final class Node implements NodeInterface
 
     protected NodeAggregateClassification $classification;
 
+    protected PropertyCollection $properties;
+
+    protected DimensionSpacePoint $dimensionSpacePoint;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -55,7 +59,8 @@ final class Node implements NodeInterface
         ?NodeName $nodeName,
         SerializedPropertyValues $serializedProperties,
         PropertyConverter $propertyConverter,
-        NodeAggregateClassification $classification
+        NodeAggregateClassification $classification,
+        DimensionSpacePoint $dimensionSpacePoint
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -66,6 +71,7 @@ final class Node implements NodeInterface
         $this->serializedProperties = $serializedProperties;
         $this->properties = new PropertyCollection($serializedProperties, $propertyConverter);
         $this->classification = $classification;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
     }
 
     /**
@@ -128,24 +134,24 @@ final class Node implements NodeInterface
      */
     public function getProperty($propertyName)
     {
-        return $this->properties->getProperty($propertyName);
+        return $this->properties[$propertyName];
     }
 
     public function hasProperty($propertyName): bool
     {
-        return $this->properties->propertyExists($propertyName);
+        return $this->serializedProperties->propertyExists($propertyName);
     }
 
 
 
     public function getCacheEntryIdentifier(): string
     {
-        throw new \RuntimeException('Not supported');
+        return 'Node_' . $this->getContentStreamIdentifier()->getCacheEntryIdentifier() . '_' . $this->getDimensionSpacePoint()->getCacheEntryIdentifier() . '_' .  $this->getNodeAggregateIdentifier()->getCacheEntryIdentifier();
     }
 
     public function getLabel(): string
     {
-        throw new \RuntimeException('Not supported');
+        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
 
     public function getSerializedProperties(): SerializedPropertyValues

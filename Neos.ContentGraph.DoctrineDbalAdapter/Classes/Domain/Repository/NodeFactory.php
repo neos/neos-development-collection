@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -27,6 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProje
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -37,10 +39,12 @@ use Neos\Flow\Annotations as Flow;
 final class NodeFactory
 {
     private NodeTypeManager $nodeTypeManager;
+    private PropertyConverter $propertyConverter;
 
-    public function __construct(NodeTypeManager $nodeTypeManager)
+    public function __construct(NodeTypeManager $nodeTypeManager, PropertyConverter $propertyConverter)
     {
         $this->nodeTypeManager = $nodeTypeManager;
+        $this->propertyConverter = $propertyConverter;
     }
 
     /**
@@ -48,17 +52,30 @@ final class NodeFactory
      * @return Node
      * @throws NodeTypeNotFoundException
      */
-    public function mapNodeRowToNode(array $nodeRow): Node
+    public function mapNodeRowToNode(array $nodeRow, DimensionSpacePoint $dimensionSpacePoint): NodeInterface
     {
-        return new Node(
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
+        $nodeClassName = $nodeType->getConfiguration('class') ?: \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node::class;
+        if (!class_exists($nodeClassName)) {
+            throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
+        }
+        if (!in_array(ContentProjection\NodeInterface::class, class_implements($nodeClassName))) {
+            if (in_array(NodeInterface::class, class_implements($nodeClassName))) {
+                throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassImplementsTheDeprecatedLegacyInterface($nodeClassName);
+            }
+            throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotImplementTheRequiredInterface($nodeClassName);
+        }
+        return new $nodeClassName(
             ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
-            $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']),
+            $nodeType,
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true)),
-            NodeAggregateClassification::fromString($nodeRow['classification'])
+            $this->propertyConverter,
+            NodeAggregateClassification::fromString($nodeRow['classification']),
+            $dimensionSpacePoint,
         );
     }
 
@@ -90,7 +107,7 @@ final class NodeFactory
             $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
             if (!isset($nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->getHash()])) {
                 // ... so we handle occupation exactly once ...
-                $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->getHash()] = $this->mapNodeRowToNode($nodeRow);
+                $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->getHash()] = $this->mapNodeRowToNode($nodeRow, $occupiedDimensionSpacePoint);
                 $occupiedDimensionSpacePoints[] = $occupiedDimensionSpacePoint;
                 $rawNodeAggregateIdentifier = $rawNodeAggregateIdentifier ?: $nodeRow['nodeaggregateidentifier'];
                 $rawNodeTypeName = $rawNodeTypeName ?: $nodeRow['nodetypename'];
@@ -155,7 +172,7 @@ final class NodeFactory
             $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
             if (!isset($nodesByOccupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->getHash()])) {
                 // ... so we handle occupation exactly once ...
-                $nodesByOccupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->getHash()] = $this->mapNodeRowToNode($nodeRow);
+                $nodesByOccupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->getHash()] = $this->mapNodeRowToNode($nodeRow, $occupiedDimensionSpacePoint);
                 $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][] = $occupiedDimensionSpacePoint;
                 $nodeTypeNames[$rawNodeAggregateIdentifier] = $nodeTypeNames[$rawNodeAggregateIdentifier] ?? NodeTypeName::fromString($nodeRow['nodetypename']);
                 $nodeNames[$rawNodeAggregateIdentifier] = $nodeNames[$rawNodeAggregateIdentifier] ?? ($nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null);

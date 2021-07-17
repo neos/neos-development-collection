@@ -13,10 +13,13 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeTreeTraversalHelper;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Domain\Exception;
@@ -34,6 +37,12 @@ class NodeHelper implements ProtectedContextAwareInterface
     protected $nodeAddressFactory;
 
     /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
      * if no content collection could be found
      *
@@ -42,7 +51,7 @@ class NodeHelper implements ProtectedContextAwareInterface
      * @return NodeInterface
      * @throws Exception
      */
-    public function nearestContentCollection(NodeInterface $node, $nodePath, ContentSubgraphInterface $subgraph): NodeInterface
+    public function nearestContentCollection(NodeInterface $node, $nodePath): NodeInterface
     {
         $contentCollectionType = 'Neos.Neos:ContentCollection';
         if ($node->getNodeType()->isOfType($contentCollectionType)) {
@@ -51,9 +60,8 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ((string)$nodePath === '') {
                 throw new Exception(sprintf('No content collection of type %s could be found in the current node and no node path was provided. You might want to configure the nodePath property with a relative path to the content collection.', $contentCollectionType), 1409300545);
             }
-            $subNode = NodeTreeTraversalHelper::findNodeByNodePath(
-                $subgraph,
-                $node->getNodeAggregateIdentifier(),
+            $subNode = $this->findNodeByNodePath(
+                $node,
                 NodePath::fromString($nodePath)
             );
 
@@ -69,6 +77,50 @@ class NodeHelper implements ProtectedContextAwareInterface
     {
         return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
     }
+
+    private function findNodeByNodePath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
+    {
+        if ($nodePath->isAbsolute()) {
+            $node = $this->findRootNode($node);
+        }
+
+
+        return $this->findNodeByPath($node, $nodePath);
+    }
+
+
+
+    private function findRootNode(NodeInterface $node): NodeInterface
+    {
+        while (true) {
+            // TODO: FIX visibility constraints
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $parentNode = $nodeAccessor->findParentNode($node);
+            if ($parentNode === null) {
+                // there is no parent, so the root node was the node before
+                return $node;
+            } else {
+                $node = $parentNode;
+            }
+        }
+    }
+
+    private function findNodeByPath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
+    {
+        foreach ($nodePath->getParts() as $nodeName) {
+            // TODO: FIX visibility constraints
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $childNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($node, $nodeName);
+            if ($childNode === null) {
+                // we cannot find the child node, so there is no node on this path
+                return null;
+            }
+            $node = $childNode;
+        }
+
+        return $node;
+    }
+
 
     /**
      * @param string $methodName

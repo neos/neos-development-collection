@@ -167,8 +167,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
 
-        $this->registerArgument('subgraph', 'mixed', 'The subgraph');
-
         $this->registerArgument('node', 'mixed', 'A node object, a string node path (absolute or relative), a string node://-uri or NULL');
         $this->registerArgument('format', 'string', 'Format to use for the URL, for example "html" or "json"');
         $this->registerArgument('absolute', 'boolean', 'If set, an absolute URI is rendered', false, false);
@@ -288,9 +286,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      */
     private function getNodeAccessorForNodeAddress(NodeAddress $nodeAddress): NodeAccessorInterface
     {
-        if ($this->arguments['nodeAccessor']) {
-            return $this->arguments['nodeAccessor'];
-        }
         return $this->nodeAccessorManager->accessorFor($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
     }
 }

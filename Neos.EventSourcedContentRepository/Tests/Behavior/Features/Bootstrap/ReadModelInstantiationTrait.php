@@ -18,11 +18,10 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
-use Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
@@ -35,11 +34,9 @@ trait ReadModelInstantiationTrait
 
     private ?DimensionSpacePoint $dimensionSpacePoint = null;
 
-    private ReadModelFactory $readModelFactory;
-
     private ContentGraphInterface $contentGraph;
 
-    private ?NodeBasedReadModelInterface $currentReadModel = null;
+    protected NodeInterface $currentReadModel;
 
     private ?\Exception $lastInstantiationException = null;
 
@@ -49,7 +46,7 @@ trait ReadModelInstantiationTrait
 
     public function setupReadModelInstantiationTrait(): void
     {
-        $this->readModelFactory = $this->getObjectManager()->get(ReadModelFactory::class);
+
     }
 
     /**
@@ -79,7 +76,7 @@ trait ReadModelInstantiationTrait
 
         $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier));
 
-        $this->currentReadModel = $this->readModelFactory->createReadModel($node, $subgraph);
+        $this->currentReadModel = $node;
     }
 
     /**

@@ -73,26 +73,32 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
 
     public function findNodeByPath(NodePath $path, NodeInterface $startingNode): ?NodeInterface
     {
-        // TODO: Implement findNodeByPath() method.
+        return $this->subgraph->findNodeByPath($path, $startingNode->getNodeAggregateIdentifier());
     }
 
     public function findChildNodeConnectedThroughEdgeName(NodeInterface $parentNode, NodeName $edgeName): ?NodeInterface
     {
-        // TODO: Implement findChildNodeConnectedThroughEdgeName() method.
+        return $this->subgraph->findChildNodeConnectedThroughEdgeName($parentNode->getNodeAggregateIdentifier(), $edgeName);
     }
 
     public function findNodePath(NodeInterface $node): NodePath
     {
-        // TODO: Implement findNodePath() method.
+        return $this->subgraph->findNodePath($node->getNodeAggregateIdentifier());
     }
 
     public function findSubtrees(array $entryNodes, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface
     {
-        // TODO: Implement findSubtrees() method.
+        $entryNodeAggregateIdentifiers = array_map(function(NodeInterface $node) {
+            return $node->getNodeAggregateIdentifier();
+        }, $entryNodes);
+        return $this->subgraph->findSubtrees($entryNodeAggregateIdentifiers, $maximumLevels, $nodeTypeConstraints);
     }
 
     public function findDescendants(array $entryNodes, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): Nodes
     {
-        // TODO: Implement findDescendants() method.
+        $entryNodeAggregateIdentifiers = array_map(function(NodeInterface $node) {
+            return $node->getNodeAggregateIdentifier();
+        }, $entryNodes);
+        return $this->subgraph->findDescendants($entryNodeAggregateIdentifiers, $nodeTypeConstraints, $searchTerm);
     }
 }

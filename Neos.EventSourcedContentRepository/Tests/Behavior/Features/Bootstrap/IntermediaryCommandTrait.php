@@ -19,14 +19,14 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
-use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
-use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Image;
@@ -36,7 +36,7 @@ use Neos\Media\Domain\Model\Image;
  */
 trait IntermediaryCommandTrait
 {
-    protected NodeAggregateCommandHandler $intermediaryNodeAggregateCommandHandler;
+    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
     private ?\Exception $lastCommandException = null;
 
@@ -50,7 +50,7 @@ trait IntermediaryCommandTrait
 
     public function setupIntermediaryCommandTrait(): void
     {
-        $this->intermediaryNodeAggregateCommandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
+        $this->nodeAggregateCommandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
         $this->resourceManager = $this->getObjectManager()->get(ResourceManager::class);
     }
 
@@ -86,7 +86,7 @@ trait IntermediaryCommandTrait
                 : null
         );
 
-        $this->lastCommandOrEventResult = $this->intermediaryNodeAggregateCommandHandler
+        $this->lastCommandOrEventResult = $this->nodeAggregateCommandHandler
             ->handleCreateNodeAggregateWithNode($command);
     }
 
@@ -131,7 +131,7 @@ trait IntermediaryCommandTrait
                     ? NodeAggregateIdentifiersByNodePaths::fromArray(json_decode($row['tetheredDescendantNodeAggregateIdentifiers'], true, 512, JSON_THROW_ON_ERROR))
                     : null
             );
-            $this->lastCommandOrEventResult = $this->intermediaryNodeAggregateCommandHandler
+            $this->lastCommandOrEventResult = $this->nodeAggregateCommandHandler
                 ->handleCreateNodeAggregateWithNode($command);
             $this->theGraphProjectionIsFullyUpToDate();
         }
@@ -157,7 +157,7 @@ trait IntermediaryCommandTrait
             UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
         );
 
-        $this->lastCommandOrEventResult = $this->intermediaryNodeAggregateCommandHandler
+        $this->lastCommandOrEventResult = $this->nodeAggregateCommandHandler
             ->handleSetNodeProperties($command);
     }
 

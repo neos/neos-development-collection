@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
@@ -230,7 +231,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             'nodeType' => $node->getNodeType()->getName(),
             'label' => $node->getLabel(),
             'isAutoCreated' => self::isAutoCreated($node, $nodeAccessor),
-            'depth' => $nodeAccessor->$node->findNodePath()->getDepth(),
+            // TODO: depth is expensive to calculate; maybe let's get rid of this?
+            'depth' => $nodeAccessor->findNodePath($node)->getDepth(),
             'children' => [],
             'parent' => $this->nodeAddressFactory->createFromNode($nodeAccessor->findParentNode($node))->serializeForUri(),
             'matchesCurrentDimensions' => $node->getDimensionSpacePoint()->equals($node->getOriginDimensionSpacePoint())
@@ -470,6 +472,21 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     protected function buildContentChildNodeFilterString()
     {
         return $this->buildNodeTypeFilterString([], $this->nodeTypeStringsToList($this->documentNodeTypeRole, $this->ignoredNodeTypeRole));
+    }
+
+    public function nodeAddress(NodeInterface $node): NodeAddress
+    {
+        return $this->nodeAddressFactory->createFromNode($node);
+    }
+
+    public function serializedNodeAddress(NodeInterface $node): string
+    {
+        return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+    }
+
+    public function inBackend(NodeInterface $node)
+    {
+        return !$this->nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
     }
 
     /**

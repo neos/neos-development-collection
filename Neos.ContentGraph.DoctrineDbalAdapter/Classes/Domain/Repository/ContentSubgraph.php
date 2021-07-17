@@ -194,7 +194,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $parentNodeIdentifierCache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
 
         if ($cache->contains($nodeAggregateIdentifier, $nodeTypeConstraints)) {
-            return $cache->findChildNodes($nodeAggregateIdentifier, $nodeTypeConstraints, $limit, $offset);
+            return Nodes::fromArray($cache->findChildNodes($nodeAggregateIdentifier, $nodeTypeConstraints, $limit, $offset));
         }
         $query = new SqlQueryBuilder();
         $query->addToQuery('
@@ -215,7 +215,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
-            $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
+            $node = $this->nodeFactory->mapNodeRowToNode($nodeData, $this->getDimensionSpacePoint());
             $result[] = $node;
             $namedChildNodeCache->add($nodeAggregateIdentifier, $node->getNodeName(), $node);
             $parentNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $nodeAggregateIdentifier);
@@ -258,7 +258,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
                 return null;
             }
 
-            $node = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $node = $this->nodeFactory->mapNodeRowToNode($nodeRow, $this->getDimensionSpacePoint());
             $cache->add($nodeAggregateIdentifier, $node);
 
             return $node;
@@ -358,7 +358,7 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $this->getDimensionSpacePoint());
         }
 
         return Nodes::fromArray($result);
@@ -401,7 +401,7 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $this->getDimensionSpacePoint());
         }
 
         return Nodes::fromArray($result);
@@ -452,7 +452,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
 
-        $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $this->getDimensionSpacePoint()) : null;
         if ($node) {
             $cache->add($childNodeAggregateIdentifier, $node->getNodeAggregateIdentifier());
 
@@ -537,7 +537,7 @@ WHERE
             $nodeData = $query->execute($this->getDatabaseConnection())->fetch();
 
             if ($nodeData) {
-                $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
+                $node = $this->nodeFactory->mapNodeRowToNode($nodeData, $this->getDimensionSpacePoint());
                 if ($node) {
                     $cache->add($parentNodeAggregateIdentifier, $edgeName, $node);
                     $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
@@ -581,7 +581,7 @@ WHERE
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord, $this->getDimensionSpacePoint());
         }
 
         return Nodes::fromArray($result);
@@ -631,7 +631,7 @@ WHERE
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord, $this->getDimensionSpacePoint());
         }
 
         return Nodes::fromArray($result);
@@ -681,7 +681,7 @@ WHERE
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord, $this->getDimensionSpacePoint());
         }
 
         return Nodes::fromArray($result);
@@ -852,7 +852,7 @@ order by level asc, position asc;')
         $subtreesByNodeIdentifier['ROOT'] = new Subtree(0);
 
         foreach ($result as $nodeData) {
-            $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
+            $node = $this->nodeFactory->mapNodeRowToNode($nodeData, $this->getDimensionSpacePoint());
             $this->getInMemoryCache()->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
 
             if (!isset($subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']])) {
@@ -963,7 +963,7 @@ order by level asc, position asc;')
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord, $this->getDimensionSpacePoint());
         }
 
         return Nodes::fromArray($result);

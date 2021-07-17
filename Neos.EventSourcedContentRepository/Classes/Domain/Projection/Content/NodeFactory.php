@@ -52,6 +52,7 @@ final class NodeFactory
      */
     public function createReadModel(NodeInterface $node, ContentSubgraphInterface $subgraph): NodeBasedReadModelInterface
     {
+        throw new \RuntimeException("TODO SHOULD NEVER BE CALLED");
         $implementationClassName = NodeImplementationClassName::forNodeType($node->getNodeType());
         $propertyCollectionClassName = PropertyCollectionImplementationClassName::forNodeType($node->getNodeType());
         $workspaceName = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($subgraph->getContentStreamIdentifier())->getWorkspaceName();
@@ -72,6 +73,7 @@ final class NodeFactory
 
     public function createReadModelFromNodeAddress(NodeAddress $nodeAddress, VisibilityConstraints $visibilityConstraints): ?NodeBasedReadModelInterface
     {
+        throw new \RuntimeException("TODO SHOULD NEVER BE CALLED");
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $nodeAddress->getContentStreamIdentifier(),
             $nodeAddress->getDimensionSpacePoint(),
@@ -87,6 +89,7 @@ final class NodeFactory
 
     public function createReadModels(array $nodes, ContentSubgraphInterface $subgraph): NodeList
     {
+        throw new \RuntimeException("TODO SHOULD NEVER BE CALLED");
         $readModels = [];
         foreach ($nodes as $node) {
             $readModels = $this->createReadModel($node, $subgraph);

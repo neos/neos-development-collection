@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterf
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -60,9 +61,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var NodeAccessorManager
      */
-    protected $contentGraph;
+    protected $nodeAccessorManager;
 
     /**
      * @var NodeInterface
@@ -77,17 +78,16 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         $menuItems = [];
 
-        $currentDimensionSpacePoint = $this->getSubgraph()->getDimensionSpacePoint();
+
+        $currentDimensionSpacePoint = $this->currentNode->getDimensionSpacePoint();
         foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace()->getPoints() as $dimensionSpacePoint) {
-            $subgraph = null;
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
-                    $subgraph = $this->getSubgraph();
                     $variant = $this->currentNode;
                 } else {
-                    $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $dimensionSpacePoint, VisibilityConstraints::frontend());
-                    $variant = $subgraph->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
+                    $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->currentNode->getContentStreamIdentifier(), $dimensionSpacePoint, VisibilityConstraints::frontend());
+                    $variant = $nodeAccessor->findByIdentifier($this->currentNode->getNodeAggregateIdentifier());
                 }
 
                 if (!$variant && $this->includeGeneralizations()) {
@@ -102,7 +102,6 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 
                 if ($variant === null || !$this->isNodeHidden($variant)) {
                     $menuItems[] = [
-                        'subgraph' => $subgraph,
                         'node' => $variant,
                         'state' => $this->calculateItemState($variant),
                         'label' => $this->determineLabel($variant, $metadata),
@@ -116,8 +115,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($this->getContentDimensionIdentifierToLimitTo() && $this->getValuesToRestrictTo()) {
             $order = array_flip($this->getValuesToRestrictTo());
             usort($menuItems, function (array $menuItemA, array $menuItemB) use ($order) {
-                return $order[$menuItemA['subgraph']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())]
-                    <=> $order[$menuItemB['subgraph']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())];
+                return $order[$menuItemA['node']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())]
+                    <=> $order[$menuItemB['node']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())];
             });
         }
 
@@ -131,9 +130,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function isDimensionSpacePointRelevant(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return !$this->getContentDimensionIdentifierToLimitTo() // no limit to one dimension, so all DSPs are relevant
-            || $dimensionSpacePoint->equals($this->getSubgraph()->getDimensionSpacePoint()) // always include the current variant
+            || $dimensionSpacePoint->equals($this->currentNode->getDimensionSpacePoint()) // always include the current variant
             // include all direct variants in the dimension we're limited to unless their values in that dimension are missing in the specified list
-            || $dimensionSpacePoint->isDirectVariantInDimension($this->getSubgraph()->getDimensionSpacePoint(), $this->getContentDimensionIdentifierToLimitTo())
+            || $dimensionSpacePoint->isDirectVariantInDimension($this->currentNode->getDimensionSpacePoint(), $this->getContentDimensionIdentifierToLimitTo())
             && (empty($this->getValuesToRestrictTo()) || in_array($dimensionSpacePoint->getCoordinate($this->getContentDimensionIdentifierToLimitTo()), $this->getValuesToRestrictTo()));
     }
 
@@ -152,8 +151,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         ksort($generalizations);
         foreach ($generalizations as $generalization) {
             if ($generalization->getCoordinate($contentDimensionIdentifier) === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)) {
-                $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $generalization, VisibilityConstraints::frontend());
-                $variant = $contentSubgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+                $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->currentNode->getContentStreamIdentifier(), $generalization, VisibilityConstraints::frontend());
+                $variant = $nodeAccessor->findByIdentifier($nodeAggregateIdentifier);
                 if ($variant) {
                     return $variant;
                 }
@@ -217,14 +216,6 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         }
 
         return self::STATE_NORMAL;
-    }
-
-    /**
-     * @return ContentSubgraphInterface
-     */
-    protected function getSubgraph(): ContentSubgraphInterface
-    {
-        return $this->fusionValue('subgraph');
     }
 
     /**

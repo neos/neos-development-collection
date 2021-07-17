@@ -105,7 +105,7 @@ final class ContentGraph implements ContentGraphInterface
             ]
         )->fetch();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $originDimensionSpacePoint) : null;
     }
 
     /**
@@ -113,7 +113,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param NodeTypeName $nodeTypeName
      * @throws DBALException
      * @throws \Exception
-     * @return NodeAggregate|null
+     * @return NodeAggregate
      */
     public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): NodeAggregate
     {

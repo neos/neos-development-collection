@@ -14,7 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\ForwardCompatibility\Result;
 
 /**
  * The Doctrine DBAL adapter content graph
@@ -57,10 +57,10 @@ final class SqlQueryBuilder
 
     /**
      * @param Connection $connection
-     * @return Statement
-     * @throws \Doctrine\DBAL\DBALException
+     * @return Result
+     * @throws \Doctrine\DBAL\Exception
      */
-    public function execute(Connection $connection): Statement
+    public function execute(Connection $connection): Result
     {
         return $connection->executeQuery($this->query, $this->parameters, $this->types);
     }

@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Infrastructure\Property;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;

@@ -14,8 +14,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  */
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyType;
 
 trait NodeSerialization
 {

@@ -19,7 +19,6 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\ContentAccess\Exception\InvalidAccessorConfiguration;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorFactoryInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
-use Neos\EventSourcedContentRepository\ContentAccess\Parts\FindChildNodesInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 

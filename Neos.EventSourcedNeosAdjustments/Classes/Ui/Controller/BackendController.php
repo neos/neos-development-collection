@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -176,7 +177,12 @@ class BackendController extends ActionController
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
         $nodeAccessor = $this->nodeAccessorManager->accessorFor($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier($workspace->getCurrentContentStreamIdentifier()), NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
+
+        // we assume that the ROOT node is always stored in the CR as "physical" node; so it is safe
+        // to call the contentGraph here directly.
+        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($workspace->getCurrentContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
+        $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($this->findDefaultDimensionSpacePoint());
+        $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($rootNode, NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
 
         if (!$nodeAddress) {
             // TODO: fix resolving node address from session?
@@ -223,16 +229,5 @@ class BackendController extends ActionController
         }
 
         return new DimensionSpacePoint($coordinates);
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @return NodeAggregateIdentifier
-     */
-    protected function getRootNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier): NodeAggregateIdentifier
-    {
-        // we assume that the ROOT node is always stored in the CR as "physical" node; so it is safe
-        // to call the contentGraph here directly.
-        return $this->contentGraph->findRootNodeAggregateByType($contentStreamIdentifier, NodeTypeName::fromString('Neos.Neos:Sites'))->getIdentifier();
     }
 }

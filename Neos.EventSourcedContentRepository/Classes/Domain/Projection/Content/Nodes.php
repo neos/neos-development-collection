@@ -13,7 +13,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Proxy(false)
+ */
 final class Nodes implements \IteratorAggregate, \Countable
 {
 
@@ -29,6 +33,11 @@ final class Nodes implements \IteratorAggregate, \Countable
         return new static($nodes);
     }
 
+    public static function empty()
+    {
+        return new static([]);
+    }
+
 
     public function getIterator()
     {
@@ -38,5 +47,19 @@ final class Nodes implements \IteratorAggregate, \Countable
     public function count()
     {
         return count($this->nodes);
+    }
+
+    public function first(): ?NodeInterface
+    {
+        if (count($this->nodes) > 0) {
+            return reset($this->nodes);
+        }
+        return null;
+    }
+
+    public function merge(Nodes $other): Nodes
+    {
+        $nodes = array_merge($this->nodes, $other->nodes);
+        return self::fromArray($nodes);
     }
 }
