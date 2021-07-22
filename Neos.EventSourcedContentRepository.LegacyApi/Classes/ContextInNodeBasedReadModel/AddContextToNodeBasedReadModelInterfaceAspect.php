@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
-use Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel\EmulatedLegacyContext;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\AOP\JoinPointInterface;
 

@@ -28,7 +28,6 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\ContentContextFactory;
 use Psr\Log\LoggerInterface;
 
 /**

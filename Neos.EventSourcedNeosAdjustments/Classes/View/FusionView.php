@@ -16,7 +16,6 @@ use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\SiteNodeUtility;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Security\Context;

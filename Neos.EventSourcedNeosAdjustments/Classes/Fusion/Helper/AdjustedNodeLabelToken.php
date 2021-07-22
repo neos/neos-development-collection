@@ -19,7 +19,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Neos\Fusion\Helper\NodeLabelToken;
 
-
 class AdjustedNodeLabelToken extends NodeLabelToken
 {
 

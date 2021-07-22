@@ -88,7 +88,7 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
 
     public function findSubtrees(array $entryNodes, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface
     {
-        $entryNodeAggregateIdentifiers = array_map(function(NodeInterface $node) {
+        $entryNodeAggregateIdentifiers = array_map(function (NodeInterface $node) {
             return $node->getNodeAggregateIdentifier();
         }, $entryNodes);
         return $this->subgraph->findSubtrees($entryNodeAggregateIdentifiers, $maximumLevels, $nodeTypeConstraints);
@@ -96,7 +96,7 @@ final class ContentSubgraphAccessor implements NodeAccessorInterface
 
     public function findDescendants(array $entryNodes, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): Nodes
     {
-        $entryNodeAggregateIdentifiers = array_map(function(NodeInterface $node) {
+        $entryNodeAggregateIdentifiers = array_map(function (NodeInterface $node) {
             return $node->getNodeAggregateIdentifier();
         }, $entryNodes);
         return $this->subgraph->findDescendants($entryNodeAggregateIdentifiers, $nodeTypeConstraints, $searchTerm);

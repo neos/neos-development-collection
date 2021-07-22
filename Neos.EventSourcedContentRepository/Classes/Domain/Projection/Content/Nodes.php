@@ -20,7 +20,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class Nodes implements \IteratorAggregate, \Countable
 {
-
     private array $nodes;
 
     private function __construct(array $nodes)

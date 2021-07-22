@@ -13,13 +13,7 @@ namespace Neos\EventSourcedContentRepository\ContentAccess;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 final class NodeTreeTraversalHelper
 {
-
-
 }

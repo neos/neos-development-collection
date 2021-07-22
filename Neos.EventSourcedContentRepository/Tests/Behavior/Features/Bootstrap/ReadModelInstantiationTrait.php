@@ -46,7 +46,6 @@ trait ReadModelInstantiationTrait
 
     public function setupReadModelInstantiationTrait(): void
     {
-
     }
 
     /**

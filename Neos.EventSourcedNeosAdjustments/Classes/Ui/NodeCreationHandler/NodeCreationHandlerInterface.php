@@ -14,7 +14,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 
-
 /**
  * Contract for Node Creation handler that allow to hook into the process just before a node is being added
  * via the Neos UI

@@ -147,5 +147,4 @@ interface NodeAccessorInterface
      * @return array|NodeInterface[]
      */
     public function findDescendants(array $entryNodes, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): Nodes;
-
 }
