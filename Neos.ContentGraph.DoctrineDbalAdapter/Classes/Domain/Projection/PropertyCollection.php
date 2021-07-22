@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /*
- * This file is part of the Neos.ContentRepository.Intermediary package.
+ * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 
@@ -77,5 +77,10 @@ final class PropertyCollection implements PropertyCollectionInterface
     public function getIterator()
     {
         return $this->iterator;
+    }
+
+    public function serialized(): SerializedPropertyValues
+    {
+        return $this->serializedPropertyValues;
     }
 }

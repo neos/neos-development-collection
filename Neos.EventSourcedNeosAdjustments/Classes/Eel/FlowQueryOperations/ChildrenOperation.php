@@ -88,11 +88,10 @@ class ChildrenOperation extends AbstractOperation
 
         /** @var NodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            // TODO: is it safe to always use "WithoutRestrictions" here? I believe not.
             $childNodes = $this->nodeAccessorManager->accessorFor(
                 $contextNode->getContentStreamIdentifier(),
                 $contextNode->getDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                $contextNode->getVisibilityConstraints()
             )->findChildNodes($contextNode);
             foreach ($childNodes as $childNode) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
@@ -153,7 +152,7 @@ class ChildrenOperation extends AbstractOperation
                             $resolvedNode = $this->nodeAccessorManager->accessorFor(
                                 $resolvedNode->getContentStreamIdentifier(),
                                 $resolvedNode->getDimensionSpacePoint(),
-                                VisibilityConstraints::withoutRestrictions() // TODO: fix
+                                $resolvedNode->getVisibilityConstraints()
                             )->findChildNodeConnectedThroughEdgeName($resolvedNode, NodeName::fromString($nodePathSegment));
                         }
 
@@ -173,7 +172,7 @@ class ChildrenOperation extends AbstractOperation
                         $childNodes = $this->nodeAccessorManager->accessorFor(
                             $contextNode->getContentStreamIdentifier(),
                             $contextNode->getDimensionSpacePoint(),
-                            VisibilityConstraints::withoutRestrictions() // TODO
+                            $contextNode->getVisibilityConstraints()
                         )->findChildNodes($contextNode, $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $allowedNodeTypes)));
 
                         foreach ($childNodes as $childNode) {

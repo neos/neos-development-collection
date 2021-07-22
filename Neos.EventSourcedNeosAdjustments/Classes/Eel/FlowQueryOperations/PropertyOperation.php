@@ -90,7 +90,7 @@ class PropertyOperation extends AbstractOperation
 
             /* @var $element NodeInterface */
             $element = $context[0];
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($element->getContentStreamIdentifier(), $element->getDimensionSpacePoint(), VisibilityConstraints::frontend()); // TODO: how to determine correct VisibilityConstraints here??
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($element->getContentStreamIdentifier(), $element->getDimensionSpacePoint(), $element->getVisibilityConstraints());
             if ($propertyPath === '_path') {
                 return (string)$nodeAccessor->findNodePath($element);
             } elseif ($propertyPath[0] === '_') {

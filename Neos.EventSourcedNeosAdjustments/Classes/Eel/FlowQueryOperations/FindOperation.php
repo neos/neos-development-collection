@@ -130,7 +130,9 @@ class FindOperation extends AbstractOperation
         $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
 
         /** @todo fetch them $elsewhere (fusion runtime?) */
-        $visibilityConstraints = VisibilityConstraints::frontend();
+        $firstContextNode = reset($contextNodes);
+        assert($firstContextNode instanceof NodeInterface);
+        $visibilityConstraints = $firstContextNode->getVisibilityConstraints();
 
         $entryPoints = $this->getEntryPoints($contextNodes, $visibilityConstraints);
         foreach ($parsedFilter['Filters'] as $filter) {

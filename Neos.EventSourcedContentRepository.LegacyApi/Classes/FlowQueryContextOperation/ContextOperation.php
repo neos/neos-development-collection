@@ -86,7 +86,7 @@ class ContextOperation extends AbstractOperation
             // we start modifying the subgraph step-by-step.
             $nodeAccessor = $this->getSubgraphFromNode($contextNode);
 
-            $visibilityConstraints = VisibilityConstraints::frontend();
+            $visibilityConstraints = $contextNode->getVisibilityConstraints();
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
 
@@ -112,7 +112,6 @@ class ContextOperation extends AbstractOperation
 
     private function getSubgraphFromNode(NodeInterface $contextNode): NodeAccessorInterface
     {
-        // TODO: withoutRestrictions??
-        return $this->nodeAccessorManager->accessorFor($contextNode->getContentStreamIdentifier(), $contextNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        return $this->nodeAccessorManager->accessorFor($contextNode->getContentStreamIdentifier(), $contextNode->getDimensionSpacePoint(), $contextNode->getVisibilityConstraints());
     }
 }

@@ -15,15 +15,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
-use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
@@ -42,13 +41,13 @@ final class Node implements NodeInterface
 
     protected ?NodeName $nodeName;
 
-    protected SerializedPropertyValues $serializedProperties;
-
     protected NodeAggregateClassification $classification;
 
     protected PropertyCollection $properties;
 
     protected DimensionSpacePoint $dimensionSpacePoint;
+
+    protected VisibilityConstraints $visibilityConstraints;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -57,10 +56,10 @@ final class Node implements NodeInterface
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        SerializedPropertyValues $serializedProperties,
-        PropertyConverter $propertyConverter,
+        PropertyCollectionInterface $propertyCollection,
         NodeAggregateClassification $classification,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -68,10 +67,10 @@ final class Node implements NodeInterface
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
-        $this->serializedProperties = $serializedProperties;
-        $this->properties = new PropertyCollection($serializedProperties, $propertyConverter);
+        $this->properties = $propertyCollection;
         $this->classification = $classification;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->visibilityConstraints = $visibilityConstraints;
     }
 
     /**
@@ -139,7 +138,7 @@ final class Node implements NodeInterface
 
     public function hasProperty($propertyName): bool
     {
-        return $this->serializedProperties->propertyExists($propertyName);
+        return $this->properties->offsetExists($propertyName);
     }
 
 
@@ -154,13 +153,13 @@ final class Node implements NodeInterface
         return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
 
-    public function getSerializedProperties(): SerializedPropertyValues
-    {
-        return $this->serializedProperties;
-    }
-
     public function getDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
+        return $this->visibilityConstraints;
     }
 }

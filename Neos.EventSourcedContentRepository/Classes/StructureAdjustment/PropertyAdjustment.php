@@ -62,7 +62,7 @@ class PropertyAdjustment
             foreach ($nodeAggregate->getNodes() as $node) {
                 $propertyKeysInNode = [];
 
-                foreach ($node->getSerializedProperties() as $propertyKey => $property) {
+                foreach ($node->getProperties()->serialized() as $propertyKey => $property) {
                     $propertyKeysInNode[$propertyKey] = $propertyKey;
 
                     // detect obsolete properties

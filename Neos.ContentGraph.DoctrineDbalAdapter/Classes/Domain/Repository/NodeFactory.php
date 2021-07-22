@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\PropertyCollection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
@@ -24,6 +25,7 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
@@ -52,7 +54,7 @@ final class NodeFactory
      * @return Node
      * @throws NodeTypeNotFoundException
      */
-    public function mapNodeRowToNode(array $nodeRow, DimensionSpacePoint $dimensionSpacePoint): NodeInterface
+    public function mapNodeRowToNode(array $nodeRow, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints): NodeInterface
     {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
         $nodeClassName = $nodeType->getConfiguration('class') ?: \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node::class;
@@ -72,10 +74,10 @@ final class NodeFactory
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
-            SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true)),
-            $this->propertyConverter,
+            new PropertyCollection(SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true)), $this->propertyConverter),
             NodeAggregateClassification::fromString($nodeRow['classification']),
             $dimensionSpacePoint,
+            $visibilityConstraints
         );
     }
 
@@ -84,7 +86,7 @@ final class NodeFactory
      * @return ContentProjection\NodeAggregate|null
      * @throws NodeTypeNotFoundException
      */
-    public function mapNodeRowsToNodeAggregate(array $nodeRows): ?ContentProjection\NodeAggregate
+    public function mapNodeRowsToNodeAggregate(array $nodeRows, VisibilityConstraints $visibilityConstraints): ?ContentProjection\NodeAggregate
     {
         if (empty($nodeRows)) {
             return null;
@@ -107,7 +109,7 @@ final class NodeFactory
             $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
             if (!isset($nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->getHash()])) {
                 // ... so we handle occupation exactly once ...
-                $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->getHash()] = $this->mapNodeRowToNode($nodeRow, $occupiedDimensionSpacePoint);
+                $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->getHash()] = $this->mapNodeRowToNode($nodeRow, $occupiedDimensionSpacePoint, $visibilityConstraints);
                 $occupiedDimensionSpacePoints[] = $occupiedDimensionSpacePoint;
                 $rawNodeAggregateIdentifier = $rawNodeAggregateIdentifier ?: $nodeRow['nodeaggregateidentifier'];
                 $rawNodeTypeName = $rawNodeTypeName ?: $nodeRow['nodetypename'];
@@ -152,7 +154,7 @@ final class NodeFactory
      * @return array|ContentProjection\NodeAggregate[]
      * @throws NodeTypeNotFoundException
      */
-    public function mapNodeRowsToNodeAggregates(array $nodeRows): array
+    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): array
     {
         $nodeAggregates = [];
         $nodeTypeNames = [];
@@ -172,7 +174,7 @@ final class NodeFactory
             $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
             if (!isset($nodesByOccupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->getHash()])) {
                 // ... so we handle occupation exactly once ...
-                $nodesByOccupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->getHash()] = $this->mapNodeRowToNode($nodeRow, $occupiedDimensionSpacePoint);
+                $nodesByOccupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->getHash()] = $this->mapNodeRowToNode($nodeRow, $occupiedDimensionSpacePoint, $visibilityConstraints);
                 $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][] = $occupiedDimensionSpacePoint;
                 $nodeTypeNames[$rawNodeAggregateIdentifier] = $nodeTypeNames[$rawNodeAggregateIdentifier] ?? NodeTypeName::fromString($nodeRow['nodetypename']);
                 $nodeNames[$rawNodeAggregateIdentifier] = $nodeNames[$rawNodeAggregateIdentifier] ?? ($nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null);

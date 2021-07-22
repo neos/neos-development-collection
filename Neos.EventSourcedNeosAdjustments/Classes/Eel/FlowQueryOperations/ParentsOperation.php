@@ -74,11 +74,10 @@ class ParentsOperation extends AbstractOperation
             $node = $contextNode;
             do {
                 try {
-                    // TODO: is it safe to always use "WithoutRestrictions" here? I believe not.
                     $node = $this->nodeAccessorManager->accessorFor(
                         $node->getContentStreamIdentifier(),
                         $node->getDimensionSpacePoint(),
-                        VisibilityConstraints::withoutRestrictions()
+                        $node->getVisibilityConstraints()
                     )->findParentNode($node);
                 } catch (NodeException $exception) {
                     break;

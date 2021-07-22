@@ -39,9 +39,6 @@ class NodeAccessorManager
      */
     protected $nodeAccessorChainFactory;
 
-    // TODO: maybe integrate the visibilityConstraints remembering (which we use right here) in this class, similar to
-    // withVisibilityConstraints(..., closure()).
-
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint

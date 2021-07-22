@@ -20,11 +20,10 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
-use Neos\ContentRepository\Intermediary\Domain\AbstractReadModel;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 
@@ -151,11 +150,6 @@ final class Thing implements NodeInterface
     public function getLabel(): string
     {
         throw new \RuntimeException('Not supported');
-    }
-
-    public function getSerializedProperties(): SerializedPropertyValues
-    {
-        return $this->serializedProperties;
     }
 
     public function getDimensionSpacePoint(): DimensionSpacePoint

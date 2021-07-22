@@ -32,7 +32,7 @@ class SiteNodeUtility
     public function findSiteNode(NodeInterface $node): NodeInterface
     {
         $previousNode = null;
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getVisibilityConstraints());
         do {
             if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
                 // the Site node is the one one level underneath the "Sites" node.
