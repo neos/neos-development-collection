@@ -7,7 +7,7 @@
 			<target state="needs-translation">Back</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="needs-translation">Cancel</target></trans-unit>
+			<target state="translated">Kanselleer</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -228,28 +228,33 @@
 			<target state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} het die {1} "{2}" geskep.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target state="translated">
+{0} het die {1} "{2}" verwyder.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target state="translated">
+{0} het die variant {1} van die {2} "{3}" geskep.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} het die {1} "{2}" verander.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} het die {1} "{2}" geskuif.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target state="translated">
+{0} het die {1} "{2}" gekopieër.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target state="translated">
+{0} het die {1} "{2}" herdoop tot "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target state="translated">
+{0} inhoud gewysig op die {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target state="needs-translation">{0} created a new user "{1}" for {2}.</target></trans-unit>
@@ -286,7 +291,7 @@
 			<target state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target state="needs-translation">Edit</target></trans-unit>
+			<target state="translated">Wysig</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target state="needs-translation">Edit account</target></trans-unit>
@@ -690,10 +695,10 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target state="needs-translation">Edit</target></trans-unit>
+			<target state="translated">Wysig</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target state="needs-translation">Edit</target></trans-unit>
+			<target state="translated">Wysig</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target state="needs-translation">New electronic address</target></trans-unit>
