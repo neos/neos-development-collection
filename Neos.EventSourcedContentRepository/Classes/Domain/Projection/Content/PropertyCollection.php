@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
- * This file is part of the Neos.ContentRepository.Intermediary package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -81,7 +81,7 @@ final class PropertyCollection implements PropertyCollectionInterface
         return $this->iterator;
     }
 
-    public function getSerializedPropertyValues(): SerializedPropertyValues
+    public function serialized(): SerializedPropertyValues
     {
         return $this->serializedPropertyValues;
     }

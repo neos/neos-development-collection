@@ -22,7 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionImplementationClassNameResolver;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\Flow\Annotations as Flow;
 
 /**

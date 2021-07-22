@@ -28,7 +28,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
 {
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeTypeConstraints $nodeTypeConstraints
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
      * @return Nodes

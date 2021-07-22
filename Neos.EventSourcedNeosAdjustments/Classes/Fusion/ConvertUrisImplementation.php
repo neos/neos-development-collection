@@ -13,7 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  */
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -70,6 +71,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected $resourceManager;
 
     /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
      * Convert URIs matching a supported scheme with generated URIs
      *
      * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
@@ -92,11 +99,11 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         $node = $this->fusionValue('node');
 
-        if (!$node instanceof NodeBasedReadModelInterface) {
-            throw new NeosException(sprintf('The current node must be an instance of NodeBasedReadModelInterface, given: "%s".', gettype($text)), 1382624087);
+        if (!$node instanceof NodeInterface) {
+            throw new NeosException(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
         }
 
-        $nodeAddress = $node->getAddress();
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
 
         if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
             return $text;

@@ -1111,6 +1111,449 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^I expect the subgraph projection to consist of exactly (\d+) nodes$/
+     * @param int $expectedNumberOfNodes
+     */
+    public function iExpectTheSubgraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes)
+    {
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $actualNumberOfNodes = $subgraph->countNodes();
+        Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content subgraph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
+    }
+
+    /**
+     * @Then /^I expect node aggregate identifier "([^"]*)" to lead to node (.*)$/
+     * @param string $serializedNodeAggregateIdentifier
+     * @param string $serializedNodeIdentifier
+     */
+    public function iExpectNodeAggregateIdentifierToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodeIdentifier): void
+    {
+        $expectedDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
+        $this->currentNode = $nodeByAggregateIdentifier;
+        Assert::assertInstanceOf(NodeInterface::class, $nodeByAggregateIdentifier, 'No node could be found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+        $actualDiscriminator = NodeDiscriminator::fromNode($nodeByAggregateIdentifier);
+        Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
+    }
+
+    /**
+     * @Then /^I expect node aggregate identifier "([^"]*)" to lead to no node$/
+     * @param string $serializedNodeAggregateIdentifier
+     */
+    public function iExpectNodeAggregateIdentifierToLeadToNoNode(string $serializedNodeAggregateIdentifier): void
+    {
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
+        Assert::assertNull($nodeByAggregateIdentifier, 'A node was found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+    }
+
+    /**
+     * @Then /^I expect node aggregate identifier "([^"]*)" and path "([^"]*)" to lead to node (.*)$/
+     * @param string $serializedNodeAggregateIdentifier
+     * @param string $serializedNodePath
+     * @param string $serializedNodeIdentifier
+     */
+    public function iExpectNodeAggregateIdentifierAndPathToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath, string $serializedNodeIdentifier): void
+    {
+        $expectedDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $this->iExpectNodeAggregateIdentifierToLeadToNode($serializedNodeAggregateIdentifier, $serializedNodeIdentifier);
+
+        $nodeByPath = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
+        Assert::assertInstanceOf(NodeInterface::class, $nodeByPath, 'No node could be found by path "' . $serializedNodePath . '"" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+        $actualDiscriminator = NodeDiscriminator::fromNode($nodeByPath);
+        Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ', given was ' . json_encode($actualDiscriminator));
+    }
+
+    /**
+     * @Then /^I expect node aggregate identifier "([^"]*)" and path "([^"]*)" to lead to no node$/
+     * @param string $serializedNodeAggregateIdentifier
+     * @param string $serializedNodePath
+     */
+    public function iExpectNodeAggregateIdentifierAndPathToLeadToNoNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath): void
+    {
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $this->iExpectNodeAggregateIdentifierToLeadToNoNode($serializedNodeAggregateIdentifier);
+
+        $nodeByPath = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
+        Assert::assertNull($nodeByPath, 'A node was found by path "' . $serializedNodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+    }
+
+    /**
+     * @Then /^I expect this node to be a child of node (.*)$/
+     * @param string $serializedNodeDiscriminator
+     */
+    public function iExpectThisNodeToBeTheChildOfNode(string $serializedNodeDiscriminator): void
+    {
+        $expectedParentDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeDiscriminator, true));
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $parent = $subgraph->findParentNode($this->currentNode->getNodeAggregateIdentifier());
+        Assert::assertInstanceOf(NodeInterface::class, $parent, 'Parent not found.');
+        $actualParentDiscriminator = NodeDiscriminator::fromNode($parent);
+        Assert::assertTrue($expectedParentDiscriminator->equals($actualParentDiscriminator), 'Parent discriminator does not match. Expected was ' . json_encode($expectedParentDiscriminator) . ', given was ' . json_encode($actualParentDiscriminator));
+
+        $expectedChildDiscriminator = NodeDiscriminator::fromNode($this->currentNode);
+        $child = $subgraph->findChildNodeConnectedThroughEdgeName($parent->getNodeAggregateIdentifier(), $this->currentNode->getNodeName());
+        $actualChildDiscriminator = NodeDiscriminator::fromNode($child);
+        Assert::assertTrue($expectedChildDiscriminator->equals($actualChildDiscriminator), 'Child discriminator does not match. Expected was ' . json_encode($expectedChildDiscriminator) . ', given was ' . json_encode($actualChildDiscriminator));
+    }
+
+    /**
+     * @Then /^I expect this node to have the preceding siblings (.*)$/
+     * @param string $serializedExpectedSiblingNodeAggregateIdentifiers
+     */
+    public function iExpectThisNodeToHaveThePrecedingSiblings(string $serializedExpectedSiblingNodeAggregateIdentifiers)
+    {
+        $rawExpectedSiblingNodeAggregateIdentifiers = json_decode($serializedExpectedSiblingNodeAggregateIdentifiers);
+        $expectedSiblingNodeAggregateIdentifiers = array_map(function ($item) {
+            return NodeAggregateIdentifier::fromString($item);
+        }, $rawExpectedSiblingNodeAggregateIdentifiers);
+
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $actualSiblings = $subgraph->findPrecedingSiblings($this->currentNode->getNodeAggregateIdentifier());
+        $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
+            return $sibling->getNodeAggregateIdentifier();
+        }, iterator_to_array($actualSiblings));
+
+        Assert::assertEquals(
+            $expectedSiblingNodeAggregateIdentifiers,
+            $actualSiblingNodeAggregateIdentifiers,
+            'Expected preceding siblings ' . json_encode($expectedSiblingNodeAggregateIdentifiers) . ', found ' . json_encode($actualSiblingNodeAggregateIdentifiers)
+        );
+    }
+
+    /**
+     * @Then /^I expect this node to have the succeeding siblings (.*)$/
+     * @param string $serializedExpectedSiblingNodeAggregateIdentifiers
+     */
+    public function iExpectThisNodeToHaveTheSucceedingSiblings(string $serializedExpectedSiblingNodeAggregateIdentifiers)
+    {
+        $rawExpectedSiblingNodeAggregateIdentifiers = json_decode($serializedExpectedSiblingNodeAggregateIdentifiers);
+        $expectedSiblingNodeAggregateIdentifiers = array_map(function ($item) {
+            return NodeAggregateIdentifier::fromString($item);
+        }, $rawExpectedSiblingNodeAggregateIdentifiers);
+
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $actualSiblings = $subgraph->findSucceedingSiblings($this->currentNode->getNodeAggregateIdentifier());
+        $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
+            return $sibling->getNodeAggregateIdentifier();
+        }, iterator_to_array($actualSiblings));
+
+        Assert::assertEquals(
+            $expectedSiblingNodeAggregateIdentifiers,
+            $actualSiblingNodeAggregateIdentifiers,
+            'Expected succeeding siblings ' . json_encode($expectedSiblingNodeAggregateIdentifiers) . ', found ' . json_encode($actualSiblingNodeAggregateIdentifiers)
+        );
+    }
+
+    /**
+     * @Then /^I expect a node identified by aggregate identifier "([^"]*)" to exist in the subgraph$/
+     * @param string $rawNodeAggregateIdentifier
+     * @throws Exception
+     * @deprecated use iExpectNodeAggregateIdentifierAndPathToLeadToNode
+     */
+    public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheSubgraph(string $rawNodeAggregateIdentifier)
+    {
+        $this->currentNode = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier));
+        Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $rawNodeAggregateIdentifier . '" was not found in the subgraph with dimension space point "' . $this->dimensionSpacePoint . '" in content stream "' . $this->contentStreamIdentifier . '".');
+    }
+
+    /**
+     * @Then /^I expect a node identified by aggregate identifier "([^"]*)" not to exist in the subgraph$/
+     * @param string $nodeAggregateIdentifier
+     * @deprecated use iExpectNodeAggregateIdentifierAndPathToLeadToNoNode
+     */
+    public function iExpectANodeIdentifiedByAggregateIdentifierNotToExistInTheSubgraph(string $nodeAggregateIdentifier)
+    {
+        $node = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+        Assert::assertTrue($node === null, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was found in the current Content Stream / Dimension Space Point, but it SHOULD NOT BE FOUND.');
+    }
+
+    /**
+     * @Then /^I expect the node aggregate "([^"]*)" to have the following child nodes:$/
+     * @param string $rawNodeAggregateIdentifier
+     * @param TableNode $expectedChildNodesTable
+     */
+    public function iExpectTheNodeToHaveTheFollowingChildNodes(string $rawNodeAggregateIdentifier, TableNode $expectedChildNodesTable)
+    {
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
+        $subgraph = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $nodes = $subgraph
+            ->findChildNodes($nodeAggregateIdentifier);
+
+        $numberOfChildNodes = $subgraph
+            ->countChildNodes($nodeAggregateIdentifier);
+
+        Assert::assertEquals(count($expectedChildNodesTable->getHash()), $numberOfChildNodes, 'ContentSubgraph::countChildNodes returned a wrong value');
+        Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'ContentSubgraph::findChildNodes: Child Node Count does not match');
+        $nodes = iterator_to_array($nodes);
+        foreach ($expectedChildNodesTable->getHash() as $index => $row) {
+            $expectedNodeName = NodeName::fromString($row['Name']);
+            $actualNodeName = $nodes[$index]->getNodeName();
+            Assert::assertEquals($expectedNodeName, $actualNodeName, 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName . '" Actual: "' . $actualNodeName . '"');
+            if (isset($row['NodeDiscriminator'])) {
+                $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($row['NodeDiscriminator'], true));
+                $actualNodeDiscriminator = NodeDiscriminator::fromNode($nodes[$index]);
+                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
+            }
+        }
+    }
+
+    /**
+     * @Then /^I expect the node "([^"]*)" to have the type "([^"]*)"$/
+     * @param string $nodeAggregateIdentifier
+     * @param string $nodeType
+     */
+    public function iExpectTheNodeToHaveTheType(string $nodeAggregateIdentifier, string $nodeType)
+    {
+        $node = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+        Assert::assertEquals($nodeType, (string)$node->getNodeTypeName(), 'Node Type names do not match');
+    }
+
+    /**
+     * @Then /^I expect this node to have the properties:$/
+     * @param TableNode $expectedProperties
+     */
+    public function iExpectThisNodeToHaveTheProperties(TableNode $expectedProperties)
+    {
+        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
+    }
+
+    /**
+     * @Then /^I expect the node "([^"]*)" to have the properties:$/
+     * @param string $nodeAggregateIdentifier
+     * @param TableNode $expectedProperties
+     */
+    public function iExpectTheNodeToHaveTheProperties(string $nodeAggregateIdentifier, TableNode $expectedProperties)
+    {
+        $this->currentNode = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
+    }
+
+
+    /**
+     * @Then /^I expect the Node Aggregate "([^"]*)" to have the properties:$/
+     * @param $nodeAggregateIdentifier
+     * @param TableNode $expectedProperties
+     */
+    public function iExpectTheNodeAggregateToHaveTheProperties($nodeAggregateIdentifier, TableNode $expectedProperties)
+    {
+        $this->currentNode = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
+    }
+
+    /**
+     * @Then /^I expect the current Node to have the properties:$/
+     * @param TableNode $expectedProperties
+     */
+    public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
+    {
+        Assert::assertNotNull($this->currentNode, 'current node not found');
+        $this->currentNode = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
+
+        foreach ($expectedProperties->getHash() as $row) {
+            Assert::assertTrue($this->currentNode->hasProperty($row['Key']), 'Property "' . $row['Key'] . '" not found');
+            $actualProperty = $this->currentNode->getProperty($row['Key']);
+            $expected = $row['Value'];
+            if (isset($row['Type']) && $row['Type'] === 'DateTime') {
+                $expected = DateTimeImmutable::createFromFormat(DATE_W3C, $expected);
+            }
+            Assert::assertEquals($expected, $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
+        }
+    }
+
+    /**
+     * @Then /^I expect this node to have no properties$/
+     */
+    public function iExpectThisNodeToHaveNoProperties()
+    {
+        Assert::assertNotNull($this->currentNode, 'current node not found');
+        $properties = $this->currentNode->getProperties();
+        $properties = iterator_to_array($properties);
+        Assert::assertCount(0, $properties, 'I expect no properties');
+    }
+
+    /**
+     * @Then /^I expect this node to be of type "([^"]*)"$/
+     * @param string $nodeTypeName
+     */
+    public function iExpectTheNodeToBeOfType(string $nodeTypeName)
+    {
+        Assert::assertEquals($nodeTypeName, $this->currentNode->getNodeTypeName()->jsonSerialize());
+    }
+
+
+    /**
+     * @Then /^I expect the node aggregate "([^"]*)" to have the references:$/
+     * @param string $nodeAggregateIdentifier
+     * @param TableNode $expectedReferences
+     * @throws Exception
+     */
+    public function iExpectTheNodeToHaveTheReferences(string $nodeAggregateIdentifier, TableNode $expectedReferences)
+    {
+        $expectedReferences = $this->readPayloadTable($expectedReferences);
+
+        /** @var ContentSubgraphInterface $subgraph */
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
+            $destinationNodes = $subgraph->findReferencedNodes(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier), PropertyName::fromString($propertyName));
+            $destinationNodeAggregateIdentifiers = array_map(
+                function ($item) {
+                    if ($item instanceof NodeInterface) {
+                        return (string)$item->getNodeAggregateIdentifier();
+                    } else {
+                        return $item;
+                    }
+                },
+                iterator_to_array($destinationNodes)
+            );
+            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
+        }
+    }
+
+    /**
+     * @Then /^I expect the node aggregate "([^"]*)" to be referenced by:$/
+     * @param string $nodeAggregateIdentifier
+     * @param TableNode $expectedReferences
+     * @throws Exception
+     */
+    public function iExpectTheNodeToBeReferencedBy(string $nodeAggregateIdentifier, TableNode $expectedReferences)
+    {
+        $expectedReferences = $this->readPayloadTable($expectedReferences);
+
+        /** @var ContentSubgraphInterface $subgraph */
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
+            $destinationNodes = $subgraph->findReferencingNodes(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier), PropertyName::fromString($propertyName));
+            $destinationNodeAggregateIdentifiers = array_map(
+                function ($item) {
+                    if ($item instanceof NodeInterface) {
+                        return (string)$item->getNodeAggregateIdentifier();
+                    } else {
+                        return $item;
+                    }
+                },
+                iterator_to_array($destinationNodes)
+            );
+
+            // since the order on the target side is not defined we sort
+            // expectation and result before comparison
+            sort($expectedDestinationNodeAggregateIdentifiers);
+            sort($destinationNodeAggregateIdentifiers);
+            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
+        }
+    }
+
+    /**
+     * @Then /^I expect the path "([^"]*)" to lead to the node ([^"]*)$/
+     * @param string $serializedNodePath
+     * @param string $serializedNodeIdentifier
+     * @throws Exception
+     */
+    public function iExpectThePathToLeadToTheNode(string $serializedNodePath, string $serializedNodeIdentifier)
+    {
+        if (!$this->getRootNodeAggregateIdentifier()) {
+            throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
+        }
+        $expectedDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
+        $this->currentNode = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
+        Assert::assertNotNull($this->currentNode, 'Did not find node at path "' . $serializedNodePath . '"');
+        $actualDiscriminator = NodeDiscriminator::fromNode($this->currentNode);
+        Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
+    }
+
+    /**
+     * @When /^I go to the parent node of node aggregate "([^"]*)"$/
+     * @param string $nodeAggregateIdentifier
+     */
+    public function iGoToTheParentNodeOfNode(string $nodeAggregateIdentifier)
+    {
+        $this->currentNode = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findParentNode(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+    }
+
+    /**
+     * @Then /^I do not find any node$/
+     */
+    public function currentNodeIsNull()
+    {
+        if ($this->currentNode) {
+            Assert::fail('Current node was not NULL, but node aggregate: ' . $this->currentNode->getNodeAggregateIdentifier());
+        } else {
+            Assert::assertTrue(true);
+        }
+    }
+
+    /**
+     * @Then /^I find a node with node aggregate "([^"]*)"$/
+     * @param string $nodeAggregateIdentifier
+     */
+    public function currentNodeAggregateShouldBe(string $nodeAggregateIdentifier)
+    {
+        Assert::assertEquals($nodeAggregateIdentifier, (string)$this->currentNode->getNodeAggregateIdentifier());
+    }
+
+    /**
+     * @Then /^I expect the path "([^"]*)" to lead to no node$/
+     * @param string $serializedNodePath
+     * @throws Exception
+     */
+    public function iExpectThePathToLeadToNoNode(string $serializedNodePath)
+    {
+        if (!$this->getRootNodeAggregateIdentifier()) {
+            throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
+        }
+        $node = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
+        Assert::assertNull($node, 'Did find node at path "' . $serializedNodePath . '"');
+    }
+
+    /**
+     * @When /^VisibilityConstraints are set to "(withoutRestrictions|frontend)"$/
+     * @param string $restrictionType
+     */
+    public function visibilityConstraintsAreSetTo(string $restrictionType)
+    {
+        switch ($restrictionType) {
+            case 'withoutRestrictions':
+                $this->visibilityConstraints = VisibilityConstraints::withoutRestrictions();
+                break;
+            case 'frontend':
+                $this->visibilityConstraints = VisibilityConstraints::frontend();
+                break;
+            default:
+                throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.');
+        }
+    }
+
+
+    /**
      * @Then /^the subtree for node aggregate "([^"]*)" with node types "([^"]*)" and (\d+) levels deep should be:$/
      * @param string $nodeAggregateIdentifier
      * @param string $nodeTypeConstraints

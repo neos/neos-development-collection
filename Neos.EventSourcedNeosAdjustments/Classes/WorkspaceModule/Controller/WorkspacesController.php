@@ -14,8 +14,6 @@ namespace Neos\EventSourcedNeosAdjustments\WorkspaceModule\Controller;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -26,6 +24,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishW
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -147,12 +146,6 @@ class WorkspacesController extends AbstractModuleController
      * @var RuntimeBlocker
      */
     protected $runtimeBlocker;
-
-    /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
 
     /**
      * @return void
@@ -559,7 +552,6 @@ class WorkspacesController extends AbstractModuleController
             $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $change->originDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
 
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
-            $node = $this->readModelFactory->createReadModel($node, $subgraph);
             $pathParts = explode('/', (string)$node->findNodePath());
             if (count($pathParts) > 2) {
                 $siteNodeName = $pathParts[2];
@@ -610,22 +602,22 @@ class WorkspacesController extends AbstractModuleController
      * Retrieves the given node's corresponding node in the base content stream (that is, which would be overwritten if the
      * given node would be published)
      */
-    protected function getOriginalNode(NodeBasedReadModelInterface $modifiedNode, ContentStreamIdentifier $baseContentStreamIdentifier): ?NodeBasedReadModelInterface
+    protected function getOriginalNode(NodeInterface $modifiedNode, ContentStreamIdentifier $baseContentStreamIdentifier): ?NodeInterface
     {
         $baseSubgraph = $this->contentGraph->getSubgraphByIdentifier($baseContentStreamIdentifier, $modifiedNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         $node = $baseSubgraph->findNodeByNodeAggregateIdentifier($modifiedNode->getNodeAggregateIdentifier());
 
-        return $node ? $this->readModelFactory->createReadModel($node, $baseSubgraph) : null;
+        return $node;
     }
 
     /**
      * Renders the difference between the original and the changed content of the given node and returns it, along
      * with meta information, in an array.
      *
-     * @param NodeBasedReadModelInterface $changedNode
+     * @param NodeInterface $changedNode
      * @return array
      */
-    protected function renderContentChanges(NodeBasedReadModelInterface $changedNode, ContentStreamIdentifier $contentStreamIdentifierOfOriginalNode)
+    protected function renderContentChanges(NodeInterface $changedNode, ContentStreamIdentifier $contentStreamIdentifierOfOriginalNode)
     {
         $currentWorkspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifierOfOriginalNode);
         $originalNode = null;
@@ -735,10 +727,10 @@ class WorkspacesController extends AbstractModuleController
      * Tries to determine a label for the specified property
      *
      * @param string $propertyName
-     * @param NodeBasedReadModelInterface $changedNode
+     * @param NodeInterface $changedNode
      * @return string
      */
-    protected function getPropertyLabel($propertyName, NodeBasedReadModelInterface $changedNode)
+    protected function getPropertyLabel($propertyName, NodeInterface $changedNode)
     {
         $properties = $changedNode->getNodeType()->getProperties();
         if (!isset($properties[$propertyName]) ||

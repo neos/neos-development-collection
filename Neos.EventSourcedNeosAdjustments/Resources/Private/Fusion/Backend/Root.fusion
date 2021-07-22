@@ -1,8 +1,3 @@
 prototype(Neos.Neos:NodeUri) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
-    subgraph = ${subgraph}
-}
-
-backend.initialState.context {
-    subgraph = ${subgraph}
 }

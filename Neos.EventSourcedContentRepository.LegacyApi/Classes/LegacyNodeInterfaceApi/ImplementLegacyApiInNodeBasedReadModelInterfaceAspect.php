@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\LegacyNodeInterfaceApi;
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -21,13 +22,19 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
     protected $legacyLogger;
 
     /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
      * @Flow\Around("method(Neos\ContentRepository\Intermediary\Domain\AbstractReadModel->getIdentifier())")
      */
     public function getIdentifier(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
     {
         $this->legacyLogger->info('NodeInterface.getIdentifier() called', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getIdentifier'));
 
-        /* @var NodeBasedReadModelInterface $traversableNode */
+        /* @var NodeInterface $traversableNode */
         $traversableNode = $joinPoint->getProxy();
         return $traversableNode->getNodeAggregateIdentifier()->jsonSerialize();
     }
@@ -39,8 +46,9 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
     {
         $this->legacyLogger->info('NodeInterface.getDepth() called', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getDepth'));
 
-        /* @var NodeBasedReadModelInterface $traversableNode */
+        /* @var NodeInterface $traversableNode */
         $traversableNode = $joinPoint->getProxy();
-        return $traversableNode->findNodePath()->getDepth();
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($traversableNode->getContentStreamIdentifier(), $traversableNode->getDimensionSpacePoint(), $traversableNode->getVisibilityConstraints());
+        return $nodeAccessor->findNodePath($traversableNode)->getDepth();
     }
 }

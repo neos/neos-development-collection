@@ -12,64 +12,62 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 
-/**
- * This is a NEW interface, introduced in Neos 4.3.
- *
- * The new Event-Sourced core NodeInterface used for READING. It contains only information
- * local to a node; i.e. all properties in this interface can be accessed extremely fast.
- *
- * The NodeInterface is *immutable*, meaning its contents never change after creation.
- * It is *only used for reading*.
- *
- * Starting with version 5.0 (when backed by the Event Sourced CR), it is
- * *completely detached from storage*; so it will not auto-update after a property changed in
- * storage.
- */
-interface NodeInterface
+interface NodeInterface extends \Neos\ContentRepository\Domain\Projection\Content\NodeInterface
 {
     /**
-     * Whether or not this node is a root of the graph, i.e. has no parent node
-     */
-    public function isRoot(): bool;
-
-    /**
-     * Whether or not this node is tethered to its parent, fka auto created child node
-     */
-    public function isTethered(): bool;
-
-    public function getClassification(): NodeAggregateClassification;
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier;
-
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier;
-
-    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint;
-
-    public function getNodeTypeName(): NodeTypeName;
-
-    public function getNodeType(): NodeType;
-
-    public function getNodeName(): ?NodeName;
-
-    public function getProperties(): SerializedPropertyValues;
-
-    /**
-     * Returns the specified property.
+     * Returns all properties of this node. References are NOT part of this API; there you need to check getReference() and getReferences().
      *
-     * @param string $propertyName Name of the property
-     * @return mixed value of the property
+     * To read the serialized properties, call getProperties()->serialized().
+     *
+     * @return PropertyCollectionInterface Property values, indexed by their name
      * @api
      */
-    public function getProperty(string $propertyName);
+    public function getProperties(): PropertyCollectionInterface;
 
-    public function hasProperty($propertyName): bool;
+    /**
+     * DimensionSpacePoint this node has been accessed in. This is part of the node's "Read Model" identity, whis is defined by:
+     * - {@see getContentStreamIdentifier}
+     * - {@see getNodeAggregateIdentifier}
+     * - {@see getDimensionSpacePoint} (this method)
+     * - {@see getVisibilityConstraints}
+     *
+     * With the above information, you can fetch a Node Accessor using {@see NodeAccessorManager::accessorFor()}, or
+     * (for lower-level access) a Subgraph using {@see ContentGraphInterface::getSubgraphByIdentifier()}.
+     *
+     * This is the DimensionSpacePoint this node has been accessed in - NOT the DimensionSpacePoint where
+     * the node is "at home". The DimensionSpacePoint where the node is (at home) is called the ORIGIN DimensionSpacePoint,
+     * and this can be accessed using {@see getOriginDimensionSpacePoint}. If in doubt, you'll usually need this method
+     * insead of the Origin DimensionSpacePoint.
+     *
+     * We are still a bit unsure whether this method should be part of the Node itself, or rather part of some kind of
+     * "Context Accessor" or "Perspective" object.
+     *
+     * @return DimensionSpacePoint
+     */
+    public function getDimensionSpacePoint(): DimensionSpacePoint;
+
+    /**
+     * VisibilityConstraints of the Subgraph / NodeAccessor this node has been read from. This is part of the node's "Read Model" identity, whis is defined by:
+     * - {@see getContentStreamIdentifier}
+     * - {@see getNodeAggregateIdentifier}
+     * - {@see getDimensionSpacePoint}
+     * - {@see getVisibilityConstraints} (this method)
+     *
+     * With the above information, you can fetch a Node Accessor using {@see NodeAccessorManager::accessorFor()}, or
+     * (for lower-level access) a Subgraph using {@see ContentGraphInterface::getSubgraphByIdentifier()}.
+     *
+     * We are still a bit unsure whether this method should be part of the Node itself, or rather part of some kind of
+     * "Context Accessor" or "Perspective" object.
+     *
+     * @return VisibilityConstraints
+     */
+    public function getVisibilityConstraints(): VisibilityConstraints;
+
+    public function getClassification(): NodeAggregateClassification;
 }

@@ -5,7 +5,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
@@ -71,9 +70,7 @@ class PropertyAdjustment
             foreach ($nodeAggregate->getNodes() as $node) {
                 $propertyKeysInNode = [];
 
-                $nodeReadModel = $this->readModelFactory->createReadModel($node, $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions()));
-
-                foreach ($node->getProperties()->getValues() as $propertyKey => $property) {
+                foreach ($node->getProperties()->serialized() as $propertyKey => $property) {
                     $propertyKeysInNode[$propertyKey] = $propertyKey;
 
                     // detect obsolete properties
@@ -92,7 +89,7 @@ class PropertyAdjustment
 
                     // detect non-deserializable properties
                     try {
-                        $nodeReadModel->getProperties()->offsetGet($propertyKey);
+                        $node->getProperty($propertyKey);
                     } catch (\Exception $e) {
                         $message = sprintf('The property "%s" was not deserializable. Error was: %s %s. Remove the property?', $propertyKey, get_class($e), $e->getMessage());
                         yield StructureAdjustment::createForNode(

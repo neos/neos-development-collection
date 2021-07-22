@@ -19,12 +19,12 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Exception\InvalidNodeCreationHandlerException;
@@ -145,12 +145,12 @@ abstract class AbstractCreate extends AbstractStructuralChange
     }
 
     /**
-     * @param NodeBasedReadModelInterface $parentNode
+     * @param NodeInterface $parentNode
      * @param NodeAggregateIdentifier|null $succeedingSiblingNodeAggregateIdentifier
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      * @throws InvalidNodeCreationHandlerException|NodeNameIsAlreadyOccupied|NodeException
      */
-    protected function createNode(NodeBasedReadModelInterface $parentNode, NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null): NodeBasedReadModelInterface
+    protected function createNode(NodeInterface $parentNode, NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null): NodeInterface
     {
         // TODO: the $name=... line should be as expressed below
         // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());

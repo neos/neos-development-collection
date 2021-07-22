@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -74,7 +74,7 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
                 }
             }
 
-            /** @var NodeBasedReadModelInterface $node */
+            /** @var NodeInterface $node */
             $node = $joinPoint->getProxy();
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
             return parent::matchesSubject($nodePrivilegeSubject);

@@ -16,20 +16,19 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
-use Neos\ContentRepository\Intermediary\Domain\Command\SetNodeProperties;
-use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
-use Neos\ContentRepository\Intermediary\Domain\NodeAggregateCommandHandler as IntermediaryNodeAggregateCommandHandlerAlias;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
@@ -63,6 +62,12 @@ class Property extends AbstractChange
      * @var NodeServiceInterface
      */
     protected $nodeService;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * The node dom address
@@ -100,21 +105,9 @@ class Property extends AbstractChange
 
     /**
      * @Flow\Inject
-     * @var IntermediaryNodeAggregateCommandHandlerAlias
-     */
-    protected $intermediaryNodeAggregateCommandHandler;
-
-    /**
-     * @Flow\Inject
      * @var ContentCacheFlusher
      */
     protected $contentCacheFlusher;
-
-    /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
 
     /**
      * Set the property name
@@ -272,7 +265,7 @@ class Property extends AbstractChange
 
                 // TODO: Make changing the node type a separated, specific/defined change operation.
                 if ($propertyName[0] !== '_' || $propertyName === '_hiddenInIndex') {
-                    $commandResult = $this->intermediaryNodeAggregateCommandHandler->handleSetNodeProperties(
+                    $commandResult = $this->nodeAggregateCommandHandler->handleSetNodeProperties(
                         new SetNodeProperties(
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
@@ -332,15 +325,14 @@ class Property extends AbstractChange
 
             // !!! REMEMBER: we are not allowed to use $node anymore, because it may have been modified by the commands above.
             // Thus, we need to re-fetch it (as a workaround; until we do not need this anymore)
-            $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-            $node = $subgraph->findNodeByNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
-            $node = $this->readModelFactory->createReadModel($node, $subgraph);
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $node = $nodeAccessor->findByIdentifier($node->getNodeAggregateIdentifier());
 
             $this->updateWorkspaceInfo();
 
             $reloadIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadIfChanged', $propertyName);
             if (!$this->getIsInline() && $node->getNodeType()->getConfiguration($reloadIfChangedConfigurationPath)) {
-                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $node->findParentNode()->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $nodeAccessor->findParentNode($node)->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
                     $reloadContentOutOfBand = new ReloadContentOutOfBand();
                     $reloadContentOutOfBand->setNode($node);
                     $reloadContentOutOfBand->setNodeDomAddress($this->getNodeDomAddress());

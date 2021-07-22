@@ -14,8 +14,6 @@ declare(strict_types=1);
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -63,10 +61,7 @@ trait FlowQueryTrait
             VisibilityConstraints::withoutRestrictions()
         );
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
-        $node = $this->readModelFactory->createReadModel(
-            $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier),
-            $subgraph
-        );
+        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
         $this->currentFlowQuery = new FlowQuery([$node]);
     }
 
@@ -99,7 +94,7 @@ trait FlowQueryTrait
         $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedExpectedNodeAggregateIdentifier);
         $expectationMet = false;
         foreach ($this->currentFlowQuery->getContext() as $node) {
-            /** @var NodeBasedReadModelInterface $node */
+            /** @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface $node */
             if ($node->getNodeAggregateIdentifier()->equals($expectedNodeAggregateIdentifier)) {
                 $expectationMet = true;
                 break;

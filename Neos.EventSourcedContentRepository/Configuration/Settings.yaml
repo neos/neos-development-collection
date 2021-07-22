@@ -7,6 +7,38 @@ Neos:
       defaultProjectorsToBeBlocked:
         'Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector': true
         'Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector': true
+    nodeAccessorFactories:
+      contentSubgraph:
+        position: end
+        className: 'Neos\EventSourcedContentRepository\ContentAccess\Implementation\ContentSubgraphAccessorFactory'
+
+    propertyConverters:
+      ScalarNormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\ScalarNormalizer
+      ArrayNormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\ArrayNormalizer
+      DateTimeNormalizer:
+        className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+        position: 'start'
+      UriNormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\UriNormalizer
+      ValueObjectArrayDenormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer
+      ValueObjectBoolDenormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer
+      ValueObjectFloatDenormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer
+      ValueObjectIntDenormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer
+      ValueObjectStringDenormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer
+      DoctrinePersistentObjectNormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
+      CollectionTypeDenormalizer:
+        className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
+      ProxyAwareObjectNormalizer:
+        className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
+
   EventSourcing:
     EventStore:
       stores:

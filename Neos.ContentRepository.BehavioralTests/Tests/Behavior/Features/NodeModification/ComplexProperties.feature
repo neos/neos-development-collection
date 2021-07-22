@@ -25,7 +25,7 @@ Feature: Set properties of complex type
           type: GuzzleHttp\Psr7\Uri
           defaultValue: 'https://neos.io'
         postalAddress:
-          type: Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress
+          type: Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress
           defaultValue:
             streetAddress: '28 31st of February Street'
             postalCode: '12345'

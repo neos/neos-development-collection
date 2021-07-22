@@ -18,7 +18,6 @@
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
-        "neos/contentrepository-intermediary": "self.version",
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
         "neos/eventsourcedcontentrepository-security": "self.version",
         "neos/event-sourced-content-repository": "self.version",
@@ -35,9 +34,6 @@
               ],
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
-            ],
-            "Neos\\ContentRepository\\Intermediary\\": [
-                "Neos.ContentRepository.Intermediary/Classes"
             ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Classes"
@@ -63,9 +59,6 @@
         "psr-4": {
             "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
                 "Neos.ContentRepository.BehavioralTests/Tests"
-            ],
-            "Neos\\ContentRepository\\Intermediary\\Tests\\": [
-                "Neos.ContentRepository.Intermediary/Tests"
             ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\Tests\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Tests"

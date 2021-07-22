@@ -27,7 +27,7 @@ Feature: Create a node aggregate with complex initial values
         uri:
           type: GuzzleHttp\Psr7\Uri
         postalAddress:
-          type: Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress
+          type: Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress
         image:
           type: Neos\Media\Domain\Model\ImageInterface
         images:

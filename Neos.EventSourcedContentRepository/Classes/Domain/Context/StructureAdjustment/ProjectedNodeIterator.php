@@ -33,7 +33,6 @@ class ProjectedNodeIterator
         $this->contentGraph = $contentGraph;
     }
 
-
     /**
      * @param NodeTypeName $nodeTypeName
      * @return ReadableNodeAggregateInterface[]

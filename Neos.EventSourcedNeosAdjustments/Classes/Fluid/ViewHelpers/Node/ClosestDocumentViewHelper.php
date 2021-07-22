@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Eel\FlowQuery\FlowQuery;
 
@@ -31,12 +31,12 @@ class ClosestDocumentViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('node', NodeBasedReadModelInterface::class, 'Node', true);
+        $this->registerArgument('node', NodeInterface::class, 'Node', true);
     }
 
 
     /**
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      * @throws \Neos\Eel\Exception
      */
     public function render()

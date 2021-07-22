@@ -13,11 +13,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -439,12 +439,12 @@ class BackendServiceController extends ActionController
         $result = [];
         /** @var NodeAddress $nodeAddress */
         foreach ($nodes as $nodeAddress) {
-            $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $nodeAddress->getContentStreamIdentifier(),
                 $nodeAddress->getDimensionSpacePoint(),
                 VisibilityConstraints::withoutRestrictions()
             );
-            $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+            $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
             // TODO finish implementation
             /*$otherNodeVariants = array_values(array_filter(array_map(function ($node) {
@@ -462,9 +462,9 @@ class BackendServiceController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var NodeAccessorManager
      */
-    protected $contentGraph;
+    protected $nodeAccessorManager;
 
     /**
      * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
@@ -482,9 +482,9 @@ class BackendServiceController extends ActionController
         $result = [];
         /** @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $nodeAddress */
         foreach ($nodes as $nodeAddress) {
-            $subgraph = $this->contentGraph
-                ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-            $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+            $nodeAccessor = $this->nodeAccessorManager
+                ->accessorFor($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
             $result[$nodeAddress->serializeForUri()] = ['policy' => $this->nodePolicyService->getNodePolicyInformation($node)];
         }

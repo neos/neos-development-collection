@@ -15,8 +15,8 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -50,6 +50,11 @@ class EventSourcedNodeController extends ActionController
      */
     protected $contentGraph;
 
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject(lazy=false)
@@ -116,12 +121,6 @@ class EventSourcedNodeController extends ActionController
     protected $nodeSiteResolvingService;
 
     /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
-
-    /**
      * @param NodeAddress $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
@@ -144,26 +143,28 @@ class EventSourcedNodeController extends ActionController
             throw new NodeNotFoundException("TODO: SUBGRAPH NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
-        $nodeInstance = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
         }
 
-        $traversableNode = $this->readModelFactory->createReadModel($nodeInstance, $subgraph);
-        $traversableSite = $this->readModelFactory->createReadModel($site, $subgraph);
 
         $this->view->assignMultiple([
-            'value' => $traversableNode,
-            'subgraph' => $subgraph,
-            'site' => $traversableSite,
+            'value' => $nodeInstance,
+            'site' => $site,
         ]);
 
         $this->overrideViewVariablesFromInternalArguments();
@@ -211,7 +212,13 @@ class EventSourcedNodeController extends ActionController
         }
 
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
-        $nodeInstance = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::frontend()
+        );
+        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
@@ -221,13 +228,9 @@ class EventSourcedNodeController extends ActionController
             $this->handleShortcutNode($nodeAddress);
         }
 
-        $traversableNode = $this->readModelFactory->createReadModel($nodeInstance, $subgraph);
-        $traversableSite = $this->readModelFactory->createReadModel($site, $subgraph);
-
         $this->view->assignMultiple([
-            'value' => $traversableNode,
-            'subgraph' => $subgraph,
-            'site' => $traversableSite,
+            'value' => $nodeInstance,
+            'site' => $site,
         ]);
     }
 

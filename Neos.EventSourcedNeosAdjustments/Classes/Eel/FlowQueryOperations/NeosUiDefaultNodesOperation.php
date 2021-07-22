@@ -13,16 +13,16 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
-class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\NeosUiDefaultNodesOperation
+class NeosUiDefaultNodesOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
@@ -40,9 +40,9 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var NodeAccessorManager
      */
-    protected $contentGraph;
+    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject
@@ -51,10 +51,15 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
     protected $nodeTypeConstraintFactory;
 
     /**
-     * @Flow\Inject
-     * @var ReadModelFactory
+     * {@inheritdoc}
+     *
+     * @param array (or array-like object) $context onto which this operation should be applied
+     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
      */
-    protected $readModelFactory;
+    public function canEvaluate($context)
+    {
+        return isset($context[0]) && ($context[0] instanceof NodeInterface);
+    }
 
     /**
      * {@inheritdoc}
@@ -65,15 +70,15 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        /** @var NodeBasedReadModelInterface $siteNode */
-        /** @var NodeBasedReadModelInterface $documentNode */
+        /** @var NodeInterface $siteNode */
+        /** @var NodeInterface $documentNode */
         list($siteNode, $documentNode) = $flowQuery->getContext();
-        /** @var NodeBasedReadModelInterface $toggledNodes */
+        /** @var NodeInterface $toggledNodes */
         list($baseNodeType, $loadingDepth, $toggledNodes, $clipboardNodesContextPaths) = $arguments;
 
         $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($baseNodeType);
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($documentNode->getContentStreamIdentifier(), $documentNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($documentNode->getContentStreamIdentifier(), $documentNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
 
         // Collect all parents of documentNode up to siteNode
         $nodes = [
@@ -81,15 +86,17 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
         ];
         $currentNode = null;
         try {
-            $currentNode = $documentNode->findParentNode();
+            $currentNode = $nodeAccessor->findParentNode($documentNode);
         } catch (NodeException $ignored) {
             // parent does not exist
         }
         if ($currentNode) {
-            $parentNodeIsUnderneathSiteNode = strpos((string)$currentNode->findNodePath(), (string)$siteNode->findNodePath()) === 0;
+            $currentNodePath = $nodeAccessor->findNodePath($currentNode);
+            $siteNodePath = $nodeAccessor->findNodePath($siteNode);
+            $parentNodeIsUnderneathSiteNode = strpos((string)$currentNodePath, (string)$siteNodePath) === 0;
             while ((string)$currentNode->getNodeAggregateIdentifier() !== (string)$siteNode->getNodeAggregateIdentifier() && $parentNodeIsUnderneathSiteNode) {
                 $nodes[(string)$currentNode->getNodeAggregateIdentifier()] = $currentNode;
-                $currentNode = $currentNode->findParentNode();
+                $currentNode = $nodeAccessor->findParentNode($currentNode);
             }
         }
 
@@ -99,9 +106,9 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
         if ($loadingDepth === 0) {
             throw new \RuntimeException('TODO: Loading Depth 0 not supported');
         }
-        $subtree = $subgraph->findSubtrees([$siteNode->getNodeAggregateIdentifier()], $loadingDepth, $nodeTypeConstraints);
+        $subtree = $nodeAccessor->findSubtrees([$siteNode], $loadingDepth, $nodeTypeConstraints);
         $subtree = $subtree->getChildren()[0];
-        $this->flattenSubtreeToNodeList($subgraph, $subtree, $nodes);
+        $this->flattenSubtreeToNodeList($nodeAccessor, $subtree, $nodes);
 
         // TODO: Clipboard nodes
 
@@ -109,14 +116,14 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
     }
 
 
-    private function flattenSubtreeToNodeList(ContentSubgraphInterface $subgraph, SubtreeInterface $subtree, array &$nodes)
+    private function flattenSubtreeToNodeList(NodeAccessorInterface $nodeAccessor, SubtreeInterface $subtree, array &$nodes)
     {
         $currentNode = $subtree->getNode();
 
-        $nodes[(string)$currentNode->getNodeAggregateIdentifier()] = $this->readModelFactory->createReadModel($currentNode, $subgraph);
+        $nodes[(string)$currentNode->getNodeAggregateIdentifier()] = $currentNode;
 
         foreach ($subtree->getChildren() as $childSubtree) {
-            $this->flattenSubtreeToNodeList($subgraph, $childSubtree, $nodes);
+            $this->flattenSubtreeToNodeList($nodeAccessor, $childSubtree, $nodes);
         }
     }
 }

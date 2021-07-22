@@ -222,6 +222,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             }
             if ($site === null) {
                 $site = $this->siteRepository->findFirstOnline();
+                if ($site === null) {
+                    throw new \RuntimeException('TODO: No site found. Please create one.');
+                }
             }
             $this->siteNodeNameRuntimeCache[$host] = NodeName::fromString($site->getNodeName());
         }

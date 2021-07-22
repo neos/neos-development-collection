@@ -11,19 +11,19 @@ declare(strict_types=1);
  * source code.
  */
 
-require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
-require_once(__DIR__ . '/../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
-require_once(__DIR__ . '/../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
-require_once(__DIR__ . '/../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
-require_once(__DIR__ . '/../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-require_once(__DIR__ . '/../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
-require_once(__DIR__ . '/../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/ReadModelInstantiationTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/IntermediaryCommandTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
-require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ReadModelInstantiationTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/IntermediaryCommandTrait.php');
+require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
+require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\IntermediaryCommandTrait;

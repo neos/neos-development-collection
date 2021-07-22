@@ -112,3 +112,45 @@ Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker:
       object:
         factoryObjectName: Neos\EventSourcedContentRepository\Infrastructure\Projection\DefaultBlockedProjectorFactory
 
+Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConversionSerializerFactory
+        factoryMethodName: buildSerializer
+
+Neos\EventSourcedContentRepository\StructureAdjustment\TetheredNodeAdjustments:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\EventSourcedContentRepository\StructureAdjustment\UnknownNodeTypeAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\EventSourcedContentRepository\StructureAdjustment\DisallowedChildNodeAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\EventSourcedContentRepository\StructureAdjustment\PropertyAdjustment:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'

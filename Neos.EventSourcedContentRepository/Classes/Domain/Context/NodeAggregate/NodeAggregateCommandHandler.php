@@ -28,16 +28,19 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\Node
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRemoval;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRenaming;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRetyping;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeSerialization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeVariation;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\TetheredNodeInternals;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 
 final class NodeAggregateCommandHandler
 {
     use ConstraintChecks;
+    use NodeSerialization;
     use NodeCreation;
     use NodeDisabling;
     use NodeModification;
@@ -78,6 +81,8 @@ final class NodeAggregateCommandHandler
 
     private ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
+    protected PropertyConverter $propertyConverter;
+
     /**
      * can be disabled in {@see NodeAggregateCommandHandler::withoutAnchestorNodeTypeConstraintChecks()}
      */
@@ -93,7 +98,8 @@ final class NodeAggregateCommandHandler
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         NodeAggregateEventPublisher $nodeEventPublisher,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
-        RuntimeBlocker $runtimeBlocker
+        RuntimeBlocker $runtimeBlocker,
+        PropertyConverter $propertyConverter
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
@@ -103,6 +109,7 @@ final class NodeAggregateCommandHandler
         $this->nodeEventPublisher = $nodeEventPublisher;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->runtimeBlocker = $runtimeBlocker;
+        $this->propertyConverter = $propertyConverter;
     }
 
     protected function getContentGraph(): ContentGraphInterface
@@ -148,6 +155,11 @@ final class NodeAggregateCommandHandler
     public function getRuntimeBlocker(): RuntimeBlocker
     {
         return $this->runtimeBlocker;
+    }
+
+    public function getPropertyConverter(): PropertyConverter
+    {
+        return $this->propertyConverter;
     }
 
     /**

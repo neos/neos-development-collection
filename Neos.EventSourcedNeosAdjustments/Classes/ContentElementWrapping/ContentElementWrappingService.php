@@ -13,7 +13,10 @@ namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
@@ -81,6 +84,17 @@ class ContentElementWrappingService
      */
     protected $nodeInfoHelper;
 
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * All editable nodes rendered in the document
@@ -100,13 +114,13 @@ class ContentElementWrappingService
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param string $content
      * @param string $fusionPath
      * @return string
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    public function wrapContentObject(NodeBasedReadModelInterface $node, $content, $fusionPath): ?string
+    public function wrapContentObject(NodeInterface $node, $content, $fusionPath, array $additionalAttributes = []): ?string
     {
         if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
@@ -118,11 +132,10 @@ class ContentElementWrappingService
         //    return $content;
         //}
 
-        $nodeAddress = $node->getAddress();
-        $attributes = [
-            'data-__neos-node-contextpath' => $nodeAddress->serializeForUri(),
-            'data-__neos-fusion-path' => $fusionPath
-        ];
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $attributes = $additionalAttributes;
+        $attributes['data-node-__fusion-path'] = $fusionPath;
+        $attributes['data-__neos-node-contextpath'] = $nodeAddress->serializeForUri();
 
         $this->renderedNodes[$node->getCacheEntryIdentifier()] = $node;
 
@@ -144,30 +157,38 @@ class ContentElementWrappingService
      * within the current document node. This way we can show e.g. content collections
      * within the structure tree which are not actually rendered.
      *
-     * @param NodeBasedReadModelInterface $documentNode
+     * @param NodeInterface $documentNode
      * @return mixed
      * @throws \Neos\Eel\Exception
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    protected function appendNonRenderedContentNodeMetadata(NodeBasedReadModelInterface $documentNode)
+    protected function appendNonRenderedContentNodeMetadata(NodeInterface $documentNode)
     {
         if ($this->isContentStreamOfLiveWorkspace($documentNode->getContentStreamIdentifier())) {
             return '';
         }
 
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($documentNode->getContentStreamIdentifier(), $documentNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
 
-        foreach ($documentNode->findChildNodes() as $node) {
+        foreach ($nodeAccessor->findChildNodes($documentNode) as $node) {
             if ($node->getNodeType()->isOfType('Neos.Neos:Document') === true) {
                 continue;
             }
 
             if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
-                $nodeContextPath = $node->getAddress()->serializeForUri();
+                $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
             }
 
-            if ($documentNode->countChildNodes() > 0) {
+            $nestedNodes = $nodeAccessor->findChildNodes($node);
+            $hasChildNodes = false;
+            foreach ($nestedNodes as $nestedNode) {
+                $hasChildNodes = true;
+                break;
+            }
+
+            if ($hasChildNodes) {
                 $this->nonRenderedContentNodeMetadata .= $this->appendNonRenderedContentNodeMetadata($node);
             }
         }
@@ -190,12 +211,12 @@ class ContentElementWrappingService
     }
 
     /**
-     * @param NodeBasedReadModelInterface $documentNode
+     * @param NodeInterface $documentNode
      * @return string
      * @throws \Neos\Eel\Exception
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    public function getNonRenderedContentNodeMetadata(NodeBasedReadModelInterface $documentNode)
+    public function getNonRenderedContentNodeMetadata(NodeInterface $documentNode)
     {
         $this->userLocaleService->switchToUILocale();
 
