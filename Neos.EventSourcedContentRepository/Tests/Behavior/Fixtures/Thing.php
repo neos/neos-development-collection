@@ -22,6 +22,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
@@ -57,8 +58,7 @@ final class Thing implements NodeInterface
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        SerializedPropertyValues $serializedProperties,
-        PropertyConverter $propertyConverter,
+        PropertyCollection $propertyCollection,
         NodeAggregateClassification $classification
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -67,8 +67,7 @@ final class Thing implements NodeInterface
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
-        $this->serializedProperties = $serializedProperties;
-        $this->properties = new PropertyCollection($serializedProperties, $propertyConverter);
+        $this->properties = $propertyCollection;
         $this->classification = $classification;
     }
 
@@ -156,5 +155,9 @@ final class Thing implements NodeInterface
     {
         // TODO!!!
         return $this->dimensionSpacePoint;
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
     }
 }
