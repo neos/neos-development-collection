@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
@@ -21,7 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
-class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\NeosUiDefaultNodesOperation
+class NeosUiDefaultNodesOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
@@ -48,6 +49,17 @@ class NeosUiDefaultNodesOperation extends \Neos\Neos\Ui\FlowQueryOperations\Neos
      * @var NodeTypeConstraintFactory
      */
     protected $nodeTypeConstraintFactory;
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param array (or array-like object) $context onto which this operation should be applied
+     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     */
+    public function canEvaluate($context)
+    {
+        return isset($context[0]) && ($context[0] instanceof NodeInterface);
+    }
 
     /**
      * {@inheritdoc}

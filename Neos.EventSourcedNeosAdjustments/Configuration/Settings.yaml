@@ -21,6 +21,11 @@ Neos:
           'Neos\\ContentRepository\\Domain\\Service\\NodeTypeManager': true
           'Neos\\ContentRepository\\DimensionSpace\\DimensionSpace\\DimensionSpacePoint.*': true
 
+  ContentRepository:
+    labelGenerator:
+      eel:
+        defaultContext:
+          Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
   Fusion:
     defaultContext:
       Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper

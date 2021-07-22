@@ -239,7 +239,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         ];
     }
 
-    private static function isAutoCreated(NodeInterface $node, NodeAccessorInterface $nodeAccessor)
+    public static function isAutoCreated(NodeInterface $node, NodeAccessorInterface $nodeAccessor)
     {
         $parent = $nodeAccessor->findParentNode($node);
         if ($parent) {

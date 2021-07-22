@@ -23,6 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Domain\Exception;
+use Neos\Neos\Fusion\Helper\NodeLabelToken;
 
 /**
  * Eel helper for ContentRepository Nodes
@@ -72,6 +73,18 @@ class NodeHelper implements ProtectedContextAwareInterface
             }
         }
     }
+
+    /**
+     * Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
+     *
+     * @param \Neos\ContentRepository\Domain\Model\NodeInterface|null $node
+     * @return NodeLabelToken
+     */
+    public function labelForNode(NodeInterface $node = null): NodeLabelToken
+    {
+        return new AdjustedNodeLabelToken($node);
+    }
+
 
     public function nodeAddressToString(NodeInterface $node): string
     {

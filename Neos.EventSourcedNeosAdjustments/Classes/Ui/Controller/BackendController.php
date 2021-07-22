@@ -14,19 +14,15 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
-use Neos\EventSourcedNeosAdjustments\Ui\View\BackendFusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -44,11 +40,6 @@ use Neos\Neos\Ui\Domain\Service\StyleAndJavascriptInclusionService;
 
 class BackendController extends ActionController
 {
-
-    /**
-     * @var string
-     */
-    protected $defaultViewObjectName = BackendFusionView::class;
 
     /**
      * @var FusionView
