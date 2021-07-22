@@ -11,7 +11,7 @@ Feature: Validate initial and default properties
     'Neos.ContentRepository.Intermediary.Testing:Node':
       properties:
         postalAddress:
-          type: '\Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress'
+          type: 'Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress'
     """
     And the event RootWorkspaceWasCreated was published with payload:
       | Key                        | Value                                  |

@@ -12,11 +12,11 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelRepository;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -24,28 +24,23 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeService
 {
+
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
+     * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var NodeAccessorManager
      */
-    protected $contentGraph;
-
-    /**
-     * @Flow\Inject
-     * @var ReadModelRepository
-     */
-    protected $readModelRepository;
+    protected $nodeAccessorManager;
 
     /**
      * Helper method to retrieve the closest document for a node
      */
-    public function getClosestDocument(NodeBasedReadModelInterface $node): NodeBasedReadModelInterface
+    public function getClosestDocument(NodeInterface $node): NodeInterface
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return $node;
@@ -59,10 +54,10 @@ class NodeService
     /**
      * Helper method to check if a given node is a document node.
      *
-     * @param  NodeBasedReadModelInterface $node The node to check
+     * @param  NodeInterface $node The node to check
      * @return boolean             A boolean which indicates if the given node is a document node.
      */
-    public function isDocument(NodeBasedReadModelInterface $node): bool
+    public function isDocument(NodeInterface $node): bool
     {
         return ($this->getClosestDocument($node) === $node);
     }
@@ -70,10 +65,11 @@ class NodeService
     /**
      * Converts a given context path to a node object
      */
-    public function getNodeFromContextPath(string $contextPath): NodeBasedReadModelInterface
+    public function getNodeFromContextPath(string $contextPath): NodeInterface
     {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextPath);
 
-        return $this->readModelRepository->findByNodeAddress($nodeAddress, VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        return $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
     }
 }

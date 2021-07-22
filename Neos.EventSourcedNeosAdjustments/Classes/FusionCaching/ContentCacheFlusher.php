@@ -18,7 +18,9 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Service\AssetService;
@@ -26,7 +28,6 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\ContentContextFactory;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -75,9 +76,9 @@ class ContentCacheFlusher
 
     /**
      * @Flow\Inject
-     * @var ContentContextFactory
+     * @var NodeAccessorManager
      */
-    protected $contextFactory;
+    protected $nodeAccessorManager;
 
     /**
      * @Flow\Inject
@@ -90,10 +91,11 @@ class ContentCacheFlusher
      */
     protected $contexts = [];
 
-    private static function fetchParentIfExistsForNode(NodeBasedReadModelInterface $node): ?NodeBasedReadModelInterface
+    private function fetchParentIfExistsForNode(NodeInterface $node): ?NodeInterface
     {
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         try {
-            return $node->findParentNode();
+            return $nodeAccessor->findParentNode($node);
         } catch (NodeException $e) {
             return null;
         }
@@ -103,10 +105,10 @@ class ContentCacheFlusher
      * Register a node change for a later cache flush. This method is triggered by a signal sent via ContentRepository's Node
      * model or the Neos Publishing Service.
      *
-     * @param NodeBasedReadModelInterface $node The node which has changed in some way
+     * @param NodeInterface $node The node which has changed in some way
      * @return void
      */
-    public function registerNodeChange(NodeBasedReadModelInterface $node): void
+    public function registerNodeChange(NodeInterface $node): void
     {
         $nodeAggregateIdentifier = $node->getNodeAggregateIdentifier();
         $contentStreamIdentifier = $node->getContentStreamIdentifier();
@@ -117,7 +119,7 @@ class ContentCacheFlusher
         $this->registerChangeOnNodeType($node->getNodeTypeName(), $contentStreamIdentifier, $nodeAggregateIdentifier);
 
 
-        while ($node = self::fetchParentIfExistsForNode($node)) {
+        while ($node = $this->fetchParentIfExistsForNode($node)) {
             $tagName = 'DescendantOf_%' . $node->getContentStreamIdentifier() . '%_' . $node->getNodeAggregateIdentifier();
             $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $node->getNodeAggregateIdentifier());
 

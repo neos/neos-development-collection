@@ -12,7 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -54,7 +57,19 @@ abstract class AbstractStructuralChange extends AbstractChange
     protected $contentCacheFlusher;
 
     /**
-     * @var NodeBasedReadModelInterface
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @var NodeInterface
      */
     protected $cachedSiblingNode = null;
 
@@ -112,7 +127,7 @@ abstract class AbstractStructuralChange extends AbstractChange
     /**
      * Get the sibling node
      *
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      */
     public function getSiblingNode()
     {
@@ -132,17 +147,18 @@ abstract class AbstractStructuralChange extends AbstractChange
     /**
      * Perform finish tasks - needs to be called from inheriting class on `apply`
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @return void
      */
-    protected function finish(NodeBasedReadModelInterface $node)
+    protected function finish(NodeInterface $node)
     {
         $updateNodeInfo = new UpdateNodeInfo();
         $updateNodeInfo->setNode($node);
         $updateNodeInfo->recursive();
 
         $updateParentNodeInfo = new UpdateNodeInfo();
-        $parentNode = $node->findParentNode();
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $parentNode = $nodeAccessor->findParentNode($node);
         $updateParentNodeInfo->setNode($parentNode);
 
         $this->feedbackCollection->add($updateNodeInfo);
@@ -160,7 +176,7 @@ abstract class AbstractStructuralChange extends AbstractChange
                 //    no other node in between
                 $this->getParentDomAddress() &&
                 $this->getParentDomAddress()->getFusionPath() &&
-                $this->getParentDomAddress()->getContextPath() === $node->findParentNode()->getAddress()->serializeForUri()
+                $this->getParentDomAddress()->getContextPath() === $this->nodeAddressFactory->createFromNode($nodeAccessor->findParentNode($node))->serializeForUri()
             ) {
                 $renderContentOutOfBand = new RenderContentOutOfBand();
                 $renderContentOutOfBand->setNode($node);

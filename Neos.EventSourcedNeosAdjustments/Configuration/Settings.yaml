@@ -21,6 +21,11 @@ Neos:
           'Neos\\ContentRepository\\Domain\\Service\\NodeTypeManager': true
           'Neos\\ContentRepository\\DimensionSpace\\DimensionSpace\\DimensionSpacePoint.*': true
 
+  ContentRepository:
+    labelGenerator:
+      eel:
+        defaultContext:
+          Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
   Fusion:
     defaultContext:
       Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
@@ -56,7 +61,7 @@ Neos:
             # TODO: re-enable dimensions
             byName: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.contentDimensionsByName()}'
             active: '${subgraph.dimensionSpacePoint.toLegacyDimensionArray()}'
-            allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(subgraph.dimensionSpacePoint)}'
+            allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.dimensionSpacePoint)}'
           workspaces:
             personalWorkspace: '${Neos.EventSourcedNeosAdjustments.Workspace.getPersonalWorkspace()}'
         ui:
@@ -72,7 +77,7 @@ Neos:
 
           contentDimensions:
             active: '${documentNode.dimensionSpacePoint.toLegacyDimensionArray()}'
-            allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(subgraph.dimensionSpacePoint)}'
+            allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.dimensionSpacePoint)}'
           documentNodeSerialization: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.renderNodeWithPropertiesAndChildrenInformation(documentNode, controllerContext)}'
           url: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.previewUri(documentNode, controllerContext)}'
 

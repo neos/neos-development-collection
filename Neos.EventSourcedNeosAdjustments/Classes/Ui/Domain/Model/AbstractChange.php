@@ -13,9 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\NodeCreated;
@@ -29,7 +28,7 @@ use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 abstract class AbstractChange implements ChangeInterface
 {
     /**
-     * @var NodeBasedReadModelInterface
+     * @var NodeInterface
      */
     protected $subject;
 
@@ -47,12 +46,6 @@ abstract class AbstractChange implements ChangeInterface
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
-    /**
-     * @Flow\Inject
      * @var UserService
      */
     protected $userService;
@@ -67,7 +60,7 @@ abstract class AbstractChange implements ChangeInterface
     /**
      * Set the subject
      */
-    public function setSubject(NodeBasedReadModelInterface $subject): void
+    public function setSubject(NodeInterface $subject): void
     {
         $this->subject = $subject;
     }
@@ -75,7 +68,7 @@ abstract class AbstractChange implements ChangeInterface
     /**
      * Get the subject
      */
-    public function getSubject(): NodeBasedReadModelInterface
+    public function getSubject(): NodeInterface
     {
         return $this->subject;
     }
@@ -101,7 +94,7 @@ abstract class AbstractChange implements ChangeInterface
      *
      * This method will be triggered if [nodeType].properties.[propertyName].ui.reloadIfChanged is TRUE.
      */
-    protected function reloadDocument(NodeBasedReadModelInterface $node = null): void
+    protected function reloadDocument(NodeInterface $node = null): void
     {
         $reloadDocument = new ReloadDocument();
         if ($node) {
@@ -114,7 +107,7 @@ abstract class AbstractChange implements ChangeInterface
     /**
      * Inform the client that a node has been created, the client decides if and which tree should react to this change.
      */
-    protected function addNodeCreatedFeedback(NodeBasedReadModelInterface $subject = null): void
+    protected function addNodeCreatedFeedback(NodeInterface $subject = null): void
     {
         $node = $subject ?: $this->getSubject();
         $nodeCreated = new NodeCreated();

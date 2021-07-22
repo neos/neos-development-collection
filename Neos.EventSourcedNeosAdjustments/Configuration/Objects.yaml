@@ -3,14 +3,6 @@ Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
 'Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface':
   className: Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node
 
-Neos\EventSourcedNeosAdjustments\Ui\View\BackendFusionView:
-  properties:
-    typoScriptParser:
-      object: Neos\Fusion\Core\Parser
-    fallbackView:
-      object: Neos\FluidAdaptor\View\TemplateView
-
-
 Neos\EventSourcedNeosAdjustments\FusionCaching\FusionCachingAspect:
   properties:
     fusionCache:

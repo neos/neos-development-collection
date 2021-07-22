@@ -10,21 +10,14 @@ prototype(Neos.Neos:NodeUri) {
 
 prototype(Neos.Neos:DimensionsMenuItems) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\DimensionsMenuItemsImplementation'
-    subgraph = ${subgraph}
 }
 
 prototype(Neos.Neos:MenuItems) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuItemsImplementation'
-    subgraph = ${subgraph}
 }
-prototype(Neos.NodeTypes.Navigation:Navigation) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuImplementation'
-    subgraph = ${subgraph}
-}
-
 
 prototype(Neos.Neos:ContentCollection) {
-    @context.node = ${Neos.EventSourcedNeosAdjustments.Node.nearestContentCollection(node, this.nodePath, subgraph)}
+    @context.node = ${Neos.EventSourcedNeosAdjustments.Node.nearestContentCollection(node, this.nodePath)}
     // TODO FIX ME HERE!!!
     @cache.maximumLifetime = ${null}
 }
@@ -73,9 +66,6 @@ prototype(Neos.Neos:Page) {
         javascriptBackendInformation {
             @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
             @cache.entryIdentifier.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
-            context {
-                subgraph = ${subgraph}
-            }
         }
         guestFrameApplication {
             @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}

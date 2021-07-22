@@ -16,9 +16,9 @@ require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/ReadModelInstantiationTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/IntermediaryCommandTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/ReadModelInstantiationTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/IntermediaryCommandTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 

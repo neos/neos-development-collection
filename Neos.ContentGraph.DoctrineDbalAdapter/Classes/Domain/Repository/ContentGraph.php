@@ -68,7 +68,7 @@ final class ContentGraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
-    ): ?ContentSubgraphInterface {
+    ): ContentSubgraphInterface {
         $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash() . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
             $this->subgraphs[$index] = new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints);
@@ -105,7 +105,7 @@ final class ContentGraph implements ContentGraphInterface
             ]
         )->fetch();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $originDimensionSpacePoint, Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions()) : null;
     }
 
     /**
@@ -113,7 +113,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param NodeTypeName $nodeTypeName
      * @throws DBALException
      * @throws \Exception
-     * @return NodeAggregate|null
+     * @return NodeAggregate
      */
     public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): NodeAggregate
     {
@@ -137,7 +137,7 @@ final class ContentGraph implements ContentGraphInterface
             throw new \RuntimeException('Root Node Aggregate not found');
         }
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow], Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions());
     }
 
     public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): \Iterator
@@ -156,7 +156,7 @@ final class ContentGraph implements ContentGraphInterface
 
         $resultStatement = $connection->executeQuery($query, $parameters);
         while ($nodeRow = $resultStatement->fetch()) {
-            yield $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
+            yield $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow], Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions());
         }
     }
 
@@ -192,7 +192,7 @@ final class ContentGraph implements ContentGraphInterface
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows, Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions());
     }
 
     /**
@@ -230,7 +230,7 @@ final class ContentGraph implements ContentGraphInterface
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions());
     }
 
     /**
@@ -277,7 +277,7 @@ final class ContentGraph implements ContentGraphInterface
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows, Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions());
     }
 
     /**
@@ -302,7 +302,7 @@ final class ContentGraph implements ContentGraphInterface
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions());
     }
 
     /**
@@ -330,7 +330,7 @@ final class ContentGraph implements ContentGraphInterface
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions());
     }
 
     /**
@@ -356,7 +356,7 @@ final class ContentGraph implements ContentGraphInterface
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions());
     }
 
     private function createChildNodeAggregateQuery(): string

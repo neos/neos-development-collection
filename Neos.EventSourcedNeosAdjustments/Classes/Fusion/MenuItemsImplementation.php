@@ -13,13 +13,12 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  */
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Flow\Annotations as Flow;
 
@@ -33,6 +32,12 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      * @var NodeTypeConstraintFactory
      */
     protected $nodeTypeConstraintFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * Hard limit for the maximum number of levels supported by this menu
@@ -66,12 +71,6 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      * @var NodeTypeConstraints
      */
     protected $nodeTypeConstraints;
-
-    /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
 
     /**
      * The last navigation level which should be rendered.
@@ -175,16 +174,16 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 return $node->getNodeAggregateIdentifier();
             }, $menuLevelCollection);
 
-            $childSubtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->currentNode->getContentStreamIdentifier(), $this->currentNode->getDimensionSpacePoint(), VisibilityConstraints::frontend());
+            $childSubtree = $nodeAccessor->findSubtrees($menuLevelCollection, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
         } else {
             $entryParentNode = $this->findMenuStartingPoint();
             if (!$entryParentNode) {
                 return [];
             }
 
-            $entryNodeAggregateIdentifiers = [$entryParentNode->getNodeAggregateIdentifier()];
-
-            $childSubtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->currentNode->getContentStreamIdentifier(), $this->currentNode->getDimensionSpacePoint(), VisibilityConstraints::frontend());
+            $childSubtree = $nodeAccessor->findSubtrees([$entryParentNode], $this->getMaximumLevels(), $this->getNodeTypeConstraints());
             $childSubtree = $childSubtree->getChildren()[0];
         }
 
@@ -212,7 +211,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             }
         }
 
-        $traversableNode = $this->readModelFactory->createReadModel($subtree->getNode(), $this->getSubgraph());
+        $traversableNode = $subtree->getNode();
         return new MenuItem($traversableNode, MenuItemState::normal(), $subtree->getNode()->getLabel(), $subtree->getLevel(), $children);
     }
 
@@ -242,7 +241,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         } elseif ($this->getEntryLevel() < 0) {
             $remainingIterations = abs($this->getEntryLevel());
             $entryParentNode = null;
-            NodeTreeTraversalHelper::traverseUpUntilCondition($this->getSubgraph(), $traversalStartingPoint, function (NodeInterface $node) use (&$remainingIterations, &$entryParentNode) {
+            $this->traverseUpUntilCondition($traversalStartingPoint, function (NodeInterface $node) use (&$remainingIterations, &$entryParentNode) {
                 if (!$this->getNodeTypeConstraints()->matches($node->getNodeTypeName())) {
                     return false;
                 }
@@ -260,7 +259,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         } else {
             $traversedHierarchy = [];
             $constraints = $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(NodeTypeName::fromString('Neos.Neos:Sites'));
-            NodeTreeTraversalHelper::traverseUpUntilCondition($this->getSubgraph(), $traversalStartingPoint, function (NodeInterface $traversedNode) use (&$traversedHierarchy, $constraints) {
+            $this->traverseUpUntilCondition($traversalStartingPoint, function (NodeInterface $traversedNode) use (&$traversedHierarchy, $constraints) {
                 if (!$constraints->matches($traversedNode->getNodeTypeName())) {
                     return false;
                 }
@@ -276,14 +275,6 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @return ContentSubgraphInterface
-     */
-    protected function getSubgraph(): ContentSubgraphInterface
-    {
-        return $this->fusionValue('subgraph');
-    }
-
-    /**
      * @return NodeTypeConstraints
      */
     protected function getNodeTypeConstraints(): NodeTypeConstraints
@@ -293,5 +284,23 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         }
 
         return $this->nodeTypeConstraints;
+    }
+
+    /**
+     * the callback always gets the current NodeInterface passed as first parameter, and then its parent, and its parent etc etc.
+     * Until it has reached the root, or the return value of the closure is FALSE.
+     *
+     * @param NodeAccessorManager $nodeAccessorManager
+     * @param NodeInterface $node
+     * @param \Closure $callback
+     */
+    protected function traverseUpUntilCondition(NodeInterface $node, \Closure $callback): void
+    {
+        do {
+            $shouldContinueTraversal = $callback($node);
+            // TODO: FIX visibility constraints
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $node = $nodeAccessor->findParentNode($node);
+        } while ($shouldContinueTraversal !== false && $node !== null);
     }
 }

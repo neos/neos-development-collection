@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
  * An interface to describe a change
@@ -22,12 +22,12 @@ interface ChangeInterface
     /**
      * Set the subject
      */
-    public function setSubject(NodeBasedReadModelInterface $subject): void;
+    public function setSubject(NodeInterface $subject): void;
 
     /**
      * Get the subject
      */
-    public function getSubject(): NodeBasedReadModelInterface;
+    public function getSubject(): NodeInterface;
 
     /**
      * Checks whether this change can be applied to the subject

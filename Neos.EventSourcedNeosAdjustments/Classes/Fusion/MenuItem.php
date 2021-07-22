@@ -2,14 +2,14 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
  * A menu item
  */
 final class MenuItem
 {
-    protected NodeBasedReadModelInterface $node;
+    protected NodeInterface $node;
 
     protected ?MenuItemState $state;
 
@@ -19,7 +19,7 @@ final class MenuItem
 
     protected array $children;
 
-    public function __construct(NodeBasedReadModelInterface $node, MenuItemState $state = null, string $label = null, int $menuLevel = 1, array $children = [])
+    public function __construct(NodeInterface $node, MenuItemState $state = null, string $label = null, int $menuLevel = 1, array $children = [])
     {
         $this->node = $node;
         $this->state = $state;
@@ -28,7 +28,7 @@ final class MenuItem
         $this->children = $children;
     }
 
-    public function getNode(): NodeBasedReadModelInterface
+    public function getNode(): NodeInterface
     {
         return $this->node;
     }

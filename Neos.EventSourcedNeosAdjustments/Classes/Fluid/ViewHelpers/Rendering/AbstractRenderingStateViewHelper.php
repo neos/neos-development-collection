@@ -12,10 +12,15 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManager;
 use Neos\Flow\Security\Exception;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
+use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 
 /**
  * Abstract ViewHelper for all Neos rendering state helpers.
@@ -27,6 +32,45 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
      * @var PrivilegeManager
      */
     protected $privilegeManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * Get a node from the current Fusion context if available.
+     *
+     * @param NodeInterface|null $node
+     * @return NodeAddress
+     *
+     * @throws ViewHelperException
+     * @TODO Refactor to a Fusion Context trait (in Neos.Fusion) that can be used inside ViewHelpers to get variables from the Fusion context.
+     */
+    protected function getNodeAddressOfContextNode(?NodeInterface $node): NodeAddress
+    {
+        if ($node !== null) {
+            return $this->nodeAddressFactory->createFromNode($node);
+        }
+
+        $baseNode = null;
+        $view = $this->viewHelperVariableContainer->getView();
+        if ($view instanceof FusionAwareViewInterface) {
+            $fusionObject = $view->getFusionObject();
+            $currentContext = $fusionObject->getRuntime()->getCurrentContext();
+            if (isset($currentContext['node'])) {
+                $baseNode = $currentContext['node'];
+            }
+        }
+
+        if ($baseNode === null) {
+            throw new ViewHelperException('The ' . get_class($this) . ' needs a Node to determine the state. We could not find one in your context so please provide it as "node" argument to the ViewHelper.', 1427267133);
+        }
+
+        return $this->nodeAddressFactory->createFromNode($baseNode);
+    }
+
 
     protected function hasAccessToBackend(): bool
     {

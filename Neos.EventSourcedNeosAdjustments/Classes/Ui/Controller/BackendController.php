@@ -14,18 +14,15 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
-use Neos\EventSourcedNeosAdjustments\Ui\View\BackendFusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -43,11 +40,6 @@ use Neos\Neos\Ui\Domain\Service\StyleAndJavascriptInclusionService;
 
 class BackendController extends ActionController
 {
-
-    /**
-     * @var string
-     */
-    protected $defaultViewObjectName = BackendFusionView::class;
 
     /**
      * @var FusionView
@@ -110,6 +102,12 @@ class BackendController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
+     * @Flow\Inject
      * @var ContentGraphInterface
      */
     protected $contentGraph;
@@ -137,12 +135,6 @@ class BackendController extends ActionController
      * @var ContentDimensionSourceInterface
      */
     protected $contentDimensionSource;
-
-    /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Neos.Ui", path="splashScreen.partial")
@@ -175,16 +167,19 @@ class BackendController extends ActionController
 
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier($workspace->getCurrentContentStreamIdentifier()), NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
-        $siteNode = $this->readModelFactory->createReadModel($siteNode, $subgraph);
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+
+        // we assume that the ROOT node is always stored in the CR as "physical" node; so it is safe
+        // to call the contentGraph here directly.
+        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($workspace->getCurrentContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
+        $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($this->findDefaultDimensionSpacePoint());
+        $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($rootNode, NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
 
         if (!$nodeAddress) {
             // TODO: fix resolving node address from session?
             $node = $siteNode;
         } else {
-            $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-            $node = $this->readModelFactory->createReadModel($node, $subgraph);
+            $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
         }
 
         $this->view->assign('user', $user);
@@ -198,7 +193,7 @@ class BackendController extends ActionController
         $this->view->assign('sitesForMenu', $this->menuHelper->buildSiteList($this->getControllerContext()));
 
         $this->view->assignMultiple([
-            'subgraph' => $subgraph
+            'subgraph' => $nodeAccessor
         ]);
 
         $this->view->assign('interfaceLanguage', $this->userService->getInterfaceLanguage());
@@ -225,14 +220,5 @@ class BackendController extends ActionController
         }
 
         return new DimensionSpacePoint($coordinates);
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @return NodeAggregateIdentifier
-     */
-    protected function getRootNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier): NodeAggregateIdentifier
-    {
-        return $this->contentGraph->findRootNodeAggregateByType($contentStreamIdentifier, NodeTypeName::fromString('Neos.Neos:Sites'))->getIdentifier();
     }
 }

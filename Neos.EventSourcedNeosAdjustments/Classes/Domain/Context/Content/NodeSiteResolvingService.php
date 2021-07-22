@@ -13,9 +13,9 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
@@ -34,18 +34,18 @@ class NodeSiteResolvingService
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var NodeAccessorManager
      */
-    protected $contentGraph;
+    protected $nodeAccessorManager;
 
     public function findSiteNodeForNodeAddress(NodeAddress $nodeAddress): ?NodeInterface
     {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $nodeAddress->getContentStreamIdentifier(),
             $nodeAddress->getDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
         $previousNode = null;
         do {
             if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
@@ -53,7 +53,7 @@ class NodeSiteResolvingService
                 return $previousNode;
             }
             $previousNode = $node;
-        } while ($node = $subgraph->findParentNode($node->getNodeAggregateIdentifier()));
+        } while ($node = $nodeAccessor->findParentNode($node));
 
         // no Site node found at rootline
         return null;

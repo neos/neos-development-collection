@@ -12,6 +12,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
@@ -19,8 +20,9 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
@@ -39,9 +41,13 @@ final class Node implements NodeInterface
 
     protected ?NodeName $nodeName;
 
-    protected SerializedPropertyValues $properties;
-
     protected NodeAggregateClassification $classification;
+
+    protected PropertyCollection $properties;
+
+    protected DimensionSpacePoint $dimensionSpacePoint;
+
+    protected VisibilityConstraints $visibilityConstraints;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -50,8 +56,10 @@ final class Node implements NodeInterface
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        SerializedPropertyValues $properties,
-        NodeAggregateClassification $classification
+        PropertyCollectionInterface $propertyCollection,
+        NodeAggregateClassification $classification,
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -59,8 +67,10 @@ final class Node implements NodeInterface
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
-        $this->properties = $properties;
+        $this->properties = $propertyCollection;
         $this->classification = $classification;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->visibilityConstraints = $visibilityConstraints;
     }
 
     /**
@@ -109,7 +119,7 @@ final class Node implements NodeInterface
         return $this->nodeName;
     }
 
-    public function getProperties(): SerializedPropertyValues
+    public function getProperties(): PropertyCollectionInterface
     {
         return $this->properties;
     }
@@ -121,13 +131,35 @@ final class Node implements NodeInterface
      * @return mixed value of the property
      * @api
      */
-    public function getProperty(string $propertyName)
+    public function getProperty($propertyName)
     {
-        return $this->properties->getProperty($propertyName)->getValue();
+        return $this->properties[$propertyName];
     }
 
     public function hasProperty($propertyName): bool
     {
-        return $this->properties->propertyExists($propertyName);
+        return $this->properties->offsetExists($propertyName);
+    }
+
+
+
+    public function getCacheEntryIdentifier(): string
+    {
+        return 'Node_' . $this->getContentStreamIdentifier()->getCacheEntryIdentifier() . '_' . $this->getDimensionSpacePoint()->getCacheEntryIdentifier() . '_' .  $this->getNodeAggregateIdentifier()->getCacheEntryIdentifier();
+    }
+
+    public function getLabel(): string
+    {
+        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
+        return $this->visibilityConstraints;
     }
 }

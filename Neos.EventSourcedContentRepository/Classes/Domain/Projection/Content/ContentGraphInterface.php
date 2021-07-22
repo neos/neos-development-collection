@@ -54,9 +54,9 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeTypeName $nodeTypeName
-     * @return NodeAggregate|null
+     * @return NodeAggregate
      */
-    public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): ?NodeAggregate;
+    public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): NodeAggregate;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

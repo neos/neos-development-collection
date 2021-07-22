@@ -15,7 +15,7 @@ require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/Fl
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/IntermediaryCommandTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/IntermediaryCommandTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/BrowserTrait.php');
 require_once(__DIR__ . '/FlowSubcommandTrait.php');
