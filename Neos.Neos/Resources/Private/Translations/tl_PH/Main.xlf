@@ -653,7 +653,7 @@
 			<target state="translated">Pagpapatunay</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target state="needs-translation">Logout</target></trans-unit>
+			<target state="translated">Mag-logout</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
 			<target state="translated">Ang na-enter na username o password ay mali</target></trans-unit>

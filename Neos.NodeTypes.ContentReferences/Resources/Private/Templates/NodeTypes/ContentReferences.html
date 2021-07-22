@@ -1,5 +1,5 @@
 {namespace neos=Neos\Neos\ViewHelpers}
-<f:if condition="{referenceNodes}">
+<f:if condition="{hasReferences}">
   <f:then>
     <div{attributes -> f:format.raw()}>
       {referenceNodes -> f:format.raw()}

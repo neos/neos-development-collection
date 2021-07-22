@@ -1618,6 +1618,10 @@ class NodeDataRepository extends Repository
      */
     protected function filterNodeDataByBestMatchInContext(array $nodeDataObjects, Workspace $workspace, array $dimensions, $includeRemovedNodes = false)
     {
+        if (!$nodeDataObjects) {
+            return [];
+        }
+
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
         $nonPersistedNodes = [];
         $nodeIdentifier = [];
