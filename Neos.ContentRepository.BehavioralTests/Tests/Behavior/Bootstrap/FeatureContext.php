@@ -28,7 +28,7 @@ require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Featu
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\IntermediaryCommandTrait;
 use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\ReadModelInstantiationTrait;
-use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;

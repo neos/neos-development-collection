@@ -110,6 +110,21 @@ trait CurrentSubgraphTrait
         }
     }
 
+    public function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
+    }
+
+    public function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    public function getCurrentVisibilityConstraints(): ?VisibilityConstraints
+    {
+        return $this->visibilityConstraints;
+    }
+
     protected function getCurrentSubgraphs(): ContentSubgraphs
     {
         $currentSubgraphs = [];

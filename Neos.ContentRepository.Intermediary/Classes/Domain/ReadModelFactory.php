@@ -20,6 +20,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionImplementationClassNameResolver;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Intermediary\Domain\Property\PropertyConverter;
 use Neos\Flow\Annotations as Flow;
@@ -55,7 +56,7 @@ final class ReadModelFactory
     public function createReadModel(NodeInterface $node, ContentSubgraphInterface $subgraph): NodeBasedReadModelInterface
     {
         $implementationClassName = NodeImplementationClassName::forNodeType($node->getNodeType());
-        $propertyCollectionClassName = PropertyCollectionImplementationClassName::forNodeType($node->getNodeType());
+        $propertyCollectionClassName = PropertyCollectionImplementationClassNameResolver::forNodeType($node->getNodeType());
         $workspaceName = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($subgraph->getContentStreamIdentifier())->getWorkspaceName();
 
         $propertyCollection = new $propertyCollectionClassName(

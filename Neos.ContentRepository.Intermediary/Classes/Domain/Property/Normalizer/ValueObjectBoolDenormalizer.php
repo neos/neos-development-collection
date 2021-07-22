@@ -12,7 +12,7 @@ final class ValueObjectBoolDenormalizer implements DenormalizerInterface
         return $type::fromBool($data);
     }
 
-    public function supportsDenormalization($data, $type, string $format = null)
+    public function supportsDenormalization($data, $type, string $format = null): bool
     {
         return is_bool($data) && class_exists($type) && method_exists($type, 'fromBool');
     }

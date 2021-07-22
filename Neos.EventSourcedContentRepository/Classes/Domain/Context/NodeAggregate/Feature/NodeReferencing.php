@@ -25,6 +25,8 @@ use Ramsey\Uuid\Uuid;
 
 trait NodeReferencing
 {
+    use ConstraintChecks;
+
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
@@ -34,10 +36,23 @@ trait NodeReferencing
     /**
      * @param SetNodeReferences $command
      * @return CommandResult
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function handleSetNodeReferences(SetNodeReferences $command): CommandResult
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
+
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireDimensionSpacePointToExist($command->getSourceOriginDimensionSpacePoint());
+        $sourceNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSourceNodeAggregateIdentifier());
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint($sourceNodeAggregate, $command->getSourceOriginDimensionSpacePoint());
+        $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->getReferenceName());
+        foreach ($command->getDestinationNodeAggregateIdentifiers() as $destinationNodeAggregateIdentifier) {
+            $destinationNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $destinationNodeAggregateIdentifier);
+            // @todo check reference node type constraints
+        }
 
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {

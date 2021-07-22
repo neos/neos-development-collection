@@ -12,21 +12,19 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph as DbalContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph as PostgreSQLContentHypergraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\ContentRepository\Intermediary\Domain\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Intermediary\Domain\Command\PropertyValuesToWrite;
+use Neos\ContentRepository\Intermediary\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
@@ -49,8 +47,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Move
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifierCollection;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
@@ -71,14 +67,11 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -110,6 +103,8 @@ trait EventSourcedTrait
     use CurrentSubgraphTrait;
     use ProjectedNodeAggregateTrait;
     use ProjectedNodeTrait;
+    use NodeCreation;
+    use NodeDisabling;
 
     /**
      * @var EventTypeResolver
@@ -239,9 +234,28 @@ trait EventSourcedTrait
         }
     }
 
-    public function currentNodeAggregateIdentifier()
+    protected function deserializeProperties(array $properties): PropertyValuesToWrite
     {
-        return $this->currentNode->getNodeAggregateIdentifier();
+        foreach ($properties as &$propertyValue) {
+            if ($propertyValue === 'PostalAddress:dummy') {
+                $propertyValue = PostalAddress::dummy();
+            } elseif ($propertyValue === 'PostalAddress:anotherDummy') {
+                $propertyValue = PostalAddress::anotherDummy();
+            }
+            if (is_string($propertyValue)) {
+                if (\mb_strpos($propertyValue, 'Date:') === 0) {
+                    $propertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($propertyValue, 5));
+                } elseif (\mb_strpos($propertyValue, 'URI:') === 0) {
+                    $propertyValue = new Uri(\mb_substr($propertyValue, 4));
+                } elseif ($propertyValue === 'IMG:dummy') {
+                    $propertyValue = $this->requireDummyImage();
+                } elseif ($propertyValue === '[IMG:dummy]') {
+                    $propertyValue = [$this->requireDummyImage()];
+                }
+            }
+        }
+
+        return PropertyValuesToWrite::fromArray($properties);
     }
 
     /**
@@ -258,55 +272,6 @@ trait EventSourcedTrait
         $newContentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['newContentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($newContentStreamIdentifier);
         $this->publishEvent('Neos.EventSourcedContentRepository:RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
-    }
-
-    /**
-     * @Given /^the event RootNodeAggregateWithNodeWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theEventRootNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserIdentifier'])) {
-            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
-
-        $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
-        $this->rootNodeAggregateIdentifier = $nodeAggregateIdentifier;
-    }
-
-    /**
-     * @Given /^the event NodeAggregateWithNodeWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theEventNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initialPropertyValues'])) {
-            $eventPayload['initialPropertyValues'] = [];
-        }
-        if (!isset($eventPayload['originDimensionSpacePoint'])) {
-            $eventPayload['originDimensionSpacePoint'] = [];
-        }
-        if (!isset($eventPayload['coveredDimensionSpacePoints'])) {
-            $eventPayload['coveredDimensionSpacePoints'] = [[]];
-        }
-        if (!isset($eventPayload['nodeName'])) {
-            $eventPayload['nodeName'] = null;
-        }
-        if (!isset($eventPayload['initiatingUserIdentifier'])) {
-            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-
-        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
-
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**
@@ -423,22 +388,6 @@ trait EventSourcedTrait
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeReferencesWereSet', $streamName->getEventStreamName(), $eventPayload);
     }
 
-    /**
-     * @Given /^the event NodeAggregateWasDisabled was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserIdentifier'])) {
-            $eventPayload['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
-
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
-    }
 
     /**
      * @Given /^the event NodeAggregateWasRemoved was published with payload:$/
@@ -582,147 +531,6 @@ trait EventSourcedTrait
         }
 
         $this->theCommandIsExecutedWithPayload('CreateWorkspace', null, $commandArguments);
-    }
-
-    /**
-     * @When /^the command CreateRootNodeAggregateWithNode is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws ContentStreamDoesNotExistYet
-     * @throws Exception
-     */
-    public function theCommandCreateRootNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
-            : $this->contentStreamIdentifier;
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->currentUserIdentifier;
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']);
-
-        $command = new CreateRootNodeAggregateWithNode(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier,
-            NodeTypeName::fromString($commandArguments['nodeTypeName']),
-            $initiatingUserIdentifier
-        );
-
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateRootNodeAggregateWithNode($command);
-        $this->rootNodeAggregateIdentifier = $nodeAggregateIdentifier;
-    }
-
-    /**
-     * @When /^the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     */
-    public function theCommandCreateRootNodeAggregateWithNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
-    {
-        try {
-            $this->theCommandCreateRootNodeAggregateWithNodeIsExecutedWithPayload($payloadTable);
-        } catch (\Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
-    }
-
-    /**
-     * @When the following CreateNodeAggregateWithNode commands are executed:
-     */
-    public function theFollowingCreateNodeAggregateWithNodeCommandsAreExecuted(TableNode $table): void
-    {
-        foreach ($table->getHash() as $row) {
-            $contentStreamIdentifier = isset($row['contentStreamIdentifier'])
-                ? ContentStreamIdentifier::fromString($row['contentStreamIdentifier'])
-                : $this->contentStreamIdentifier;
-            $originDimensionSpacePoint = isset($row['originDimensionSpacePoint'])
-                ? OriginDimensionSpacePoint::fromJsonString($row['originDimensionSpacePoint'])
-                : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->dimensionSpacePoint);
-            $initiatingUserIdentifier = isset($row['initiatingUserIdentifier'])
-                ? UserIdentifier::fromString($row['initiatingUserIdentifier'])
-                : $this->currentUserIdentifier;
-            $command = new CreateNodeAggregateWithNode(
-                $contentStreamIdentifier,
-                NodeAggregateIdentifier::fromString($row['nodeAggregateIdentifier']),
-                NodeTypeName::fromString($row['nodeTypeName']),
-                $originDimensionSpacePoint,
-                $initiatingUserIdentifier,
-                NodeAggregateIdentifier::fromString($row['parentNodeAggregateIdentifier']),
-                isset($row['succeedingSiblingNodeAggregateIdentifier'])
-                    ? NodeAggregateIdentifier::fromString($row['succeedingSiblingNodeAggregateIdentifier'])
-                    : null,
-                isset($row['nodeName'])
-                    ? NodeName::fromString($row['nodeName'])
-                    : null,
-                isset($row['initialPropertyValues'])
-                    ? PropertyValuesToWrite::fromJsonString($row['initialPropertyValues'])
-                    : null,
-                isset($row['tetheredDescendantNodeAggregateIdentifiers'])
-                    ? NodeAggregateIdentifiersByNodePaths::fromJsonString($row['tetheredDescendantNodeAggregateIdentifiers'])
-                    : null
-            );
-            $this->lastCommandOrEventResult = $this->intermediaryNodeAggregateCommandHandler
-                ->handleCreateNodeAggregateWithNode($command);
-            $this->theGraphProjectionIsFullyUpToDate();
-        }
-    }
-
-    /**
-     * @When /^the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
-    public function theCommandCreateNodeAggregateWithNodeAndSerializedPropertiesIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
-            : $this->contentStreamIdentifier;
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->currentUserIdentifier;
-        $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
-            ? new OriginDimensionSpacePoint($commandArguments['originDimensionSpacePoint'])
-            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->dimensionSpacePoint);
-
-        $command = new CreateNodeAggregateWithNodeAndSerializedProperties(
-            $contentStreamIdentifier,
-            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
-            NodeTypeName::fromString($commandArguments['nodeTypeName']),
-            $originDimensionSpacePoint,
-            $initiatingUserIdentifier,
-            NodeAggregateIdentifier::fromString($commandArguments['parentNodeAggregateIdentifier']),
-            isset($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
-                ? NodeAggregateIdentifier::fromString($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
-                : null,
-            isset($commandArguments['nodeName'])
-                ? NodeName::fromString($commandArguments['nodeName'])
-                : null,
-            isset($commandArguments['initialPropertyValues'])
-                ? SerializedPropertyValues::fromArray($commandArguments['initialPropertyValues'])
-                : null,
-            isset($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
-                ? NodeAggregateIdentifiersByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
-                : null
-        );
-
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeAggregateWithNodeAndSerializedProperties($command);
-    }
-
-    /**
-     * @When /^the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     */
-    public function theCommandCreateNodeAggregateWithNodeAndSerializedPropertiesIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
-    {
-        try {
-            $this->theCommandCreateNodeAggregateWithNodeAndSerializedPropertiesIsExecutedWithPayload($payloadTable);
-        } catch (\Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
     }
 
     /**
@@ -981,76 +789,6 @@ trait EventSourcedTrait
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
             ->handleDiscardIndividualNodesFromWorkspace($command);
-    }
-
-    /**
-     * @Given /^the command DisableNodeAggregate is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
-            : $this->contentStreamIdentifier;
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->currentUserIdentifier;
-
-        $command = new DisableNodeAggregate(
-            $contentStreamIdentifier,
-            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
-            DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::fromString($commandArguments['nodeVariantSelectionStrategy']),
-            $initiatingUserIdentifier
-        );
-
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleDisableNodeAggregate($command);
-    }
-
-    /**
-     * @Given /^the command DisableNodeAggregate is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     */
-    public function theCommandDisableNodeAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
-    {
-        try {
-            $this->theCommandDisableNodeAggregateIsExecutedWithPayload($payloadTable);
-        } catch (Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
-    }
-
-    /**
-     * @Given /^the command EnableNodeAggregate is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theCommandEnableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-        $command = EnableNodeAggregate::fromArray($commandArguments);
-
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleEnableNodeAggregate($command);
-    }
-
-    /**
-     * @Given /^the command EnableNodeAggregate is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     */
-    public function theCommandEnableNodeAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
-    {
-        try {
-            $this->theCommandEnableNodeAggregateIsExecutedWithPayload($payloadTable);
-        } catch (Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
     }
 
     /**
@@ -1321,6 +1059,11 @@ trait EventSourcedTrait
     public function iAmUserIdentifiedBy(string $userIdentifier): void
     {
         $this->currentUserIdentifier = UserIdentifier::fromString($userIdentifier);
+    }
+
+    public function getCurrentUserIdentifier(): ?UserIdentifier
+    {
+        return $this->currentUserIdentifier;
     }
 
     /**

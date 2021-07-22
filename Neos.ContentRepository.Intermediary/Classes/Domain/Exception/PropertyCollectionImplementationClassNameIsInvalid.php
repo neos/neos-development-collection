@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Intermediary\Domain\Exception;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\PropertyCollectionInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

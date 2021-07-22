@@ -20,10 +20,12 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyCannotBeSet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
@@ -43,10 +45,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\ReferenceCannotBeSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 trait ConstraintChecks
 {
@@ -140,6 +144,26 @@ trait ConstraintChecks
             }
             $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($tetheredChildNodeType);
         }
+    }
+
+    protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
+    {
+        $nodeType = $this->getNodeTypeManager()->getNodeType((string) $nodeTypeName);
+        if (!isset($nodeType->getProperties()[(string)$propertyName])) {
+
+        }
+    }
+
+    protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
+    {
+        $nodeType = $this->getNodeTypeManager()->getNodeType((string) $nodeTypeName);
+        if (isset($nodeType->getProperties()[(string)$propertyName])) {
+            $propertyType = $nodeType->getPropertyType((string)$propertyName);
+            if ($propertyType === 'reference' || $propertyType === 'references') {
+                return;
+            }
+        }
+        throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($propertyName, $nodeTypeName);
     }
 
     /**

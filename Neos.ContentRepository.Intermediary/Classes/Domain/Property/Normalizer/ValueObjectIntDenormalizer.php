@@ -12,7 +12,7 @@ final class ValueObjectIntDenormalizer implements DenormalizerInterface
         return $type::fromInt($data);
     }
 
-    public function supportsDenormalization($data, $type, string $format = null)
+    public function supportsDenormalization($data, $type, string $format = null): bool
     {
         return is_int($data) && class_exists($type) && method_exists($type, 'fromInt');
     }

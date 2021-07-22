@@ -31,17 +31,15 @@ use PHPUnit\Framework\Assert;
  */
 trait ReadModelInstantiationTrait
 {
-    private ?ContentStreamIdentifier $contentStreamIdentifier = null;
+    protected ?ContentStreamIdentifier $contentStreamIdentifier = null;
 
-    private ?DimensionSpacePoint $dimensionSpacePoint = null;
+    protected ?DimensionSpacePoint $dimensionSpacePoint = null;
 
-    private ReadModelFactory $readModelFactory;
+    protected ReadModelFactory $readModelFactory;
 
-    private ContentGraphInterface $contentGraph;
+    protected ?NodeBasedReadModelInterface $currentReadModel = null;
 
-    private ?NodeBasedReadModelInterface $currentReadModel = null;
-
-    private ?\Exception $lastInstantiationException = null;
+    protected ?\Exception $lastInstantiationException = null;
 
     abstract protected function getObjectManager(): ObjectManagerInterface;
 

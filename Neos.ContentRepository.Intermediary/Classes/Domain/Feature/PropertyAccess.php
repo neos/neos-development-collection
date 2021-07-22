@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Intermediary\Domain\Feature;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\PropertyCollectionInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 
 /**
  * The feature trait implementing the property access interface based on a property collection

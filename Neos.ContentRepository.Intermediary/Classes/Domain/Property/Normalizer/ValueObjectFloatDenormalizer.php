@@ -12,7 +12,7 @@ final class ValueObjectFloatDenormalizer implements DenormalizerInterface
         return $type::fromFloat($data);
     }
 
-    public function supportsDenormalization($data, $type, string $format = null)
+    public function supportsDenormalization($data, $type, string $format = null): bool
     {
         return is_float($data) && class_exists($type) && method_exists($type, 'fromFloat');
     }

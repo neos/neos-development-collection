@@ -129,7 +129,7 @@ trait NodeRetyping
         /**************
          * Preparation - make the command fully deterministic in case of rebase
          **************/
-        $descendantNodeAggregateIdentifiers = self::populateNodeAggregateIdentifiers($newNodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
+        $descendantNodeAggregateIdentifiers = static::populateNodeAggregateIdentifiers($newNodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
         // Write the auto-created descendant node aggregate identifiers back to the command; so that when rebasing the command, it stays
         // fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIdentifiers($descendantNodeAggregateIdentifiers);

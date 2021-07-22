@@ -42,7 +42,10 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash
                 AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
     ) AS sh
-    WHERE sn.nodeaggregateidentifier != :nodeAggregateIdentifier' . $queryMode->renderCondition();
+    WHERE sn.nodeaggregateidentifier != :nodeAggregateIdentifier
+      ' . $queryMode->renderCondition();
+
+    //AND sn.relationanchorpoint = ANY(sh.childnodeanchors[(array_position(sh.childnodeanchors, sh.relationanchorpoint)):])';
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,

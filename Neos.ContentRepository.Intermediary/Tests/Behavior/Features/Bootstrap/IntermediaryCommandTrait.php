@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use CurrentSubgraphTrait;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -36,9 +37,11 @@ use Neos\Media\Domain\Model\Image;
  */
 trait IntermediaryCommandTrait
 {
+    use CurrentSubgraphTrait;
+
     protected NodeAggregateCommandHandler $intermediaryNodeAggregateCommandHandler;
 
-    private ?\Exception $lastCommandException = null;
+    protected ?\Exception $lastCommandException = null;
 
     protected ?Image $dummyImage = null;
 
@@ -54,68 +57,18 @@ trait IntermediaryCommandTrait
         $this->resourceManager = $this->getObjectManager()->get(ResourceManager::class);
     }
 
-    /**
-     * @When /^the intermediary command CreateNodeAggregateWithNode is executed with payload:$/
-     * @param TableNode $payloadTable
-     */
-    public function theIntermediaryCommandCreateNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-
-        $command = new CreateNodeAggregateWithNode(
-            ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
-            NodeTypeName::fromString($commandArguments['nodeTypeName']),
-            new OriginDimensionSpacePoint($commandArguments['originDimensionSpacePoint']),
-            UserIdentifier::fromString($commandArguments['initiatingUserIdentifier']),
-            NodeAggregateIdentifier::fromString($commandArguments['parentNodeAggregateIdentifier']),
-            isset($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
-                ? NodeAggregateIdentifier::fromString($commandArguments['succeedingSiblingNodeAggregateIdentifier'])
-                : null,
-            isset($commandArguments['nodeName'])
-                ? NodeName::fromString($commandArguments['nodeName'])
-                : null,
-            isset($commandArguments['initialPropertyValues'])
-                ? $this->unserializeProperties($commandArguments['initialPropertyValues'])
-                : null,
-            isset($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
-                ? NodeAggregateIdentifiersByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
-                : null
-        );
-
-        $this->lastCommandOrEventResult = $this->intermediaryNodeAggregateCommandHandler
-            ->handleCreateNodeAggregateWithNode($command);
-    }
 
     /**
-     * @When /^the intermediary command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
+     * @When the following intermediary CreateNodeAggregateWithNode commands are executed:
      */
-    public function theIntermediaryCommandCreateNodeAggregateWithNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
-    {
-        try {
-            $this->theIntermediaryCommandCreateNodeAggregateWithNodeIsExecutedWithPayload($payloadTable);
-        } catch (\Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
-    }
-
-
-    /**
-     * @When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream :contentStreamIdentifier and origin :originSpacePoint:
-     * @throws JsonException
-     */
-    public function theFollowingCreateNodeAggregateWithNodeAndSerializedPropertiesCommandsAreExecuted(string $contentStreamIdentifier, string $originSpacePoint, TableNode $table): void
+    public function theFollowingCreateNodeAggregateWithNodeAndSerializedPropertiesCommandsAreExecuted(TableNode $table): void
     {
         foreach ($table->getHash() as $row) {
             $command = new CreateNodeAggregateWithNode(
-                ContentStreamIdentifier::fromString($contentStreamIdentifier),
+                $this->contentStreamIdentifier,
                 NodeAggregateIdentifier::fromString($row['nodeAggregateIdentifier']),
                 NodeTypeName::fromString($row['nodeTypeName']),
-                OriginDimensionSpacePoint::fromJsonString($originSpacePoint),
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($this->dimensionSpacePoint),
                 UserIdentifier::forSystemUser(),
                 NodeAggregateIdentifier::fromString($row['parentNodeAggregateIdentifier']),
                 !empty($row['succeedingSiblingNodeAggregateIdentifier'])

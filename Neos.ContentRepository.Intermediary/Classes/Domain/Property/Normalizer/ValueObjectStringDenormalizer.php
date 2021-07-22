@@ -12,7 +12,7 @@ final class ValueObjectStringDenormalizer implements DenormalizerInterface
         return $type::fromString($data);
     }
 
-    public function supportsDenormalization($data, $type, string $format = null)
+    public function supportsDenormalization($data, $type, string $format = null): bool
     {
         return is_string($data) && class_exists($type) && method_exists($type, 'fromString');
     }

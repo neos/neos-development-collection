@@ -80,9 +80,6 @@ final class CreateNodeAggregateWithNode
         );
     }
 
-    /**
-     * @return PropertyValuesToWrite|null
-     */
     public function getInitialPropertyValues(): ?PropertyValuesToWrite
     {
         return $this->initialPropertyValues;

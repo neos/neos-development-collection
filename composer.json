@@ -24,7 +24,7 @@
         "neos/event-sourced-content-repository": "self.version",
         "neos/event-sourced-neos-adjustments": "self.version"
     },
-    "suggest": [],
+    "suggest": {},
     "autoload": {
         "psr-4": {
             "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
