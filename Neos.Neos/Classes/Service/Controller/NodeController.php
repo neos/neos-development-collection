@@ -13,6 +13,7 @@ namespace Neos\Neos\Service\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
@@ -184,7 +185,7 @@ class NodeController extends AbstractServiceController
     {
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
 
-        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+        if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
             $this->persistenceManager->persistAll();
         }
 
@@ -237,7 +238,7 @@ class NodeController extends AbstractServiceController
     {
         $node = $this->nodeOperations->move($node, $targetNode, $position);
 
-        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+        if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
             $this->persistenceManager->persistAll();
         }
 
@@ -280,7 +281,7 @@ class NodeController extends AbstractServiceController
     {
         $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
 
-        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+        if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
             $this->persistenceManager->persistAll();
         }
 
@@ -333,7 +334,7 @@ class NodeController extends AbstractServiceController
      */
     public function updateAction(Node $node)
     {
-        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+        if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
             $this->persistenceManager->persistAll();
         }
 
@@ -373,7 +374,7 @@ class NodeController extends AbstractServiceController
      */
     public function deleteAction(Node $node)
     {
-        if ($this->request->getHttpRequest()->isMethodSafe() === false) {
+        if (SecurityHelper::hasSafeMethod($this->request->getHttpRequest()) === false) {
             $this->persistenceManager->persistAll();
         }
 
