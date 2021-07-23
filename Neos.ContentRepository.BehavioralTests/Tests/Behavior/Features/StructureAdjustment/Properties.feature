@@ -44,9 +44,9 @@ Feature: Properties
     And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key    | Value |
       | myProp | Foo   |
 
@@ -63,9 +63,8 @@ Feature: Properties
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no properties
 
   Scenario: a new property default value is set
@@ -83,10 +82,9 @@ Feature: Properties
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "cs-identifier" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key       | Value |
       | myProp    | Foo   |
       | otherProp | foo   |
@@ -135,6 +133,6 @@ Feature: Properties
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no properties

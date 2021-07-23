@@ -66,7 +66,7 @@ Feature: Set properties of complex type
       | originDimensionSpacePoint | {}                                                                                                                       |
       | propertyValues            | {"postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io"} |
     And the graph projection is fully up to date
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and dimension space point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated
     Then I expect this read model to have the properties:
       | Key           | Value                                           |

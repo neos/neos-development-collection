@@ -59,7 +59,7 @@ Feature: Create a node aggregate with complex default values
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"             |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
     And the graph projection is fully up to date
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and dimension space point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated
     Then I expect this read model to have the properties:
       | Key           | Value                                           |
@@ -80,7 +80,7 @@ Feature: Create a node aggregate with complex default values
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                 |
       | initialPropertyValues         | {"postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io"} |
     And the graph projection is fully up to date
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and dimension space point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated
     Then I expect this read model to have the properties:
       | Key           | Value                                           |

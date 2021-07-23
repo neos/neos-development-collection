@@ -56,9 +56,9 @@ Feature: Copy nodes (without dimensions)
     And the graph projection is fully up to date
 
   Scenario: Copy
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and dimension space point {}
     # node to copy (currentNode): "sir-nodeward-nodington-iii"
-    And I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" to exist in the subgraph
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     When the command CopyNodesRecursively is executed, copying the current node aggregate with payload:
       | Key                                            | Value                                                             |
       | contentStreamIdentifier                        | "cs-identifier"                                                   |
@@ -70,4 +70,4 @@ Feature: Copy nodes (without dimensions)
       | nodeAggregateIdentifierMapping                 | {"sir-nodeward-nodington-iii": "sir-nodeward-nodington-iii-copy"} |
 
     And the graph projection is fully up to date
-    Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii-copy" to exist in the subgraph
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii-copy" to lead to node cs-identifier;sir-nodeward-nodington-iii-copy;{}

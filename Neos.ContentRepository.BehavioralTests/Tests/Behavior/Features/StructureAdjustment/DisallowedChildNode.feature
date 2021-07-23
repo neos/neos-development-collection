@@ -88,7 +88,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and dimension space point {}
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
 
@@ -179,6 +179,6 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:SubDocument"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:SubDocument"
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and dimension space point {}
     And I expect node aggregate identifier "subdoc" to lead to no node
 

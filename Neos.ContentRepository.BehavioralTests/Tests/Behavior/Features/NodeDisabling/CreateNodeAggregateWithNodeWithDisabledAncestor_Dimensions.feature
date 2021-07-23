@@ -79,7 +79,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | targetOrigin            | {"language": "gsw"} |
     And the graph projection is fully up to date
 
-  #  When I am in content stream "cs-identifier" and Dimension Space Point {"language": "gsw"}
+  #  When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
   #  Then I expect a node identified by aggregate identifier "nodingers-cat" not to exist in the subgraph
 
   # re-add this later once removing nodes is refactored
@@ -110,7 +110,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
 
   #  And the graph projection is fully up to date
 
-  #  When I am in content stream "cs-identifier" and Dimension Space Point {"language": "gsw"}
+  #  When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
   #  Then I expect a node identified by aggregate identifier "na-identifier" to exist in the subgraph
 
 
@@ -145,7 +145,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
 
   #  And the graph projection is fully up to date
 
-  #  When I am in content stream "cs-identifier" and Dimension Space Point {"language": "gsw"}
+  #  When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
   #  Then I expect a node identified by aggregate identifier "cna-identifier" not to exist in the subgraph
 
   #  When VisibilityConstraints are set to "withoutRestrictions"

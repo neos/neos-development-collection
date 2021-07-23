@@ -47,7 +47,7 @@ Feature: Provide and configure a custom read model
       | initiatingUserIdentifier      | "initiating-user-identifier"                                           |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                               |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated and exceptions are caught
     Then I expect the instantiation to have thrown an exception of type "NodeImplementationClassNameIsInvalid" with code 1615415122
 
@@ -61,7 +61,7 @@ Feature: Provide and configure a custom read model
       | initiatingUserIdentifier      | "initiating-user-identifier"                                           |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                               |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated and exceptions are caught
     Then I expect the instantiation to have thrown an exception of type "NodeImplementationClassNameIsInvalid" with code 1615415501
 
@@ -75,6 +75,6 @@ Feature: Provide and configure a custom read model
       | initiatingUserIdentifier      | "initiating-user-identifier"                                              |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                  |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated and exceptions are caught
     Then I expect the instantiation to have thrown an exception of type "NodeImplementationClassNameIsInvalid" with code 1615415586

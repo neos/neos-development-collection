@@ -103,9 +103,9 @@ Feature: Tethered Nodes integrity violations
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     And I get the node at path "document/some-new-child"
-    Then I expect this node to have the properties:
+    And I expect this node to have the following properties:
       | Key | Value              |
       | foo | my default applied |
 
@@ -134,7 +134,7 @@ Feature: Tethered Nodes integrity violations
       | DISALLOWED_TETHERED_NODE | nodewyn-tetherton       |
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
+    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "nodewyn-tetherton" to lead to no node
     Then I expect node aggregate identifier "nodimer-tetherton" to lead to no node
 

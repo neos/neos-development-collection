@@ -99,22 +99,21 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
-      | Key           | Value                                                                                                                               |
-      | workspaceName | "user-test"                                                                                                                         |
-      | nodeAddresses | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
+      | Key                      | Value                                                                                                                               |
+      | workspaceName            | "user-test"                                                                                                                         |
+      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" to exist in the subgraph
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" not to exist in the subgraph
-
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
   Scenario: (ShowNode) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
@@ -153,21 +152,21 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
-      | Key           | Value                                                                                                                               |
-      | workspaceName | "user-test"                                                                                                                         |
-      | nodeAddresses | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
+      | Key                      | Value                                                                                                                               |
+      | workspaceName            | "user-test"                                                                                                                         |
+      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" not to exist in the subgraph
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" to exist in the subgraph
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;nody-mc-nodeface;{}
 
 
     # @todo check why these won't run
@@ -199,13 +198,13 @@ Feature: Publishing hide/show scenario of nodes
     #  | nodeAddresses | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
     #And the graph projection is fully up to date
 
-   # When I am in the active content stream of workspace "live" and Dimension Space Point {}
+   # When I am in the active content stream of workspace "live" and dimension space point {}
    ## Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
     #  | Name     | NodeAggregateIdentifier    |
     #  | text1mod | sir-david-nodenborough     |
      # | image    | sir-nodeward-nodington-iii |
 
-   # When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+   # When I am in the active content stream of workspace "user-test" and dimension space point {}
    # Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
    #   | Name     | NodeAggregateIdentifier    |
    #   | text1mod | sir-david-nodenborough     |
@@ -237,21 +236,21 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
-      | Key           | Value                                                                                                                               |
-      | workspaceName | "user-test"                                                                                                                         |
-      | nodeAddresses | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
+      | Key                      | Value                                                                                                                               |
+      | workspaceName            | "user-test"                                                                                                                         |
+      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" to exist in the subgraph
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" not to exist in the subgraph
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
 
   Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
@@ -278,21 +277,21 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
-      | Key           | Value                                                                                                                               |
-      | workspaceName | "user-test"                                                                                                                         |
-      | nodeAddresses | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
+      | Key                      | Value                                                                                                                               |
+      | workspaceName            | "user-test"                                                                                                                         |
+      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" to exist in the subgraph
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" not to exist in the subgraph
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
 
   Scenario: (SetNodeReferences) It is possible to publish setting node references
@@ -311,7 +310,7 @@ Feature: Publishing hide/show scenario of nodes
       | sourceOriginDimensionSpacePoint     | {}                             |
       | referenceName                       | "referenceProperty"            |
       | destinationNodeAggregateIdentifiers | ["sir-nodeward-nodington-iii"] |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
+      | initiatingUserIdentifier            | "initiating-user-identifier"   |
     And the command "SetNodeReferences" is executed with payload:
       | Key                                 | Value                          |
       | contentStreamIdentifier             | "user-cs-identifier"           |
@@ -319,40 +318,42 @@ Feature: Publishing hide/show scenario of nodes
       | sourceOriginDimensionSpacePoint     | {}                             |
       | referenceName                       | "referenceProperty"            |
       | destinationNodeAggregateIdentifiers | ["sir-nodeward-nodington-iii"] |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
+      | initiatingUserIdentifier            | "initiating-user-identifier"   |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
-      | Key           | Value                                                                                                                               |
-      | workspaceName | "user-test"                                                                                                                         |
-      | nodeAddresses | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
+      | Key                      | Value                                                                                                                               |
+      | workspaceName            | "user-test"                                                                                                                         |
+      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect the node aggregate "sir-david-nodenborough" to have the references:
-      | Key               | Value                          |
-      | referenceProperty | ["sir-nodeward-nodington-iii"] |
-    Then I expect the node aggregate "nody-mc-nodeface" to have the references:
-      | Key               | Value |
-      | referenceProperty | []    |
-    Then I expect the node aggregate "sir-nodeward-nodington-iii" to have the references:
-      | Key               | Value |
-      | referenceProperty | []    |
-    And I expect the node aggregate "sir-nodeward-nodington-iii" to be referenced by:
-      | Key               | Value                      |
-      | referenceProperty | ["sir-david-nodenborough"] |
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following references:
+      | Key               | Value                                           |
+      | referenceProperty | ["cs-identifier;sir-nodeward-nodington-iii;{}"] |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have no references
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have no references
+    And I expect this node to be referenced by:
+      | Key               | Value                                       |
+      | referenceProperty | ["cs-identifier;sir-david-nodenborough;{}"] |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect the node aggregate "sir-david-nodenborough" to have the references:
-      | Key               | Value                          |
-      | referenceProperty | ["sir-nodeward-nodington-iii"] |
-    Then I expect the node aggregate "nody-mc-nodeface" to have the references:
-      | Key               | Value                          |
-      | referenceProperty | ["sir-nodeward-nodington-iii"] |
-    And I expect the node aggregate "sir-nodeward-nodington-iii" to be referenced by:
-      | Key               | Value                                          |
-      | referenceProperty | ["sir-david-nodenborough", "nody-mc-nodeface"] |
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following references:
+      | Key               | Value                                                |
+      | referenceProperty | ["user-cs-identifier;sir-nodeward-nodington-iii;{}"] |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following references:
+      | Key               | Value                                                |
+      | referenceProperty | ["user-cs-identifier;sir-nodeward-nodington-iii;{}"] |
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following references:
+      | Key               | Value                                                                                     |
+      | referenceProperty | ["user-cs-identifier;sir-david-nodenborough;{}","user-cs-identifier;nody-mc-nodeface;{}"] |
 
   Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
     Given the command CreateWorkspace is executed with payload:
@@ -382,19 +383,19 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
-      | Key           | Value                                                                                                                 |
-      | workspaceName | "user-test"                                                                                                           |
-      | nodeAddresses | [{"nodeAggregateIdentifier": "new1-agg", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
+      | Key                      | Value                                                                                                                 |
+      | workspaceName            | "user-test"                                                                                                           |
+      | nodeAddresses            | [{"nodeAggregateIdentifier": "new1-agg", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                          |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "new1-agg" to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "new2-agg" not to exist in the subgraph
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "new1-agg" to lead to node cs-identifier;new1-agg;{}
+    Then I expect node aggregate identifier "new2-agg" to lead to no node
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "new1-agg" to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "new2-agg" to exist in the subgraph
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "new1-agg" to lead to node user-cs-identifier;new1-agg;{}
+    Then I expect node aggregate identifier "new2-agg" to lead to node user-cs-identifier;new2-agg;{}
 
 
   # TODO: implement MoveNodeAggregate testcase

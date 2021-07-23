@@ -164,20 +164,19 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"de"}
-    Then I expect a node identified by aggregate identifier "nodea-identifier-de" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"gsw"}
-    Then I expect a node identified by aggregate identifier "nodea-identifier-de" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"gsw"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 
     # the old "childOfTypeA" has not been removed with this strategy.
-    Then I expect the node aggregate "nodea-identifier-de" to have the following child nodes:
-      | Name         |
-      | childOfTypeA |
-      | childOfTypeB |
-
+    And I expect this node to have the following child nodes:
+      | Name         | NodeDiscriminator                            |
+      | childOfTypeA | cs-identifier;childOfTypeA;{"language":"de"} |
+      | childOfTypeB | cs-identifier;childOfTypeB;{"language":"de"} |
 
 #      #missing default property values of target type must be set
 #      #extra properties of source target type must be removed (TBD)

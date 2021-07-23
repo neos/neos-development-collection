@@ -56,8 +56,8 @@ Feature: Single Node operations on live workspace
       | initiatingUserIdentifier  | "initiating-user-identifier" |
 
     When the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    And I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value |
       | text | Hello |

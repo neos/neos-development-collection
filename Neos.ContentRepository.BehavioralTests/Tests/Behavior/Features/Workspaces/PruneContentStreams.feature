@@ -48,7 +48,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then the current content stream has state "IN_USE_BY_WORKSPACE"
     And the content stream "user-cs-identifier" has state "NO_LONGER_IN_USE"
 
@@ -70,11 +70,11 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     When I prune unused content streams
     And the graph projection is fully up to date
 
-    When I am in content stream "user-cs-identifier" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "root-node" not to exist in the subgraph
+    When I am in content stream "user-cs-identifier" and dimension space point {}
+    Then I expect node aggregate identifier "root-node" to lead to no node
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "root-node" to exist in the subgraph
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier;root-node;{}
 
   Scenario: NO_LONGER_IN_USE content streams can be cleaned up completely (simple case)
 

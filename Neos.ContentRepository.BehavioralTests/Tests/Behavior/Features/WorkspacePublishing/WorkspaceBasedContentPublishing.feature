@@ -105,15 +105,15 @@ Feature: Workspace based content publishing
       | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value    |
       | text | Original |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value    |
       | text | Modified |
 
@@ -124,9 +124,9 @@ Feature: Workspace based content publishing
       | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value    |
       | text | Modified |
 
@@ -170,11 +170,11 @@ Feature: Workspace based content publishing
       | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value                      |
       | text | Modified in user workspace |
 
@@ -196,7 +196,7 @@ Feature: Workspace based content publishing
       | workspaceName            | "user-test"                  |
       | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
 
     When the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                          |
@@ -215,9 +215,9 @@ Feature: Workspace based content publishing
       | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value         |
       | text | Modified anew |
 
@@ -231,9 +231,9 @@ Feature: Workspace based content publishing
       | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value    |
       | text | Modified |
 
@@ -244,9 +244,9 @@ Feature: Workspace based content publishing
       | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value    |
       | text | Original |
 
@@ -276,8 +276,8 @@ Feature: Workspace based content publishing
       | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value                      |
       | text | Modified in live workspace |

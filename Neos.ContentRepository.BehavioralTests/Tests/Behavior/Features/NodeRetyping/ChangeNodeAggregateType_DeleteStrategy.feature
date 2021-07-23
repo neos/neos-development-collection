@@ -86,13 +86,13 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:ParentNodeTypeB"
 
     # the child nodes have been removed
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"gsw"}
+    When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
   Scenario: Try to change to a node type that disallows already present grandchildren with the delete conflict resolution strategy
@@ -146,19 +146,19 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"de"}
-    Then I expect a node identified by aggregate identifier "parent2-na" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "parent2-na" to lead to node cs-identifier;parent2-na;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:ParentNodeTypeB"
 
     # the child nodes still exist
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"de"}
-    Then I expect a node identified by aggregate identifier "autocreated-child" to exist in the subgraph
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"gsw"}
-    Then I expect a node identified by aggregate identifier "autocreated-child" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "autocreated-child" to lead to node cs-identifier;autocreated-child;{"language":"de"}
+    When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect node aggregate identifier "autocreated-child" to lead to node cs-identifier;autocreated-child;{"language":"gsw"}
 
     # the grandchild nodes have been removed
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"gsw"}
+    When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
 
@@ -190,18 +190,16 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"de"}
-    Then I expect a node identified by aggregate identifier "nodea-identifier-de" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"gsw"}
-    Then I expect a node identified by aggregate identifier "nodea-identifier-de" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"gsw"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
-
-    Then I expect the node aggregate "nodea-identifier-de" to have the following child nodes:
-      | Name         |
-      | childOfTypeB |
-
+    And I expect this node to have the following child nodes:
+      | Name         | NodeDiscriminator                             |
+      | childOfTypeB | cs-identifier;childOfTypeB;{"language":"gsw"} |
 
   Scenario: When changing node type, a non-allowed tethered node should stay (Tethered nodes are not taken into account when checking constraints)
     And I have the following additional NodeTypes configuration:
@@ -244,12 +242,12 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language":"de"}
-    Then I expect a node identified by aggregate identifier "nodea-identifier-de" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 
     # BOTH tethered child nodes still need to exist
-    Then I expect the node aggregate "nodea-identifier-de" to have the following child nodes:
-      | Name         |
-      | childOfTypeA |
-      | childOfTypeB |
+    And I expect this node to have the following child nodes:
+      | Name         | NodeDiscriminator                            |
+      | childOfTypeA | cs-identifier;childOfTypeA;{"language":"de"} |
+      | childOfTypeB | cs-identifier;childOfTypeB;{"language":"de"} |

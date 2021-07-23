@@ -52,6 +52,6 @@ Feature: Unknown node types
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
+    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 

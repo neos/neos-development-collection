@@ -188,8 +188,8 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | newParentNodeAggregateIdentifier | "lady-eleonode-rootford"           |
       | relationDistributionStrategy     | "scatter"                          |
     And the graph projection is fully up to date
-    When I am in content stream "cs-identifier" and Dimension Space Point {"market": "DE", "language": "de"}
-    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node {"contentStreamIdentifier":"cs-identifier","nodeAggregateIdentifier":"nody-mc-nodeface","originDimensionSpacePoint":{"market":"DE","language":"de"}}
+    When I am in content stream "cs-identifier" and dimension space point {"market": "DE", "language": "de"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier","nodeAggregateIdentifier":"nody-mc-nodeface","originDimensionSpacePoint":{"market":"DE","language":"de"}
 
 
   Scenario: Try to move a node to a parent whose node type does not allow child nodes of the node's type

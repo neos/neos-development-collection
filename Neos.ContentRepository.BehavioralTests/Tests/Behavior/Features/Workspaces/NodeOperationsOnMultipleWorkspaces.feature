@@ -79,28 +79,28 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | initiatingUserIdentifier  | "initiating-user-identifier" |
 
     When the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    And I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value    |
       | text | Original |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value   |
       | text | Changed |
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect node aggregate identifier "nodingers-cat" and path "child/pet" to lead to node {"contentStreamIdentifier": "cs-identifier", "nodeAggregateIdentifier": "nodingers-cat", "originDimensionSpacePoint": {}}
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "nodingers-cat" and node path "child/pet" to lead to node cs-identifier;nodingers-cat;{}
     When I go to the parent node of node aggregate "nodingers-cat"
-    Then I expect the current Node to have the properties:
+    Then I expect this node to have the following properties:
       | Key  | Value    |
       | text | Original |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect node aggregate identifier "nodingers-cat" and path "child/pet" to lead to node {"contentStreamIdentifier": "user-cs-identifier", "nodeAggregateIdentifier": "nodingers-cat", "originDimensionSpacePoint": {}}
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "nodingers-cat" and node path "child/pet" to lead to node user-cs-identifier;nodingers-cat;{}
     When I go to the parent node of node aggregate "nodingers-cat"
-    Then I expect the current Node to have the properties:
+    Then I expect this node to have the following properties:
       | Key  | Value   |
       | text | Changed |

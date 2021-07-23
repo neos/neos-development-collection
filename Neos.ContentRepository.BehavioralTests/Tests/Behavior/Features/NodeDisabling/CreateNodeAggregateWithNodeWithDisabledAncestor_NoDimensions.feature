@@ -59,5 +59,5 @@ Feature: Creation of nodes underneath hidden nodes
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nodingers-cat" not to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {}
+    Then I expect node aggregate identifier "nodingers-cat" to lead to no node

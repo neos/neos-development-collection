@@ -26,13 +26,13 @@ Feature: Nodes can be hidden/shown
     Then the feedback contains "Neos.Neos.Ui:UpdateNodeInfo"
 
     And VisibilityConstraints are set to "frontend"
-    Then I expect a node identified by aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" not to exist in the subgraph
+    Then I expect node aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" to exist in the subgraph
+    Then I expect node aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" to lead to node cs-identifier;d17caff2-f50c-d30b-b735-9b9216de02e9;{"language": "en_US"}
 
     # show it again
     When I send the following changes:
       | Type                  | Subject Node Address | Payload                                  |
       | Neos.Neos.Ui:Property | TEASERNODE           | {"propertyName":"_hidden","value":false} |
     And VisibilityConstraints are set to "frontend"
-    Then I expect a node identified by aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" to exist in the subgraph
+    Then I expect node aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" to lead to node cs-identifier;d17caff2-f50c-d30b-b735-9b9216de02e9;{"language": "en_US"}

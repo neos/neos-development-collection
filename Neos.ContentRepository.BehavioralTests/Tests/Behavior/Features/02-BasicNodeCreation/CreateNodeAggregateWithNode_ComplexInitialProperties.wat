@@ -61,7 +61,7 @@ Feature: Create a node aggregate with complex initial values
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                                                                                                                                                                                |
       | initialPropertyValues         | {"string":"Nody McNodeface", "nullString": null, "bool":true, "int":42, "float":4.2, "array":{"givenName":"Nody", "familyName":"McNodeface"}, "postalAddress":"PostalAddress:dummy", "date":"Date:2020-08-20T18:56:15+00:00", "uri":"URI:https://neos.io", "image":"IMG:dummy", "images":"[IMG:dummy]"} |
     And the graph projection is fully up to date
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and dimension space point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated
     Then I expect this read model to have the properties:
       | Key           | Value                                           |

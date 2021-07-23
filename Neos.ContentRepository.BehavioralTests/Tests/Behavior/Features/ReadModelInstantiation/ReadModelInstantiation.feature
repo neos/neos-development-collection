@@ -38,6 +38,6 @@ Feature: Provide and configure a custom read model
       | initiatingUserIdentifier      | "initiating-user-identifier"                                          |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                              |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated
     Then I expect this read model to be an instance of "Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\Thing"

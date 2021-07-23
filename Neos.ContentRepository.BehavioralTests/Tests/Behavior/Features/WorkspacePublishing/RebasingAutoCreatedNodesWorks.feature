@@ -62,10 +62,10 @@ Feature: Rebasing auto-created nodes works
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"   |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
     And the graph projection is fully up to date
-    And I am in content stream "user-cs-identifier" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
+    And I am in content stream "user-cs-identifier" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     When I get the node at path "mcnodeface/foo"
-    And I expect this node to be a child of node {"contentStreamIdentifier":"user-cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"user-cs-identifier;nody-mc-nodeface;{}
 
     # - then, for the auto-created child node, set a property.
     When the command "SetSerializedNodeProperties" is executed with payload:

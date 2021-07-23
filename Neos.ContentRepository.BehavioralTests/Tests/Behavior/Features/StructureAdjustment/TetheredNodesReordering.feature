@@ -47,10 +47,13 @@ Feature: Tethered Nodes Reordering Structure changes
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     And I get the node at path "document/tethered-node"
-    And I expect this node to have the preceding siblings []
-    And I expect this node to have the succeeding siblings ["other-tethered-node-agg", "third-tethered-node-agg"]
+    And I expect this node to have no preceding siblings
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;other-tethered-node-agg;{} |
+      | cs-identifier;third-tethered-node-agg;{} |
 
   Scenario: re-ordering the tethered child nodes brings up wrongly sorted tethered nodes
     Given I have the following additional NodeTypes configuration:
@@ -66,7 +69,11 @@ Feature: Tethered Nodes Reordering Structure changes
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     And I get the node at path "document/tethered-node"
-    And I expect this node to have the preceding siblings ["other-tethered-node-agg"]
-    And I expect this node to have the succeeding siblings ["third-tethered-node-agg"]
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;other-tethered-node-agg;{} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;third-tethered-node-agg;{} |

@@ -110,25 +110,31 @@ Feature: Publishing and discard individual nodes (basics)
       | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value      |
       | text | Initial t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value      |
       | text | Initial t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value          |
       | image | Modified image |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value          |
       | image | Modified image |
 
@@ -139,25 +145,31 @@ Feature: Publishing and discard individual nodes (basics)
       | nodeAddresses | []          |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value      |
       | text | Initial t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value      |
       | text | Initial t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value         |
       | image | Initial image |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value          |
       | image | Modified image |
 
@@ -168,25 +180,31 @@ Feature: Publishing and discard individual nodes (basics)
       | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value          |
       | image | Modified image |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value          |
       | image | Modified image |
 
@@ -202,14 +220,17 @@ Feature: Publishing and discard individual nodes (basics)
       | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value         |
       | image | Initial image |
 
@@ -220,14 +241,17 @@ Feature: Publishing and discard individual nodes (basics)
       | nodeAddresses | []          |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value       |
       | text | Modified t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value          |
       | image | Modified image |
 
@@ -238,14 +262,17 @@ Feature: Publishing and discard individual nodes (basics)
       | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}, {"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value      |
       | text | Initial t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value      |
       | text | Initial t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value         |
       | image | Initial image |
 
@@ -258,14 +285,17 @@ Feature: Publishing and discard individual nodes (basics)
     And the graph projection is fully up to date
 
     # live WS does not change because of a discard
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value      |
       | text | Initial t1 |
-    And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key  | Value      |
       | text | Initial t2 |
-    And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to have the following properties:
       | Key   | Value         |
       | image | Initial image |
 

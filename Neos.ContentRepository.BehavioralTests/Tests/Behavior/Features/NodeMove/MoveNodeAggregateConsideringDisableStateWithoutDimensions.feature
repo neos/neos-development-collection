@@ -97,10 +97,10 @@ Feature: Move a node aggregate considering disable state but without content dim
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
-    And I expect node aggregate identifier "nody-mc-nodeface" and path "esquire/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {}}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-nodeward-nodington-iii", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-nodeward-nodington-iii;{}
 
   Scenario: Move a node disabled by itself to a new parent that is enabled
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -118,10 +118,10 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                         |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "nody-mc-nodeface" and path "esquire/child-document" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document" to lead to no node
 
   Scenario: Move a node that disables one of its descendants to a new parent that is enabled
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -139,11 +139,11 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                         |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "sir-david-nodenborough" and path "esquire/document" to lead to no node
-    Then I expect node aggregate identifier "nody-mc-nodeface" and path "esquire/document/child-document" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/document" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document/child-document" to lead to no node
 
   Scenario: Move a node that is disabled by one of its ancestors to a new parent that disables itself
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -166,10 +166,10 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                         |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "nody-mc-nodeface" and path "esquire/child-document" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document" to lead to no node
 
   Scenario: Move a node that is disabled by itself to a new parent that disables itself
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -191,10 +191,10 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                         |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "sir-david-nodenborough" and path "esquire/document" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/document" to lead to no node
 
   Scenario: Move a node that is enabled to a new parent that disables itself
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -211,10 +211,10 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                         |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "sir-david-nodenborough" and path "esquire/document" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/document" to lead to no node
 
   Scenario: Move a node that disables any of its descendants to a new parent that disables itself
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -236,11 +236,11 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                         |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "sir-david-nodenborough" and path "esquire/document" to lead to no node
-    Then I expect node aggregate identifier "nody-mc-nodeface" and path "esquire/document/child-document" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/document" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document/child-document" to lead to no node
 
   Scenario: Move a node that is disabled by one of its ancestors to a new parent that is disabled by one of its ancestors
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -262,10 +262,10 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "nodimus-prime"    |
       | newSucceedingSiblingNodeAggregateIdentifier | null               |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "nody-mc-nodeface" and path "esquire/esquire-child/child-document" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/child-document" to lead to no node
 
   Scenario: Move a node that is disabled by itself to a new parent that is disabled by one of its ancestors
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -287,10 +287,10 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "nodimus-prime"          |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "sir-david-nodenborough" and path "esquire/esquire-child/document" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/esquire-child/document" to lead to no node
 
   Scenario: Move a node that disables any of its descendants to a new parent that is disabled by one of its ancestors
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -312,11 +312,11 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "nodimus-prime"          |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "sir-david-nodenborough" and path "esquire/esquire-child/document" to lead to no node
-    Then I expect node aggregate identifier "nody-mc-nodeface" and path "esquire/esquire-child/document/child-document" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/esquire-child/document" to lead to no node
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document/child-document" to lead to no node
 
   Scenario: Move a node that is enabled to a new parent that is disabled by one of its ancestors
     Given the event NodeAggregateWasDisabled was published with payload:
@@ -333,7 +333,7 @@ Feature: Move a node aggregate considering disable state but without content dim
       | newParentNodeAggregateIdentifier            | "nodimus-prime"          |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
-    Then I expect node aggregate identifier "sir-david-nodenborough" and path "esquire/esquire-child/document" to lead to no node
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/esquire-child/document" to lead to no node

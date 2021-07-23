@@ -39,9 +39,9 @@ Feature: Node Property Conversion
 
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key          | Value                     | Type     |
       | dateProperty | 1997-07-16T19:20:30+05:00 | DateTime |
 
@@ -66,8 +66,8 @@ Feature: Node Property Conversion
       | initiatingUserIdentifier  | "initiating-user-identifier"                       |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in the active content stream of workspace "live" and dimension space point {}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
       | Key          | Value                     | Type     |
       | dateProperty | 1997-07-19T19:20:30+05:00 | DateTime |
