@@ -8,7 +8,7 @@ Feature: Set properties of complex type
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Intermediary.Testing:Node':
+    'Neos.ContentRepository.Testing:Node':
       properties:
         array:
           type: array
@@ -54,7 +54,7 @@ Feature: Set properties of complex type
       | Key                           | Value                                              |
       | contentStreamIdentifier       | "cs-identifier"                                    |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Intermediary.Testing:Node" |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Node" |
       | originDimensionSpacePoint     | {}                                                 |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"             |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |

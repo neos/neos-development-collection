@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
@@ -36,7 +35,6 @@ class PropertyAdjustment
     protected NodeTypeManager $nodeTypeManager;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
     protected RuntimeBlocker $runtimeBlocker;
-    protected ReadModelFactory $readModelFactory;
     protected ContentGraph $contentGraph;
 
     public function __construct(
@@ -45,7 +43,6 @@ class PropertyAdjustment
         NodeTypeManager $nodeTypeManager,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
         RuntimeBlocker $runtimeBlocker,
-        ReadModelFactory $readModelFactory,
         ContentGraph $contentGraph
     ) {
         $this->eventStore = $eventStore;
@@ -53,7 +50,6 @@ class PropertyAdjustment
         $this->nodeTypeManager = $nodeTypeManager;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->runtimeBlocker = $runtimeBlocker;
-        $this->readModelFactory = $readModelFactory;
         $this->contentGraph = $contentGraph;
     }
 

@@ -210,7 +210,7 @@ final class NodeFactory
             $nodes[] = $this->mapNodeRowToNode($nodeRow, $contentStreamIdentifier);
         }
 
-        return new Nodes($nodes);
+        return Nodes::fromArray($nodes);
     }
 
     public function mapNodeRowsToSubtree(array $nodeRows): Subtree
