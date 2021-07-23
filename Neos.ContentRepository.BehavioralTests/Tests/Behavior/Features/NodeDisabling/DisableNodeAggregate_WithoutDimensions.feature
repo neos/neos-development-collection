@@ -92,11 +92,11 @@ Feature: Disable a node aggregate
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
     Then I expect the graph projection to consist of exactly 5 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;preceding-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;succeeding-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;nody-mc-nodeface;{}} to exist in the content graph
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;preceding-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
 
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points [{}]
@@ -117,7 +117,7 @@ Feature: Disable a node aggregate
       | 2     | nody-mc-nodeface        |
       | 1     | succeeding-nodenborough |
     And I expect node aggregate identifier "preceding-nodenborough" and node path "preceding-document" to lead to node cs-identifier;preceding-nodenborough;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                        |
@@ -138,14 +138,14 @@ Feature: Disable a node aggregate
       | Key        | Value                      |
       | references | ["cs-identifier;preceding-nodenborough;{}"] |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
       | cs-identifier;preceding-nodenborough;{} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
 
     When VisibilityConstraints are set to "frontend"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
@@ -159,7 +159,7 @@ Feature: Disable a node aggregate
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |
     And I expect node aggregate identifier "preceding-nodenborough" and node path "preceding-document" to lead to node cs-identifier;preceding-nodenborough;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                        |
@@ -167,7 +167,7 @@ Feature: Disable a node aggregate
     And I expect this node to have no references
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;preceding-nodenborough;{} |
@@ -199,11 +199,11 @@ Feature: Disable a node aggregate
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
     Then I expect the graph projection to consist of exactly 5 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;preceding-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;succeeding-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;nody-mc-nodeface;{}} to exist in the content graph
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;preceding-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
 
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points []
@@ -223,4 +223,4 @@ Feature: Disable a node aggregate
       | 0     | sir-david-nodenborough  |
       | 1     | nody-mc-nodeface        |
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}

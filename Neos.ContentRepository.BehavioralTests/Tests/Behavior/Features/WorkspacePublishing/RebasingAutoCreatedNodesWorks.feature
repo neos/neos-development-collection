@@ -65,7 +65,7 @@ Feature: Rebasing auto-created nodes works
     And I am in content stream "user-cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     When I get the node at path "mcnodeface/foo"
-    And I expect this node to be a child of node {"contentStreamIdentifier":"user-cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to be a child of node user-cs-identifier;nody-mc-nodeface;{}
 
     # - then, for the auto-created child node, set a property.
     When the command "SetSerializedNodeProperties" is executed with payload:

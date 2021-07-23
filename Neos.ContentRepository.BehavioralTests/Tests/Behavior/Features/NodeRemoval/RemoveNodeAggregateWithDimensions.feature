@@ -71,8 +71,8 @@ Feature: Remove NodeAggregate
       | coveredDimensionSpacePoint   | {"language":"de"}    |
     And the graph projection is fully up to date
 
-    Then I expect the graph projection to consist of exactly 1 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}} to exist in the content graph
+    Then I expect the graph projection to consist of exactly 1 node
+    And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
 
     When I am in content stream "live-cs-identifier" and dimension space point {"language":"de"}
     Then I expect the subgraph projection to consist of exactly 1 nodes
@@ -100,10 +100,10 @@ Feature: Remove NodeAggregate
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"gsw"}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nody-mc-nodeface;{"language":"gsw"} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nodimus-prime;{"language":"de"} to exist in the content graph
 
     When I am in content stream "user-cs-identifier" and dimension space point {"language":"de"}
     Then I expect the subgraph projection to consist of exactly 1 nodes

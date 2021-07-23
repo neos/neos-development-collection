@@ -106,7 +106,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                   |
@@ -135,7 +135,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                   |
@@ -145,7 +145,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                 |
@@ -164,7 +164,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;anthony-destinode;{"language": "mul"} |
@@ -193,7 +193,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;anthony-destinode;{"language": "mul"} |
@@ -204,7 +204,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;anthony-destinode;{"language": "mul"} |
@@ -232,7 +232,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;berta-destinode;{"language": "mul"}   |
@@ -243,7 +243,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;berta-destinode;{"language": "mul"}   |
@@ -270,7 +270,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;carl-destinode;{"language": "mul"}    |
@@ -280,7 +280,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;berta-destinode;{"language": "mul"}   |
@@ -299,7 +299,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                   |
@@ -309,7 +309,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;berta-destinode;{"language": "mul"}   |
@@ -330,7 +330,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;anthony-destinode;{"language": "mul"} |
@@ -341,7 +341,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;berta-destinode;{"language": "mul"}   |
@@ -361,7 +361,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;carl-destinode;{"language": "mul"}    |
@@ -371,7 +371,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;berta-destinode;{"language": "mul"}   |
@@ -392,7 +392,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;berta-destinode;{"language": "mul"}   |
@@ -403,7 +403,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                   |
@@ -413,7 +413,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                   |
@@ -433,7 +433,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;berta-destinode;{"language": "mul"}   |
@@ -444,7 +444,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;anthony-destinode;{"language": "mul"} |
@@ -455,7 +455,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;anthony-destinode;{"language": "mul"} |
@@ -475,7 +475,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;berta-destinode;{"language": "mul"}   |
@@ -486,7 +486,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;carl-destinode;{"language": "mul"}    |
@@ -496,7 +496,7 @@ Feature: Move a node with content dimensions
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"language": "mul"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                   |
       | cs-identifier;carl-destinode;{"language": "mul"}    |

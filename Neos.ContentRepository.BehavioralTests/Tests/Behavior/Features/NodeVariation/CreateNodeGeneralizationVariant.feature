@@ -119,63 +119,63 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
 
   Scenario: Create generalization of node to dimension space point with further generalizations
     When the command CreateNodeVariant is executed with payload:
@@ -259,11 +259,11 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"gsw"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
@@ -283,13 +283,13 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
 
   Scenario: Create generalization of node to dimension space point with specializations that are partially occupied and covered
     When the event NodeGeneralizationVariantWasCreated was published with payload:
@@ -388,63 +388,63 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
 
   Scenario: Create generalization of a node to a dimension space point that is already covered by a more general generalization
     When the event NodeGeneralizationVariantWasCreated was published with payload:
@@ -543,60 +543,60 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"CH", "language":"gsw"}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}

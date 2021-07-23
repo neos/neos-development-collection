@@ -100,7 +100,7 @@ Feature: Move a node aggregate considering disable state but without content dim
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{}
 
   Scenario: Move a node disabled by itself to a new parent that is enabled
     Given the event NodeAggregateWasDisabled was published with payload:

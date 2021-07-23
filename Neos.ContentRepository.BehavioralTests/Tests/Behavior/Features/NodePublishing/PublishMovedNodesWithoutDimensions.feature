@@ -84,28 +84,28 @@ Feature: Publishing moved nodes without dimensions
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;nody-mc-nodeface;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-nodeward-nodington-iii;{}} to exist in the content graph
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-nodeward-nodington-iii;{} to exist in the content graph
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in content stream "cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
 
@@ -124,28 +124,28 @@ Feature: Publishing moved nodes without dimensions
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;nody-mc-nodeface;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-nodeward-nodington-iii;{}} to exist in the content graph
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-nodeward-nodington-iii;{} to exist in the content graph
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in content stream "cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
 
@@ -174,33 +174,33 @@ Feature: Publishing moved nodes without dimensions
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 5 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;nody-mc-nodeface;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-nodeward-nodington-iii;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;lady-abigail-nodenborough;{}} to exist in the content graph
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-nodeward-nodington-iii;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;lady-abigail-nodenborough;{} to exist in the content graph
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in content stream "cs-identifier" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "lady-abigail-nodenborough" and node path "esquire/other-document" to lead to node cs-identifier;lady-abigail-nodenborough;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/document" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-nodeward-nodington-iii;{}
+    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                          |
       | cs-identifier;lady-abigail-nodenborough;{} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
 
@@ -219,23 +219,23 @@ Feature: Publishing moved nodes without dimensions
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-david-nodenborough;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;nody-mc-nodeface;{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier;sir-nodeward-nodington-iii;{}} to exist in the content graph
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-nodeward-nodington-iii;{} to exist in the content graph
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in content stream "cs-identifier" and dimension space point {}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                           |
       | cs-identifier;nody-mc-nodeface;{}           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
@@ -243,7 +243,7 @@ Feature: Publishing moved nodes without dimensions
       | NodeDiscriminator                           |
       | cs-identifier;sir-nodeward-nodington-iii;{} |
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;nody-mc-nodeface;{}       |

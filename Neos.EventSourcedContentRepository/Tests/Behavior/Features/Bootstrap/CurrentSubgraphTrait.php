@@ -64,7 +64,7 @@ trait CurrentSubgraphTrait
     }
 
     /**
-     * @Given /^I am in the active content stream of workspace "([^"]*)" and Dimension Space Point (.*)$/
+     * @Given /^I am in the active content stream of workspace "([^"]*)" and dimension space point (.*)$/
      * @param string $workspaceName
      * @param string $dimensionSpacePoint
      * @throws Exception
