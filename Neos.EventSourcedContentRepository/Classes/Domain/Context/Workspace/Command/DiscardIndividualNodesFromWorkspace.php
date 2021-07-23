@@ -13,9 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -69,16 +66,11 @@ final class DiscardIndividualNodesFromWorkspace
 
     public static function fromArray(array $array): self
     {
-        $nodeAddresses = [];
-        foreach ($array['nodeAddresses'] as $nodeAddressArray) {
-            $nodeAddresses[] = new NodeAddress(
-                ContentStreamIdentifier::fromString($nodeAddressArray['contentStreamIdentifier']),
-                new DimensionSpacePoint($nodeAddressArray['dimensionSpacePoint']),
-                NodeAggregateIdentifier::fromString($nodeAddressArray['nodeAggregateIdentifier']),
-                null
-            );
-        }
-        return new static(
+        $nodeAddresses = array_map(function(array $serializedNodeAddress) {
+            return NodeAddress::fromArray($serializedNodeAddress);
+        }, $array['nodeAddresses']);
+
+        return new self(
             new WorkspaceName($array['workspaceName']),
             $nodeAddresses,
             UserIdentifier::fromString($array['initiatingUserIdentifier'])

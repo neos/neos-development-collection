@@ -44,7 +44,7 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Ramsey\Uuid\Uuid;
 
-trait NodeRetyping
+trait NodeTypeChange
 {
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
@@ -190,7 +190,7 @@ trait NodeRetyping
 
 
     /**
-     * NOTE: when changing this method, {@see NodeRetyping::deleteDisallowedNodesWhenChangingNodeType} needs to be modified as well (as they
+     * NOTE: when changing this method, {@see NodeTypeChange::deleteDisallowedNodesWhenChangingNodeType} needs to be modified as well (as they
      * are structurally the same)
      *
      * @param ReadableNodeAggregateInterface $nodeAggregate
@@ -222,7 +222,7 @@ trait NodeRetyping
     }
 
     /**
-     * NOTE: when changing this method, {@see NodeRetyping::requireConstraintsImposedByHappyPathStrategyAreMet} needs to be modified as well (as they
+     * NOTE: when changing this method, {@see NodeTypeChange::requireConstraintsImposedByHappyPathStrategyAreMet} needs to be modified as well (as they
      * are structurally the same)
      *
      * @param ReadableNodeAggregateInterface $nodeAggregate

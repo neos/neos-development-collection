@@ -66,6 +66,16 @@ final class NodeAddress
         $this->workspaceName = $workspaceName;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            new DimensionSpacePoint($array['dimensionSpacePoint']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            isset($array['workspaceName']) ? new WorkspaceName($array['workspaceName']) : null
+        );
+    }
+
     public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
     {
         return new self($this->contentStreamIdentifier, $this->dimensionSpacePoint, $nodeAggregateIdentifier, $this->workspaceName);

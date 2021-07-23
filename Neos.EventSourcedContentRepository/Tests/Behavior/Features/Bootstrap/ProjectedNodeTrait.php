@@ -45,6 +45,11 @@ trait ProjectedNodeTrait
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
+    protected function getCurrentNodes(): ?NodesByAdapter
+    {
+        return $this->currentNodes;
+    }
+
     /**
      * @When /^I go to the parent node of node aggregate "([^"]*)"$/
      * @param string $serializedNodeAggregateIdentifier
