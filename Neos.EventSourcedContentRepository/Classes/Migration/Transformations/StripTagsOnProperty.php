@@ -53,13 +53,13 @@ class StripTagsOnProperty implements NodeBasedTransformationInterface
     public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if ($node->hasProperty($this->propertyName)) {
-            $newValue = strip_tags($node->getProperty($this->propertyName));
+            $newValue = strip_tags($node->getProperties()->serialized()->getProperty($this->propertyName)->getValue());
             return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
                 $contentStreamForWriting,
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
                 SerializedPropertyValues::fromArray([
-                    $this->propertyName => new SerializedPropertyValue($newValue, $node->getProperties()->getProperty($this->propertyName)->getType())
+                    $this->propertyName => new SerializedPropertyValue($newValue, $node->getProperties()->serialized()->getProperty($this->propertyName)->getType())
                 ]),
                 UserIdentifier::forSystemUser()
             ));

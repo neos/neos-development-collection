@@ -150,32 +150,4 @@ trait ReadModelInstantiationTrait
             Assert::assertEquals($expectedPropertyValue, $properties[$propertyName], 'Node property ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($properties[$propertyName]));
         }
     }
-
-
-    /**
-     * @Then /^I expect the current Node to have the properties:$/
-     * @param TableNode $expectedProperties
-     */
-    public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
-    {
-        Assert::assertNotNull($this->currentNode, 'current node not found');
-        $subgraph = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-        $this->currentNode = $subgraph->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
-
-        $this->currentReadModel = $this->readModelFactory->createReadModel($this->currentNode, $subgraph);
-
-        $properties = $this->currentReadModel->getProperties();
-
-        foreach ($expectedProperties->getHash() as $row) {
-            Assert::assertTrue(isset($properties[$row['Key']]), 'Property "' . $row['Key'] . '" not found');
-            if (isset($row['Type']) && $row['Type'] === 'DateTime') {
-                $row['Value'] = \DateTime::createFromFormat(\DateTime::W3C, $row['Value']);
-            }
-            $actualProperty = $properties[$row['Key']];
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
-        }
-    }
-
-
 }

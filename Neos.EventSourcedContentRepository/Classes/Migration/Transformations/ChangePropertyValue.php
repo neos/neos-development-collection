@@ -132,7 +132,7 @@ class ChangePropertyValue implements NodeBasedTransformationInterface
     public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if ($node->hasProperty($this->propertyName)) {
-            $currentProperty = $node->getProperties()->getProperty($this->propertyName);
+            $currentProperty = $node->getProperties()->serialized()->getProperty($this->propertyName);
             $newValueWithReplacedCurrentValue = str_replace($this->currentValuePlaceholder, $currentProperty->getValue(), $this->newSerializedValue);
             $newValueWithReplacedSearch = str_replace($this->search, $this->replace, $newValueWithReplacedCurrentValue);
 
