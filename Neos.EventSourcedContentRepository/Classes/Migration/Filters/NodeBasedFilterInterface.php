@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Migration\Command;
+namespace Neos\EventSourcedContentRepository\Migration\Filters;
 
 /*
  * This file is part of the Neos.ContentRepository package.

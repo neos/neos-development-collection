@@ -15,8 +15,8 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Intermediary\Migration\Command\ExecuteMigration;
-use Neos\ContentRepository\Intermediary\Migration\MigrationCommandHandler;
+use Neos\EventSourcedContentRepository\Migration\Command\ExecuteMigration;
+use Neos\EventSourcedContentRepository\Migration\MigrationCommandHandler;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

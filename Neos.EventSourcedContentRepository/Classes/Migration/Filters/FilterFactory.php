@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Migration\Command;
+namespace Neos\EventSourcedContentRepository\Migration\Filters;
 
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 use Neos\ContentRepository\Migration\Filters\DoctrineFilterInterface;

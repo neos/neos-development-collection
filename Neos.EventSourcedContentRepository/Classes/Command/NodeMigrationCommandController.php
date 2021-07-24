@@ -11,10 +11,10 @@ namespace Neos\EventSourcedContentRepository\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Migration\Command\ExecuteMigration;
-use Neos\ContentRepository\Intermediary\Migration\MigrationCommandHandler;
 use Neos\ContentRepository\Migration\Domain\Factory\MigrationFactory;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Migration\Command\ExecuteMigration;
+use Neos\EventSourcedContentRepository\Migration\MigrationCommandHandler;
 use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;

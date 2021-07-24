@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Migration\Command;
+namespace Neos\EventSourcedContentRepository\Migration;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Migration\Exception\InvalidMigrationFilterSpecified;

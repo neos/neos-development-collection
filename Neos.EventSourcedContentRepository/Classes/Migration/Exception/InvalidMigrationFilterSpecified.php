@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedContentRepository\Migration\Command;
+namespace Neos\EventSourcedContentRepository\Migration\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
