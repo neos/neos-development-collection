@@ -12,7 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
@@ -22,7 +25,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 class UpdateNodeInfo extends AbstractFeedback
 {
     /**
-     * @var NodeBasedReadModelInterface
+     * @var NodeInterface
      */
     protected $node;
 
@@ -32,15 +35,27 @@ class UpdateNodeInfo extends AbstractFeedback
      */
     protected $nodeInfoHelper;
 
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
     protected $isRecursive = false;
 
     /**
      * Set the node
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @return void
      */
-    public function setNode(NodeBasedReadModelInterface $node)
+    public function setNode(NodeInterface $node)
     {
         $this->node = $node;
     }
@@ -58,7 +73,7 @@ class UpdateNodeInfo extends AbstractFeedback
     /**
      * Get the node
      *
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      */
     public function getNode()
     {
@@ -116,18 +131,19 @@ class UpdateNodeInfo extends AbstractFeedback
     /**
      * Serialize node and all child nodes
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function serializeNodeRecursively(NodeBasedReadModelInterface $node, ControllerContext $controllerContext)
+    public function serializeNodeRecursively(NodeInterface $node, ControllerContext $controllerContext)
     {
         $result = [
-            $node->getAddress()->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
+            $this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
         ];
 
         if ($this->isRecursive === true) {
-            foreach ($node->findChildNodes() as $childNode) {
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            foreach ($nodeAccessor->findChildNodes($node) as $childNode) {
                 $result = array_merge($result, $this->serializeNodeRecursively($childNode, $controllerContext));
             }
         }

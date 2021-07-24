@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -28,15 +29,29 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
  *  in contentStreamIdentifier $contentStreamIdentifier
  *
  * It is used in Neos Routing to build a URI to a node.
+ *
+ * @Flow\Proxy(false)
  */
 final class NodeAddress
 {
+    /**
+     * @var ContentStreamIdentifier
+     */
     protected ContentStreamIdentifier $contentStreamIdentifier;
 
+    /**
+     * @var DimensionSpacePoint
+     */
     protected DimensionSpacePoint $dimensionSpacePoint;
 
+    /**
+     * @var NodeAggregateIdentifier
+     */
     protected NodeAggregateIdentifier $nodeAggregateIdentifier;
 
+    /**
+     * @var WorkspaceName|null
+     */
     protected ?WorkspaceName $workspaceName;
 
     public function __construct(

@@ -12,8 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveNode;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\Flow\Annotations as Flow;
@@ -28,6 +30,12 @@ class MoveInto extends AbstractStructuralChange
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * @var string
@@ -45,9 +53,9 @@ class MoveInto extends AbstractStructuralChange
     /**
      * Get the sibling node
      *
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      */
-    public function getParentNode(): ?NodeBasedReadModelInterface
+    public function getParentNode(): ?NodeInterface
     {
         if ($this->parentContextPath === null) {
             return null;
@@ -93,7 +101,8 @@ class MoveInto extends AbstractStructuralChange
             // "subject" is the to-be-moved node
             $subject = $this->getSubject();
 
-            $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($this->getParentNode()->getNodeAggregateIdentifier());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($subject->getContentStreamIdentifier(), $subject->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $hasEqualParentNode = $nodeAccessor->findParentNode($subject)->getNodeAggregateIdentifier()->equals($this->getParentNode()->getNodeAggregateIdentifier());
 
             $command = new MoveNodeAggregate(
                 $subject->getContentStreamIdentifier(),

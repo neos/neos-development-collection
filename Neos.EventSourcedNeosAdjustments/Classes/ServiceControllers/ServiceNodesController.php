@@ -14,9 +14,8 @@ namespace Neos\EventSourcedNeosAdjustments\ServiceControllers;
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\SearchTerm;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\Flow\Annotations as Flow;
@@ -59,20 +58,14 @@ class ServiceNodesController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var NodeAccessorManager
      */
-    protected $contentGraph;
+    protected $nodeAccessorManager;
     /**
      * @Flow\Inject
      * @var NodeTypeConstraintFactory
      */
     protected $nodeTypeConstraintFactory;
-
-    /**
-     * @Flow\Inject
-     * @var ReadModelFactory
-     */
-    protected $readModelFactory;
 
     /**
      * @var array
@@ -108,35 +101,33 @@ class ServiceNodesController extends ActionController
     {
         $nodeAddress = $contextNode;
         unset($contextNode);
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $nodeAddress->getContentStreamIdentifier(),
             $nodeAddress->getDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
         );
 
-        $traversableNodes = [];
-
         if ($nodeIdentifiers === []) {
-            $nodes = $subgraph->findDescendants(
-                [$nodeAddress->getNodeAggregateIdentifier()],
+            $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+            $nodes = $nodeAccessor->findDescendants(
+                [$entryNode],
                 $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $nodeTypes)),
                 SearchTerm::fulltext($searchTerm)
             );
-
-            $traversableNodes = $this->readModelFactory->createReadModels($nodes, $subgraph)->toArray();
+            $this->view->assign('nodes', $nodes);
         } else {
             if (!empty($searchTerm)) {
                 throw new \RuntimeException('Combination of $nodeIdentifiers and $searchTerm not supported');
             }
 
+            $nodes = [];
             foreach ($nodeIdentifiers as $nodeAggregateIdentifier) {
-                $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+                $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
                 if ($node !== null) {
-                    $traversableNodes[] = $this->readModelFactory->createReadModel($node, $subgraph);
+                    $nodes[] = $node;
                 }
             }
+            $this->view->assign('nodes', $nodes);
         }
-
-        $this->view->assign('nodes', $traversableNodes);
     }
 }

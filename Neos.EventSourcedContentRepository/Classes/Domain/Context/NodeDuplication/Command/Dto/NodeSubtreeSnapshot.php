@@ -52,6 +52,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
      */
     private $childNodes;
 
+    // TODO: use accessor here??
     public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, NodeInterface $sourceNode): self
     {
         $childNodes = [];
@@ -64,8 +65,8 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             $sourceNode->getNodeTypeName(),
             $sourceNode->getNodeName(),
             NodeAggregateClassification::fromNode($sourceNode),
-            $sourceNode->getProperties(),
-            NodeReferences::fromArray($subgraph->findReferencedNodes($sourceNode->getNodeAggregateIdentifier())),
+            $sourceNode->getProperties()->serialized(),
+            NodeReferences::fromNodes($subgraph->findReferencedNodes($sourceNode->getNodeAggregateIdentifier())),
             $childNodes
         );
     }

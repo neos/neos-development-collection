@@ -15,10 +15,6 @@ Feature: Provide and configure a custom read model
       class: 'Neos\ContentRepository\Intermediary\Tests\Fixtures\InvalidReadModel'
     'Neos.ContentRepository.Intermediary.Testing:NodeWithDeprecatedReadModel':
       class: 'Neos\ContentRepository\Intermediary\Tests\Fixtures\DeprecatedReadModel'
-    'Neos.ContentRepository.Intermediary.Testing:NodeWithMissingPropertyCollectionModel':
-      propertyCollectionClass: 'I\Do\Not\Exist'
-    'Neos.ContentRepository.Intermediary.Testing:NodeWithInvalidPropertyCollectionModel':
-      propertyCollectionClass: 'Neos\ContentRepository\Intermediary\Tests\Fixtures\InvalidPropertyCollection'
     'Neos.ContentRepository.Intermediary.Testing:NodeWithInvalidPropertyType':
       properties:
         foo:
@@ -82,31 +78,3 @@ Feature: Provide and configure a custom read model
     And I am in content stream "cs-identifier" and Dimension Space Point {}
     And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated and exceptions are caught
     Then I expect the instantiation to have thrown an exception of type "NodeImplementationClassNameIsInvalid" with code 1615415586
-
-  Scenario: Try to instantiate a read model with a non-existing content collection implementation
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                                                                |
-      | contentStreamIdentifier       | "cs-identifier"                                                                      |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                   |
-      | nodeTypeName                  | "Neos.ContentRepository.Intermediary.Testing:NodeWithMissingPropertyCollectionModel" |
-      | originDimensionSpacePoint     | {}                                                                                   |
-      | initiatingUserIdentifier      | "initiating-user-identifier"                                                         |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                             |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
-    And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated and exceptions are caught
-    Then I expect the instantiation to have thrown an exception of type "PropertyCollectionImplementationClassNameIsInvalid" with code 1615416178
-
-  Scenario: Try to instantiate a read model not implementing the required interface
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                                                                |
-      | contentStreamIdentifier       | "cs-identifier"                                                                      |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                   |
-      | nodeTypeName                  | "Neos.ContentRepository.Intermediary.Testing:NodeWithInvalidPropertyCollectionModel" |
-      | originDimensionSpacePoint     | {}                                                                                   |
-      | initiatingUserIdentifier      | "initiating-user-identifier"                                                         |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                             |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and Dimension Space Point {}
-    And the read model with node aggregate identifier "nody-mc-nodeface" is instantiated and exceptions are caught
-    Then I expect the instantiation to have thrown an exception of type "PropertyCollectionImplementationClassNameIsInvalid" with code 1615416214

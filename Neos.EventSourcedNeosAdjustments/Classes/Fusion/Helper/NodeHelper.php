@@ -13,13 +13,14 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Intermediary\Domain\ReadModelFactory;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Domain\Exception;
+use Neos\Neos\Fusion\Helper\NodeLabelToken;
 
 /**
  * Eel helper for ContentRepository Nodes
@@ -29,20 +30,26 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     /**
      * @Flow\Inject
-     * @var ReadModelFactory
+     * @var NodeAddressFactory
      */
-    protected $readModelFactory;
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
      * if no content collection could be found
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param string $nodePath
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      * @throws Exception
      */
-    public function nearestContentCollection(NodeBasedReadModelInterface $node, $nodePath, ContentSubgraphInterface $subgraph): NodeBasedReadModelInterface
+    public function nearestContentCollection(NodeInterface $node, $nodePath): NodeInterface
     {
         $contentCollectionType = 'Neos.Neos:ContentCollection';
         if ($node->getNodeType()->isOfType($contentCollectionType)) {
@@ -51,24 +58,79 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ((string)$nodePath === '') {
                 throw new Exception(sprintf('No content collection of type %s could be found in the current node and no node path was provided. You might want to configure the nodePath property with a relative path to the content collection.', $contentCollectionType), 1409300545);
             }
-            $subNode = NodeTreeTraversalHelper::findNodeByNodePath(
-                $subgraph,
-                $node->getNodeAggregateIdentifier(),
+            $subNode = $this->findNodeByNodePath(
+                $node,
                 NodePath::fromString($nodePath)
             );
 
             if ($subNode !== null && $subNode->getNodeType()->isOfType($contentCollectionType)) {
-                return $this->readModelFactory->createReadModel($subNode, $subgraph);
+                return $subNode;
             } else {
                 throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:repair --node-type %s" command.', $contentCollectionType, $node->findNodePath(), $nodePath, (string)$node->getNodeType()), 1389352984);
             }
         }
     }
 
-    public function nodeAddressToString(NodeBasedReadModelInterface $node): string
+    /**
+     * Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
+     *
+     * @param \Neos\ContentRepository\Domain\Model\NodeInterface|null $node
+     * @return NodeLabelToken
+     */
+    public function labelForNode(NodeInterface $node = null): NodeLabelToken
     {
-        return $node->getAddress()->serializeForUri();
+        return new AdjustedNodeLabelToken($node);
     }
+
+
+    public function nodeAddressToString(NodeInterface $node): string
+    {
+        return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+    }
+
+    private function findNodeByNodePath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
+    {
+        if ($nodePath->isAbsolute()) {
+            $node = $this->findRootNode($node);
+        }
+
+
+        return $this->findNodeByPath($node, $nodePath);
+    }
+
+
+
+    private function findRootNode(NodeInterface $node): NodeInterface
+    {
+        while (true) {
+            // TODO: FIX visibility constraints
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $parentNode = $nodeAccessor->findParentNode($node);
+            if ($parentNode === null) {
+                // there is no parent, so the root node was the node before
+                return $node;
+            } else {
+                $node = $parentNode;
+            }
+        }
+    }
+
+    private function findNodeByPath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
+    {
+        foreach ($nodePath->getParts() as $nodeName) {
+            // TODO: FIX visibility constraints
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $childNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($node, $nodeName);
+            if ($childNode === null) {
+                // we cannot find the child node, so there is no node on this path
+                return null;
+            }
+            $node = $childNode;
+        }
+
+        return $node;
+    }
+
 
     /**
      * @param string $methodName

@@ -489,7 +489,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
     private function deleteNodeQuery(string $query, array $parameters): void
     {
         try {
-            $this->dbal->executeQuery('DELETE ' . self::TABLE_NAME_DOCUMENT_URIS . ' ' . $query, $parameters, self::COLUMN_TYPES_DOCUMENT_URIS);
+            $this->dbal->executeQuery('DELETE FROM ' . self::TABLE_NAME_DOCUMENT_URIS . ' ' . $query, $parameters, self::COLUMN_TYPES_DOCUMENT_URIS);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to delete node via custom query: %s', $e->getMessage()), 1599659226, $e);
         }

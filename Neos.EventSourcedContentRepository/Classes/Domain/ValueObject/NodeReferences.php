@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -50,6 +51,22 @@ final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSeria
     }
 
     public static function fromArray(array $nodeReferences): self
+    {
+        $values = [];
+        foreach ($nodeReferences as $nodeReferenceName => $nodeReferenceValue) {
+            if (is_array($nodeReferenceValue)) {
+                $values[$nodeReferenceName] = NodeReference::fromArray($nodeReferenceValue);
+            } elseif ($nodeReferenceValue instanceof NodeReference) {
+                $values[$nodeReferenceName] = $nodeReferenceValue;
+            } else {
+                throw new \InvalidArgumentException(sprintf('Invalid nodeReferences value. Expected instance of %s, got: %s', NodeReference::class, is_object($nodeReferenceValue) ? get_class($nodeReferenceValue) : gettype($nodeReferenceValue)), 1546524480);
+            }
+        }
+
+        return new static($values);
+    }
+
+    public static function fromNodes(Nodes $nodeReferences): self
     {
         $values = [];
         foreach ($nodeReferences as $nodeReferenceName => $nodeReferenceValue) {

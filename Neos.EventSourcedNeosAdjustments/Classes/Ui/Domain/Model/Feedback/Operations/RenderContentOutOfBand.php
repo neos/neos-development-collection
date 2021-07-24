@@ -12,9 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -27,7 +28,7 @@ use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 class RenderContentOutOfBand extends AbstractFeedback
 {
     /**
-     * @var NodeBasedReadModelInterface
+     * @var NodeInterface
      */
     protected $node;
 
@@ -58,17 +59,23 @@ class RenderContentOutOfBand extends AbstractFeedback
 
     /**
      * @Flow\Inject
-     * @var ContentGraphInterface
+     * @var NodeAddressFactory
      */
-    protected $contentGraph;
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * Set the node
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @return void
      */
-    public function setNode(NodeBasedReadModelInterface $node)
+    public function setNode(NodeInterface $node)
     {
         $this->node = $node;
     }
@@ -76,7 +83,7 @@ class RenderContentOutOfBand extends AbstractFeedback
     /**
      * Get the node
      *
-     * @return NodeBasedReadModelInterface
+     * @return NodeInterface
      */
     public function getNode()
     {
@@ -195,7 +202,7 @@ class RenderContentOutOfBand extends AbstractFeedback
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'contextPath' => $this->getNode()->getAddress()->serializeForUri(),
+            'contextPath' => $this->nodeAddressFactory->createFromNode($this->getNode())->serializeForUri(),
             'parentDomAddress' => $this->getParentDomAddress(),
             'siblingDomAddress' => $this->getSiblingDomAddress(),
             'mode' => $this->getMode(),
@@ -211,19 +218,16 @@ class RenderContentOutOfBand extends AbstractFeedback
      */
     protected function renderContent(ControllerContext $controllerContext)
     {
-        $this->contentCache->flushByTag(sprintf('Node_%s', (string)$this->getNode()->findParentNode()->getNodeAggregateIdentifier()));
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->getNode()->getContentStreamIdentifier(), $this->getNode()->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $this->contentCache->flushByTag(sprintf('Node_%s', (string)$nodeAccessor->findParentNode($this->getNode())->getNodeAggregateIdentifier()));
 
         $parentDomAddress = $this->getParentDomAddress();
 
         $fusionView = new FusionView();
         $fusionView->setControllerContext($controllerContext);
 
-        $fusionView->assign('value', $this->getNode()->findParentNode());
-        $fusionView->assign('subgraph', $this->contentGraph->getSubgraphByIdentifier(
-            $this->getNode()->getContentStreamIdentifier(),
-            $this->getNode()->getDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions()
-        ));
+        $fusionView->assign('value', $nodeAccessor->findParentNode($this->getNode()));
+        $fusionView->assign('subgraph', $nodeAccessor);
         $fusionView->setFusionPath($parentDomAddress->getFusionPath());
 
         return $fusionView->render();

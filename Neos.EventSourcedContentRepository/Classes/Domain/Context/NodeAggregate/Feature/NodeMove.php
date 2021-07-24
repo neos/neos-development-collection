@@ -34,6 +34,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDist
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
@@ -289,7 +290,7 @@ trait NodeMove
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $contentSubgraph->findSucceedingSiblings($precedingSiblingIdentifier, null, 1);
                     if (count($alternateSucceedingSiblings) > 0) {
-                        $succeedingSibling = reset($alternateSucceedingSiblings);
+                        $succeedingSibling = $alternateSucceedingSiblings->first();
                     }
                 } else {
                     $succeedingSibling = $this->resolveSucceedingSiblingFromOriginSiblings($nodeAggregate->getIdentifier(), $parentIdentifier, $precedingSiblingIdentifier, $succeedingSiblingIdentifier, $contentSubgraph, $originContentSubgraph);
@@ -335,8 +336,8 @@ trait NodeMove
         ContentSubgraphInterface $originContentSubgraph
     ): ?NodeInterface {
         $succeedingSibling = null;
-        $precedingSiblingCandidates = $precedingSiblingIdentifier ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier): [];
-        $succeedingSiblingCandidates = $succeedingSiblingIdentifier ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingIdentifier) : [];
+        $precedingSiblingCandidates = iterator_to_array($precedingSiblingIdentifier ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier): Nodes::empty());
+        $succeedingSiblingCandidates = iterator_to_array($succeedingSiblingIdentifier ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingIdentifier) : Nodes::empty());
         $maximumIndex = max(count($succeedingSiblingCandidates), count($precedingSiblingCandidates));
         for ($i = 0; $i < $maximumIndex; $i++) {
             // try successors of same distance first

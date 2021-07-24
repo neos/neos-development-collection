@@ -11,10 +11,12 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Utility\ObjectAccess;
 
@@ -47,6 +49,12 @@ class PropertyOperation extends AbstractOperation
     protected static $final = true;
 
     /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
      * {@inheritdoc}
      *
      * We can only handle ContentRepository Nodes.
@@ -56,7 +64,7 @@ class PropertyOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return (isset($context[0]) && ($context[0] instanceof NodeBasedReadModelInterface));
+        return (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
     /**
@@ -79,24 +87,27 @@ class PropertyOperation extends AbstractOperation
                 return null;
             }
 
-            /* @var $element NodeBasedReadModelInterface */
+            /* @var $element NodeInterface */
             $element = $context[0];
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($element->getContentStreamIdentifier(), $element->getDimensionSpacePoint(), $element->getVisibilityConstraints());
             if ($propertyPath === '_path') {
-                return (string)$element->findNodePath();
+                return (string)$nodeAccessor->findNodePath($element);
             } elseif ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
                 if ($element->getNodeType()->getPropertyType($propertyPath) === 'reference') {
-                    $references = $element->findNamedReferencedNodes(PropertyName::fromString($propertyPath));
-                    if ($references->isEmpty()) {
+                    $tmp = $nodeAccessor->findReferencedNodes($element, PropertyName::fromString($propertyPath));
+                    $references = [];
+                    foreach ($tmp as $reference) {
+                        $references[] = $reference;
+                    }
+                    if (count($references) === 0) {
                         return null;
                     } else {
-                        $arr = $references->toArray();
-                        $res = reset($arr);
-                        return $res;
+                        return $references[0];
                     }
                 } elseif ($element->getNodeType()->getPropertyType($propertyPath) === 'references') {
-                    return $element->findNamedReferencedNodes(PropertyName::fromString($propertyPath))->toArray();
+                    return $nodeAccessor->findReferencedNodes($element, PropertyName::fromString($propertyPath));
                 } else {
                     return $element->getProperty($propertyPath);
                 }

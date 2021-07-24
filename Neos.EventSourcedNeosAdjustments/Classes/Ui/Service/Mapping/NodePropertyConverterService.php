@@ -13,8 +13,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModels;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
@@ -32,6 +33,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Creates PropertyMappingConfigurations to map NodeType properties for the Neos interface.
+ *
+ * THIS IS DIRTY CODE. In the longer run, the neos UI should work DIRECTLY with serialized properties instead of the objects.
  *
  * @Flow\Scope("singleton")
  */
@@ -54,6 +57,12 @@ class NodePropertyConverterService
      * @var PropertyMapper
      */
     protected $propertyMapper;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
 
     /**
      * @Flow\Transient
@@ -96,11 +105,11 @@ class NodePropertyConverterService
     /**
      * Get a single property reduced to a simple type (no objects) representation
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @param string $propertyName
      * @return mixed
      */
-    public function getProperty(NodeBasedReadModelInterface $node, $propertyName)
+    public function getProperty(NodeInterface $node, $propertyName)
     {
         if ($propertyName === '_hidden') {
             return $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden();
@@ -110,15 +119,16 @@ class NodePropertyConverterService
 
         // We handle "reference" and "references" differently than other properties; because we need to use another API for querying these references.
         if ($propertyType === 'reference') {
-            $references = $node->findNamedReferencedNodes(PropertyName::fromString($propertyName));
-            if ($references->isEmpty()) {
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $referenceIdentifiers = $this->toNodeIdentifierStrings($nodeAccessor->findReferencedNodes($node, PropertyName::fromString($propertyName)));
+            if (count($referenceIdentifiers) === 0) {
                 return null;
             } else {
-                $nodeIdentifierStrings = $this->toNodeIdentifierStrings($references);
-                return reset($nodeIdentifierStrings);
+                return reset($referenceIdentifiers);
             }
         } elseif ($propertyType === 'references') {
-            $references = $node->findNamedReferencedNodes(PropertyName::fromString($propertyName));
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $references = $nodeAccessor->findReferencedNodes($node, PropertyName::fromString($propertyName));
 
             return $this->toNodeIdentifierStrings($references);
         // Here, the normal property access logic starts.
@@ -152,7 +162,7 @@ class NodePropertyConverterService
         return $convertedValue;
     }
 
-    private function toNodeIdentifierStrings(NodeBasedReadModels $nodes)
+    private function toNodeIdentifierStrings(iterable $nodes)
     {
         $identifiers = [];
         foreach ($nodes as $node) {
@@ -164,10 +174,10 @@ class NodePropertyConverterService
     /**
      * Get all properties reduced to simple type (no objects) representations in an array
      *
-     * @param NodeBasedReadModelInterface $node
+     * @param NodeInterface $node
      * @return array
      */
-    public function getPropertiesArray(NodeBasedReadModelInterface $node)
+    public function getPropertiesArray(NodeInterface $node)
     {
         $properties = [];
         foreach ($node->getNodeType()->getProperties() as $propertyName => $propertyConfiguration) {

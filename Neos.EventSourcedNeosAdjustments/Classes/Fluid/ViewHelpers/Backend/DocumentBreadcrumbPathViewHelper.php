@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Backend;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -27,7 +27,7 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
      */
     protected $escapeOutput = false;
 
-    public function render(NodeBasedReadModelInterface $node)
+    public function render(NodeInterface $node)
     {
         $documentNodes = [];
         $flowQuery = new FlowQuery([$node]);

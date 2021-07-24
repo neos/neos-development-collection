@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\ContentElementWrapping\ContentElementEditableService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -55,7 +55,7 @@ class ContentElementEditableImplementation extends AbstractFusionObject
         $content = $this->getValue();
 
         $node = $this->fusionValue('node');
-        if (!$node instanceof NodeBasedReadModelInterface) {
+        if (!$node instanceof NodeInterface) {
             return $content;
         }
 

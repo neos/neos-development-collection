@@ -1,5 +1,6 @@
 'Neos.Neos:Sites': []
 'Neos.Neos:Node':
+  label: "${Neos.EventSourcedNeosAdjustments.Node.labelForNode(node).properties('title', 'text')}"
   properties:
     _removed: ~
     _creationDateTime: ~

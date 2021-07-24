@@ -13,7 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Intermediary\Domain\NodeBasedReadModelInterface;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -21,16 +22,23 @@ use Neos\Flow\Annotations as Flow;
  */
 class SiteNodeUtility
 {
-    public static function findSiteNode(NodeBasedReadModelInterface $node): NodeBasedReadModelInterface
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    public function findSiteNode(NodeInterface $node): NodeInterface
     {
         $previousNode = null;
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getVisibilityConstraints());
         do {
             if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
                 // the Site node is the one one level underneath the "Sites" node.
                 return $previousNode;
             }
             $previousNode = $node;
-        } while ($node = $node->findParentNode());
+        } while ($node = $nodeAccessor->findParentNode($node));
 
         // no Site node found at rootline
         throw new \RuntimeException('No site node found!');
