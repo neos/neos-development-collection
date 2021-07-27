@@ -2,16 +2,16 @@
 declare(strict_types=1);
 namespace Neos\ContentRepository\Configuration;
 
-use Neos\Flow\Configuration\ConfigurationSource\ConfigurationSourceInterface;
 use Neos\Flow\Configuration\Exception as ConfigurationException;
 use Neos\Flow\Configuration\Exception\ParseErrorException;
+use Neos\Flow\Configuration\Loader\LoaderInterface;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
-class NodeTypeConfigurationSource implements ConfigurationSourceInterface
+class NodeTypesLoader implements LoaderInterface
 {
 
     /**

@@ -11,7 +11,7 @@ namespace Neos\ContentRepository;
  * source code.
  */
 
-use Neos\ContentRepository\Configuration\NodeTypeConfigurationSource;
+use Neos\ContentRepository\Configuration\NodeTypesLoader;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Source\YamlSource;
@@ -59,8 +59,8 @@ class Package extends BasePackage
             }
         });
 
-        $dispatcher->connect(ConfigurationManager::class, 'configurationManagerReady', function (ConfigurationManager $configurationManager) use ($bootstrap) {
-            $configurationManager->registerConfigurationType('NodeTypes', new NodeTypeConfigurationSource(new YamlSource()));
+        $dispatcher->connect(ConfigurationManager::class, 'configurationManagerReady', function (ConfigurationManager $configurationManager) {
+            $configurationManager->registerConfigurationType('NodeTypes', new NodeTypesLoader(new YamlSource()));
         });
 
         if ($bootstrap->getContext()->isProduction()) {
