@@ -6,7 +6,7 @@
     ],
     "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
     "require": {
-        "php": "^7.3",
+        "php": "^7.3 || ^8.0",
         "neos/diff": "~7.1.0",
         "neos/flow": "~7.1.0",
         "neos/media-browser": "~7.1.0",
