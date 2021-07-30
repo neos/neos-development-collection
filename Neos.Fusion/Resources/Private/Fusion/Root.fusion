@@ -232,6 +232,17 @@ prototype(Neos.Fusion:Fragment) < prototype(Neos.Fusion:Component) {
   renderer = ${props.content}
 }
 
+# Comment content and don't output the content 
+# Usage:
+# renderer = afx`
+#    <Neos.Fusion:Comment>
+#       <h1>This content is not rendered</h1>
+#    </Neos.Fusion:Comment>
+# `
+prototype(Neos.Fusion:Comment) < prototype(Neos.Fusion:Component) {
+  renderer = ''
+}
+
 # These are globally applied cache identifiers.
 # If you don't make @cache.entryIdentifiers another prototype (like a Neos.Fusion:DataStructure)
 # they will be rendered as this prototype, which means everything in here is added to ALL cached
