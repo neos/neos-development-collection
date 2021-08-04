@@ -103,7 +103,7 @@
 			<target state="translated">Bu işlem geri alınamaz.</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="translated">İptal et</target></trans-unit>
+			<target state="translated">Cancel</target></trans-unit>
       <trans-unit id="replace" xml:space="preserve">
 				<source>Replace</source>
 			<target state="translated">Değiştir</target></trans-unit>
