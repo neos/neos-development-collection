@@ -1,0 +1,12 @@
+prototype(Neos.Fusion:Memo) {
+  @class = 'Neos\\Fusion\\FusionObjects\\MemoImplementation'
+}
+
+memo.returnsValue = Neos.Fusion:Memo {
+  discriminator = 'simple'
+  value = ${1 + 1}
+}
+memo.returnsPreviousValueForDiscriminator = Neos.Fusion:Memo {
+  discriminator = 'simple'
+  value = 3
+}
