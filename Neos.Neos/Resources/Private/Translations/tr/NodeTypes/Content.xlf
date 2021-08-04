@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Content</source>
-			<target state="translated">İçerik</target></trans-unit>
+			<target state="translated">Content</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
 				<source>Change type</source>
 			<target state="translated">Türü değiştir</target></trans-unit>
