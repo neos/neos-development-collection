@@ -11,6 +11,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\FusionObjects\Result\JoinResult;
 
 /**
  * Fusion object to render a list of items as single concatenated string
@@ -38,7 +39,11 @@ class JoinImplementation extends DataStructureImplementation
         $glue = $this->getGlue();
         $parentResult = parent::evaluate();
         if ($parentResult !== []) {
-            return implode($glue, $parentResult);
+            if (count($parentResult) == 1) {
+                $firstKey = array_key_first($parentResult);
+                return $parentResult[$firstKey];
+            }
+            return new JoinResult($glue, $parentResult);
         }
         return null;
     }

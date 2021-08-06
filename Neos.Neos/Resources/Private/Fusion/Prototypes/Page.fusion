@@ -87,7 +87,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     # Script includes before the closing body tag should go here
     javascripts = Neos.Fusion:Join
     # This processor appends the rendered javascripts Array to the rendered template
-    @process.appendJavaScripts = ${value + this.javascripts}
+    @process.appendJavaScripts = ${'' + value + this.javascripts}
   }
 
   # This enables redirecting to the last visited page after login
