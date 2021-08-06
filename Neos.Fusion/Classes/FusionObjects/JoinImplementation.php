@@ -13,7 +13,6 @@ namespace Neos\Fusion\FusionObjects;
 
 use Neos\Fusion\FusionObjects\Result\JoinResult;
 
-
 /**
  * Fusion object to render a list of items as single concatenated string
  */
