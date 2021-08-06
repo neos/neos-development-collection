@@ -13,7 +13,6 @@ namespace Neos\Fusion\FusionObjects;
 
 use Neos\Fusion\FusionObjects\Result\TagResult;
 
-
 /**
  * A Fusion object for tag based content
  *
