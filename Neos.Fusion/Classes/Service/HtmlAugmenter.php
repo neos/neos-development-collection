@@ -12,6 +12,7 @@ namespace Neos\Fusion\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\FusionObjects\Result\TagResult;
 use Neos\Neos\Exception;
 
 /**
@@ -46,6 +47,11 @@ class HtmlAugmenter
         if ($attributes === []) {
             return $html;
         }
+
+        if ($html instanceof TagResult) {
+            return $html->withMergedAttributes($attributes);
+        }
+
         $rootElement = $this->getHtmlRootElement($html);
         if ($rootElement === null || $this->elementHasAttributes($rootElement, $exclusiveAttributes)) {
             return sprintf('<%s%s>%s</%s>', $fallbackTagName, $this->renderAttributes($attributes), $html, $fallbackTagName);
