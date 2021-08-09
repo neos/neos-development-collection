@@ -421,9 +421,15 @@
       <trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target state="needs-translation">Roles</target></trans-unit>
+      <trans-unit id="users.roles.directlyAssignedPrivileges" xml:space="preserve">
+				<source>Directly assigned privilege</source>
+			<target state="needs-translation">Directly assigned privilege</target></trans-unit>
       <trans-unit id="users.name" xml:space="preserve">
 				<source>Name</source>
 			<target state="needs-translation">Name</target></trans-unit>
+      <trans-unit id="users.roles.fromParentRole" xml:space="preserve">
+				<source>From Parent Role "{role}"</source>
+			<target state="needs-translation">From Parent Role "{role}"</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
 			<target state="needs-translation">Accounts and Roles</target></trans-unit>
@@ -747,6 +753,225 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
       <trans-unit id="userSettings.editUser" xml:space="preserve">
 				<source>Edit User</source>
 			<target state="needs-translation">Edit User</target></trans-unit>
+      <trans-unit id="configuration.anErrorOccurredDuringValidationOfTheConfiguration.title" xml:space="preserve">
+				<source>An error occurred during validation of the configuration.</source>
+			<target state="needs-translation">An error occurred during validation of the configuration.</target></trans-unit>
+      <trans-unit id="configuration.configurationTypeNotFound.body" xml:space="preserve">
+				<source>Configuration type not found.</source>
+			<target state="needs-translation">Configuration type not found.</target></trans-unit>
+      <trans-unit id="sites.sitePackageNotFound.title" xml:space="preserve">
+				<source>Site package not found</source>
+			<target state="needs-translation">Site package not found</target></trans-unit>
+      <trans-unit id="sites.sitePackageNotFound.body" xml:space="preserve">
+				<source>The site package with key "{0}" was not found.</source>
+			<target state="needs-translation">The site package with key "{0}" was not found.</target></trans-unit>
+      <trans-unit id="sites.update.title" xml:space="preserve">
+				<source>Update</source>
+			<target state="needs-translation">Update</target></trans-unit>
+      <trans-unit id="sites.update.body" xml:space="preserve">
+				<source>The site "{0}" has been updated.</source>
+			<target state="needs-translation">The site "{0}" has been updated.</target></trans-unit>
+      <trans-unit id="sites.missingPackage.title" xml:space="preserve">
+				<source>Missing Package</source>
+			<target state="needs-translation">Missing Package</target></trans-unit>
+      <trans-unit id="sites.missingPackage.body" xml:space="preserve">
+				<source>The package "{0}" is required to create new site packages.</source>
+			<target state="needs-translation">The package "{0}" is required to create new site packages.</target></trans-unit>
+      <trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
+				<source>Invalid package key</source>
+			<target state="needs-translation">Invalid package key</target></trans-unit>
+      <trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
+				<source>Site Packages {0} was created.</source>
+			<target state="needs-translation">Site Packages {0} was created.</target></trans-unit>
+      <trans-unit id="sites.sitePackagesWasCreated.body" xml:space="preserve">
+				<source>The package key "{0}" already exists.</source>
+			<target state="needs-translation">The package key "{0}" already exists.</target></trans-unit>
+      <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
+				<source>The site has been imported.</source>
+			<target state="needs-translation">The site has been imported.</target></trans-unit>
+      <trans-unit id="sites.importError.title" xml:space="preserve">
+				<source>Import error</source>
+			<target state="needs-translation">Import error</target></trans-unit>
+      <trans-unit id="sites.importError.body" xml:space="preserve">
+				<source>Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</source>
+			<target state="needs-translation">Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</target></trans-unit>
+      <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
+				<source>Site creation error</source>
+			<target state="needs-translation">Site creation error</target></trans-unit>
+      <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.body" xml:space="preserve">
+				<source>Error: A site with siteNodeName "{0}" already exists</source>
+			<target state="needs-translation">Error: A site with siteNodeName "{0}" already exists</target></trans-unit>
+      <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.title" xml:space="preserve">
+				<source>Site creation error</source>
+			<target state="needs-translation">Site creation error</target></trans-unit>
+      <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.body" xml:space="preserve">
+				<source>Error: The given node type "{0}" was not found</source>
+			<target state="needs-translation">Error: The given node type "{0}" was not found</target></trans-unit>
+      <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title" xml:space="preserve">
+				<source>Site creation error</source>
+			<target state="needs-translation">Site creation error</target></trans-unit>
+      <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body" xml:space="preserve">
+				<source>Error: The given node type "%s" is not based on the superType "{0}"</source>
+			<target state="needs-translation">Error: The given node type "%s" is not based on the superType "{0}"</target></trans-unit>
+      <trans-unit id="sites.successfullyCreatedSite.body" xml:space="preserve">
+				<source>Successfully created site "{0}" with siteNode "{1}", type "{2}" and packageKey "{3}"</source>
+			<target state="needs-translation">Successfully created site "{0}" with siteNode "{1}", type "{2}" and packageKey "{3}"</target></trans-unit>
+      <trans-unit id="sites.siteDeleted.title" xml:space="preserve">
+				<source>Site deleted</source>
+			<target state="needs-translation">Site deleted</target></trans-unit>
+      <trans-unit id="sites.siteDeleted.body" xml:space="preserve">
+				<source>The site "{0}" has been deleted.</source>
+			<target state="needs-translation">The site "{0}" has been deleted.</target></trans-unit>
+      <trans-unit id="sites.siteActivated.title" xml:space="preserve">
+				<source>Site activated</source>
+			<target state="needs-translation">Site activated</target></trans-unit>
+      <trans-unit id="sites.siteActivated.body" xml:space="preserve">
+				<source>The site "{0}" has been activated.</source>
+			<target state="needs-translation">The site "{0}" has been activated.</target></trans-unit>
+      <trans-unit id="sites.siteDeactivated.title" xml:space="preserve">
+				<source>Site deactivated</source>
+			<target state="needs-translation">Site deactivated</target></trans-unit>
+      <trans-unit id="sites.siteDeactivated.body" xml:space="preserve">
+				<source>The site "{0}" has been deactivated.</source>
+			<target state="needs-translation">The site "{0}" has been deactivated.</target></trans-unit>
+      <trans-unit id="sites.domainUpdated.title" xml:space="preserve">
+				<source>Domain updated</source>
+			<target state="needs-translation">Domain updated</target></trans-unit>
+      <trans-unit id="sites.domainUpdated.body" xml:space="preserve">
+				<source>The domain "{0}" has been updated.</source>
+			<target state="needs-translation">The domain "{0}" has been updated.</target></trans-unit>
+      <trans-unit id="sites.domainCreated.title" xml:space="preserve">
+				<source>Domain created</source>
+			<target state="needs-translation">Domain created</target></trans-unit>
+      <trans-unit id="sites.domainCreated.body" xml:space="preserve">
+				<source>'The domain "{0}" has been created.'</source>
+			<target state="needs-translation">'The domain "{0}" has been created.'</target></trans-unit>
+      <trans-unit id="sites.domainDeleted.title" xml:space="preserve">
+				<source>Domain deleted</source>
+			<target state="needs-translation">Domain deleted</target></trans-unit>
+      <trans-unit id="sites.domainDeleted.body" xml:space="preserve">
+				<source>The domain "{0}" has been deleted.</source>
+			<target state="needs-translation">The domain "{0}" has been deleted.</target></trans-unit>
+      <trans-unit id="sites.domainActivated.title" xml:space="preserve">
+				<source>Domain activated</source>
+			<target state="needs-translation">Domain activated</target></trans-unit>
+      <trans-unit id="sites.domainActivated.body" xml:space="preserve">
+				<source>The domain "{0}" has been activated.</source>
+			<target state="needs-translation">The domain "{0}" has been activated.</target></trans-unit>
+      <trans-unit id="sites.domainDeactivated.title" xml:space="preserve">
+				<source>Domain deactivated</source>
+			<target state="needs-translation">Domain deactivated</target></trans-unit>
+      <trans-unit id="sites.domainDeactivated.body" xml:space="preserve">
+				<source>The domain "{0}" has been deactivated.</source>
+			<target state="needs-translation">The domain "{0}" has been deactivated.</target></trans-unit>
+      <trans-unit id="users.userCreated.title" xml:space="preserve">
+				<source>User created</source>
+			<target state="needs-translation">User created</target></trans-unit>
+      <trans-unit id="users.userCreated.body" xml:space="preserve">
+				<source>The user "{0}" has been created.</source>
+			<target state="needs-translation">The user "{0}" has been created.</target></trans-unit>
+      <trans-unit id="users.userCreationDenied.title" xml:space="preserve">
+				<source>User creation denied</source>
+			<target state="needs-translation">User creation denied</target></trans-unit>
+      <trans-unit id="users.userCreationDenied.body" xml:space="preserve">
+				<source>You are not allowed to create a user with roles "{0}".</source>
+			<target state="needs-translation">You are not allowed to create a user with roles "{0}".</target></trans-unit>
+      <trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
+				<source>User editing denied</source>
+			<target state="needs-translation">User editing denied</target></trans-unit>
+      <trans-unit id="users.userEditingDenied.editing.body" xml:space="preserve">
+				<source>Not allowed to edit the user "{0}".</source>
+			<target state="needs-translation">Not allowed to edit the user "{0}".</target></trans-unit>
+      <trans-unit id="users.userUpdated.title" xml:space="preserve">
+				<source>User updated</source>
+			<target state="needs-translation">User updated</target></trans-unit>
+      <trans-unit id="users.userUpdated.body" xml:space="preserve">
+				<source>The user "{0}" has been updated.</source>
+			<target state="needs-translation">The user "{0}" has been updated.</target></trans-unit>
+      <trans-unit id="users.userEditingDenied.deletion.title" xml:space="preserve">
+				<source>User editing denied</source>
+			<target state="needs-translation">User editing denied</target></trans-unit>
+      <trans-unit id="users.userEditingDenied.deletion.body" xml:space="preserve">
+				<source>Not allowed to delete the user "{0}".</source>
+			<target state="needs-translation">Not allowed to delete the user "{0}".</target></trans-unit>
+      <trans-unit id="users.currentUserCannotBeDeleted.title" xml:space="preserve">
+				<source>Current user cannot be deleted</source>
+			<target state="needs-translation">Current user cannot be deleted</target></trans-unit>
+      <trans-unit id="users.currentUserCannotBeDeleted.body" xml:space="preserve">
+				<source>You cannot delete the currently logged in user</source>
+			<target state="needs-translation">You cannot delete the currently logged in user</target></trans-unit>
+      <trans-unit id="users.userDeleted.title" xml:space="preserve">
+				<source>User deleted</source>
+			<target state="needs-translation">User deleted</target></trans-unit>
+      <trans-unit id="users.userDeleted.body" xml:space="preserve">
+				<source>The user "{0}" has been deleted.</source>
+			<target state="needs-translation">The user "{0}" has been deleted.</target></trans-unit>
+      <trans-unit id="users.userAccountEditingDenied.title" xml:space="preserve">
+				<source>User account editing denied</source>
+			<target state="needs-translation">User account editing denied</target></trans-unit>
+      <trans-unit id="users.userAccountEditingDenied.body" xml:space="preserve">
+				<source>Not allowed to edit the account for the user "{0}".</source>
+			<target state="needs-translation">Not allowed to edit the account for the user "{0}".</target></trans-unit>
+      <trans-unit id="users.doNotLockYourselfOut.title" xml:space="preserve">
+				<source>Don\'t lock yourself out</source>
+			<target state="needs-translation">Don\'t lock yourself out</target></trans-unit>
+      <trans-unit id="users.doNotLockYourselfOut.body" xml:space="preserve">
+				<source>With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!</source>
+			<target state="needs-translation">With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!</target></trans-unit>
+      <trans-unit id="users.accountUpdated.title" xml:space="preserve">
+				<source>Account updated</source>
+			<target state="needs-translation">Account updated</target></trans-unit>
+      <trans-unit id="users.accountUpdated.body" xml:space="preserve">
+				<source>The account has been updated.</source>
+			<target state="needs-translation">The account has been updated.</target></trans-unit>
+      <trans-unit id="users.userEmailEditingDenied.title" xml:space="preserve">
+				<source>User email editing denied</source>
+			<target state="needs-translation">User email editing denied</target></trans-unit>
+      <trans-unit id="users.userEmailEditingDenied.body" xml:space="preserve">
+				<source>Not allowed to create an electronic address for the user "{0}".</source>
+			<target state="needs-translation">Not allowed to create an electronic address for the user "{0}".</target></trans-unit>
+      <trans-unit id="users.electronicAddressAdded.title" xml:space="preserve">
+				<source>Electronic address added</source>
+			<target state="needs-translation">Electronic address added</target></trans-unit>
+      <trans-unit id="users.electronicAddressAdded.body" xml:space="preserve">
+				<source>An electronic address "{0}" ({1}) has been added.</source>
+			<target state="needs-translation">An electronic address "{0}" ({1}) has been added.</target></trans-unit>
+      <trans-unit id="users.userEmailDeletionDenied.title" xml:space="preserve">
+				<source>User email deletion denied</source>
+			<target state="needs-translation">User email deletion denied</target></trans-unit>
+      <trans-unit id="users.userEmailDeletionDenied.body" xml:space="preserve">
+				<source>Not allowed to delete an electronic address for the user "{0}".</source>
+			<target state="needs-translation">Not allowed to delete an electronic address for the user "{0}".</target></trans-unit>
+      <trans-unit id="users.electronicAddressRemoved.title" xml:space="preserve">
+				<source>Electronic address removed</source>
+			<target state="needs-translation">Electronic address removed</target></trans-unit>
+      <trans-unit id="users.electronicAddressRemoved.body" xml:space="preserve">
+				<source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
+			<target state="needs-translation">The electronic address "{0}" ({1}) has been deleted for "{2}".</target></trans-unit>
+      <trans-unit id="userSettings.UserUpdated.title" xml:space="preserve">
+				<source>User updated</source>
+			<target state="needs-translation">User updated</target></trans-unit>
+      <trans-unit id="userSettings.UserUpdated.body" xml:space="preserve">
+				<source>Your user has been updated.</source>
+			<target state="needs-translation">Your user has been updated.</target></trans-unit>
+      <trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
+				<source>Password updated</source>
+			<target state="needs-translation">Password updated</target></trans-unit>
+      <trans-unit id="userSettings.passwordUpdated.body" xml:space="preserve">
+				<source>The password has been updated.</source>
+			<target state="needs-translation">The password has been updated.</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddressAdded.title" xml:space="preserve">
+				<source>Edit User</source>
+			<target state="needs-translation">Edit User</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddressAdded.body" xml:space="preserve">
+				<source>An electronic address "{0}" ({1}) has been added.</source>
+			<target state="needs-translation">An electronic address "{0}" ({1}) has been added.</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddressRemoved.title" xml:space="preserve">
+				<source>Electronic address removed</source>
+			<target state="needs-translation">Electronic address removed</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddressRemoved.body" xml:space="preserve">
+				<source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
+			<target state="needs-translation">The electronic address "{0}" ({1}) has been deleted for "{2}".</target></trans-unit>
     </body>
   </file>
 </xliff>

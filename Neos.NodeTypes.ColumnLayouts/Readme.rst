@@ -1,8 +1,13 @@
---------------
-Neos Column Layout NodeTypes
---------------
+----------------------------
+Neos Column-Layout NodeTypes
+----------------------------
 
-This package implements node types for two to four columns in a very simple manner. You probably want to implement your own. This originally was part of the Neos.NodeTypes package.
+This package offers content NodeTypes for two, three and four column layouts in a very simple manner. Please consider this a example implementation - you probably want to implement your own.
+
+Attention
+---------
+
+This package renders a layout div, like `<div class="container columns-25-75">[content]</div>` for a two column layout with a left 25% column and on the right a 75% column. You need to bring your own CSS, which implements the layout.
 
 Contribute
 ----------

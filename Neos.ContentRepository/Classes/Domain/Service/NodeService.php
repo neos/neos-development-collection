@@ -74,7 +74,14 @@ class NodeService implements NodeServiceInterface
         $nodeType = $node->getNodeType();
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
             try {
-                $node->createNode($childNodeName, $childNodeType);
+                $node->createNode(
+                    $childNodeName,
+                    $childNodeType,
+                    Utility::buildAutoCreatedChildNodeIdentifier(
+                        $childNodeName,
+                        $node->getIdentifier()
+                    )
+                );
             } catch (NodeExistsException $exception) {
                 // If you have a node that has been marked as removed, but is needed again
                 // the old node is recovered

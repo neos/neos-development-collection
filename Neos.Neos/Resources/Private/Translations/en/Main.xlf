@@ -829,6 +829,19 @@
 			<trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
 			</trans-unit>
+
+			<trans-unit id="login.wrongCredentials.title" xml:space="preserve">
+				<source>Wrong Credentials</source>
+			</trans-unit>
+			<trans-unit id="login.wrongCredentials.body" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+			</trans-unit>
+			<trans-unit id="login.loggedOut.title" xml:space="preserve">
+				<source>Logged Out</source>
+			</trans-unit>
+			<trans-unit id="login.loggedOut.body" xml:space="preserve">
+				<source>Successfully logged out</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

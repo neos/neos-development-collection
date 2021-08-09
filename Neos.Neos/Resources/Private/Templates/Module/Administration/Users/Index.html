@@ -26,6 +26,7 @@
 						<tr>
 							<th><neos:backend.translate id="users.name" source="Modules" package="Neos.Neos"/></th>
 							<th><neos:backend.translate id="users.accountsAndRoles" source="Modules" package="Neos.Neos"/></th>
+							<th><neos:backend.translate id="users.lastLogin" source="Modules" package="Neos.Neos"/></th>
 							<th>&nbsp;</th>
 						</tr>
 					</thead>
@@ -37,6 +38,11 @@
 									<i class="fas fa-user icon-white"></i>{account.accountIdentifier} <f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
 								</f:for>
 							</td>
+              <td>
+                <f:for each="{user.accounts}" as="account">
+                  <f:format.date format="Y-m-d H:i:s">{account.lastSuccessfulAuthenticationDate}</f:format.date>
+                </f:for>
+              </td>
 							<td class="neos-action">
 								<div class="neos-pull-right">
 									<f:link.action action="show" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.view', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">

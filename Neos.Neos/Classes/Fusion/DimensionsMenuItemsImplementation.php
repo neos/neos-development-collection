@@ -239,6 +239,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         $rootNode = $node->getContext()->getRootNode();
         $nodesOnPath = $node->getContext()->getNodesOnPath($rootNode, $node);
 
-        return count($nodesOnPath) < $node->getDepth();
+        // Because the depth is 0-based, but the nodes returned by getNodesOnPath()
+        // contain the root node, less-than-or-equal must be used.
+        return count($nodesOnPath) <= $node->getDepth();
     }
 }
