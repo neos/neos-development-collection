@@ -1,7 +1,7 @@
 <?php
 namespace Neos\Fusion\FusionObjects\Result;
 
-class TagResult
+class TagResult implements HtmlStringable
 {
 
     /**
@@ -70,6 +70,16 @@ class TagResult
             }
         }
         return new self($this->tagName, $mergedAttributes, $this->content, $this->omitClosingTag, $this->selfClosingTag, $this->allowEmptyAttributes);
+    }
+
+    function toHtmlString()
+    {
+        if (is_iterable($this->attributes)) {
+            $renderedAttributes = self::renderAttributes($this->attributes, $this->allowEmptyAttributes);
+        } else {
+            $renderedAttributes = (string)$this->attributes;
+        }
+        return '<' . $this->tagName . $renderedAttributes . ($this->selfClosingTag ? ' /' : '') . '>' . (!$this->omitClosingTag && !$this->selfClosingTag ? ($this->content instanceof HtmlStringable) ? $this->content->toHtmlString() : htmlspecialchars((string) $this->content). '</' . $this->tagName . '>' : '');
     }
 
     public function __toString()
