@@ -1,8 +1,6 @@
 <?php
 namespace Neos\Fusion\FusionObjects\Result;
 
-use function React\Promise\reduce;
-
 class JoinResult implements HtmlStringable
 {
 
@@ -29,7 +27,7 @@ class JoinResult implements HtmlStringable
         $this->glue = $glue;
     }
 
-    function toHtmlString()
+    public function toHtmlString()
     {
         return implode(
             $this->glue,

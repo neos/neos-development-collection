@@ -72,7 +72,7 @@ class TagResult implements HtmlStringable
         return new self($this->tagName, $mergedAttributes, $this->content, $this->omitClosingTag, $this->selfClosingTag, $this->allowEmptyAttributes);
     }
 
-    function toHtmlString()
+    public function toHtmlString()
     {
         if (is_iterable($this->attributes)) {
             $renderedAttributes = self::renderAttributes($this->attributes, $this->allowEmptyAttributes);

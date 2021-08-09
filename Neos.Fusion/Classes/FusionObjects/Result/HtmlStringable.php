@@ -2,8 +2,7 @@
 
 namespace Neos\Fusion\FusionObjects\Result;
 
-
 interface HtmlStringable
 {
-    function toHtmlString();
+    public function toHtmlString();
 }
