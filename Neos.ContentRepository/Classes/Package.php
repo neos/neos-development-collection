@@ -91,7 +91,7 @@ class Package extends BasePackage
                 $nodeTypeConfigurationFileMonitor->shutdownObject();
             }
         });
-        $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', static function(string $fileMonitorIdentifier) use ($bootstrap) {
+        $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', static function (string $fileMonitorIdentifier) use ($bootstrap) {
             if ($fileMonitorIdentifier === 'ContentRepository_NodeTypesConfiguration') {
                 $bootstrap->getObjectManager()->get(ConfigurationManager::class)->refreshConfiguration();
             }

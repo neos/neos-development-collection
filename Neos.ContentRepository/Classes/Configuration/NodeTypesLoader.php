@@ -41,7 +41,7 @@ class NodeTypesLoader implements LoaderInterface
                 continue;
             }
             $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($nodeTypesDirectory));
-            $allFilesIterator = new \CallbackFilterIterator($iterator, static function(\SplFileInfo $fileInfo) {
+            $allFilesIterator = new \CallbackFilterIterator($iterator, static function (\SplFileInfo $fileInfo) {
                 return $fileInfo->isFile() && $fileInfo->getExtension() === 'yaml';
             });
             /** @var \SplFileInfo $fileInfo */
