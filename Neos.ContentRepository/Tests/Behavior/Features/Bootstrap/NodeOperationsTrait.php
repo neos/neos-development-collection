@@ -82,7 +82,7 @@ trait NodeOperationsTrait
      * @Given /^I have the following nodes:$/
      * @When /^I create the following nodes:$/
      */
-    public function iHaveTheFollowingNodes($table)
+    public function     iHaveTheFollowingNodes($table)
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
@@ -565,6 +565,8 @@ trait NodeOperationsTrait
         } else {
             $node = $this->iShouldHaveOneNode();
             $referenceNode = $node->getContext()->getNode($referenceNodePath);
+            Assert::assertNotNull($referenceNode, 'The target node at path "' . $referenceNodePath . '" was not found.');
+
             switch ($action) {
                 case 'before':
                     $node->moveBefore($referenceNode);
@@ -948,6 +950,20 @@ trait NodeOperationsTrait
 
         $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
         $this->resetNodeInstances();
+    }
+
+    /**
+     * @Then the node should be connected to the root
+     */
+    public function theNodeShouldBeConnectedToTheRoot()
+    {
+        $node = $this->iShouldHaveOneNode();
+
+        while ($node->getParentPath() !== '/') {
+            $parent = $node->getParent();
+            Assert::assertNotNull($parent, 'Parent node of "' . $node->getContextPath() . '" was not found.');
+            $node = $parent;
+        }
     }
 
     /**

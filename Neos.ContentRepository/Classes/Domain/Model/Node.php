@@ -183,7 +183,22 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
             throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath(), $path), 1414436551);
         }
 
-        $changedNodePathsCollection = $this->setPathInternal($path, !$checkForExistence);
+
+        if ($this->getNodeType()->isAggregate()) {
+            $changedNodePathsCollection = $this->setPathInternalForAggregate($path, !$checkForExistence);
+            /*foreach ($changedNodePathsCollection as $x) {
+                \Neos\Flow\var_dump([
+                    'a' => $x[0]->getContextPath(),
+                    '1' => $x[1],
+                    '2' => $x[2],
+                    '3' => $x[3],
+                ]);
+            }*/
+
+        } else {
+            $changedNodePathsCollection = $this->setPathInternal($path, !$checkForExistence);
+        }
+
         $this->nodeDataRepository->persistEntities();
         array_walk($changedNodePathsCollection, function ($changedNodePathInformation) {
             call_user_func_array([
@@ -222,10 +237,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     protected function setPathInternal(string $destinationPath, bool $recursiveCall): array
     {
-        if ($this->getNodeType()->isAggregate()) {
-            return $this->setPathInternalForAggregate($destinationPath, $recursiveCall);
-        }
-
         $originalPath = $this->nodeData->getPath();
 
         /** @var Node $childNode */
@@ -250,7 +261,35 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     protected function setPathInternalForAggregate(string $destinationPath, bool $recursiveCall): array
     {
         $originalPath = $this->nodeData->getPath();
+
+        // TODO: WE MIGHT NEED TO ITERATE OVER ALL PRESETS... that's a hard one. Otherwise we do not take fallbacks properly into account.
+        // $this->getOtherNodeVariants()
+
+        $directNodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, false);
         $nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, true);
+
+        foreach ($directNodeDataVariants as $directNodeDataVariant) {
+
+            // TODO check whether the parent of the destination path exists in the given dimension
+
+            /* @var $directNodeDataVariant NodeData */
+            \Neos\Flow\var_dump($directNodeDataVariant->getPath());
+            $this->nodeDataRepository->findOneByPath(NodePaths::getParentPath($directNodeDataVariant->getPath(), ) )
+            \Neos\Flow\var_dump($directNodeDataVariant->getDimensionValues());
+
+            var_dump($directNodeDataVariant->getPath());
+        }
+
+        foreach ($nodeDataVariantsAndChildren as $x) {
+            if (array_search($x, $directNodeDataVariants) !== false) {
+
+                \Neos\Flow\var_dump($x->getPath(),"FOUND");
+            } else {
+                \Neos\Flow\var_dump($x->getPath(), "NOT FOUND");
+            }
+        }
+
+        // IF PARENT
 
         $changedNodePathsCollection = array_map(function ($nodeData) use ($destinationPath, $originalPath, $recursiveCall) {
             return $this->moveNodeData($nodeData, $originalPath, $destinationPath, $recursiveCall);
@@ -1272,10 +1311,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     public function getNumberOfChildNodes($nodeTypeFilter = null): int
     {
-        $nodes = $this->context->getFirstLevelNodeCache()->getChildNodesByPathAndNodeTypeFilter($this->getPath(), $nodeTypeFilter);
-        if ($nodes !== false) {
-            return count($nodes);
-        }
         return $this->nodeData->getNumberOfChildNodes($nodeTypeFilter, $this->context->getWorkspace(), $this->context->getDimensions());
     }
 
