@@ -38,4 +38,19 @@ class FirstLevelNodeCacheTest extends UnitTestCase
         self::assertNull($valueForNodeIdA);
         self::assertFalse($valueForNodeIdB);
     }
+
+    /**
+     * @test
+     */
+    public function resetCacheWorksProperly()
+    {
+        $nodeIdA = 'node-id-a';
+
+        $mockCache = new FirstLevelNodeCache();
+
+        $mockCache->setByIdentifier($nodeIdA, null);
+        self::assertNull($mockCache->getByIdentifier($nodeIdA));
+        $mockCache->removeNodeFromIdentifierCache($nodeIdA);
+        self::assertFalse($mockCache->getByIdentifier($nodeIdA));
+    }
 }

@@ -105,6 +105,34 @@ class FirstLevelNodeCache
     }
 
     /**
+     * Removes the Node with identifier $identifier from the cache.
+     * This is needed in extremely rare cases: When loading
+     * Nodes in the Security Framework, we need to ensure we do
+     * not pollute the Node cache, as otherwise these nodes will be
+     * found lateron when the actual queries are made.
+     *
+     * @param string $identifier
+     */
+    public function removeNodeFromIdentifierCache($identifier)
+    {
+        unset($this->nodesByIdentifier[$identifier]);
+    }
+
+    /**
+     * Removes the Node Path $nodePath from the cache.
+     * This is needed in extremely rare cases: When loading
+     * Nodes in the Security Framework, we need to ensure we do
+     * not pollute the Node cache, as otherwise these nodes will be
+     * found lateron when the actual queries are made.
+     *
+     * @param string $nodePath
+     */
+    public function removeNodeFromPathCache($nodePath)
+    {
+        unset($this->nodesByPath[$nodePath]);
+    }
+
+    /**
      * Returns the cached child nodes for the given path and node type filter.
      *
      * @param string $path
