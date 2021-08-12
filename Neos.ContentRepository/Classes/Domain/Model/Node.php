@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Exception\NodeMethodIsUnsupported;
@@ -98,6 +99,12 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @var NodeServiceInterface
      */
     protected $nodeService;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionCombinator
+     */
+    protected $contentDimensionCombinator;
 
     /**
      * @param NodeData $nodeData
@@ -260,10 +267,90 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     protected function setPathInternalForAggregate(string $destinationPath, bool $recursiveCall): array
     {
+        // This method is NOT called recursively, but just ONCE for the root of the moved node tree.
+        // we need to figure out what other NodeData (in other dimensions) we can move. We want to move ALL POSSIBLE dimensions,
+        // but WITHOUT creating disconnected nodes due to the move.
+
+        // A disconnected node exists if, for EVERY allowed Dimension Combination,
+        // the node had an existing parent before the move, but looses the parent after the move.
+        //
+        // Thus, to prepare, we load two data structures:
+        // - all nodeData objects which exist for this node (i.e. which materialized variants exist).
+        // - this to-be-moved node in all allowed Dimension Presets
+        //
+        // Then, we need to figure for every NodeData object individually, whether it it had a parent right now,
+        // and will loose its parent in ANY of its associated Presets. If this is the case, we cannot move the NodeData
+        // object and its children.
+        // If everything works out, we can move this NodeData object and all child nodes of presets this NodeData object is referenced from.
+
+
         $originalPath = $this->nodeData->getPath();
 
+        $allowedDimensions = $this->contentDimensionCombinator->getAllAllowedCombinations();
+        $nodesInDimensions = [];
+        foreach ($allowedDimensions as $dimensions) {
+            $contextInDimension = $this->contextFactory->create([
+                'workspaceName' => $this->context->getWorkspaceName(),
+                'dimensions' => $dimensions,
+                'invisibleContentShown' => true,
+                'inaccessibleContentShown' => true,
+                'removedContentShown' => true
+            ]);
+            $n = $contextInDimension->getNodeByIdentifier($this->getIdentifier());
+            if ($n !== null) {
+                $nodesInDimensions[] = $n;
+            }
+        }
+
+        $nodeDataVariants = $this->nodeDataRepository->findByIdentifierWithoutReduce($this->getIdentifier(), $this->context->getWorkspace());
+        foreach ($nodeDataVariants as $nodeDataVariant) {
+            assert($nodeDataVariant instanceof NodeData);
+
+            $canMoveNodeData = true;
+            $nodesMatchingNodeData = [];
+
+            foreach ($nodesInDimensions as $nodeInDimension) {
+                assert($nodeInDimension instanceof NodeInterface);
+                if ($nodeInDimension->getNodeData() === $nodeDataVariant) {
+                    $nodesMatchingNodeData[] = $nodeInDimension;
+                    // the found node is backed by the current NodeData object.
+                    // Now, we can check whether the node has a parent right now, and would loose its parent if we move it to the
+                    // new location.
+                    $nodeHasParentBeforeMove = ($nodeInDimension->getParent() !== null);
+                    $destinationParentPath = NodePaths::getParentPath($destinationPath);
+                    $nodeHasParentAfterMove = ($nodeInDimension->getContext()->getNode($destinationParentPath) !== null);
+
+                    if ($nodeHasParentBeforeMove && !$nodeHasParentAfterMove) {
+                        // moving $nodeDataVariant would lead to a disconnected node in the dimension specified by $nodeInDimension->getContext()->getDimensions()
+                        // thus, we cannot $nodeDataVariant at all.
+                        continue 2;
+                        $canMoveNodeData = false;
+                    }
+                }
+            }
+
+            if ($canMoveNodeData) {
+                // moving $nodeData to the new location would not lead to a hole, so we can do that.
+
+                // TODO: HOW TO FIGURE OUT WHICH CHILDREN TO MOVE? -> Presets. Somehow hard because it is recursive....
+            }
+
+        }
+
+
+        //   en -> de
+        //  fr -> de
+        //
+        //  |-- sites (de, fr) <-- en is shinethrough to de
+        //  . |-- cr  (de, fr) <-- en is shinethrough to de
+        //  . | |-- subpage (de, en, fr) <-- fr, en is shinethrough to de
+        //  . | | |-- content1 (de) <-- shines through in en, fr as well.
+        //  . |-- other  (en, fr)
         // TODO: WE MIGHT NEED TO ITERATE OVER ALL PRESETS... that's a hard one. Otherwise we do not take fallbacks properly into account.
-        // $this->getOtherNodeVariants()
+        foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $dimensions) {
+
+            $context->get
+        }
 
         $directNodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, false);
         $nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, true);
@@ -274,7 +361,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
 
             /* @var $directNodeDataVariant NodeData */
             \Neos\Flow\var_dump($directNodeDataVariant->getPath());
-            $this->nodeDataRepository->findOneByPath(NodePaths::getParentPath($directNodeDataVariant->getPath(), ) )
+            //$this->nodeDataRepository->findOneByPath(NodePaths::getParentPath($directNodeDataVariant->getPath(), ) )
             \Neos\Flow\var_dump($directNodeDataVariant->getDimensionValues());
 
             var_dump($directNodeDataVariant->getPath());

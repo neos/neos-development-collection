@@ -2,10 +2,16 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
 
   Let's say we have the following Node structure in the beginning:
 
-  |-- sites (de, en)
-  . |-- cr  (de, en)
-  . | |-- subpage (de, en)
-  . |-- other  (de)
+  en -> de
+  fr -> de
+
+  |-- sites (de, fr) <-- en is shinethrough to de
+  . |-- cr  (de, fr) <-- en is shinethrough to de
+  . | |-- subpage (de, en, fr) <-- fr, en is shinethrough to de
+  . | | |-- content1 (de) <-- shines through in en, fr as well.
+  . |-- other  (en, fr)
+
+  !!!! MOVE leads to copy. ---> content1. Dangerous.
 
   Now, the user moves /site/cr/subpage underneath /site/other/ in the user workspace.
 
@@ -27,15 +33,32 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
   |-- sites (de, en)
   . |-- cr  (de, en)
   .   |-- subpage (en)
+  .     |-- content2 (en)
   . |-- other  (de)
   .   |-- subpage (de)   user-demo
-
+  .     |-- content1 (de)
 
   Now, when moving "subpage" underneath /site (which exists in "de" AND "en"), then we would expect BOTH variants again be moved:
   |-- site (de, en)
   . |-- subpage (de, en)   user-demo
   . |-- cr  (de, en)
   . |-- other  (de)
+
+  ## FALLBACKS
+
+  The problem gets more difficult when DIMENSION FALLBACKS are active: Because we only know based on a fallback
+  whether a node becomes disconnected or not.
+
+  For an example, let's say "en" falls back to "de" in the example above; then the initial structure looks as follows:
+
+  |-- sites (de, en)
+  . |-- cr  (de, en)
+  . | |-- subpage (de, en)
+  . |-- other  (de) <-- also visible in "en" now (because of fallbacks).
+
+  In this case, it is ALLOWED to move "subpage" underneath "other" because it is still fully reachable in all dimension presets.
+
+
 
   Background:
     Given I have the following nodes:
@@ -64,14 +87,15 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
     And the node should be connected to the root
 
     # OLD BEHAVIOR: a disconnected node (underneath a parent node)
-    And I get a node by path "/sites/other/subpage" with the following context:
+    #And I get a node by path "/sites/other/subpage" with the following context:
+    #  | Workspace  | Language |
+    #  | user-admin | en       |
+    #Then I should have one node
+    #And the node should be connected to the root
+
+
+    And I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | en       |
     Then I should have one node
     And the node should be connected to the root
-
-
-    #And I get a node by path "/sites/cr/subpage" with the following context:
-    #  | Workspace  | Language |
-    #  | user-admin | en       |
-    #Then I should have one node
