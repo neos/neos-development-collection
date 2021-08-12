@@ -82,7 +82,7 @@ trait NodeOperationsTrait
      * @Given /^I have the following nodes:$/
      * @When /^I create the following nodes:$/
      */
-    public function     iHaveTheFollowingNodes($table)
+    public function iHaveTheFollowingNodes($table)
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);

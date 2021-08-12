@@ -110,7 +110,6 @@ class NodeMoveIntegrityCheckService
             foreach ($erroredContexts as $v) {
                 assert($v instanceof Context);
                 //$v->getDimensions();
-
             }
 
             sprintf('Node %s can not be moved.
@@ -122,7 +121,6 @@ class NodeMoveIntegrityCheckService
 
 
         if (count($erroredContexts) > 0) {
-
         }
     }
 

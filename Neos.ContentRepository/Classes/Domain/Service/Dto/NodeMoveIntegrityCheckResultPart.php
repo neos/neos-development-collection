@@ -1,6 +1,7 @@
 <?php
 
 namespace Neos\ContentRepository\Domain\Service\Dto;
+
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -11,11 +12,8 @@ namespace Neos\ContentRepository\Domain\Service\Dto;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Domain\Service\Context;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 
 /**
