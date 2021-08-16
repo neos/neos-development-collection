@@ -107,7 +107,6 @@ class Context
     protected $targetDimensions = [];
 
     /**
-     * @Flow\IgnoreValidation
      * @var FirstLevelNodeCache
      */
     protected $firstLevelNodeCache;
