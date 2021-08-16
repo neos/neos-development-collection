@@ -4,7 +4,7 @@
   "license": ["GPL-3.0-or-later"],
   "type": "neos-package-collection",
   "require": {
-    "neos/flow-development-collection": "7.1.x-dev",
+    "neos/flow-development-collection": "dev-master",
     "neos/neos-setup": "^1.0"
   },
   "replace": {
