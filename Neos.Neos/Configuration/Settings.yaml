@@ -280,7 +280,7 @@ Neos:
           position: 100
 
       backendLoginForm:
-        backgroundImage: 'resource://Neos.Neos/Public/Images/Login/Wallpaper.jpg'
+        backgroundImage: 'resource://Neos.Neos/Public/Images/Login/Wallpaper.webp'
         stylesheets:
           'Neos.Neos:DefaultStyles': 'resource://Neos.Neos/Public/Styles/Login.css'
 
