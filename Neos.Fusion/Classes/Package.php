@@ -47,7 +47,8 @@ class Package extends BasePackage
                         }
 
                         $fusionPaths = [
-                            $package->getResourcesPath() . 'Private/Fusion'
+                            $package->getResourcesPath() . 'Private/Fusion',
+                            $package->getPackagePath() . 'NodeTypes'
                         ];
                         foreach ($fusionPaths as $fusionPath) {
                             if (is_dir($fusionPath)) {
