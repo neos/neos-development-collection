@@ -26,7 +26,7 @@ body {
 
   @include font;
 
-  &[style] {
+  &.neos--bg {
     .neos-login-box {
       padding: $unit;
       position: relative;
@@ -309,42 +309,32 @@ body {
 }
 
 @media (max-width: 1400px) {
-  .neos {
-    &[style] {
-      .neos-login-footer {
-        width: 70%;
-      }
-    }
+  .neos.neos--bg .neos-login-footer {
+    width: 70%;
   }
 }
 
 @media (max-width: 1000px) {
-  .neos {
-    &[style] {
-      .neos-login-footer {
-        width: 90%;
-      }
-    }
+  .neos.neos--bg .neos-login-footer {
+    width: 90%;
   }
 }
 
 @media (max-width: 480px) {
-  .neos {
-    &[style] {
-      .neos-login-box {
-        width: 100%;
-        padding: $unit/2;
-      }
-
-      .neos-login-footer {
-        width: 100%;
-      }
+  .neos.neos--bg {
+    .neos-login-box {
+      width: 100%;
+      padding: $unit/2;
     }
 
-    input[type="text"],
-    input[type="password"] {
-      min-width: 0;
+    .neos-login-footer {
+      width: 100%;
     }
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    min-width: 0;
   }
 }
 

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Login.css', package: 'Neos.Neos')}"/>
   <link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Welcome.css', package: 'Neos.Neos')}"/>
   <style type="text/css">
+    body.neos--bg
     .neos-login-box:before {
       background-image: url({f:uri.resource(path: 'Images/Login/Wallpaper.webp', package: 'Neos.Neos')});
     }
@@ -14,8 +15,7 @@
 </f:section>
 
 <f:section name="body">
-  <body class="neos"
-        style="background-image:url({f:uri.resource(path: 'Images/Login/Wallpaper.webp', package:'Neos.Neos')});">
+  <body class="neos neos--bg">
   <div class="neos-modal-centered">
     <main class="neos-login-main">
       <div class="neos-login-box background-image-active">

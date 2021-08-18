@@ -51,12 +51,13 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
                 <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/safari-pinned-tab.svg')} rel="mask-icon" color="#00adee" />
 
                 <style type="text/css" @if.set={props.backgroundImageSource}>{'
+                    body.neos--bg,
                     .neos-login-box:before {
                         background-image: url(' + props.backgroundImageSource + ');
                     }
                 '}</style>
             </head>
-            <body class="neos" style={'background-image:url(' + props.backgroundImageSource + ')'} style.@if.set={props.backgroundImageSource}>
+            <body class={["neos", props.backgroundImageSource ? 'neos--bg' : null]}>
                 <div class="neos-modal-centered">
                     <main class="neos-login-main">
                         <div class={['neos-login-box', props.backgroundImageSource ? 'background-image-active' : null]}>
