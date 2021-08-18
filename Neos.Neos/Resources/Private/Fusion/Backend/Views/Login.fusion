@@ -29,6 +29,8 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
           }
         }
       }
+      backgroundImageSourceIsWebp = ${this.backgroundImageSource ? String.endsWith(this.backgroundImageSource, '.webp') : null}
+      backgroundImageSourceCSS = ${this.backgroundImageSource ? 'body.neos,.neos-login-box:before{background-image:url(' + this.backgroundImageSource + ')}' : null}
 
       headerComment = ${Configuration.setting('Neos.Neos.headerComment')}
 
@@ -50,12 +52,16 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
                 <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/favicon-32x32.png')} sizes="32x32" rel="icon" type="image/png" />
                 <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/safari-pinned-tab.svg')} rel="mask-icon" color="#00adee" />
 
-                <style type="text/css" @if.set={props.backgroundImageSource}>{'
-                    body.neos--bg,
-                    .neos-login-box:before {
-                        background-image: url(' + props.backgroundImageSource + ');
-                    }
-                '}</style>
+                <script @if.set={props.backgroundImageSourceIsWebp}>
+                    {"(function(){var webp = false, elem = document.createElement('canvas'); if (!!(elem.getContext && elem.getContext('2d'))) { webp = elem.toDataURL('image/webp').indexOf('data:image/webp') == 0 } document.documentElement.classList.add(webp ? 'webp' :'no-webp')})()"}
+                </script>
+                <style type="text/css" @if.set={props.backgroundImageSource && !props.backgroundImageSourceIsWebp}>
+                    {'body.neos--bg,.neos-login-box:before{background-image:url(' + props.backgroundImageSource + ')}'}
+                </style>
+                <style type="text/css" @if.set={props.backgroundImageSource && props.backgroundImageSourceIsWebp}>
+                    {'.webp body.neos--bg,.webp .neos-login-box:before {background-image: url(' + props.backgroundImageSource + ')}'}
+                    {'.no-webp body.neos--bg,.no-webp .neos-login-box:before {background-image: url(' + String.substr(props.backgroundImageSource, 0, String.length(props.backgroundImageSource) - 4) + 'jpg)}'}
+                </style>
             </head>
             <body class={["neos", props.backgroundImageSource ? 'neos--bg' : null]}>
                 <div class="neos-modal-centered">
