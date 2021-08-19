@@ -403,6 +403,8 @@ class WorkspacesController extends AbstractModuleController
                 $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenPublished', [], null, null, 'Modules', 'Neos.Neos'));
             break;
             case 'discard':
+                // not using $this->publishingService->discardNodes($nodes); here to
+                // actually use discardNode() from the Neos.Neos PublishingService
                 foreach ($nodes as $node) {
                     $this->publishingService->discardNode($node);
                 }
