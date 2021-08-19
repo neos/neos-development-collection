@@ -30,7 +30,6 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
         }
       }
       backgroundImageSourceIsWebp = ${this.backgroundImageSource ? String.endsWith(this.backgroundImageSource, '.webp') : null}
-      backgroundImageSourceCSS = ${this.backgroundImageSource ? 'body.neos,.neos-login-box:before{background-image:url(' + this.backgroundImageSource + ')}' : null}
 
       headerComment = ${Configuration.setting('Neos.Neos.headerComment')}
 
