@@ -44,11 +44,11 @@ class FirstLevelNodeCache
      * Otherwise false is returned.
      *
      * @param string $path
-     * @return NodeInterface
+     * @return NodeInterface|boolean
      */
     public function getByPath($path)
     {
-        if (isset($this->nodesByPath[$path])) {
+        if (array_key_exists($path, $this->nodesByPath)) {
             return $this->nodesByPath[$path];
         }
 
@@ -81,7 +81,7 @@ class FirstLevelNodeCache
      */
     public function getByIdentifier($identifier)
     {
-        if (isset($this->nodesByIdentifier[$identifier])) {
+        if (array_key_exists($identifier, $this->nodesByIdentifier)) {
             return $this->nodesByIdentifier[$identifier];
         }
 
@@ -102,6 +102,34 @@ class FirstLevelNodeCache
         if ($node !== null) {
             $this->nodesByPath[$node->getPath()] = $node;
         }
+    }
+
+    /**
+     * Removes the Node with identifier $identifier from the cache.
+     * This is needed in extremely rare cases: When loading
+     * Nodes in the Security Framework, we need to ensure we do
+     * not pollute the Node cache, as otherwise these nodes will be
+     * found lateron when the actual queries are made.
+     *
+     * @param string $identifier
+     */
+    public function removeNodeFromIdentifierCache($identifier)
+    {
+        unset($this->nodesByIdentifier[$identifier]);
+    }
+
+    /**
+     * Removes the Node Path $nodePath from the cache.
+     * This is needed in extremely rare cases: When loading
+     * Nodes in the Security Framework, we need to ensure we do
+     * not pollute the Node cache, as otherwise these nodes will be
+     * found lateron when the actual queries are made.
+     *
+     * @param string $nodePath
+     */
+    public function removeNodeFromPathCache($nodePath)
+    {
+        unset($this->nodesByPath[$nodePath]);
     }
 
     /**
