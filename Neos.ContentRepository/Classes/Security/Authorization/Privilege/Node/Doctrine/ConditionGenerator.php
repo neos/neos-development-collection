@@ -130,7 +130,11 @@ class ConditionGenerator extends EntityConditionGenerator
         $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
             $node = $context->getNodeByIdentifier($nodeIdentifier);
         });
-        $context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, null);
+        // we need to ensure that $node is never stored in the node cache
+        $context->getFirstLevelNodeCache()->removeNodeFromIdentifierCache($nodeIdentifier);
+        if ($node !== null) {
+            $context->getFirstLevelNodeCache()->removeNodeFromPathCache($node->getPath());
+        }
         return $node;
     }
 }
