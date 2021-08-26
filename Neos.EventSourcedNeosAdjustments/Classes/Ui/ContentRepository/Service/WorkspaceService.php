@@ -72,7 +72,7 @@ class WorkspaceService
             if ($documentNode) {
                 return [
                     'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
-                    'documentContextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri()
+                    'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()
                 ];
             }
         }, $publishableNodes);
