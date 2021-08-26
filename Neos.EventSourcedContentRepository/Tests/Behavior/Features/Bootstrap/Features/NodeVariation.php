@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +13,6 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
@@ -40,7 +40,7 @@ trait NodeVariation
     /**
      * @Given /^the command CreateNodeVariant is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandCreateNodeVariantIsExecutedWithPayload(TableNode $payloadTable)
     {
@@ -66,7 +66,7 @@ trait NodeVariation
     /**
      * @Given /^the command CreateNodeVariant is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandCreateNodeVariantIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
     {
@@ -80,7 +80,7 @@ trait NodeVariation
     /**
      * @Given /^the event NodeGeneralizationVariantWasCreated was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventNodeGeneralizationVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
@@ -102,7 +102,7 @@ trait NodeVariation
     /**
      * @Given /^the event NodeSpecializationVariantWasCreated was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventNodeSpecializationVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
@@ -124,7 +124,7 @@ trait NodeVariation
     /**
      * @Given /^the event NodePeerVariantWasCreated was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventNodePeerVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {

@@ -24,10 +24,14 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
+use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 
 /**
  * The node factory for mapping database rows to nodes and node aggregates
@@ -36,12 +40,86 @@ final class NodeFactory
 {
     private NodeTypeManager $nodeTypeManager;
 
-    public function __construct(NodeTypeManager $nodeTypeManager)
-    {
+    private PropertyConverter $propertyConverter;
+
+    public function __construct(
+        NodeTypeManager $nodeTypeManager,
+        PropertyConverter $propertyConverter
+    ) {
         $this->nodeTypeManager = $nodeTypeManager;
+        $this->propertyConverter = $propertyConverter;
     }
 
-    public function mapNodeRowsToNodeAggregate(array $nodeRows): ?NodeAggregate
+    public function mapNodeRowToNode(
+        array $nodeRow,
+        VisibilityConstraints $visibilityConstraints,
+        ?DimensionSpacePoint $dimensionSpacePoint = null,
+        ?ContentStreamIdentifier $contentStreamIdentifier = null
+    ): NodeInterface {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
+        $nodeClassName = $nodeType->getConfiguration('class') ?: \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node::class;
+        if (!class_exists($nodeClassName)) {
+            throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
+        }
+        if (!in_array(ContentProjection\NodeInterface::class, class_implements($nodeClassName))) {
+            if (in_array(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class, class_implements($nodeClassName))) {
+                throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassImplementsTheDeprecatedLegacyInterface($nodeClassName);
+            }
+            throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotImplementTheRequiredInterface($nodeClassName);
+        }
+        return new $nodeClassName(
+            $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
+            NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
+            OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
+            NodeTypeName::fromString($nodeRow['nodetypename']),
+            $nodeType,
+            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
+            new PropertyCollection(SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true)), $this->propertyConverter),
+            NodeAggregateClassification::fromString($nodeRow['classification']),
+            $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
+            $visibilityConstraints
+        );
+    }
+
+    public function mapNodeRowsToNodes(
+        array $nodeRows,
+        VisibilityConstraints $visibilityConstraints,
+        ContentStreamIdentifier $contentStreamIdentifier = null
+    ): Nodes {
+        $nodes = [];
+        foreach ($nodeRows as $nodeRow) {
+            $nodes[] = $this->mapNodeRowToNode(
+                $nodeRow,
+                $visibilityConstraints,
+                null,
+                $contentStreamIdentifier
+            );
+        }
+
+        return Nodes::fromArray($nodes);
+    }
+
+    public function mapNodeRowsToSubtree(
+        array $nodeRows,
+        VisibilityConstraints $visibilityConstraints
+    ): Subtree {
+        $subtreesByParentNodeAggregateIdentifier = [];
+        foreach ($nodeRows as $nodeRow) {
+            $node = $this->mapNodeRowToNode(
+                $nodeRow,
+                $visibilityConstraints
+            );
+            $subtreesByParentNodeAggregateIdentifier[$nodeRow['parentnodeaggregateidentifier']][] = new Subtree(
+                $nodeRow['level'],
+                $node,
+                $subtreesByParentNodeAggregateIdentifier[$nodeRow['nodeaggregateidentifier']] ?? []
+            );
+        }
+
+        return $subtreesByParentNodeAggregateIdentifier['ROOT'][0];
+    }
+
+    public function mapNodeRowsToNodeAggregate(array $nodeRows, VisibilityConstraints $visibilityConstraints): ?NodeAggregate
     {
         if (empty($nodeRows)) {
             return null;
@@ -64,8 +142,13 @@ final class NodeFactory
         /** @var DimensionSpacePoint[] $disabledDimensionSpacePoints */
         $disabledDimensionSpacePoints = [];
         foreach ($nodeRows as $nodeRow) {
-            $node = $this->mapNodeRowToNode($nodeRow);
             $contentStreamIdentifier = $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
+            $node = $this->mapNodeRowToNode(
+                $nodeRow,
+                $visibilityConstraints,
+                null,
+                $contentStreamIdentifier
+            );
             $nodeAggregateIdentifier = $nodeAggregateIdentifier ?: NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
             $nodeAggregateClassification = $nodeAggregateClassification ?: NodeAggregateClassification::fromString($nodeRow['classification']);
             $nodeTypeName = $nodeTypeName ?: NodeTypeName::fromString($nodeRow['nodetypename']);
@@ -107,7 +190,7 @@ final class NodeFactory
      * @param array $nodeRows
      * @return array|NodeAggregate[]
      */
-    public function mapNodeRowsToNodeAggregates(array $nodeRows): array
+    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): array
     {
         $nodeAggregates = [];
         if (empty($nodeRows)) {
@@ -139,8 +222,13 @@ final class NodeFactory
         $disabledDimensionSpacePoints = [];
         foreach ($nodeRows as $nodeRow) {
             $key = $nodeRow['nodeaggregateidentifier'];
-            $node = $this->mapNodeRowToNode($nodeRow);
             $contentStreamIdentifier = $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
+            $node = $this->mapNodeRowToNode(
+                $nodeRow,
+                $visibilityConstraints,
+                null,
+                $contentStreamIdentifier
+            );
             $nodeAggregateIdentifiers[$key] = NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
             if (!isset($nodeAggregateClassifications[$key])) {
                 $nodeAggregateClassifications[$key] = NodeAggregateClassification::fromString($nodeRow['classification']);
@@ -187,44 +275,5 @@ final class NodeFactory
         }
 
         return $nodeAggregates;
-    }
-
-    public function mapNodeRowToNode(array $nodeRow, ContentStreamIdentifier $contentStreamIdentifier = null): NodeInterface
-    {
-        return new Node(
-            $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
-            NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
-            OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
-            NodeTypeName::fromString($nodeRow['nodetypename']),
-            $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']),
-            !empty($nodeRow['nodename']) ? NodeName::fromString($nodeRow['nodename']) : null,
-            SerializedPropertyValues::fromJsonString($nodeRow['properties']),
-            NodeAggregateClassification::fromString($nodeRow['classification'])
-        );
-    }
-
-    public function mapNodeRowsToNodes(array $nodeRows, ContentStreamIdentifier $contentStreamIdentifier = null): Nodes
-    {
-        $nodes = [];
-        foreach ($nodeRows as $nodeRow) {
-            $nodes[] = $this->mapNodeRowToNode($nodeRow, $contentStreamIdentifier);
-        }
-
-        return Nodes::fromArray($nodes);
-    }
-
-    public function mapNodeRowsToSubtree(array $nodeRows): Subtree
-    {
-        $subtreesByParentNodeAggregateIdentifier = [];
-        foreach ($nodeRows as $nodeRow) {
-            $node = $this->mapNodeRowToNode($nodeRow);
-            $subtreesByParentNodeAggregateIdentifier[$nodeRow['parentnodeaggregateidentifier']][] = new Subtree(
-                $nodeRow['level'],
-                $node,
-                $subtreesByParentNodeAggregateIdentifier[$nodeRow['nodeaggregateidentifier']] ?? []
-            );
-        }
-
-        return $subtreesByParentNodeAggregateIdentifier['ROOT'][0];
     }
 }

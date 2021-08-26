@@ -82,7 +82,9 @@ final class ContentGraph implements ContentGraphInterface
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @return NodeInterface|null
-     * @throws DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findNodeByIdentifiers(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -103,9 +105,13 @@ final class ContentGraph implements ContentGraphInterface
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier
             ]
-        )->fetch();
+        )->fetchAssociative();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $originDimensionSpacePoint, Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions()) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            $originDimensionSpacePoint->toDimensionSpacePoint(),
+            Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions()
+        ) : null;
     }
 
     /**

@@ -210,7 +210,7 @@ final class NodeFactory
                 $nodeTypeNames[$rawNodeAggregateIdentifier],
                 $nodeNames[$rawNodeAggregateIdentifier],
                 new OriginDimensionSpacePointSet($occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier]),
-                $nodesByOccupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier],
+                $nodes,
                 $coverageByOccupantsByNodeAggregate[$rawNodeAggregateIdentifier],
                 new DimensionSpacePointSet($coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier]),
                 $nodesByCoveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier],

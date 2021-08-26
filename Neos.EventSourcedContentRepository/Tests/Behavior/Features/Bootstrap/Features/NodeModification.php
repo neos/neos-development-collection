@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -39,7 +40,7 @@ trait NodeModification
     /**
      * @Given /^the event NodePropertiesWereSet was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventNodePropertiesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {

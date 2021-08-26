@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -32,7 +33,7 @@ trait WorkspacePublishing
     /**
      * @Given /^the command PublishIndividualNodesFromWorkspace is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandPublishIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
     {

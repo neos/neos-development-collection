@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -43,7 +44,7 @@ trait NodeDisabling
     /**
      * @Given /^the command DisableNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
@@ -78,7 +79,7 @@ trait NodeDisabling
     {
         try {
             $this->theCommandDisableNodeAggregateIsExecutedWithPayload($payloadTable);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
     }
@@ -86,7 +87,7 @@ trait NodeDisabling
     /**
      * @Given /^the event NodeAggregateWasDisabled was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
     {
@@ -107,7 +108,7 @@ trait NodeDisabling
     /**
      * @Given /^the command EnableNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandEnableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
@@ -142,7 +143,7 @@ trait NodeDisabling
     {
         try {
             $this->theCommandEnableNodeAggregateIsExecutedWithPayload($payloadTable);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
     }

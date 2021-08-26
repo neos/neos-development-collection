@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -16,7 +17,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph as DbalContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph as PostgreSQLContentHypergraph;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -33,13 +33,25 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeCopying;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeCreation;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeDisabling;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeModification;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeMove;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeReferencing;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRemoval;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRenaming;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeTypeChange;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeVariation;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStore;
@@ -157,7 +169,7 @@ trait EventSourcedTrait
     /**
      * @param TableNode $payloadTable
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     protected function readPayloadTable(TableNode $payloadTable): array
     {
@@ -439,7 +451,9 @@ trait EventSourcedTrait
             return $this->rootNodeAggregateIdentifier;
         }
 
-        $sitesNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($this->contentStreamIdentifier, \Neos\ContentRepository\Domain\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
+        $contentGraphs = $this->getContentGraphs();
+        $contentGraph = reset($contentGraphs);
+        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->contentStreamIdentifier, \Neos\ContentRepository\Domain\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
         if ($sitesNodeAggregate) {
             return $sitesNodeAggregate->getIdentifier();
         }

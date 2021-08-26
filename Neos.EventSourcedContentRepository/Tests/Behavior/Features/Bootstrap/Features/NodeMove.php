@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -42,7 +43,7 @@ trait NodeMove
     /**
      * @Given /^the command MoveNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandMoveNodeIsExecutedWithPayload(TableNode $payloadTable): void
     {
@@ -100,7 +101,7 @@ trait NodeMove
     /**
      * @Given /^the event NodeAggregateWasMoved was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventNodeAggregateWasMovedWasPublishedWithPayload(TableNode $payloadTable)
     {

@@ -12,15 +12,17 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
 /**
  * The node implementation for the PostgreSQL content graph adapter
@@ -39,9 +41,13 @@ final class Node implements NodeInterface
 
     private ?NodeName $nodeName;
 
-    private SerializedPropertyValues $properties;
+    private PropertyCollectionInterface $properties;
 
     private NodeAggregateClassification $classification;
+
+    private DimensionSpacePoint $perspectiveDimensionSpacePoint;
+
+    private VisibilityConstraints $perspectiveVisibilityConstraints;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -50,8 +56,10 @@ final class Node implements NodeInterface
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        SerializedPropertyValues $properties,
-        NodeAggregateClassification $classification
+        PropertyCollectionInterface $properties,
+        NodeAggregateClassification $classification,
+        DimensionSpacePoint $perspectiveDimensionSpacePoint,
+        VisibilityConstraints $perspectiveVisibilityConstraints
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -61,6 +69,8 @@ final class Node implements NodeInterface
         $this->nodeName = $nodeName;
         $this->properties = $properties;
         $this->classification = $classification;
+        $this->perspectiveDimensionSpacePoint = $perspectiveDimensionSpacePoint;
+        $this->perspectiveVisibilityConstraints = $perspectiveVisibilityConstraints;
     }
 
     public function getClassification(): NodeAggregateClassification
@@ -114,7 +124,7 @@ final class Node implements NodeInterface
         return $this->nodeName;
     }
 
-    public function getProperties(): SerializedPropertyValues
+    public function getProperties(): PropertyCollectionInterface
     {
         return $this->properties;
     }
@@ -127,12 +137,12 @@ final class Node implements NodeInterface
      */
     public function getProperty($propertyName)
     {
-        return $this->properties->getProperty($propertyName);
+        return $this->properties->offsetGet($propertyName);
     }
 
     public function hasProperty($propertyName): bool
     {
-        return $this->properties->propertyExists($propertyName);
+        return $this->properties->offsetExists($propertyName);
     }
 
     /**
@@ -153,5 +163,15 @@ final class Node implements NodeInterface
     public function getLabel(): string
     {
         return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this) ?? '';
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->perspectiveDimensionSpacePoint;
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
+        return $this->perspectiveVisibilityConstraints;
     }
 }

@@ -105,7 +105,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            $this->visibilityConstraints,
+            $this->dimensionSpacePoint
+        ) : null;
     }
 
     public function findChildNodes(
@@ -129,7 +133,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $childNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($childNodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodes($childNodeRows, $this->visibilityConstraints);
     }
 
     public function countChildNodes(
@@ -166,7 +170,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodes($nodeRows, $this->visibilityConstraints);
     }
 
     public function findReferencingNodes(
@@ -187,7 +191,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $referencedNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($referencedNodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodes($referencedNodeRows, $this->visibilityConstraints);
     }
 
     public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
@@ -198,7 +202,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            $this->visibilityConstraints,
+            $this->dimensionSpacePoint
+        ) : null;
     }
 
     public function findNodeByPath(
@@ -233,7 +241,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            $this->visibilityConstraints,
+            $this->dimensionSpacePoint,
+        ) : null;
     }
 
     public function findSiblings(
@@ -307,7 +319,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $siblingsRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows);
+        return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->visibilityConstraints);
     }
 
     public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath
@@ -370,7 +382,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $nodeRows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToSubtree($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToSubtree($nodeRows, $this->visibilityConstraints);
     }
 
     public function findDescendants(

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -36,7 +37,7 @@ trait NodeCopying
 
     abstract protected function getContentGraphs(): ContentGraphs;
 
-    abstract protected function getCurrentNodes(): NodesByAdapter;
+    abstract protected function getCurrentNodes(): ?NodesByAdapter;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 

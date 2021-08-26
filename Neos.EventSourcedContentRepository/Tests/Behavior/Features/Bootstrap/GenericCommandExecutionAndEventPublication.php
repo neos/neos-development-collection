@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -66,7 +67,7 @@ trait GenericCommandExecutionAndEventPublication
      * @param string $shortCommandName
      * @param TableNode|null $payloadTable
      * @param null $commandArguments
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandIsExecutedWithPayload(string $shortCommandName, TableNode $payloadTable = null, $commandArguments = null)
     {
@@ -106,7 +107,7 @@ trait GenericCommandExecutionAndEventPublication
     /**
      * @param $shortCommandName
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     protected static function resolveShortCommandName($shortCommandName): array
     {
@@ -200,7 +201,7 @@ trait GenericCommandExecutionAndEventPublication
      * @param $eventType
      * @param $streamName
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventWasPublishedToStreamWithPayload(string $eventType, string $streamName, TableNode $payloadTable)
     {
@@ -212,9 +213,10 @@ trait GenericCommandExecutionAndEventPublication
      * @param $eventType
      * @param StreamName $streamName
      * @param $eventPayload
-     * @throws Exception
+     * @throws \Exception
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    protected function publishEvent($eventType, StreamName $streamName, $eventPayload)
+    protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void
     {
         $event = $this->getEventNormalizer()->denormalize($eventPayload, $eventType);
         $event = DecoratedEvent::addIdentifier($event, Uuid::uuid4()->toString());
@@ -228,7 +230,7 @@ trait GenericCommandExecutionAndEventPublication
      * @Then /^the last command should have thrown an exception of type "([^"]*)"(?: with code (\d*))?$/
      * @param string $shortExceptionName
      * @param int|null $expectedCode
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode = null)
     {

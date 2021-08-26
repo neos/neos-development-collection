@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -33,7 +34,7 @@ trait ContentStreamForking
     /**
      * @Given /^the command ForkContentStream is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandForkContentStreamIsExecutedWithPayload(TableNode $payloadTable): void
     {

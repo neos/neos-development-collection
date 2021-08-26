@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -42,7 +43,7 @@ trait NodeRemoval
     /**
      * @Given /^the command RemoveNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandRemoveNodeAggregateIsExecutedWithPayload(TableNode $payloadTable)
     {
@@ -72,7 +73,7 @@ trait NodeRemoval
     /**
      * @Given /^the command RemoveNodeAggregate is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandRemoveNodeAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
     {
@@ -86,7 +87,7 @@ trait NodeRemoval
     /**
      * @Given /^the event NodeAggregateWasRemoved was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventNodeAggregateWasRemovedWasPublishedWithPayload(TableNode $payloadTable)
     {

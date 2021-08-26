@@ -26,6 +26,8 @@ Feature: Create node aggregate with node
           type: '\Neos\ContentRepository\BehavioralTests\Tests\Fixtures\PostalAddress'
           defaultValue:
             iDoNotExist: 'whatever'
+    'Neos.ContentRepository.Testing:AbstractNode':
+      abstract: true
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
@@ -69,8 +71,25 @@ Feature: Create node aggregate with node
       | nodeTypeName                  | "Neos.ContentRepository:Root" |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"      |
       | nodeName                      | "document"                    |
-
     Then the last command should have thrown an exception of type "NodeTypeIsOfTypeRoot"
+
+  Scenario: Try to create a node aggregate of a non-existing node type:
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                           | Value                                        |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"                     |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:IDoNotExist" |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                     |
+      | nodeName                      | "document"                                   |
+    Then the last command should have thrown an exception of type "NodeTypeDoesNotExist"
+
+  Scenario: Try to create a node aggregate of an abstract node type:
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                           | Value                                        |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"                     |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:AbstractNode" |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                     |
+      | nodeName                      | "document"                                   |
+    Then the last command should have thrown an exception of type "NodeTypeIsAbstract"
 
   Scenario: Try to create a node aggregate in an origin dimension space point not within the allowed dimension subspace:
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:

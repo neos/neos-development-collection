@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -44,7 +45,7 @@ trait NodeReferencing
     /**
      * @Given /^the command SetNodeReferences is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandSetNodeReferencesIsExecutedWithPayload(TableNode $payloadTable)
     {
@@ -75,7 +76,7 @@ trait NodeReferencing
     /**
      * @Given /^the command SetNodeReferences is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandSetNodeReferencesIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
     {
@@ -89,7 +90,7 @@ trait NodeReferencing
     /**
      * @Given /^the event NodeReferencesWereSet was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventNodeReferencesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {

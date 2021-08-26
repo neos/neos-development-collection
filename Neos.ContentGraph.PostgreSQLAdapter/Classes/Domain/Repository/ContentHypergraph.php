@@ -88,13 +88,17 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            VisibilityConstraints::withoutRestrictions(),
+            $originDimensionSpacePoint->toDimensionSpacePoint()
+        ) : null;
     }
 
     public function findRootNodeAggregateByType(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeTypeName $nodeTypeName
-    ): ?NodeAggregate {
+    ): NodeAggregate {
         // TODO: Implement findRootNodeAggregateByType() method.
     }
 
@@ -114,7 +118,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows, VisibilityConstraints::withoutRestrictions());
     }
 
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
@@ -128,7 +132,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows, VisibilityConstraints::withoutRestrictions());
     }
 
     public function findParentNodeAggregates(
@@ -140,7 +144,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
     }
 
     public function findChildNodeAggregates(
@@ -151,7 +155,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
     }
 
     public function findChildNodeAggregatesByName(
@@ -164,7 +168,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
     }
 
     public function findTetheredChildNodeAggregates(
@@ -176,7 +180,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
     }
 
     public function getDimensionSpacePointsOccupiedByChildNodeName(

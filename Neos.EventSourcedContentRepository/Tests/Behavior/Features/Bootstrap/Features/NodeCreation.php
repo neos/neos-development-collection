@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -53,7 +54,7 @@ trait NodeCreation
      * @When /^the command CreateRootNodeAggregateWithNode is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws ContentStreamDoesNotExistYet
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandCreateRootNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
     {
@@ -94,7 +95,7 @@ trait NodeCreation
     /**
      * @Given /^the event RootNodeAggregateWithNodeWasCreated was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventRootNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
@@ -211,7 +212,7 @@ trait NodeCreation
     /**
      * @When /^the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
@@ -269,7 +270,7 @@ trait NodeCreation
     /**
      * @Given /^the event NodeAggregateWithNodeWasCreated was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {

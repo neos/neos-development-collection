@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -33,7 +34,7 @@ trait WorkspaceDiscarding
     /**
      * @Given /^the command DiscardWorkspace is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandDiscardWorkspaceIsExecuted(TableNode $payloadTable): void
     {
@@ -55,7 +56,7 @@ trait WorkspaceDiscarding
     /**
      * @Given /^the command DiscardIndividualNodesFromWorkspace is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandDiscardIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
     {

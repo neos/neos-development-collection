@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -39,7 +40,7 @@ trait WorkspaceCreation
     /**
      * @When /^the command CreateRootWorkspace is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandCreateRootWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
     {
@@ -63,7 +64,7 @@ trait WorkspaceCreation
     /**
      * @Given /^the event RootWorkspaceWasCreated was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theEventRootWorkspaceWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
@@ -79,7 +80,7 @@ trait WorkspaceCreation
     /**
      * @When /^the command CreateWorkspace is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws Exception
+     * @throws \Exception
      */
     public function theCommandCreateWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
     {

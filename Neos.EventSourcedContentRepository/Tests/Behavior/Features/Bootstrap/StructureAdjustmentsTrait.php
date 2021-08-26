@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
