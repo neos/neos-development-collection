@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -27,6 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminators;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodesByAdapter;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -279,10 +281,36 @@ trait ProjectedNodeTrait
             $properties = $currentNode->getProperties();
             foreach ($expectedProperties->getHash() as $row) {
                 Assert::assertTrue($properties->offsetExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
-                $actualProperty = $properties->offsetGet($row['Key']);
-                Assert::assertEquals(json_decode($row['Value']), $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty)) . ' in adapter "' . $adapterName . '"';
+                $expectedPropertyValue = $this->resolvePropertyValue($row['Value']);
+                $actualPropertyValue = $properties->offsetGet($row['Key']);
+                if ($row['Value'] === 'Date:now') {
+                    // we accept 10s offset for the projector to be fine
+                    Assert::assertLessThan($actualPropertyValue, $expectedPropertyValue->sub(new \DateInterval('PT10S')), 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($actualPropertyValue));
+                } else {
+                    Assert::assertEquals($expectedPropertyValue, $actualPropertyValue, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualPropertyValue)) . ' in adapter "' . $adapterName . '"';
+                }
             }
         });
+    }
+
+    private function resolvePropertyValue(string $serializedPropertyValue)
+    {
+        switch ($serializedPropertyValue) {
+            case 'PostalAddress:dummy':
+                return PostalAddress::dummy();
+            case 'PostalAddress:anotherDummy':
+                return PostalAddress::anotherDummy();
+            case 'Date:now':
+                return new \DateTimeImmutable();
+            default:
+                if (\mb_strpos($serializedPropertyValue, 'Date:') === 0) {
+                    return \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($serializedPropertyValue, 5));
+                } elseif (\mb_strpos($serializedPropertyValue, 'URI:') === 0) {
+                    return new Uri(\mb_substr($serializedPropertyValue, 4));
+                }
+        }
+
+        return \json_decode($serializedPropertyValue, true);
     }
 
     /**

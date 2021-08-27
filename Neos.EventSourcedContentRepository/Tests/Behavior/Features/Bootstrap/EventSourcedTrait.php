@@ -211,10 +211,6 @@ trait EventSourcedTrait
                     $propertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($propertyValue, 5));
                 } elseif (\mb_strpos($propertyValue, 'URI:') === 0) {
                     $propertyValue = new Uri(\mb_substr($propertyValue, 4));
-                } elseif ($propertyValue === 'IMG:dummy') {
-                    $propertyValue = $this->requireDummyImage();
-                } elseif ($propertyValue === '[IMG:dummy]') {
-                    $propertyValue = [$this->requireDummyImage()];
                 }
             }
         }

@@ -222,7 +222,7 @@ trait NodeCreation
             if (!$propertyType->isMatchedBy($propertyValue)) {
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
                     PropertyName::fromString($propertyName),
-                    gettype($propertyValue),
+                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
                     $propertyType->getValue()
                 );
             }
