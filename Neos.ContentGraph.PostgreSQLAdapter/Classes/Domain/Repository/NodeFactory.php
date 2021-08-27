@@ -73,7 +73,7 @@ final class NodeFactory
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
-            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
+            $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
             new PropertyCollection(SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true)), $this->propertyConverter),
             NodeAggregateClassification::fromString($nodeRow['classification']),
             $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),

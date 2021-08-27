@@ -119,7 +119,7 @@ Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter:
         factoryObjectName: Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConversionSerializerFactory
         factoryMethodName: buildSerializer
 
-Neos\EventSourcedContentRepository\StructureAdjustment\TetheredNodeAdjustments:
+Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\TetheredNodeAdjustments:
   arguments:
     1:
       object:
@@ -128,7 +128,7 @@ Neos\EventSourcedContentRepository\StructureAdjustment\TetheredNodeAdjustments:
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\StructureAdjustment\UnknownNodeTypeAdjustment:
+Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\UnknownNodeTypeAdjustment:
   arguments:
     1:
       object:
@@ -137,7 +137,7 @@ Neos\EventSourcedContentRepository\StructureAdjustment\UnknownNodeTypeAdjustment
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\StructureAdjustment\DisallowedChildNodeAdjustment:
+Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\DisallowedChildNodeAdjustment:
   arguments:
     1:
       object:
@@ -146,7 +146,7 @@ Neos\EventSourcedContentRepository\StructureAdjustment\DisallowedChildNodeAdjust
           1:
             value: 'ContentRepository'
 
-Neos\EventSourcedContentRepository\StructureAdjustment\PropertyAdjustment:
+Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\PropertyAdjustment:
   arguments:
     1:
       object:

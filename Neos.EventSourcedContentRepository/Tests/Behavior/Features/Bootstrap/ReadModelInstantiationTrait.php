@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap;
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.

@@ -80,7 +80,7 @@ Feature: Create node aggregate with node
       | nodeTypeName                  | "Neos.ContentRepository.Testing:IDoNotExist" |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                     |
       | nodeName                      | "document"                                   |
-    Then the last command should have thrown an exception of type "NodeTypeDoesNotExist"
+    Then the last command should have thrown an exception of type "NodeTypeNotFound"
 
   Scenario: Try to create a node aggregate of an abstract node type:
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:

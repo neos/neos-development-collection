@@ -13,15 +13,14 @@ Feature: Create node aggregate with node
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
-    And I am in content stream "cs-identifier"
     And I am user identified by "initiating-user-identifier"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
+    And I am in content stream "cs-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
@@ -41,31 +40,11 @@ Feature: Create node aggregate with node
         nullText:
           type: string
     """
-    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                                          |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                       |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
-      | originDimensionSpacePoint     | {"language":"mul"}                                             |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                       |
-      | nodeName                      | "node"                                                         |
-      | initialPropertyValues         | {"text": {"type": "string", "value": "initial text"}}          |
-    And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                                          |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                             |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
-      | originDimensionSpacePoint     | {"language":"de"}                                              |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                       |
-      | nodeName                      | "child-node"                                                   |
-    And the graph projection is fully up to date
-    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                                          |
-      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                   |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
-      | originDimensionSpacePoint     | {"language":"en"}                                              |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                       |
-      | nodeName                      | "esquire"                                                      |
-    And the graph projection is fully up to date
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateIdentifier    | originDimensionSpacePoint | nodeName   | parentNodeAggregateIdentifier | nodeTypeName                                                 | initialPropertyValues    |
+      | sir-david-nodenborough     | {"language":"mul"}        | node       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {"text": "initial text"} |
+      | nody-mc-nodeface           | {"language":"de"}         | child-node | sir-david-nodenborough        | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {}                       |
+      | sir-nodeward-nodington-iii | {"language":"en"}         | esquire    | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {}                       |
 
     Then I expect exactly 5 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" with payload:
@@ -264,10 +243,10 @@ Feature: Create node aggregate with node
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
     And I expect this node to have the following siblings:
-      | NodeDiscriminator                                      |
+      | NodeDiscriminator                                       |
       | cs-identifier;sir-david-nodenborough;{"language":"mul"} |
     And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                                      |
+      | NodeDiscriminator                                       |
       | cs-identifier;sir-david-nodenborough;{"language":"mul"} |
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references

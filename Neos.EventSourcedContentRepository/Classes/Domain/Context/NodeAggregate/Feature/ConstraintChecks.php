@@ -42,6 +42,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyCovered;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsAbstract;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
@@ -96,6 +97,13 @@ trait ConstraintChecks
             return $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
         } catch (NodeTypeNotFoundException $exception) {
             throw new NodeTypeNotFound('Node type "' . $nodeTypeName . '" is unknown to the node type manager.', 1541671070);
+        }
+    }
+
+    protected function requireNodeTypeToNotBeAbstract(NodeType $nodeType): void
+    {
+        if ($nodeType->isAbstract()) {
+            throw NodeTypeIsAbstract::butWasNotSupposedToBe(NodeTypeName::fromString($nodeType->getName()));
         }
     }
 

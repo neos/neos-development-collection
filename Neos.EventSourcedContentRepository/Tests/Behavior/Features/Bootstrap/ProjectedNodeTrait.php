@@ -66,7 +66,7 @@ trait ProjectedNodeTrait
     /**
      * @Then /^I get the node at path "([^"]*)"$/
      * @param string $serializedNodePath
-     * @throws Exception
+     * @throws \Exception
      */
     public function iGetTheNodeAtPath(string $serializedNodePath): void
     {
@@ -79,7 +79,7 @@ trait ProjectedNodeTrait
     /**
      * @Then /^I expect a node identified by (.*) to exist in the content graph$/
      * @param string $serializedNodeDiscriminator
-     * @throws Exception
+     * @throws \Exception
      */
     public function iExpectANodeIdentifiedByXToExistInTheContentGraph(string $serializedNodeDiscriminator): void
     {
@@ -139,7 +139,7 @@ trait ProjectedNodeTrait
      * @Then /^I expect path "([^"]*)" to lead to node (.*)$/
      * @param string $serializedNodePath
      * @param string $serializedNodeDiscriminator
-     * @throws Exception
+     * @throws \Exception
      */
     public function iExpectPathToLeadToNode(string $serializedNodePath, string $serializedNodeDiscriminator): void
     {
@@ -160,7 +160,7 @@ trait ProjectedNodeTrait
     /**
      * @Then /^I expect path "([^"]*)" to lead to no node$/
      * @param string $serializedNodePath
-     * @throws Exception
+     * @throws \Exception
      */
     public function iExpectPathToLeadToNoNode(string $serializedNodePath): void
     {
@@ -179,7 +179,7 @@ trait ProjectedNodeTrait
      * @param string $serializedNodeAggregateIdentifier
      * @param string $serializedNodePath
      * @param string $serializedNodeDiscriminator
-     * @throws Exception
+     * @throws \Exception
      */
     public function iExpectNodeAggregateIdentifierAndNodePathToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath, string $serializedNodeDiscriminator): void
     {
@@ -191,7 +191,7 @@ trait ProjectedNodeTrait
      * @Then /^I expect node aggregate identifier "([^"]*)" and node path "([^"]*)" to lead to no node$/
      * @param string $serializedNodeAggregateIdentifier
      * @param string $serializedNodePath
-     * @throws Exception
+     * @throws \Exception
      */
     public function iExpectNodeAggregateIdentifierAndNodePathToLeadToNoNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath): void
     {
@@ -278,8 +278,8 @@ trait ProjectedNodeTrait
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use($expectedProperties) {
             $properties = $currentNode->getProperties();
             foreach ($expectedProperties->getHash() as $row) {
-                Assert::assertTrue($properties->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
-                $actualProperty = $properties->getProperty($row['Key'])->getValue();
+                Assert::assertTrue($properties->offsetExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
+                $actualProperty = $properties->offsetGet($row['Key']);
                 Assert::assertEquals(json_decode($row['Value']), $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty)) . ' in adapter "' . $adapterName . '"';
             }
         });
@@ -300,7 +300,7 @@ trait ProjectedNodeTrait
     /**
      * @Then /^I expect this node to have the following references:$/
      * @param TableNode $expectedReferences
-     * @throws Exception
+     * @throws \Exception
      */
     public function iExpectThisNodeToHaveTheFollowingReferences(TableNode $expectedReferences): void
     {
@@ -318,7 +318,7 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to have no references$/
-     * @throws Exception
+     * @throws \Exception
      */
     public function iExpectThisNodeToHaveNoReferences(): void
     {
@@ -332,7 +332,7 @@ trait ProjectedNodeTrait
     /**
      * @Then /^I expect this node to be referenced by:$/
      * @param TableNode $expectedReferences
-     * @throws Exception
+     * @throws \Exception
      */
     public function iExpectThisNodeToBeReferencedBy(TableNode $expectedReferences): void
     {
@@ -352,7 +352,7 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to not be referenced$/
-     * @throws Exception
+     * @throws \Exception
      */
     public function iExpectThisNodeToNotBeReferenced(): void
     {
@@ -405,7 +405,10 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($expectedChildNodesTable) {
             $subgraph = $this->getCurrentSubgraphs()[$adapterName];
-            $actualChildNodes = $subgraph->findChildNodes($currentNode->getNodeAggregateIdentifier());
+            $actualChildNodes = [];
+            foreach ($subgraph->findChildNodes($currentNode->getNodeAggregateIdentifier()) as $actualChildNode) {
+                $actualChildNodes[] = $actualChildNode;
+            }
 
             Assert::assertEquals(count($expectedChildNodesTable->getHash()), $subgraph->countChildNodes($currentNode->getNodeAggregateIdentifier()), 'ContentSubgraph::countChildNodes returned a wrong value in adapter "' . $adapterName . '"');
             Assert::assertCount(count($expectedChildNodesTable->getHash()), $actualChildNodes, 'ContentSubgraph::findChildNodes: Child node count does not match in adapter "' . $adapterName . '"');
@@ -444,7 +447,10 @@ trait ProjectedNodeTrait
     public function iExpectThisNodeToHaveTheFollowingSiblings(TableNode $expectedSiblingsTable): void
     {
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use($expectedSiblingsTable) {
-            $actualSiblings = $this->getCurrentSubgraphs()[$adapterName]->findSiblings($currentNode->getNodeAggregateIdentifier());
+            $actualSiblings = [];
+            foreach ($this->getCurrentSubgraphs()[$adapterName]->findSiblings($currentNode->getNodeAggregateIdentifier()) as $actualSibling) {
+                $actualSiblings[] = $actualSibling;
+            }
             Assert::assertCount(count($expectedSiblingsTable->getHash()), $actualSiblings, 'ContentSubgraph::findSiblings: Sibling count does not match in adapter "' . $adapterName . '"');
             foreach ($expectedSiblingsTable->getHash() as $index => $row) {
                 $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
@@ -472,7 +478,10 @@ trait ProjectedNodeTrait
     public function iExpectThisNodeToHaveTheFollowingPrecedingSiblings(TableNode $expectedPrecedingSiblingsTable): void
     {
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use($expectedPrecedingSiblingsTable) {
-            $actualSiblings = $this->getCurrentSubgraphs()[$adapterName]->findPrecedingSiblings($currentNode->getNodeAggregateIdentifier());
+            $actualSiblings = [];
+            foreach ($this->getCurrentSubgraphs()[$adapterName]->findPrecedingSiblings($currentNode->getNodeAggregateIdentifier()) as $actualSibling) {
+                $actualSiblings[] = $actualSibling;
+            }
             Assert::assertCount(count($expectedPrecedingSiblingsTable->getHash()), $actualSiblings, 'ContentSubgraph::findPrecedingSiblings: Sibling count does not match in adapter "' . $adapterName . '"');
             foreach ($expectedPrecedingSiblingsTable->getHash() as $index => $row) {
                 $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
@@ -500,7 +509,10 @@ trait ProjectedNodeTrait
     public function iExpectThisNodeToHaveTheFollowingSucceedingSiblings(TableNode $expectedSucceedingSiblingsTable): void
     {
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use($expectedSucceedingSiblingsTable) {
-            $actualSiblings = $this->getCurrentSubgraphs()[$adapterName]->findSucceedingSiblings($currentNode->getNodeAggregateIdentifier());
+            $actualSiblings = [];
+            foreach ($this->getCurrentSubgraphs()[$adapterName]->findSucceedingSiblings($currentNode->getNodeAggregateIdentifier()) as $actualSibling) {
+                $actualSiblings[] = $actualSibling;
+            }
             Assert::assertCount(count($expectedSucceedingSiblingsTable->getHash()), $actualSiblings, 'ContentSubgraph::findSucceedingSiblings: Sibling count does not match in adapter "' . $adapterName . '"');
             foreach ($expectedSucceedingSiblingsTable->getHash() as $index => $row) {
                 $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);

@@ -64,6 +64,10 @@ trait NodeCreation
 
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
+    abstract protected function requireNodeTypeToNotBeAbstract(NodeType $nodeType): void;
+
+    abstract protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void;
+
     abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function getRuntimeBlocker(): RuntimeBlocker;
@@ -84,6 +88,7 @@ trait NodeCreation
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
         $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
         $nodeType = $this->requireNodeType($command->getNodeTypeName());
+        $this->requireNodeTypeToNotBeAbstract($nodeType);
         $this->requireNodeTypeToBeOfTypeRoot($nodeType);
 
         $events = DomainEvents::createEmpty();
@@ -133,6 +138,7 @@ trait NodeCreation
 
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
+        $this->requireNodeType($command->getNodeTypeName());
         $this->validateProperties($this->deserializeDefaultProperties($command->getNodeTypeName()), $command->getNodeTypeName());
         $this->validateProperties($command->getInitialPropertyValues(), $command->getNodeTypeName());
 
@@ -162,7 +168,11 @@ trait NodeCreation
         $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
         $defaultValues = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
+            $propertyType = PropertyType::fromNodeTypeDeclaration(
+                $nodeType->getPropertyType($propertyName),
+                PropertyName::fromString($propertyName),
+                $nodeTypeName
+            );
             $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
                 new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
             );
@@ -204,7 +214,11 @@ trait NodeCreation
             if (!isset($nodeType->getProperties()[$propertyName])) {
                 throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(PropertyName::fromString($propertyName), $nodeTypeName);
             }
-            $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
+            $propertyType = PropertyType::fromNodeTypeDeclaration(
+                $nodeType->getPropertyType($propertyName),
+                PropertyName::fromString($propertyName),
+                $nodeTypeName
+            );
             if (!$propertyType->isMatchedBy($propertyValue)) {
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
                     PropertyName::fromString($propertyName),
@@ -230,6 +244,7 @@ trait NodeCreation
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
         $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
         $nodeType = $this->requireNodeType($command->getNodeTypeName());
+        $this->requireNodeTypeToNotBeAbstract($nodeType);
         $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
         $this->requireTetheredDescendantNodeTypesToExist($nodeType);
         $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($nodeType);

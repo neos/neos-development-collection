@@ -11,6 +11,8 @@ Feature: Create a root node aggregate
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:AbstractRoot':
+      abstract: true
     'Neos.ContentRepository.Testing:NonRoot': []
     """
     And I am user identified by "initiating-user-identifier"
@@ -41,6 +43,13 @@ Feature: Create a root node aggregate
       | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyExists"
+
+  Scenario: Try to create a root node aggregate of an abstract root node type:
+    When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                     | Value                                    |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"                       |
+      | nodeTypeName            | "Neos.ContentRepository.Testing:AbstractRoot" |
+    Then the last command should have thrown an exception of type "NodeTypeIsAbstract"
 
   Scenario: Try to create a root node aggregate of a non-root node type:
     When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:

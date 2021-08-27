@@ -42,6 +42,7 @@ require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Featu
 
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\ReadModelInstantiationTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -64,6 +65,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use EventSourcedTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use StructureAdjustmentsTrait;
+    use ReadModelInstantiationTrait;
 
     /**
      * @var string
@@ -82,7 +84,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $this->setupIntegrityViolationTrait();
         $this->setupProjectionIntegrityViolationDetectionTrait();
         $this->setupReadModelInstantiationTrait();
-        $this->setupIntermediaryCommandTrait();
     }
 
     /**
