@@ -6,10 +6,12 @@
   <title>Welcome to Neos</title>
   <link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Login.css', package: 'Neos.Neos')}"/>
   <link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Welcome.css', package: 'Neos.Neos')}"/>
-  <style type="text/css">
-    body.neos--bg
-    .neos-login-box:before {
+  <style>
+    .webp body.neos--bg,.webp .neos-login-box:before {
       background-image: url({f:uri.resource(path: 'Images/Login/Wallpaper.webp', package: 'Neos.Neos')});
+    }
+    .no-webp body.neos--bg,.no-webp .neos-login-box:before {
+      background-image: url({f:uri.resource(path: 'Images/Login/Wallpaper.jpg', package: 'Neos.Neos')});
     }
   </style>
   <script
@@ -19,6 +21,7 @@
 
 <f:section name="body">
   <body class="neos neos--bg">
+  <img style="display: none" src="data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA" onload="document.documentElement.classList.add('webp')" onerror="document.documentElement.classList.add('no-webp')"/>
   <div class="neos-modal-centered">
     <main class="neos-login-main">
       <div class="neos-login-box background-image-active">
