@@ -76,9 +76,6 @@ jobs:
           ref: ${{ env.NEOS_TARGET_VERSION }}
           path: ${{ env.NEOS_DIST_FOLDER }}
 
-      - name: Set alias branch name
-        run: if [ "${NEOS_TARGET_VERSION}" == "master" ]; then echo "NEOS_BRANCH_ALIAS=dev-master"; else echo "NEOS_BRANCH_ALIAS=${NEOS_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
-
       - name: Update composer.json
         run: |
           git -C ../${{ env.NEOS_CR_FOLDER }} checkout -b build
@@ -126,6 +123,10 @@ jobs:
           echo "Running in context '$FLOW_CONTEXT'"
           ./flow configuration:show
           ./flow routing:list
+
+      - name: Setup eventstore
+        run: |
+          ./flow eventstore:setup
 
       - name: Run functional tests
         run: |
