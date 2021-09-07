@@ -7,10 +7,8 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Loop) {
 	items = ${nodeAvailable ? q(node).children() : []}
 
   # To ensure backwards compatibility override items if collection is set
-	items.@process.collectionLegacy {
-		value = ${this.collection}
-		@if.hasCollectionProp = ${this.collection != null && Array.length(this.collection) > 0}
-	}
+  items.@process.collectionLegacy = ${this.collection}
+  items.@process.collectionLegacy.@if.hasCollectionProp = ${this.collection != null && Array.length(this.collection) > 0}
 
 	# Render every item by its own Fusion object
 	itemRenderer = Neos.Neos:ContentCase
