@@ -26,30 +26,20 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
   attributes = Neos.Fusion:DataStructure
 
   # The following is used to automatically append class and data attribute needed for editing.
-  # You can disable the following line with:
+  # You can disable the behavior in your site's Fusion with:
   # prototype(Neos.Neos:ContentCollection) {
   #   attributes.class.@process.collectionClass >
   # }
-  # in your site's Fusion if you don't need that behavior.
   attributes {
-    class.@process.collectionClass = Neos.Fusion:Case {
-      @context.collectionClass = 'neos-contentcollection'
-
-      classIsString {
-        condition = ${Type.isString(value)}
-        renderer = ${String.trim(value + ' ' + collectionClass)}
-      }
-
-      classIsArray {
-        condition = ${Type.isArray(value)}
-        renderer = ${Array.push(value, collectionClass)}
-      }
+    class.@process.collectionClass = Neos.Fusion:Value {
+      castedArray = ${Type.isArray(value) ? value : [value]}
+      value = ${Array.push(this.castedArray, 'neos-contentcollection')}
     }
-
     data-__neos-insertion-anchor = true
     data-__neos-insertion-anchor.@if.onlyRenderInBackend = ${node.context.inBackend && node.context.currentRenderingMode.edit}
   }
 
+  # Doesnt need to be set, if node is a content collection.
   nodePath = 'to-be-set-by-user'
 
   # You may override this to get your content collection from a different place than the current node.
@@ -69,7 +59,12 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
     }
 
     entryTags {
+      # A cache entry with this tag will be flushed
+			# whenever a node (for any variant) that is a descendant (child on any level)
+			# of one of the given nodes is updated.
       1 = ${Neos.Caching.descendantOfTag(node)}
+      # A cache entry with this tag will be flushed
+			# whenever one of the given nodes (for any variant) is updated.
       2 = ${Neos.Caching.nodeTag(node)}
     }
 
