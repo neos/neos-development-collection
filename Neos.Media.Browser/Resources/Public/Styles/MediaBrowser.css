@@ -287,6 +287,9 @@
 .neos.media-browser .neos-media-content.neos-media-aside-condensed .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active .neos-media-assetsource-icon {
   filter: invert(0.5) sepia(1) saturate(5) hue-rotate(175deg);
 }
+.neos.media-browser .neos-media-content.neos-media-aside-condensed .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active:hover .neos-media-assetsource-icon {
+  filter: none;
+}
 .neos.media-browser .neos-media-content.neos-media-aside-condensed .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a:not(.neos-active):hover {
   background-color: #fff;
   color: #00b5ff;
@@ -410,6 +413,9 @@
   }
   .neos.media-browser .neos-media-content .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active .neos-media-assetsource-icon {
     filter: invert(0.5) sepia(1) saturate(5) hue-rotate(175deg);
+  }
+  .neos.media-browser .neos-media-content .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active:hover .neos-media-assetsource-icon {
+    filter: none;
   }
   .neos.media-browser .neos-media-content .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a:not(.neos-active):hover {
     background-color: #fff;
