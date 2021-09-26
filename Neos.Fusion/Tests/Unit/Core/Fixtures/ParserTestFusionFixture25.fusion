@@ -1,0 +1,9 @@
+
+//
+// Fusion Fixture 25
+//
+// Checks if quoted paths will escape the @ char
+// and if dots inside the quotes will not be interpreted as nested.
+
+attributes."@notAMeta" = "value"
+attributes."@notAMeta.notNested.reallyNotNested.string" = "value"
