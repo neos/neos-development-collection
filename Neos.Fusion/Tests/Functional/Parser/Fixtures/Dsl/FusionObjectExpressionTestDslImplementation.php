@@ -11,7 +11,6 @@ namespace Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\DslInterface;
 
 class FusionObjectExpressionTestDslImplementation implements DslInterface
