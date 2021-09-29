@@ -1,6 +1,7 @@
 <?php
 
 namespace Neos\ContentRepository\Domain\Service\Dto;
+
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -59,7 +60,7 @@ final class NodeMoveIntegrityCheckResult
             'For node ' . $this->nodeLabel . ', we attempted to move it across the following dimensions:' . chr(10);
 
         foreach ($this->parts as $part) {
-            assert ($part instanceof NodeMoveIntegrityCheckResultPart);
+            assert($part instanceof NodeMoveIntegrityCheckResultPart);
             $message .= ' - ' . $part->getDimensionsLabel();
             if ($part->isViolated()) {
                 $message .= ' (ERROR: Non-Existing Parent)';
@@ -68,7 +69,5 @@ final class NodeMoveIntegrityCheckResult
         }
 
         $message .= 'To fix this, you can .... TODO';
-
     }
-
 }
