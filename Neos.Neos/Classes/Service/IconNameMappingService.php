@@ -163,7 +163,7 @@ class IconNameMappingService
         'header' => 'fas fa-heading',
         'heart-o' => 'far fa-heart',
         'hospital-o' => 'far fa-hospital',
-        'hotel' => 'fas fa-bed',
+        'hotel' => 'fas fa-hotel',
         'hourglass-1' => 'fas fa-hourglass-start',
         'hourglass-2' => 'fas fa-hourglass-half',
         'hourglass-3' => 'fas fa-hourglass-end',
