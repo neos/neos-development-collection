@@ -1,7 +1,6 @@
 <?php
 namespace Neos\ContentRepository\Tests\Functional\Domain\Fixtures;
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 
 /**
