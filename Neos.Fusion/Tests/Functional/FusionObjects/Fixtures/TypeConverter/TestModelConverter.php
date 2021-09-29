@@ -11,7 +11,6 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\TypeConverter;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Model\TestModel;
