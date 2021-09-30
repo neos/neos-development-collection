@@ -4,7 +4,7 @@ Neos 7.2
 
 This release of Neos comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
 
-As usual, we worked hard to keep this release as backwards compatible as possible but some of the changes might require manual
+As usual, we worked hard to keep this release as backwards compatible as possible, but some of the changes might require manual
 adjustments. So please make sure to carefully read the upgrade instructions below.
 
 
@@ -12,8 +12,8 @@ adjustments. So please make sure to carefully read the upgrade instructions belo
 New Features
 ************
 
-`FEATURE: Allow NodeTypes to be defined in hierarchical folders <https://github.com/neos/neos-development-collection/pull/3332>`_
----------------------------------------------------------------------------------------------------------------------------------
+FEATURE: Allow NodeTypes to be defined in hierarchical folders
+--------------------------------------------------------------
 
 This feature allows ``NodeType.*.yaml`` files to be put into nested
 folders underneath ``<Package-Root>/NodeTypes``::
@@ -26,9 +26,10 @@ folders underneath ``<Package-Root>/NodeTypes``::
        Foo
          Bar.yaml (new)
 
+Related issue: `#3000 <https://github.com/neos/neos-development-collection/issues/3000>`_
 
-`FEATURE: Fusion Memo object <https://github.com/neos/neos-development-collection/pull/3377>`_
-----------------------------------------------------------------------------------------------
+FEATURE: Fusion Memo object
+---------------------------
 
 This Fusion object stores its value based on
 the given discriminator and returns the same
@@ -44,25 +45,33 @@ Example::
  myValue = My.Vendor:Expensive.Calculation
  myValue2 = My.Vendor:Expensive.Calculation
 
-`FEATURE: Upgrade font awesome to version 5.15 <https://github.com/neos/neos-development-collection/pull/3391>`_
-----------------------------------------------------------------------------------------------------------------
+FEATURE: Upgrade font awesome to version 5.15
+---------------------------------------------
 
 With this PR we get news brand icons and covid-19 icons. Also some bugfixes related to unicode  issues and much more.
 
 See the changes here https://github.com/FortAwesome/Font-Awesome/compare/5.12.1...5.15.3
 
+Updated the font awesome resources and adjusted the paths to our needs.
+
+Use a new Icon like head-side-mask.
+
 .. image:: https://user-images.githubusercontent.com/1014126/127469797-6586f13f-60ff-47e0-a973-a4815d89e42e.png
 
-`FEATURE: Show the last login date in the user/account list <https://github.com/neos/neos-development-collection/pull/3378>`_
------------------------------------------------------------------------------------------------------------------------------
+- Related: #3390
+
+FEATURE: Show the last login date in the user/account list
+----------------------------------------------------------
+
 
 .. image:: https://user-images.githubusercontent.com/642226/125079072-7ddfde00-e0c3-11eb-8111-e2d55a012769.png
+
 
 ********************
 Upgrade Instructions
 ********************
 
-See https://docs.neos.io/cms/references/upgrade-instructions/upgrade-instructions-7-1-7-2
+See https://www.neos.io/download-and-extend/upgrade-instructions-7-1-7-2.html
 
 .. note::
 
