@@ -8,20 +8,17 @@ Overview of merged pull requests
 ---------------------------------------------------------------------------------------------------------------------------------
 
 This feature allows ``NodeType.*.yaml`` files to be put into nested
-folders underneath ``<Package-Root>/NodeTypes``:
+folders underneath ``<Package-Root>/NodeTypes``::
 
-```
-Packages
-  Some.Package
-    Configuration
-      NodeTypes.yaml (still supported!)
-    NodeTypes
-      Foo
-        Bar.yaml (new)
-```
+ Packages
+   Some.Package
+     Configuration
+       NodeTypes.yaml (still supported!)
+     NodeTypes
+       Foo
+         Bar.yaml (new)
 
 * Resolves: `#3000 <https://github.com/neos/neos-development-collection/issues/3000>`_
-
 * Packages: ``ContentRepository``
 
 `FEATURE: Fusion Memo object <https://github.com/neos/neos-development-collection/pull/3377>`_
@@ -32,15 +29,14 @@ the given discriminator and returns the same
 result in future calls during the same rendering.
 The value will then not be evaluated again.
 
-Example:
-```
-prototype(My.Vendor:Expensive.Calculation) < prototype(Neos.Fusion:Memo) {
-    discriminator = 'expensive-calculation'
-    value = ${1+2}
-}
-myValue = My.Vendor:Expensive.Calculation
-myValue2 = My.Vendor:Expensive.Calculation
-```
+Example::
+
+ prototype(My.Vendor:Expensive.Calculation) < prototype(Neos.Fusion:Memo) {
+     discriminator = 'expensive-calculation'
+     value = ${1+2}
+ }
+ myValue = My.Vendor:Expensive.Calculation
+ myValue2 = My.Vendor:Expensive.Calculation
 
 * Packages: ``Fusion``
 
@@ -51,24 +47,17 @@ With this PR we get news brand icons and covid-19 icons. Also some bugfixes rela
 
 See the changes here https://github.com/FortAwesome/Font-Awesome/compare/5.12.1...5.15.3
 
-**What I did**
-Updated the font awesome resources and adjusted the paths to our needs.
 
-**How to verify it**
-Use a new Icon like head-side-mask.
+.. image:: https://user-images.githubusercontent.com/1014126/127469797-6586f13f-60ff-47e0-a973-a4815d89e42e.png
 
-!`Screenshot 2021-07-29 at 11 30 41 <https://user-images.githubusercontent.com/1014126/127469797-6586f13f-60ff-47e0-a973-a4815d89e42e.png>`_
-
-Releated: #3390
-
+* Releated: #3390
 * Packages: ``NodeTypes.ColumnLayouts`` ``Neos``
 
 `FEATURE: Show the last login date in the user/account list <https://github.com/neos/neos-development-collection/pull/3378>`_
 -----------------------------------------------------------------------------------------------------------------------------
 
 
-!`image <https://user-images.githubusercontent.com/642226/125079072-7ddfde00-e0c3-11eb-8111-e2d55a012769.png>`_
-
+.. image:: https://user-images.githubusercontent.com/642226/125079072-7ddfde00-e0c3-11eb-8111-e2d55a012769.png
 
 * Packages: ``Neos``
 
@@ -149,7 +138,7 @@ The behaviour is now the same as for publishing nodes and the direct
 child nodes are included in the discard if the node has auto-created
 child nodes or is a document.
 
-* Fixes: `#3274 <https://github.com/neos/neos-development-collection/issues/3274>``_, ``#3387 <https://github.com/neos/neos-development-collection/issues/3387>`_
+* Fixes: `#3274 <https://github.com/neos/neos-development-collection/issues/3274>`_, `#3387 <https://github.com/neos/neos-development-collection/issues/3387>`_
 * See: `#3275 <https://github.com/neos/neos-development-collection/issues/3275>`_
 
 
@@ -181,26 +170,23 @@ Install the new media-ui for instance and check the console for an error ;)
 `BUGFIX: Reset accidentally upmerged branch version constraints <https://github.com/neos/neos-development-collection/pull/3412>`_
 ---------------------------------------------------------------------------------------------------------------------------------
 
-Some constraints of the 7.1 branch seem to have been accidentally upmerged to master. 
+Some constraints of the 7.1 branch seem to have been accidentally upmerged to master.
 This change reset those to dev-master again.
 
 `BUGFIX: Remove broken @Flow\IgnoreValidation from ContentRepository context <https://github.com/neos/neos-development-collection/pull/3411>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-This fixes the following error on master:
+This fixes the following error on master::
 
-```
-Argument 1 passed to Neos\\Flow\\Annotations\\IgnoreValidation::__construct() must be of the type string, null given, called in /var/www/html/Packages/Libraries/doctrine/annotations/lib/Doctrine/Common/Annotations/DocParser.php on line 971
-Type: TypeError
-  File:
-Packages/Framework/Neos.Flow/Classes/Annotations/IgnoreValidation.php
-  Line: 41
+ Argument 1 passed to Neos\\Flow\\Annotations\\IgnoreValidation::__construct() must be of the type string, null given, called in /var/www/html/Packages/Libraries/doctrine/annotations/lib/Doctrine/Common/Annotations/DocParser.php on line 971
+ Type: TypeError
+   File: Packages/Framework/Neos.Flow/Classes/Annotations/IgnoreValidation.php
+   Line: 41
 
-  Type: Neos\\Flow\\Core\\Booting\\Exception\\SubProcessException
-  Code: 1355480641
-  File: Packages/Framework/Neos.Flow/Classes/Core/Booting/Scripts.php
-  Line: 712
-```
+   Type: N eos\\Flow\\Core\\Booting\\Exception\\SubProcessException
+   Code: 1355480641
+   File: Packages/Framework/Neos.Flow/Classes/Core/Booting/Scripts.php
+   Line: 712
 
 Since the variable with the annotation is populated in the constructor with a fresh instance the need of this annotation is at least questionable.
 
@@ -250,7 +236,7 @@ Use vanilla JS for toggling the technical information
 `BUGFIX: Fix cascade argument of childEvents relation <https://github.com/neos/neos-development-collection/pull/3370>`_
 -----------------------------------------------------------------------------------------------------------------------
 
-`#3341 <https://github.com/neos/neos-development-collection/issues/3341>`_build failures made me aware of this
+`#3341 <https://github.com/neos/neos-development-collection/issues/3341>`_ build failures made me aware of this
 
 * Packages: ``Neos``
 
@@ -350,152 +336,6 @@ Voting result: https://discuss.neos.io/t/neos-7-2-login-wallpaper/5571/12
 ---------------------------------------------------------------------------------------------------------
 
 Bumps `postcss <https://github.com/postcss/postcss>`_ from 8.2.8 to 8.3.4.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a href="https://github.com/postcss/postcss/releases">postcss's releases</a>.</em></p>
-<blockquote>
-<h2>8.3.4</h2>
-<ul>
-<li>Fixed broken AST detection.</li>
-</ul>
-<h2>8.3.3</h2>
-<ul>
-<li>Fixed broken AST on <code>postcss</code> dependency duplication in custom parsers.</li>
-</ul>
-<h2>8.3.2</h2>
-<ul>
-<li>Update changelog.</li>
-</ul>
-<h2>8.3.1</h2>
-<ul>
-<li>Fixed false positives <code>PostCSS does nothing</code> warning on <code>syntax</code> option.</li>
-</ul>
-<h2>8.3 “Duke Murmur”</h2>
-<p>PostCSS 8.3 improved source map parsing performance, added <code>Node#assign()</code> shortcut, and experimental <code>Document</code> node to AST.</p>
-<h2>Thanks to Sponsors</h2>
-<p>This release was possible thanks to our community.</p>
-<p>If your company wants to support the sustainability of front-end infrastructure or wants to give some love to PostCSS, you can join our supporters by:</p>
-<ul>
-<li><a href="https://tidelift.com/"><strong>Tidelift</strong></a> with a Spotify-like subscription model supporting all projects from your lock file.</li>
-<li>Direct donations in <a href="https://opencollective.com/postcss#section-contributors"><strong>PostCSS &amp; Autoprefixer Open Collective</strong></a>.</li>
-</ul>
-<h2>Source Map Performance</h2>
-<p>Because PostCSS needs synchronous API, we can’t move from the old `source-map 0.6 to 0.7 (many other open-source projects too).</p>
-<p><a href="https://github.com/7rulnik"><code>@​7rulnik</code></a> forked <code>source-map</code> 0.6 to <a href="https://www.npmjs.com/package/source-map-js"><code>source-map-js</code></a> and back-ported performance improvements from 0.7. In 8.3 we <a href="https://github-redirect.dependabot.com/postcss/postcss/pull/1515">switched</a> from <code>source-map</code> to this <code>source-map-js</code> fork.</p>
-<p>You map see 4x performance improvements in parsing map from processing step before PostCSS (for instance, Sass).</p>
-<h2><code>Document</code> Nodes</h2>
-<p>Thanks to <a href="https://github.com/gucong3000"><code>@​gucong3000</code></a>, PostCSS already parse CSS from HTML and JS files (CSS-in-JS templates and objects).</p>
-<p>But his plugin need big updates. <a href="https://github.com/hudochenkov"><code>@​hudochenkov</code></a> from <a href="https://stylelint.io/">stylelint</a> team decided to create new parsers for styles inside <a href="https://github.com/stylelint/postcss-css-in-js">CSS-in-JS</a>, <a href="https://github.com/stylelint/postcss-html">HTML</a>, and <a href="https://github.com/stylelint/postcss-markdown">Markdown</a>.</p>
-<p>He <a href="https://github-redirect.dependabot.com/postcss/postcss/issues/1498">suggested</a> adding new <a href="https://postcss.org/api/#document"><code>Document</code></a> node type to PostCSS AST to keep multiple <code>Root</code> nodes inside and JS/HTML/Markdown code blocks between these style blocks.</p>
-<pre lang="js"><code>&lt;/tr&gt;&lt;/table&gt; 
-</code></pre>
-</blockquote>
-<p>... (truncated)</p>
-</details>
-<details>
-<summary>Changelog</summary>
-<p><em>Sourced from <a href="https://github.com/postcss/postcss/blob/main/CHANGELOG.md">postcss's changelog</a>.</em></p>
-<blockquote>
-<h2>8.3.4</h2>
-<ul>
-<li>Fixed broken AST detection.</li>
-</ul>
-<h2>8.3.3</h2>
-<ul>
-<li>Fixed broken AST on <code>postcss</code> dependency duplication in custom parsers.</li>
-</ul>
-<h2>8.3.2</h2>
-<ul>
-<li>Update changelog.</li>
-</ul>
-<h2>8.3.1</h2>
-<ul>
-<li>Fixed false positives <code>PostCSS does nothing</code> warning on <code>syntax</code> option.</li>
-</ul>
-<h2>8.3 “Duke Murmur”</h2>
-<ul>
-<li>Added <code>Node#assign()</code> shortcut (by Jonathan Neal).</li>
-<li>Added experimental <code>Document</code> node to AST (by Aleks Hudochenkov).</li>
-<li>Moved to faster fork of <code>source-map</code> (by Valentin Semirulnik).</li>
-</ul>
-<h2>8.2.15</h2>
-<ul>
-<li>Fixed <code>list</code> type definitions (by <a href="https://github.com/n19htz"><code>@​n19htz</code></a>).</li>
-</ul>
-<h2>8.2.14</h2>
-<ul>
-<li>Removed <code>source-map</code> from client-side bundle (by Barak Igal).</li>
-</ul>
-<h2>8.2.13</h2>
-<ul>
-<li>Fixed ReDoS vulnerabilities in source map parsing (by Yeting Li).</li>
-</ul>
-<h2>8.2.12</h2>
-<ul>
-<li>Fixed <code>package.json</code> exports.</li>
-</ul>
-<h2>8.2.11</h2>
-<ul>
-<li>Fixed <code>DEP0148</code> warning in Node.js 16.</li>
-<li>Fixed docs (by <a href="https://github.com/semiromid"><code>@​semiromid</code></a>).</li>
-</ul>
-<h2>8.2.10</h2>
-<ul>
-<li>Fixed ReDoS vulnerabilities in source map parsing.</li>
-<li>Fixed webpack 5 support (by Barak Igal).</li>
-<li>Fixed docs (by Roeland Moors).</li>
-</ul>
-<h2>8.2.9</h2>
-<ul>
-<li>Exported <code>NodeErrorOptions</code> type (by Rouven Weßling).</li>
-</ul>
-</blockquote>
-</details>
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a href="https://github.com/postcss/postcss/commit/`c7bae29ec7ccfc6cec74621a4071fcd668236081 <https://github.com/neos/neos-development-collection/commit/c7bae29ec7ccfc6cec74621a4071fcd668236081>`_"><code>c7bae29</code></a> Release 8.3.4 version</li>
-<li><a href="https://github.com/postcss/postcss/commit/`8b4a8b1e253793a74081ac3366ed72869c21d9ea <https://github.com/neos/neos-development-collection/commit/8b4a8b1e253793a74081ac3366ed72869c21d9ea>`_"><code>8b4a8b1</code></a> Fix Node[my] hack</li>
-<li><a href="https://github.com/postcss/postcss/commit/`7ea0c9b2d44d1a536f532ebb50e173537842d161 <https://github.com/neos/neos-development-collection/commit/7ea0c9b2d44d1a536f532ebb50e173537842d161>`_"><code>7ea0c9b</code></a> Release 8.3.3 version</li>
-<li><a href="https://github.com/postcss/postcss/commit/`ff6abab345d193605ec3a8b2859133e7a62d8dc6 <https://github.com/neos/neos-development-collection/commit/ff6abab345d193605ec3a8b2859133e7a62d8dc6>`_"><code>ff6abab</code></a> Fix Symbol description</li>
-<li><a href="https://github.com/postcss/postcss/commit/`e51efa0593869f6d2b21a1d62358a6723f345fb7 <https://github.com/neos/neos-development-collection/commit/e51efa0593869f6d2b21a1d62358a6723f345fb7>`_"><code>e51efa0</code></a> Fix import order</li>
-<li><a href="https://github.com/postcss/postcss/commit/`714c5c6263f5930a5ef0c1704bbc707db9581ed5 <https://github.com/neos/neos-development-collection/commit/714c5c6263f5930a5ef0c1704bbc707db9581ed5>`_"><code>714c5c6</code></a> Require PostCSS peer dependency from parser</li>
-<li><a href="https://github.com/postcss/postcss/commit/`d8edfeda3804a63d81d010858ade6ce5e49b93a3 <https://github.com/neos/neos-development-collection/commit/d8edfeda3804a63d81d010858ade6ce5e49b93a3>`_"><code>d8edfed</code></a> Hot fix for broken isClean on AST dublication</li>
-<li><a href="https://github.com/postcss/postcss/commit/`2da5501f709862c19e7103b81ba8fb224a5793ff <https://github.com/neos/neos-development-collection/commit/2da5501f709862c19e7103b81ba8fb224a5793ff>`_"><code>2da5501</code></a> Update dependencies</li>
-<li><a href="https://github.com/postcss/postcss/commit/`026416dac4062f0a75d664d183ea371b59b14bf9 <https://github.com/neos/neos-development-collection/commit/026416dac4062f0a75d664d183ea371b59b14bf9>`_"><code>026416d</code></a> Release 8.3.2 version</li>
-<li><a href="https://github.com/postcss/postcss/commit/`6c303240fe876ee95d9975275752e266f0900f4a <https://github.com/neos/neos-development-collection/commit/6c303240fe876ee95d9975275752e266f0900f4a>`_"><code>6c30324</code></a> Merge pull request <a href="https://github-redirect.dependabot.com/postcss/postcss/issues/1600">#1600</a> from postcss/dependabot/npm_and_yarn/lodash-4.17.21</li>
-<li>Additional commits viewable in <a href="https://github.com/postcss/postcss/compare/8.2.8...8.3.4">compare view</a></li>
-</ul>
-</details>
-<br />
-
-`![Dependabot compatibility score <https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=postcss&package-manager=npm_and_yarn&previous-version=8.2.8&new-version=8.3.4>`_](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)
-
-Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting ``@dependabot rebase``.
-
-[//]: # (dependabot-automerge-start)
-[//]: # (dependabot-automerge-end)
-
----
-
-<details>
-<summary>Dependabot commands and options</summary>
-<br />
-
-You can trigger Dependabot actions by commenting on this PR:
-- ``@dependabot rebase`` will rebase this PR
-- ``@dependabot recreate`` will recreate this PR, overwriting any edits that have been made to it
-- ``@dependabot merge`` will merge this PR after your CI passes on it
-- ``@dependabot squash and merge`` will squash and merge this PR after your CI passes on it
-- ``@dependabot cancel merge`` will cancel a previously requested merge and block automerging
-- ``@dependabot reopen`` will reopen this PR if it is closed
-- ``@dependabot close`` will close this PR and stop Dependabot recreating it. You can achieve the same result by closing it manually
-- ``@dependabot ignore this major version`` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself)
-- ``@dependabot ignore this minor version`` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself)
-- ``@dependabot ignore this dependency`` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)
-You can disable automated security fix PRs for this repo from the `Security Alerts page <https://github.com/neos/neos-development-collection/network/alerts>`_.
-
-</details>
 
 * Packages: ``Neos``
 
