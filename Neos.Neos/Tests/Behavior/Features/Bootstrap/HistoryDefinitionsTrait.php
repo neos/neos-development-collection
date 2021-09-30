@@ -6,9 +6,11 @@ use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\EventLog\Domain\Model\Event;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 use Neos\Neos\EventLog\Domain\Repository\EventRepository;
+use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
 use Neos\Neos\EventLog\Integrations\EntityIntegrationService;
 use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
 
@@ -28,7 +30,9 @@ trait HistoryDefinitionsTrait
         try {
             $eventRepository = $this->getEventRepository();
             $eventRepository->removeAll();
-            $this->getTYPO3CRIntegrationService()->reset();
+            $this->getContentRepositoryIntegrationService()->reset();
+            $eventEmittingService = $this->getEventEmittingService();
+            ObjectAccess::setProperty($eventEmittingService, 'enabled', true, true);
         } catch (\Doctrine\DBAL\DBALException $e) {
             // Ignore DB exceptions, because the trait runs before applying migrations in FlowContext
         }
@@ -149,9 +153,17 @@ trait HistoryDefinitionsTrait
     /**
      * @return ContentRepositoryIntegrationService
      */
-    protected function getTYPO3CRIntegrationService()
+    protected function getContentRepositoryIntegrationService()
     {
         return $this->getObjectManager()->get(ContentRepositoryIntegrationService::class);
+    }
+
+    /**
+     * @return EventEmittingService
+     */
+    protected function getEventEmittingService()
+    {
+        return $this->getObjectManager()->get(EventEmittingService::class);
     }
 
     /**
