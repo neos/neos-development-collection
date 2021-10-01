@@ -71,7 +71,7 @@ FEATURE: Show the last login date in the user/account list
 Upgrade Instructions
 ********************
 
-See https://www.neos.io/download-and-extend/upgrade-instructions-7-1-7-2.html
+See https://docs.neos.io/cms/references/upgrade-instructions/upgrade-instructions-7-1-7-2
 
 .. note::
 
