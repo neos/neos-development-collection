@@ -10,6 +10,6 @@ prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Neos:MenuItems) {
             value = ${Array.concat(this.currentItem, value)}
         }
 
-        reverseOder = ${Array.reverse(value)}
+        reverseOrder = ${Array.reverse(value)}
     }
 }
