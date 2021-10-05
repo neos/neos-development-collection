@@ -2,7 +2,16 @@
 #
 prototype(Neos.Neos:BreadcrumbMenu) < prototype(Neos.Neos:Menu) {
   templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/BreadcrumbMenu.html'
-  itemCollection = ${q(node).add(q(node).parents('[instanceof Neos.Neos:Document]')).get()}
+
+  itemCollection = ${q(documentNode).parents('[instanceof Neos.Neos:Document]').get()}
+  // Show always the current node, event when it is hidden in index
+  items.@process.addCurrent = Neos.Fusion:Value {
+      currentItem = Neos.Neos:MenuItems {
+        renderHiddenInIndex = true
+        itemCollection = ${[documentNode]}
+      }
+      value = ${Array.concat(this.currentItem, value)}
+  }
 
   attributes.class = 'breadcrumb'
 }
