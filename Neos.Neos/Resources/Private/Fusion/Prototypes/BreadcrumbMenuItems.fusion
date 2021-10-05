@@ -1,3 +1,6 @@
 prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Neos:MenuItems) {
-  itemCollection = ${q(documentNode).add(q(documentNode).parents('[instanceof Neos.Neos:Document]')).get()}
+  itemCollection = ${q(documentNode).parents('[instanceof Neos.Neos:Document]').get()}
+  itemCollection.@process.reverseOrder = ${Array.reverse(value)}
+  // Show always the current node, event when it is hidden in index
+  @process.addCurrent = ${Array.push(value, {node:props.node})}
 }
