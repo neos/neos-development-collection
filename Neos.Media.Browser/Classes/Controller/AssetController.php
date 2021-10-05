@@ -263,7 +263,8 @@ class AssetController extends ActionController
 
             foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $retrievedTag) {
                 assert($retrievedTag instanceof Tag);
-                $tags[] = ['object' => $retrievedTag, 'count' => $this->assetRepository->countByTag($retrievedTag, $activeAssetCollection)];
+                $tagCount = ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countByTag($retrievedTag) : $this->assetRepository->countByTag($retrievedTag, $activeAssetCollection));
+                $tags[] = ['object' => $retrievedTag, 'count' => $tagCount];
             }
 
             if ($searchTerm !== null) {
