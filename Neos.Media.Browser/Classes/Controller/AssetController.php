@@ -266,7 +266,7 @@ class AssetController extends ActionController
                 $tags[] = ['object' => $retrievedTag, 'count' => $this->assetRepository->countByTag($retrievedTag, $activeAssetCollection)];
             }
 
-            if ($searchTerm !== null) {
+            if ($searchTerm !== null && !empty($searchTerm)) {
                 $assetProxies = $assetProxyRepository->findBySearchTerm($searchTerm);
                 $this->view->assign('searchTerm', $searchTerm);
             } elseif ($this->browserState->get('tagMode') === self::TAG_NONE) {
