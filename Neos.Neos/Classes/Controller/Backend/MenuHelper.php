@@ -164,7 +164,10 @@ class MenuHelper
             }
             $this->moduleListFirstLevelCache[$moduleName] = array_merge(
                 $this->collectModuleData($controllerContext, $moduleName, $moduleConfiguration, $moduleName),
-                ['group' => $moduleName, 'submodules' => $submodules]
+                [
+                    'group' => $moduleName,
+                    'submodules' => (new PositionalArraySorter($submodules))->toArray(),
+                ]
             );
         }
 
@@ -217,7 +220,8 @@ class MenuHelper
             'label' => $moduleConfiguration['label'] ?? '',
             'description' => $moduleConfiguration['description'] ?? '',
             'icon' => $icon,
-            'hideInMenu' => (bool)($moduleConfiguration['hideInMenu'] ?? false)
+            'hideInMenu' => (bool)($moduleConfiguration['hideInMenu'] ?? false),
+            'position' => $moduleConfiguration['position'] ?? null,
         ];
     }
 }
