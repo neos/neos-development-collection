@@ -96,15 +96,17 @@ class Parser implements ParserInterface
 	/x';
 
     /**
-     * Split an object path like "foo.bar.baz.quux" or "foo.prototype(Neos.Fusion:Something).bar.baz"
-     * at the dots (but not the dots inside the prototype definition prototype(...))
+     * Split an object path like "foo.bar.baz.quux", "foo.'bar.baz.quux'" or "foo.prototype(Neos.Fusion:Something).bar.baz"
+     * at the dots (but not the dots inside the prototype definition prototype(...) or dots inside quotes)
      */
     const SPLIT_PATTERN_OBJECTPATH = '/
-		\.                         # we split at dot characters...
-		(?!                        # which are not inside prototype(...). Thus, the dot does NOT match IF it is followed by:
-			[^(]*                  # - any character except (
-			\)                     # - the character )
-		)
+        (                       # Matches area if:
+            prototype\(.*?\)        # inside prototype(...),
+            |"(?:\\\"|[^"])+"       # inside double quotes - respect escape,
+            |\'(?:\\\\\'|[^\'])+\'  # inside single quotes - respect escape
+        )
+        (*SKIP)(*FAIL)          # skip, when the preceding matches and fail (dont include them in the match)
+        |\.                     # for what was not matched, we split at dot characters...
 	/x';
 
     /**

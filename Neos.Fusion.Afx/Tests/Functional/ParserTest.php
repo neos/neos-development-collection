@@ -222,6 +222,38 @@ class ParserTest extends TestCase
     /**
      * @test
      */
+    public function shouldParseSingleSelfClosingTagWithEmptyAttribute(): void
+    {
+        $parser = new Parser('<div prop/>');
+
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [
+                            [
+                                'type' => 'prop',
+                                'payload' => [
+                                    'type' => 'boolean',
+                                    'payload' => true,
+                                    'identifier' => 'prop'
+                                ]
+                            ]
+                        ],
+                        'children' => [],
+                        'selfClosing' => true
+                    ]
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
     public function shouldParseSingleSelfClosingTagWithMultipleAttributes(): void
     {
         $parser = new Parser('<div prop="value" anotherProp="Another Value"/>');
@@ -287,6 +319,86 @@ class ParserTest extends TestCase
                                     'type' => 'string',
                                     'payload' => 'Another Value',
                                     'identifier' => 'anotherProp'
+                                ]
+                            ]
+                        ],
+                        'children' => [],
+                        'selfClosing' => true
+                    ]
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldParseTagWithSingleOrDoubleQuoteEscapedAttributeIdentifier(): void
+    {
+        $parser = new Parser('<div "@click.blah.blih.blub"="value" \'@click.blah.blih.blub\'="value"/>');
+
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [
+                            [
+                                'type' => 'prop',
+                                'payload' => [
+                                    'type' => 'string',
+                                    'payload' => 'value',
+                                    'identifier' => '"@click.blah.blih.blub"'
+                                ]
+                            ],
+                            [
+                                'type' => 'prop',
+                                'payload' => [
+                                    'type' => 'string',
+                                    'payload' => 'value',
+                                    'identifier' => '\'@click.blah.blih.blub\''
+                                ]
+                            ]
+                        ],
+                        'children' => [],
+                        'selfClosing' => true
+                    ]
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldParseTagWithEscapedAttributeIdentifierWithQuoteEscapesInside(): void
+    {
+        $parser = new Parser('<div "@click.escaped\"escaped"="value" \'escaped\\\'escaped\' />');
+
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [
+                            [
+                                'type' => 'prop',
+                                'payload' => [
+                                    'type' => 'string',
+                                    'payload' => 'value',
+                                    'identifier' => '"@click.escaped\"escaped"'
+                                ]
+                            ],
+                            [
+                                'type' => 'prop',
+                                'payload' => [
+                                    'type' => 'boolean',
+                                    'payload' => true,
+                                    'identifier' => '\'escaped\\\'escaped\''
                                 ]
                             ]
                         ],
