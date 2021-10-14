@@ -39,7 +39,7 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
     data-__neos-insertion-anchor.@if.onlyRenderInBackend = ${node.context.inBackend && node.context.currentRenderingMode.edit}
   }
 
-  # Doesnt need to be set, if node is a content collection.
+  # Doesn't need to be set, if the node is a content collection.
   nodePath = 'to-be-set-by-user'
 
   # You may override this to get your content collection from a different place than the current node.
