@@ -79,6 +79,7 @@
           line-height: $unit;
           padding: 0 $defaultMargin;
           box-sizing: border-box;
+          border: 0;
 
           &:hover {
             background: $blue;

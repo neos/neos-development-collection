@@ -7,7 +7,7 @@
 			<target state="translated">Geri</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="translated">İptal et</target></trans-unit>
+			<target state="translated">Cancel</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>

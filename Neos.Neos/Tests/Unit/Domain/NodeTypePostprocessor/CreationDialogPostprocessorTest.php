@@ -198,43 +198,4 @@ class CreationDialogPostprocessorTest extends UnitTestCase
 
         self::assertSame($expectedElements, $configuration['ui']['creationDialog']['elements']);
     }
-
-    /**
-     * @test
-     */
-    public function processDisablesUnsupportedEditors(): void
-    {
-        $configuration = [
-            'properties' => [
-                'somePropertyName' => [
-                    'ui' => [
-                        'showInCreationDialog' => true,
-                        'inspector' => [
-                            'editor' => 'Neos.Neos/Inspector/Editors/ImageEditor',
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $this->creationDialogPostprocessor->process($this->mockNodeType, $configuration, []);
-
-        $expectedElements = [
-            'somePropertyName' => [
-                'type' => 'string',
-                'ui' => [
-                    'label' => 'somePropertyName',
-                    'help' => [
-                        'message' => 'The "Neos.Neos/Inspector/Editors/ImageEditor" editor is currently not supported in the Creation Dialog',
-                    ],
-                    'editor' => 'Neos.Neos/Inspector/Editors/ImageEditor',
-                    'editorOptions' => [
-                        'disabled' => true,
-                    ]
-                ],
-            ],
-        ];
-
-        self::assertSame($expectedElements, $configuration['ui']['creationDialog']['elements']);
-    }
 }

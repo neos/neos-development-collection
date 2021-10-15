@@ -61,10 +61,11 @@
 			<target state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target state="translated">Sorteer rigting Stygend</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target state="translated">
+Sorteer rigting Dalend</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
@@ -103,13 +104,13 @@
 			<target state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="needs-translation">Cancel</target></trans-unit>
+			<target state="translated">Kanselleer</target></trans-unit>
       <trans-unit id="replace" xml:space="preserve">
 				<source>Replace</source>
 			<target state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="needs-translation">Replace asset resource</target></trans-unit>
+			<target state="translated">Vervang batehulpbron</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target state="needs-translation">Save</target></trans-unit>
@@ -262,7 +263,7 @@
 			<target state="needs-translation">Basics</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target state="needs-translation">Delete</target></trans-unit>
+			<target state="translated">verwyder</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target state="needs-translation">Click to delete</target></trans-unit>
@@ -316,7 +317,7 @@
 			<target state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target state="needs-translation">No file selected</target></trans-unit>
+			<target state="translated">Geen lêer is gekies nie</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
@@ -422,13 +423,15 @@
 			<target state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target state="translated">
+'Hulpbronne van die tipe' {0} 'kan slegs deur 'n soortgelyke bron vervang word. Het tipe "{1}" 'gekry</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target state="translated">Geen toegang tot werkruimte "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="needs-translation">No document node found for this node</target></trans-unit>
+			<target state="translated">
+Geen dokumentknoop gevind vir hierdie knoop nie</target></trans-unit>
     </body>
   </file>
 </xliff>

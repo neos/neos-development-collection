@@ -5058,11 +5058,10 @@ q:after {
   .neos .neos-dropdown-menu {
     position: absolute;
     top: 100%;
-    left: 0;
     z-index: 1000;
     display: none;
     float: left;
-    min-width: 160px;
+    min-width: 100%;
     padding: 0;
     margin: 1px 0 0;
     list-style: none;
@@ -5375,7 +5374,8 @@ q:after {
             font-size: 14px;
             line-height: 40px;
             padding: 0 16px;
-            box-sizing: border-box; }
+            box-sizing: border-box;
+            border: 0; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li a:hover,
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button:hover {
               background: #00b5ff; }

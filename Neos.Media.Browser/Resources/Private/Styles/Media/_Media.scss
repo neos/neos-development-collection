@@ -112,12 +112,26 @@
 
 						&.neos-active {
 							background-color: #fff;
+
+							.neos-media-assetsource-icon {
+								filter: invert(.5) sepia(1) saturate(5) hue-rotate(175deg);
+							}
+
+							&:hover {
+								.neos-media-assetsource-icon {
+									filter: none;
+								}
+							}
 						}
 
 						&:not(.neos-active) {
 							&:hover {
 								background-color: #fff;
 								color: $blue;
+
+								.neos-media-assetsource-icon {
+									filter: invert(.5) sepia(1) saturate(5) hue-rotate(175deg);
+								}
 							}
 
 							&.neos-drag-active::after {

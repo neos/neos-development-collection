@@ -1272,6 +1272,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     public function getNumberOfChildNodes($nodeTypeFilter = null): int
     {
+        $nodes = $this->context->getFirstLevelNodeCache()->getChildNodesByPathAndNodeTypeFilter($this->getPath(), $nodeTypeFilter);
+        if ($nodes !== false) {
+            return count($nodes);
+        }
         return $this->nodeData->getNumberOfChildNodes($nodeTypeFilter, $this->context->getWorkspace(), $this->context->getDimensions());
     }
 
