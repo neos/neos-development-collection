@@ -9,6 +9,10 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+# Composer uses 4 spaces itself
+[composer.json]
+indent_size = 4
+
 # PHP should follow the PSR-2 standard
 [*.php]
 indent_size = 4
