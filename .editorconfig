@@ -28,7 +28,3 @@ indent_style = tab
 # HTML should use tabs, to reduce conflicts
 [*.html]
 indent_style = tab
-
-# SASS should use tabs, to reduce conflicts
-[*.scss]
-indent_style = tab
