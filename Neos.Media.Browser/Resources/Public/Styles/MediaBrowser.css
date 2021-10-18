@@ -26,11 +26,11 @@
   src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url("../Fonts/NotoSans/NotoSans-BoldItalic.ttf") format("truetype");
 }
 /*!
- * Font Awesome Free 5.8.2 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
-  font-family: 'FontAwesome';
+  font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 900;
   font-display: auto;
@@ -40,7 +40,7 @@
 .fa,
 .fas,
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-drag-active:not(.neos-active)::after {
-  font-family: 'FontAwesome';
+  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
 }
 
@@ -287,6 +287,9 @@
 .neos.media-browser .neos-media-content.neos-media-aside-condensed .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active .neos-media-assetsource-icon {
   filter: invert(0.5) sepia(1) saturate(5) hue-rotate(175deg);
 }
+.neos.media-browser .neos-media-content.neos-media-aside-condensed .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active:hover {
+  background-color: #00b5ff;
+}
 .neos.media-browser .neos-media-content.neos-media-aside-condensed .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active:hover .neos-media-assetsource-icon {
   filter: none;
 }
@@ -413,6 +416,9 @@
   }
   .neos.media-browser .neos-media-content .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active .neos-media-assetsource-icon {
     filter: invert(0.5) sepia(1) saturate(5) hue-rotate(175deg);
+  }
+  .neos.media-browser .neos-media-content .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active:hover {
+    background-color: #00b5ff;
   }
   .neos.media-browser .neos-media-content .neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-active:hover .neos-media-assetsource-icon {
     filter: none;
