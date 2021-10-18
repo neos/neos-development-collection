@@ -120,6 +120,9 @@
 							&:hover {
 								background-color: $blue;
 								
+								.neos-media-assetsource-icon {
+									filter: none;
+								}
 							}
 						}
 
