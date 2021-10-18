@@ -183,6 +183,28 @@ EOF;
     /**
      * @test
      */
+    public function newlinesInsideStringsAreCollapsedToSpaces(): void
+    {
+        $afxCode = '
+            <h1>
+                This is a string literal
+                with multiple lines
+                that shall collapse
+                to spaces.
+            </h1>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = 'This is a string literal with multiple lines that shall collapse to spaces.'
+}
+EOF;
+
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
     public function htmlTagsAreConvertedToSelfClosingFusionTags(): void
     {
         $afxCode = '<h1/>';
