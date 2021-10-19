@@ -25,6 +25,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Model\Tag;
@@ -175,11 +176,12 @@ class MediaCommandController extends CommandController
      * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialogs
      * @param string $onlyTags Comma-separated list of asset tags, that should be taken into account
      * @param int $limit Limit the result of unused assets displayed and removed for this run.
+     * @param string $onlyCollections Comma-separated list of asset collections, that should be taken into account
      * @return void
      * @throws IllegalObjectTypeException
      * @throws AssetServiceException
      */
-    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = null)
+    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = null, string $onlyCollections = ''): void
     {
         $iterator = $this->assetRepository->findAllIterator();
         $assetCount = $this->assetRepository->countAll();
@@ -205,15 +207,25 @@ class MediaCommandController extends CommandController
             return count(array_intersect($filterTagValues, $assetTagValues)) > 0;
         };
 
+        $assetCollectionsMatchFilterCollections = static function (Collection $assetCollections, string $filterCollections): bool {
+            $filterCollectionValues = Arrays::trimExplode(',', $filterCollections);
+            $assetCollectionValues = [];
+            foreach ($assetCollections as $assetCollection) {
+                /** @var AssetCollection $assetCollection */
+                $assetCollectionValues[] = $assetCollection->getTitle();
+            }
+            return count(array_intersect($filterCollectionValues, $assetCollectionValues)) > 0;
+        };
+
         !$quiet && $this->output->progressStart($assetCount);
 
+        /** @var Asset $asset */
         foreach ($this->assetRepository->iterate($iterator) as $asset) {
             !$quiet && $this->output->progressAdvance(1);
 
             if ($limit !== null && $unusedAssetCount === $limit) {
                 break;
             }
-
             if (!$asset instanceof Asset) {
                 continue;
             }
@@ -221,6 +233,9 @@ class MediaCommandController extends CommandController
                 continue;
             }
             if ($filterByAssetSourceIdentifier !== '' && $asset->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
+                continue;
+            }
+            if ($onlyCollections !== '' && !$assetCollectionsMatchFilterCollections($asset->getAssetCollections(), $onlyCollections)) {
                 continue;
             }
             if ($onlyTags !== '' && $assetTagsMatchFilterTags($asset->getTags(), $onlyTags) === false) {
