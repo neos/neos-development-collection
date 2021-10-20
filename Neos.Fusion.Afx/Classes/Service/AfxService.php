@@ -303,7 +303,10 @@ class AfxService
         // ignore blank text if it is connected to a newline
         $payload = array_map(function ($astNode) {
             if ($astNode['type'] === 'text') {
-                $astNode['payload'] = preg_replace('/[\\s]*\\n[\\s]*/u', '', $astNode['payload']);
+                // remove whitespace connected to newlines at the beginning or end of text payloads
+                $astNode['payload'] = preg_replace('/(^[\\s]*\\n[\\s]*|[\\s]*\\n[\\s]*$)/u', '', $astNode['payload']);
+                // collapse whitespace connected to newlines in the middle of text payloads to spaces
+                $astNode['payload'] = preg_replace('/([\\s]*\\n[\\s]*)+/u', ' ', $astNode['payload']);
             }
             return $astNode;
         }, $payload);
