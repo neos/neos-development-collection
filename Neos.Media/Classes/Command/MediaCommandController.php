@@ -174,9 +174,9 @@ class MediaCommandController extends CommandController
      * @param string $assetSource If specified, only assets of this asset source are considered. For example "neos" or "my-asset-management-system"
      * @param bool $quiet If set, only errors will be displayed.
      * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialogs
-     * @param string $onlyTags Comma-separated list of asset tags, that should be taken into account
+     * @param string $onlyTags Comma-separated list of asset tag labels, that should be taken into account
      * @param int $limit Limit the result of unused assets displayed and removed for this run.
-     * @param string $onlyCollections Comma-separated list of asset collections, that should be taken into account
+     * @param string $onlyCollections Comma-separated list of asset collection titles, that should be taken into account
      * @return void
      * @throws IllegalObjectTypeException
      * @throws AssetServiceException
