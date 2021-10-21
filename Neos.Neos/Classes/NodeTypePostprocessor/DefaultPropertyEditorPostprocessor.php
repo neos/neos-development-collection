@@ -73,15 +73,44 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
                 // - take configuration from editor defaults
                 // - take configuration from dataType
                 // - take configuration from properties (NodeTypes)
-                $mergedInspectorConfiguration = [];
-                if (isset($this->editorDefaultConfiguration[$editor])) {
-                    $mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor];
-                }
-
+                $mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor] ?? [];
                 $mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $defaultConfigurationFromDataType);
                 $mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedInspectorConfiguration, $propertyConfiguration['ui']['inspector']);
                 $propertyConfiguration['ui']['inspector'] = $mergedInspectorConfiguration;
                 $propertyConfiguration['ui']['inspector']['editor'] = $editor;
+            }
+        }
+        unset($propertyConfiguration);
+        if (isset($configuration['ui']['creationDialog']['elements']) && is_array($configuration['ui']['creationDialog']['elements'])) {
+            foreach ($configuration['ui']['creationDialog']['elements'] as &$elementConfiguration) {
+                if (!isset($elementConfiguration['type'])) {
+                    continue;
+                }
+
+                $type = $elementConfiguration['type'];
+                $defaultConfigurationFromDataType = $this->dataTypesDefaultConfiguration[$type] ?? [];
+
+                // FIRST STEP: Figure out which editor should be used
+                // - Default: editor as configured from the data type
+                // - Override: editor as configured from the property configuration.
+                if (isset($elementConfiguration['ui']['editor'])) {
+                    $editor = $elementConfiguration['ui']['editor'];
+                } elseif (isset($defaultConfigurationFromDataType['editor'])) {
+                    $editor = $defaultConfigurationFromDataType['editor'];
+                } else {
+                    // No exception since the configuration could be a partial configuration overriding a property with showInCreationDialog flag set
+                    continue;
+                }
+
+                // SECOND STEP: Build up the full UI configuration by merging:
+                // - take configuration from editor defaults
+                // - take configuration from dataType
+                // - take configuration from creationDialog elements (NodeTypes)
+                $mergedUiConfiguration = $this->editorDefaultConfiguration[$editor] ?? [];
+                $mergedUiConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedUiConfiguration, $defaultConfigurationFromDataType);
+                $mergedUiConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedUiConfiguration, $elementConfiguration['ui']);
+                $elementConfiguration['ui'] = $mergedUiConfiguration;
+                $elementConfiguration['ui']['editor'] = $editor;
             }
         }
     }
