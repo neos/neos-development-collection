@@ -172,8 +172,8 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
                     'ui' => [
                         'label' => 'Some Label',
                         'inspector' => [
-//                            'value' => 'fromEditorDefaultConfig',
-//                            'editorDefaultValue' => 'fromEditorDefaultConfig',
+                            'value' => 'fromEditorDefaultConfig',
+                            'editorDefaultValue' => 'fromEditorDefaultConfig',
                             'editor' => 'EditorWithDefaultConfig',
                             'propertyValue' => 'fromPropertyConfig',
                         ],

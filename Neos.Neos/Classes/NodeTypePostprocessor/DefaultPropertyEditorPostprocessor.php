@@ -52,15 +52,11 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
 
                 $type = $propertyConfiguration['type'];
 
-                if (!isset($this->dataTypesDefaultConfiguration[$type])) {
-                    continue;
-                }
-
                 if (!isset($propertyConfiguration['ui']['inspector'])) {
                     continue;
                 }
 
-                $defaultConfigurationFromDataType = $this->dataTypesDefaultConfiguration[$type];
+                $defaultConfigurationFromDataType = $this->dataTypesDefaultConfiguration[$type] ?? [];
 
                 // FIRST STEP: Figure out which editor should be used
                 // - Default: editor as configured from the data type
