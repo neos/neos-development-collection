@@ -12,6 +12,7 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -26,6 +27,12 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
     protected $systemLogger;
 
     /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
      * Returns an empty string
      *
      * @param string $fusionPath path causing the exception
@@ -36,6 +43,7 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
         $this->systemLogger->debug('Absorbed Exception: ' . $exception->getMessage(), ['fusionPath' => $fusionPath, 'referenceCode' => $referenceCode, 'FLOW_LOG_ENVIRONMENT' => ['packageKey' => 'Neos.Fusion', 'className' => self::class, 'methodName' => 'handle']]);
+        $this->throwableStorage->logThrowable($exception);
         return '';
     }
 
