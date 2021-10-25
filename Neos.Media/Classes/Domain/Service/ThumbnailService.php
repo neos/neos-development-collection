@@ -231,6 +231,7 @@ class ThumbnailService
     public function refreshThumbnail(Thumbnail $thumbnail): void
     {
         $thumbnail->refresh();
+        $this->emitThumbnailRefreshed($thumbnail);
         $this->persistenceManager->allowObject($thumbnail);
         if (!$this->persistenceManager->isNewObject($thumbnail)) {
             $this->thumbnailRepository->update($thumbnail);
@@ -258,6 +259,17 @@ class ThumbnailService
         }
 
         return $this->resourceManager->getPublicPackageResourceUriByPath($staticResource);
+    }
+
+    /**
+     * Signals that a thumbnail was refreshed.
+     *
+     * @Flow\Signal
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    public function emitThumbnailRefreshed(Thumbnail $thumbnail): void
+    {
     }
 
     /**
