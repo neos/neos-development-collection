@@ -67,9 +67,12 @@ class AfxServiceTest extends TestCase
      */
     public function htmlTagsWithIgnoredContentAreConvertedToFusionTags(): void
     {
-        $afxCode = '<h1>
+        $afxCode = <<<'EOF'
+            <h1>
+                
+            </h1>
+            EOF;
 
-</h1>';
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Tag {
                 tagName = 'h1'
@@ -423,11 +426,11 @@ class AfxServiceTest extends TestCase
     {
         $afxCode = <<<'EOF'
             <h1>
-
+                
                 <strong>foo</strong>
-
+                    
                 <i>bar</i>
-
+                
             </h1>
             EOF;
 
