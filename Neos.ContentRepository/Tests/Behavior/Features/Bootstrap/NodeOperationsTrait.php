@@ -951,6 +951,20 @@ trait NodeOperationsTrait
     }
 
     /**
+     * @Then the node should be connected to the root
+     */
+    public function theNodeShouldBeConnectedToTheRoot()
+    {
+        $node = $this->iShouldHaveOneNode();
+
+        while ($node->getParentPath() !== '/') {
+            $parent = $node->getParent();
+            Assert::assertNotNull($parent, 'Parent node of "' . $node->getContextPath() . '" was not found.');
+            $node = $parent;
+        }
+    }
+
+    /**
      * Makes sure to reset all node instances which might still be stored in the NodeDataRepository, ContextFactory or
      * NodeFactory.
      *
