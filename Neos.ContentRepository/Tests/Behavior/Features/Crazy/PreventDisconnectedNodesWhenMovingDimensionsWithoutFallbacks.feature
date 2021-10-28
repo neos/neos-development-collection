@@ -167,6 +167,7 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
     Then I should have one node
     And the node should be connected to the root
 
+  # As a editor this error can be triggered when a node is selected, cut and pasted in another dimension
   Scenario: /sites/cr/subpage and /sites/other got disjunctive dimensions (zero common dimensions) => SHOULD FAIL
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                           | Properties              | Language |
@@ -176,7 +177,9 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
     When I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | en       |
-    And I move the node into the node with path "/sites/other"
+    And I move the node into the node with path "/sites/other" in the following context:
+      | Workspace  | Language |
+      | user-admin | fr       |
 
     # Assertions: Nodes are NOT MOVED AT ALL (i.e. not findable at the target)
     And I get a node by path "/sites/other/subpage" with the following context:

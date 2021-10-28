@@ -585,6 +585,39 @@ trait NodeOperationsTrait
     }
 
     /**
+     * @Given /^I move the node (before|after|into) the node with path "([^"]*)" in the following context:$/
+     */
+    public function iMoveTheNodeIntoTheNodeWithPathInTheFollowingContext($action, $referenceNodePath, $referenceNodeContextTable)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($action), 'string', escapeshellarg($referenceNodePath)));
+        } else {
+            $rows = $referenceNodeContextTable->getHash();
+            $referenceNodeContext = $this->getContextForProperties($rows[0]);
+
+            $node = $this->iShouldHaveOneNode();
+            $referenceNode = $referenceNodeContext->getNode($referenceNodePath);
+            switch ($action) {
+                case 'before':
+                    $node->moveBefore($referenceNode);
+                    break;
+                case 'after':
+                    $node->moveAfter($referenceNode);
+                    break;
+                case 'into':
+                    $node->moveInto($referenceNode);
+                    break;
+                default:
+                    throw new \InvalidArgumentException('Unknown move action "' . $action . '"');
+            }
+
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
+            $this->resetNodeInstances();
+        }
+    }
+
+
+    /**
      * @Then /^I should have one node$/
      *
      * @return \Neos\ContentRepository\Domain\Model\NodeInterface
