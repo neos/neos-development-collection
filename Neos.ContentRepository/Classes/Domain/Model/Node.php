@@ -183,7 +183,12 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
             throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath(), $path), 1414436551);
         }
 
-        $changedNodePathsCollection = $this->setPathInternal($path, !$checkForExistence);
+        if ($this->getNodeType()->isAggregate()) {
+            $changedNodePathsCollection = $this->setPathInternalForAggregate($path, !$checkForExistence);
+        } else {
+            $changedNodePathsCollection = $this->setPathInternal($path, !$checkForExistence);
+        }
+
         $this->nodeDataRepository->persistEntities();
         array_walk($changedNodePathsCollection, function ($changedNodePathInformation) {
             call_user_func_array([
@@ -212,7 +217,9 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
 
     /**
      * Moves a node and sub nodes to the new path.
-     * This process is different depending on the fact if the node is an aggregate type or not.
+     * ONLY CALLED FOR Non-Aggregate Nodes, (= non-Document Nodes) -> CONTENT Nodes.
+     *
+     * For Document Nodes, {@see setPathInternalForAggregate} is called (in {@see setPath}
      *
      * @param string $destinationPath the new node path
      * @param boolean $recursiveCall is this a recursive call
@@ -222,10 +229,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     protected function setPathInternal(string $destinationPath, bool $recursiveCall): array
     {
-        if ($this->getNodeType()->isAggregate()) {
-            return $this->setPathInternalForAggregate($destinationPath, $recursiveCall);
-        }
-
         $originalPath = $this->nodeData->getPath();
 
         /** @var Node $childNode */
@@ -249,6 +252,12 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     protected function setPathInternalForAggregate(string $destinationPath, bool $recursiveCall): array
     {
+        // This method is NOT called recursively, but just ONCE for the root of the moved node tree.
+        // we need to figure out what other NodeData (in other dimensions) we can move. We want to move ALL POSSIBLE dimensions,
+        // but WITHOUT creating disconnected nodes due to the move.
+
+        // A disconnected node exists if, for EVERY allowed Dimension Combination,
+        // the node had an existing parent before the move, but looses the parent after the move.
         $originalPath = $this->nodeData->getPath();
         $nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, true);
 
