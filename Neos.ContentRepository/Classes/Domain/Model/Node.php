@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\ContentRepository\Domain\Service\NodeMoveIntegrityCheckService;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Exception\NodeMethodIsUnsupported;
@@ -98,6 +99,12 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @var NodeServiceInterface
      */
     protected $nodeService;
+
+    /**
+     * @Flow\Inject
+     * @var NodeMoveIntegrityCheckService
+     */
+    protected $nodeMoveIntegrityCheckService;
 
     /**
      * @param NodeData $nodeData
@@ -258,6 +265,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
 
         // A disconnected node exists if, for EVERY allowed Dimension Combination,
         // the node had an existing parent before the move, but looses the parent after the move.
+        $this->nodeMoveIntegrityCheckService->ensureIntegrityForDocumentNodeMove($this, $destinationPath);
         $originalPath = $this->nodeData->getPath();
         $nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, true);
 

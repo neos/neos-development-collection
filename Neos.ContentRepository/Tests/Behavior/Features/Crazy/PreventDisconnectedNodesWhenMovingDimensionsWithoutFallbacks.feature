@@ -20,6 +20,9 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
   - /sites/cr/subpage and /sites/other got disjunctive dimensions (zero common dimensions)
 
   Background:
+    Given I have the following content dimensions:
+      | Identifier | Default | Presets                                                                                        |
+      | language   | de      | de=de; en=en; fr=fr |
     Given I have the following nodes:
       | Identifier                           | Path      | Node Type                           | Properties            | Language |
       | 86198d18-8c4a-41eb-95fa-56223b2a3a97 | /sites    | unstructured                        |                       | de       |
@@ -103,7 +106,15 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
     When I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | en       |
-    And I move the node into the node with path "/sites/other"
+    And I move the node into the node with path "/sites/other" and exceptions are caught
+    Then the last caught exception should be of type "NodeMoveIntegrityViolationException" with message:
+    """
+    Node Neos.ContentRepository.Testing:Page (subpage) can not be moved.
+    When moving Document Nodes, they are moved across all dimensions.
+    For node Neos.ContentRepository.Testing:Page (subpage), we attempted to move it across the following dimensions:
+     - language ["de"] (ERROR: Non-Existing Parent)
+     - language ["en"]
+    """
 
     # Assertions: Nodes are NOT MOVED AT ALL (i.e. not findable at the target)
     And I get a node by path "/sites/other/subpage" with the following context:
@@ -139,7 +150,15 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
     When I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | en       |
-    And I move the node into the node with path "/sites/other"
+    And I move the node into the node with path "/sites/other" and exceptions are caught
+    Then the last caught exception should be of type "NodeMoveIntegrityViolationException" with message:
+    """
+    Node Neos.ContentRepository.Testing:Page (subpage) can not be moved.
+    When moving Document Nodes, they are moved across all dimensions.
+    For node Neos.ContentRepository.Testing:Page (subpage), we attempted to move it across the following dimensions:
+     - language ["de"] (ERROR: Non-Existing Parent)
+     - language ["en"]
+    """
 
     # Assertions: Nodes are NOT MOVED AT ALL (i.e. not findable at the target)
     And I get a node by path "/sites/other/subpage" with the following context:
@@ -177,9 +196,16 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
     When I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | en       |
-    And I move the node into the node with path "/sites/other" in the following context:
+    And I move the node into the node with path "/sites/other" in the following context and exceptions are caught:
       | Workspace  | Language |
       | user-admin | fr       |
+    Then the last caught exception should be of type "NodeMoveIntegrityViolationException" with message:
+    """
+    Node Neos.ContentRepository.Testing:Page (subpage) can not be moved.
+    When moving Document Nodes, they are moved across all dimensions.
+    For node Neos.ContentRepository.Testing:Page (subpage), we attempted to move it across the following dimensions:
+     - language ["en"] (ERROR: Non-Existing Parent)
+    """
 
     # Assertions: Nodes are NOT MOVED AT ALL (i.e. not findable at the target)
     And I get a node by path "/sites/other/subpage" with the following context:
