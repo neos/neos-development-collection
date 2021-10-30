@@ -78,6 +78,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         }
 
         $node = $this->fusionValue('node');
+        $additionalParams = $this->fusionValue('additionalParams');
 
         if (!$node instanceof NodeInterface) {
             throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
@@ -93,14 +94,20 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         $absolute = $this->fusionValue('absolute');
 
-        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris, $absolute) {
+        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris, $absolute, $additionalParams) {
             switch ($matches[1]) {
                 case 'node':
                     $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext, $absolute);
+                    if (is_array($additionalParams) && count($additionalParams)) {
+                        $resolvedUri .= '?' . http_build_query($additionalParams);
+                    }
                     $this->runtime->addCacheTag('node', $matches[2]);
                     break;
                 case 'asset':
                     $resolvedUri = $linkingService->resolveAssetUri($matches[0]);
+                    if (is_array($additionalParams) && count($additionalParams)) {
+                        $resolvedUri .= '?' . http_build_query($additionalParams);
+                    }
                     $this->runtime->addCacheTag('asset', $matches[2]);
                     break;
                 default:
