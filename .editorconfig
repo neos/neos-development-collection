@@ -17,14 +17,10 @@ indent_size = 4
 [*.php]
 indent_size = 4
 
-# JS should use tabs, to reduce conflicts
-[*.js]
+# JS,SASS, HTML should use tabs, to reduce conflicts
+[*.{js,scss,html}]
 indent_style = tab
 
-# SASS should use tabs, to reduce conflicts
-[*.scss]
-indent_style = tab
-
-# HTML should use tabs, to reduce conflicts
-[*.html]
-indent_style = tab
+# Markdown uses trailing whitespace for line breaks
+[*.md]
+trim_trailing_whitespace = false
