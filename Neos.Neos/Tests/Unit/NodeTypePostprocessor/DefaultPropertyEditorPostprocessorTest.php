@@ -21,7 +21,6 @@ use Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor;
  */
 class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
 {
-
     private function processConfiguration(array $configuration, array $dataTypesDefaultConfiguration, array $editorDefaultConfiguration): array
     {
         $postprocessor = new DefaultPropertyEditorPostprocessor();
@@ -470,5 +469,4 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $actualResult = $this->processConfiguration($configuration, [], []);
         self::assertSame($configuration, $actualResult);
     }
-
 }
