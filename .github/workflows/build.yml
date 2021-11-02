@@ -32,7 +32,7 @@ jobs:
           #  experimental: false
           #  dependencies: 'lowest'
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     services:
       mariadb:
         image: mariadb:10.2
@@ -121,12 +121,6 @@ jobs:
                   'Neos.Flow': TRUE
           EOF
           echo "Running in context '$FLOW_CONTEXT'"
-          ./flow configuration:show
-          ./flow routing:list
-
-      - name: Setup eventstore
-        run: |
-          ./flow eventstore:setup
 
       - name: Run functional tests
         run: |
@@ -136,7 +130,7 @@ jobs:
       - name: Run behat tests
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
+          ./flow behat:setup
           bin/behat -f progress -c Packages/CR/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
           bin/behat -f progress -c Packages/CR/Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist
 
