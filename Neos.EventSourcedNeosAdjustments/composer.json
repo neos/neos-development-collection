@@ -7,7 +7,8 @@
     ],
     "require": {
         "neos/neos": "*",
-        "neos/neos-ui": "*"
+        "neos/neos-ui": "*",
+        "neos/event-sourcing": "*"
     },
     "autoload": {
         "psr-4": {
