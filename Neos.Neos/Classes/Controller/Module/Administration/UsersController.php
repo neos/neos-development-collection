@@ -68,6 +68,12 @@ class UsersController extends AbstractModuleController
     protected $tokenAndProviderFactory;
 
     /**
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
+     * @var array
+     */
+    protected $authenticationProviderSettings;
+
+    /**
      * @return void
      * @throws NoSuchArgumentException
      */
@@ -381,9 +387,18 @@ class UsersController extends AbstractModuleController
      */
     protected function getAuthenticationProviders(): array
     {
-        $providerNames = array_keys($this->tokenAndProviderFactory->getProviders());
+        $providers = array_keys($this->tokenAndProviderFactory->getProviders());
+
+        $providerNames =[];
+        foreach ($providers as $authenticationProviderName) {
+            $providerNames[$authenticationProviderName] = [
+                'label' => ($this->authenticationProviderSettings[$authenticationProviderName]['label'] ?? $authenticationProviderName),
+                'identifier' => $authenticationProviderName
+            ];
+        }
+
         sort($providerNames);
-        return array_combine($providerNames, $providerNames);
+        return $providerNames;
     }
 
     /**
