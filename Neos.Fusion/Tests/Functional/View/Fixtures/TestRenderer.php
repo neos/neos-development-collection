@@ -11,7 +11,6 @@ namespace Neos\Fusion\Tests\Functional\View\Fixtures;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 
 /**
