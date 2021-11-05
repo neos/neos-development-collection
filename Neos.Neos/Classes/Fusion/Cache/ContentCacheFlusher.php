@@ -217,6 +217,7 @@ class ContentCacheFlusher
     {
         $this->tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
         $this->tagsToFlush['Node_' . $cacheIdentifier] = sprintf('which were tagged with "Node_%s" because that identifier has changed.', $cacheIdentifier);
+        $this->tagsToFlush['NodeDynamicTag_' . $cacheIdentifier] = sprintf('which were tagged with "NodeDynamicTag_%s" because that identifier has changed.', $cacheIdentifier);
 
         // Note, as we don't have a node here we cannot go up the structure.
         $tagName = 'DescendantOf_' . $cacheIdentifier;
