@@ -1,6 +1,6 @@
 # Event Sourced Content Repository Collection
 
-[![Build Status](https://travis-ci.org/neos/contentrepository-development-collection.svg?branch=master)](https://travis-ci.org/neos/contentrepository-development-collection) [![StyleCI](https://github.styleci.io/repos/151722585/shield?branch=master)](https://github.styleci.io/repos/151722585)
+[![Build Status](https://github.com/neos/contentrepository-development-collection/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/neos/contentrepository-development-collection/actions/workflows/build.yml?query=branch%3Amaster) [![StyleCI](https://github.styleci.io/repos/151722585/shield?branch=master)](https://github.styleci.io/repos/151722585)
 
 This is the package bundle you can install alongside a plain Neos to play around with the event-sourced CR.
 
