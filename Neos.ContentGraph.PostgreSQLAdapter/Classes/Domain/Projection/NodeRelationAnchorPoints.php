@@ -53,7 +53,11 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
         $childNodeAnchors = $this->getArrayCopy();
         if ($succeedingSibling) {
             $pivot = array_search($succeedingSibling, $childNodeAnchors);
-            array_splice($childNodeAnchors, $pivot, 0, $nodeRelationAnchorPoint);
+            if ($pivot) {
+                array_splice($childNodeAnchors, $pivot, 0, $nodeRelationAnchorPoint);
+            } else {
+                $childNodeAnchors[] = $nodeRelationAnchorPoint;
+            }
         } else {
             $childNodeAnchors[] = $nodeRelationAnchorPoint;
         }

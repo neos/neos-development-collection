@@ -24,112 +24,33 @@ Feature: Create node peer variant
           type: 'Neos.ContentRepository.Testing:TetheredDocument'
     'Neos.ContentRepository.Testing:DocumentWithoutTetheredChildren': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
-      | Key                            | Value                |
-      | workspaceName                  | "live"               |
-      | workspaceTitle                 | "Live"               |
-      | workspaceDescription           | "The live workspace" |
-      | newContentStreamIdentifier     | "cs-identifier"      |
-      | initiatingUserIdentifier       | "system-user"        |
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                                                                                                                                                                                                                                                       |
-      | contentStreamIdentifier     | "cs-identifier"                                                                                                                                                                                                                                                             |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                                                                                                                                                                                                                    |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                                                                                                                                                               |
-      | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"DE", "language":"fr"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"},{"market":"CH", "language":"fr"}] |
-      | initiatingUserIdentifier    | "system-user"                                                                                                                                                                                                                                                               |
-      | nodeAggregateClassification | "root"                                                                                                                                                                                                                                                                      |
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
+    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key                     | Value                         |
+      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeTypeName            | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateIdentifier | originDimensionSpacePoint        | nodeName            | parentNodeAggregateIdentifier | nodeTypeName                                                   | tetheredDescendantNodeAggregateIdentifiers                                               |
     # We have to add another node since root nodes have no origin dimension space points and thus cannot be varied.
     # We also need a tethered child node to test that it is reachable from the freshly created peer variant of the parent
     # and we need a tethered child node of the tethered child node to test that this works recursively
+      | sir-david-nodenborough  | {"market":"DE", "language":"en"} | document            | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document                        | {"tethered-document": "nodimus-prime", "tethered-document/tethered": "nodimus-mediocre"} |
     # and we need a non-tethered child node to make sure it is _not_ reachable from the freshly created peer variant of the parent
-    # Node /document
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                                                                                                                                                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                                                                                 |
-      | originDimensionSpacePoint     | {"market":"DE", "language":"en"}                                                                                                                                                                          |
-      | coveredDimensionSpacePoints   | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                                                                                  |
-      | nodeName                      | "document"                                                                                                                                                                                                |
-      | nodeAggregateClassification   | "regular"                                                                                                                                                                                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                                                                                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:DocumentWithoutTetheredChildren"                                                                                                                                          |
-      | originDimensionSpacePoint     | {"market":"DE", "language":"en"}                                                                                                                                                                          |
-      | coveredDimensionSpacePoints   | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                                                                                  |
-      | nodeName                      | "child-document"                                                                                                                                                                                          |
-      | nodeAggregateClassification   | "regular"                                                                                                                                                                                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier       | "nodimus-prime"                                                                                                                                                                                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:TetheredDocument"                                                                                                                                                         |
-      | originDimensionSpacePoint     | {"market":"DE", "language":"en"}                                                                                                                                                                          |
-      | coveredDimensionSpacePoints   | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                                                                                  |
-      | nodeName                      | "tethered-document"                                                                                                                                                                                       |
-      | nodeAggregateClassification   | "tethered"                                                                                                                                                                                                |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier       | "nodimus-mediocre"                                                                                                                                                                                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered"                                                                                                                                                                 |
-      | originDimensionSpacePoint     | {"market":"DE", "language":"en"}                                                                                                                                                                          |
-      | coveredDimensionSpacePoints   | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | parentNodeAggregateIdentifier | "nodimus-prime"                                                                                                                                                                                           |
-      | nodeName                      | "tethered"                                                                                                                                                                                                |
-      | nodeAggregateClassification   | "tethered"                                                                                                                                                                                                |
+      | nody-mc-nodeface        | {"market":"DE", "language":"en"} | child-document      | sir-david-nodenborough        | Neos.ContentRepository.Testing:DocumentWithoutTetheredChildren | {}                                                                                       |
     # We have to add another node as a peer.
     # We also need a tethered child node to test that it is reachable from the freshly created peer variant of the parent
     # and we need a tethered child node of the tethered child node to test that this works recursively
+      | madame-lanode           | {"market":"CH", "language":"fr"} | peer-document       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document                        | {"tethered-document": "nodesis-prime", "tethered-document/tethered": "nodesis-mediocre"} |
     # and we need a non-tethered child node to make sure it is _not_ reachable from the freshly created peer variant of the parent
-    # Node /document
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "madame-lanode"                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"market":"CH", "language":"fr"}          |
-      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"fr"}]        |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-      | nodeName                      | "peer-document"                           |
-      | nodeAggregateClassification   | "regular"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nodette"                                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"market":"CH", "language":"fr"}          |
-      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"fr"}]        |
-      | parentNodeAggregateIdentifier | "madame-lanode"                           |
-      | nodeName                      | "peer-child-document"                     |
-      | nodeAggregateClassification   | "regular"                                 |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                             |
-      | contentStreamIdentifier       | "cs-identifier"                                   |
-      | nodeAggregateIdentifier       | "nodesis-prime"                                   |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:TetheredDocument" |
-      | originDimensionSpacePoint     | {"market":"CH", "language":"fr"}                  |
-      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"fr"}]                |
-      | parentNodeAggregateIdentifier | "madame-lanode"                                   |
-      | nodeName                      | "tethered-document"                               |
-      | nodeAggregateClassification   | "tethered"                                        |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nodesis-mediocre"                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered" |
-      | originDimensionSpacePoint     | {"market":"CH", "language":"fr"}          |
-      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"fr"}]        |
-      | parentNodeAggregateIdentifier | "nodesis-prime"                           |
-      | nodeName                      | "tethered"                                |
-      | nodeAggregateClassification   | "tethered"                                |
-    And the graph projection is fully up to date
+      | nodette                 | {"market":"CH", "language":"fr"} | peer-child-document | madame-lanode                 | Neos.ContentRepository.Testing:DocumentWithoutTetheredChildren | {}                                                                                       |
 
   Scenario: Create peer variant of node to dimension space point without specializations
     When the command CreateNodeVariant is executed with payload:
@@ -139,7 +60,6 @@ Feature: Create node peer variant
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"CH", "language":"fr"} |
     Then I expect exactly 13 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    # The first event is NodeAggregateWithNodeWasCreated
     And event at index 10 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamIdentifier | "cs-identifier"                    |
@@ -147,7 +67,6 @@ Feature: Create node peer variant
       | sourceOrigin            | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
-    # The first event is NodeAggregateWithNodeWasCreated
     And event at index 11 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamIdentifier | "cs-identifier"                    |
@@ -155,7 +74,6 @@ Feature: Create node peer variant
       | sourceOrigin            | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
-    # The first event is NodeAggregateWithNodeWasCreated
     And event at index 12 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
       | contentStreamIdentifier | "cs-identifier"                    |
@@ -163,7 +81,6 @@ Feature: Create node peer variant
       | sourceOrigin            | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
-    # No peer node creation for non-auto created child nodes
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 12 nodes

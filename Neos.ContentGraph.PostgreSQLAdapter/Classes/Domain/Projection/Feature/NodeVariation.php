@@ -14,8 +14,10 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -106,24 +108,46 @@ trait NodeVariation
                 );
                 foreach ($missingCoverage as $uncoveredDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
-                    $targetParentNode = $this->getProjectionHyperGraph()->findNodeRecordByCoverage(
+
+                    // First we check for an already existing hyperrelation
+                    $hierarchyRelation = $this->getProjectionHyperGraph()->findChildHierarchyHyperrelationRecord(
                         $event->getContentStreamIdentifier(),
                         $uncoveredDimensionSpacePoint,
                         $parentNodeAggregateIdentifier
                     );
 
-                    $this->copyHierarchyRelationToDimensionSpacePoint(
-                        $ingoingSourceHierarchyRelation,
-                        $event->getContentStreamIdentifier(),
-                        $uncoveredDimensionSpacePoint,
-                        $parentNodeForCoverage->relationAnchorPoint,
-                        $generalizedNode->relationAnchorPoint
-                    );
+                    if ($hierarchyRelation) {
+                        // If it exists, we need to look for a succeeding sibling to keep some order of nodes
+                        $targetSucceedingSibling = $this->getProjectionHyperGraph()->findNodeRecordByCoverage(
+                            $event->getContentStreamIdentifier(),
+                            $uncoveredDimensionSpacePoint,
+                            $sourceSucceedingSiblingNode->nodeAggregateIdentifier
+                        );
+
+                        $hierarchyRelation->addChildNodeAnchor(
+                            $generalizedNode->relationAnchorPoint,
+                            $targetSucceedingSibling
+                                ? $targetSucceedingSibling->relationAnchorPoint
+                                : null,
+                            $this->getDatabaseConnection()
+                        );
+                    } else {
+                        $targetParentNode = $this->getProjectionHyperGraph()->findNodeRecordByCoverage(
+                            $event->getContentStreamIdentifier(),
+                            $uncoveredDimensionSpacePoint,
+                            $parentNodeAggregateIdentifier
+                        );
+
+                        $hierarchyRelation = new HierarchyHyperrelationRecord(
+                            $event->getContentStreamIdentifier(),
+                            $targetParentNode->relationAnchorPoint,
+                            $uncoveredDimensionSpacePoint,
+                            NodeRelationAnchorPoints::fromArray([$generalizedNode->relationAnchorPoint])
+                        );
+                        $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                    }
                 }
             }
-
-
-
         });
     }
 

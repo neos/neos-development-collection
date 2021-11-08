@@ -17,16 +17,14 @@ Feature: Create node variant
           type: 'Neos.ContentRepository.Testing:Tethered'
     'Neos.ContentRepository.Testing:Tethered': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
     And I am user identified by "initiating-user-identifier"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
+    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
@@ -82,14 +80,6 @@ Feature: Create node variant
       | targetOrigin            | {"market":"DE", "language":"de"} |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
-  Scenario: Try to create a variant to a target dimension space point that does not exist
-    When the command CreateNodeVariant is executed with payload and exceptions are caught:
-      | Key                     | Value                             |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"          |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
-      | targetOrigin            | {"undeclared":"undefined"}        |
-    Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
-
   Scenario: Try to create a variant from a source dimension space point that the node aggregate does not occupy
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
       | Key                     | Value                             |
@@ -97,6 +87,14 @@ Feature: Create node variant
       | sourceOrigin            | {"market":"CH", "language":"gsw"} |
       | targetOrigin            | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied"
+
+  Scenario: Try to create a variant to a target dimension space point that does not exist
+    When the command CreateNodeVariant is executed with payload and exceptions are caught:
+      | Key                     | Value                             |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"          |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
+      | targetOrigin            | {"undeclared":"undefined"}        |
+    Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to create a variant to a target dimension space point that the node aggregate already occupies
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
@@ -106,7 +104,7 @@ Feature: Create node variant
       | targetOrigin            | {"market":"DE", "language":"gsw"} |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsAlreadyOccupied"
 
-  Scenario: Try to create a variant to a target dimension space point that the node aggregate's parent in the source dimension point does not cover
+  Scenario: Try to create a variant to a target dimension space point that neither the node aggregate nor its parent in the source dimension point cover
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
       | Key                     | Value                             |
       | nodeAggregateIdentifier | "nody-mc-nodeface"                |

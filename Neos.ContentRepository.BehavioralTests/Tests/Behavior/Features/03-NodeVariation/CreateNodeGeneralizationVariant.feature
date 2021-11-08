@@ -24,15 +24,14 @@ Feature: Create node generalization
     'Neos.ContentRepository.Testing:TetheredLeaf': []
     'Neos.ContentRepository.Testing:LeafDocument': []
     """
-    And I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     And I am user identified by "initiating-user-identifier"
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                            | Value                |
       | workspaceName                  | "live"               |
       | workspaceTitle                 | "Live"               |
       | workspaceDescription           | "The live workspace" |
       | newContentStreamIdentifier     | "cs-identifier"      |
-      | initiatingUserIdentifier       | "system-user"        |
+    And I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
@@ -59,7 +58,12 @@ Feature: Create node generalization
       | sourceOrigin            | {"market":"CH", "language":"gsw"} |
       | targetOrigin            | {"market":"DE", "language":"en"}  |
     Then I expect exactly 9 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    # The first event is NodeAggregateWithNodeWasCreated
+    # The event at index 0 was ContentStreamWasCreated for cs-identifier
+    # The event at index 1 was RootNodeAggregateWithNodeWasCreated for lady-eleonode-rootford
+    # The event at index 2 was NodeAggregateWithNodeWasCreated for sir-david-nodenborough
+    # The event at index 3 was NodeAggregateWithNodeWasCreated for nodewyn-tetherton
+    # The event at index 4 was NodeAggregateWithNodeWasCreated for nodimer-tetherton
+    # The event at index 5 was NodeAggregateWithNodeWasCreated for nody-mc-nodeface
     And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
@@ -67,7 +71,6 @@ Feature: Create node generalization
       | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
-    # The first event is NodeAggregateWithNodeWasCreated
     And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
@@ -75,7 +78,6 @@ Feature: Create node generalization
       | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
-    # The first event is NodeAggregateWithNodeWasCreated
     And event at index 8 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                                                |
       | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
@@ -185,7 +187,6 @@ Feature: Create node generalization
       | sourceOrigin            | {"market":"CH", "language":"gsw"} |
       | targetOrigin            | {"market":"DE", "language":"gsw"} |
     Then I expect exactly 9 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    # The first event is NodeAggregateWithNodeWasCreated
     And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                     | Expected                            |
       | contentStreamIdentifier | "cs-identifier"                     |
@@ -193,7 +194,6 @@ Feature: Create node generalization
       | sourceOrigin            | {"market":"CH", "language":"gsw"}   |
       | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
       | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
-    # The first event is NodeAggregateWithNodeWasCreated
     And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                     | Expected                            |
       | contentStreamIdentifier | "cs-identifier"                     |
@@ -201,7 +201,6 @@ Feature: Create node generalization
       | sourceOrigin            | {"market":"CH", "language":"gsw"}   |
       | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
       | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
-    # The first event is NodeAggregateWithNodeWasCreated
     And event at index 8 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                     | Expected                            |
       | contentStreamIdentifier | "cs-identifier"                     |
