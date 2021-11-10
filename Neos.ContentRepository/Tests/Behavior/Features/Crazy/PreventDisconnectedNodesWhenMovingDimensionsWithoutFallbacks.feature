@@ -1,7 +1,7 @@
 @fixtures
 Feature: Prevent disconnected Node Variants when moving a document, in a setup with dimensions and without fallbacks
 
-  Let's say we got two independent dimensions: de, fr and en
+  Let's say we got three independent dimensions: de, fr and en
 
   The content tree looks like this:
   |-- sites
@@ -13,15 +13,15 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
   In the following tests we always try to move /sites/cr/subpage into /sites/other.
   The different variations differ in the dimensions that /sites/cr/subpage and /sites/other got.
   We want to test cases where:
-  - /sites/cr/subpage and /sites/other got the same dimensions
-  - /sites/cr/subpage got less dimensions than /sites/other
-  - /sites/cr/subpage got more dimensions than /sites/other
+  - /sites/cr/subpage and /sites/other have the same dimensions
+  - /sites/cr/subpage has less dimensions than /sites/other
+  - /sites/cr/subpage has more dimensions than /sites/other
   - /sites/cr/subpage and /sites/other share only one common dimension
-  - /sites/cr/subpage and /sites/other got disjunctive dimensions (zero common dimensions)
+  - /sites/cr/subpage and /sites/other have disjunctive dimensions (zero common dimensions)
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Presets                                                                                        |
+      | Identifier | Default | Presets             |
       | language   | de      | de=de; en=en; fr=fr |
     Given I have the following nodes:
       | Identifier                           | Path      | Node Type                           | Properties            | Language |
@@ -33,7 +33,7 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
       | 498414ca-d211-4eee-a5ec-f54c056bfc3e | /sites/cr | Neos.ContentRepository.Testing:Page | {"title": "CR page"}  | fr       |
     And I am authenticated with role "Neos.Neos:Editor"
 
-  Scenario: /sites/cr/subpage and /sites/other got the same dimensions => SHOULD WORK
+  Scenario: /sites/cr/subpage and /sites/other has the same dimensions => SHOULD WORK
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                           | Properties                | Language |
       | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}      | en       |
@@ -53,7 +53,6 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
       | user-admin | de       |
     Then I should have one node
     And the node should be connected to the root
-
     And I get a node by path "/sites/other/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | en       |
@@ -70,7 +69,7 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
       | user-admin | en       |
     Then I should have 0 nodes
 
-  Scenario: /sites/cr/subpage got less dimensions than /sites/other => SHOULD WORK
+  Scenario: /sites/cr/subpage has less dimensions than /sites/other => SHOULD WORK
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                           | Properties              | Language |
       | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}    | en       |
