@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\PublishableToOtherContentStreamsInterface;
 use Neos\EventSourcing\Event\DomainEventInterface;
 
 /**
@@ -23,7 +24,7 @@ use Neos\EventSourcing\Event\DomainEventInterface;
  *
  * NOTE: the target dimension space point must not contain any content.
  */
-final class DimensionSpacePointWasMoved implements DomainEventInterface
+final class DimensionSpacePointWasMoved implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -66,5 +67,14 @@ final class DimensionSpacePointWasMoved implements DomainEventInterface
     public function getTarget(): DimensionSpacePoint
     {
         return $this->target;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
+    {
+        return new DimensionSpacePointWasMoved(
+            $targetContentStreamIdentifier,
+            $this->source,
+            $this->target
+        );
     }
 }

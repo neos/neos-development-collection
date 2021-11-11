@@ -21,7 +21,7 @@ Feature: Routing functionality with multiple content dimensions
       | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     And the graph projection is fully up to date
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin '{"market":"DE", "language":"en"}':
+    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin '{"market":"DE", "language":"en"}':
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues           | nodeName |
       | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
       | nody-mc-nodeface        | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nody"}      | node2    |
@@ -78,8 +78,9 @@ Feature: Routing functionality with multiple content dimensions
               to: {"market":"CH", "language":"de_DE"}
     """
     When the command "PublishWorkspace" is executed with payload:
-      | Key           | Value          |
-      | workspaceName | "migration-cs" |
+      | Key                      | Value          |
+      | workspaceName            | "migration-cs" |
+      | initiatingUserIdentifier | "user"         |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
 
@@ -104,3 +105,37 @@ Feature: Routing functionality with multiple content dimensions
   Scenario: Match node in specific dimension
     When I am on URL "/de/nody/karl-de"
     Then the matched node should be "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}'
+
+  Scenario: Add Dimension shine through, then resolving should still work
+    Given I have the following content dimensions:
+      | Identifier | Default | Values          | Generalizations         | ResolutionMode | ResolutionValues             |
+      | market     | DE      | DE, CH          | CH->DE                  |                |                              |
+      | language   | en      | en, de, gsw, at | gsw->de->en, at->de->en | uriPathSegment | en:en, de:de, gsw:gsw, at:at |
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should not resolve to an URL
+
+    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    """
+    migration:
+      -
+        transformations:
+          -
+            type: 'AddDimensionShineThrough'
+            settings:
+              from: {"market":"DE", "language":"de"}
+              to: {"market":"DE", "language":"at"}
+          -
+            type: 'AddDimensionShineThrough'
+            settings:
+              from: {"market":"CH", "language":"de"}
+              to: {"market":"CH", "language":"at"}
+    """
+    When the command "PublishWorkspace" is executed with payload:
+      | Key                      | Value          |
+      | workspaceName            | "migration-cs" |
+      | initiatingUserIdentifier | "user"         |
+    And the graph projection is fully up to date
+    And The documenturipath projection is up to date
+
+    When I am on URL "/"
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should resolve to URL "/at/nody/karl-de"

@@ -12,6 +12,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionShineThroughWasAdded;
 use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionSpacePointWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
@@ -533,21 +534,62 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
     {
-        $this->updateNodeQuery(
-            'SET dimensionspacepointhash = :newDimensionSpacePointHash WHERE dimensionspacepointhash = :originalDimensionSpacePointHash', [
-            'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-            'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
-            'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
-                // TODO: contentStreamIdentifier restriction HOW?
-        ]);
+        if ($this->isLiveContentStream($event->getContentStreamIdentifier())) {
+            $this->updateNodeQuery(
+                'SET dimensionspacepointhash = :newDimensionSpacePointHash WHERE dimensionspacepointhash = :originalDimensionSpacePointHash', [
+                'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+                'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+            ]);
 
-        $this->updateNodeQuery(
-            'SET origindimensionspacepointhash = :newDimensionSpacePointHash WHERE origindimensionspacepointhash = :originalDimensionSpacePointHash', [
-            'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-            'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
-            'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
-            // TODO: contentStreamIdentifier restriction HOW?
-        ]);
+            $this->updateNodeQuery(
+                'SET origindimensionspacepointhash = :newDimensionSpacePointHash WHERE origindimensionspacepointhash = :originalDimensionSpacePointHash', [
+                'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+                'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+            ]);
+        }
     }
 
+
+    public function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event)
+    {
+        if ($this->isLiveContentStream($event->getContentStreamIdentifier())) {
+            try {
+                $this->dbal->executeStatement('INSERT INTO ' . self::TABLE_NAME_DOCUMENT_URIS . ' (
+                    nodeaggregateidentifier,
+                    uripath,
+                    nodeaggregateidentifierpath,
+                    sitenodename,
+                    disabled,
+                    dimensionspacepointhash,
+                    origindimensionspacepointhash,
+                    parentnodeaggregateidentifier,
+                    precedingnodeaggregateidentifier,
+                    succeedingnodeaggregateidentifier,
+                    shortcuttarget
+                )
+                SELECT
+                    nodeaggregateidentifier,
+                    uripath,
+                    nodeaggregateidentifierpath,
+                    sitenodename,
+                    disabled,
+                    :newDimensionSpacePointHash AS dimensionspacepointhash,
+                    origindimensionspacepointhash,
+                    parentnodeaggregateidentifier,
+                    precedingnodeaggregateidentifier,
+                    succeedingnodeaggregateidentifier,
+                    shortcuttarget
+                FROM
+                    ' . self::TABLE_NAME_DOCUMENT_URIS . '
+                WHERE
+                    dimensionSpacePointHash = :sourceDimensionSpacePointHash
+                ', [
+                    'sourceDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to insert new dimension shine through: %s', $e->getMessage()), 1599646608, $e);
+            }
+        }
+    }
 }

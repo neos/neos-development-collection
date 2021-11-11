@@ -22,6 +22,7 @@ require_once(__DIR__ . '/BrowserTrait.php');
 require_once(__DIR__ . '/FlowSubcommandTrait.php');
 require_once(__DIR__ . '/FlowQueryTrait.php');
 
+use Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap\IntermediaryCommandTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -42,6 +43,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use IsolatedBehatStepsTrait;
     use RoutingTrait;
     use MigrationsTrait;
+    use IntermediaryCommandTrait;
 
     public function __construct()
     {
@@ -53,7 +55,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $this->setupFlowSubcommandTrait();
         $this->setupEventSourcedTrait();
         $this->setupMigrationsTrait();
-        $this->readModelFactory = $this->objectManager->get(\Neos\ContentRepository\Intermediary\Domain\ReadModelFactory::class);
+        $this->setupIntermediaryCommandTrait();
     }
 
     /**
@@ -77,7 +79,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     /**
      * @return ObjectManagerInterface
      */
-    protected function getObjectManager()
+    protected function getObjectManager(): ObjectManagerInterface
     {
         return $this->objectManager;
     }

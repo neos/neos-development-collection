@@ -1088,9 +1088,6 @@ insert ignore into neos_contentgraph_restrictionrelation
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
                 ]
             );
-
-            // TODO: Routing Projection!
-
         });
     }
 
@@ -1152,8 +1149,6 @@ insert ignore into neos_contentgraph_restrictionrelation
                 'sourceDimensionSpacePointHash' => (string)$event->getSource()->getHash(),
                 'targetDimensionSpacePointHash' => (string)$event->getTarget()->getHash()
             ]);
-
-            // TODO: Routing Projection!
         });
     }
 }
