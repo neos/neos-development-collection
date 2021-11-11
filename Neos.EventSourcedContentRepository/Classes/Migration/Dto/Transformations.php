@@ -41,7 +41,7 @@ final class Transformations
             } elseif ($transformationObject instanceof NodeBasedTransformationInterface) {
                 $this->nodeBasedTransformations[] = $transformationObject;
             } else {
-                throw new \RuntimeException('TODO: Transformation object must implement either GlobalTransformationInterface or NodeAggregateBasedTransformationInterface or NodeBasedTransformationInterface');
+                throw new \InvalidArgumentException(sprintf('Transformation object must implement either %s, %s or %s. Given: %s',  GlobalTransformationInterface::class, NodeAggregateBasedTransformationInterface::class, NodeBasedTransformationInterface::class, is_object($transformationObject) ? get_class($transformationObject) : gettype($transformationObject)), 1611735528);
             }
         }
     }
