@@ -46,18 +46,18 @@ class NodeMigrationCommandController extends CommandController
      *
      * @param string $version The version of the migration configuration you want to use.
      * @param string $workspace The workspace where the migration should be applied; by default "live"
-     * @param boolean $confirmation Confirm application of this migration, only needed if the given migration contains any warnings.
+     * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      * @see neos.contentrepository.migration:node:migrationstatus
      */
-    public function migrateCommand(string $version, $workspace = 'live', bool $confirmation = false)
+    public function migrateCommand(string $version, $workspace = 'live', bool $force = false)
     {
         try {
             $migrationConfiguration = $this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration();
 
             $this->outputCommentsAndWarnings($migrationConfiguration);
-            if ($migrationConfiguration->hasWarnings() && $confirmation === false) {
+            if ($migrationConfiguration->hasWarnings() && $force === false) {
                 $this->outputLine();
                 $this->outputLine('Migration has warnings. You need to confirm execution by adding the "--confirmation true" option to the command.');
                 $this->quit(1);
