@@ -617,9 +617,6 @@
 			<trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
 			</trans-unit>
-			<trans-unit id="workspace" xml:space="preserve">
-				<source>Workspace</source>
-			</trans-unit>
 			<trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			</trans-unit>
@@ -819,9 +816,6 @@
 			</trans-unit>
 			<trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			</trans-unit>
-			<trans-unit id="createNew" xml:space="preserve">
-				<source>Create new</source>
 			</trans-unit>
 			<trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
