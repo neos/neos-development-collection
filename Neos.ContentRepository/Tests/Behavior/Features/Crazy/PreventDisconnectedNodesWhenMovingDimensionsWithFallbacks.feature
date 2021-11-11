@@ -1,14 +1,12 @@
 @fixtures
-Feature: Prevent disconnected Node Variants when moving a document, in a setup with dimensions and with fallbacks
+Feature: Prevent disconnected Node Variants when moving a document, in a setup with language-dimensions and configured fallbacks
 
   To understand this tests, you first should have a look at PreventDisconnectedNodesWhenMovingDimensionsWithoutFallbacks
-  Those are basically the same tests, but without any configured fallback nodes and therefore simpler.
+  Those are basically the same tests, but without any configured fallbacks and therefore simpler.
 
-  Let's say we have three dimensions: de, ch and at, were both at and ch fallback to de
+  Let's say we have three language-dimensions: de, ch and at, were both at and ch fallback to de:
 
-  ┌──────►DE◄─────┐
-  │               │
-  CH             AT
+  .                      CH ─────►DE◄─────AT
 
   The content tree looks like this:
   |-- sites
@@ -17,14 +15,20 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
   . | | |-- content
   . |-- other
 
-  In the following tests we always try to move /sites/cr/subpage into /sites/other.
-  The different variations differ in the dimensions that /sites/cr/subpage and /sites/other got.
+  In the following tests we always try to move /sites/cr/subpage into /sites/other without
+  creating disconnected node-variants (nodes not connected to the root node
+  anymore, see https://github.com/neos/neos-development-collection/issues/3384)
+
+  The different scenarios differ in the languages in which /sites/cr/subpage and /sites/other exist.
   We want to test cases where:
-  - /sites/cr/subpage and /sites/other got the same dimensions
-  - /sites/cr/subpage got less dimensions than /sites/other
-  - /sites/cr/subpage got more dimensions than /sites/other
-  - /sites/cr/subpage and /sites/other share only one common dimension
-  - /sites/cr/subpage and /sites/other got disjunctive dimensions (zero common dimensions)
+  - /sites/cr/subpage exists in exactly the same languages as /sites/other
+  - /sites/cr/subpage exists in less languages than /sites/other
+  - /sites/cr/subpage exists in more languages than /sites/other
+  - /sites/cr/subpage shares only one language with /sites/other
+  - /sites/cr/subpage shares only one language with /sites/other which is **NOT** configured as fallback
+  - /sites/cr/subpage shares only one language with /sites/other which **IS** configured as fallback
+  - /sites/cr/subpage has no common language with /sites/other and the language of the target is **NOT** fallback for the language of the start
+  - /sites/cr/subpage has no common language with /sites/other and the language of the target **IS** a fallback for the language of the start
 
   Background:
     Given I have the following content dimensions:
@@ -40,7 +44,7 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
       | 498414ca-d211-4eee-a5ec-f54c056bfc3e | /sites/cr | Neos.ContentRepository.Testing:Page | {"title": "CR page"}  | at       |
     And I am authenticated with role "Neos.Neos:Editor"
 
-  Scenario: /sites/cr/subpage and /sites/other got the same dimensions => SHOULD WORK
+  Scenario:/sites/cr/subpage exists in exactly the same languages as /sites/other => SHOULD WORK
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                           | Properties                | Language |
       | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}      | at       |
@@ -77,7 +81,7 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
     Then I should have 0 nodes
 
 
-  Scenario: /sites/cr/subpage got less dimensions than /sites/other => SHOULD WORK
+  Scenario: /sites/cr/subpage exists in less languages than /sites/other => SHOULD WORK
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                           | Properties              | Language |
       | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}    | at       |
@@ -102,7 +106,7 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
       | user-admin | at,de    |
     Then I should have 0 nodes
 
-  Scenario: /sites/cr/subpage got more dimensions than /sites/other => SHOULD FAIL
+  Scenario: /sites/cr/subpage exists in more languages than /sites/other => SHOULD FAIL
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                           | Properties              | Language |
       | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}    | at       |
@@ -146,7 +150,7 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
     Then I should have one node
     And the node should be connected to the root
 
-  Scenario: /sites/cr/subpage and /sites/other share only one common dimension which IS **NOT** the fallback dimension => SHOULD FAIL
+  Scenario: /sites/cr/subpage shares only one language with /sites/other which is **NOT** configured as fallback => SHOULD FAIL
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                           | Properties              | Language |
       | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}    | de       |
@@ -195,7 +199,7 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
     Then I should have one node
     And the node should be connected to the root
 
-  Scenario: /sites/cr/subpage and /sites/other share only one common dimension which **IS** the fallback dimension => SHOULD WORK
+  Scenario: /sites/cr/subpage shares only one language with /sites/other which **IS** configured as fallback => SHOULD WORK
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                           | Properties              | Language |
       | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}    | de       |
@@ -231,35 +235,8 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
       | user-admin | at,de    |
     Then I should have 0 nodes
 
-   # As a editor this error can be triggered when a node is selected, cut and pasted in another dimension
-  Scenario: /sites/cr/subpage and /sites/other got disjunctive dimensions where the target-dimension **IS** a fallback for the start-dimension => SHOULD WORK
-    Given I have the following nodes:
-      | Identifier                           | Path                           | Node Type                           | Properties              | Language |
-      | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}    | at       |
-      | 1bb26211-74e8-450d-a4ac-7a01b0f9b21e | /sites/cr/subpage/main/content | Neos.ContentRepository.Testing:Text | {"text": "my text"}     | at       |
-      | c3aed33e-bb46-4200-ad85-9c46d7cfa8f8 | /sites/other                   | Neos.ContentRepository.Testing:Page | {"title": "Other page"} | de       |
-    When I get a node by path "/sites/cr/subpage" with the following context:
-      | Workspace  | Language |
-      | user-admin | at,de    |
-    And I move the node into the node with path "/sites/other" in the following context:
-      | Workspace  | Language |
-      | user-admin | de       |
-
-    # Assertions: Nodes are moved to new location
-    And I get a node by path "/sites/other/subpage" with the following context:
-      | Workspace  | Language |
-      | user-admin | at,de    |
-    Then I should have one node
-    And the node should be connected to the root
-
-    # Assertions: Nodes are not found anymore at old location
-    And I get a node by path "/sites/cr/subpage" with the following context:
-      | Workspace  | Language |
-      | user-admin | at,de    |
-    Then I should have 0 nodes
-
-    # As a editor this error can be triggered when a node is selected, cut and pasted in another dimension
-  Scenario: /sites/cr/subpage and /sites/other got disjunctive dimensions where the target-dimension is **NOT** fallback for the start-dimension => SHOULD FAIL
+  # As a editor this error can be triggered when a node is selected, cut and pasted in another dimension
+  Scenario: /sites/cr/subpage has no common language with /sites/other and the language of the target is **NOT** fallback for the language of the start => SHOULD FAIL
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                           | Properties              | Language |
       | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}    | de       |
@@ -297,3 +274,30 @@ Feature: Prevent disconnected Node Variants when moving a document, in a setup w
       | user-admin | de       |
     Then I should have one node
     And the node should be connected to the root
+
+  # this happens when the nodes from the fallback language shine through
+  Scenario: /sites/cr/subpage has no common language with /sites/other and the language of the target **IS** a fallback for the language of the start => SHOULD WORK
+    Given I have the following nodes:
+      | Identifier                           | Path                           | Node Type                           | Properties              | Language |
+      | 0808f2ef-3430-49a3-908c-c6d41f86eea1 | /sites/cr/subpage              | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}    | at       |
+      | 1bb26211-74e8-450d-a4ac-7a01b0f9b21e | /sites/cr/subpage/main/content | Neos.ContentRepository.Testing:Text | {"text": "my text"}     | at       |
+      | c3aed33e-bb46-4200-ad85-9c46d7cfa8f8 | /sites/other                   | Neos.ContentRepository.Testing:Page | {"title": "Other page"} | de       |
+    When I get a node by path "/sites/cr/subpage" with the following context:
+      | Workspace  | Language |
+      | user-admin | at,de    |
+    And I move the node into the node with path "/sites/other" in the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+
+    # Assertions: Nodes are moved to new location
+    And I get a node by path "/sites/other/subpage" with the following context:
+      | Workspace  | Language |
+      | user-admin | at,de    |
+    Then I should have one node
+    And the node should be connected to the root
+
+    # Assertions: Nodes are not found anymore at old location
+    And I get a node by path "/sites/cr/subpage" with the following context:
+      | Workspace  | Language |
+      | user-admin | at,de    |
+    Then I should have 0 nodes
