@@ -2,9 +2,10 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="de">
     <body>
-      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+      <trans-unit id="ui.label" xml:space="preserve" approved="no">
 				<source>Headline</source>
-			<target state="final">Titel</target></trans-unit>
+        <target state="translated">Überschrift</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
