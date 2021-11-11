@@ -1010,7 +1010,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                   destinationnodeaggregateidentifier
                 )
                 SELECT
-                  "' . (string)$destinationRelationAnchorPoint . '" AS nodeanchorpoint,
+                  :destinationRelationAnchorPoint AS nodeanchorpoint,
                   ref.name,
                   ref.position,
                   ref.destinationnodeaggregateidentifier
@@ -1018,7 +1018,8 @@ insert ignore into neos_contentgraph_restrictionrelation
                     neos_contentgraph_referencerelation ref
                     WHERE ref.nodeanchorpoint = :sourceNodeAnchorPoint
             ', [
-            'sourceNodeAnchorPoint' => (string)$sourceRelationAnchorPoint
+            'sourceNodeAnchorPoint' => (string)$sourceRelationAnchorPoint,
+            'destinationRelationAnchorPoint' => (string)$destinationRelationAnchorPoint
         ]);
     }
 
