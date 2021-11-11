@@ -201,7 +201,7 @@
       </trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-        <target state="translated">Опубліковується…</target>
+        <target state="translated">Опубліковується</target>
       </trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>

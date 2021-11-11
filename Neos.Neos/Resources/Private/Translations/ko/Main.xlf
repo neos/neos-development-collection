@@ -237,7 +237,7 @@
       </trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-        <target state="translated">저장 완료!</target>
+        <target state="translated">저장 완료</target>
       </trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>

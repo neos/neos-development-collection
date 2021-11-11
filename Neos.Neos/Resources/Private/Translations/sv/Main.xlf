@@ -5,828 +5,1099 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target state="translated">Auto-publicera</target></trans-unit>
+        <target state="translated">Auto-publicera</target>
+      </trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target state="translated">Auto-publicera till {0}</target></trans-unit>
+        <target state="translated">Auto-publicera till {0}</target>
+      </trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target state="translated">Granska ändringar</target></trans-unit>
+        <target state="translated">Granska ändringar</target>
+      </trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Tillämpa</target></trans-unit>
+        <target state="translated">Tillämpa</target>
+      </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target state="translated">Tillämpa ändringar</target></trans-unit>
+        <target state="translated">Tillämpa ändringar</target>
+      </trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target state="translated">Avbryt</target></trans-unit>
+        <target state="translated">Avbryt</target>
+      </trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target state="translated">Tillbaka</target></trans-unit>
+        <target state="translated">Tillbaka</target>
+      </trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target state="translated">Välj</target></trans-unit>
+        <target state="translated">Välj</target>
+      </trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target state="translated">Skriv för att söka</target></trans-unit>
+        <target state="translated">Skriv för att söka</target>
+      </trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target state="translated">Innehåll</target></trans-unit>
+        <target state="translated">Innehåll</target>
+      </trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target state="translated">Nod</target></trans-unit>
+        <target state="translated">Nod</target>
+      </trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target state="translated">Visa innehåll</target></trans-unit>
+        <target state="translated">Visa innehåll</target>
+      </trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target state="translated">Skapa efter</target></trans-unit>
+        <target state="translated">Skapa efter</target>
+      </trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target state="translated">Skapa ny</target></trans-unit>
+        <target state="translated">Skapa ny</target>
+      </trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target state="translated">Stäng</target></trans-unit>
+        <target state="translated">Stäng</target>
+      </trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target state="translated">Kopiera</target></trans-unit>
+        <target state="translated">Kopiera</target>
+      </trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target state="translated">Klipp ut</target></trans-unit>
+        <target state="translated">Klipp ut</target>
+      </trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target state="translated">Radera</target></trans-unit>
+        <target state="translated">Radera</target>
+      </trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target state="translated">Ja, ta bort elementet</target></trans-unit>
+        <target state="translated">Ja, ta bort elementet</target>
+      </trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target state="translated">Ta bort elementet</target></trans-unit>
+        <target state="translated">Ta bort elementet</target>
+      </trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target state="translated">Ignorera</target></trans-unit>
+        <target state="translated">Ignorera</target>
+      </trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target state="translated">Ignorera ändringar</target></trans-unit>
+        <target state="translated">Ignorera ändringar</target>
+      </trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target state="translated">Redigera rubrik</target></trans-unit>
+        <target state="translated">Redigera rubrik</target>
+      </trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target state="translated">Redigera/förhandsgranska</target></trans-unit>
+        <target state="translated">Redigera/förhandsgranska</target>
+      </trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target state="translated">Redigera</target></trans-unit>
+        <target state="translated">Redigera</target>
+      </trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target state="translated">Dölj/visa</target></trans-unit>
+        <target state="translated">Dölj/visa</target>
+      </trans-unit>
       <trans-unit id="hide" xml:space="preserve">
 				<source>Hide</source>
-			<target state="translated">Dölj</target></trans-unit>
+        <target state="translated">Dölj</target>
+      </trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target state="translated">Visa</target></trans-unit>
+        <target state="translated">Visa</target>
+      </trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target state="translated">i</target></trans-unit>
+        <target state="translated">i</target>
+      </trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target state="translated">före</target></trans-unit>
+        <target state="translated">före</target>
+      </trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target state="translated">efter</target></trans-unit>
+        <target state="translated">efter</target>
+      </trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target state="translated">Laddar</target></trans-unit>
+        <target state="translated">Laddar</target>
+      </trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target state="translated">Nytt efter</target></trans-unit>
+        <target state="translated">Nytt efter</target>
+      </trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target state="translated">Nytt före</target></trans-unit>
+        <target state="translated">Nytt före</target>
+      </trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target state="translated">Nytt till</target></trans-unit>
+        <target state="translated">Nytt till</target>
+      </trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target state="translated">Navigera</target></trans-unit>
+        <target state="translated">Navigera</target>
+      </trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target state="translated">Ok</target></trans-unit>
+        <target state="translated">Ok</target>
+      </trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target state="translated">Sida</target></trans-unit>
+        <target state="translated">Sida</target>
+      </trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target state="translated">Klistra in</target></trans-unit>
+        <target state="translated">Klistra in</target>
+      </trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target state="translated">Klistra in efter</target></trans-unit>
+        <target state="translated">Klistra in efter</target>
+      </trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target state="translated">Klistra innan</target></trans-unit>
+        <target state="translated">Klistra innan</target>
+      </trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target state="translated">Klistra in i</target></trans-unit>
+        <target state="translated">Klistra in i</target>
+      </trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target state="translated">Lösenord</target></trans-unit>
+        <target state="translated">Lösenord</target>
+      </trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target state="translated">Förhandsgranska</target></trans-unit>
+        <target state="translated">Förhandsgranska</target>
+      </trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target state="translated">Publicera</target></trans-unit>
+        <target state="translated">Publicera</target>
+      </trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target state="translated">Publicera till {0}</target></trans-unit>
+        <target state="translated">Publicera till {0}</target>
+      </trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target state="translated">Publicera alla ändringar för aktuell sida</target></trans-unit>
+        <target state="translated">Publicera alla ändringar för aktuell sida</target>
+      </trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target state="translated">Kan ej publicera eftersom arbetsytan är skrivskyddad</target></trans-unit>
+        <target state="translated">Kan ej publicera eftersom arbetsytan är skrivskyddad</target>
+      </trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target state="translated">Välj arbetsyta</target></trans-unit>
+        <target state="translated">Välj arbetsyta</target>
+      </trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target state="translated">Publicerar</target></trans-unit>
+        <target state="translated">Publicerar</target>
+      </trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target state="translated">Publicerat</target></trans-unit>
+        <target state="translated">Publicerat</target>
+      </trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target state="translated">Visa/dölj publiceringsmenyn</target></trans-unit>
+        <target state="translated">Visa/dölj publiceringsmenyn</target>
+      </trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target state="translated">Målarbetsyta</target></trans-unit>
+        <target state="translated">Målarbetsyta</target>
+      </trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target state="translated">Aktuell arbetsyta</target></trans-unit>
+        <target state="translated">Aktuell arbetsyta</target>
+      </trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target state="translated">Ta bort</target></trans-unit>
+        <target state="translated">Ta bort</target>
+      </trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target state="translated">Uppdatera</target></trans-unit>
+        <target state="translated">Uppdatera</target>
+      </trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
-			<target state="translated">Spara</target></trans-unit>
+        <target state="translated">Spara</target>
+      </trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target state="translated">Sparar</target></trans-unit>
+        <target state="translated">Sparar</target>
+      </trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target state="translated">Sparat</target></trans-unit>
+        <target state="translated">Sparat</target>
+      </trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target state="translated">Sök</target></trans-unit>
+        <target state="translated">Sök</target>
+      </trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target state="translated">Visa/dölj inspektör</target></trans-unit>
+        <target state="translated">Visa/dölj inspektör</target>
+      </trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target state="translated">Användarnamn</target></trans-unit>
+        <target state="translated">Användarnamn</target>
+      </trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target state="translated">Du</target></trans-unit>
+        <target state="translated">Du</target>
+      </trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target state="translated">[ingen titel]</target></trans-unit>
+        <target state="translated">[ingen titel]</target>
+      </trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target state="translated">Etikett</target></trans-unit>
+        <target state="translated">Etikett</target>
+      </trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target state="translated">Innehållstyp</target></trans-unit>
+        <target state="translated">Innehållstyp</target>
+      </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target state="translated">Sökväg</target></trans-unit>
+        <target state="translated">Sökväg</target>
+      </trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
-			<target state="translated">Relativ sökväg</target></trans-unit>
+        <target state="translated">Relativ sökväg</target>
+      </trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target state="translated">Version</target></trans-unit>
+        <target state="translated">Version</target>
+      </trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
-			<target state="translated">Detta går ej att ångra!</target></trans-unit>
+        <target state="translated">Detta går ej att ångra.</target>
+      </trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target state="translated">Inventarie</target></trans-unit>
+        <target state="translated">Inventarie</target>
+      </trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target state="translated">Skapad</target></trans-unit>
+        <target state="translated">Skapad</target>
+      </trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target state="translated">Senaste ändring</target></trans-unit>
+        <target state="translated">Senaste ändring</target>
+      </trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target state="translated">Senaste publikation</target></trans-unit>
+        <target state="translated">Senaste publikation</target>
+      </trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target state="translated">Identifierare</target></trans-unit>
+        <target state="translated">Identifierare</target>
+      </trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
-			<target state="translated">Namn</target></trans-unit>
+        <target state="translated">Namn</target>
+      </trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target state="translated">Arbetsyta</target></trans-unit>
+        <target state="translated">Arbetsyta</target>
+      </trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
-			<target state="translated">Struktur</target></trans-unit>
+        <target state="translated">Struktur</target>
+      </trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target state="translated">Visa/dölj sammanhangsstruktur</target></trans-unit>
+        <target state="translated">Visa/dölj sammanhangsstruktur</target>
+      </trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
-			<target state="translated">Filter</target></trans-unit>
+        <target state="translated">Filter</target>
+      </trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
-			<target state="translated">Visa/dölj meny</target></trans-unit>
+        <target state="translated">Visa/dölj meny</target>
+      </trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target state="translated">Laddningsfel!</target></trans-unit>
+        <target state="translated">Laddningsfel!</target>
+      </trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
-			<target state="translated">Du måste välja en nod</target></trans-unit>
+        <target state="translated">Du måste välja en nod</target>
+      </trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
-			<target state="translated">Rotnoden kan ej raderas.</target></trans-unit>
+        <target state="translated">Rotnoden kan ej raderas.</target>
+      </trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target state="translated">Du kan ej kopiera den här noden</target></trans-unit>
+        <target state="translated">Du kan ej kopiera den här noden</target>
+      </trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target state="translated">Du kan ej klippa ut denna nod</target></trans-unit>
+        <target state="translated">Du kan ej klippa ut denna nod</target>
+      </trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
-			<target state="translated">Innehållsdimensioner</target></trans-unit>
+        <target state="translated">Innehållsdimensioner</target>
+      </trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-			<target state="translated">Sida</target></trans-unit>
+        <target state="translated">Sida</target>
+      </trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
-			<target state="translated">Dokument</target></trans-unit>
+        <target state="translated">Dokument</target>
+      </trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target state="translated">Referens</target></trans-unit>
+        <target state="translated">Referens</target>
+      </trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target state="translated">Värd/Host</target></trans-unit>
+        <target state="translated">Värd/Host</target>
+      </trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target state="translated">Schema</target></trans-unit>
+        <target state="translated">Schema</target>
+      </trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target state="translated">Port</target></trans-unit>
+        <target state="translated">Port</target>
+      </trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
-			<target state="translated">Primärt</target></trans-unit>
+        <target state="translated">Primärt</target>
+      </trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target state="translated">Paket</target></trans-unit>
+        <target state="translated">Paket</target>
+      </trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target state="translated">Deaktiverat</target></trans-unit>
+        <target state="translated">Deaktiverat</target>
+      </trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target state="translated">Otillänglig</target></trans-unit>
+        <target state="translated">Otillänglig</target>
+      </trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target state="translated">Ej aktiv</target></trans-unit>
+        <target state="translated">Ej aktiv</target>
+      </trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target state="translated">Klicka för att redigera</target></trans-unit>
+        <target state="translated">Klicka för att redigera</target>
+      </trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target state="translated">Klicka för att inaktivera</target></trans-unit>
+        <target state="translated">Klicka för att inaktivera</target>
+      </trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target state="translated">Klicka för att aktivera</target></trans-unit>
+        <target state="translated">Klicka för att aktivera</target>
+      </trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target state="translated">Klicka för att radera</target></trans-unit>
+        <target state="translated">Klicka för att radera</target>
+      </trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target state="translated">Klicka för att skapa ny</target></trans-unit>
+        <target state="translated">Klicka för att skapa ny</target>
+      </trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target state="translated">Status</target></trans-unit>
+        <target state="translated">Status</target>
+      </trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target state="translated">Aktiv</target></trans-unit>
+        <target state="translated">Aktiv</target>
+      </trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target state="translated">Domäner</target></trans-unit>
+        <target state="translated">Domäner</target>
+      </trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target state="translated">Domän</target></trans-unit>
+        <target state="translated">Domän</target>
+      </trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target state="translated">Ja, radera!</target></trans-unit>
+        <target state="translated">Ja, radera!</target>
+      </trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
-			<target state="translated">Paketnyckel</target></trans-unit>
+        <target state="translated">Paketnyckel</target>
+      </trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
-			<target state="translated">Beskrivning</target></trans-unit>
+        <target state="translated">Beskrivning</target>
+      </trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target state="translated">Växla innehållsträd</target></trans-unit>
+        <target state="translated">Växla innehållsträd</target>
+      </trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target state="translated">Visa publiceringsalternativ</target></trans-unit>
+        <target state="translated">Visa publiceringsalternativ</target>
+      </trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="translated">Aktivera redigering i helskärmsläge</target></trans-unit>
+        <target state="translated">Aktivera redigering i helskärmsläge</target>
+      </trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target state="translated">Avaktivera redigering i helskärmsläge</target></trans-unit>
+        <target state="translated">Avaktivera redigering i helskärmsläge</target>
+      </trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target state="translated">Visa förhandsgranskning</target></trans-unit>
+        <target state="translated">Visa förhandsgranskning</target>
+      </trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target state="translated">Allmänt</target></trans-unit>
+        <target state="translated">Allmänt</target>
+      </trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
-			<target state="translated">Struktur</target></trans-unit>
+        <target state="translated">Struktur</target>
+      </trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
-			<target state="translated">Plugins</target></trans-unit>
+        <target state="translated">Plugins</target>
+      </trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
-			<target state="translated">Klicka på {0} för att fortsätta till sidan.</target></trans-unit>
+        <target state="translated">Klicka på {0} för att fortsätta till sidan.</target>
+      </trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
-			<target state="translated">Klicka på {0} för att se filen.</target></trans-unit>
+        <target state="translated">Klicka på {0} för att se filen.</target>
+      </trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
-			<target state="translated">Klicka på {0} för att öppna länken.</target></trans-unit>
+        <target state="translated">Klicka på {0} för att öppna länken.</target>
+      </trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target state="translated">(inget mål har valts)</target></trans-unit>
+        <target state="translated">(inget mål har valts)</target>
+      </trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target state="translated">Detta är en genväg till den första barnsidan. &lt;br /&gt;Klicka på {0} att fortsätta till sidan.</target></trans-unit>
+        <target state="translated">Detta är en genväg till den första barnsidan. &lt;br /&gt;Klicka på {0} att fortsätta till sidan.</target>
+      </trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target state="translated">Detta är en genväg till den överordnade sidan. &lt;br /&gt;Klicka på {0} att fortsätta till sidan.</target></trans-unit>
+        <target state="translated">Detta är en genväg till den överordnade sidan. &lt;br /&gt;Klicka på {0} att fortsätta till sidan.</target>
+      </trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target state="translated">Fullskärm</target></trans-unit>
+        <target state="translated">Fullskärm</target>
+      </trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
         <note>Deprecated, replaced by previewShortcutButton.title</note>
-			<target state="translated">Öppna sidan i live arbetsplatsen</target></trans-unit>
+        <target state="translated">Öppna sidan i live arbetsplatsen</target>
+      </trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
 				<source>Open page in target workspace</source>
-			<target state="translated">Öppna sidan i målarbetsytan</target></trans-unit>
+        <target state="translated">Öppna sidan i målarbetsytan</target>
+      </trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target state="translated">Ignorera alla</target></trans-unit>
+        <target state="translated">Ignorera alla</target>
+      </trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target state="translated">Ignorera alla ändringar</target></trans-unit>
+        <target state="translated">Ignorera alla ändringar</target>
+      </trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target state="translated">Är du säker på att du vill ignorera alla ändringar i den här arbetsytan?</target></trans-unit>
+        <target state="translated">Är du säker på att du vill ignorera alla ändringar i den här arbetsytan?</target>
+      </trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="translated">Är du säker på att du vill ignorera {numberOfChanges} ändring(ar) i denna arbetsyta?</target></trans-unit>
+        <target state="translated">Är du säker på att du vill ignorera {numberOfChanges} ändring(ar) i denna arbetsyta?</target>
+      </trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target state="translated">Publicera alla</target></trans-unit>
+        <target state="translated">Publicera alla</target>
+      </trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target state="translated">Publicera alla ändringar</target></trans-unit>
+        <target state="translated">Publicera alla ändringar</target>
+      </trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target state="translated">Är du säker på att du vill publicera alla ändringar?</target></trans-unit>
+        <target state="translated">Är du säker på att du vill publicera alla ändringar?</target>
+      </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
-			<target state="translated">Väntande ändringar</target></trans-unit>
+        <target state="translated">Väntande ändringar</target>
+      </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target state="translated">Din personliga arbetsyta innehåller för närvarande opublicerade ändringar. För att växla till en annan arbetsyta måste du antingen publicera eller ignorera opublicerade ändringar först.</target></trans-unit>
+        <target state="translated">Din personliga arbetsyta innehåller för närvarande opublicerade ändringar. För att växla till en annan arbetsyta måste du antingen publicera eller ignorera opublicerade ändringar först.</target>
+      </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target state="translated">Granska dina ändringar, publicera eller ignorera dem och välj sedan en ny arbetsyta igen.</target></trans-unit>
+        <target state="translated">Granska dina ändringar, publicera eller ignorera dem och välj sedan en ny arbetsyta igen.</target>
+      </trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target state="translated">Redigeringslägen</target></trans-unit>
+        <target state="translated">Redigeringslägen</target>
+      </trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target state="translated">Förhandsgranskningscentral</target></trans-unit>
+        <target state="translated">Förhandsgranskningscentral</target>
+      </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target state="translated">Du har fortfarande förändringar. Vad vill du göra med dem?</target></trans-unit>
+        <target state="translated">Du har fortfarande förändringar. Vad vill du göra med dem?</target>
+      </trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target state="translated">Markerat element</target></trans-unit>
+        <target state="translated">Markerat element</target>
+      </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target state="translated">Det finns fält som inte är korrekt ifyllda.</target></trans-unit>
+        <target state="translated">Det finns fält som inte är korrekt ifyllda.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target state="translated">Fälten markerade med ett fel har ännu ej fyllts i korrekt. Korrigera dem.</target></trans-unit>
+        <target state="translated">Fälten markerade med ett fel har ännu ej fyllts i korrekt. Korrigera dem.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target state="translated">Fortsätt redigera</target></trans-unit>
+        <target state="translated">Fortsätt redigera</target>
+      </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target state="translated">Släng</target></trans-unit>
+        <target state="translated">Släng</target>
+      </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Tillämpa</target></trans-unit>
+        <target state="translated">Tillämpa</target>
+      </trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
-			<target state="translated">Välj ett plugin</target></trans-unit>
+        <target state="translated">Välj ett plugin</target>
+      </trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
 				<source>No plugin configured</source>
-			<target state="translated">Inget plugin har konfigurerats</target></trans-unit>
+        <target state="translated">Inget plugin har konfigurerats</target>
+      </trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target state="translated">vyn visas på sidan</target></trans-unit>
+        <target state="translated">vyn visas på sidan</target>
+      </trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
-			<target state="translated">vyn visas på den aktuella sidan</target></trans-unit>
+        <target state="translated">vyn visas på den aktuella sidan</target>
+      </trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
-			<target state="translated">Inget datum har ställts in</target></trans-unit>
+        <target state="translated">Inget datum har ställts in</target>
+      </trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
-			<target state="translated">Redigera kod</target></trans-unit>
+        <target state="translated">Redigera kod</target>
+      </trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target state="translated">Klistra in en länk eller skriv för att söka</target></trans-unit>
+        <target state="translated">Klistra in en länk eller skriv för att söka</target>
+      </trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
-			<target state="translated">Kunde inte ladda undernod-typer av:</target></trans-unit>
+        <target state="translated">Kunde inte ladda undernod-typer av:</target>
+      </trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target state="translated">Ändra typ</target></trans-unit>
+        <target state="translated">Ändra typ</target>
+      </trans-unit>
       <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target state="translated">Ytterligare information</target></trans-unit>
+        <target state="translated">Ytterligare information</target>
+      </trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target state="translated">Synlighet</target></trans-unit>
+        <target state="translated">Synlighet</target>
+      </trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
-			<target state="translated">Dokumentalternativ</target></trans-unit>
+        <target state="translated">Dokumentalternativ</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
-			<target state="translated">Texten måste vara mellan {minimum} och {maximum} tecken lång.</target></trans-unit>
+        <target state="translated">Texten måste vara mellan {minimum} och {maximum} tecken lång.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
 				<source>This field must contain at least {minimum} characters.</source>
-			<target state="translated">Detta fält måste innehålla minst {minimum} tecken.</target></trans-unit>
+        <target state="translated">Detta fält måste innehålla minst {minimum} tecken.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
 				<source>This text may not exceed {maximum} characters.</source>
-			<target state="translated">Denna text får ej överstiga {maximum} tecken.</target></trans-unit>
+        <target state="translated">Denna text får ej överstiga {maximum} tecken.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Endast vanliga tecken (a till ö) och siffror är tillåtna.</target></trans-unit>
+        <target state="translated">Endast vanliga tecken (a till ö) och siffror är tillåtna.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
-			<target state="translated">Det angivna ämnet är inte räkenbart.</target></trans-unit>
+        <target state="translated">Det angivna ämnet är inte räkenbart.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
 				<source>The count must be between {minimum} and {maximum}.</source>
-			<target state="translated">Antalet måste vara mellan {minimum} och {maximum}.</target></trans-unit>
+        <target state="translated">Antalet måste vara mellan {minimum} och {maximum}.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
 				<source>The given value was not a valid date.</source>
-			<target state="translated">Det angivna värdet var inte ett giltigt datum.</target></trans-unit>
+        <target state="translated">Det angivna värdet var inte ett giltigt datum.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
 				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-			<target state="translated">Det angivna datumet måste ligga mellan {formatEarliestDate} och {formatLatestDate}</target></trans-unit>
+        <target state="translated">Det angivna datumet måste ligga mellan {formatEarliestDate} och {formatLatestDate}</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
 				<source>The given date must be after {formatEarliestDate}</source>
-			<target state="translated">Det angivna datumet måste infalla efter {formatEarliestDate}</target></trans-unit>
+        <target state="translated">Det angivna datumet måste infalla efter {formatEarliestDate}</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
 				<source>The given date must be before {formatLatestDate}</source>
-			<target state="translated">Det angivna datumet måste infalla före {formatLatestDate}</target></trans-unit>
+        <target state="translated">Det angivna datumet måste infalla före {formatLatestDate}</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
 				<source>Please specify a valid email address.</source>
-			<target state="translated">Vänligen ange en giltig e-postadress.</target></trans-unit>
+        <target state="translated">Vänligen ange en giltig e-postadress.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
 				<source>A valid float number is expected.</source>
-			<target state="translated">Ett giltigt decimalt nummer förväntas.</target></trans-unit>
+        <target state="translated">Ett giltigt decimalt nummer förväntas.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
 				<source>A valid integer number is expected.</source>
-			<target state="translated">Ett giltigt heltal förväntas.</target></trans-unit>
+        <target state="translated">Ett giltigt heltal förväntas.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target state="translated">Endast bokstäver, siffror, mellanslag och vissa skiljetecken förväntas.</target></trans-unit>
+        <target state="translated">Endast bokstäver, siffror, mellanslag och vissa skiljetecken förväntas.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
 				<source>This property is required.</source>
-			<target state="translated">Denna egenskap krävs.</target></trans-unit>
+        <target state="translated">Denna egenskap krävs.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
 				<source>A valid number is expected.</source>
-			<target state="translated">Ett giltigt tal förväntas.</target></trans-unit>
+        <target state="translated">Ett giltigt tal förväntas.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
 				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target state="translated">Ange ett giltigt nummer mellan {minimum} och {maximum}</target></trans-unit>
+        <target state="translated">Ange ett giltigt nummer mellan {minimum} och {maximum}</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target state="translated">Det angivna ämnet matchar inte mönstret ({pattern})</target></trans-unit>
+        <target state="translated">Det angivna ämnet matchar inte mönstret ({pattern})</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
 				<source>A valid string is expected.</source>
-			<target state="translated">En giltig sträng förväntas.</target></trans-unit>
+        <target state="translated">En giltig sträng förväntas.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
 				<source>Valid text without any XML tags is expected.</source>
-			<target state="translated">En giltig text utan XML-taggar förväntas.</target></trans-unit>
+        <target state="translated">En giltig text utan XML-taggar förväntas.</target>
+      </trans-unit>
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
 				<source>The given subject is not a valid UUID.</source>
-			<target state="translated">Det angivna ämnet är ej en giltig UUID.</target></trans-unit>
+        <target state="translated">Det angivna ämnet är ej en giltig UUID.</target>
+      </trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
 				<source>Toggle content dimensions selector</source>
-			<target state="translated">Visa/dölj val för innehållsdimension</target></trans-unit>
+        <target state="translated">Visa/dölj val för innehållsdimension</target>
+      </trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
-			<target state="translated">Börja med ett tomt eller förfyllt dokument?</target></trans-unit>
+        <target state="translated">Börja med ett tomt eller förfyllt dokument?</target>
+      </trans-unit>
       <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target state="translated">Denna {nodeTypeLabel} finns ännu ej i {currentDimensionChoiceText}.</target></trans-unit>
+        <target state="translated">Denna {nodeTypeLabel} finns ännu ej i {currentDimensionChoiceText}.</target>
+      </trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target state="translated">Du kan skapa den nu, börja antingen med en tom {nodeTypeLabel} eller kopiera allt innehåll från den synliga {nodeTypeLabel} till {currentDocumentDimensionChoiceText}.</target></trans-unit>
+        <target state="translated">Du kan skapa den nu, börja antingen med en tom {nodeTypeLabel} eller kopiera allt innehåll från den synliga {nodeTypeLabel} till {currentDocumentDimensionChoiceText}.</target>
+      </trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-			<target state="translated">Dessutom finns det {numberOfNodesMissingInRootline} förfader dokument som inte finns i den valda varianten heller och som kommer att skapas.</target></trans-unit>
+        <target state="translated">Dessutom finns det {numberOfNodesMissingInRootline} förfader dokument som inte finns i den valda varianten heller och som kommer att skapas.</target>
+      </trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target state="translated">Skapa tomt</target></trans-unit>
+        <target state="translated">Skapa tomt</target>
+      </trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
-			<target state="translated">Skapa och kopiera</target></trans-unit>
+        <target state="translated">Skapa och kopiera</target>
+      </trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target state="translated">Innehåll</target></trans-unit>
+        <target state="translated">Innehåll</target>
+      </trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target state="translated">Visa/dölj menygrupp</target></trans-unit>
+        <target state="translated">Visa/dölj menygrupp</target>
+      </trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target state="translated">Visa/dölj klibbiga menyläget</target></trans-unit>
+        <target state="translated">Visa/dölj klibbiga menyläget</target>
+      </trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target state="translated">Vill du verkligen radera</target></trans-unit>
+        <target state="translated">Vill du verkligen radera</target>
+      </trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target state="translated">Detta tar bort elementet</target></trans-unit>
+        <target state="translated">Detta tar bort elementet</target>
+      </trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target state="translated">och dess barn</target></trans-unit>
+        <target state="translated">och dess barn</target>
+      </trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target state="translated">Denna åtgärd kan ångras i arbetsytans förvaltning.</target></trans-unit>
+        <target state="translated">Denna åtgärd kan ångras i arbetsytans förvaltning.</target>
+      </trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target state="translated">Höjd</target></trans-unit>
+        <target state="translated">Höjd</target>
+      </trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target state="translated">Vill du verkligen radera</target></trans-unit>
+        <target state="translated">Vill du verkligen radera</target>
+      </trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target state="translated">detta element</target></trans-unit>
+        <target state="translated">detta element</target>
+      </trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target state="translated">Detta tar bort elementet.</target></trans-unit>
+        <target state="translated">Detta tar bort elementet.</target>
+      </trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target state="translated">Denna åtgärd kan ångras i arbetsytans förvaltning.</target></trans-unit>
+        <target state="translated">Denna åtgärd kan ångras i arbetsytans förvaltning.</target>
+      </trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target state="translated">Media</target></trans-unit>
+        <target state="translated">Media</target>
+      </trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
-			<target state="translated">Beskär</target></trans-unit>
+        <target state="translated">Beskär</target>
+      </trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target state="translated">Bredd</target></trans-unit>
+        <target state="translated">Bredd</target>
+      </trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target state="translated">Saknad nödvändig egenskap: </target></trans-unit>
+        <target state="translated">Saknad nödvändig egenskap: </target>
+      </trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target state="translated">Arbetsyta</target></trans-unit>
+        <target state="translated">Arbetsyta</target>
+      </trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target state="translated">Arbetsytor</target></trans-unit>
+        <target state="translated">Arbetsytor</target>
+      </trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target state="translated">Ett fel uppstod vid sparande</target></trans-unit>
+        <target state="translated">Ett fel uppstod vid sparande</target>
+      </trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target state="translated">Ladda om sidan för att försöka åtgärda problemet.</target></trans-unit>
+        <target state="translated">Ladda om sidan för att försöka åtgärda problemet.</target>
+      </trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target state="translated">Ladda om backend-systemet</target></trans-unit>
+        <target state="translated">Ladda om backend-systemet</target>
+      </trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target state="translated">Ladda om</target></trans-unit>
+        <target state="translated">Ladda om</target>
+      </trans-unit>
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
 				<source>In-Place</source>
-			<target state="translated">På plats</target></trans-unit>
+        <target state="translated">På plats</target>
+      </trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
-			<target state="translated">Råa innehållet</target></trans-unit>
+        <target state="translated">Råa innehållet</target>
+      </trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
 				<source>Raw Content Mode</source>
-			<target state="translated">Råa innehåll-läget</target></trans-unit>
+        <target state="translated">Råa innehåll-läget</target>
+      </trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
-			<target state="translated">Skrivbord</target></trans-unit>
+        <target state="translated">Skrivbord</target>
+      </trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
-			<target state="translated">Logga in till</target></trans-unit>
+        <target state="translated">Logga in till</target>
+      </trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target state="translated">Autentiserar</target></trans-unit>
+        <target state="translated">Autentiserar</target>
+      </trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target state="translated">Logga ut</target></trans-unit>
+        <target state="translated">Logga ut</target>
+      </trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target state="translated">Det angivna användarnamnet eller lösenordet var felaktigt</target></trans-unit>
+        <target state="translated">Det angivna användarnamnet eller lösenordet var felaktigt</target>
+      </trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
-			<target state="translated">Din inloggning har löpt ut. Vänligen logga in igen.</target></trans-unit>
+        <target state="translated">Din inloggning har löpt ut. Vänligen logga in igen.</target>
+      </trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target state="translated">Välkommen till Neos</target></trans-unit>
+        <target state="translated">Välkommen till Neos</target>
+      </trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target state="translated">Gå till setup</target></trans-unit>
+        <target state="translated">Gå till setup</target>
+      </trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
-			<target state="translated">Teknisk information</target></trans-unit>
+        <target state="translated">Teknisk information</target>
+      </trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target state="translated">Saknar hemsida</target></trans-unit>
+        <target state="translated">Saknar hemsida</target>
+      </trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target state="translated">Antingen har ingen webbplats definierats, platsen innehåller ingen hemsida eller den aktiva platsen kunde inte fastställas.</target></trans-unit>
+        <target state="translated">Antingen har ingen webbplats definierats, platsen innehåller ingen hemsida eller den aktiva platsen kunde inte fastställas.</target>
+      </trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target state="translated">Du kanske vill ange webbplatsens domän eller importera en ny webbplats i inställningarna.</target></trans-unit>
+        <target state="translated">Du kanske vill ange webbplatsens domän eller importera en ny webbplats i inställningarna.</target>
+      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target state="translated">Databasfel</target></trans-unit>
+        <target state="translated">Databasfel</target>
+      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="translated">Det finns ingen databasanslutning ännu eller Neos databasschema har inte skapats.</target></trans-unit>
+        <target state="translated">Det finns ingen databasanslutning ännu eller Neos databasschema har inte skapats.</target>
+      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target state="translated">Kör installationen för att konfigurera din databas.</target></trans-unit>
+        <target state="translated">Kör installationen för att konfigurera din databas.</target>
+      </trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target state="translated">Sidan hittades inte</target></trans-unit>
+        <target state="translated">Sidan hittades inte</target>
+      </trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target state="translated">Tyvärr kunde sidan du begärde inte hittas.</target></trans-unit>
+        <target state="translated">Tyvärr kunde sidan du begärde inte hittas.</target>
+      </trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
-			<target state="translated">Ogiltig nodtyp</target></trans-unit>
+        <target state="translated">Ogiltig nodtyp</target>
+      </trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target state="translated">Konfigurationen av den nodtyp som är tänkt för att återges här är inte tillgänglig. Förmodligen har du bytt namn på nodtypen och saknar en migrering eller du har helt enkelt felstavat det.</target></trans-unit>
+        <target state="translated">Konfigurationen av den nodtyp som är tänkt för att återges här är inte tillgänglig. Förmodligen har du bytt namn på nodtypen och saknar en migrering eller du har helt enkelt felstavat det.</target>
+      </trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target state="translated">Oväntat fel när nod skapas</target></trans-unit>
+        <target state="translated">Oväntat fel när nod skapas</target>
+      </trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target state="translated">Oväntat fel när nod raderas</target></trans-unit>
+        <target state="translated">Oväntat fel när nod raderas</target>
+      </trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
-			<target state="translated">Oväntat fel när nod uppdateras</target></trans-unit>
+        <target state="translated">Oväntat fel när nod uppdateras</target>
+      </trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
 				<source>Unexpected error while moving node</source>
-			<target state="translated">Oväntat fel när nod flyttas</target></trans-unit>
+        <target state="translated">Oväntat fel när nod flyttas</target>
+      </trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
-			<target state="translated">Fel när nodträd laddas.</target></trans-unit>
+        <target state="translated">Fel när nodträd laddas.</target>
+      </trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target state="translated">Det angivna användarnamnet eller lösenordet var felaktigt</target></trans-unit>
+        <target state="translated">Det angivna användarnamnet eller lösenordet var felaktigt</target>
+      </trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target state="translated">"{nodeTypeName}" på sidan "{pageLabel}"</target></trans-unit>
+        <target state="translated">"{nodeTypeName}" på sidan "{pageLabel}"</target>
+      </trans-unit>
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
-			<target state="translated">Noder</target></trans-unit>
+        <target state="translated">Noder</target>
+      </trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
-			<target state="translated">Visa</target></trans-unit>
+        <target state="translated">Visa</target>
+      </trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target state="translated">Denna nod kan ej nås via en offentlig URL</target></trans-unit>
+        <target state="translated">Denna nod kan ej nås via en offentlig URL</target>
+      </trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
-			<target state="translated">Nodegenskaper</target></trans-unit>
+        <target state="translated">Nodegenskaper</target>
+      </trans-unit>
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target state="translated">Kopiera {source} till {target}</target></trans-unit>
+        <target state="translated">Kopiera {source} till {target}</target>
+      </trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
-			<target state="translated">Flytta {source} till {target}</target></trans-unit>
+        <target state="translated">Flytta {source} till {target}</target>
+      </trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target state="translated">Välj vart {source} ska sättas in relativt till {target}.</target></trans-unit>
+        <target state="translated">Välj vart {source} ska sättas in relativt till {target}.</target>
+      </trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
-			<target state="translated">Infoga</target></trans-unit>
+        <target state="translated">Infoga</target>
+      </trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
 				<source>Insert mode</source>
-			<target state="translated">Infogningsläge</target></trans-unit>
+        <target state="translated">Infogningsläge</target>
+      </trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target state="translated">Välj bildförhållande</target></trans-unit>
+        <target state="translated">Välj bildförhållande</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target state="translated">Fetstil</target></trans-unit>
+        <target state="translated">Fetstil</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
-			<target state="translated">Kursiv</target></trans-unit>
+        <target state="translated">Kursiv</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target state="translated">Understrykning</target></trans-unit>
+        <target state="translated">Understrykning</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target state="translated">Nedsänkt</target></trans-unit>
+        <target state="translated">Nedsänkt</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
-			<target state="translated">Upphöjt</target></trans-unit>
+        <target state="translated">Upphöjt</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target state="translated">Genomstruken</target></trans-unit>
+        <target state="translated">Genomstruken</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
-			<target state="translated">Länk</target></trans-unit>
+        <target state="translated">Länk</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target state="translated">Sorterad lista</target></trans-unit>
+        <target state="translated">Sorterad lista</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
-			<target state="translated">Osorterad lista</target></trans-unit>
+        <target state="translated">Osorterad lista</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
-			<target state="translated">Vänsterjustera</target></trans-unit>
+        <target state="translated">Vänsterjustera</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
 				<source>Align right</source>
-			<target state="translated">Högerjustera</target></trans-unit>
+        <target state="translated">Högerjustera</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
-			<target state="translated">Centrera</target></trans-unit>
+        <target state="translated">Centrera</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
-			<target state="translated">Justera</target></trans-unit>
+        <target state="translated">Justera</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
-			<target state="translated">Tabell</target></trans-unit>
+        <target state="translated">Tabell</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
-			<target state="translated">Ta bort formatering</target></trans-unit>
+        <target state="translated">Ta bort formatering</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target state="translated">Minska indrag</target></trans-unit>
+        <target state="translated">Minska indrag</target>
+      </trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target state="translated">Indrag</target></trans-unit>
+        <target state="translated">Indrag</target>
+      </trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target state="translated">Skapa ny</target></trans-unit>
+        <target state="translated">Skapa ny</target>
+      </trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target state="translated">Inga träffar hittades</target></trans-unit>
+        <target state="translated">Inga träffar hittades</target>
+      </trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target state="translated">Vänligen ange ## #CHARACTERS### fler tecken</target></trans-unit>
+        <target state="translated">Vänligen ange ## #CHARACTERS### fler tecken</target>
+      </trans-unit>
       <trans-unit id="login.wrongCredentials.title" xml:space="preserve">
 				<source>Wrong Credentials</source>
-			<target state="needs-translation">Wrong Credentials</target></trans-unit>
+        <target state="needs-translation">Wrong Credentials</target>
+      </trans-unit>
       <trans-unit id="login.wrongCredentials.body" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target state="translated">Det angivna användarnamnet eller lösenordet var felaktigt</target></trans-unit>
+        <target state="translated">Det angivna användarnamnet eller lösenordet var felaktigt</target>
+      </trans-unit>
       <trans-unit id="login.loggedOut.title" xml:space="preserve">
 				<source>Logged Out</source>
-			<target state="needs-translation">Logged Out</target></trans-unit>
+        <target state="needs-translation">Logged Out</target>
+      </trans-unit>
       <trans-unit id="login.loggedOut.body" xml:space="preserve">
 				<source>Successfully logged out</source>
-			<target state="needs-translation">Successfully logged out</target></trans-unit>
+        <target state="needs-translation">Successfully logged out</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
