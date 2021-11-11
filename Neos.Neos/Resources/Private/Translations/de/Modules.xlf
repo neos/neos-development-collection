@@ -47,9 +47,9 @@
 				<source>Yes, delete the workspace</source>
         <target state="final">Ja, den Arbeitsbereich löschen</target>
       </trans-unit>
-      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="no">
 				<source>Edit workspace "{0}"</source>
-        <target state="final">Arbeitsbereich bearbeiten</target>
+        <target state="translated">Arbeitsbereich "{0}" bearbeiten</target>
       </trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
 				<source>Personal workspace</source>
@@ -810,9 +810,9 @@
 				<source>No sites available</source>
         <target state="final">Keine Seiten verfügbar</target>
       </trans-unit>
-      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
-				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-        <target state="final">Das &lt;em&gt;Neos Kickstarter&lt;/em&gt;-Paket ist nicht installiert, installieren Sie es, um eine neue Seite zu erstellen.</target>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="no">
+				<source>The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</source>
+        <target state="translated">Das &lt;em&gt;Neos Kickstarter&lt;/em&gt;-Paket ist nicht installiert, installieren Sie es, um eine neue Seite zu erstellen.</target>
       </trans-unit>
       <trans-unit id="sites.new" xml:space="preserve" approved="yes">
 				<source>New site</source>
@@ -1065,11 +1065,11 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body" xml:space="preserve">
 				<source>Error: The given node type "%s" is not based on the superType "{0}"</source>
-        <target state="needs-translation">Error: The given node type "%s" is not based on the superType "{0}"</target>
+        <target state="translated">Fehler: Der angegebene Node-Type "%s" basiert nicht auf dem Super-Type "{0}"</target>
       </trans-unit>
       <trans-unit id="sites.successfullyCreatedSite.body" xml:space="preserve">
 				<source>Successfully created site "{0}" with siteNode "{1}", type "{2}" and packageKey "{3}"</source>
-        <target state="needs-translation">Successfully created site "{0}" with siteNode "{1}", type "{2}" and packageKey "{3}"</target>
+        <target state="translated">Site "{0}" mit Site-Node "{1}", Typ "{2}" und Package-Key "{3}" erfolgreich erstellt</target>
       </trans-unit>
       <trans-unit id="sites.siteDeleted.title" xml:space="preserve">
 				<source>Site deleted</source>
@@ -1097,43 +1097,43 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       </trans-unit>
       <trans-unit id="sites.domainUpdated.title" xml:space="preserve">
 				<source>Domain updated</source>
-        <target state="needs-translation">Domain updated</target>
+        <target state="translated">Domain aktualisiert</target>
       </trans-unit>
       <trans-unit id="sites.domainUpdated.body" xml:space="preserve">
 				<source>The domain "{0}" has been updated.</source>
-        <target state="needs-translation">The domain "{0}" has been updated.</target>
+        <target state="translated">Die Domain "{0}" wurde aktualisiert.</target>
       </trans-unit>
       <trans-unit id="sites.domainCreated.title" xml:space="preserve">
 				<source>Domain created</source>
-        <target state="needs-translation">Domain created</target>
+        <target state="translated">Domain erstellt</target>
       </trans-unit>
       <trans-unit id="sites.domainCreated.body" xml:space="preserve">
 				<source>'The domain "{0}" has been created.'</source>
-        <target state="needs-translation">'The domain "{0}" has been created.'</target>
+        <target state="translated">Die Domain "{0}" wurde erstellt.</target>
       </trans-unit>
       <trans-unit id="sites.domainDeleted.title" xml:space="preserve">
 				<source>Domain deleted</source>
-        <target state="needs-translation">Domain deleted</target>
+        <target state="translated">Domain gelöscht</target>
       </trans-unit>
       <trans-unit id="sites.domainDeleted.body" xml:space="preserve">
 				<source>The domain "{0}" has been deleted.</source>
-        <target state="needs-translation">The domain "{0}" has been deleted.</target>
+        <target state="translated">Die Domain "{0}" wurde gelöscht.</target>
       </trans-unit>
       <trans-unit id="sites.domainActivated.title" xml:space="preserve">
 				<source>Domain activated</source>
-        <target state="needs-translation">Domain activated</target>
+        <target state="translated">Domain aktiviert</target>
       </trans-unit>
       <trans-unit id="sites.domainActivated.body" xml:space="preserve">
 				<source>The domain "{0}" has been activated.</source>
-        <target state="needs-translation">The domain "{0}" has been activated.</target>
+        <target state="translated">Die Domain "{0}" wurde aktiviert.</target>
       </trans-unit>
       <trans-unit id="sites.domainDeactivated.title" xml:space="preserve">
 				<source>Domain deactivated</source>
-        <target state="needs-translation">Domain deactivated</target>
+        <target state="translated">Domain deaktiviert</target>
       </trans-unit>
       <trans-unit id="sites.domainDeactivated.body" xml:space="preserve">
 				<source>The domain "{0}" has been deactivated.</source>
-        <target state="needs-translation">The domain "{0}" has been deactivated.</target>
+        <target state="translated">Die Domain "{0}" wurde deaktiviert.</target>
       </trans-unit>
       <trans-unit id="users.userCreated.title" xml:space="preserve">
 				<source>User created</source>
