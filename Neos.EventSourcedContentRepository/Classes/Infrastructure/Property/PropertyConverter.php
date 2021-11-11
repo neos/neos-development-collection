@@ -40,10 +40,11 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
-            if ($propertyValue !== null) {
-                // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
-                $nodeType->getOptions();
+            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+            $nodeType->getOptions();
+            $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
 
+            if ($propertyValue !== null) {
                 $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
 
                 try {
@@ -54,8 +55,14 @@ final class PropertyConverter
 
                 $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, (string)$propertyType);
             } else {
-                // $propertyValue == null -> we want to unset $propertyName!
-                $serializedPropertyValues[$propertyName] = null;
+                if (array_key_exists($propertyName, $nodeType->getProperties())) {
+                    // $propertyValue == null and defined in node types -> we want to set the $propertyName to NULL
+                    $serializedPropertyValues[$propertyName] = new SerializedPropertyValue(null, (string)$propertyType);
+                } else {
+                    // $propertyValue == null and not defined in NodeTypes -> we want to unset $propertyName!
+                    $serializedPropertyValues[$propertyName] = null;
+                }
+
             }
         }
 

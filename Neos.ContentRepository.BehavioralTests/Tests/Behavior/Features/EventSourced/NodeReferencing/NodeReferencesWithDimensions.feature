@@ -16,6 +16,8 @@ Feature: Node References with Dimensions
           type: reference
         referencesProperty:
           type: references
+        text:
+          type: string
     """
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
@@ -101,6 +103,7 @@ Feature: Node References with Dimensions
       | Key                           | Value                |
       | contentStreamIdentifier       | "user-cs-identifier" |
       | sourceContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier      | "user-identifier"    |
     And the graph projection is fully up to date
 
     # after forking, the reference must still exist on the forked content stream (no surprises here).
@@ -130,7 +133,7 @@ Feature: Node References with Dimensions
 
     # after then modifying the node's properties (thus triggering copy-on-write), the reference property
     # should still exist (this was a BUG)
-    And the command "SetNodeProperties" is executed with payload:
+    And the intermediary command SetNodeProperties is executed with payload:
       | Key                       | Value                                  |
       | contentStreamIdentifier   | "user-cs-identifier"                   |
       | nodeAggregateIdentifier   | "source-nodandaise"                    |
@@ -380,7 +383,7 @@ Feature: Node References with Dimensions
 
   Scenario: Create a reference, then create a generalization of the source node; and the references should exist on the generalization
     # We need to create a new ch-only node to test this; as by default, only a german node already exists shining through in ch
-    And the command CreateNodeAggregateWithNode is executed with payload:
+    And the intermediary command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
       | nodeAggregateIdentifier       | "ch-only"                                           |

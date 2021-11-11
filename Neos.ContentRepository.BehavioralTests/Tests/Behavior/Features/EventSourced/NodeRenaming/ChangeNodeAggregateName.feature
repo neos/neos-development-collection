@@ -32,11 +32,11 @@ Feature: Change node name
 
     And the graph projection is fully up to date
     When the command "ChangeNodeAggregateName" is executed with payload:
-      | Key                     | Value              |
-      | contentStreamIdentifier | "cs-identifier"    |
-      | nodeAggregateIdentifier | "nody-mc-nodeface" |
-      | newNodeName             | "cat"              |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | Key                      | Value                        |
+      | contentStreamIdentifier  | "cs-identifier"              |
+      | nodeAggregateIdentifier  | "nody-mc-nodeface"           |
+      | newNodeName              | "cat"                        |
+      | initiatingUserIdentifier | "initiating-user-identifier" |
 
     Then I expect exactly 3 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeAggregateNameWasChanged" with payload:
@@ -63,10 +63,11 @@ Feature: Change node name
       | Name | NodeAggregateIdentifier |
       | dog  | nody-mc-nodeface        |
     When the command "ChangeNodeAggregateName" is executed with payload:
-      | Key                     | Value              |
-      | contentStreamIdentifier | "cs-identifier"    |
-      | nodeAggregateIdentifier | "nody-mc-nodeface" |
-      | newNodeName             | "cat"              |
+      | Key                      | Value                        |
+      | contentStreamIdentifier  | "cs-identifier"              |
+      | nodeAggregateIdentifier  | "nody-mc-nodeface"           |
+      | newNodeName              | "cat"                        |
+      | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
