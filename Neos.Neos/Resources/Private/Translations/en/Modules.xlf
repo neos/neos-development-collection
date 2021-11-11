@@ -847,7 +847,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 				<source>Domain created</source>
 			</trans-unit>
 			<trans-unit id="sites.domainCreated.body" xml:space="preserve">
-				<source>'The domain "{0}" has been created.'</source>
+				<source>The domain "{0}" has been created.</source>
 			</trans-unit>
 			<trans-unit id="sites.domainDeleted.title" xml:space="preserve">
 				<source>Domain deleted</source>
