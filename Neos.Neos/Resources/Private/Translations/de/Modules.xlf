@@ -572,11 +572,11 @@
       </trans-unit>
       <trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
 				<source>Not enough privileges to edit this user</source>
-        <target state="needs-translation">Not enough privileges to edit this user</target>
+        <target state="translated">Keine ausreichenden Rechte, um diesen Nutzer zu bearbeiten</target>
       </trans-unit>
       <trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
 				<source>Not enough privileges to delete this user</source>
-        <target state="needs-translation">Not enough privileges to delete this user</target>
+        <target state="translated">Keine ausreichenden Rechte, um diesen Nutzer zu löschen</target>
       </trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete user</source>
@@ -742,21 +742,21 @@
 				<source>Default asset collection</source>
         <target state="final">Standard Ressourcen-Sammlung</target>
       </trans-unit>
-      <trans-unit id="sites.sitePackage" xml:space="preserve" approved="yes">
+      <trans-unit id="sites.sitePackage" xml:space="preserve" approved="no">
 				<source>Site package</source>
-        <target state="final">Seitenpaket</target>
+        <target state="translated">Site-Package</target>
       </trans-unit>
-      <trans-unit id="sites.delete" xml:space="preserve" approved="yes">
+      <trans-unit id="sites.delete" xml:space="preserve" approved="no">
 				<source>Delete this site</source>
-        <target state="final">Diese Seite löschen</target>
+        <target state="translated">Diese Site löschen</target>
       </trans-unit>
-      <trans-unit id="sites.deactivate" xml:space="preserve" approved="yes">
+      <trans-unit id="sites.deactivate" xml:space="preserve" approved="no">
 				<source>Deactivate site</source>
-        <target state="final">Seite deaktivieren</target>
+        <target state="translated">Site deaktivieren</target>
       </trans-unit>
-      <trans-unit id="sites.activate" xml:space="preserve" approved="yes">
+      <trans-unit id="sites.activate" xml:space="preserve" approved="no">
 				<source>Activate site</source>
-        <target state="final">Seite aktivieren</target>
+        <target state="translated">Site aktivieren</target>
       </trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
@@ -788,7 +788,7 @@
       </trans-unit>
       <trans-unit id="sites.generatorClass" xml:space="preserve">
 	  		    <source>Select a site generator</source>
-        <target state="needs-translation">Select a site generator</target>
+        <target state="translated">Site-Generator auswählen</target>
       </trans-unit>
       <trans-unit id="sites.name" xml:space="preserve" approved="yes">
 				<source>Site name</source>
@@ -993,15 +993,15 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       </trans-unit>
       <trans-unit id="configuration.configurationTypeNotFound.body" xml:space="preserve">
 				<source>Configuration type not found.</source>
-        <target state="needs-translation">Configuration type not found.</target>
+        <target state="translated">Konfigurations-Typ nicht gefunden.</target>
       </trans-unit>
       <trans-unit id="sites.sitePackageNotFound.title" xml:space="preserve">
 				<source>Site package not found</source>
-        <target state="needs-translation">Site package not found</target>
+        <target state="translated">Site-Package nicht gefunden</target>
       </trans-unit>
       <trans-unit id="sites.sitePackageNotFound.body" xml:space="preserve">
 				<source>The site package with key "{0}" was not found.</source>
-        <target state="needs-translation">The site package with key "{0}" was not found.</target>
+        <target state="translated">Das Site-Package mit dem Key "{0}" wurde nicht gefunden.</target>
       </trans-unit>
       <trans-unit id="sites.update.title" xml:space="preserve" approved="yes">
 				<source>Update</source>
@@ -1013,15 +1013,15 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       </trans-unit>
       <trans-unit id="sites.missingPackage.title" xml:space="preserve">
 				<source>Missing Package</source>
-        <target state="needs-translation">Missing Package</target>
+        <target state="translated">Fehlendes Package</target>
       </trans-unit>
       <trans-unit id="sites.missingPackage.body" xml:space="preserve">
 				<source>The package "{0}" is required to create new site packages.</source>
-        <target state="needs-translation">The package "{0}" is required to create new site packages.</target>
+        <target state="translated">Das Package "{0}" wird zum Erzeugen neuer Site-Packages benötigt.</target>
       </trans-unit>
       <trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
 				<source>Invalid package key</source>
-        <target state="needs-translation">Invalid package key</target>
+        <target state="translated">Ungültiger Package-Key</target>
       </trans-unit>
       <trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
 				<source>Site Packages {0} was created.</source>
@@ -1041,7 +1041,7 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       </trans-unit>
       <trans-unit id="sites.importError.body" xml:space="preserve">
 				<source>Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</source>
-        <target state="needs-translation">Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</target>
+        <target state="translated">Fehler: Während des Importierens von "Sites.xml" aus dem Package "{0}" trat ein Ausnahme-Fehler auf: {1}</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
 				<source>Site creation error</source>
@@ -1049,15 +1049,15 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.body" xml:space="preserve">
 				<source>Error: A site with siteNodeName "{0}" already exists</source>
-        <target state="needs-translation">Error: A site with siteNodeName "{0}" already exists</target>
+        <target state="translated">Fehler: Eine Site mit dem siteNodeName "{0}" existiert bereits</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.title" xml:space="preserve">
 				<source>Site creation error</source>
-        <target state="needs-translation">Site creation error</target>
+        <target state="translated">Site-Erzeugung fehlgeschlagen</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.body" xml:space="preserve">
 				<source>Error: The given node type "{0}" was not found</source>
-        <target state="needs-translation">Error: The given node type "{0}" was not found</target>
+        <target state="translated">Fehler: Der angegebene Node-Typ "{0}" wurde nicht gefunden</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title" xml:space="preserve">
 				<source>Site creation error</source>

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Media.Browser" source-language="en" datatype="plaintext" target-language="la-LA">
     <body>
@@ -53,6 +53,78 @@
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
         <target xml:lang="la-LA">crwdns927:0{0}crwdne927:0</target>
+      </trans-unit>
+      <trans-unit id="module.label" xml:space="preserve" approved="no">
+				<source>Media</source>
+        <target>crwdns5957:0crwdne5957:0</target>
+      </trans-unit>
+      <trans-unit id="field.name" xml:space="preserve">
+				<source>Name</source>
+        <target>crwdns6180:0crwdne6180:0</target>
+      </trans-unit>
+      <trans-unit id="field.title" xml:space="preserve">
+				<source>Title</source>
+        <target>crwdns6111:0crwdne6111:0</target>
+      </trans-unit>
+      <trans-unit id="field.label" xml:space="preserve">
+				<source>Label</source>
+        <target>crwdns5829:0crwdne5829:0</target>
+      </trans-unit>
+      <trans-unit id="field.type" xml:space="preserve">
+				<source>Type</source>
+        <target>crwdns6245:0crwdne6245:0</target>
+      </trans-unit>
+      <trans-unit id="message.operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone.</source>
+        <target>crwdns5834:0crwdne5834:0</target>
+      </trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+        <target>crwdns6005:0crwdne6005:0</target>
+      </trans-unit>
+      <trans-unit id="saveEditing" xml:space="preserve">
+				<source>Save</source>
+        <target>crwdns5821:0crwdne5821:0</target>
+      </trans-unit>
+      <trans-unit id="search.placeholder" xml:space="preserve">
+				<source>Search</source>
+        <target>crwdns5824:0crwdne5824:0</target>
+      </trans-unit>
+      <trans-unit id="clickToDelete" xml:space="preserve">
+				<source>Click to delete</source>
+        <target>crwdns5866:0crwdne5866:0</target>
+      </trans-unit>
+      <trans-unit id="save" xml:space="preserve">
+				<source>Save</source>
+        <target>crwdns5821:0crwdne5821:0</target>
+      </trans-unit>
+      <trans-unit id="metadata" xml:space="preserve">
+				<source>Metadata</source>
+        <target>crwdns6242:0crwdne6242:0</target>
+      </trans-unit>
+      <trans-unit id="metadata.dimensions" xml:space="preserve">
+				<source>Dimensions</source>
+        <target>crwdns6203:0crwdne6203:0</target>
+      </trans-unit>
+      <trans-unit id="metadata.type" xml:space="preserve">
+				<source>Type</source>
+        <target>crwdns6245:0crwdne6245:0</target>
+      </trans-unit>
+      <trans-unit id="delete" xml:space="preserve">
+				<source>Delete</source>
+        <target>crwdns5782:0crwdne5782:0</target>
+      </trans-unit>
+      <trans-unit id="metadata.identifier" xml:space="preserve">
+				<source>Identifier</source>
+        <target>crwdns5839:0crwdne5839:0</target>
+      </trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve">
+				<source>Title</source>
+        <target>crwdns6111:0crwdne6111:0</target>
+      </trans-unit>
+      <trans-unit id="preview" xml:space="preserve">
+				<source>Preview</source>
+        <target>crwdns5808:0crwdne5808:0</target>
       </trans-unit>
     </body>
   </file>
