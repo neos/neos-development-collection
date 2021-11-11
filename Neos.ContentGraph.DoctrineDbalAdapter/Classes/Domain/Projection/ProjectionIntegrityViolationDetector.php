@@ -636,7 +636,7 @@ WHERE
     }
 
 
-    public function findProjectedNodeAggregateIdentifiersInContentStream(ContentStreamIdentifier $contentStreamIdentifier): array
+    protected function findProjectedNodeAggregateIdentifiersInContentStream(ContentStreamIdentifier $contentStreamIdentifier): array
     {
         $records = $this->client->getConnection()->executeQuery(
             'SELECT DISTINCT nodeaggregateidentifier FROM neos_contentgraph_node'
