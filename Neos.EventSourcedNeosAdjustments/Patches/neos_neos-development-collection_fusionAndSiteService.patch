@@ -128,7 +128,7 @@ index ce81f7601..41d1e9238 100644
   */
 
 +use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
- use function GuzzleHttp\Psr7\parse_response;
+ use GuzzleHttp\Psr7\Message;
  use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
  use Neos\Flow\Annotations as Flow;
 @@ -206,7 +207,7 @@ class FusionView extends AbstractView
