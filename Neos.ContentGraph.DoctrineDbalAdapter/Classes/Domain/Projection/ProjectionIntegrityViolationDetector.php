@@ -574,6 +574,7 @@ WHERE
                     WHERE
                         h.contentstreamidentifier = :contentStreamIdentifier
                     AND nodeaggregateidentifier NOT IN (
+                        -- this query finds all nodes whose origin *IS COVERED* by an incoming hierarchy relation.
                         SELECT n.nodeaggregateidentifier
                         FROM neos_contentgraph_node n
                         LEFT JOIN neos_contentgraph_hierarchyrelation p
