@@ -26,11 +26,11 @@ Feature: Create node generalization
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                            | Value                |
-      | workspaceName                  | "live"               |
-      | workspaceTitle                 | "Live"               |
-      | workspaceDescription           | "The live workspace" |
-      | newContentStreamIdentifier     | "cs-identifier"      |
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
     And I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
@@ -291,27 +291,12 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
 
   Scenario: Create generalization of node to dimension space point with specializations that are partially occupied and covered
-    When the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                     | Value                                                                                                 |
-      | contentStreamIdentifier | "cs-identifier"                                                                                       |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"                                                                              |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
-    And the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                     | Value                                                                                                 |
-      | contentStreamIdentifier | "cs-identifier"                                                                                       |
-      | nodeAggregateIdentifier | "nodewyn-tetherton"                                                                                   |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
-    And the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                     | Value                                                                                                 |
-      | contentStreamIdentifier | "cs-identifier"                                                                                       |
-      | nodeAggregateIdentifier | "nodimer-tetherton"                                                                                   |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+    Given the command CreateNodeVariant is executed with payload:
+      | Key                     | Value                             |
+      | contentStreamIdentifier | "cs-identifier"                   |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"          |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
+      | targetOrigin            | {"market":"DE", "language":"de"}  |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -446,27 +431,12 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
 
   Scenario: Create generalization of a node to a dimension space point that is already covered by a more general generalization
-    When the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                     | Value                                                                                                                                                                   |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                                                |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
-    And the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                     | Value                                                                                                                                                                   |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateIdentifier | "nodewyn-tetherton"                                                                                                                                                     |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
-    And the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                     | Value                                                                                                                                                                   |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateIdentifier | "nodimer-tetherton"                                                                                                                                                     |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+    Given the command CreateNodeVariant is executed with payload:
+      | Key                     | Value                             |
+      | contentStreamIdentifier | "cs-identifier"                   |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"          |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
+      | targetOrigin            | {"market":"DE", "language":"en"}  |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -508,8 +478,8 @@ Feature: Create node generalization
     Then I expect the graph projection to consist of exactly 11 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"} to exist in the content graph

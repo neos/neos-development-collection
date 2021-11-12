@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
  */
 
 use Doctrine\DBAL\Connection as DatabaseConnection;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
@@ -126,11 +127,31 @@ final class ContentHypergraph implements ContentGraphInterface
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate {
-        $query = HypergraphParentQuery::create($contentStreamIdentifier);
-        $query = $query->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier)
-            ->withChildOriginDimensionSpacePoint($childOriginDimensionSpacePoint);
+        $query = /** @lang PostgreSQL */ '
+            SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename, n.classification, n.properties, n.nodename, ph.contentstreamidentifier, ph.dimensionspacepoint
+                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ph
+                JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
+            WHERE ph.contentstreamidentifier = :contentStreamIdentifier
+                AND n.nodeaggregateidentifier = (
+                    SELECT pn.nodeaggregateidentifier
+                        FROM ' . NodeRecord::TABLE_NAME . ' pn
+                        JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME .' ch ON pn.relationanchorpoint = ch.parentnodeanchor
+                        JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
+                    WHERE cn.nodeaggregateidentifier = :childNodeAggregateIdentifier
+                        AND cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash
+                        AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash
+                        AND ch.contentstreamidentifier = :contentStreamIdentifier
+                )';
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
+            'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->getHash()
+        ];
 
-        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $nodeRows = $this->getDatabaseConnection()->executeQuery(
+            $query,
+            $parameters
+        )->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows, VisibilityConstraints::withoutRestrictions());
     }

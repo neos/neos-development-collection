@@ -678,20 +678,19 @@ Feature: Create node peer variant
     And I expect this node to be a child of node cs-identifier;nodesis-prime;{"market":"CH", "language":"fr"}
 
   Scenario: Create a peer node variant to a dimension space point with specializations and where the parent node aggregate is already specialized in
-    Given the event NodePeerVariantWasCreated was published with payload:
-      | Key                     | Value                                                               |
-      | contentStreamIdentifier | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"                                            |
-      | sourceOrigin            | {"market":"DE", "language":"en"}                                    |
-      | peerOrigin              | {"market":"DE", "language":"fr"}                                    |
-      | peerCoverage            | [{"market":"DE", "language":"fr"},{"market":"CH", "language":"fr"}] |
-    And the event NodeSpecializationVariantWasCreated was published with payload:
-      | Key                     | Value                              |
-      | contentStreamIdentifier | "cs-identifier"                    |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"           |
-      | sourceOrigin            | {"market":"DE", "language":"fr"}   |
-      | specializationOrigin    | {"market":"CH", "language":"fr"}   |
-      | specializationCoverage  | [{"market":"CH", "language":"fr"}] |
+    Given the command CreateNodeVariant is executed with payload:
+      | Key                     | Value                            |
+      | contentStreamIdentifier | "cs-identifier"                  |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"         |
+      | sourceOrigin            | {"market":"DE", "language":"en"} |
+      | targetOrigin            | {"market":"DE", "language":"fr"} |
+    And the graph projection is fully up to date
+    And the command CreateNodeVariant is executed with payload:
+      | Key                     | Value                            |
+      | contentStreamIdentifier | "cs-identifier"                  |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"         |
+      | sourceOrigin            | {"market":"DE", "language":"fr"} |
+      | targetOrigin            | {"market":"CH", "language":"fr"} |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -700,9 +699,17 @@ Feature: Create node peer variant
       | nodeAggregateIdentifier | "nody-mc-nodeface"               |
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"DE", "language":"fr"} |
-    Then I expect exactly 13 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 12 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    Then I expect exactly 17 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    # Event 1 is ContentStreamWasCreated
+    # Event 2 is RootNodeAggregateWithNodeWasCreated
+    # Event 3-5 are NodeAggregateWithNodeWasCreated for Sir David Nodenborough and tethered children
+    # Event 6 is NodeAggregateWithNodeWasCreated for Nody McNodeface
+    # Events 7-9 are NodeAggregateWithNodeWasCreated for Madame Lanode and tethered children
+    # Event 10 is NodeAggregateWithNodeWasCreated for Nodette
+    # Events 11-13 are NodePeerVariantWasCreated for Sir David Nodenborough and tethered children
+    # Events 14-16 are NodeSpecializationVariantWasCreated for Sir David Nodenborough and tethered children
+    # Event 17 is NodePeerVariantWasCreated for Nody McNodeface
+    And event at index 16 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                            |
       | contentStreamIdentifier | "cs-identifier"                                                     |
       | nodeAggregateIdentifier | "nody-mc-nodeface"                                                  |
@@ -711,7 +718,7 @@ Feature: Create node peer variant
       | peerCoverage            | [{"market":"DE", "language":"fr"},{"market":"CH", "language":"fr"}] |
 
     When the graph projection is fully up to date
-    Then I expect the graph projection to consist of exactly 12 nodes
+    Then I expect the graph projection to consist of exactly 16 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"fr"} to exist in the content graph
@@ -719,7 +726,11 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"fr"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-prime;{"market":"DE", "language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimus-prime;{"market":"DE", "language":"fr"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimus-prime;{"market":"CH", "language":"fr"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-mediocre;{"market":"DE", "language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimus-mediocre;{"market":"DE", "language":"fr"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimus-mediocre;{"market":"CH", "language":"fr"} to exist in the content graph
     And I expect a node identified by cs-identifier;madame-lanode;{"market":"CH", "language":"fr"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodette;{"market":"CH", "language":"fr"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodesis-prime;{"market":"CH", "language":"fr"} to exist in the content graph

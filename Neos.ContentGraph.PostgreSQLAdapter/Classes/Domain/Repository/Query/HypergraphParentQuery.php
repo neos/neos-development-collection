@@ -13,15 +13,11 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
  * source code.
  */
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -38,11 +34,12 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
                 ? implode(', ', $fieldsToFetch)
                 : 'pn.origindimensionspacepoint, pn.nodeaggregateidentifier, pn.nodetypename, pn.classification, pn.properties, pn.nodename,
                 ph.contentstreamidentifier, ph.dimensionspacepoint' ) . '
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME .' ph
-            JOIN ' . NodeRecord::TABLE_NAME .' pn ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
-            JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME .' ch ON ch.parentnodeanchor = pn.relationanchorpoint
-            JOIN ' . NodeRecord::TABLE_NAME .' cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
-            WHERE ph.contentstreamidentifier = :contentStreamIdentifier';
+            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ph
+            JOIN ' . NodeRecord::TABLE_NAME . ' pn ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
+            JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ch ON ch.parentnodeanchor = pn.relationanchorpoint
+            JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
+            WHERE ph.contentstreamidentifier = :contentStreamIdentifier
+                AND ch.contentstreamidentifier = :contentStreamIdentifier';
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
@@ -70,17 +67,6 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
 
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->getHash();
-
-        return new self($query, $parameters);
-    }
-
-    public function withChildOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
-    {
-        $query = $this->query .= '
-            AND cn.origindimensionspacepointhash = :originDimensionSpacePointHash';
-
-        $parameters = $this->parameters;
-        $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->getHash();
 
         return new self($query, $parameters);
     }
