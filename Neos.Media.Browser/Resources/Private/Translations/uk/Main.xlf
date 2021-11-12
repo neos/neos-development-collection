@@ -459,10 +459,6 @@
           <source>{0} usages</source>
           <target state="translated">{0} вокристано</target>
         </trans-unit>
-        <trans-unit id="relatedNodes[3]">
-          <source>{0} usages</source>
-          <target state="translated">{0} вокристано</target>
-        </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
