@@ -47,9 +47,9 @@
 				<source>Yes, delete the workspace</source>
         <target state="final">Jā, dzēst darba virsmu</target>
       </trans-unit>
-      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="no">
 				<source>Edit workspace "{0}"</source>
-        <target state="final">Rediģēt darba virsmu</target>
+        <target state="translated">Rediģēt darba virsmu</target>
       </trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
 				<source>Personal workspace</source>
@@ -811,7 +811,7 @@
         <target state="translated">Nav pieejama vietņu</target>
       </trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
-				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+				<source>The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</source>
         <target state="translated">&lt;em&gt;Neos Kickstarter&lt;/em&gt; pakotne nav instalēta, vispirms instalējiet to izmantojot kickstart komandu veidojot jaunu pakotni.</target>
       </trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
