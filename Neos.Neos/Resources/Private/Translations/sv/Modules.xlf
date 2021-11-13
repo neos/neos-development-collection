@@ -811,7 +811,7 @@
         <target state="translated">Inga webbplatser tillgängliga</target>
       </trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
-				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+				<source>The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</source>
         <target state="translated">&lt;em&gt;Neos Kickstarter&lt;/em&gt; paket är inste installerat. Installera det för att snabbstarta nya sidor.</target>
       </trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
