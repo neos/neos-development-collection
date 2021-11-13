@@ -784,10 +784,10 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 				<source>Invalid package key</source>
 			</trans-unit>
 			<trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
-				<source>Site Packages {0} was created.</source>
+				<source>The package key "{0}" already exists.</source>
 			</trans-unit>
 			<trans-unit id="sites.sitePackagesWasCreated.body" xml:space="preserve">
-				<source>The package key "{0}" already exists.</source>
+				<source>Site package {0} was created.</source>
 			</trans-unit>
 			<trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
 				<source>The site has been imported.</source>
