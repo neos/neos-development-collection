@@ -47,9 +47,9 @@
 				<source>Yes, delete the workspace</source>
         <target state="final">Да, удалить рабочую область</target>
       </trans-unit>
-      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="no">
 				<source>Edit workspace "{0}"</source>
-        <target state="final">Редактировать рабочую область</target>
+        <target state="translated">Редактировать рабочую область</target>
       </trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
 				<source>Personal workspace</source>
@@ -810,9 +810,9 @@
 				<source>No sites available</source>
         <target state="final">Нет доступных сайтов</target>
       </trans-unit>
-      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
-				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-        <target state="final">Пакет &lt;em&gt;Neos Kickstarter&lt;/em&gt; не установлен, установите его для кикстарта новых сайтов.</target>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="no">
+				<source>The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</source>
+        <target state="translated">Пакет &lt;em&gt;Neos Kickstarter&lt;/em&gt; не установлен, установите его для кикстарта новых сайтов.</target>
       </trans-unit>
       <trans-unit id="sites.new" xml:space="preserve" approved="yes">
 				<source>New site</source>
