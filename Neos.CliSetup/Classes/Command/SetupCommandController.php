@@ -84,8 +84,8 @@ class SetupCommandController extends CommandController
 
         if (is_null($host)) {
             $host = $this->output->ask(
-                sprintf('Host (<info>%s</info>): ', $this->persistenceConfiguration['host']),
-                $this->persistenceConfiguration['host']
+                sprintf('Host (<info>%s</info>): ', $this->persistenceConfiguration['host'] ?? '127.0.0.1'),
+                $this->persistenceConfiguration['host'] ?? '127.0.0.1'
             );
         }
 
@@ -125,7 +125,7 @@ class SetupCommandController extends CommandController
             $this->quit(1);
         }
 
-        $filename = $this->getSettingsFilename();
+        $filename = $this->getSettingsFilename('Settings.Database.yaml');
 
         $this->outputLine();
         $this->output($this->writeSettings($filename, 'Neos.Flow.persistence.backendOptions',$persistenceConfiguration));
@@ -147,13 +147,13 @@ class SetupCommandController extends CommandController
 
         if (is_null($driver)) {
             $driver = $this->output->select(
-                sprintf('Select Image Handler (<info>%s</info>): ', $this->imagineDriver),
+                sprintf('Select Image Handler (<info>%s</info>): ', array_key_last($availableImageHandlers)),
                 $availableImageHandlers,
-                $this->imagineDriver
+                array_key_last($availableImageHandlers)
             );
         }
 
-        $filename = $this->getSettingsFilename();
+        $filename = $this->getSettingsFilename('Settings.Imagehandling.yaml');
         $this->outputLine();
         $this->output($this->writeSettings($filename, 'Neos.Imagine.driver', $driver));
         $this->outputLine();
@@ -161,12 +161,14 @@ class SetupCommandController extends CommandController
     }
 
     /**
+     * Get the full path for the given settings filename in the current application context
+     *
+     * @param string $filename The filename for the settings file
      * @return string
      */
-    protected function getSettingsFilename(): string
+    protected function getSettingsFilename(string $filename): string
     {
-        $filename = 'Configuration/' . $this->flowContext . '/Settings.yaml';
-        return $filename;
+        return 'Configuration/' . $this->flowContext . '/' . $filename;
     }
 
     /**
