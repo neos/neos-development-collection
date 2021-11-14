@@ -480,7 +480,6 @@ class Parser extends AbstractParser implements ParserInterface
             case $this->accept(Token::META_PATH_START):
                 $this->consume();
                 $metaName = $this->expect(Token::OBJECT_PATH_PART)->getValue();
-                $metaName = $metaName === 'override' ? 'context' : $metaName;
                 return ['__meta', $metaName];
 
             case $this->accept(Token::STRING):

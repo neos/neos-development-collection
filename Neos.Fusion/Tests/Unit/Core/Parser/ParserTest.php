@@ -472,7 +472,6 @@ class ParserTest extends TestCase
     {
         return [
             ['a.@abc = 1', ['a' => ['__meta' => ['abc' => 1]]]],
-            ['a.@override = 1', ['a' => ['__meta' => ['context' => 1]]]],
         ];
     }
 
