@@ -4,28 +4,28 @@ prototype(Neos.Fusion:Debug) {
   plaintext = true
 }
 
-debug.empty = Debug
+debug.empty = Neos.Fusion:Debug
 
-debug.null = Debug {
+debug.null = Neos.Fusion:Debug {
   value = NULL
 }
 
-debug.nullWithTitle = Debug {
+debug.nullWithTitle = Neos.Fusion:Debug {
   title = 'Title'
   value = NULL
 }
 
-debug.eelExpression = Debug {
+debug.eelExpression = Neos.Fusion:Debug {
   value = ${'hello' + ' ' + 'world'}
 }
 
-debug.fusionObjectExpression = Debug {
-  value = Value {
+debug.fusionObjectExpression = Neos.Fusion:Debug {
+  value = Neos.Fusion:Value {
     value = 'hello world'
   }
 }
 
-debug.multipleValues = Debug {
+debug.multipleValues = Neos.Fusion:Debug {
   foo = 'foo'
   bar = 'bar'
 }

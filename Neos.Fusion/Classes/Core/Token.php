@@ -17,7 +17,7 @@ class Token
     public const META_PATH_START = 36;
     public const OBJECT_PATH_PART = 35;
 
-    public const OBJECT_TYPE_PART = 39;
+    public const FUSION_OBJECT_NAME = 39;
 
     public const TRUE_VALUE = 5;
     public const FALSE_VALUE = 6;

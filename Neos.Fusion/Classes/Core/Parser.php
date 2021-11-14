@@ -49,21 +49,6 @@ class Parser extends AbstractParser implements ParserInterface
     protected $currentObjectPathStack = [];
 
     /**
-     * Namespaces used for resolution of Fusion object names. These namespaces
-     * are a mapping from a user defined key (alias) to a package key (the namespace).
-     * By convention, the namespace should be a package key, but other strings would
-     * be possible, too. Note that, in order to resolve an object type, a prototype
-     * with that namespace and name must be defined elsewhere.
-     *
-     * TODO: These namespaces are _not_ used for resolution of processor class names
-     * TODO: Is the above true? but this works: a.@process.stuff = Value
-     * @var array
-     */
-    protected $objectTypeNamespaces = [
-        'default' => 'Neos.Fusion'
-    ];
-
-    /**
      * @var string|null
      */
     protected $contextPathAndFilename;
@@ -153,7 +138,7 @@ class Parser extends AbstractParser implements ParserInterface
 
     /**
      * Statement
-     *  = NamespaceDeclaration / IncludeStatement / PrototypeDeclaration / UnsetStatement / ObjectDefinition
+     *  = IncludeStatement / PrototypeDeclaration / UnsetStatement / ObjectDefinition
      */
     protected function parseStatement(): void
     {
@@ -161,10 +146,6 @@ class Parser extends AbstractParser implements ParserInterface
             // watch out for the order, its regex matching and first one wins.
             case $this->accept(Token::INCLUDE):
                 $this->parseIncludeStatement();
-                return;
-
-            case $this->accept(Token::NAMESPACE):
-                $this->parseNamespaceDeclaration();
                 return;
 
             case $this->accept(Token::PROTOTYPE):
@@ -357,53 +338,6 @@ class Parser extends AbstractParser implements ParserInterface
     }
 
     /**
-     * Parses a namespace declaration and stores the result in the namespace registry.
-     *
-     * NamespaceDeclaration
-     * = NAMESPACE ( " NamespaceAssignment " / ' NamespaceAssignment ' / NamespaceAssignment ) EndOfStatement
-     */
-    protected function parseNamespaceDeclaration(): void
-    {
-        try {
-            $this->expect(Token::NAMESPACE);
-            $this->lazySmallGap();
-
-            switch (true) {
-                case $this->accept(Token::DOUBLE_QUOTE):
-                case $this->accept(Token::SINGLE_QUOTE):
-                    $quoteType = $this->consume()->getType();
-                    $this->lazySmallGap();
-                    $this->parseNamespaceAssignment();
-                    $this->lazySmallGap();
-                    $this->expect($quoteType);
-                    break;
-
-                default:
-                    $this->parseNamespaceAssignment();
-                    break;
-            }
-        } catch (\Exception $e) {
-            throw new ParserException(ParserException::MESSAGE_UNEXPECTED_CHAR | ParserException::MESSAGE_FROM_INPUT, $this->getParsingContext(), 1180547190, 'Invalid namespace declaration: ' . $e->getMessage());
-        }
-        $this->parseEndOfStatement();
-    }
-
-    /**
-     * NamespaceAssignment
-     *  = FusionObjectNamePart = FusionObjectNamePart
-     */
-    protected function parseNamespaceAssignment(): void
-    {
-        $namespaceAlias = $this->expect(Token::OBJECT_TYPE_PART)->getValue();
-        $this->lazySmallGap();
-        $this->expect(Token::ASSIGNMENT);
-        $this->lazySmallGap();
-        $namespacePackageKey = $this->expect(Token::OBJECT_TYPE_PART)->getValue();
-
-        $this->setObjectTypeNamespace($namespaceAlias, $namespacePackageKey);
-    }
-
-    /**
      * IncludeStatement
      *  = INCLUDE ( StringLiteral / FILE_PATTERN ) EndOfStatement
      */
@@ -445,10 +379,6 @@ class Parser extends AbstractParser implements ParserInterface
     protected function includeAndParseFilesByPattern(string $filePattern): void
     {
         $parser = new Parser();
-
-        // TODO: bug?: using a parser for one pattern means, that if you include all files: '**/*',
-        // one could declare a namespace in a earlier parsed fusion file and use this in a later parsed file. This could be hard to follow.
-        // is this wanted?
 
         $filesToInclude = FilePatternResolver::resolveFilesByPattern($filePattern, $this->contextPathAndFilename, '.fusion');
         foreach ($filesToInclude as $file) {
@@ -570,21 +500,11 @@ class Parser extends AbstractParser implements ParserInterface
 
     /**
      * FusionObjectName
-     *  = OBJECT_TYPE_PART ( : OBJECT_TYPE_PART )?
+     *  = FUSION_OBJECT_NAME
      */
     protected function parseFusionObjectName(): string
     {
-        $objectPart = $this->expect(Token::OBJECT_TYPE_PART)->getValue();
-
-        if ($this->lazyExpect(Token::COLON)) {
-            $namespace = $this->objectTypeNamespaces[$objectPart] ?? $objectPart;
-            $unqualifiedType = $this->expect(Token::OBJECT_TYPE_PART)->getValue();
-        } else {
-            $namespace = $this->objectTypeNamespaces['default'];
-            $unqualifiedType = $objectPart;
-        }
-
-        return $namespace . ':' . $unqualifiedType;
+        return $this->expect(Token::FUSION_OBJECT_NAME)->getValue();
     }
 
     /**
@@ -594,22 +514,21 @@ class Parser extends AbstractParser implements ParserInterface
     protected function parsePathValue()
     {
         switch (true) {
+            case $this->accept(Token::FUSION_OBJECT_NAME):
+                return $this->parseFusionObject();
+
             // watch out for the order, its regex matching and first one wins.
             case $this->accept(Token::FALSE_VALUE):
             case $this->accept(Token::NULL_VALUE):
             case $this->accept(Token::TRUE_VALUE):
-            case $this->accept(Token::INTEGER):
             case $this->accept(Token::FLOAT):
+            case $this->accept(Token::INTEGER):
             case $this->accept(Token::STRING):
             case $this->accept(Token::CHAR):
                 return $this->parseLiteral();
 
             case $this->accept(Token::DSL_EXPRESSION_START):
                 return $this->parseDslExpression();
-
-            // Needs to come later, since the regex is too greedy.
-            case $this->accept(Token::OBJECT_TYPE_PART):
-                return $this->parseFusionObject();
 
             case $this->accept(Token::EEL_EXPRESSION):
                 return $this->parseEelExpression();
@@ -651,10 +570,6 @@ class Parser extends AbstractParser implements ParserInterface
         }
 
         $parser = new Parser();
-        // transfer current namespaces to new parser
-        foreach ($this->objectTypeNamespaces as $key => $objectTypeNamespace) {
-            $parser->setObjectTypeNamespace($key, $objectTypeNamespace);
-        }
         $temporaryAst = $parser->parse('value = ' . $transpiledFusion);
         return $temporaryAst['value'];
     }
@@ -749,36 +664,5 @@ class Parser extends AbstractParser implements ParserInterface
             && in_array($pathKey, self::$reservedParseTreeKeys, true)) {
             throw new Fusion\Exception(sprintf('Reversed key "%s" used.', $pathKey), 1437065270);
         }
-    }
-
-    /**
-     * Sets the given alias to the specified namespace.
-     *
-     * The namespaces defined through this setter or through a "namespace" declaration
-     * in one of the Fusions are used to resolve a fully qualified Fusion
-     * object name while parsing Fusion code.
-     *
-     * The alias is the handle by which the namespace can be referred to.
-     * The namespace is, by convention, a package key which must correspond to a
-     * namespace used in the prototype definitions for Fusion object types.
-     *
-     * The special alias "default" is used as a fallback for resolution of unqualified
-     * Fusion object types.
-     *
-     * @param string $alias An alias for the given namespace, for example "neos"
-     * @param string $namespace The namespace, for example "Neos.Neos"
-     * @return void
-     * @throws Fusion\Exception
-     * @api
-     */
-    public function setObjectTypeNamespace($alias, $namespace): void
-    {
-        if (is_string($alias) === false) {
-            throw new Fusion\Exception('The alias of a namespace must be valid string!', 1180600696);
-        }
-        if (is_string($namespace) === false) {
-            throw new Fusion\Exception('The namespace must be of type string!', 1180600697);
-        }
-        $this->objectTypeNamespaces[$alias] = $namespace;
     }
 }

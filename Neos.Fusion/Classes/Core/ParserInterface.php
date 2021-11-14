@@ -31,26 +31,4 @@ interface ParserInterface
      * @api
      */
     public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = []);
-
-    /**
-     * Sets the given alias to the specified namespace.
-     *
-     * The namespaces defined through this setter or through a "namespace" declaration
-     * in one of the Fusions are used to resolve a fully qualified Fusion
-     * object name while parsing Fusion code.
-     *
-     * The alias is the handle by wich the namespace can be referred to.
-     * The namespace is, by convention, a package key which must correspond to a
-     * namespace used in the prototype definitions for Fusion object types.
-     *
-     * The special alias "default" is used as a fallback for resolution of unqualified
-     * Fusion object types.
-     *
-     * @param string $alias An alias for the given namespace, for example "neos"
-     * @param string $namespace The namespace, for example "Neos.Neos"
-     * @return void
-     * @api
-     * @deprecated with version 7.3 will be removed with 8.0
-     */
-    public function setObjectTypeNamespace($alias, $namespace);
 }

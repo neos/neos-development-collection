@@ -2,20 +2,20 @@ prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImpleme
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 processors.newSyntax.basicProcessor {
-  valueWithNestedPlainValue = Value {
+  valueWithNestedPlainValue = Neos.Fusion:Value {
     value = 'Hello'
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
   }
 
-  valueWithNestedEel = Value {
+  valueWithNestedEel = Neos.Fusion:Value {
     value = ${'Hello'}
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
   }
 
-  valueWithNestedFusion = Value {
-    value = Value {
+  valueWithNestedFusion = Neos.Fusion:Value {
+    value = Neos.Fusion:Value {
       value = 'Hello'
     }
     value.@process.2 = ${value + ' foo'}
@@ -24,22 +24,22 @@ processors.newSyntax.basicProcessor {
 }
 
 processors.newSyntax.processorBeforeValue {
-  valueWithNestedPlainValue = Value {
+  valueWithNestedPlainValue = Neos.Fusion:Value {
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
     value = 'Hello'
   }
 
-  valueWithNestedEel = Value {
+  valueWithNestedEel = Neos.Fusion:Value {
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
     value = ${'Hello'}
   }
 
-  valueWithNestedFusion = Value {
+  valueWithNestedFusion = Neos.Fusion:Value {
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
-    value = Value {
+    value = Neos.Fusion:Value {
       value = 'Hello'
     }
   }
@@ -48,7 +48,7 @@ processors.newSyntax.processorBeforeValue {
 
 
 processors.newSyntax.extendedSyntaxProcessor {
-  valueWithNestedPlainValue = Value {
+  valueWithNestedPlainValue = Neos.Fusion:Value {
     value = 'Hello'
     value.@process.1 = ${value + ' foo'}
     value.@process.default {
@@ -57,7 +57,7 @@ processors.newSyntax.extendedSyntaxProcessor {
     }
   }
 
-  valueWithNestedEel = Value {
+  valueWithNestedEel = Neos.Fusion:Value {
     value = ${'Hello'}
     value.@process.1 = ${value + ' foo'}
     value.@process.default {
@@ -66,8 +66,8 @@ processors.newSyntax.extendedSyntaxProcessor {
     }
   }
 
-  valueWithNestedFusion = Value {
-    value = Value {
+  valueWithNestedFusion = Neos.Fusion:Value {
+    value = Neos.Fusion:Value {
       value = 'Hello'
     }
     value.@process.1 = ${value + ' foo'}
@@ -109,7 +109,7 @@ processors.newSyntax.unset {
 
 }
 
-processors.newSyntax.usingThisInProcessor = Value {
+processors.newSyntax.usingThisInProcessor = Neos.Fusion:Value {
   value = "my value"
   @process.1 = ${value + this.append}
   append = " append"

@@ -134,11 +134,11 @@ class ParserException extends Fusion\Exception
 
     protected function messageParsingPathOrOperator(): string
     {
-        if (preg_match('/.*namespace\s*$/', $this->firstPartOfLine) === 1) {
-            return 'Did you meant to add a namespace declaration? (namespace: Alias=Vendor)';
+        if (preg_match('/.*namespace\s*:\s*$/', $this->firstPartOfLine) === 1) {
+            return 'It looks like you want to declare a namespace alias. The feature to alias namespaces was removed.';
         }
         if (preg_match('/.*include\s*$/', $this->firstPartOfLine) === 1) {
-            return 'Did you meant to include a Fusion file? (include: "./FileName.fusion")';
+            return 'Did you meant to include a Fusion file? (include: FileName.fusion)';
         }
         if ($this->lastChar === ' ' && $this->nextChar === '.') {
             return "Nested paths, seperated by '.' cannot contain spaces.";
@@ -166,6 +166,9 @@ class ParserException extends Fusion\Exception
 
     protected function messageParsingValueAssignment(): string
     {
+        if (preg_match('/^[a-zA-Z0-9.]+/', $this->lastPartOfLine) === 1) {
+            return "Unexpected '$this->lastPartOfLine' in value assignment - It looks like an object without namespace. But namespace alias were removed. You might want to add 'Neos.Fusion:' infront.";
+        }
         switch ($this->nextChar) {
             case '':
                 return 'No value specified in assignment.';

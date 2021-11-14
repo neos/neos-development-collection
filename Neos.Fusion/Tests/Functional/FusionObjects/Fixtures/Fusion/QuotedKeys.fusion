@@ -21,6 +21,6 @@ quotedKeys."@special" {
   '_!' = 1
 }
 
-prototype(Foo.Bar) < prototype(Neos.Fusion:TestRenderer)
-quotedKeys.prototype(Foo.Bar)."test" = 1
-quotedKeys.prototype.test = Foo.Bar
+prototype(Neos.Fusion:Foo.Bar) < prototype(Neos.Fusion:TestRenderer)
+quotedKeys.prototype(Neos.Fusion:Foo.Bar)."test" = 1
+quotedKeys.prototype.test = Neos.Fusion:Foo.Bar

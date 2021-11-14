@@ -5,14 +5,14 @@
  *  objects and properties.
  */
 
-object1 = Text
+object1 = Neos.Fusion:Text
 object1.value = "Hello world!"
 object1.foo = 42
 
 object2 < object1
 
 lib {
-  object3 = Text
+  object3 = Neos.Fusion:Text
   object3.value = "Another message"
 
   object4 < .object3
@@ -23,6 +23,6 @@ lib {
   object6.foo = 21
 }
 
-object7 = Text
+object7 = Neos.Fusion:Text
 object7.value < object1.value
 

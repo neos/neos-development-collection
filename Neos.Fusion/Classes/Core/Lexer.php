@@ -48,27 +48,22 @@ final class Lexer
         Token::NEWLINE => '/^[\n\r]+/',
         Token::SPACE => '/^[ \t]+/',
 
-        // all these values are in atomic groups (to disable backtracking)
-        // followed by non . : or alphanumeric, to determine the difference if the value is standalone
-        // or part of a fusion object.
-        // alternatively: '/^(true|TRUE)\b/',
         // VALUE ASSIGNMENT
-        Token::TRUE_VALUE => '/^(?>true|TRUE)(?![a-zA-Z0-9.:])/',
-        Token::FALSE_VALUE => '/^(?>false|FALSE)(?![a-zA-Z0-9.:])/',
-        Token::NULL_VALUE => '/^(?>null|NULL)(?![a-zA-Z0-9.:])/',
-        Token::INTEGER => '/^(?>-?[0-9]+)(?![a-zA-Z.:])/',
-        Token::FLOAT => '/^(?>-?[0-9]+\.[0-9]+)(?![a-zA-Z.:])/',
+        Token::TRUE_VALUE => '/^(?>true|TRUE)\\b/',
+        Token::FALSE_VALUE => '/^(?>false|FALSE)\\b/',
+        Token::NULL_VALUE => '/^(?>null|NULL)\\b/',
+        Token::INTEGER => '/^-?[0-9]+/',
+        Token::FLOAT => '/^-?[0-9]+\.[0-9]+/',
 
         Token::DSL_EXPRESSION_START => '/^[a-zA-Z0-9\.]+(?=`)/',
         Token::DSL_EXPRESSION_CONTENT => '/^`[^`]*`/',
         Token::EEL_EXPRESSION => self::PATTERN_EEL_EXPRESSION,
 
         // Object type part
-        Token::OBJECT_TYPE_PART => '/^[0-9a-zA-Z.]+/',
+        Token::FUSION_OBJECT_NAME => '/^[0-9a-zA-Z.]+:[0-9a-zA-Z.]+/',
 
         // Keywords
         Token::INCLUDE => '/^include\\s*:/',
-        Token::NAMESPACE => '/^namespace\\s*:/',
         Token::PROTOTYPE => '/^prototype\\s*:/',
         Token::UNSET_KEYWORD => '/^unset\\s*:/',
 

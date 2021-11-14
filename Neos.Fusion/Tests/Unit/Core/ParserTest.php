@@ -770,64 +770,6 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * Checks if namespace declarations are expanded correctly
-     *
-     * @test
-     */
-    public function parserCorrectlyParsesFixture18()
-    {
-        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture18');
-
-        $expectedParseTree = [
-            'object1' => [
-                '__objectType' => 'Neos.Neos:Text',
-                '__value' => null,
-                '__eelExpression' => null
-            ],
-            'object2' => [
-                '__objectType' => 'Neos.Neos:Text',
-                '__value' => null,
-                '__eelExpression' => null
-            ],
-            'object3' => [
-                '__objectType' => 'Neos.Schirmchen:Text',
-                '__value' => null,
-                '__eelExpression' => null
-            ],
-            'object4' => [
-                '__objectType' => 'Neos.Future:Text',
-                '__value' => null,
-                '__eelExpression' => null
-            ],
-            '__prototypes' => [
-                'Neos.Neos:Foo' => [
-                    '__meta' => [
-                        'class' => JoinImplementation::class
-                    ]
-                ],
-                'Neos.Neos:Bar' => [
-                    '__meta' => [
-                        'class' => JoinImplementation::class
-                    ]
-                ],
-                'Neos.Schirmchen:Baz' => [
-                    '__meta' => [
-                        'class' => JoinImplementation::class
-                    ]
-                ],
-                'Neos.Future:Quux' => [
-                    '__meta' => [
-                        'class' => JoinImplementation::class
-                    ]
-                ]
-            ]
-        ];
-
-        $actualParseTree = $this->parser->parse($sourceCode);
-        self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
-    }
-
-    /**
      * Checks if simple values (string, boolean, integer) are parsed correctly
      *
      * @test

@@ -20,22 +20,22 @@ prototype(Neos.Fusion:PrototypeInheritance.SubWithoutOverride) < prototype(Neos.
 prototype(Neos.Fusion:PrototypeInheritance.Base).value = 'BaseModified'
 
 prototypeInheritance {
-  base = PrototypeInheritance.Base
-  subWithOverride = PrototypeInheritance.SubWithOverride
-  subWithoutOverride = PrototypeInheritance.SubWithoutOverride
+  base = Neos.Fusion:PrototypeInheritance.Base
+  subWithOverride = Neos.Fusion:PrototypeInheritance.SubWithOverride
+  subWithoutOverride = Neos.Fusion:PrototypeInheritance.SubWithoutOverride
 }
 
 ///////// ADVANCED PROTOTYPE INHERITANCE
-// Here, we test context-dependent prototypes such as prototype(Foo).prototype(Bar).
+// Here, we test context-dependent prototypes such as prototype(Neos.Fusion:Foo).prototype(Neos.Fusion:Bar).
 // This should now also take the inheritance into account, if Foo e.g. has a parent type.
 
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base).@class = 'Neos\\Fusion\\Tests\\Functional\\FusionObjects\\Fixtures\\WrappedNestedObjectRenderer'
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base) {
-  prototype(PrototypeInheritance.Advanced.Value).value = '|value_from_base_NEVER_TO_BE_SHOWN|'
+  prototype(Neos.Fusion:PrototypeInheritance.Advanced.Value).value = '|value_from_base_NEVER_TO_BE_SHOWN|'
   prepend = 'prepend_beforeOverride'
   append = 'append_beforeOverride'
-  value = PrototypeInheritance.Advanced.Value
+  value = Neos.Fusion:PrototypeInheritance.Advanced.Value
 }
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.SubWithOverride) < prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base) {
   prepend = 'prepend_inSub'
@@ -45,7 +45,7 @@ prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.SubWithoutOver
 
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base) {
   append = 'append_afterOverride'
-  prototype(PrototypeInheritance.Advanced.Value).value = '|value_from_nested_prototype|'
+  prototype(Neos.Fusion:PrototypeInheritance.Advanced.Value).value = '|value_from_nested_prototype|'
 }
 
 prototypeInheritanceAdvanced {
@@ -53,16 +53,16 @@ prototypeInheritanceAdvanced {
   // - prepend_beforeOverride
   // - value_from_nested_prototype
   // - append_afterOverride
-  base = PrototypeInheritance.Advanced.WrappedNested.Base
+  base = Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base
 
   // same as "base"; as nothing has changed. THIS IS WHERE PROTOTYPE INHERITANCE SHOWS
-  subWithoutOverride = PrototypeInheritance.Advanced.WrappedNested.SubWithoutOverride
+  subWithoutOverride = Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.SubWithoutOverride
 
   // when evaluating this, the following should happen:
   // - prepend_inSub
   // - value_from_nested_prototype
   // - append_afterOverride
-  subWithOverride = PrototypeInheritance.Advanced.WrappedNested.SubWithOverride
+  subWithOverride = Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.SubWithOverride
 }
 
 

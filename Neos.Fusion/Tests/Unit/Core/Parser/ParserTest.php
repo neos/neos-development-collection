@@ -297,47 +297,21 @@ class ParserTest extends TestCase
     }
 
 
-    public function namespaceDeclaration()
+    public function throwsOldNamespaceDeclaration()
     {
-        $obj = function(string $name): array {
-            return ['__objectType' => $name, '__value' => null, '__eelExpression' => null];
-        };
         return [
             [
                 <<<'Fusion'
                 namespace: Alias=Package.Name
                 b = Alias:Stuff
-                Fusion,
-                ['b' => $obj('Package.Name:Stuff')]
-            ],
-            [
-                <<<'Fusion'
-                namespace: "Alias=Package.Name"
-                b = Alias:Stuff
-                Fusion,
-                ['b' => $obj('Package.Name:Stuff')]
-            ],
-            [
-                <<<'Fusion'
-                namespace: 'Alias=Package.Name'
-                b = Alias:Stuff
-                Fusion,
-                ['b' => $obj('Package.Name:Stuff')]
+                Fusion
             ],
             [
                 <<<'Fusion'
                 namespace:     Alias  =  Package.Name
                 b = Alias:Stuff
-                Fusion,
-                ['b' => $obj('Package.Name:Stuff')]
-            ],
-            [
-                <<<'Fusion'
-                namespace: "  Alias  =  Package.Name  "
-                b = Alias:Stuff
-                Fusion,
-                ['b' => $obj('Package.Name:Stuff')]
-            ],
+                Fusion
+            ]
         ];
     }
 
@@ -345,7 +319,6 @@ class ParserTest extends TestCase
     {
         return [
             ['fwefw/*fwef*/fewfwe1212 = ""'], // no comments inside everywhere
-            ['namespace: cms=\-notvalid-\Fusion\Fixtures'], // Checks if a leading slash in the namespace declaration throws an exception
             ['"" = 123'], // no empty strings in path
             ['\'\' = 123'],
             ['äüöfwef = ""'], // no utf in path
@@ -620,10 +593,10 @@ class ParserTest extends TestCase
             return ['__objectType' => $name, '__value' => null, '__eelExpression' => null];
         };
         return [
-            ['a = Foo.null.Bar', ['a' => $obj('Neos.Fusion:Foo.null.Bar')]],
-            ['a = truefalse.101.Bar', ['a' => $obj('Neos.Fusion:truefalse.101.Bar')]],
+            ['a = Foo.null:Bar', ['a' => $obj('Foo.null:Bar')]],
+            ['a = truefalse.101:Bar', ['a' => $obj('truefalse.101:Bar')]],
             ['a = 4Object.123:A456.123', ['a' => $obj('4Object.123:A456.123')]],
-            ['a = 4Foo.Bar', ['a' => $obj('Neos.Fusion:4Foo.Bar')]],
+            ['a = 4Foo:Bar', ['a' => $obj('4Foo:Bar')]],
             ['a = 3Vendor:Name', ['a' => $obj('3Vendor:Name')]],
             ['a = V3ndor:Name', ['a' => $obj('V3ndor:Name')]],
             ['a = TRUE132.Vendor:Object', ['a' => $obj('TRUE132.Vendor:Object')]],
@@ -635,24 +608,35 @@ class ParserTest extends TestCase
     public function weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain()
     {
         return [
-            ['a = .Hello.Name'],
-            ['a = ....fewf..fwe.1415'],
-            ['a = 1354.154.453'],
-            ['a = Hello..Name'],
             ['a = ABC:123'],
             ['a = 123:123'],
+            ['a = 1:FusionObject'],
+            ['a = 45455464:FusionObject'],
+            ['a = TRUE:FusionObject'],
+            ['a = false:FusionObject'],
+            ['a = Vendor:Hello..Name'],
+            ['a = .:.'],
+            ['a = Vendor:....fewf..fwe.1415'],
+        ];
+    }
+
+    public function throwsFusionObjectNamesWithoutNamespace()
+    {
+        return [
+            ['a = Value'],
+            ['a = Foo.null.Bar'],
+            ['a = 4Foo.Bar'],
             ['a = 123.123.123'],
             ['a = 1.FusionObject'],
             ['a = 45455464.FusionObject'],
             ['a = TRUE.FusionObject'],
             ['a = false.FusionObject'],
-            ['a = 1:FusionObject'],
-            ['a = 45455464:FusionObject'],
-            ['a = TRUE:FusionObject'],
-            ['a = false:FusionObject'],
+            ['a = .Hello.Name'],
+            ['a = ....fewf..fwe.1415'],
+            ['a = 1354.154.453'],
+            ['a = Hello..Name']
         ];
     }
-
 
 
     /**
@@ -660,7 +644,6 @@ class ParserTest extends TestCase
      * @dataProvider additionalNewFusionSyntaxProposalAndIdeas
      * @dataProvider commentsTest
      * @dataProvider metaObjectPaths
-     * @dataProvider namespaceDeclaration
      * @dataProvider eelValueAssign
      * @dataProvider simpleValueAssign
      * @dataProvider unexpectedCopyAssigment
@@ -680,8 +663,10 @@ class ParserTest extends TestCase
 
     /**
      * @test
+     * @dataProvider throwsOldNamespaceDeclaration
      * @dataProvider throwsWrongComments
      * @dataProvider throwsGeneralWrongSyntax
+     * @dataProvider throwsFusionObjectNamesWithoutNamespace
      */
     public function itThrowsWhileParsing($fusion): void
     {

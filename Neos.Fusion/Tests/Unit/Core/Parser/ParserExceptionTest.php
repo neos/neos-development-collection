@@ -43,14 +43,14 @@ class ParserExceptionTest extends TestCase
         yield 'ugly underscore indentation, because the web removes space'  => [
             <<<'FUSION'
 
-                    a      = Neos.Fusion [
+                    a      = Neos.Fusion:Value [
             FUSION,
 
             <<<'MESSAGE'
-            <input>:2:30
+            <input>:2:36
             _ |
-            2 | _______ a_____ = Neos.Fusion [
-            _ | _____________________________^— column 30
+            2 | _______ a_____ = Neos.Fusion:Value [
+            _ | ___________________________________^— column 36
             Expected the end of a statement but found '['.
             MESSAGE
 
@@ -83,10 +83,6 @@ class ParserExceptionTest extends TestCase
             'path.something', 'Object path without operator or block - found: <EOF>'
         ];
 
-        yield 'namespace missing object path' => [
-            'namespace: b=', 'Invalid namespace declaration: Expected token: "OBJECT_TYPE_PART": Unexpected <EOF>'
-        ];
-
         yield 'no value' => [
             'a =', 'No value specified in assignment.'
         ];
@@ -115,31 +111,29 @@ class ParserExceptionTest extends TestCase
     public function parsingWorksButOtherLogicThrows()
     {
         yield 'invalid path to object inheritance' => [
-            'prototype(a) < path.simple', 'Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.'
+            'prototype(a:b) < path.simple', 'Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.'
         ];
 
         yield 'accidentally invalid nested object inheritance by missing end of block will complain about the }' => [
             'a {
-            prototype(a) < prototype(b)', 'No closing brace "}" matched this starting block. Encountered <EOF>.'
+            prototype(a:b) < prototype(b:b)', 'No closing brace "}" matched this starting block. Encountered <EOF>.'
         ];
 
         yield 'invalid nested object inheritance' => [
-            'nested.prototype(a) < prototype(b)', 'Cannot inherit, when one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)'
+            'nested.prototype(a:b) < prototype(b:b)', 'Cannot inherit, when one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)'
         ];
     }
 
     public function advancedGuessingWhatWentWrong()
     {
         yield 'misspelled prototype declaration' => [
-            'prooototype(a)', 'A normal path segment cannot contain \'(\'. Did you meant to declare a prototype: \'prototype()\'?'
+            'prooototype(a:b)', 'A normal path segment cannot contain \'(\'. Did you meant to declare a prototype: \'prototype()\'?'
         ];
 
         yield 'include without colon' => [
             'include "pattern"', 'Did you meant to include a Fusion file? (include: "./FileName.fusion")'
         ];
 
-        yield 'namespace without colon' => [
-            'namespace a=b', 'Did you meant to add a namespace declaration? (namespace: Alias=Vendor)'
         ];
     }
 
@@ -178,6 +172,16 @@ class ParserExceptionTest extends TestCase
         ];
     }
 
+    public function removedLanguageFeaturedAreExplained()
+    {
+        yield 'unqualified object type' => [
+            'a = Value', "Unexpected 'Value' in value assignment - It looks like an object without namespace. But namespace alias were removed. You might want to add 'Neos.Fusion:' infront."
+        ];
+
+        yield 'namespace alias declaration' => [
+            'namespace: a=b', "It looks like you want to declare a namespace alias. The feature to alias namespaces was removed."
+        ];
+    }
 
     public function endOfLineExpected()
     {
@@ -185,14 +189,9 @@ class ParserExceptionTest extends TestCase
             'a = 1 + 1', 'Expected the end of a statement but found \'+ 1\'.'
         ];
 
-        yield 'namespace fusion object with space' => [
-            'namespace: a=b .c', 'Expected the end of a statement but found \'.c\'.'
-        ];
-
         yield 'fusion object with space in value' => [
-            'a = Neos .Fusion:Tag', 'Expected the end of a statement but found \'.Fusion:Tag\'.'
+            'a = Vendor:Content. Component', 'Expected the end of a statement but found \'Component\'.'
         ];
-
     }
 
     /**
@@ -211,6 +210,7 @@ class ParserExceptionTest extends TestCase
     /**
      * @test
      * @dataProvider advancedGuessingWhatWentWrong
+     * @dataProvider removedLanguageFeaturedAreExplained
      * @dataProvider generalInvalidFusion
      * @dataProvider parsingWorksButOtherLogicThrows
      * @dataProvider unclosedStatements

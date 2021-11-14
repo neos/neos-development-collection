@@ -4,7 +4,7 @@ prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\Data
 prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 prototype(Neos.Fusion:Tag) {
   @class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
-  attributes = Attributes
+  attributes = Neos.Fusion:Attributes
   omitClosingTag = false
   selfClosingTag = false
 }
