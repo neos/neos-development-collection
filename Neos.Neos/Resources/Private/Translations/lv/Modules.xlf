@@ -273,9 +273,9 @@
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
         <target state="final">Šis modulis sniedz apskatu par visām darbībām, kas ietekmē šo Neos instalāciju.</target>
       </trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="no">
 				<source>Here's what happened recently in Neos</source>
-        <target state="final">Lūk, kas nesen notika Neos:</target>
+        <target state="translated">Lūk, kas nesen notika Neos</target>
       </trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
@@ -548,7 +548,7 @@
       </trans-unit>
       <trans-unit id="users.roles.directlyAssignedPrivileges" xml:space="preserve">
 				<source>Directly assigned privilege</source>
-        <target state="needs-translation">Directly assigned privilege</target>
+        <target state="translated">Tieši piešķirta privilēģija</target>
       </trans-unit>
       <trans-unit id="users.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
@@ -572,11 +572,11 @@
       </trans-unit>
       <trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
 				<source>Not enough privileges to edit this user</source>
-        <target state="needs-translation">Not enough privileges to edit this user</target>
+        <target state="translated">Nepietiek tiesību rediģēt šo lietotāju</target>
       </trans-unit>
       <trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
 				<source>Not enough privileges to delete this user</source>
-        <target state="needs-translation">Not enough privileges to delete this user</target>
+        <target state="translated">Nav pietiekamu privilēģiju, lai dzēstu šo lietotāju</target>
       </trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete user</source>
@@ -788,7 +788,7 @@
       </trans-unit>
       <trans-unit id="sites.generatorClass" xml:space="preserve">
 	  		    <source>Select a site generator</source>
-        <target state="needs-translation">Select a site generator</target>
+        <target state="translated">Izvēlieties vietnes ģeneratoru</target>
       </trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
@@ -989,19 +989,19 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
       </trans-unit>
       <trans-unit id="configuration.anErrorOccurredDuringValidationOfTheConfiguration.title" xml:space="preserve">
 				<source>An error occurred during validation of the configuration.</source>
-        <target state="needs-translation">An error occurred during validation of the configuration.</target>
+        <target state="translated">Konfigurācijas validācijas laikā radās kļūda.</target>
       </trans-unit>
       <trans-unit id="configuration.configurationTypeNotFound.body" xml:space="preserve">
 				<source>Configuration type not found.</source>
-        <target state="needs-translation">Configuration type not found.</target>
+        <target state="translated">Konfigurācijas veids nav atrasts.</target>
       </trans-unit>
       <trans-unit id="sites.sitePackageNotFound.title" xml:space="preserve">
 				<source>Site package not found</source>
-        <target state="needs-translation">Site package not found</target>
+        <target state="translated">Vietnes pakotne nav atrasta</target>
       </trans-unit>
       <trans-unit id="sites.sitePackageNotFound.body" xml:space="preserve">
 				<source>The site package with key "{0}" was not found.</source>
-        <target state="needs-translation">The site package with key "{0}" was not found.</target>
+        <target state="translated">Vietnes pakotne "{0}" netika atrasta.</target>
       </trans-unit>
       <trans-unit id="sites.update.title" xml:space="preserve" approved="yes">
 				<source>Update</source>
@@ -1009,19 +1009,19 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
       </trans-unit>
       <trans-unit id="sites.update.body" xml:space="preserve">
 				<source>The site "{0}" has been updated.</source>
-        <target state="needs-translation">The site "{0}" has been updated.</target>
+        <target state="translated">Vietne "{0}" ir atjaunināta.</target>
       </trans-unit>
       <trans-unit id="sites.missingPackage.title" xml:space="preserve">
 				<source>Missing Package</source>
-        <target state="needs-translation">Missing Package</target>
+        <target state="translated">Trūkst pakotne</target>
       </trans-unit>
       <trans-unit id="sites.missingPackage.body" xml:space="preserve">
 				<source>The package "{0}" is required to create new site packages.</source>
-        <target state="needs-translation">The package "{0}" is required to create new site packages.</target>
+        <target state="translated">Lai izveidotu jaunas vietnes pakotnes, ir nepieciešama pakotne "{0}".</target>
       </trans-unit>
       <trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
 				<source>Invalid package key</source>
-        <target state="needs-translation">Invalid package key</target>
+        <target state="translated">Nederīga "package key"</target>
       </trans-unit>
       <trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
 				<source>Site Packages {0} was created.</source>
@@ -1033,19 +1033,19 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
       </trans-unit>
       <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
 				<source>The site has been imported.</source>
-        <target state="needs-translation">The site has been imported.</target>
+        <target state="translated">Vietne tika importēta.</target>
       </trans-unit>
       <trans-unit id="sites.importError.title" xml:space="preserve">
 				<source>Import error</source>
-        <target state="needs-translation">Import error</target>
+        <target state="translated">Importēšanas kļūda</target>
       </trans-unit>
       <trans-unit id="sites.importError.body" xml:space="preserve">
 				<source>Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</source>
-        <target state="needs-translation">Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</target>
+        <target state="translated">Kļūda: importējot "Vietnes.xml" no pakotnes "{0}", radās izņēmums: {1}</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
 				<source>Site creation error</source>
-        <target state="needs-translation">Site creation error</target>
+        <target state="translated">Vietnes izveides kļūda</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.body" xml:space="preserve">
 				<source>Error: A site with siteNodeName "{0}" already exists</source>
@@ -1278,6 +1278,10 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
       <trans-unit id="userSettings.electronicAddressRemoved.body" xml:space="preserve">
 				<source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
         <target state="needs-translation">The electronic address "{0}" ({1}) has been deleted for "{2}".</target>
+      </trans-unit>
+      <trans-unit id="users.lastLogin" xml:space="preserve">
+				<source>Last Login</source>
+        <target>Pēdējā pieteikšanās</target>
       </trans-unit>
     </body>
   </file>
