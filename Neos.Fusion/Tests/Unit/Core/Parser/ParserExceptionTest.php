@@ -131,9 +131,7 @@ class ParserExceptionTest extends TestCase
         ];
 
         yield 'include without colon' => [
-            'include "pattern"', 'Did you meant to include a Fusion file? (include: "./FileName.fusion")'
-        ];
-
+            'include "pattern"', 'Did you meant to include a Fusion file? (include: FileName.fusion)'
         ];
     }
 

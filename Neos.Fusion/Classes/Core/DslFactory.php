@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Core;
 
 /*
@@ -37,9 +39,9 @@ class DslFactory
     /**
      * @param string $identifier
      * @return DslInterface
-     * @throws Fusion/Exception
+     * @throws Fusion\Exception
      */
-    public function create($identifier)
+    public function create(string $identifier): DslInterface
     {
         if (isset($this->dslSettings) && is_array($this->dslSettings) && isset($this->dslSettings[$identifier])) {
             $dslObjectName = $this->dslSettings[$identifier];

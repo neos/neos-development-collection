@@ -15,7 +15,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Exception;
-use Neos\Fusion\FusionObjects\JoinImplementation;
 
 /**
  * Testcase for the Fusion Parser

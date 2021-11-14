@@ -1,6 +1,17 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Fusion\Core;
+
+/*
+ * This file is part of the Neos.Fusion package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Neos\Fusion;
 use Neos\Utility\Arrays;
@@ -55,7 +66,7 @@ class AstBuilder
     public function inheritPrototypeInObjectTree($targetPrototypeObjectPath, $sourcePrototypeObjectPath)
     {
         if (count($targetPrototypeObjectPath) !== 2 || count($sourcePrototypeObjectPath) !== 2) {
-            // one of the path has not a lenght of 2: this means
+            // one of the path has not a length of 2: this means
             // at least one path is nested (f.e. foo.prototype(Bar))
             // Currently, it is not supported to override the prototypical inheritance in
             // parts of the Fusion rendering tree.

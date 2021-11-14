@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Fusion\Core;
 
@@ -12,7 +13,6 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
 
 abstract class AbstractParser

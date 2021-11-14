@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Core;
-use Neos\Fusion;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -11,6 +12,8 @@ use Neos\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\Fusion;
 
 /**
  * An exception thrown by the Fusion parser. It will generate a message if the MESSAGE context flag is provided and show the current line with ASCII art.

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Core;
 
 /*
@@ -10,7 +12,8 @@ namespace Neos\Fusion\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Fusion\Exception;
+
+use Neos\Fusion;
 
 /**
  * Contract for a Fusion parser
@@ -24,11 +27,12 @@ interface ParserInterface
      * as the result.
      *
      * @param string $sourceCode The Fusion source code to parse
-     * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
-     * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
+     * @param string|null $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
+     * @param array|AstBuilder|null $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @return array A Fusion object tree, generated from the source code
-     * @throws Exception
+     * @throws Fusion\Exception
+     * @throws ParserException
      * @api
      */
-    public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = []);
+    public function parse(string $sourceCode, string $contextPathAndFilename = null, $objectTreeUntilNow = null): array;
 }

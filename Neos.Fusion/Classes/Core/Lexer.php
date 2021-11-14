@@ -1,11 +1,19 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Fusion\Core;
 
-/**
- * @internal
+/*
+ * This file is part of the Neos.Fusion package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
  */
-final class Lexer
+
+class Lexer
 {
     // Difference to: Neos\Eel\Package::EelExpressionRecognizer
     // added an atomic group (to prevent catastrophic backtracking) and removed the end anchor $
@@ -166,7 +174,7 @@ final class Lexer
         if ($this->lookahead !== null) {
             return $this->lookahead;
         }
-        if ($this->cursor === $this->codeLen){
+        if ($this->cursor === $this->codeLen) {
             return $this->lookahead = new Token(Token::EOF, '');
         }
         if ($tokenType === Token::EOF) {

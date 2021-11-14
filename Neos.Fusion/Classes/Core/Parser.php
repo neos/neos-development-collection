@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Fusion\Core;
 
@@ -63,19 +64,16 @@ class Parser extends AbstractParser implements ParserInterface
      * as the result.
      *
      * @param string $sourceCode The Fusion source code to parse
-     * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
+     * @param string|null $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
      * @param array|AstBuilder|null $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be false for includes to only do that once at the end.
      * @return array A Fusion object tree, generated from the source code
-     * @throws Fusion\Exception|ParserException
+     * @throws Fusion\Exception
+     * @throws ParserException
      * @api
      */
-    public function parse($sourceCode, $contextPathAndFilename = null, $objectTreeUntilNow = null, bool $buildPrototypeHierarchy = true): array
+    public function parse(string $sourceCode, string $contextPathAndFilename = null, $objectTreeUntilNow = null, bool $buildPrototypeHierarchy = true): array
     {
-        if (\is_string($sourceCode) === false) {
-            throw new Fusion\Exception('Cannot parse Fusion - $sourceCode must be of type string!', 1180203775);
-        }
-
         if ($objectTreeUntilNow instanceof AstBuilder) {
             $this->astBuilder = $objectTreeUntilNow;
         } elseif ($objectTreeUntilNow === null) {
@@ -394,7 +392,7 @@ class Parser extends AbstractParser implements ParserInterface
 
     /**
      * EndOfStatement
-     *  = ( EOF / ; / NEWLINE )
+     *  = ( EOF / NEWLINE )
      */
     protected function parseEndOfStatement(): void
     {
@@ -417,7 +415,6 @@ class Parser extends AbstractParser implements ParserInterface
      */
     protected function parseBlockStatement(array $path): void
     {
-
         $this->expect(Token::LBRACE);
         array_push($this->currentObjectPathStack, $path);
         $exceptionContextStartOfBlock = $this->getParsingContext(-1);
@@ -554,12 +551,12 @@ class Parser extends AbstractParser implements ParserInterface
 
     /**
      * @param string $identifier
-     * @param $code
-     * @return mixed
+     * @param string $code
+     * @return array|string|int|float|bool
      * @throws Exception
      * @throws Fusion\Exception
      */
-    protected function invokeAndParseDsl(string $identifier, $code)
+    protected function invokeAndParseDsl(string $identifier, string $code)
     {
         $dslObject = $this->dslFactory->create($identifier);
         try {

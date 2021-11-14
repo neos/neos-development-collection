@@ -1,6 +1,18 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Fusion\Core;
+
+/*
+ * This file is part of the Neos.Fusion package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Fusion;
 
 class Token
@@ -56,10 +68,10 @@ class Token
     public const REST_OF_LINE = 40;
 
     /** @var string  */
-    private $value;
+    protected $value;
 
     /** @var int  */
-    private $type;
+    protected $type;
 
     /**
      * @param int $type The type of the token
