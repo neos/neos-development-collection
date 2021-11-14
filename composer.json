@@ -55,7 +55,8 @@
         "neos/nodetypes-html": "self.version",
         "neos/nodetypes-navigation": "self.version",
         "neos/nodetypes": "self.version",
-        "neos/site-kickstarter": "self.version"
+        "neos/site-kickstarter": "self.version",
+        "neos/cli-setup": "self.version"
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
@@ -112,6 +113,9 @@
             ],
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
+            ],
+            "Neos\\CliSetup\\\\": [
+                "Neos.CliSetup/Classes"
             ]
         }
     },

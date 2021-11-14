@@ -1,0 +1,24 @@
+Neos:
+  CliSetup:
+    #
+    # Imgine drivers currently available
+    #
+    supportedImageHandlers:
+      'gd': 'GD Library - generally slow'
+      'gmagick': 'Gmagick php module'
+      'imagick': 'ImageMagick php module'
+      'vips': 'Vips php module - fast and memory efficient, needs rokka/imagine-vips'
+    #
+    # Images to verify that the format can be handled
+    #
+    requiredImageFormats:
+      'jpg': 'resource://Neos.Neos/Private/Installer/TestImages/Test.jpg'
+      'gif': 'resource://Neos.Neos/Private/Installer/TestImages/Test.gif'
+      'png': 'resource://Neos.Neos/Private/Installer/TestImages/Test.png'
+    #
+    # The drivers that are supported via migrations
+    #
+    supportedDatabaseDrivers:
+      'pdo_mysql': 'MySQL/MariaDB via PDO'
+      'mysqli': 'MySQL/MariaDB via mysqli'
+      'pdo_pgsql': 'PostgreSQL via PDO'
