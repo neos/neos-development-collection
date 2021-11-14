@@ -236,10 +236,6 @@
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
           <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[5]">
-          <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
-        </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
         <source>The workspace "{0}" has been removed.</source>
