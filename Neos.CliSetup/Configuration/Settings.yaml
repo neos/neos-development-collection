@@ -4,10 +4,10 @@ Neos:
     # Imgine drivers currently available
     #
     supportedImageHandlers:
-      'gd': 'GD Library - generally slow'
-      'gmagick': 'Gmagick php module'
-      'imagick': 'ImageMagick php module'
-      'vips': 'Vips php module - fast and memory efficient, needs rokka/imagine-vips'
+      'Gd': 'GD Library - generally slow'
+      'Gmagick': 'Gmagick php module'
+      'Imagick': 'ImageMagick php module'
+      'Vips': 'Vips php module - fast and memory efficient, needs rokka/imagine-vips'
     #
     # Images to verify that the format can be handled
     #

@@ -112,6 +112,4 @@ class DatabaseConnectionService
         }
         $connection->close();
     }
-
-
 }

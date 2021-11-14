@@ -45,11 +45,11 @@ class ImageHandlerService
     public function getAvailableImageHandlers(): array
     {
         $availableImageHandlers = [];
-        foreach ($this->supportedImageHandlers as $extensionName => $description) {
-            if (\extension_loaded($extensionName)) {
-                $unsupportedFormats = $this->findUnsupportedImageFormats($extensionName);
+        foreach ($this->supportedImageHandlers as $driverName => $description) {
+            if (\extension_loaded(strtolower($driverName))) {
+                $unsupportedFormats = $this->findUnsupportedImageFormats($driverName);
                 if (\count($unsupportedFormats) === 0) {
-                    $availableImageHandlers[$extensionName] = $description;
+                    $availableImageHandlers[$driverName] = $description;
                 }
             }
         }

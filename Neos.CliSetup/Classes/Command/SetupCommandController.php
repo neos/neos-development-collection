@@ -138,9 +138,9 @@ class SetupCommandController extends CommandController
      */
     public function imageHandlerCommand(string $driver = null): void
     {
-        $availableHandlers = $this->imageHandlerService->getAvailableImageHandlers();
+        $availableImageHandlers = $this->imageHandlerService->getAvailableImageHandlers();
 
-        if (count($availableHandlers) == 0) {
+        if (count($availableImageHandlers) == 0) {
             $this->outputLine("No supported image handler was found.");
             $this->quit(1);
         }
@@ -148,7 +148,7 @@ class SetupCommandController extends CommandController
         if (is_null($driver)) {
             $driver = $this->output->select(
                 sprintf('Select Image Handler (<info>%s</info>): ', $this->imagineDriver),
-                $availableHandlers,
+                $availableImageHandlers,
                 $this->imagineDriver
             );
         }
