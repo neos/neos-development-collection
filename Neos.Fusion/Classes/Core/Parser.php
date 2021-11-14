@@ -146,14 +146,6 @@ class Parser extends AbstractParser implements ParserInterface
                 $this->parseIncludeStatement();
                 return;
 
-            case $this->accept(Token::PROTOTYPE):
-                $this->parsePrototypeDeclaration();
-                return;
-
-            case $this->accept(Token::UNSET_KEYWORD):
-                $this->parseUnsetStatement();
-                return;
-
             case $this->accept(Token::PROTOTYPE_START):
             case $this->accept(Token::OBJECT_PATH_PART):
             case $this->accept(Token::META_PATH_START):
@@ -164,55 +156,6 @@ class Parser extends AbstractParser implements ParserInterface
         }
 
         throw new ParserException(ParserException::MESSAGE_PARSING_STATEMENT, $this->getParsingContext(), 1635708717);
-    }
-
-    /**
-     * PrototypeDeclaration
-     *  = PROTOTYPE FusionObjectName ( EXTENDS FusionObjectName )? ( BlockStatement / EndOfStatement )
-     */
-    protected function parsePrototypeDeclaration(): void
-    {
-        $this->expect(Token::PROTOTYPE);
-        $this->lazySmallGap();
-        $currentPathPrefix = $this->getCurrentObjectPathPrefix();
-
-        $currentPath = $currentPathPrefix;
-        array_push($currentPath, '__prototypes', $this->parseFusionObjectName());
-
-        $this->lazySmallGap();
-
-        if ($prototypeWasExtended = $this->lazyExpect(Token::EXTENDS)) {
-            $this->lazySmallGap();
-            $extendObjectPath = $currentPathPrefix;
-            array_push($extendObjectPath, '__prototypes', $this->parseFusionObjectName());
-            $this->astBuilder->inheritPrototypeInObjectTree($currentPath, $extendObjectPath);
-            $this->lazySmallGap();
-        }
-
-        if ($this->accept(Token::LBRACE)) {
-            $this->parseBlockStatement($currentPath);
-            return;
-        }
-
-        if ($prototypeWasExtended === true) {
-            $this->parseEndOfStatement();
-            return;
-        }
-
-        throw new ParserException(ParserException::MESSAGE_FROM_INPUT | ParserException::MESSAGE_UNEXPECTED_CHAR, $this->getParsingContext(), 1635708717, 'Syntax error while parsing prototype declaration');
-    }
-
-    /**
-     * UnsetStatement
-     *  = UNSET_KEYWORD ObjectPathAssignment EndOfStatement
-     */
-    protected function parseUnsetStatement(): void
-    {
-        $this->expect(Token::UNSET_KEYWORD);
-        $this->lazySmallGap();
-        $currentPath = $this->parseAssignedObjectPath($this->getCurrentObjectPathPrefix());
-        $this->astBuilder->removeValueInObjectTree($currentPath);
-        $this->parseEndOfStatement();
     }
 
     /**
@@ -239,15 +182,11 @@ class Parser extends AbstractParser implements ParserInterface
 
     /**
      * ValueCopy
-     *  = ( COPY / EXTENDS ) ObjectPathAssignment
+     *  = COPY ObjectPathAssignment
      */
     protected function parseValueCopy($currentPath): void
     {
-        if ($this->accept(Token::COPY) === false
-            && $this->accept(Token::EXTENDS) === false) {
-            throw new Exception("Error Processing Request", 1);
-        }
-        $operator = $this->consume()->getType();
+        $this->expect(Token::COPY);
 
         $this->lazySmallGap();
         $sourcePath = $this->parseAssignedObjectPath(AstBuilder::getParentPath($currentPath));
@@ -285,10 +224,6 @@ class Parser extends AbstractParser implements ParserInterface
             return;
         }
 
-        if ($operator === Token::EXTENDS) {
-            throw new ParserException(ParserException::MESSAGE_FROM_INPUT | ParserException::HIDE_COLUMN, $this->getParsingContext(), 1635708717, "The operator 'extends' doesnt support the copy path operation");
-        }
-
         $this->astBuilder->copyValueInObjectTree($currentPath, $sourcePath);
     }
 
@@ -313,7 +248,6 @@ class Parser extends AbstractParser implements ParserInterface
                 break;
 
             case $this->accept(Token::COPY):
-            case $this->accept(Token::EXTENDS):
                 $this->parseValueCopy($currentPath);
                 break;
 

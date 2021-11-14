@@ -46,15 +46,12 @@ class Token
     public const DSL_EXPRESSION_CONTENT = 44;
 
     public const PROTOTYPE_START = 13;
-    public const PROTOTYPE = 10;
     public const INCLUDE = 11;
     public const NAMESPACE = 12;
-    public const UNSET_KEYWORD = 8;
 
     public const ASSIGNMENT = 26;
     public const COPY = 27;
     public const UNSET = 28;
-    public const EXTENDS = 9;
 
     public const SEMICOLON = 14;
     public const DOT = 15;

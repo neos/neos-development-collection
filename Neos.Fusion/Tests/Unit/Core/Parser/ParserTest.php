@@ -8,57 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
-    public function additionalNewFusionSyntaxProposalAndIdeas(): \Generator
-    {
-        yield 'prototype definition keyword' => [
-            <<<'Fusion'
-            prototype: Vendor:MyObject {
-                value = 123
-            }
-            Fusion,
-            ['__prototypes' => ['Vendor:MyObject' => ['value' => 123]]]
-        ];
-        yield 'prototype extension keyword' => [
-            <<<'Fusion'
-            prototype: Vendor:MyObject extends Neos.Fusion:Value {
-                value = 123
-            }
-            Fusion,
-            ['__prototypes' => ['Vendor:MyObject' => ['__prototypeObjectName' => 'Neos.Fusion:Value', 'value' => 123, '__prototypeChain' => ['Neos.Fusion:Value']]]]
-        ];
-        yield 'path prototype extension keyword' => [
-            <<<'Fusion'
-            prototype(Vendor:MyObject) extends prototype(Neos.Fusion:Value) {
-                value = 123
-            }
-            Fusion,
-            ['__prototypes' => ['Vendor:MyObject' => ['__prototypeObjectName' => 'Neos.Fusion:Value', 'value' => 123,  '__prototypeChain' => ['Neos.Fusion:Value']]]]
-        ];
-        yield 'empty prototype definition' => [
-            <<<'Fusion'
-            prototype: Vendor:MyObject {
-            }
-            Fusion,
-            []
-        ];
-        yield 'unset keyword absolute path' => [
-            <<<'Fusion'
-            a = 'value'
-            unset: a
-            Fusion,
-            ['a' => ['__stopInheritanceChain' => true]]
-        ];
-        yield 'unset keyword relative path' => [
-            <<<'Fusion'
-            b {
-                a = 'value'
-                unset: .a
-            }
-            Fusion,
-            ['b' => ['a' => ['__stopInheritanceChain' => true]]]
-        ];
-    }
-
     public function pathBlockTest(): array
     {
         return [
@@ -655,7 +604,6 @@ class ParserTest extends TestCase
 
     /**
      * @test
-     * @dataProvider additionalNewFusionSyntaxProposalAndIdeas
      * @dataProvider commentsTest
      * @dataProvider metaObjectPaths
      * @dataProvider eelValueAssign

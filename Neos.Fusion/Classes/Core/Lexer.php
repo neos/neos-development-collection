@@ -72,8 +72,6 @@ class Lexer
 
         // Keywords
         Token::INCLUDE => '/^include\\s*:/',
-        Token::PROTOTYPE => '/^prototype\\s*:/',
-        Token::UNSET_KEYWORD => '/^unset\\s*:/',
 
         // Object path segments
         Token::PROTOTYPE_START => '/^prototype\(/',
@@ -84,7 +82,6 @@ class Lexer
         Token::ASSIGNMENT => '/^=/',
         Token::COPY => '/^</',
         Token::UNSET => '/^>/',
-        Token::EXTENDS => '/^extends\b/',
 
         // Symbols
         Token::DOT => '/^\./',
