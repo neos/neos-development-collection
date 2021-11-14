@@ -127,10 +127,20 @@ class ParserTest extends TestCase
             ],
             [
                 <<<'Fusion'
-                a /* we are comments
-                and we are every where  */ = 'b'
+                a { // hello
+                    b = 123
+                }
                 Fusion,
-                ['a' => 'b']
+                ['a' => ['b' => 123]]
+            ],
+            [
+                <<<'Fusion'
+                a { /*
+                    comment
+                */ b = 123
+                }
+                Fusion,
+                ['a' => ['b' => 123]]
             ],
             [
                 <<<'Fusion'
@@ -153,8 +163,6 @@ class ParserTest extends TestCase
                 Fusion,
                 ['a' => "", 'b' => 123]
             ],
-            ['a = /*fwefe*/ 123456', ['a' => 123456]],
-            ['a /*fwefe*/ = 123456', ['a' => 123456]],
             ['/*fwefe*/ a = 123456', ['a' => 123456]],
         ];
     }
@@ -164,11 +172,29 @@ class ParserTest extends TestCase
         return[
             [
                 <<<'Fusion'
+                a /* we are comments
+                and we are not every where  */ = 'b'
+                Fusion,
+                ['a' => 'b']
+            ],
+            ['a = /*fwefe*/ 123456', ['a' => 123456]],
+            ['a /*fwefe*/ = 123456', ['a' => 123456]],
+            [
+                <<<'Fusion'
                 a /*
                     comment
                 */
                 // hello
                 {
+                    b = ""
+                }
+                Fusion,
+            ],
+            [
+                <<<'Fusion'
+                a /*
+                    comment
+                */ {
                     b = ""
                 }
                 Fusion,

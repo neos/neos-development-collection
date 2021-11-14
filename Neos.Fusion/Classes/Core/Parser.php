@@ -165,7 +165,7 @@ class Parser extends AbstractParser implements ParserInterface
     protected function parseValueAssignment($currentPath): void
     {
         $this->expect(Token::ASSIGNMENT);
-        $this->lazySmallGap();
+        $this->lazyExpect(Token::SPACE);
         $value = $this->parsePathValue();
         $this->astBuilder->setValueInObjectTree($currentPath, $value);
     }
@@ -187,8 +187,8 @@ class Parser extends AbstractParser implements ParserInterface
     protected function parseValueCopy($currentPath): void
     {
         $this->expect(Token::COPY);
+        $this->lazyExpect(Token::SPACE);
 
-        $this->lazySmallGap();
         $sourcePath = $this->parseAssignedObjectPath(AstBuilder::getParentPath($currentPath));
 
         $currentPathsPrototype = AstBuilder::objectPathIsPrototype($currentPath);
@@ -234,7 +234,7 @@ class Parser extends AbstractParser implements ParserInterface
     protected function parseObjectDefinition(): void
     {
         $currentPath = $this->parseObjectPath($this->getCurrentObjectPathPrefix());
-        $this->lazySmallGap();
+        $this->lazyExpect(Token::SPACE);
         $exceptionContextAfterPath = $this->getParsingContext();
 
         $operationWasParsed = null;
@@ -254,8 +254,7 @@ class Parser extends AbstractParser implements ParserInterface
             default:
                 $operationWasParsed = false;
         }
-
-        $this->lazySmallGap();
+        $this->lazyExpect(Token::SPACE);
 
         if ($this->accept(Token::LBRACE)) {
             $this->parseBlockStatement($currentPath);
