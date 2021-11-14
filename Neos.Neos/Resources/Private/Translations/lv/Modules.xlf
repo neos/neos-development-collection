@@ -273,9 +273,9 @@
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
         <target state="final">Šis modulis sniedz apskatu par visām darbībām, kas ietekmē šo Neos instalāciju.</target>
       </trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="no">
 				<source>Here's what happened recently in Neos</source>
-        <target state="final">Lūk, kas nesen notika Neos:</target>
+        <target state="translated">Lūk, kas nesen notika Neos</target>
       </trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
@@ -564,11 +564,11 @@
       </trans-unit>
       <trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
 				<source>Not enough privileges to edit this user</source>
-        <target state="needs-translation">Not enough privileges to edit this user</target>
+        <target state="translated">Nepietiek tiesību rediģēt šo lietotāju</target>
       </trans-unit>
       <trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
 				<source>Not enough privileges to delete this user</source>
-        <target state="needs-translation">Not enough privileges to delete this user</target>
+        <target state="translated">Nav pietiekamu privilēģiju, lai dzēstu šo lietotāju</target>
       </trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete user</source>
