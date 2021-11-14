@@ -64,7 +64,7 @@ class Lexer
         Token::FLOAT => '/^-?[0-9]+\.[0-9]+/',
 
         Token::DSL_EXPRESSION_START => '/^[a-zA-Z0-9\.]+(?=`)/',
-        Token::DSL_EXPRESSION_CONTENT => '/^`[^`]*`/',
+        Token::DSL_EXPRESSION_CONTENT => '/^`[^`]*+`/',
         Token::EEL_EXPRESSION => self::PATTERN_EEL_EXPRESSION,
 
         // Object type part
@@ -89,9 +89,6 @@ class Lexer
         Token::RPAREN => '/^\)/',
         Token::LBRACE => '/^{/',
         Token::RBRACE => '/^}/',
-        Token::DOUBLE_QUOTE => '/^"/',
-        Token::SINGLE_QUOTE => '/^\'/',
-        Token::SEMICOLON => '/^;/',
 
         // Strings
         Token::STRING => <<<'REGEX'

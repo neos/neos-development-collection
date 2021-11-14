@@ -136,12 +136,12 @@ class Parser extends AbstractParser implements ParserInterface
 
     /**
      * Statement
-     *  = IncludeStatement / PrototypeDeclaration / UnsetStatement / ObjectDefinition
+     *  = IncludeStatement / ObjectDefinition
      */
     protected function parseStatement(): void
     {
+        // watch out for the order, its regex matching and first one wins.
         switch (true) {
-            // watch out for the order, its regex matching and first one wins.
             case $this->accept(Token::INCLUDE):
                 $this->parseIncludeStatement();
                 return;
@@ -149,8 +149,8 @@ class Parser extends AbstractParser implements ParserInterface
             case $this->accept(Token::PROTOTYPE_START):
             case $this->accept(Token::OBJECT_PATH_PART):
             case $this->accept(Token::META_PATH_START):
-            case $this->accept(Token::STRING):
             case $this->accept(Token::CHAR):
+            case $this->accept(Token::STRING):
                 $this->parseObjectDefinition();
                 return;
         }
@@ -262,11 +262,11 @@ class Parser extends AbstractParser implements ParserInterface
             return;
         }
 
-        if ($operationWasParsed !== false) {
-            $this->parseEndOfStatement();
-            return;
+        if ($operationWasParsed === false) {
+            throw new ParserException(ParserException::MESSAGE_PARSING_PATH_OR_OPERATOR, $exceptionContextAfterPath, 1635708717);
         }
-        throw new ParserException(ParserException::MESSAGE_PARSING_PATH_OR_OPERATOR, $exceptionContextAfterPath, 1635708717);
+
+        $this->parseEndOfStatement();
     }
 
     /**
@@ -395,46 +395,37 @@ class Parser extends AbstractParser implements ParserInterface
 
     /**
      * PathSegment
-     *  = ( PROTOTYPE_START FusionObjectName ) / OBJECT_PATH_PART / @ OBJECT_PATH_PART / StringLiteral )
+     *  = ( PROTOTYPE_START FUSION_OBJECT_NAME ) / OBJECT_PATH_PART / @ OBJECT_PATH_PART / StringLiteral )
      */
     protected function parsePathSegment(): array
     {
         switch (true) {
             case $this->accept(Token::PROTOTYPE_START):
                 $this->consume();
-                $prototypeName = $this->parseFusionObjectName();
+                $prototypeName = $this->expect(Token::FUSION_OBJECT_NAME)->getValue();
                 $this->expect(Token::RPAREN);
                 return ['__prototypes', $prototypeName];
 
             case $this->accept(Token::OBJECT_PATH_PART):
-                $value = $this->consume()->getValue();
-                self::throwIfKeyIsReservedParseTreeKey($value);
-                return [$value];
+                $pathKey = $this->consume()->getValue();
+                self::throwIfKeyIsReservedParseTreeKey($pathKey);
+                return [$pathKey];
 
             case $this->accept(Token::META_PATH_START):
                 $this->consume();
-                $metaName = $this->expect(Token::OBJECT_PATH_PART)->getValue();
-                return ['__meta', $metaName];
+                $metaPathKey = $this->expect(Token::OBJECT_PATH_PART)->getValue();
+                return ['__meta', $metaPathKey];
 
             case $this->accept(Token::STRING):
             case $this->accept(Token::CHAR):
-                $value = $this->parseStringLiteral();
-                if ($value === '') {
+                $quotedPathKey = $this->parseStringLiteral();
+                if ($quotedPathKey === '') {
                     throw new ParserException(ParserException::MESSAGE_FROM_INPUT, $this->getParsingContext(), 1635708717, "A quoted path must not be empty");
                 }
-                return [$value];
+                return [$quotedPathKey];
         }
 
         throw new ParserException(ParserException::MESSAGE_PARSING_PATH_SEGMENT, $this->getParsingContext(), 1635708755);
-    }
-
-    /**
-     * FusionObjectName
-     *  = FUSION_OBJECT_NAME
-     */
-    protected function parseFusionObjectName(): string
-    {
-        return $this->expect(Token::FUSION_OBJECT_NAME)->getValue();
     }
 
     /**
@@ -443,25 +434,39 @@ class Parser extends AbstractParser implements ParserInterface
      */
     protected function parsePathValue()
     {
+        // watch out for the order, its regex matching and first one wins.
+        // sorted by likelihood
         switch (true) {
+            case $this->accept(Token::CHAR):
+            case $this->accept(Token::STRING):
+                return $this->parseStringLiteral();
+
             case $this->accept(Token::FUSION_OBJECT_NAME):
                 return $this->parseFusionObject();
-
-            // watch out for the order, its regex matching and first one wins.
-            case $this->accept(Token::FALSE_VALUE):
-            case $this->accept(Token::NULL_VALUE):
-            case $this->accept(Token::TRUE_VALUE):
-            case $this->accept(Token::FLOAT):
-            case $this->accept(Token::INTEGER):
-            case $this->accept(Token::STRING):
-            case $this->accept(Token::CHAR):
-                return $this->parseLiteral();
 
             case $this->accept(Token::DSL_EXPRESSION_START):
                 return $this->parseDslExpression();
 
             case $this->accept(Token::EEL_EXPRESSION):
                 return $this->parseEelExpression();
+
+            case $this->accept(Token::FLOAT):
+                return (float)$this->consume()->getValue();
+
+            case $this->accept(Token::INTEGER):
+                return (int)$this->consume()->getValue();
+
+            case $this->accept(Token::TRUE_VALUE):
+                $this->consume();
+                return true;
+
+            case $this->accept(Token::FALSE_VALUE):
+                $this->consume();
+                return false;
+
+            case $this->accept(Token::NULL_VALUE):
+                $this->consume();
+                return null;
         }
         throw new ParserException(ParserException::MESSAGE_PARSING_VALUE_ASSIGNMENT, $this->getParsingContext(), 1635708717);
     }
@@ -500,7 +505,7 @@ class Parser extends AbstractParser implements ParserInterface
         }
 
         $parser = new Parser();
-        $temporaryAst = $parser->parse('value = ' . $transpiledFusion);
+        $temporaryAst = $parser->parse('value = ' . $transpiledFusion, $this->contextPathAndFilename, null, false);
         return $temporaryAst['value'];
     }
 
@@ -510,55 +515,23 @@ class Parser extends AbstractParser implements ParserInterface
      */
     protected function parseEelExpression(): array
     {
-        $eelExpression = $this->expect(Token::EEL_EXPRESSION)->getValue();
-        $eelExpression = substr($eelExpression, 2, -1);
-
-        $eelExpression = str_replace("\n", '', $eelExpression);
+        $eelWrapped = $this->expect(Token::EEL_EXPRESSION)->getValue();
+        $eelContent = substr($eelWrapped, 2, -1);
+        $eelWithoutNewLines = str_replace("\n", '', $eelContent);
         return [
-            '__eelExpression' => $eelExpression, '__value' => null, '__objectType' => null
+            '__eelExpression' => $eelWithoutNewLines, '__value' => null, '__objectType' => null
         ];
     }
 
     /**
      * FusionObject
-     *  = FusionObjectName
+     *  = FUSION_OBJECT_NAME
      */
     protected function parseFusionObject(): array
     {
         return [
-            '__objectType' => $this->parseFusionObjectName(), '__value' => null, '__eelExpression' => null
+            '__objectType' => $this->expect(Token::FUSION_OBJECT_NAME)->getValue(), '__value' => null, '__eelExpression' => null
         ];
-    }
-
-    /**
-     * Literal
-     *  = ( TRUE_VALUE / FALSE_VALUE / NULL_VALUE / STRING / CHAR / INTEGER / FLOAT )
-     *
-     * @return mixed
-     */
-    protected function parseLiteral()
-    {
-        switch (true) {
-            case $this->accept(Token::TRUE_VALUE):
-                $this->consume();
-                return true;
-            case $this->accept(Token::FALSE_VALUE):
-                $this->consume();
-                return false;
-            case $this->accept(Token::NULL_VALUE):
-                $this->consume();
-                return null;
-
-            case $this->accept(Token::STRING):
-            case $this->accept(Token::CHAR):
-                return $this->parseStringLiteral();
-
-            case $this->accept(Token::INTEGER):
-                return (int)$this->consume()->getValue();
-            case $this->accept(Token::FLOAT):
-                return (float)$this->consume()->getValue();
-        }
-        throw new ParserException(ParserException::MESSAGE_UNEXPECTED_CHAR | ParserException::MESSAGE_FROM_INPUT, $this->getParsingContext(), 1635708717, 'Expected literal.');
     }
 
     /**
@@ -570,14 +543,14 @@ class Parser extends AbstractParser implements ParserInterface
     {
         switch (true) {
             case $this->accept(Token::STRING):
-                $string = $this->consume()->getValue();
-                $string = substr($string, 1, -1);
-                return stripcslashes($string);
+                $stringWrapped = $this->consume()->getValue();
+                $stringContent = substr($stringWrapped, 1, -1);
+                return stripcslashes($stringContent);
 
             case $this->accept(Token::CHAR):
-                $char = $this->consume()->getValue();
-                $char = substr($char, 1, -1);
-                return stripslashes($char);
+                $charWrapped = $this->consume()->getValue();
+                $charContent = substr($charWrapped, 1, -1);
+                return stripslashes($charContent);
         }
         throw new ParserException(ParserException::MESSAGE_UNEXPECTED_CHAR | ParserException::MESSAGE_FROM_INPUT, $this->getParsingContext(), 1635708719, 'Expected string literal');
     }

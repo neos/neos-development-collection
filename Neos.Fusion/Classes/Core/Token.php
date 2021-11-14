@@ -17,6 +17,7 @@ use Neos\Fusion;
 
 class Token
 {
+    // TODO rearrange
     public const EOF = -1;
 
     public const SLASH_COMMENT = 0;
@@ -53,14 +54,11 @@ class Token
     public const COPY = 27;
     public const UNSET = 28;
 
-    public const SEMICOLON = 14;
     public const DOT = 15;
     public const COLON = 16;
     public const RPAREN = 18;
     public const LBRACE = 19;
     public const RBRACE = 20;
-    public const DOUBLE_QUOTE = 37;
-    public const SINGLE_QUOTE = 38;
 
     public const FILE_PATTERN = 40;
 
