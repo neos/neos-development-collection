@@ -271,6 +271,10 @@ class ParserTest extends TestCase
 
         yield 'utf in path' => ['äüö-path = ""'];
 
+        yield 'unclosed string in assignment' => ['path = "hello world'];
+
+        yield 'unclosed char in assignment' => ['path = \'hello world'];
+
         yield 'comments inside paths' => ['path/*comment*/path123 = ""'];
 
         yield 'multiple dots chained' => ['path..path = ""'];
@@ -398,6 +402,7 @@ class ParserTest extends TestCase
             ['_ = ""', ['_' => '']],
             ['class = ""', ['class' => '']], // nope, me thinking about class as a keyword...
             ['something: = ""', ['something:' => '']],
+            ['namespace: = ""', ['namespace:' => '']], // Todo should this work?
             ['a.include: = ""', ['a' => ['include:' => '']]],
             ['-_-:so-:m33_24et---hing00: = ""', ['-_-:so-:m33_24et---hing00:' => '']],
             ['"a.b" = ""', ['a.b' => '']],

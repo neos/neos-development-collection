@@ -283,7 +283,7 @@ class Parser extends AbstractParser implements ParserInterface
             case $this->accept(Token::CHAR):
                 $filePattern = $this->parseStringLiteral();
                 break;
-            case $this->accept(Token::REST_OF_LINE):
+            case $this->accept(Token::FILE_PATTERN):
                 $filePattern = $this->consume()->getValue();
                 break;
             default:

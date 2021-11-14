@@ -91,12 +91,6 @@ class ParserIncludeTest extends UnitTestCase
             'fusion ' => 'include:./file.fusion',
             'include' => []
         ];
-
-        yield 'single file with spaces without quotes' => [
-            'context' => 'vfs://fusion/file.fusion',
-            'fusion ' => 'include:file with space.fusion',
-            'include' => ['file with space.fusion' => true]
-        ];
     }
 
     public function includeNormalGlobbing(): \Generator
@@ -209,28 +203,24 @@ class ParserIncludeTest extends UnitTestCase
         $parser->parse($fusionCode);
     }
 
-
-    public function weirdFusionIncludesAreParsed(): \Generator
+    public function weirdFusionIncludeValuesAreHandedOver(): \Generator
     {
         yield 'pattern with direct comment' => [
-            'include: pattern/* hello this is (not) a comment */', 'pattern/* hello this is (not) a comment */'
+            'include: pattern /* this is a comment */', 'pattern'
         ];
-        yield 'unquoted pattern with spaces' => [
-            'include: fusion file with space.fusion', 'fusion file with space.fusion'
-        ];
-        yield 'unquoted pattern with uncommon char' => [
-            'include: folder/äüö.fusion', 'folder/äüö.fusion'
+        yield 'pattern with direct comment 2' => [
+            'include: pattern // this is a comment', 'pattern'
         ];
         yield 'unquoted pattern with what could be a comment as start' => [
             'include: /**/*', '/**/*'
         ];
         yield 'unquoted pattern with what could be a comment as start 2' => [
-            'include: // hello', '// hello'
+            'include: //hello', '//hello'
         ];
     }
 
     /**
-     * @dataProvider weirdFusionIncludesAreParsed
+     * @dataProvider weirdFusionIncludeValuesAreHandedOver
      * @test
      */
     public function testFusionIncludesArePassedCorrectlyToIncludeAndParseFilesByPattern($fusion, $includePattern): void
@@ -240,6 +230,42 @@ class ParserIncludeTest extends UnitTestCase
             ->expects(self::once())
             ->method('includeAndParseFilesByPattern')
             ->with($includePattern);
+
+        $parser->parse($fusion);
+    }
+
+    public function throwsFusionIncludesWithSpaces(): \Generator
+    {
+        yield 'pattern with direct comment' => [
+            'include: /* comments are here not allowed */ pattern '
+        ];
+        yield 'pattern with direct comment 2' => [
+            'include: pattern/* hello this is (not) a comment */'
+        ];
+        yield 'unquoted pattern with spaces' => [
+            'include: fusion file with space.fusion'
+        ];
+        yield 'unquoted pattern with uncommon char' => [
+            'include: folder/äüö.fusion'
+        ];
+        yield 'unquoted pattern with what could be a comment as start 2' => [
+            'include: // hello'
+        ];
+    }
+
+    /**
+     * @dataProvider throwsFusionIncludesWithSpaces
+     * @test
+     */
+    public function testFusionIncludesThrowExpectedEndOfStatement($fusion): void
+    {
+        self::expectException(Fusion\Exception::class);
+        self::expectExceptionCode(1635878683);
+
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['includeAndParseFilesByPattern'])->getMock();
+        $parser
+            ->expects(self::once())
+            ->method('includeAndParseFilesByPattern');
 
         $parser->parse($fusion);
     }

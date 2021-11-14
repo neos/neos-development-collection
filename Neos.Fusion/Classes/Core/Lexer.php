@@ -115,8 +115,7 @@ class Lexer
         /x
         REGEX,
 
-        Token::REST_OF_LINE => '/^[^\\n]+/',
-//        Token::FILE_PATTERN => '`^[a-zA-Z0-9.*:/_-]+`',
+        Token::FILE_PATTERN => '`^[a-zA-Z0-9.*:/_-]+`',
     ];
 
     /**

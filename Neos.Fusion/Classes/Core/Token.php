@@ -62,7 +62,7 @@ class Token
     public const DOUBLE_QUOTE = 37;
     public const SINGLE_QUOTE = 38;
 
-    public const REST_OF_LINE = 40;
+    public const FILE_PATTERN = 40;
 
     /** @var string  */
     protected $value;
