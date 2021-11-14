@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ParserExceptionTest extends TestCase
 {
-    public function fullParserExceptionMessage()
+    public function fullParserExceptionMessage(): \Generator
     {
         yield 'no closing brace' => [
             <<<'FUSION'
@@ -70,10 +70,9 @@ class ParserExceptionTest extends TestCase
             MESSAGE
 
         ];
-
     }
 
-    public function generalInvalidFusion()
+    public function generalInvalidFusion(): \Generator
     {
         yield 'reserved meta key' => [
             '__meta = 1', 'Exception while parsing: Reversed key "__meta" used.'
@@ -108,7 +107,7 @@ class ParserExceptionTest extends TestCase
         ];
     }
 
-    public function parsingWorksButOtherLogicThrows()
+    public function parsingWorksButOtherLogicThrows(): \Generator
     {
         yield 'invalid path to object inheritance' => [
             'prototype(a:b) < path.simple', 'Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.'
@@ -124,7 +123,7 @@ class ParserExceptionTest extends TestCase
         ];
     }
 
-    public function advancedGuessingWhatWentWrong()
+    public function advancedGuessingWhatWentWrong(): \Generator
     {
         yield 'misspelled prototype declaration' => [
             'prooototype(a:b)', 'A normal path segment cannot contain \'(\'. Did you meant to declare a prototype: \'prototype()\'?'
@@ -135,7 +134,7 @@ class ParserExceptionTest extends TestCase
         ];
     }
 
-    public function unclosedStatements()
+    public function unclosedStatements(): \Generator
     {
         yield 'unclosed multiline comment' => [
             '/*', 'Unclosed comment.'
@@ -170,7 +169,7 @@ class ParserExceptionTest extends TestCase
         ];
     }
 
-    public function removedLanguageFeaturedAreExplained()
+    public function removedLanguageFeaturedAreExplained(): \Generator
     {
         yield 'unqualified object type' => [
             'a = Value', "Unexpected 'Value' in value assignment - It looks like an object without namespace. But namespace alias were removed. You might want to add 'Neos.Fusion:' infront."
@@ -181,7 +180,7 @@ class ParserExceptionTest extends TestCase
         ];
     }
 
-    public function endOfLineExpected()
+    public function endOfLineExpected(): \Generator
     {
         yield 'multiple values' => [
             'a = 1 + 1', 'Expected the end of a statement but found \'+ 1\'.'

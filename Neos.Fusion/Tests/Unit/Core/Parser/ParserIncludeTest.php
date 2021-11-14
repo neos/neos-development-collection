@@ -185,7 +185,7 @@ class ParserIncludeTest extends UnitTestCase
      * @dataProvider includeRecursiveGlobbing
      * @test
      */
-    public function fusionParseMethodIsCalledCorrectlyWithFilesOfPattern($contextPathAndFilename, $fusionCode, $expectedFusionAst)
+    public function fusionParseMethodIsCalledCorrectlyWithFilesOfPattern($contextPathAndFilename, $fusionCode, $expectedFusionAst): void
     {
         $parser = new Parser();
         $actualFusionAst = $parser->parse($fusionCode, $contextPathAndFilename);
@@ -196,7 +196,7 @@ class ParserIncludeTest extends UnitTestCase
     /**
      * @test
      */
-    public function absoluteIncludePathsRaiseError()
+    public function absoluteIncludePathsRaiseError(): void
     {
         self::expectException(Fusion\Exception::class);
         self::expectExceptionCode(1636144292);
@@ -233,7 +233,7 @@ class ParserIncludeTest extends UnitTestCase
      * @dataProvider weirdFusionIncludesAreParsed
      * @test
      */
-    public function testFusionIncludesArePassedCorrectlyToIncludeAndParseFilesByPattern($fusion, $includePattern)
+    public function testFusionIncludesArePassedCorrectlyToIncludeAndParseFilesByPattern($fusion, $includePattern): void
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['includeAndParseFilesByPattern'])->getMock();
         $parser
@@ -270,7 +270,7 @@ class ParserIncludeTest extends UnitTestCase
      * @test
      * @dataProvider unsupportedGlobbingTechnics
      */
-    public function testUnsupportedGlobbingTechnicsThrowException($pattern)
+    public function testUnsupportedGlobbingTechnicsThrowException($pattern): void
     {
         self::expectException(Fusion\Exception::class);
         self::expectExceptionCode(1636144713);
@@ -286,7 +286,7 @@ class ParserIncludeTest extends UnitTestCase
     /**
      * @test
      */
-    public function testThatInTestEnvironmentStatCanDifferentiateBetweenFilesWhoHaveTheSameSize()
+    public function testThatInTestEnvironmentStatCanDifferentiateBetweenFilesWhoHaveTheSameSize(): void
     {
         self::assertNotSame(stat('vfs://fusion/Globbing/level1-A.fusion'), stat('vfs://fusion/Globbing/level1-B.fusion'));
         self::assertNotSame(stat('vfs://fusion/Globbing/level1-A.fusion'), stat('vfs://fusion/Globbing/level1-C.fusion'));

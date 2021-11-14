@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
-    public function additionalNewFusionSyntaxProposalAndIdeas()
+    public function additionalNewFusionSyntaxProposalAndIdeas(): \Generator
     {
         yield 'prototype definition keyword' => [
             <<<'Fusion'
@@ -59,7 +59,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function pathBlockTest()
+    public function pathBlockTest(): array
     {
         return [
             [
@@ -126,7 +126,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function unexpectedBlocksWork()
+    public function unexpectedBlocksWork(): array
     {
         // test of normal objects is already done with the fixtures
         return [
@@ -161,7 +161,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function commentsTest()
+    public function commentsTest(): array
     {
         $obj = function (string $name): array {
             return ['__objectType' => $name, '__value' => null, '__eelExpression' => null];
@@ -209,7 +209,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function throwsWrongComments()
+    public function throwsWrongComments(): array
     {
         return[
             [
@@ -236,7 +236,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function prototypeDeclarationAndInheritance()
+    public function prototypeDeclarationAndInheritance(): array
     {
         return [
             [
@@ -296,7 +296,7 @@ class ParserTest extends TestCase
     }
 
 
-    public function throwsOldNamespaceDeclaration()
+    public function throwsOldNamespaceDeclaration(): array
     {
         return [
             [
@@ -314,78 +314,92 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function throwsGeneralWrongSyntax()
+    public function throwsGeneralWrongSyntax(): \Generator
     {
-        return [
-            ['fwefw/*fwef*/fewfwe1212 = ""'], // no comments inside everywhere
-            ['"" = 123'], // no empty strings in path
-            ['\'\' = 123'],
-            ['äüöfwef = ""'], // no utf in path
-            ['nomultidots..few = ""'], // no multiple dots chained
-            ['.nostartingdot = ""'], // no path starting with dot
-            ['32fe wfwe.f = ""'], // no spaces in path name
-            ['pat . fewfw  .  fewf       .    = ""'], // no spaces between dots
-            ['a = Neos . Fusion:Hi . Stuff'], // no spaces between objects dots
-            ['a = Fusion  : Object'], // no spaces between objects  colons
-            ['{}'], // block out of context
-            ['a = ${ fwef fewf {}'], // unclosed eel
-            [<<<'Fusion'
-            a = "fwfe"
+        yield 'empty strings in path' => ['"" = 123'];
+
+        yield 'empty strings in path 2' => ['\'\' = 123'];
+
+        yield 'utf in path' => ['äüö-path = ""'];
+
+        yield 'comments inside paths' => ['path/*comment*/path123 = ""'];
+
+        yield 'multiple dots chained' => ['path..path = ""'];
+
+        yield 'leading dot path' => ['path.path. = ""'];
+
+        yield 'path starting with dot' => ['.path = ""'];
+
+        yield 'spaces in path name' => ['path 123.path. = ""'];
+
+        yield 'spaces between dots' => ['path . path  .  path = ""'];
+
+        yield 'spaces between objects dots' => ['a = Neos . Fusion:Hi . Stuff'];
+
+        yield 'spaces between objects  colons' => ['a = Fusion  : Object'];
+
+        yield 'single path without operation' => ['path'];
+
+        yield 'single nested path without operation' => ['path.path."string"'];
+
+        yield 'single line block declaration' => ['a { b = "" }'];
+
+        yield 'unclosed eel' => ['a = ${ hello {}'];
+
+        yield 'open left eel and eof file doesnt end in catastrophic backtracking' => ['a = ${abc abc abc abc abc abc abc abc abc abc abc ...'];
+
+        yield 'open left eel runs into fusion' => [<<<'Fusion'
+            a {
+                b = ${hello open left eel
             }
-            Fusion], // block out of context
-            ['a { b = "" }'], // no end of line detected
-            // will throw with old parser: An exception was thrown while Neos tried to render your page
-            // missing brace:
-            [<<<'Fusion'
+            Fusion];
+
+        yield 'block out of context' => ['{}'];
+
+        yield 'block close out of context' => [<<<'Fusion'
+            a = "hello"
+            }
+            Fusion];
+
+        yield 'missing brace' => [<<<'Fusion'
             a = Neos.Fusion:Value {
               value = Neos.Fusion:Join {
-                a = "wfef"
+                a = "hello"
             }
-            Fusion],
-            [<<<'Fusion'
+            Fusion];
+
+        yield 'newline after assign operator' => [<<<'Fusion'
             baz =
             'Foo'
-            Fusion],
-            [<<<'Fusion'
+            Fusion];
+
+        yield 'newline after path before assign' => [<<<'Fusion'
+            baz
+            = 'Foo'
+            Fusion];
+
+        yield 'newline after path and assign operator' => [<<<'Fusion'
             baz
             =
             'Foo'
-            Fusion],
-            [<<<'Fusion'
-            baz
-            = 'Foo'
-            Fusion],
-            [<<<'Fusion'
-            asinglepathwithoutoperation
-            Fusion],
-            [<<<'Fusion'
-            a.single-path."withoutoperation"
-            Fusion],
-            [<<<'Fusion'
-            a = ${hello open left eel and eof file...
-            Fusion],
-            [<<<'Fusion'
-            a = ${hello open left eel
-            b {
-            }
-            Fusion],
-            [<<<'Fusion'
+            Fusion];
+
+        yield 'path with opening block brace on newline' => [<<<'Fusion'
             a
             {
                 b = ""
             }
-            Fusion],
-            [<<<'Fusion'
+            Fusion];
+
+        yield 'prototype with opening block brace on newline' => [<<<'Fusion'
             prototype(a)
             {
                 b = ""
             }
-            Fusion],
-        ];
+            Fusion];
     }
 
-
-    public function unexpectedCopyAssigment()
+    public function unexpectedCopyAssigment(): array
     {
         return [
             ['a < b', ['b' => [], 'a' => []]],
@@ -421,7 +435,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function unexpectedObjectPaths()
+    public function unexpectedObjectPaths(): array
     {
         return [
             ['0 = ""', [0 => '']],
@@ -454,7 +468,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function metaObjectPaths()
+    public function metaObjectPaths(): array
     {
         return [
             ['a.@abc = 1', ['a' => ['__meta' => ['abc' => 1]]]],
@@ -462,7 +476,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function nestedObjectPaths()
+    public function nestedObjectPaths(): array
     {
         return [
             ['12f:o:o.ba:r.as.ba:z = 1', ['12f:o:o' => ['ba:r' => ['as' => ['ba:z' => 1]]]]],
@@ -472,7 +486,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function simpleValueAssign()
+    public function simpleValueAssign(): array
     {
         return [
             ['a="b"', ['a' => 'b']],
@@ -501,7 +515,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function eelValueAssign()
+    public function eelValueAssign(): \Generator
     {
         $eel = function (string $exp): array {
             return ['__eelExpression' => $exp, '__value' => null, '__objectType' => null];
@@ -561,7 +575,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function stringAndCharValueAssign()
+    public function stringAndCharValueAssign(): array
     {
         return [
             [<<<'Fusion'
@@ -588,7 +602,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function fusionObjectNameEdgeCases()
+    public function fusionObjectNameEdgeCases(): array
     {
         $obj = function (string $name): array {
             return ['__objectType' => $name, '__value' => null, '__eelExpression' => null];
@@ -606,7 +620,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain()
+    public function weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain(): array
     {
         return [
             ['a = ABC:123'],
@@ -621,7 +635,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    public function throwsFusionObjectNamesWithoutNamespace()
+    public function throwsFusionObjectNamesWithoutNamespace(): array
     {
         return [
             ['a = Value'],
