@@ -1,0 +1,23 @@
+
+prototype(Neos.Neos:Error.View.Page) < prototype(Neos.Fusion:Component) {
+  title = ''
+  content = ''
+
+  renderer = Neos.Fusion:Join {
+    doctype = '<!DOCTYPE html>'
+    htmlStart = '<html lang="en">'
+    head = afx`
+      <head>
+        <meta charset="utf-8" />
+        <title>{props.title}</title>
+        <link href={StaticResource.uri('Neos.Neos', 'Public/Styles/Error.css')} rel="stylesheet"/>
+        <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/apple-touch-icon.png')} sizes="180x180" rel="apple-touch-icon" />
+        <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/favicon-16x16.png')} sizes="16x16" rel="icon" type="image/png" />
+        <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/favicon-32x32.png')} sizes="32x32" rel="icon" type="image/png" />
+        <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/safari-pinned-tab.svg')} rel="mask-icon" color="#00adee" />
+      </head>
+    `
+    body = ${props.content}
+    htmlEnd = '</html>'
+  }
+}

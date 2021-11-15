@@ -18,9 +18,9 @@ class ParserExceptionTest extends TestCase
 
             <<<'MESSAGE'
             <input>:1:7
-            _ |
+              |
             1 | value {
-            _ | ______^— column 7
+              |       ^— column 7
             No closing brace "}" matched this starting block. Encountered <EOF>.
             MESSAGE
         ];
@@ -33,9 +33,9 @@ class ParserExceptionTest extends TestCase
 
             <<<'MESSAGE'
             <input>:2:5
-            _ |
+              |
             2 | a = ${
-            _ | ____^— column 5
+              |     ^— column 5
             Unclosed eel expression.
             MESSAGE
         ];
@@ -48,9 +48,9 @@ class ParserExceptionTest extends TestCase
 
             <<<'MESSAGE'
             <input>:2:36
-            _ |
-            2 | _______ a_____ = Neos.Fusion:Value [
-            _ | ___________________________________^— column 36
+              |
+            2 |         a      = Neos.Fusion:Value [
+              |                                    ^— column 36
             Expected the end of a statement but found '['.
             MESSAGE
 
@@ -63,9 +63,9 @@ class ParserExceptionTest extends TestCase
 
             <<<'MESSAGE'
             <input>:1:10
-            _ |
+              |
             1 | somepath.äöü = 123
-            _ | _________^— column 10
+              |          ^— column 10
             Unexpected 'ä'. Expected an object path like alphanumeric[:-], prototype(...), quoted paths, or meta path starting with @
             MESSAGE
 
@@ -75,7 +75,7 @@ class ParserExceptionTest extends TestCase
     public function generalInvalidFusion(): \Generator
     {
         yield 'reserved meta key' => [
-            '__meta = 1', 'Exception while parsing: Reversed key "__meta" used.'
+            '  __meta = 1', 'Exception while parsing: Reversed key "__meta" used.'
         ];
 
         yield 'a path without operator or block' => [
@@ -126,11 +126,11 @@ class ParserExceptionTest extends TestCase
     public function advancedGuessingWhatWentWrong(): \Generator
     {
         yield 'misspelled prototype declaration' => [
-            'prooototype(a:b)', 'A normal path segment cannot contain \'(\'. Did you meant to declare a prototype: \'prototype()\'?'
+            'prooototype(a:b)', 'A normal path segment cannot contain \'(\'. Did you mean to declare a prototype: \'prototype()\'?'
         ];
 
         yield 'include without colon' => [
-            'include "pattern"', 'Did you meant to include a Fusion file? (include: FileName.fusion)'
+            'include "pattern"', 'Did you mean to include a Fusion file? (include: FileName.fusion)'
         ];
     }
 
@@ -220,7 +220,7 @@ class ParserExceptionTest extends TestCase
             $parser->parse($fusion);
             self::fail('No exception was thrown. Expected message: ' . $expectedMessage);
         } catch (ParserException $e) {
-            self::assertSame($expectedMessage, $e->getGeneratedMessage());
+            self::assertSame($expectedMessage, $e->getHelperMessagePart());
         }
     }
 }

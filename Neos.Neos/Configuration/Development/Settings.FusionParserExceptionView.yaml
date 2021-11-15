@@ -1,0 +1,22 @@
+#
+# Exception view configuration for the Fusion Parser
+#
+
+Neos:
+  Flow:
+    error:
+      exceptionHandler:
+        renderingGroups:
+          fusionParserExceptions:
+            matchingExceptionClassNames: ['Neos\Fusion\Core\ParserException']
+            options:
+              # TODO Bug - unused templatePathAndFilename has to be set to pass isset() check ...
+              templatePathAndFilename: true
+              logException: true
+              viewClassName: Neos\Fusion\View\FusionView
+              viewOptions:
+                fusionPath: 'Neos/Fusion/FusionParserException'
+                fusionPathPatterns: ['resource://Neos.Neos/Private/Fusion/Error/Root.fusion']
+                enableContentCache: false
+              variables:
+                flowPathRoot: '%FLOW_PATH_ROOT%'
