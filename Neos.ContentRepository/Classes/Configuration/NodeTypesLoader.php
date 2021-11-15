@@ -48,8 +48,10 @@ class NodeTypesLoader implements LoaderInterface
                         $fileInfo->getPath(),
                         $fileInfo->getBasename('.' . $fileInfo->getExtension())
                     ]);
-                    $configuration = Arrays::arrayMergeRecursiveOverrule($configuration,
-                        $this->yamlSource->load($path, false));
+                    $configuration = Arrays::arrayMergeRecursiveOverrule(
+                        $configuration,
+                        $this->yamlSource->load($path, false)
+                    );
                 }
             }
 
