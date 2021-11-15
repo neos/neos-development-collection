@@ -76,7 +76,7 @@ class SetupCommandController extends CommandController
 
         if (is_null($driver)) {
             $driver = $this->output->select(
-                sprintf('DB Driver (<info>%s</info>): ', $this->persistenceConfiguration['driver']),
+                sprintf('DB Driver (<info>%s</info>): ', $this->persistenceConfiguration['driver'] ?? '---'),
                 $availableDrivers,
                 $this->persistenceConfiguration['driver']
             );
@@ -91,21 +91,21 @@ class SetupCommandController extends CommandController
 
         if (is_null($dbname)) {
             $dbname = $this->output->ask(
-                sprintf('Database (<info>%s</info>): ', $this->persistenceConfiguration['dbname']),
+                sprintf('Database (<info>%s</info>): ', $this->persistenceConfiguration['dbname'] ?? '---'),
                 $this->persistenceConfiguration['dbname']
             );
         }
 
         if (is_null($user)) {
             $user = $this->output->ask(
-                sprintf('Username (<info>%s</info>): ', $this->persistenceConfiguration['user']),
+                sprintf('Username (<info>%s</info>): ', $this->persistenceConfiguration['user'] ?? '---'),
                 $this->persistenceConfiguration['user']
             );
         }
 
         if (is_null($password)) {
             $password = $this->output->ask(
-                sprintf('Password (<info>%s</info>): ', $this->persistenceConfiguration['password']),
+                sprintf('Password (<info>%s</info>): ', $this->persistenceConfiguration['password'] ?? '---'),
                 $this->persistenceConfiguration['password']
             );
         }
@@ -128,7 +128,7 @@ class SetupCommandController extends CommandController
         $filename = $this->getSettingsFilename('Settings.Database.yaml');
 
         $this->outputLine();
-        $this->output($this->writeSettings($filename, 'Neos.Flow.persistence.backendOptions',$persistenceConfiguration));
+        $this->output(sprintf('<info>%s</info>',$this->writeSettings($filename, 'Neos.Flow.persistence.backendOptions',$persistenceConfiguration)));
         $this->outputLine();
         $this->outputLine(sprintf("The new database settings were written to file <info>%s</info>", $filename));
     }
@@ -155,7 +155,7 @@ class SetupCommandController extends CommandController
 
         $filename = $this->getSettingsFilename('Settings.Imagehandling.yaml');
         $this->outputLine();
-        $this->output($this->writeSettings($filename, 'Neos.Imagine.driver', $driver));
+        $this->output(sprintf('<info>%s</info>', $this->writeSettings($filename, 'Neos.Imagine.driver', $driver)));
         $this->outputLine();
         $this->outputLine(sprintf("The new image handler setting were written to file <info>%s</info>", $filename));
     }
