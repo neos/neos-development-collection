@@ -125,25 +125,4 @@ abstract class AbstractParser
             }
         }
     }
-
-    /**
-     * Get the current file, cursor and the code the lexer is using.
-     *
-     * @param int $offset
-     * @return array{?string, string, int}
-     */
-    protected function getParsingContext(int $offset = 0): array
-    {
-        $cursor = $this->lexer->getCursor();
-        $code = $this->lexer->getCode();
-
-        if ($offset !== 0) {
-            $cursor += $offset;
-            if ($cursor < 0 || $cursor > strlen($code)) {
-                throw new \LogicException("Offset of '$offset' cannot be applied, as its out of range.", 1635790851);
-            }
-        }
-
-        return [$this->contextPathAndFilename, $code, $cursor];
-    }
 }

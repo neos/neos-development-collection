@@ -3,7 +3,7 @@
 namespace Neos\Fusion\Tests\Unit\Core\Parser;
 
 use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Core\ParserException;
+use Neos\Fusion\Exception\ParserException;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase

@@ -3,7 +3,7 @@
 namespace Neos\Fusion\Tests\Functional\Parser;
 
 use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Core\ParserException;
+use Neos\Fusion\Exception\ParserException;
 use PHPUnit\Framework\TestCase;
 
 class ParserExceptionTest extends TestCase
@@ -75,7 +75,7 @@ class ParserExceptionTest extends TestCase
     public function generalInvalidFusion(): \Generator
     {
         yield 'reserved meta key' => [
-            '  __meta = 1', 'Exception while parsing: Reversed key "__meta" used.'
+            '  __meta = 1', 'Exception while parsing: Reversed key \'__meta\' used.'
         ];
 
         yield 'a path without operator or block' => [
@@ -149,7 +149,7 @@ class ParserExceptionTest extends TestCase
         ];
 
         yield 'unclosed dsl expression' => [
-            'a = afx`something', 'A dsl expression starting with \'`something\' was not closed.'
+            'a = afx`something', 'A dsl expression starting with \'something\' was not closed.'
         ];
 
         yield 'unclosed block' => [
@@ -157,7 +157,7 @@ class ParserExceptionTest extends TestCase
         ];
 
         yield 'path with unclosed quoted path' => [
-            'nested."path = 0', 'A quoted object path starting with " was not closed'
+            'nested."path = 0', 'A quoted object path starting with <double quote> was not closed'
         ];
 
         yield 'unexpected block start' => [

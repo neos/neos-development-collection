@@ -15,7 +15,7 @@ namespace Neos\Fusion\Core;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
-use Neos\Fusion\Exception;
+use Neos\Fusion\Exception\ParserException;
 
 /**
  * The Fusion Parser
@@ -114,7 +114,13 @@ class Parser extends AbstractParser implements ParserInterface
         } catch (ParserException $e) {
             throw $e;
         } catch (Fusion\Exception $e) {
-            throw new ParserException(ParserException::MESSAGE_FROM_INPUT | ParserException::HIDE_COLUMN, $this->getParsingContext(), $e->getCode(), 'Exception while parsing: ' . $e->getMessage(), $e);
+            throw (new ParserException())
+                ->withCode($e->getCode())
+                ->withMessage('Exception while parsing: ' . $e->getMessage())
+                ->withoutColumnShown()
+                ->withPrevious($e)
+                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                ->build();
         }
     }
 
@@ -155,7 +161,11 @@ class Parser extends AbstractParser implements ParserInterface
                 return;
         }
 
-        throw new ParserException(ParserException::MESSAGE_PARSING_STATEMENT, $this->getParsingContext(), 1635708717);
+        throw (new ParserException())
+            ->withCode(1635708717)
+            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+            ->withParseStatement()
+            ->build();
     }
 
     /**
@@ -199,13 +209,13 @@ class Parser extends AbstractParser implements ParserInterface
                 $this->astBuilder->inheritPrototypeInObjectTree($currentPath, $sourcePath);
             } catch (Fusion\Exception $e) {
                 // delay throw since there might be syntax errors causing this.
-                $this->delayedCombinedException = new ParserException(
-                    ParserException::MESSAGE_FROM_INPUT | ParserException::HIDE_COLUMN,
-                    $this->getParsingContext(),
-                    $e->getStatusCode(),
-                    $e->getMessage(),
-                    $this->delayedCombinedException
-                );
+                $this->delayedCombinedException = (new ParserException())
+                    ->withCode($e->getCode())
+                    ->withMessage($e->getMessage())
+                    ->withoutColumnShown()
+                    ->withPrevious($this->delayedCombinedException)
+                    ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                    ->build();
             }
             return;
         }
@@ -214,13 +224,13 @@ class Parser extends AbstractParser implements ParserInterface
             // Only one of "source" or "target" is a prototype. We do not support copying a
             // non-prototype value to a prototype value or vice-versa.
             // delay throw since there might be syntax errors causing this.
-            $this->delayedCombinedException = new ParserException(
-                ParserException::MESSAGE_FROM_INPUT | ParserException::HIDE_COLUMN,
-                $this->getParsingContext(),
-                1358418015,
-                "Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.",
-                $this->delayedCombinedException
-            );
+            $this->delayedCombinedException = (new ParserException())
+                ->withCode(1358418015)
+                ->withMessage("Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.")
+                ->withoutColumnShown()
+                ->withPrevious($this->delayedCombinedException)
+                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                ->build();
             return;
         }
 
@@ -235,7 +245,7 @@ class Parser extends AbstractParser implements ParserInterface
     {
         $currentPath = $this->parseObjectPath($this->getCurrentObjectPathPrefix());
         $this->lazyExpect(Token::SPACE);
-        $exceptionContextAfterPath = $this->getParsingContext();
+        $cursorAfterObjectPath = $this->lexer->getCursor();
 
         $operationWasParsed = null;
         switch (true) {
@@ -262,7 +272,12 @@ class Parser extends AbstractParser implements ParserInterface
         }
 
         if ($operationWasParsed === false) {
-            throw new ParserException(ParserException::MESSAGE_PARSING_PATH_OR_OPERATOR, $exceptionContextAfterPath, 1635708717);
+            throw (new ParserException())
+                ->withCode(1635708717)
+                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())
+                ->withCursor($cursorAfterObjectPath)
+                ->withParsePathOrOperator()
+                ->build();
         }
 
         $this->parseEndOfStatement();
@@ -286,7 +301,12 @@ class Parser extends AbstractParser implements ParserInterface
                 $filePattern = $this->consume()->getValue();
                 break;
             default:
-                throw new ParserException(ParserException::MESSAGE_UNEXPECTED_CHAR | ParserException::MESSAGE_FROM_INPUT, $this->getParsingContext(), 1635708717, 'Expected file pattern in quotes or [a-zA-Z0-9.*:/_-]');
+                throw (new ParserException())
+                    ->withCode(1635708717)
+                    ->withMessage('Expected file pattern in quotes or [a-zA-Z0-9.*:/_-]')
+                    ->withUnexpectedChar()
+                    ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                    ->build();
         }
 
         try {
@@ -294,7 +314,12 @@ class Parser extends AbstractParser implements ParserInterface
         } catch (ParserException $e) {
             throw $e;
         } catch (Fusion\Exception $e) {
-            throw new ParserException(ParserException::MESSAGE_FROM_INPUT | ParserException::HIDE_COLUMN, $this->getParsingContext(), $e->getCode(), $e->getMessage());
+            throw (new ParserException())
+                ->withCode($e->getCode())
+                ->withMessage($e->getMessage())
+                ->withoutColumnShown()
+                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                ->build();
         }
 
         $this->parseEndOfStatement();
@@ -338,8 +363,11 @@ class Parser extends AbstractParser implements ParserInterface
             $this->consume();
             return;
         }
-
-        throw new ParserException(ParserException::MESSAGE_PARSING_END_OF_STATEMENT, $this->getParsingContext(), 1635878683);
+        throw (new ParserException())
+            ->withCode(1635878683)
+            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+            ->withParseEndOfStatement()
+            ->build();
     }
 
     /**
@@ -349,15 +377,20 @@ class Parser extends AbstractParser implements ParserInterface
     protected function parseBlockStatement(array $path): void
     {
         $this->expect(Token::LBRACE);
+        $cursorPositionStartOfBlock = $this->lexer->getCursor() - 1;
         array_push($this->currentObjectPathStack, $path);
-        $exceptionContextStartOfBlock = $this->getParsingContext(-1);
 
         $this->parseStatementList(Token::RBRACE);
 
         try {
             $this->expect(Token::RBRACE);
         } catch (Fusion\Exception $e) {
-            throw new ParserException(ParserException::MESSAGE_FROM_INPUT, $exceptionContextStartOfBlock, 1635708717, 'No closing brace "}" matched this starting block. Encountered <EOF>.');
+            throw (new ParserException())
+                ->withCode(1635708717)
+                ->withMessage('No closing brace "}" matched this starting block. Encountered <EOF>.')
+                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())
+                ->withCursor($cursorPositionStartOfBlock)
+                ->build();
         }
         array_pop($this->currentObjectPathStack);
     }
@@ -419,12 +452,20 @@ class Parser extends AbstractParser implements ParserInterface
             case $this->accept(Token::CHAR):
                 $quotedPathKey = $this->parseStringLiteral();
                 if ($quotedPathKey === '') {
-                    throw new ParserException(ParserException::MESSAGE_FROM_INPUT, $this->getParsingContext(), 1635708717, "A quoted path must not be empty");
+                    throw (new ParserException())
+                        ->withCode(1635708717)
+                        ->withMessage("A quoted path must not be empty")
+                        ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                        ->build();
                 }
                 return [$quotedPathKey];
         }
 
-        throw new ParserException(ParserException::MESSAGE_PARSING_PATH_SEGMENT, $this->getParsingContext(), 1635708755);
+        throw (new ParserException())
+            ->withCode(1635708755)
+            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+            ->withParsePathSegment()
+            ->build();
     }
 
     /**
@@ -467,7 +508,12 @@ class Parser extends AbstractParser implements ParserInterface
                 $this->consume();
                 return null;
         }
-        throw new ParserException(ParserException::MESSAGE_PARSING_VALUE_ASSIGNMENT, $this->getParsingContext(), 1635708717);
+
+        throw (new ParserException())
+            ->withCode(1635708717)
+            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+            ->withParsePathValue()
+            ->build();
     }
 
     /**
@@ -480,7 +526,11 @@ class Parser extends AbstractParser implements ParserInterface
         try {
             $dslCode = $this->expect(Token::DSL_EXPRESSION_CONTENT)->getValue();
         } catch (Fusion\Exception $e) {
-            throw new ParserException(ParserException::MESSAGE_PARSING_DSL_EXPRESSION, $this->getParsingContext(), 1490714685);
+            throw (new ParserException())
+                ->withCode(1490714685)
+                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                ->withParseDslExpression()
+                ->build();
         }
         $dslCode = substr($dslCode, 1, -1);
         return $this->invokeAndParseDsl($dslIdentifier, $dslCode);
@@ -490,7 +540,6 @@ class Parser extends AbstractParser implements ParserInterface
      * @param string $identifier
      * @param string $code
      * @return array|string|int|float|bool
-     * @throws Exception
      * @throws Fusion\Exception
      */
     protected function invokeAndParseDsl(string $identifier, string $code)
@@ -500,7 +549,11 @@ class Parser extends AbstractParser implements ParserInterface
             $transpiledFusion = $dslObject->transpile($code);
         } catch (\Exception $e) {
             // convert all exceptions from dsl transpilation to fusion exception and add file and line info
-            throw new ParserException(ParserException::MESSAGE_FROM_INPUT, $this->getParsingContext(), 1180600696, $e->getMessage());
+            throw (new ParserException())
+                ->withCode(1180600696)
+                ->withMessage($e->getMessage())
+                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                ->build();
         }
 
         $parser = new Parser();
@@ -551,7 +604,7 @@ class Parser extends AbstractParser implements ParserInterface
                 $charContent = substr($charWrapped, 1, -1);
                 return stripslashes($charContent);
         }
-        throw new ParserException(ParserException::MESSAGE_UNEXPECTED_CHAR | ParserException::MESSAGE_FROM_INPUT, $this->getParsingContext(), 1635708719, 'Expected string literal');
+        throw new Fusion\Exception('Expected string literal', 1635708719);
     }
 
     protected function getCurrentObjectPathPrefix(): array
@@ -564,7 +617,7 @@ class Parser extends AbstractParser implements ParserInterface
     {
         if (substr($pathKey, 0, 2) === '__'
             && in_array($pathKey, self::$reservedParseTreeKeys, true)) {
-            throw new Fusion\Exception(sprintf('Reversed key "%s" used.', $pathKey), 1437065270);
+            throw new Fusion\Exception("Reversed key '$pathKey' used.", 1437065270);
         }
     }
 }
