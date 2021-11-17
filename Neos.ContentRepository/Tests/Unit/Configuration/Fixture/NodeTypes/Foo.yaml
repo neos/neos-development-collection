@@ -1,0 +1,7 @@
+'Some.Node:Type':
+  options:
+    finalPath: NodeTypes/Foo.yaml
+    pathNodeTypes.Foo_yaml: true
+'NodeType:PathNodeTypes.Foo_yaml':
+  options:
+    path: NodeTypes/Foo.yaml
