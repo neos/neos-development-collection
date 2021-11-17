@@ -17,6 +17,7 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
 use Neos\Neos\Exception;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * @Flow\Scope("singleton")
@@ -80,10 +81,11 @@ class NodeTypeConfigurationEnrichmentAspect
      */
     public function enrichNodeTypeLabelsConfiguration(JoinPointInterface $joinPoint): void
     {
+        $declaredSuperTypes = $joinPoint->getMethodArgument('declaredSuperTypes');
         $configuration = $joinPoint->getMethodArgument('configuration');
         $nodeTypeName = $joinPoint->getMethodArgument('name');
 
-        $this->addLabelsToNodeTypeConfiguration($nodeTypeName, $configuration);
+        $this->addLabelsToNodeTypeConfiguration($nodeTypeName, $configuration, $declaredSuperTypes);
 
         $joinPoint->setMethodArgument('configuration', $configuration);
         $joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -92,16 +94,17 @@ class NodeTypeConfigurationEnrichmentAspect
     /**
      * @param string $nodeTypeName
      * @param array $configuration
+     * @param array $declaredSuperTypes
      * @return void
      */
-    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
+    protected function addLabelsToNodeTypeConfiguration($nodeTypeName, array &$configuration, array $declaredSuperTypes)
     {
         if (isset($configuration['ui'])) {
             $this->setGlobalUiElementLabels($nodeTypeName, $configuration);
         }
 
         if (isset($configuration['properties'])) {
-            $this->setPropertyLabels($nodeTypeName, $configuration);
+            $this->setPropertyLabels($nodeTypeName, $configuration, $declaredSuperTypes);
         }
     }
 
@@ -186,9 +189,10 @@ class NodeTypeConfigurationEnrichmentAspect
     /**
      * @param string $nodeTypeLabelIdPrefix
      * @param array $configuration
+     * @param array $declaredSuperTypes
      * @return void
      */
-    protected function setPropertyLabels($nodeTypeName, array &$configuration)
+    protected function setPropertyLabels($nodeTypeName, array &$configuration, array $declaredSuperTypes)
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
         foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
@@ -200,11 +204,19 @@ class NodeTypeConfigurationEnrichmentAspect
                 $propertyConfiguration['ui']['label'] = $this->getPropertyLabelTranslationId($nodeTypeLabelIdPrefix, $propertyName);
             }
 
-            if (isset($propertyConfiguration['ui']['inspector']['editor']) && isset($propertyConfiguration['ui']['inspector']['editorOptions'])) {
+            $editorName = $propertyConfiguration['ui']['inspector']['editor']
+                ?? array_reduce($declaredSuperTypes, function ($editorName, NodeType $superType) use ($propertyName) {
+                    $superTypeConfiguration = $superType->getLocalConfiguration();
+                    return $editorName ?? $superTypeConfiguration['properties'][$propertyName]['ui']['inspector']['editor'] ?? null;
+                }, null);
+            $hasEditor = !is_null($editorName);
+            $hasEditorOptions = isset($propertyConfiguration['ui']['inspector']['editorOptions']);
+
+            if ($hasEditor && $hasEditorOptions) {
                 $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $propertyName) {
                     return $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path);
                 };
-                $this->applyEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $propertyConfiguration['ui']['inspector']['editor'], $propertyConfiguration['ui']['inspector']['editorOptions'], $translationIdGenerator);
+                $this->applyEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $editorName, $propertyConfiguration['ui']['inspector']['editorOptions'], $translationIdGenerator);
             }
 
             if (isset($propertyConfiguration['ui']['aloha']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['aloha'], 'placeholder')) {
