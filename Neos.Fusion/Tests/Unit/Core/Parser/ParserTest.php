@@ -111,6 +111,46 @@ class ParserTest extends TestCase
         ];
     }
 
+    public function unsetPathOrSetToNull()
+    {
+        yield 'overwrite with boolean value' => [
+            <<<'Fusion'
+            a.b = "hello"
+            a = true
+            Fusion,
+            ['a' => ['b' => 'hello', '__value' => true, '__eelExpression' => null, '__objectType' => null]]
+        ];
+        yield 'unset value at global level' => [
+            <<<'Fusion'
+            a >
+            Fusion,
+            ['a' => ['__stopInheritanceChain' => true]]
+        ];
+
+        yield 'set value to null at global level' => [
+            <<<'Fusion'
+            a = null
+            Fusion,
+            ['a' => null]
+        ];
+
+        yield 'set value to null at global level with previous content' => [
+            <<<'Fusion'
+            a.b = "hello"
+            a = null
+            Fusion,
+            []
+        ];
+
+        yield 'set value to null at nested level with previous content' => [
+            <<<'Fusion'
+            a.b.c = "hello"
+            a.b = null
+            Fusion,
+            ['a' => []]
+        ];
+    }
+
     public function commentsTest(): array
     {
         $obj = function (string $name): array {
@@ -271,6 +311,109 @@ class ParserTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
+    public function testPhpArrayKeys()
+    {
+        // as a reminder how php arrays work ^^
+        $asArrayKey = function ($val) {
+            return array_key_first([$val => 'something']);
+        };
+
+        self::assertSame(-123, $asArrayKey(-123));
+        self::assertSame(-123, $asArrayKey('-123'));
+
+        self::assertSame(123, $asArrayKey(123.456));
+        self::assertSame(123, $asArrayKey('123'));
+
+        self::assertSame('007', $asArrayKey('007'));
+        self::assertSame('123.456', $asArrayKey('123.456'));
+    }
+
+    public function problematicPathIdNames(): \Generator
+    {
+        yield 'float in quotes as path identifier' => [
+            <<<'Fusion'
+            "15.8" = 123
+            Fusion,
+            ['15.8' => 123]
+        ];
+
+        yield 'int in quotes as path identifier' => [
+            <<<'Fusion'
+            "15" = 123
+            Fusion,
+            [15 => 123]
+        ];
+
+        yield 'int as path identifier' => [
+            <<<'Fusion'
+            24 = 123
+            Fusion,
+            [24 => 123]
+        ];
+
+        yield 'null as path identifier' => [
+            <<<'Fusion'
+            null = 123
+            Fusion,
+            ['null' => 123]
+        ];
+
+        yield 'true as path identifier' => [
+            <<<'Fusion'
+            true = 123
+            Fusion,
+            ['true' => 123]
+        ];
+
+        yield 'negative int as path identifier' => [
+            <<<'Fusion'
+            -123 = 123
+            Fusion,
+            [-123 => 123]
+        ];
+
+        yield 'positive int quoted as path identifier' => [
+            <<<'Fusion'
+            "+123" = 123
+            Fusion,
+            ["+123" => 123]
+        ];
+
+        yield 'multiple zeros as path identifier' => [
+            <<<'Fusion'
+            000 = 123
+            Fusion,
+            ['000' => 123]
+        ];
+
+        yield 'single zeros as path identifier' => [
+            <<<'Fusion'
+            0 = 123
+            Fusion,
+            [0 => 123]
+        ];
+
+        yield 'quoted keys and unquoted keys are treated the same' => [
+            <<<'Fusion'
+            123456 = 123
+            "123456" = false
+            Fusion,
+            [123456 => false]
+        ];
+
+        yield 'floats in quoted keys can be used to copy values' => [
+            <<<'Fusion'
+            "123.132" = 123
+            123 = "check that the float is not casted to 123"
+            abc < "123.132"
+            Fusion,
+            ["123.132" => 123, 123 => "check that the float is not casted to 123", "abc" => 123]
+        ];
+
+    }
 
     public function throwsOldNamespaceDeclaration(): array
     {
@@ -637,6 +780,7 @@ class ParserTest extends TestCase
     /**
      * @test
      * @dataProvider commentsTest
+     * @dataProvider problematicPathIdNames
      * @dataProvider metaObjectPaths
      * @dataProvider eelValueAssign
      * @dataProvider simpleValueAssign

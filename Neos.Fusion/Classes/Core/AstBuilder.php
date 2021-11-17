@@ -59,8 +59,7 @@ class AstBuilder
     public function copyValueInObjectTree($targetObjectPath, $sourceObjectPath)
     {
         $originalValue = $this->getValueFromObjectTree($sourceObjectPath);
-        $value = is_object($originalValue) ? clone $originalValue : $originalValue;
-        $this->setValueInObjectTree($targetObjectPath, $value);
+        $this->setValueInObjectTree($targetObjectPath, $originalValue);
     }
 
     public function inheritPrototypeInObjectTree($targetPrototypeObjectPath, $sourcePrototypeObjectPath)
@@ -84,38 +83,20 @@ class AstBuilder
      * Assigns a value to a node or a property in the object tree, specified by the object path array.
      *
      * @param array $objectPathArray The object path, specifying the node / property to set
-     * @param mixed $value The value to assign, is a non-array type or an array with __eelExpression etc.
+     * @param scalar|null|array $value The value to assign, is a non-array type or an array with __eelExpression etc.
      * @param array|null $objectTree The current (sub-) tree, used internally - don't specify!
      * @return array The modified object tree
      */
-    public function setValueInObjectTree(array $objectPathArray, $value, array &$objectTree = null): array
+    public function setValueInObjectTree(array $objectPathArray, $value, array &$objectTree = null): ?array
     {
         if ($objectTree === null) {
             $objectTree = &$this->objectTree;
         }
 
         $currentKey = array_shift($objectPathArray);
-        if (is_numeric($currentKey)) {
-            $currentKey = (int)$currentKey;
-        }
 
-        if (empty($objectPathArray)) {
-            // last part of the iteration, setting the final value
-            if (isset($objectTree[$currentKey]) && $value === null) {
-                unset($objectTree[$currentKey]);
-            } elseif (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey])) {
-                if (is_array($value)) {
-                    $objectTree[$currentKey] = Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
-                } else {
-                    $objectTree[$currentKey]['__value'] = $value;
-                    $objectTree[$currentKey]['__eelExpression'] = null;
-                    $objectTree[$currentKey]['__objectType'] = null;
-                }
-            } else {
-                $objectTree[$currentKey] = $value;
-            }
-        } else {
-            // we still need to traverse further down
+        // we still need to traverse further down
+        if (count($objectPathArray) > 0) {
             if (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey]) === false) {
                 // the element one-level-down is already defined, but it is NOT an array. So we need to convert the simple type to __value
                 $objectTree[$currentKey] = [
@@ -123,13 +104,32 @@ class AstBuilder
                     '__eelExpression' => null,
                     '__objectType' => null
                 ];
-            } elseif (isset($objectTree[$currentKey]) === false) {
+            }
+            if (isset($objectTree[$currentKey]) === false) {
                 $objectTree[$currentKey] = [];
             }
-
-            $this->setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
+            return self::setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
         }
-        return $objectTree;
+
+        // last part of the iteration, setting the final value
+        if (isset($objectTree[$currentKey]) && $value === null) {
+            unset($objectTree[$currentKey]);
+            return null;
+        }
+
+        if (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey])) {
+            if (is_array($value)) {
+                $objectTree[$currentKey] = Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
+                return null;
+            }
+            $objectTree[$currentKey]['__value'] = $value;
+            $objectTree[$currentKey]['__eelExpression'] = null;
+            $objectTree[$currentKey]['__objectType'] = null;
+            return null;
+        }
+
+        $objectTree[$currentKey] = $value;
+        return null;
     }
 
     /**
@@ -137,9 +137,9 @@ class AstBuilder
      *
      * @param array $objectPathArray The object path, specifying the node to retrieve the value of
      * @param array|string|null $objectTree The current (sub-) tree, used internally - don't specify!
-     * @return mixed The value
+     * @return array|scalar|null The value
      */
-    public function &getValueFromObjectTree(array $objectPathArray, &$objectTree = null)
+    public function getValueFromObjectTree(array $objectPathArray, $objectTree = null)
     {
         if ($objectTree === null) {
             $objectTree = &$this->objectTree;
@@ -147,17 +147,13 @@ class AstBuilder
 
         if (count($objectPathArray) > 0) {
             $currentKey = array_shift($objectPathArray);
-            if (is_numeric($currentKey)) {
-                $currentKey = (int)$currentKey;
-            }
             if (isset($objectTree[$currentKey]) === false) {
                 $objectTree[$currentKey] = [];
             }
-            $value = &$this->getValueFromObjectTree($objectPathArray, $objectTree[$currentKey]);
-        } else {
-            $value = &$objectTree;
+            return self::getValueFromObjectTree($objectPathArray, $objectTree[$currentKey]);
         }
-        return $value;
+
+        return $objectTree;
     }
 
     /**
@@ -172,7 +168,7 @@ class AstBuilder
             return;
         }
 
-        foreach ($this->objectTree['__prototypes'] as $prototypeName => $prototypeConfiguration) {
+        foreach (array_keys($this->objectTree['__prototypes']) as $prototypeName) {
             $prototypeInheritanceHierarchy = [];
             $currentPrototypeName = $prototypeName;
             while (isset($this->objectTree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'])) {
