@@ -10,6 +10,7 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion;
 use org\bovigo\vfs\vfsStream;

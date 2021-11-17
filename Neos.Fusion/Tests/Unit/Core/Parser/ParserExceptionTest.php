@@ -1,12 +1,21 @@
 <?php
+namespace Neos\Fusion\Tests\Unit\Core\Parser;
 
-namespace Neos\Fusion\Tests\Functional\Parser;
+/*
+ * This file is part of the Neos.Fusion package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Exception\ParserException;
-use PHPUnit\Framework\TestCase;
+use Neos\Flow\Tests\UnitTestCase;
 
-class ParserExceptionTest extends TestCase
+class ParserExceptionTest extends UnitTestCase
 {
     public function fullParserExceptionMessage(): \Generator
     {

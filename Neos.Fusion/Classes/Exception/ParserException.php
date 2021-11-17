@@ -244,7 +244,9 @@ class ParserException extends Fusion\Exception
         $columnNumber = mb_strlen($linePartBeforeCursor) + 1;
 
         $nextChar = mb_substr($linePartAfterCursor, 0, 1);
-        $nextCharPrint = $isEof ? '<EOF>' : self::printable($nextChar);
+
+        $nextCharPrint = self::printable($nextChar, $isEof);
+
         $prevChar = mb_substr($linePartBeforeCursor, -1);
 
         $asciiPreviewMessagePart = self::renderErrorLinePreview(
@@ -256,8 +258,7 @@ class ParserException extends Fusion\Exception
         );
 
         if ($this->fluentMessageMaker !== null && is_callable($this->fluentMessageMaker)) {
-            $helperMessagePart = call_user_func(
-                $this->fluentMessageMaker,
+            $helperMessagePart = ($this->fluentMessageMaker)(
                 $nextCharPrint,
                 $nextChar,
                 $linePartAfterCursor,
@@ -283,14 +284,13 @@ class ParserException extends Fusion\Exception
         return $fullMessage;
     }
 
-    public static function renderErrorLinePreview(
+    protected static function renderErrorLinePreview(
         ?string $fileName,
         string $currentLine,
         int $lineNumber,
         int $columnNumber,
         bool $renderColumnDetails = true
-    ): string
-    {
+    ): string {
         $body = $currentLine;
         $fileNameAndPosition = $fileName ?? '<input>' . ':' . $lineNumber;
 
@@ -363,10 +363,13 @@ class ParserException extends Fusion\Exception
         return [$lineNumberCursor, $linePartAfterCursor, $linePartBeforeCursor];
     }
 
-    public static function printable(string $char): string
+    protected static function printable(string $char, bool $isEof = false): string
     {
+        if ($isEof) {
+            return '<EOF>';
+        }
         if ($char === '') {
-            return "<new line>";
+            return '<new line>';
         }
 
         // https://github.com/parsica-php/parsica/blob/main/src/Internal/Ascii.php

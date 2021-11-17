@@ -50,12 +50,12 @@ class Parser extends AbstractParser implements ParserInterface
     protected $currentObjectPathStack = [];
 
     /**
-     * @var string|null
+     * @var ?string
      */
     protected $contextPathAndFilename;
 
     /**
-     * @var ParserException|null
+     * @var ?ParserException
      */
     protected $delayedCombinedException;
 
@@ -378,6 +378,8 @@ class Parser extends AbstractParser implements ParserInterface
     {
         $this->expect(Token::LBRACE);
         $cursorPositionStartOfBlock = $this->lexer->getCursor() - 1;
+        $this->parseEndOfStatement();
+
         array_push($this->currentObjectPathStack, $path);
 
         $this->parseStatementList(Token::RBRACE);

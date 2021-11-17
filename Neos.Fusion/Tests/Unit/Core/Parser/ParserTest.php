@@ -1,12 +1,21 @@
 <?php
-
 namespace Neos\Fusion\Tests\Unit\Core\Parser;
 
-use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Exception\ParserException;
-use PHPUnit\Framework\TestCase;
+/*
+ * This file is part of the Neos.Fusion package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
-class ParserTest extends TestCase
+use Neos\Fusion\Core\Parser;
+use Neos\Fusion;
+use Neos\Flow\Tests\UnitTestCase;
+
+class ParserTest extends UnitTestCase
 {
     //TODO what about dsl true``
     public function pathBlockTest(): array
@@ -57,13 +66,6 @@ class ParserTest extends TestCase
                 }
                 Fusion,
                 []
-            ],
-            [
-                <<<'Fusion'
-                a { b = ""
-                }
-                Fusion,
-                ['a' => ['b' => ""]]
             ],
             [
                 <<<'Fusion'
@@ -177,7 +179,8 @@ class ParserTest extends TestCase
                 <<<'Fusion'
                 a { /*
                     comment
-                */ b = 123
+                */
+                b = 123
                 }
                 Fusion,
                 ['a' => ['b' => 123]]
@@ -435,6 +438,13 @@ class ParserTest extends TestCase
 
     public function throwsGeneralWrongSyntax(): \Generator
     {
+        yield 'path declaration after opening' => [<<<'Fusion'
+            a { b = "hello"
+            }
+            Fusion];
+
+        yield 'empty block without newline' => ['a {}'];
+
         yield 'empty strings in path' => ['"" = 123'];
 
         yield 'empty strings in path 2' => ['\'\' = 123'];
@@ -780,6 +790,7 @@ class ParserTest extends TestCase
     /**
      * @test
      * @dataProvider commentsTest
+     * @dataProvider unsetPathOrSetToNull
      * @dataProvider problematicPathIdNames
      * @dataProvider metaObjectPaths
      * @dataProvider eelValueAssign
@@ -808,7 +819,7 @@ class ParserTest extends TestCase
      */
     public function itThrowsWhileParsing($fusion): void
     {
-        self::expectException(ParserException::class);
+        self::expectException(Fusion\Exception::class);
 
         $parser = new Parser;
         $parser->parse($fusion);
