@@ -19,9 +19,15 @@ class NodeTypesLoader implements LoaderInterface
      */
     private $yamlSource;
 
-    public function __construct(YamlSource $yamlSource)
+    /**
+     * @var string
+     */
+    private $configurationBasePath;
+
+    public function __construct(YamlSource $yamlSource, string $configurationBasePath = FLOW_PATH_CONFIGURATION)
     {
         $this->yamlSource = $yamlSource;
+        $this->configurationBasePath = $configurationBasePath;
     }
 
     /**
@@ -39,11 +45,11 @@ class NodeTypesLoader implements LoaderInterface
             $nodeTypesDirectory = Files::concatenatePaths([$package->getPackagePath(), 'NodeTypes']);
             if (\is_dir($nodeTypesDirectory)) {
                 $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($nodeTypesDirectory));
-                $allFilesIterator = new \CallbackFilterIterator($iterator, static function (\SplFileInfo $fileInfo) {
+                $allYamlFilesIterator = new \CallbackFilterIterator($iterator, static function (\SplFileInfo $fileInfo) {
                     return $fileInfo->isFile() && $fileInfo->getExtension() === 'yaml';
                 });
                 /** @var \SplFileInfo $fileInfo */
-                foreach ($allFilesIterator as $fileInfo) {
+                foreach ($allYamlFilesIterator as $fileInfo) {
                     $path = Files::concatenatePaths([
                         $fileInfo->getPath(),
                         $fileInfo->getBasename('.' . $fileInfo->getExtension())
@@ -58,14 +64,14 @@ class NodeTypesLoader implements LoaderInterface
             // Package configuration
             $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($package->getConfigurationPath() . 'NodeTypes', true));
         }
-        $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load(FLOW_PATH_CONFIGURATION . 'NodeTypes', true));
+        $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($this->configurationBasePath . 'NodeTypes', true));
 
         // Context configuration
         foreach ($context->getHierarchy() as $contextName) {
             foreach ($packages as $package) {
                 $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($package->getConfigurationPath() . $contextName . '/' . 'NodeTypes', true));
             }
-            $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . 'NodeTypes', true));
+            $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($this->configurationBasePath . $contextName . '/' . 'NodeTypes', true));
         }
 
         return $configuration;
