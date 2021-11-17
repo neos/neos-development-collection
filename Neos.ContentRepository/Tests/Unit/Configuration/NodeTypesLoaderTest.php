@@ -105,7 +105,7 @@ class NodeTypesLoaderTest extends UnitTestCase
                 ],
             ],
         ];
-        self::assertSame($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -175,7 +175,7 @@ class NodeTypesLoaderTest extends UnitTestCase
                 ],
             ],
         ];
-        self::assertSame($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -233,7 +233,7 @@ class NodeTypesLoaderTest extends UnitTestCase
                 ],
             ],
         ];
-        self::assertSame($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -315,7 +315,7 @@ class NodeTypesLoaderTest extends UnitTestCase
                 ],
             ],
         ];
-        self::assertSame($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -397,7 +397,7 @@ class NodeTypesLoaderTest extends UnitTestCase
                 ],
             ],
         ];
-        self::assertSame($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -435,6 +435,6 @@ class NodeTypesLoaderTest extends UnitTestCase
                 ],
             ],
         ];
-        self::assertSame($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 }
