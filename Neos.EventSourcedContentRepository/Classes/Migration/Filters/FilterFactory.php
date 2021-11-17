@@ -77,6 +77,18 @@ class FilterFactory
             return $resolvedObjectName;
         }
 
+        if ($name === 'DimensionValues') {
+            throw new MigrationException('The "DimensionValues" filter from the legacy content repository has been replaced by the "DimensionSpacePoint" filter in the event-sourced content repository. Please adjust your node migrations.', 1637177939);
+        }
+
+        if ($name === 'IsRemoved') {
+            throw new MigrationException('The "IsRemoved" filter from the legacy content repository has been removed without replacement, as removed nodes are not resolved during a migration anymore.', 1637177986);
+        }
+
+        if ($name === 'Workspace') {
+            throw new MigrationException('The "Workspace" filter from the legacy content repository has been removed without replacement, as migrations are always targeting a single workspace (live by default).', 1637178056);
+        }
+
         $possibleFullFilterName = 'Neos\EventSourcedContentRepository\Migration\Filters\\' . $name;
         $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleFullFilterName);
         if ($resolvedObjectName !== null) {

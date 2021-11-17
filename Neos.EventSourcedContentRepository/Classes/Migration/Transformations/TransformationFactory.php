@@ -79,6 +79,22 @@ class TransformationFactory
             return $resolvedObjectName;
         }
 
+        if ($transformationName === 'AddDimensions') {
+            throw new MigrationException('The "AddDimensions" transformation from the legacy content repository has been replaced by the "AddDimensionSpecialization" transformation in the event-sourced content repository. Please adjust your node migrations.', 1637178179);
+        }
+
+        if ($transformationName === 'RenameDimension') {
+            throw new MigrationException('The "RenameDimension" transformation from the legacy content repository has been replaced by the "MoveToDimensionSpacePoints" transformation in the event-sourced content repository. Please adjust your node migrations.', 1637178184);
+        }
+
+        if ($transformationName === 'RenameNode') {
+            throw new MigrationException('The "RenameNode" transformation from the legacy content repository has been replaced by the "RenameNodeAggregate" transformation in the event-sourced content repository. Please adjust your node migrations.', 1637178234);
+        }
+
+        if ($transformationName === 'SetDimensions') {
+            throw new MigrationException('The "SetDimensions" transformation from the legacy content repository has been replaced by the "AddDimensionSpecialization" and "MoveToDimensionSpacePoints" transformation in the event-sourced content repository. Please adjust your node migrations.', 1637178280);
+        }
+
         $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('Neos\EventSourcedContentRepository\Migration\Transformations\\' . $transformationName);
         if ($resolvedObjectName !== null) {
             return $resolvedObjectName;
