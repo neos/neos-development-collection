@@ -130,7 +130,7 @@ class SetupCommandController extends CommandController
         $this->outputLine();
         $this->output(sprintf('<info>%s</info>',$this->writeSettings($filename, 'Neos.Flow.persistence.backendOptions',$persistenceConfiguration)));
         $this->outputLine();
-        $this->outputLine(sprintf("The new database settings were written to file <info>%s</info>", $filename));
+        $this->outputLine(sprintf("The new database settings were written to <info>%s</info>", $filename));
     }
 
     /**
@@ -141,7 +141,7 @@ class SetupCommandController extends CommandController
         $availableImageHandlers = $this->imageHandlerService->getAvailableImageHandlers();
 
         if (count($availableImageHandlers) == 0) {
-            $this->outputLine("No supported image handler was found.");
+            $this->outputLine("No supported image handler found.");
             $this->quit(1);
         }
 
@@ -157,7 +157,7 @@ class SetupCommandController extends CommandController
         $this->outputLine();
         $this->output(sprintf('<info>%s</info>', $this->writeSettings($filename, 'Neos.Imagine.driver', $driver)));
         $this->outputLine();
-        $this->outputLine(sprintf("The new image handler setting were written to file <info>%s</info>", $filename));
+        $this->outputLine(sprintf("The new image handler setting were written to <info>%s</info>", $filename));
     }
 
     /**

@@ -43,13 +43,13 @@ class WelcomeCommandController extends CommandController
             Welcome to Neos.
             </info>
 
-            The following steps will help you to configure your Neos:
+            The following steps will help you to configure Neos:
 
             1. Configure the database connection:
                <info>./flow setup:database</info>
             2. Create the required database tables:
                <info>./flow doctrine:migrate</info>
-            3. Configure the imageHandling:
+            3. Configure the image handler:
                <info>./flow setup:imagehandler</info>
             4. Create an admin user:
                <info>./flow user:create --roles Administrator admin admin Admin User </info>
