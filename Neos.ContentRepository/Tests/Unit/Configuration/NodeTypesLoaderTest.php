@@ -17,10 +17,8 @@ use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Utility\Arrays;
-use org\bovigo\vfs\vfsStream;
+use Neos\Utility\Files;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Component\Yaml\Yaml;
 
 class NodeTypesLoaderTest extends UnitTestCase
 {
@@ -46,62 +44,22 @@ class NodeTypesLoaderTest extends UnitTestCase
 
     public function setUp(): void
     {
-        $nodeTypeFiles = $this->mockNodeTypeDefinitions([
-            'Configuration/NodeTypes.yaml',
-            'Configuration/NodeTypes.SomeSuffix.yaml',
-            'Configuration/Testing/NodeTypes.yaml',
-            'Configuration/Testing/NodeTypes.SomeSuffix.yaml',
-            'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
-            'Configuration/Testing/SomeOtherSubContext/NodeTypes.yaml',
-            'Configuration/Testing/SomeOtherSubContext/NodeTypes.SomeSuffix.yaml',
-            'NodeTypes/Foo.yaml',
-            'NodeTypes/Bar.yaml',
-            'Packages/Package1/Configuration/NodeTypes.yaml',
-            'Packages/Package1/Configuration/NodeTypes.SomeSuffix.yaml',
-            'Packages/Package1/Configuration/SomeSubContext/NodeTypes.yaml',
-            'Packages/Package1/Configuration/SomeOtherSubContext/NodeTypes.yaml',
-            'Packages/Package1/Configuration/SomeOtherSubContext/NodeTypes.SomeSuffix.yaml',
-            'Packages/Package1/NodeTypes/Foo.yaml',
-            'Packages/Package1/NodeTypes/Bar.yaml',
-            'Packages/Package2/Configuration/NodeTypes.yaml',
-            'Packages/Package2/Configuration/SomeOtherSubContext/NodeTypes.yaml',
-            'Packages/Package2/NodeTypes/Foo.yaml',
-        ]);
-        vfsStream::setup('root', null, $nodeTypeFiles);
-        $this->nodeTypesLoader = new NodeTypesLoader(new YamlSource(), vfsStream::url('root/Configuration/'));
+        $this->nodeTypesLoader = new NodeTypesLoader(new YamlSource(), Files::concatenatePaths([__DIR__, 'Fixture', 'Configuration']) . '/');
 
         $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
         $this->mockApplicationContext->method('getHierarchy')->willReturn(['Testing', 'Testing/SomeSubContext']);
 
-        $this->mockPackage1 = $this->getMockBuilder(FlowPackageInterface::class)->getMock();
-        $this->mockPackage1->method('getPackagePath')->willReturn(vfsStream::url('root/Packages/Package1'));
-
-        $this->mockPackage2 = $this->getMockBuilder(FlowPackageInterface::class)->getMock();
-        $this->mockPackage2->method('getPackagePath')->willReturn(vfsStream::url('root/Packages/Package2'));
+        $this->mockPackage1 = $this->mockPackage('Package1');
+        $this->mockPackage2 = $this->mockPackage('Package2');
     }
 
-    private function mockNodeTypeDefinitions(array $paths): array
+    private function mockPackage(string $packageKey): FlowPackageInterface
     {
-        $result = [];
-        foreach ($paths as $path) {
-            $escapedPath = str_replace(['.', '/'], ['_', '.'], $path);
-            $nodeTypeDefinitions = Yaml::dump([
-                'Some.Node:Type' => [
-                    'options' => [
-                        'finalPath' => $path,
-                        'path' . $escapedPath => true,
-                    ]
-                ],
-                'NodeType:Path' . $escapedPath => [
-                    'options' => [
-                        'path' => $path,
-                    ]
-                ],
-            ]);
-            $pathSegments = explode('/', $path);
-            $result = Arrays::setValueByPath($result, $pathSegments, $nodeTypeDefinitions);
-        }
-        return $result;
+        $mockPackage = $this->getMockBuilder(FlowPackageInterface::class)->getMock();
+        $packagePath = Files::concatenatePaths([__DIR__, 'Fixture', 'Packages', $packageKey]) . '/';
+        $mockPackage->method('getPackagePath')->willReturn($packagePath);
+        $mockPackage->method('getConfigurationPath')->willReturn(Files::concatenatePaths([$packagePath, 'Configuration']) . '/');
+        return $mockPackage;
     }
 
     /**
@@ -115,24 +73,36 @@ class NodeTypesLoaderTest extends UnitTestCase
                 'options' => [
                     'finalPath' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
                     'pathConfiguration.NodeTypes_yaml' => true,
+                    'pathConfiguration.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.NodeTypes_yaml' => true,
+                    'pathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => true,
-                ]
+                ],
             ],
             'NodeType:PathConfiguration.NodeTypes_yaml' => [
                 'options' => [
-                    'path' => 'Configuration/NodeTypes.yaml'
-                ]
+                    'path' => 'Configuration/NodeTypes.yaml',
+                ],
+            ],
+            'NodeType:PathConfiguration.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/NodeTypes.SomeSuffix.yaml',
+                ],
             ],
             'NodeType:PathConfiguration.Testing.NodeTypes_yaml' => [
                 'options' => [
-                    'path' => 'Configuration/Testing/NodeTypes.yaml'
-                ]
+                    'path' => 'Configuration/Testing/NodeTypes.yaml',
+                ],
+            ],
+            'NodeType:PathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/Testing/NodeTypes.SomeSuffix.yaml',
+                ],
             ],
             'NodeType:PathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => [
                 'options' => [
-                    'path' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml'
-                ]
+                    'path' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
+                ],
             ],
         ];
         self::assertSame($expectedResult, $actualResult);
@@ -148,37 +118,61 @@ class NodeTypesLoaderTest extends UnitTestCase
             'Some.Node:Type' => [
                 'options' => [
                     'finalPath' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
-                    'pathPackages.Package1.NodeTypes.Foo_yaml' => true,
                     'pathPackages.Package1.NodeTypes.Bar_yaml' => true,
+                    'pathPackages.Package1.NodeTypes.Foo_yaml' => true,
+                    'pathPackages.Package1.Configuration.NodeTypes_yaml' => true,
+                    'pathPackages.Package1.Configuration.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.NodeTypes_yaml' => true,
+                    'pathConfiguration.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.NodeTypes_yaml' => true,
+                    'pathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => true,
-                ]
-            ],
-            'NodeType:PathPackages.Package1.NodeTypes.Foo_yaml' => [
-                'options' => [
-                    'path' => 'Packages/Package1/NodeTypes/Foo.yaml'
-                ]
+                ],
             ],
             'NodeType:PathPackages.Package1.NodeTypes.Bar_yaml' => [
                 'options' => [
-                    'path' => 'Packages/Package1/NodeTypes/Bar.yaml'
-                ]
+                    'path' => 'Packages/Package1/NodeTypes/Bar.yaml',
+                ],
+            ],
+            'NodeType:PathPackages.Package1.NodeTypes.Foo_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package1/NodeTypes/Foo.yaml',
+                ],
+            ],
+            'NodeType:PathPackages.Package1.Configuration.NodeTypes_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package1/Configuration/NodeTypes.yaml',
+                ],
+            ],
+            'NodeType:PathPackages.Package1.Configuration.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package1/Configuration/NodeTypes.SomeSuffix.yaml',
+                ],
             ],
             'NodeType:PathConfiguration.NodeTypes_yaml' => [
                 'options' => [
-                    'path' => 'Configuration/NodeTypes.yaml'
-                ]
+                    'path' => 'Configuration/NodeTypes.yaml',
+                ],
+            ],
+            'NodeType:PathConfiguration.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/NodeTypes.SomeSuffix.yaml',
+                ],
             ],
             'NodeType:PathConfiguration.Testing.NodeTypes_yaml' => [
                 'options' => [
-                    'path' => 'Configuration/Testing/NodeTypes.yaml'
-                ]
+                    'path' => 'Configuration/Testing/NodeTypes.yaml',
+                ],
+            ],
+            'NodeType:PathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/Testing/NodeTypes.SomeSuffix.yaml',
+                ],
             ],
             'NodeType:PathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => [
                 'options' => [
-                    'path' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml'
-                ]
+                    'path' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
+                ],
             ],
         ];
         self::assertSame($expectedResult, $actualResult);
@@ -195,31 +189,49 @@ class NodeTypesLoaderTest extends UnitTestCase
                 'options' => [
                     'finalPath' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
                     'pathPackages.Package2.NodeTypes.Foo_yaml' => true,
+                    'pathPackages.Package2.Configuration.NodeTypes_yaml' => true,
                     'pathConfiguration.NodeTypes_yaml' => true,
+                    'pathConfiguration.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.NodeTypes_yaml' => true,
+                    'pathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => true,
                 ],
             ],
             'NodeType:PathPackages.Package2.NodeTypes.Foo_yaml' => [
                 'options' => [
                     'path' => 'Packages/Package2/NodeTypes/Foo.yaml',
-                ]
+                ],
+            ],
+            'NodeType:PathPackages.Package2.Configuration.NodeTypes_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package2/Configuration/NodeTypes.yaml',
+                ],
             ],
             'NodeType:PathConfiguration.NodeTypes_yaml' => [
                 'options' => [
                     'path' => 'Configuration/NodeTypes.yaml',
-                ]
+                ],
+            ],
+            'NodeType:PathConfiguration.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/NodeTypes.SomeSuffix.yaml',
+                ],
             ],
             'NodeType:PathConfiguration.Testing.NodeTypes_yaml' => [
                 'options' => [
                     'path' => 'Configuration/Testing/NodeTypes.yaml',
-                ]
+                ],
+            ],
+            'NodeType:PathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/Testing/NodeTypes.SomeSuffix.yaml',
+                ],
             ],
             'NodeType:PathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => [
                 'options' => [
                     'path' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
-                ]
-            ]
+                ],
+            ],
         ];
         self::assertSame($expectedResult, $actualResult);
     }
@@ -234,17 +246,17 @@ class NodeTypesLoaderTest extends UnitTestCase
             'Some.Node:Type' => [
                 'options' => [
                     'finalPath' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
-                    'pathPackages.Package1.NodeTypes.Foo_yaml' => true,
                     'pathPackages.Package1.NodeTypes.Bar_yaml' => true,
+                    'pathPackages.Package1.NodeTypes.Foo_yaml' => true,
+                    'pathPackages.Package1.Configuration.NodeTypes_yaml' => true,
+                    'pathPackages.Package1.Configuration.NodeTypes_SomeSuffix_yaml' => true,
                     'pathPackages.Package2.NodeTypes.Foo_yaml' => true,
+                    'pathPackages.Package2.Configuration.NodeTypes_yaml' => true,
                     'pathConfiguration.NodeTypes_yaml' => true,
+                    'pathConfiguration.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.NodeTypes_yaml' => true,
+                    'pathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => true,
-                ],
-            ],
-            'NodeType:PathPackages.Package1.NodeTypes.Foo_yaml' => [
-                'options' => [
-                    'path' => 'Packages/Package1/NodeTypes/Foo.yaml',
                 ],
             ],
             'NodeType:PathPackages.Package1.NodeTypes.Bar_yaml' => [
@@ -252,9 +264,29 @@ class NodeTypesLoaderTest extends UnitTestCase
                     'path' => 'Packages/Package1/NodeTypes/Bar.yaml',
                 ],
             ],
+            'NodeType:PathPackages.Package1.NodeTypes.Foo_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package1/NodeTypes/Foo.yaml',
+                ],
+            ],
+            'NodeType:PathPackages.Package1.Configuration.NodeTypes_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package1/Configuration/NodeTypes.yaml',
+                ],
+            ],
+            'NodeType:PathPackages.Package1.Configuration.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package1/Configuration/NodeTypes.SomeSuffix.yaml',
+                ],
+            ],
             'NodeType:PathPackages.Package2.NodeTypes.Foo_yaml' => [
                 'options' => [
                     'path' => 'Packages/Package2/NodeTypes/Foo.yaml',
+                ],
+            ],
+            'NodeType:PathPackages.Package2.Configuration.NodeTypes_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package2/Configuration/NodeTypes.yaml',
                 ],
             ],
             'NodeType:PathConfiguration.NodeTypes_yaml' => [
@@ -262,9 +294,19 @@ class NodeTypesLoaderTest extends UnitTestCase
                     'path' => 'Configuration/NodeTypes.yaml',
                 ],
             ],
+            'NodeType:PathConfiguration.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/NodeTypes.SomeSuffix.yaml',
+                ],
+            ],
             'NodeType:PathConfiguration.Testing.NodeTypes_yaml' => [
                 'options' => [
                     'path' => 'Configuration/Testing/NodeTypes.yaml',
+                ],
+            ],
+            'NodeType:PathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/Testing/NodeTypes.SomeSuffix.yaml',
                 ],
             ],
             'NodeType:PathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => [
@@ -287,10 +329,15 @@ class NodeTypesLoaderTest extends UnitTestCase
                 'options' => [
                     'finalPath' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
                     'pathPackages.Package2.NodeTypes.Foo_yaml' => true,
-                    'pathPackages.Package1.NodeTypes.Foo_yaml' => true,
+                    'pathPackages.Package2.Configuration.NodeTypes_yaml' => true,
                     'pathPackages.Package1.NodeTypes.Bar_yaml' => true,
+                    'pathPackages.Package1.NodeTypes.Foo_yaml' => true,
+                    'pathPackages.Package1.Configuration.NodeTypes_yaml' => true,
+                    'pathPackages.Package1.Configuration.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.NodeTypes_yaml' => true,
+                    'pathConfiguration.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.NodeTypes_yaml' => true,
+                    'pathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => true,
                     'pathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => true,
                 ],
             ],
@@ -299,9 +346,9 @@ class NodeTypesLoaderTest extends UnitTestCase
                     'path' => 'Packages/Package2/NodeTypes/Foo.yaml',
                 ],
             ],
-            'NodeType:PathPackages.Package1.NodeTypes.Foo_yaml' => [
+            'NodeType:PathPackages.Package2.Configuration.NodeTypes_yaml' => [
                 'options' => [
-                    'path' => 'Packages/Package1/NodeTypes/Foo.yaml',
+                    'path' => 'Packages/Package2/Configuration/NodeTypes.yaml',
                 ],
             ],
             'NodeType:PathPackages.Package1.NodeTypes.Bar_yaml' => [
@@ -309,9 +356,29 @@ class NodeTypesLoaderTest extends UnitTestCase
                     'path' => 'Packages/Package1/NodeTypes/Bar.yaml',
                 ],
             ],
+            'NodeType:PathPackages.Package1.NodeTypes.Foo_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package1/NodeTypes/Foo.yaml',
+                ],
+            ],
+            'NodeType:PathPackages.Package1.Configuration.NodeTypes_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package1/Configuration/NodeTypes.yaml',
+                ],
+            ],
+            'NodeType:PathPackages.Package1.Configuration.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Packages/Package1/Configuration/NodeTypes.SomeSuffix.yaml',
+                ],
+            ],
             'NodeType:PathConfiguration.NodeTypes_yaml' => [
                 'options' => [
                     'path' => 'Configuration/NodeTypes.yaml',
+                ],
+            ],
+            'NodeType:PathConfiguration.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/NodeTypes.SomeSuffix.yaml',
                 ],
             ],
             'NodeType:PathConfiguration.Testing.NodeTypes_yaml' => [
@@ -319,9 +386,52 @@ class NodeTypesLoaderTest extends UnitTestCase
                     'path' => 'Configuration/Testing/NodeTypes.yaml',
                 ],
             ],
+            'NodeType:PathConfiguration.Testing.NodeTypes_SomeSuffix_yaml' => [
+                'options' => [
+                    'path' => 'Configuration/Testing/NodeTypes.SomeSuffix.yaml',
+                ],
+            ],
             'NodeType:PathConfiguration.Testing.SomeSubContext.NodeTypes_yaml' => [
                 'options' => [
                     'path' => 'Configuration/Testing/SomeSubContext/NodeTypes.yaml',
+                ],
+            ],
+        ];
+        self::assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * This is a test case for the issue https://github.com/neos/neos-development-collection/issues/3449
+     *
+     * @test
+     */
+    public function nodeTypeCanBeOverriddenFromNodeTypesFolder(): void
+    {
+        $mockSeoPackage = $this->mockPackage('Neos.Seo');
+        $mockCustomPackage = $this->mockPackage('Some.Package');
+
+        $nodeTypesLoader = new NodeTypesLoader(new YamlSource(), __DIR__);
+        $actualResult = $nodeTypesLoader->load([$mockSeoPackage, $mockCustomPackage], $this->mockApplicationContext);
+        $expectedResult = [
+            'Neos.Seo:TitleTagMixin' => [
+                'abstract' => true,
+                'properties' => [
+                    'titleOverride' => [
+                        'type' => 'string',
+                        'ui' => [
+                            'label' => 'i18n',
+                            'reloadIfChanged' => true,
+                            'inspector' => [
+                                'group' => 'document',
+                                'position' => 10000,
+                                'editor' => 'Neos.Neos/Inspector/Editors/TextAreaEditor',
+                                'editorOptions' => [
+                                    'placeholder' => 'i18n',
+                                ],
+                            ],
+                        ],
+                        'validation' => null,
+                    ],
                 ],
             ],
         ];

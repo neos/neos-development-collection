@@ -1,0 +1,7 @@
+'Some.Node:Type':
+  options:
+    finalPath: Configuration/Testing/NodeTypes.SomeSuffix.yaml
+    pathConfiguration.Testing.NodeTypes_SomeSuffix_yaml: true
+'NodeType:PathConfiguration.Testing.NodeTypes_SomeSuffix_yaml':
+  options:
+    path: Configuration/Testing/NodeTypes.SomeSuffix.yaml
