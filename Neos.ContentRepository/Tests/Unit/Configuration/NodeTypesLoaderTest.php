@@ -27,22 +27,22 @@ class NodeTypesLoaderTest extends UnitTestCase
     /**
      * @var NodeTypesLoader|MockObject
      */
-    private NodeTypesLoader $nodeTypesLoader;
+    private $nodeTypesLoader;
 
     /**
      * @var ApplicationContext|MockObject
      */
-    private ApplicationContext $mockApplicationContext;
+    private $mockApplicationContext;
 
     /**
      * @var FlowPackageInterface|MockObject
      */
-    private FlowPackageInterface $mockPackage1;
+    private $mockPackage1;
 
     /**
      * @var FlowPackageInterface|MockObject
      */
-    private FlowPackageInterface $mockPackage2;
+    private $mockPackage2;
 
     public function setUp(): void
     {
