@@ -161,8 +161,12 @@ following operators:
 
 =
   Strict equality of value and operand
+=~
+  Strict equality of case-insensitive value and operand
 !=
   Strict inequality of value and operand
+!=~
+  Strict inequality of case-insensitive value and operand
 <
   Value is less than operand
 <=
@@ -173,10 +177,16 @@ following operators:
   Value is greater than or equal to operand
 $=
   Value ends with operand (string-based) or value's last element is equal to operand (array-based)
+$=~
+  Value ends with operand (string-based) or case-insensitive value's last element is equal to operand (array-based)
 ^=
   Value starts with operand (string-based) or value's first element is equal to operand (array-based)
+^=~
+  Value starts with operand (string-based) or case-insensitive value's first element is equal to operand (array-based)
 *=
   Value contains operand (string-based) or value contains an element that is equal to operand (array based)
+*=~
+  Value contains operand (string-based) or case-insensitive value contains an element that is equal to operand (array based)
 instanceof
   Checks if the value is an instance of the operand
 !instanceof
