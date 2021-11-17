@@ -459,10 +459,6 @@
           <source>{0} usages</source>
           <target state="final">{0} użyć</target>
         </trans-unit>
-        <trans-unit id="relatedNodes[3]" approved="yes">
-          <source>{0} usages</source>
-          <target state="final">{0} użycia</target>
-        </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
