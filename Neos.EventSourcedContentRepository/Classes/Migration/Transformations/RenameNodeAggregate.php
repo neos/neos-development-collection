@@ -15,15 +15,11 @@ namespace Neos\EventSourcedContentRepository\Migration\Transformations;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Change the node type.
@@ -32,7 +28,6 @@ class RenameNodeAggregate implements NodeAggregateBasedTransformationInterface
 {
 
     /**
-     * @Flow\Inject
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
@@ -43,6 +38,11 @@ class RenameNodeAggregate implements NodeAggregateBasedTransformationInterface
      * @var string
      */
     protected $newNodeName;
+
+    public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
+    {
+        $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
+    }
 
     /**
      * @param string $newNodeName

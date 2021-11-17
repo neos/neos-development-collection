@@ -21,7 +21,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Change the node type.
@@ -30,7 +29,6 @@ class ChangeNodeType implements NodeAggregateBasedTransformationInterface
 {
 
     /**
-     * @Flow\Inject
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
@@ -44,7 +42,9 @@ class ChangeNodeType implements NodeAggregateBasedTransformationInterface
 
     private NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 
-    public function __construct() {
+    public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
+    {
+        $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
         // by default, we won't delete anything.
         $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::happypath();
     }

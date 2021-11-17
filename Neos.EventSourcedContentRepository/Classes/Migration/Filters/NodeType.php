@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Migration\Filters;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
@@ -24,7 +23,6 @@ class NodeType implements NodeAggregateBasedFilterInterface
 {
     /**
      * @var NodeTypeManager
-     * @Flow\Inject
      */
     protected $nodeTypeManager;
 
@@ -48,6 +46,11 @@ class NodeType implements NodeAggregateBasedFilterInterface
      * @var bool
      */
     protected $exclude = false;
+
+    public function __construct(NodeTypeManager $nodeTypeManager)
+    {
+        $this->nodeTypeManager = $nodeTypeManager;
+    }
 
     /**
      * Sets the node type name to match on.
