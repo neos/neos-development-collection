@@ -14,11 +14,11 @@ namespace Neos\CliSetup\Infrastructure\Database;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Neos\CliSetup\Exception as SetupException;
+use Doctrine\DBAL\Exception as DBALException;
 
 class DatabaseConnectionService
 {
@@ -46,6 +46,8 @@ class DatabaseConnectionService
     }
 
     /**
+     * Verify the database connection settings
+     *
      * @param array $connectionSettings
      * @throws SetupException
      */
@@ -53,24 +55,28 @@ class DatabaseConnectionService
     {
         try {
             $this->connectToDatabase($connectionSettings);
-        } catch (\Exception $exception) {
-            if (!$exception instanceof DBALException && !$exception instanceof \PDOException) {
-                throw $exception;
-            }
-            try {
-                $this->createDatabase($connectionSettings, $connectionSettings['dbname']);
-            } catch (DBALException $exception) {
-                throw new SetupException(sprintf('Database "%s" could not be created. Please check the permissions for user "%s". DBAL Exception: "%s"', $connectionSettings['dbname'], $connectionSettings['user'], $exception->getMessage()), 1351000841, $exception);
-            } catch (\PDOException $exception) {
-                throw new SetupException(sprintf('Database "%s" could not be created. Please check the permissions for user "%s". PDO Exception: "%s"', $connectionSettings['dbname'], $connectionSettings['user'], $exception->getMessage()), 1346758663, $exception);
-            }
-            try {
-                $this->connectToDatabase($connectionSettings);
-            } catch (DBALException $exception) {
-                throw new SetupException(sprintf('Could not connect to database "%s". Please check the permissions for user "%s". DBAL Exception: "%s"', $connectionSettings['dbname'], $connectionSettings['user'], $exception->getMessage()), 1351000864);
-            } catch (\PDOException $exception) {
-                throw new SetupException(sprintf('Could not connect to database "%s". Please check the permissions for user "%s". PDO Exception: "%s"', $connectionSettings['dbname'], $connectionSettings['user'], $exception->getMessage()), 1346758737);
-            }
+        } catch (DBALException | \PDOException $exception) {
+            throw new SetupException(sprintf('Could not connect to database "%s". Please check the permissions for user "%s". DBAL Exception: "%s"', $connectionSettings['dbname'], $connectionSettings['user'], $exception->getMessage()), 1351000864);
+        }
+    }
+
+    /**
+     * Create a database with the connection settings and verify the connection
+     *
+     * @param array $connectionSettings
+     * @throws SetupException
+     */
+    public function createDatabaseAndVerifyDatabaseConnectionWorks(array $connectionSettings)
+    {
+        try {
+            $this->createDatabase($connectionSettings, $connectionSettings['dbname']);
+        } catch (DBALException | \PDOException $exception) {
+            throw new SetupException(sprintf('Database "%s" could not be created. Please check the permissions for user "%s". DBAL Exception: "%s"', $connectionSettings['dbname'], $connectionSettings['user'], $exception->getMessage()), 1351000841, $exception);
+        }
+        try {
+            $this->connectToDatabase($connectionSettings);
+        } catch (DBALException | \PDOException $exception) {
+            throw new SetupException(sprintf('Could not connect to database "%s". Please check the permissions for user "%s". DBAL Exception: "%s"', $connectionSettings['dbname'], $connectionSettings['user'], $exception->getMessage()), 1351000864);
         }
     }
 
@@ -79,7 +85,7 @@ class DatabaseConnectionService
      *
      * @param array $connectionSettings array in the format array('user' => 'dbuser', 'password' => 'dbpassword', 'host' => 'dbhost', 'dbname' => 'dbname')
      * @return void
-     * @throws \PDOException if the connection fails
+     * @throws \Doctrine\DBAL\Exception | \PDOException if the connection fails
      */
     protected function connectToDatabase(array $connectionSettings)
     {

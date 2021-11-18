@@ -118,11 +118,24 @@ class SetupCommandController extends CommandController
             'password' => $password
         ];
 
+        $this->outputLine();
+
         try {
             $this->databaseConnectionService->verifyDatabaseConnectionWorks($persistenceConfiguration);
-        } catch (SetupException $e) {
-            $this->outputLine($e->getMessage());
-            $this->quit(1);
+            $this->outputLine(sprintf("Database <info>%s</info> was connected sucessfully.", $persistenceConfiguration['dbname']));
+        } catch (SetupException $exception) {
+            try {
+                $this->databaseConnectionService->createDatabaseAndVerifyDatabaseConnectionWorks($persistenceConfiguration);
+                $this->outputLine(sprintf("Database <info>%s</info> was sucessfully created.", $persistenceConfiguration['dbname']));
+            } catch (SetupException $exception) {
+                $this->outputLine(sprintf(
+                    'Database "%s" could not be created. Please check the permissions for user "%s". Exception: "%s"',
+                    $persistenceConfiguration['dbname'],
+                    $persistenceConfiguration['user'],
+                    $exception->getMessage()
+                ));
+                $this->quit(1);
+            }
         }
 
         $filename = $this->getSettingsFilename('Settings.Database.yaml');
