@@ -28,12 +28,6 @@ class SetupCommandController extends CommandController
 {
 
     /**
-     * @var string
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="core.context")
-     */
-    protected $flowContext;
-
-    /**
      * @var DatabaseConnectionService
      * @Flow\Inject
      */
@@ -138,7 +132,7 @@ class SetupCommandController extends CommandController
             }
         }
 
-        $filename = $this->getSettingsFilename('Settings.Database.yaml');
+        $filename = 'Configuration/Settings.Database.yaml';
 
         $this->outputLine();
         $this->output(sprintf('<info>%s</info>',$this->writeSettings($filename, 'Neos.Flow.persistence.backendOptions',$persistenceConfiguration)));
@@ -166,22 +160,11 @@ class SetupCommandController extends CommandController
             );
         }
 
-        $filename = $this->getSettingsFilename('Settings.Imagehandling.yaml');
+        $filename = 'Configuration/Settings.Imagehandling.yaml';
         $this->outputLine();
         $this->output(sprintf('<info>%s</info>', $this->writeSettings($filename, 'Neos.Imagine.driver', $driver)));
         $this->outputLine();
         $this->outputLine(sprintf('The new image handler setting were written to <info>%s</info>', $filename));
-    }
-
-    /**
-     * Get the full path for the given settings filename in the current application context
-     *
-     * @param string $filename The filename for the settings file
-     * @return string
-     */
-    protected function getSettingsFilename(string $filename): string
-    {
-        return 'Configuration/' . $this->flowContext . '/' . $filename;
     }
 
     /**
