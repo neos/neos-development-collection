@@ -70,7 +70,7 @@ class SetupCommandController extends CommandController
     {
         $availableDrivers = $this->databaseConnectionService->getAvailableDrivers();
         if (count($availableDrivers) == 0) {
-            $this->outputLine("No supported database driver found");
+            $this->outputLine('No supported database driver found');
             $this->quit(1);
         }
 
@@ -122,14 +122,14 @@ class SetupCommandController extends CommandController
 
         try {
             $this->databaseConnectionService->verifyDatabaseConnectionWorks($persistenceConfiguration);
-            $this->outputLine(sprintf("Database <info>%s</info> was connected sucessfully.", $persistenceConfiguration['dbname']));
+            $this->outputLine(sprintf('Database <info>%s</info> was connected sucessfully.', $persistenceConfiguration['dbname']));
         } catch (SetupException $exception) {
             try {
                 $this->databaseConnectionService->createDatabaseAndVerifyDatabaseConnectionWorks($persistenceConfiguration);
-                $this->outputLine(sprintf("Database <info>%s</info> was sucessfully created.", $persistenceConfiguration['dbname']));
+                $this->outputLine(sprintf('Database <info>%s</info> was sucessfully created.', $persistenceConfiguration['dbname']));
             } catch (SetupException $exception) {
                 $this->outputLine(sprintf(
-                    'Database "%s" could not be created. Please check the permissions for user "%s". Exception: "%s"',
+                    'Database <info>%s</info> could not be created. Please check the permissions for user <info>%s</info>. Exception: <info>%s</info>',
                     $persistenceConfiguration['dbname'],
                     $persistenceConfiguration['user'],
                     $exception->getMessage()
@@ -143,7 +143,7 @@ class SetupCommandController extends CommandController
         $this->outputLine();
         $this->output(sprintf('<info>%s</info>',$this->writeSettings($filename, 'Neos.Flow.persistence.backendOptions',$persistenceConfiguration)));
         $this->outputLine();
-        $this->outputLine(sprintf("The new database settings were written to <info>%s</info>", $filename));
+        $this->outputLine(sprintf('The new database settings were written to <info>%s</info>', $filename));
     }
 
     /**
@@ -154,7 +154,7 @@ class SetupCommandController extends CommandController
         $availableImageHandlers = $this->imageHandlerService->getAvailableImageHandlers();
 
         if (count($availableImageHandlers) == 0) {
-            $this->outputLine("No supported image handler found.");
+            $this->outputLine('No supported image handler found.');
             $this->quit(1);
         }
 
@@ -170,7 +170,7 @@ class SetupCommandController extends CommandController
         $this->outputLine();
         $this->output(sprintf('<info>%s</info>', $this->writeSettings($filename, 'Neos.Imagine.driver', $driver)));
         $this->outputLine();
-        $this->outputLine(sprintf("The new image handler setting were written to <info>%s</info>", $filename));
+        $this->outputLine(sprintf('The new image handler setting were written to <info>%s</info>', $filename));
     }
 
     /**
