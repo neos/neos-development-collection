@@ -75,7 +75,7 @@ class ThumbnailConfiguration
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
      * @param boolean $async Whether the thumbnail can be generated asynchronously
      * @param integer $quality Quality of the processed image
-     * @param string $format Format for the image, only jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported.
+     * @param string $format Format for the image, only jpg, jpeg, gif, png, wbmp, xbm, webp, avif and bmp are supported.
      */
     public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $quality = null, $format = null)
     {
