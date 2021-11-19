@@ -415,7 +415,6 @@ class ParserTest extends UnitTestCase
             Fusion,
             ["123.132" => 123, 123 => "check that the float is not casted to 123", "abc" => 123]
         ];
-
     }
 
     public function throwsOldNamespaceDeclaration(): array
@@ -525,7 +524,7 @@ class ParserTest extends UnitTestCase
             Fusion];
 
         yield 'prototype with opening block brace on newline' => [<<<'Fusion'
-            prototype(a)
+            prototype(a:b)
             {
                 b = ""
             }

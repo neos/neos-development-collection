@@ -13,7 +13,7 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
-use Neos\Fusion;
+use Neos\Fusion\Exception\ParserUnexpectedCharException;
 
 abstract class AbstractParser
 {
@@ -57,13 +57,14 @@ abstract class AbstractParser
      *
      * @param int $tokenType
      * @return Token
-     * @throws Fusion\Exception
+     * @throws ParserUnexpectedCharException
      */
     protected function expect(int $tokenType): Token
     {
         $token = $this->lexer->getCachedLookaheadOrTryToGenerateLookaheadForTokenAndGetLookahead($tokenType);
         if ($token === null || $token->getType() !== $tokenType) {
-            throw new Fusion\Exception('Expected token: "' . Token::typeToString($tokenType) . '"', 1635708717);
+            $tokenReadable = Token::typeToString($tokenType);
+            throw new ParserUnexpectedCharException("Expected token: '$tokenReadable'.", 1635708717);
         }
         return $this->lexer->consumeLookahead();
     }

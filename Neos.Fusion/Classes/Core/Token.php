@@ -94,7 +94,7 @@ class Token
      * @param int $type The type as an integer
      *
      * @return string The string representation
-     * @throws Fusion\Exception
+     * @throws \LogicException
      */
     public static function typeToString(int $type): string
     {
@@ -104,7 +104,7 @@ class Token
         $stringRepresentation = array_search($type, $constants, true);
 
         if ($stringRepresentation === false) {
-            throw new Fusion\Exception("Token of type '$type' does not exist");
+            throw new \LogicException("Token of type '$type' does not exist", 1637307344);
         }
         return $stringRepresentation;
     }

@@ -16,6 +16,7 @@ namespace Neos\Fusion\Core;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
 use Neos\Fusion\Exception\ParserException;
+use Neos\Fusion\Exception\ParserUnexpectedCharException;
 
 /**
  * The Fusion Parser
@@ -113,6 +114,15 @@ class Parser extends AbstractParser implements ParserInterface
             $this->parseStatementList();
         } catch (ParserException $e) {
             throw $e;
+        } catch (ParserUnexpectedCharException $e) {
+            throw (new ParserException())
+                ->withCode($e->getCode())
+                ->withMessageCreator(function ($nextCharPrintable) use($e) {
+                    return "Unexpected char $nextCharPrintable. {$e->getMessage()}";
+                })
+                ->withPrevious($e)
+                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                ->build();
         } catch (Fusion\Exception $e) {
             throw (new ParserException())
                 ->withCode($e->getCode())
@@ -164,7 +174,7 @@ class Parser extends AbstractParser implements ParserInterface
         throw (new ParserException())
             ->withCode(1635708717)
             ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-            ->withParseStatement()
+            ->withMessageCreator([MessageCreator::class, 'forParseStatement'])
             ->build();
     }
 
@@ -276,7 +286,7 @@ class Parser extends AbstractParser implements ParserInterface
                 ->withCode(1635708717)
                 ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())
                 ->withCursor($cursorAfterObjectPath)
-                ->withParsePathOrOperator()
+                ->withMessageCreator([MessageCreator::class, 'forParsePathOrOperator'])
                 ->build();
         }
 
@@ -301,12 +311,7 @@ class Parser extends AbstractParser implements ParserInterface
                 $filePattern = $this->consume()->getValue();
                 break;
             default:
-                throw (new ParserException())
-                    ->withCode(1635708717)
-                    ->withMessage('Expected file pattern in quotes or [a-zA-Z0-9.*:/_-]')
-                    ->withUnexpectedChar()
-                    ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-                    ->build();
+                throw new ParserUnexpectedCharException('Expected file pattern in quotes or [a-zA-Z0-9.*:/_-]', 1635708717);
         }
 
         try {
@@ -366,7 +371,7 @@ class Parser extends AbstractParser implements ParserInterface
         throw (new ParserException())
             ->withCode(1635878683)
             ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-            ->withParseEndOfStatement()
+            ->withMessageCreator([MessageCreator::class, 'forParseEndOfStatement'])
             ->build();
     }
 
@@ -466,7 +471,7 @@ class Parser extends AbstractParser implements ParserInterface
         throw (new ParserException())
             ->withCode(1635708755)
             ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-            ->withParsePathSegment()
+            ->withMessageCreator([MessageCreator::class, 'forParsePathSegment'])
             ->build();
     }
 
@@ -514,7 +519,7 @@ class Parser extends AbstractParser implements ParserInterface
         throw (new ParserException())
             ->withCode(1635708717)
             ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-            ->withParsePathValue()
+            ->withMessageCreator([MessageCreator::class, 'forParsePathValue'])
             ->build();
     }
 
@@ -531,7 +536,7 @@ class Parser extends AbstractParser implements ParserInterface
             throw (new ParserException())
                 ->withCode(1490714685)
                 ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-                ->withParseDslExpression()
+                ->withMessageCreator([MessageCreator::class, 'forParseDslExpression'])
                 ->build();
         }
         $dslCode = substr($dslCode, 1, -1);

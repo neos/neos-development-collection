@@ -13,12 +13,12 @@ namespace Neos\Fusion\Exception;
  * source code.
  */
 
-use Neos\Fusion;
+use Neos\Fusion\Exception;
 
 /**
  * 'Fluent' Exception for the Fusion Parser.
  */
-class ParserException extends Fusion\Exception
+class ParserException extends Exception
 {
     protected const RESOURCE_PATH_TO_PACKAGE_AND_CLEANED_PATH_REGEXP = <<<'REGEX'
     `
@@ -38,8 +38,7 @@ class ParserException extends Fusion\Exception
     /**
      * @var ?callable
      */
-    protected $fluentMessageMaker = null;
-    protected $fluentMessage = null;
+    protected $fluentMessageCreator = null;
     protected $fluentPrevious = null;
     protected $fluentUnexpectedChar = false;
     protected $fluentShowColumn = true;
@@ -73,18 +72,6 @@ class ParserException extends Fusion\Exception
         return $this;
     }
 
-    public function withMessage(string $message): self
-    {
-        $this->fluentMessage = $message;
-        return $this;
-    }
-
-    public function withUnexpectedChar(): self
-    {
-        $this->fluentUnexpectedChar = true;
-        return $this;
-    }
-
     public function withFile(?string $file): self
     {
         $this->fluentFile = $file;
@@ -115,113 +102,20 @@ class ParserException extends Fusion\Exception
         return $this;
     }
 
-    public function withParseStatement(): self
+    public function withMessage(string $message): self
     {
-        $this->fluentMessageMaker = static function ($nextPrint, $next, $nextPart): string {
-            switch ($next) {
-                case '/':
-                    if ($nextPart[1] ?? '' === '*') {
-                        return 'Unclosed comment.';
-                    }
-                    return 'Unexpected single /. You can start a comment with // or /* or #';
-                case '"':
-                case '\'':
-                    return 'Unclosed quoted path.';
-                case '{':
-                    return 'Unexpected block start out of context. Check the number of your curly braces.';
-                case '}':
-                    return 'Unexpected block end out of context. Check the number of your curly braces.';
-            }
-            return "Unexpected character in statement: $nextPrint. A valid object path is alphanumeric[:-], prototype(...), quoted, or a meta path starting with @";
+        $this->fluentMessageCreator = static function() use ($message) {
+            return $message;
         };
         return $this;
     }
 
-    public function withParseEndOfStatement(): self
+    /**
+     * @param callable(string $nextCharPrint, string $nextChar, string $linePartAfterCursor, string $prevChar, string $linePartBeforeCursor):string $messageMaker
+     */
+    public function withMessageCreator(callable $messageCreator): self
     {
-        $this->fluentMessageMaker = static function ($nextPrint, $next, $nextPart): string {
-            switch ($next) {
-                case '/':
-                    if ($nextPart[1] ?? '' === '*') {
-                        return 'Unclosed comment.';
-                    }
-                    return 'Unexpected single /. You can start a comment with // or /* or #';
-            }
-            return "Expected the end of a statement but found '$nextPart'.";
-        };
-        return $this;
-    }
-
-    public function withParsePathSegment(): self
-    {
-        $this->fluentMessageMaker = static function ($nextPrint, $next): string {
-            if ($next === '"' || $next === '\'') {
-                return "A quoted object path starting with $nextPrint was not closed";
-            }
-            return "Unexpected $nextPrint. Expected an object path like alphanumeric[:-], prototype(...), quoted paths, or meta path starting with @";
-        };
-        return $this;
-    }
-
-    public function withParsePathOrOperator(): self
-    {
-        $this->fluentMessageMaker = static function ($nextPrint, $next, $nextPart, $prev, $prevPart): string {
-            if (preg_match('/.*namespace\s*:\s*$/', $prevPart) === 1) {
-                return 'It looks like you want to declare a namespace alias. The feature to alias namespaces was removed.';
-            }
-            if (preg_match('/.*include\s*$/', $prevPart) === 1) {
-                return 'Did you mean to include a Fusion file? (include: FileName.fusion)';
-            }
-            if ($prev === ' ' && $next === '.') {
-                return "Nested paths, seperated by '.' cannot contain spaces.";
-            }
-            if ($prev === ' ') {
-                // it's an operator since there was space
-                return "Unknown operator starting with $nextPrint. (Or you have unwanted spaces in you object path)";
-            }
-            if ($next === '(') {
-                return "A normal path segment cannot contain '('. Did you mean to declare a prototype: 'prototype()'?";
-            }
-            if ($next === '') {
-                return "Object path without operator or block - found: $nextPrint";
-            }
-            return "Unknown operator or path segment at $nextPrint. Paths can contain only alphanumeric and ':-' - otherwise quote them.";
-        };
-        return $this;
-    }
-
-    public function withParseDslExpression(): self
-    {
-        $this->fluentMessageMaker = static function ($nextPrint, $next, $nextPart): string {
-            $dslCodeFistLine = substr($nextPart, 1);
-            return "A dsl expression starting with '$dslCodeFistLine' was not closed.";
-        };
-        return $this;
-    }
-
-    public function withParsePathValue(): self
-    {
-        $this->fluentMessageMaker = static function ($nextPrint, $next, $nextPart): string {
-            if (preg_match('/^[a-zA-Z0-9.]+/', $nextPart) === 1) {
-                return "Unexpected '$nextPart' in value assignment - It looks like an object without namespace. But namespace alias were removed. You might want to add 'Neos.Fusion:' infront.";
-            }
-            switch ($next) {
-                case '':
-                    return 'No value specified in assignment.';
-                case '"':
-                    return 'Unclosed quoted string.';
-                case '\'':
-                    return 'Unclosed char sequence.';
-                case '`':
-                    return 'Template literals without DSL identifier are not supported.';
-                case '$':
-                    if ($nextPart[1] ?? '' === '{') {
-                        return 'Unclosed eel expression.';
-                    }
-                    return 'Did you mean to start an eel expression "${...}"?';
-            }
-            return "Unexpected character in assignment starting with $nextPrint";
-        };
+        $this->fluentMessageCreator = $messageCreator;
         return $this;
     }
 
@@ -257,22 +151,19 @@ class ParserException extends Fusion\Exception
             $this->fluentShowColumn
         );
 
-        if ($this->fluentMessageMaker !== null && is_callable($this->fluentMessageMaker)) {
-            $helperMessagePart = ($this->fluentMessageMaker)(
-                $nextCharPrint,
-                $nextChar,
-                $linePartAfterCursor,
-                $prevChar,
-                $linePartBeforeCursor
-            );
-        } else {
-            $optionalUnexpectedCharMessage = $this->fluentUnexpectedChar ? "Unexpected Char $nextCharPrint: " : "";
-            $helperMessagePart = $optionalUnexpectedCharMessage . $this->fluentMessage;
+        if ($this->fluentMessageCreator === null || is_callable($this->fluentMessageCreator) === false) {
+            throw new \LogicException('a message creator must be specified.', 1637307774);
         }
 
         $this->headingMessagePart = self::generateHeadingByFileName($this->fluentFile);
         $this->asciiPreviewMessagePart = $asciiPreviewMessagePart;
-        $this->helperMessagePart = $helperMessagePart;
+        $this->helperMessagePart = ($this->fluentMessageCreator)(
+            $nextCharPrint,
+            $nextChar,
+            $linePartAfterCursor,
+            $prevChar,
+            $linePartBeforeCursor
+        );
 
         if (FLOW_SAPITYPE === 'Web') {
             // if the exception is printed raw to the web, we need to put in there twice as many nonbreaking spaces as normal ones
