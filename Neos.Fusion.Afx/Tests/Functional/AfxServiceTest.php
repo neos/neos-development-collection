@@ -68,7 +68,7 @@ EOF;
     public function htmlTagsWithIgnoredContentAreConvertedToFusionTags(): void
     {
         $afxCode = '<h1>
-
+   
 </h1>';
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Tag {
@@ -169,7 +169,7 @@ EOF;
      */
     public function whitespacesAndNewlinesAroundAfxCodeAreIgnored(): void
     {
-        $afxCode = '
+        $afxCode = '   
               <h1></h1>
         ';
         $expectedFusion = <<<'EOF'
@@ -475,11 +475,11 @@ EOF;
     {
         $afxCode = <<<'EOF'
 <h1>
-
+    
     <strong>foo</strong>
-
+    
     <i>bar</i>
-
+        
 </h1>
 EOF;
 
@@ -876,11 +876,11 @@ EOF;
     {
         $afxCode = <<<'EOF'
 <h1>
-<!--
-    comment
+<!-- 
+    comment 
     with
-    multiple
-    lines
+    multiple 
+    lines 
 -->
 </h1>
 EOF;

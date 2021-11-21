@@ -137,8 +137,9 @@ class AfxService
         // holds the incrementing index per attribute path
         $indexes = [];
         foreach ($attributes as &$attribute) {
-            if ($attribute['type'] !== 'prop')
+            if ($attribute['type'] !== 'prop') {
                 continue;
+            }
 
             $path = &$attribute['payload']['identifier'];
 
