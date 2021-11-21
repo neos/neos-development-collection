@@ -14,6 +14,7 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Fusion;
+use Neos\Fusion\Exception\ParserException;
 
 /**
  * Contract for a Fusion parser

@@ -16,7 +16,7 @@ namespace Neos\Fusion\Exception;
 use Neos\Fusion\Exception;
 
 /**
- * 'Fluent' Exception for the Fusion Parser.
+ * 'Fluent' exception for the Fusion Parser.
  */
 class ParserException extends Exception
 {
@@ -51,16 +51,25 @@ class ParserException extends Exception
     {
     }
 
+    /**
+     * @api
+     */
     public function getHeadingMessagePart(): string
     {
         return $this->headingMessagePart;
     }
 
+    /**
+     * @api
+     */
     public function getAsciiPreviewMessagePart(): string
     {
         return $this->asciiPreviewMessagePart;
     }
 
+    /**
+     * @api
+     */
     public function getHelperMessagePart(): string
     {
         return $this->helperMessagePart;
@@ -102,14 +111,6 @@ class ParserException extends Exception
         return $this;
     }
 
-    public function withMessage(string $message): self
-    {
-        $this->fluentMessageCreator = static function() use ($message) {
-            return $message;
-        };
-        return $this;
-    }
-
     /**
      * @param callable(string $nextCharPrint, string $nextChar, string $linePartAfterCursor, string $prevChar, string $linePartBeforeCursor):string $messageMaker
      */
@@ -117,6 +118,13 @@ class ParserException extends Exception
     {
         $this->fluentMessageCreator = $messageCreator;
         return $this;
+    }
+
+    public function withMessage(string $message): self
+    {
+        return $this->withMessageCreator(static function() use ($message) {
+            return $message;
+        });
     }
 
     public function build(): self
@@ -128,6 +136,18 @@ class ParserException extends Exception
 
     protected function renderAndInitializeFullMessage(): string
     {
+        if ($this->fluentMessageCreator === null || is_callable($this->fluentMessageCreator) === false) {
+            throw new \LogicException('A callable message creator must be specified.', 1637307774);
+        }
+
+        if (isset($this->fluentFusionCode) === false) {
+            throw new \LogicException('The fusion code must be specified.', 1637510580);
+        }
+
+        if (isset($this->fluentCursor) === false) {
+            throw new \LogicException('The cursor position must be specified.', 1637510583);
+        }
+
         list(
             $lineNumberCursor,
             $linePartAfterCursor,
@@ -150,10 +170,6 @@ class ParserException extends Exception
             $columnNumber,
             $this->fluentShowColumn
         );
-
-        if ($this->fluentMessageCreator === null || is_callable($this->fluentMessageCreator) === false) {
-            throw new \LogicException('a message creator must be specified.', 1637307774);
-        }
 
         $this->headingMessagePart = self::generateHeadingByFileName($this->fluentFile);
         $this->asciiPreviewMessagePart = $asciiPreviewMessagePart;

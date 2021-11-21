@@ -117,7 +117,7 @@ class Parser extends AbstractParser implements ParserInterface
         } catch (ParserUnexpectedCharException $e) {
             throw (new ParserException())
                 ->withCode($e->getCode())
-                ->withMessageCreator(function ($nextCharPrintable) use($e) {
+                ->withMessageCreator(function ($nextCharPrintable) use ($e) {
                     return "Unexpected char $nextCharPrintable. {$e->getMessage()}";
                 })
                 ->withPrevious($e)

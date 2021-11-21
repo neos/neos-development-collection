@@ -324,14 +324,17 @@ class ParserTest extends UnitTestCase
             return array_key_first([$val => 'something']);
         };
 
-        self::assertSame(-123, $asArrayKey(-123));
-        self::assertSame(-123, $asArrayKey('-123'));
+        self::assertSame(-123, $asArrayKey(-123), 'negative digits stay');
+        self::assertSame(-123, $asArrayKey('-123'), 'negative string digits will be converted to int');
 
-        self::assertSame(123, $asArrayKey(123.456));
-        self::assertSame(123, $asArrayKey('123'));
+        self::assertSame(123, $asArrayKey(123.456), 'floats will be converted to int');
+        self::assertSame(123, $asArrayKey('123'), 'small string digits will be converted to int');
+        self::assertNotSame('123', $asArrayKey('123'), 'small string digits will be converted to int');
+        self::assertSame('1321231232123322123322', $asArrayKey('1321231232123322123322'), 'big string digits as array key stay strings');
+        self::assertSame(1.3212312321233222E+21, 1321231232123322123322, 'big digits lose information');
 
-        self::assertSame('007', $asArrayKey('007'));
-        self::assertSame('123.456', $asArrayKey('123.456'));
+        self::assertSame('007', $asArrayKey('007'), 'leading zeros in string digit array keys stay strings');
+        self::assertSame('123.456', $asArrayKey('123.456'), 'string float array keys stay strings');
     }
 
     public function problematicPathIdNames(): \Generator
@@ -397,6 +400,13 @@ class ParserTest extends UnitTestCase
             0 = 123
             Fusion,
             [0 => 123]
+        ];
+
+        yield 'long digit as path identifier' => [
+            <<<'Fusion'
+            1321231232123322123322 = 123
+            Fusion,
+            ['1321231232123322123322' => 123]
         ];
 
         yield 'quoted keys and unquoted keys are treated the same' => [

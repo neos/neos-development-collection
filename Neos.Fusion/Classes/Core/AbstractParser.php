@@ -15,6 +15,9 @@ namespace Neos\Fusion\Core;
 
 use Neos\Fusion\Exception\ParserUnexpectedCharException;
 
+/**
+ * @internal
+ */
 abstract class AbstractParser
 {
     /**

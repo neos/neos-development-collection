@@ -14,7 +14,8 @@ namespace Neos\Fusion\Core;
  */
 
 /**
- * Create exception messages for the Fusion parser
+ * Creates exception messages for the Fusion parser
+ * @internal
  */
 class MessageCreator
 {

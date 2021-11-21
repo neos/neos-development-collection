@@ -13,60 +13,60 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
-use Neos\Fusion;
-
+/**
+ * @internal
+ */
 class Token
 {
-    // TODO rearrange
-    public const EOF = -1;
+    public const EOF = 1;
 
-    public const SLASH_COMMENT = 0;
-    public const HASH_COMMENT = 1;
-    public const MULTILINE_COMMENT = 2;
+    public const SLASH_COMMENT = 2;
+    public const HASH_COMMENT = 3;
+    public const MULTILINE_COMMENT = 4;
 
-    public const NEWLINE = 3;
-    public const SPACE = 4;
+    public const SPACE = 5;
+    public const NEWLINE = 6;
 
-    public const META_PATH_START = 36;
-    public const OBJECT_PATH_PART = 35;
+    public const INCLUDE = 7;
+    public const NAMESPACE = 8;
 
-    public const FUSION_OBJECT_NAME = 39;
+    public const META_PATH_START = 9;
+    public const OBJECT_PATH_PART = 10;
+    public const PROTOTYPE_START = 11;
 
-    public const TRUE_VALUE = 5;
-    public const FALSE_VALUE = 6;
-    public const NULL_VALUE = 7;
+    public const ASSIGNMENT = 12;
+    public const COPY = 13;
+    public const UNSET = 14;
 
-    public const INTEGER = 41;
-    public const FLOAT = 45;
+    public const FUSION_OBJECT_NAME = 15;
 
-    public const STRING = 31;
-    public const CHAR = 32;
+    public const TRUE_VALUE = 16;
+    public const FALSE_VALUE = 17;
+    public const NULL_VALUE = 18;
 
-    public const EEL_EXPRESSION = 33;
-    public const DSL_EXPRESSION_START = 43;
-    public const DSL_EXPRESSION_CONTENT = 44;
+    public const INTEGER = 19;
+    public const FLOAT = 20;
 
-    public const PROTOTYPE_START = 13;
-    public const INCLUDE = 11;
-    public const NAMESPACE = 12;
+    public const STRING = 21;
+    public const CHAR = 22;
 
-    public const ASSIGNMENT = 26;
-    public const COPY = 27;
-    public const UNSET = 28;
+    public const EEL_EXPRESSION = 23;
+    public const DSL_EXPRESSION_START = 24;
+    public const DSL_EXPRESSION_CONTENT = 25;
 
-    public const DOT = 15;
-    public const COLON = 16;
-    public const RPAREN = 18;
-    public const LBRACE = 19;
-    public const RBRACE = 20;
+    public const FILE_PATTERN = 26;
 
-    public const FILE_PATTERN = 40;
+    public const DOT = 27;
+    public const COLON = 28;
+    public const RPAREN = 29;
+    public const LBRACE = 30;
+    public const RBRACE = 31;
 
-    /** @var string  */
-    protected $value;
-
-    /** @var int  */
+    /** @var int */
     protected $type;
+
+    /** @var string */
+    protected $value;
 
     /**
      * @param int $type The type of the token

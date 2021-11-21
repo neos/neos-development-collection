@@ -18,6 +18,7 @@ use Neos\Utility\Arrays;
 
 /**
  * Collection of methods for the Fusion Parser
+ * @internal
  */
 class AstBuilder
 {
@@ -139,7 +140,7 @@ class AstBuilder
      * @param array|string|null $objectTree The current (sub-) tree, used internally - don't specify!
      * @return array|scalar|null The value
      */
-    public function getValueFromObjectTree(array $objectPathArray, $objectTree = null)
+    protected function getValueFromObjectTree(array $objectPathArray, $objectTree = null)
     {
         if ($objectTree === null) {
             $objectTree = &$this->objectTree;
