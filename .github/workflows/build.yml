@@ -82,15 +82,15 @@ jobs:
           cp ../${{ env.NEOS_CR_FOLDER }}/.travis_composer.json ./composer.json
           cat composer.json
 
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/composer
-            ${{ env.NEOS_DIST_FOLDER }}/Packages
-          key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
-          restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
+#      - name: Cache Composer packages
+#        id: composer-cache
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cache/composer
+#            ${{ env.NEOS_DIST_FOLDER }}/Packages
+#          key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
+#          restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
 
       - name: Install dependencies
         run: |
