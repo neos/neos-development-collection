@@ -26,7 +26,7 @@ class PropertyValue implements NodeBasedFilterInterface
     protected string $propertyName;
 
 
-    protected mixed $serializedValue;
+    protected $serializedValue;
 
     /**
      * Sets the property name to be checked.
@@ -45,7 +45,7 @@ class PropertyValue implements NodeBasedFilterInterface
      * @param mixed $propertyValue
      * @return void
      */
-    public function setSerializedValue(mixed $serializedValue): void
+    public function setSerializedValue($serializedValue): void
     {
         $this->serializedValue = $serializedValue;
     }
