@@ -90,12 +90,12 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         return new SerializedPropertyValues(array_filter(array_merge($this->values, $other->getValues()), fn ($value) => $value !== null));
     }
 
-    public function propertyExists($propertyName): bool
+    public function propertyExists(string $propertyName): bool
     {
         return isset($this->values[$propertyName]);
     }
 
-    public function getProperty($propertyName): ?SerializedPropertyValue
+    public function getProperty(string $propertyName): ?SerializedPropertyValue
     {
         if (!isset($this->values[$propertyName])) {
             return null;
@@ -111,11 +111,6 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     public function getValues(): array
     {
         return $this->values;
-    }
-
-    public static function fromNode(NodeInterface $node): self
-    {
-        return $node->getProperties();
     }
 
     /**
