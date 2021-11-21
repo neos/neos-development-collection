@@ -122,7 +122,7 @@ class ParserException extends Exception
 
     public function withMessage(string $message): self
     {
-        return $this->withMessageCreator(static function() use ($message) {
+        return $this->withMessageCreator(static function () use ($message) {
             return $message;
         });
     }

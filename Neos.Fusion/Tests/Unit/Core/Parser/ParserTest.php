@@ -545,7 +545,10 @@ class ParserTest extends UnitTestCase
     {
         return [
             ['a < b', ['b' => [], 'a' => []]],
+
             ['n.a < b', ['b' => [], 'n' => ['a' => []]]],
+
+            ['p < n.a', ['n' => ['a' => []], 'p' => []]],
 
             [<<<'Fusion'
             b = "hui"

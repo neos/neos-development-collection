@@ -13,6 +13,9 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+/**
+ * @internal
+ */
 class Lexer
 {
     // Difference to: Neos\Eel\Package::EelExpressionRecognizer
