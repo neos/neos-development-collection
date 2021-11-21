@@ -32,7 +32,7 @@ final class Filters
             } elseif ($filterObject instanceof NodeAggregateBasedFilterInterface) {
                 $this->nodeAggregateBasedFilters[] = $filterObject;
             } else {
-                throw new  \InvalidArgumentException(sprintf('Filter object must implement either %s or %s. Given: %s',  NodeBasedFilterInterface::class, NodeAggregateBasedFilterInterface::class, is_object($filterObject) ? get_class($filterObject) : gettype($filterObject)), 1611735521);
+                throw new  \InvalidArgumentException(sprintf('Filter object must implement either %s or %s. Given: %s', NodeBasedFilterInterface::class, NodeAggregateBasedFilterInterface::class, is_object($filterObject) ? get_class($filterObject) : gettype($filterObject)), 1611735521);
             }
         }
     }

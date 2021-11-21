@@ -26,7 +26,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
  */
 class AddDimensionShineThrough implements GlobalTransformationInterface
 {
-
     protected DimensionSpaceCommandHandler $dimensionSpacePointCommandHandler;
 
     /**

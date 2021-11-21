@@ -1047,7 +1047,7 @@ insert ignore into neos_contentgraph_restrictionrelation
             );
             while ($res = $rel->fetchAssociative()) {
                 $relationAnchorPoint = NodeRelationAnchorPoint::fromString($res['relationanchorpoint']);
-                $this->updateNodeRecordWithCopyOnWrite($event->getContentStreamIdentifier(), $relationAnchorPoint, function(NodeRecord $nodeRecord) use ($event) {
+                $this->updateNodeRecordWithCopyOnWrite($event->getContentStreamIdentifier(), $relationAnchorPoint, function (NodeRecord $nodeRecord) use ($event) {
                     $nodeRecord->originDimensionSpacePoint = $event->getTarget()->jsonSerialize();
                     $nodeRecord->originDimensionSpacePointHash = $event->getTarget()->getHash();
                 });

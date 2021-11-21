@@ -11,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Command;
  * source code.
  */
 
-use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use Neos\EventSourcedContentRepository\Domain\Projection\Integrity\ProjectionIntegrityViolationDetectionRunner;
 use Neos\Flow\Cli\CommandController;

@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Migration\Filters;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Filter nodes by node name.

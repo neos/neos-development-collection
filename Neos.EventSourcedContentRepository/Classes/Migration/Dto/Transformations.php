@@ -41,7 +41,7 @@ final class Transformations
             } elseif ($transformationObject instanceof NodeBasedTransformationInterface) {
                 $this->nodeBasedTransformations[] = $transformationObject;
             } else {
-                throw new \InvalidArgumentException(sprintf('Transformation object must implement either %s, %s or %s. Given: %s',  GlobalTransformationInterface::class, NodeAggregateBasedTransformationInterface::class, NodeBasedTransformationInterface::class, is_object($transformationObject) ? get_class($transformationObject) : gettype($transformationObject)), 1611735528);
+                throw new \InvalidArgumentException(sprintf('Transformation object must implement either %s, %s or %s. Given: %s', GlobalTransformationInterface::class, NodeAggregateBasedTransformationInterface::class, NodeBasedTransformationInterface::class, is_object($transformationObject) ? get_class($transformationObject) : gettype($transformationObject)), 1611735528);
             }
         }
     }
@@ -113,5 +113,4 @@ final class Transformations
         }
         return $commandResult;
     }
-
 }

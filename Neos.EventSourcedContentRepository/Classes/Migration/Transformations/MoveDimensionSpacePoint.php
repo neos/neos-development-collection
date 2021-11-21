@@ -23,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
  */
 class MoveDimensionSpacePoint implements GlobalTransformationInterface
 {
-
     protected DimensionSpaceCommandHandler $dimensionSpacePointCommandHandler;
 
     /**

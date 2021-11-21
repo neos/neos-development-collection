@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Migration\Command;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 
 /**
@@ -82,12 +81,12 @@ final class ExecuteMigration
         return $this->workspaceName;
     }
 
-    public function getOrCreateContentStreamIdentifierForWriting(int $index): ContentStreamIdentifier {
+    public function getOrCreateContentStreamIdentifierForWriting(int $index): ContentStreamIdentifier
+    {
         if (isset($this->contentStreamIdentifiersForWriting[$index])) {
             return $this->contentStreamIdentifiersForWriting[$index];
         }
 
         return ContentStreamIdentifier::create();
     }
-
 }

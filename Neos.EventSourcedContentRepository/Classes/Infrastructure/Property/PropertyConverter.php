@@ -62,7 +62,6 @@ final class PropertyConverter
                     // $propertyValue == null and not defined in NodeTypes -> we want to unset $propertyName!
                     $serializedPropertyValues[$propertyName] = null;
                 }
-
             }
         }
 

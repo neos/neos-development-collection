@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Migration\Transformations;
+
 /*
  * This file is part of the Neos.ContentRepository package.
  *

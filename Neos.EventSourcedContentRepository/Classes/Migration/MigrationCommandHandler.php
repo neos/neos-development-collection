@@ -124,18 +124,17 @@ class MigrationCommandHandler
         $commandResult = CommandResult::createEmpty();
         if ($transformations->containsGlobal()) {
             $commandResult = $transformations->executeGlobal($contentStreamForReading, $contentStreamForWriting);
-        } else if ($transformations->containsNodeAggregateBased()) {
+        } elseif ($transformations->containsNodeAggregateBased()) {
             foreach ($this->contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
                 foreach ($this->contentGraph->findNodeAggregatesByType($contentStreamForReading, $nodeTypeName) as $nodeAggregate) {
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
                         $commandResult = $commandResult->merge(
                             $transformations->executeNodeAggregateBased($nodeAggregate, $contentStreamForWriting)
                         );
-
                     }
                 }
             }
-        } else if ($transformations->containsNodeBased()) {
+        } elseif ($transformations->containsNodeBased()) {
             foreach ($this->contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
                 foreach ($this->contentGraph->findNodeAggregatesByType($contentStreamForReading, $nodeTypeName) as $nodeAggregate) {
                     // we *also* apply the node-aggregate-based filters on the node based transformations, so that you can filter

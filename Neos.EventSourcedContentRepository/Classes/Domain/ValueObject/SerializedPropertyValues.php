@@ -13,7 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

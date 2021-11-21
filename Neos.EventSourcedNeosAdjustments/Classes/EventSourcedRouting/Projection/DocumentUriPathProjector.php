@@ -536,16 +536,20 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
     {
         if ($this->isLiveContentStream($event->getContentStreamIdentifier())) {
             $this->updateNodeQuery(
-                'SET dimensionspacepointhash = :newDimensionSpacePointHash WHERE dimensionspacepointhash = :originalDimensionSpacePointHash', [
+                'SET dimensionspacepointhash = :newDimensionSpacePointHash WHERE dimensionspacepointhash = :originalDimensionSpacePointHash',
+                [
                 'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
                 'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
-            ]);
+            ]
+            );
 
             $this->updateNodeQuery(
-                'SET origindimensionspacepointhash = :newDimensionSpacePointHash WHERE origindimensionspacepointhash = :originalDimensionSpacePointHash', [
+                'SET origindimensionspacepointhash = :newDimensionSpacePointHash WHERE origindimensionspacepointhash = :originalDimensionSpacePointHash',
+                [
                 'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
                 'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
-            ]);
+            ]
+            );
         }
     }
 

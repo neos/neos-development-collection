@@ -17,7 +17,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Filter nodes by origin dimension space point. Normally, check for exact matches; but if includeSpecializations=TRUE,
@@ -34,7 +33,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class DimensionSpacePoints implements NodeBasedFilterInterface
 {
-
     protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
     protected DimensionSpacePointSet $points;

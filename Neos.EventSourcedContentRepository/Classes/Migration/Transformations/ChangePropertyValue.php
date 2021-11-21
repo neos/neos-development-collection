@@ -22,7 +22,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Change the value of a given property.
@@ -150,4 +149,3 @@ class ChangePropertyValue implements NodeBasedTransformationInterface
         return CommandResult::createEmpty();
     }
 }
-

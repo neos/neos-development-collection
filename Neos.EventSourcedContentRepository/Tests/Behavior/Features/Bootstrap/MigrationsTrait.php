@@ -44,7 +44,7 @@ trait MigrationsTrait
     public function iRunTheFollowingNodeMigration(string $workspaceName, string $contentStreams, PyStringNode $string)
     {
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
-        $contentStreamIdentifiers = array_map(fn(string $cs) => ContentStreamIdentifier::fromString($cs), explode(',', $contentStreams));
+        $contentStreamIdentifiers = array_map(fn (string $cs) => ContentStreamIdentifier::fromString($cs), explode(',', $contentStreams));
         $command = new ExecuteMigration($migrationConfiguration, new WorkspaceName($workspaceName), $contentStreamIdentifiers);
         $this->migrationCommandHandler->handleExecuteMigration($command);
     }
