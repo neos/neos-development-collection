@@ -112,6 +112,12 @@ class SetupCommandController extends CommandController
             'password' => $password
         ];
 
+        // postgres does not know utf8mb4
+        if ($driver == 'pdo_pgsql') {
+            $persistenceConfiguration['charset'] = 'utf8';
+            $persistenceConfiguration['defaultTableOptions']['charset'] = 'utf8';
+        }
+
         $this->outputLine();
 
         try {
