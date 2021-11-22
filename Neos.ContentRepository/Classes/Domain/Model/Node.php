@@ -928,7 +928,11 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
             return ($returnNodesAsIdentifiers ? $value : $this->context->getNodeByIdentifier($value));
         }
 
-        return $this->propertyMapper->convert($value, $expectedPropertyType);
+        try {
+            return $this->propertyMapper->convert($value, $expectedPropertyType);
+        } catch (\Neos\Flow\Property\Exception $exception) {
+            throw new NodeException(sprintf('Failed to convert property "%s" of node "%s" to the expected type of "%s": %s', $propertyName, $this->getIdentifier(), $expectedPropertyType, $exception->getMessage()), 1630675703, $exception);
+        }
     }
 
     /**

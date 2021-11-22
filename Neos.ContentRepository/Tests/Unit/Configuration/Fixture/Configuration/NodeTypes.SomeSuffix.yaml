@@ -1,0 +1,7 @@
+'Some.Node:Type':
+  options:
+    finalPath: Configuration/NodeTypes.SomeSuffix.yaml
+    pathConfiguration.NodeTypes_SomeSuffix_yaml: true
+'NodeType:PathConfiguration.NodeTypes_SomeSuffix_yaml':
+  options:
+    path: Configuration/NodeTypes.SomeSuffix.yaml

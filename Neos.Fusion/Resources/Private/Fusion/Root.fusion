@@ -1,5 +1,6 @@
 include: DebugConsole.fusion
 include: Match.fusion
+include: Memo.fusion
 
 prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
