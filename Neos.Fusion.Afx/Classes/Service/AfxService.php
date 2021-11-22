@@ -23,6 +23,7 @@ use Neos\Fusion\Afx\Exception\AfxException;
 class AfxService
 {
     const INDENTATION = '    ';
+    const SHORTHAND_META_PATHS = ['@if', '@process'];
 
     /**
      * @var string $afxCode the AFX code that is converted
@@ -127,6 +128,33 @@ class AfxService
         return $fusion;
     }
 
+    /**
+     * @param array $attributes
+     * @return array
+     */
+    protected static function generatePathForShorthandFusionMetaPath(array $attributes): array
+    {
+        // holds the incrementing index per attribute path
+        $indexes = [];
+        foreach ($attributes as &$attribute) {
+            if ($attribute['type'] !== 'prop') {
+                continue;
+            }
+
+            $path = &$attribute['payload']['identifier'];
+
+            $fusionPropertyPathSegments = explode('.', $path);
+            // f.x. '@if' (when shorthand) or 'hasTitle' (when no shorthand)
+            $lastPathSegment = end($fusionPropertyPathSegments);
+
+            if (in_array($lastPathSegment, self::SHORTHAND_META_PATHS, true)) {
+                $indexes[$path] ?? $indexes[$path] = 0;
+                // add f.x. '.if_1'
+                $path .= '.' . substr($lastPathSegment, 1) . '_' . ++$indexes[$path];
+            }
+        }
+        return $attributes;
+    }
 
     /**
      * @param array $payload
@@ -211,6 +239,8 @@ class AfxService
             $metaAttributes = [];
             $fusionAttributes = [];
             $spreadsOrAttributeLists = [];
+
+            $attributes = self::generatePathForShorthandFusionMetaPath($attributes);
 
             // seperate between attributes (before the first spread), meta attributes
             // spreads and attributes lists between and after spreads
