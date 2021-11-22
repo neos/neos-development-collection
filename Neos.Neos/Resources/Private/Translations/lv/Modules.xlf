@@ -1053,7 +1053,7 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.title" xml:space="preserve">
 				<source>Site creation error</source>
-        <target state="needs-translation">Site creation error</target>
+        <target state="translated">Vietnes izveides kļūda</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.body" xml:space="preserve">
 				<source>Error: The given node type "{0}" was not found</source>
@@ -1061,7 +1061,7 @@ Iezīmējiet vienu no mezgliem redzēsiet visus iespējamos elementu (mezglu) sa
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title" xml:space="preserve">
 				<source>Site creation error</source>
-        <target state="needs-translation">Site creation error</target>
+        <target state="translated">Vietnes izveides kļūda</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body" xml:space="preserve">
 				<source>Error: The given node type "%s" is not based on the superType "{0}"</source>
