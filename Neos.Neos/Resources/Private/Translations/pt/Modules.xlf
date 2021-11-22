@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
-        <target state="needs-translation">Title</target>
+        <target state="translated">Título</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
@@ -444,7 +444,7 @@
       </trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-        <target state="needs-translation">Title</target>
+        <target state="translated">Título</target>
       </trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
