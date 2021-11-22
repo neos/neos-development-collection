@@ -1,0 +1,24 @@
+Neos:
+  CliSetup:
+    #
+    # Imagine drivers that are supported
+    #
+    supportedImageHandlers:
+      'Gd': 'GD Library - generally slow, not recommended in production'
+      'Gmagick': 'Gmagick php module'
+      'Imagick': 'ImageMagick php module'
+      'Vips': 'Vips php module - fast and memory efficient, needs rokka/imagine-vips'
+    #
+    # Images to verify that the format can be handled
+    #
+    requiredImageFormats:
+      'jpg': 'resource://Neos.Neos/Private/Installer/TestImages/Test.jpg'
+      'gif': 'resource://Neos.Neos/Private/Installer/TestImages/Test.gif'
+      'png': 'resource://Neos.Neos/Private/Installer/TestImages/Test.png'
+    #
+    # The database drivers that are supported by migrations
+    #
+    supportedDatabaseDrivers:
+      'pdo_mysql': 'MySQL/MariaDB via PDO'
+      'mysqli': 'MySQL/MariaDB via mysqli'
+      'pdo_pgsql': 'PostgreSQL via PDO'
