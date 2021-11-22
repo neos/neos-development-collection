@@ -10,6 +10,10 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\Flow\Property\Exception as PropertyException;
+use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -221,5 +225,30 @@ class NodeTest extends UnitTestCase
         $node->createNode('bar', $mockNodeType);
 
         self::assertNotSame($generatedIdentifiers[1], $generatedIdentifiers[2], 'Child nodes should have distinct identifiers');
+    }
+
+    /**
+     * @test
+     */
+    public function getPropertyThrowsMeaningfulExceptionWhenPropertyCantBeConverted()
+    {
+        $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
+        $mockNodeType->expects(self::atLeastOnce())->method('getPropertyType')->with('somePropertyName')->willReturn('ExpectedPropertyType');
+        $mockNodeType->expects(self::atLeastOnce())->method('hasConfiguration')->with('properties.somePropertyName')->willReturn(true);
+        $mockNodeData->method('getNodeType')->willReturn($mockNodeType);
+        $mockNodeData->expects(self::atLeastOnce())->method('getProperty')->with('somePropertyName')->willReturn('somePropertyValue');
+        $mockNodeData->method('getIdentifier')->willReturn('someNodeIdentifier');
+
+        $node = new Node($mockNodeData, $mockContext);
+
+        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->getMock();
+        $mockPropertyMapper->expects(self::atLeastOnce())->method('convert')->with('somePropertyValue', 'ExpectedPropertyType')->willThrowException(new PropertyException('original exception'));
+        $this->inject($node, 'propertyMapper', $mockPropertyMapper);
+
+        $this->expectException(NodeException::class);
+        $this->expectExceptionMessage('Failed to convert property "somePropertyName" of node "someNodeIdentifier" to the expected type of "ExpectedPropertyType": original exception');
+        $node->getProperty('somePropertyName');
     }
 }

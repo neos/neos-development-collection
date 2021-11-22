@@ -38,7 +38,7 @@
               <div class="neos-control-group{f:validation.ifHasErrors(for: 'authenticationProviderName', then: ' neos-error')}">
                 <label class="neos-control-label" for="authenticationProviderName">{neos:backend.translate(id: 'users.new.userData.authenticationProviderName', value: 'Authentication Provider', source: 'Modules', package: 'Neos.Neos')}</label>
                 <div class="neos-controls">
-                  <f:form.select name="authenticationProviderName" id="authenticationProviderName" options="{providers}" prependOptionLabel="{neos:backend.translate(id: 'users.new.userData.authenticationProviderName.useDefault', source: 'Modules', value: 'Use system default')}" prependOptionValue="" class="neos-span12" />
+                  <f:form.select name="authenticationProviderName" id="authenticationProviderName" options="{providers}" optionLabelField="label" optionValueField="identifier" prependOptionLabel="{neos:backend.translate(id: 'users.new.userData.authenticationProviderName.useDefault', source: 'Modules', value: 'Use system default')}" prependOptionValue="" class="neos-span12" />
                   <f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'authenticationProviderName'}"/>
                 </div>
               </div>

@@ -848,8 +848,8 @@ Cliquez sur l'un des nœuds pour ne voir que ses substituts et ses variantes. Cl
 				<source>Domain created</source>
 			<target state="needs-translation">Domain created</target></trans-unit>
       <trans-unit id="sites.domainCreated.body" xml:space="preserve">
-				<source>'The domain "{0}" has been created.'</source>
-			<target state="needs-translation">'The domain "{0}" has been created.'</target></trans-unit>
+				<source>The domain "{0}" has been created.</source>
+			<target state="needs-translation">The domain "{0}" has been created.</target></trans-unit>
       <trans-unit id="sites.domainDeleted.title" xml:space="preserve">
 				<source>Domain deleted</source>
 			<target state="needs-translation">Domain deleted</target></trans-unit>
