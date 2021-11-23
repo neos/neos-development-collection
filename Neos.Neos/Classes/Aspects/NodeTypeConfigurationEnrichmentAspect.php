@@ -205,7 +205,10 @@ class NodeTypeConfigurationEnrichmentAspect
             }
 
             $editorName = $propertyConfiguration['ui']['inspector']['editor']
-                ?? array_reduce($declaredSuperTypes, function ($editorName, NodeType $superType) use ($propertyName) {
+                ?? array_reduce($declaredSuperTypes, function ($editorName, $superType) use ($propertyName) {
+                    if (!$superType instanceof NodeType) {
+                        return null;
+                    }
                     $superTypeConfiguration = $superType->getLocalConfiguration();
                     return $editorName ?? $superTypeConfiguration['properties'][$propertyName]['ui']['inspector']['editor'] ?? null;
                 }, null);
