@@ -24,7 +24,10 @@ class Version20141118172322 extends AbstractMigration
         $this->addSql("ALTER TABLE typo3_media_domain_model_imagevariant ADD CONSTRAINT FK_758EDEBD55FF4171 FOREIGN KEY (originalasset) REFERENCES typo3_media_domain_model_image (persistence_object_identifier)");
         $this->addSql("ALTER TABLE typo3_media_domain_model_imagevariant ADD CONSTRAINT FK_758EDEBD47A46B0A FOREIGN KEY (persistence_object_identifier) REFERENCES typo3_media_domain_model_asset (persistence_object_identifier) ON DELETE CASCADE");
         $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD CONSTRAINT FK_B7CE141455FF4171 FOREIGN KEY (originalasset) REFERENCES typo3_media_domain_model_asset (persistence_object_identifier)");
-        $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD CONSTRAINT FK_B7CE1414BC91F416 FOREIGN KEY (resource) REFERENCES typo3_flow_resource_resource (persistence_object_identifier)");
+        $tableNames = $this->sm->listTableNames();
+        if (in_array('typo3_flow_resource_resource', $tableNames, true)) {
+            $this->addSql("ALTER TABLE typo3_typo3_domain_model_media_image ADD CONSTRAINT typo3_typo3_domain_model_media_image_ibfk_1 FOREIGN KEY (flow3_resource_resource) REFERENCES typo3_flow_resource_resource(flow3_persistence_identifier)");
+        }
         $this->addSql("ALTER TABLE typo3_media_domain_model_asset DROP INDEX IDX_B8306B8EBC91F416, ADD UNIQUE INDEX UNIQ_B8306B8EBC91F416 (resource)");
         $this->addSql("ALTER TABLE typo3_media_domain_model_image DROP type, DROP imagevariants");
     }
