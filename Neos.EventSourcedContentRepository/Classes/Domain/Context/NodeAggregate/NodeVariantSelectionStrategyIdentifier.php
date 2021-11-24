@@ -18,7 +18,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The node variant selection strategy for node aggregates as selected when creating commands.
- * Used for calculating the affected dimension space points to e.g. build restriction relations to other node aggregates.
+ * Used for calculating the affected dimension space points to e.g. build restriction relations to other node aggregates;
+ * or to remove nodes.
  *
  * @Flow\Proxy(false)
  */
@@ -30,7 +31,7 @@ final class NodeVariantSelectionStrategyIdentifier implements \JsonSerializable
     const STRATEGY_ONLY_GIVEN_VARIANT = 'onlyGivenVariant';
 
     /**
-     * The "virtual specializations" strategy, meaning only the specializations covered but unoccupied by this node aggregate are affected
+     * The "virtual specializations" strategy, meaning only the specializations covered but unoccupied by this node aggregate are affected.
      */
     const STRATEGY_VIRTUAL_SPECIALIZATIONS = 'virtualSpecializations';
 
@@ -105,5 +106,10 @@ final class NodeVariantSelectionStrategyIdentifier implements \JsonSerializable
     public function __toString(): string
     {
         return $this->identifier;
+    }
+
+    public function equals(NodeVariantSelectionStrategyIdentifier $other): bool
+    {
+        return $this->identifier === $other->identifier;
     }
 }

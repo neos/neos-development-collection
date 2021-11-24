@@ -53,5 +53,6 @@ Feature: Create two nodes with the same node aggregate identifier in the same su
     And the graph projection is fully up to date
     And I run integrity violation detection
     # one error per covered dimension space point
-    Then I expect the integrity violation detection result to contain exactly 1 error
-    And I expect integrity violation detection result error number 1 to have code 1597671294
+    Then I expect the integrity violation detection result to contain exactly 2 errors
+    And I expect integrity violation detection result error number 1 to have code 1597909228
+    And I expect integrity violation detection result error number 2 to have code 1597671294

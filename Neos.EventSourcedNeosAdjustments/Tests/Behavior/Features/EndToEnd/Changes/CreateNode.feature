@@ -39,12 +39,12 @@ Feature: Nodes can be created
 #    Then the feedback contains "Neos.Neos.Ui:UpdateNodeInfo"
 #    Then the feedback contains "Neos.Neos.Ui:NodeCreated"
 
-    #When the graph projection is fully up to date
-    #And I get the node at path "/neosdemo/newnode"
-    #And I expect the current Node to have the properties:
-    #  | Key            | Value   |
-    #  | title          | newnode |
-    #  | urlPathSegment | newnode |
+    When the graph projection is fully up to date
+    And I get the node at path "/neosdemo/newnode"
+    And I expect the current Node to have the properties:
+      | Key            | Value   |
+      | title          | newnode |
+      | urlPathSegment | newnode |
 
 # TODO: fix!
 #  Scenario: CreateInto on Content Nodes

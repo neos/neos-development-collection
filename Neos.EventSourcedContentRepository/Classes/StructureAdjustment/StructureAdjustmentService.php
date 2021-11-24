@@ -35,7 +35,7 @@ class StructureAdjustmentService
      */
     public function findAllAdjustments(): \Generator
     {
-        foreach ($this->contentGraph->findProjectedNodeTypes() as $nodeTypeName) {
+        foreach ($this->contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
             yield from $this->findAdjustmentsForNodeType($nodeTypeName);
         }
     }

@@ -878,7 +878,7 @@ order by level asc, position asc;')
      * @param array $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param ContentRepository\Projection\Content\SearchTerm|null $searchTerm
-     * @return array
+     * @return iterable<NodeInterface>
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
@@ -961,6 +961,7 @@ order by level asc, position asc;')
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
 
+        // TODO: maybe make Nodes lazy-capable as well (so we can yield the results inside the foreach loop)
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord, $this->getDimensionSpacePoint(), $this->visibilityConstraints);

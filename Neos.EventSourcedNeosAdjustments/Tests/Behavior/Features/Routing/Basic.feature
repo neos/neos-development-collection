@@ -4,6 +4,18 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
 
   Background:
     Given I have no content dimensions
+    And I have the following NodeTypes configuration:
+    """
+    'Neos.Neos:Sites': {}
+    'Neos.EventSourcedNeosAdjustments:Test.Routing.Page':
+      properties:
+        uriPathSegment:
+          type: string
+    'Neos.EventSourcedNeosAdjustments:Test.Routing.Content':
+      properties:
+        uriPathSegment:
+          type: string
+    """
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
@@ -26,7 +38,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     #      nody-mc-nodeface
     #
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
+    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                          | initialPropertyValues                    | nodeName |
       | shernode-homes          | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
       | sir-david-nodenborough  | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
