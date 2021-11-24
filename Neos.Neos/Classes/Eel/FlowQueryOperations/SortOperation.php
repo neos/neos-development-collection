@@ -46,6 +46,19 @@ class SortOperation extends AbstractOperation
      *
      * First argument is the node property to sort by. Works with internal arguments (_xyz) as well.
      * Second argument is the sort direction (ASC or DESC).
+     * Third optional argument are the sort options (see https://www.php.net/manual/en/function.sort):
+     *  - 'SORT_REGULAR'
+     *  - 'SORT_NUMERIC'
+     *  - 'SORT_STRING'
+     *  - 'SORT_LOCALE_STRING'
+     *  - 'SORT_NATURAL'
+     *  - 'SORT_FLAG_CASE' (use as last option with SORT_STRING, SORT_LOCALE_STRING or SORT_NATURAL)
+     * A single sort option can be supplied as string. Multiple sort options are supplied as array.
+     * Other than the above listed sort options throw an error. Omitting the third parameter leaves FlowQuery sort() in SORT_REGULAR sort mode.
+     * Example usages:
+     *      sort("title", "ASC", ["SORT_NATURAL", "SORT_FLAG_CASE"])
+     *      sort("risk", "DESC", "SORT_NUMERIC")
+     *
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation.
