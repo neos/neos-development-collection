@@ -28,6 +28,9 @@
             "Neos\\Fusion\\Tests\\": "Tests"
         }
     },
+    "suggest": {
+        "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime"
+    },
     "extra": {
         "applied-flow-migrations": [
             "TYPO3.TYPO3CR-20150510103823",

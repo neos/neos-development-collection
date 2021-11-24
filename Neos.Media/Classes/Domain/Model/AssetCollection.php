@@ -38,7 +38,7 @@ class AssetCollection
 
     /**
      * @var Collection<\Neos\Media\Domain\Model\Tag>
-     * @ORM\ManyToMany(inversedBy="assetCollections")
+     * @ORM\ManyToMany(inversedBy="assetCollections", cascade={"persist"})
      * @ORM\OrderBy({"label"="ASC"})
      * @Flow\Lazy
      */

@@ -254,11 +254,13 @@ class ApplyTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('apply/renderRawArrayWithSpread');
-        self::assertEquals([
-            'key' => 'original value',
-            'alter' => 'altered value',
-            'add' => 'added value'
-        ], $view->render()
+        self::assertEquals(
+            [
+                'key' => 'original value',
+                'alter' => 'altered value',
+                'add' => 'added value'
+            ],
+            $view->render()
         );
     }
 
@@ -269,7 +271,19 @@ class ApplyTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('apply/renderArrayWithPositionAndSpread');
-        self::assertEquals('startmiddleModifiedendModified', $view->render()
+        self::assertEquals(
+            'startmiddleModifiedendModified',
+            $view->render()
         );
+    }
+
+    /**
+     * @test
+     */
+    public function rendererWithNestedPropsInApply()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('apply/renderWithNestedProps');
+        self::assertEquals('::example::', $view->render());
     }
 }

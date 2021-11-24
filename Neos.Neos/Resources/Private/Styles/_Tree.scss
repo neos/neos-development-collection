@@ -1,4 +1,4 @@
-ul.neos-dynatree-container {
+ul.neos-tree-container {
 	padding: 0;
 	margin: 0;
 	background-color: transparent;
@@ -8,39 +8,14 @@ ul.neos-dynatree-container {
 	white-space: nowrap;
 	display: table;
 
-	&.neos-dynatree-no-connector > li > span {
-		span {
-			display: inline-block;
-			width: 24px;
-			height: 24px;
-			line-height: 20px;
-			vertical-align: middle;
-			text-align: center;
-			cursor: pointer;
-			position: relative;
-		}
-
-		&.neos-dynatree-loading span {
-			vertical-align: middle;
-			background-image: url('../../Public/Images/ajax-preloader-222222.gif');
-			background-repeat: no-repeat;
-			background-position: 5px 3px;
-
-			&:before {
-				display: none;
-			}
-		}
-	}
-
-	.neos-dynatree-node {
-		display: table-cell;
+	.neos-tree-node {
 		min-width: 100%;
-		float: left;
 		position: relative;
 		height: 24px;
 		line-height: 24px;
 		box-sizing: border-box;
 		border-left: 3px solid transparent;
+		z-index: 10;
 
 		&.neos-hidden {
 			span + span:after {
@@ -81,11 +56,11 @@ ul.neos-dynatree-container {
 
 		&.neos-hiddenInIndex {
 			span + span {
-				opacity: .5;
+				opacity: 0.5;
 			}
 		}
 
-		&.neos-dynatree-focused {
+		&.neos-tree-focused {
 			background-color: $grayMedium;
 
 			span + span,
@@ -94,8 +69,12 @@ ul.neos-dynatree-container {
 			}
 		}
 
-		&.neos-dynatree-active {
-			background-color: $grayMedium;
+		&.neos-tree-active {
+			background: linear-gradient(
+				to bottom,
+				$grayMedium ($generalFontSize + $unit/4),
+				$grayDark ($generalFontSize + $unit/4)
+			);
 
 			span + span,
 			a {
@@ -103,19 +82,19 @@ ul.neos-dynatree-container {
 			}
 		}
 
-		&.neos-dynatree-dirty {
+		&.neos-tree-dirty {
 			border-left: 3px solid $orange;
 		}
 
-		.neos-dynatree-empty,
-		.neos-dynatree-vline,
-		.neos-dynatree-connector,
-		.neos-dynatree-expander,
-		.neos-dynatree-icon,
-		.neos-dynatree-checkbox,
-		.neos-dynatree-radio,
-		.neos-dynatree-drag-helper-img,
-		#neos-dynatree-drop-marker {
+		.neos-tree-empty,
+		.neos-tree-vline,
+		.neos-tree-connector,
+		.neos-tree-expander,
+		.neos-tree-icon,
+		.neos-tree-checkbox,
+		.neos-tree-radio,
+		.neos-tree-drag-helper-img,
+		#neos-tree-drop-marker {
 			display: inline-block;
 			width: 24px;
 			height: 24px;
@@ -123,42 +102,26 @@ ul.neos-dynatree-container {
 			color: $textSubtleLight;
 		}
 
-		&.neos-dynatree-exp-e,
-		&.neos-dynatree-exp-ed,
-		&.neos-dynatree-exp-el,
-		&.neos-dynatree-exp-edl {
-			.neos-dynatree-expander {
-				line-height: 24px;
-				@extend .#{$fa-css-prefix}-caret-right;
-				@extend .fas;
-				-webkit-transform: rotate(90deg);
-				-moz-transform: rotate(90deg);
-				-ms-transform: rotate(90deg);
-				-o-transform: rotate(90deg);
-				transform: rotate(90deg);
+		&.neos-tree-open > .neos-tree-expander {
+			display: inline-block;
+			line-height: 24px;
+			@extend .#{$fa-css-prefix}-caret-down;
+			@extend .fas;
 
-				&:before {
-					left: 11px;
-				}
+			&:before {
+				left: 7px;
 			}
 		}
 
-		&.neos-dynatree-loading {
-			.neos-dynatree-connector,
-			.neos-dynatree-expander {
-				vertical-align: middle;
-				background-image: url('../../Public/Images/ajax-preloader-222222.gif');
-				background-repeat: no-repeat;
-				background-position: 5px 4px;
-				rotate: 0;
-
-				&:before {
-					display: none;
-				}
-			}
+		.neos-tree-node {
+			display: none;
 		}
 
-		.neos-dynatree-expander {
+		&.neos-tree-open > ul > .neos-tree-node {
+			display: block;
+		}
+
+		.neos-tree-expander {
 			line-height: 24px;
 			@extend .#{$fa-css-prefix}-caret-right;
 			@extend .fas;
@@ -186,76 +149,9 @@ ul.neos-dynatree-container {
 			position: relative;
 		}
 
-		&.neos-dynatree-selected {
+		&.neos-tree-selected {
 			a {
 				color: $blue;
-			}
-		}
-
-		&.dynatree-drag-source {
-			background-color: $grayMedium;
-			opacity: .5;
-		}
-
-		&.dynatree-drop-before,
-		&.dynatree-drop-after {
-			&:after {
-				width: 100%;
-				height: 2px;
-				margin-left: 30px;
-				position: absolute;
-				content: "";
-			}
-		}
-
-		&.dynatree-drop-before:after {
-			top: 0;
-		}
-
-		&.dynatree-drop-after:after {
-			bottom: 0;
-		}
-
-		&.dynatree-drop-accept {
-			&.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) {
-				background-color: $blue;
-
-				span + span,
-				a {
-					color: #fff;
-				}
-			}
-
-			&.dynatree-drop-before:after,
-			&.dynatree-drop-after:after {
-				display: block;
-				background-color: $blue;
-			}
-		}
-
-		&.dynatree-drop-reject {
-			cursor: not-allowed !important;
-
-			.neos-dynatree-expander,
-			span + span,
-			a {
-				cursor: not-allowed !important;
-			}
-
-			&.dynatree-drag-source:hover,
-			&:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) {
-				background-color: $warning;
-
-				span + span,
-				a {
-					color: #fff;
-				}
-			}
-
-			&.dynatree-drop-before:after,
-			&.dynatree-drop-after:after {
-				display: block;
-				background-color: $warning;
 			}
 		}
 
@@ -278,80 +174,250 @@ ul.neos-dynatree-container {
 			}
 		}
 	}
-
-	$selector: 'ul';
-	$level: 0;
-  $levels: 20;
-	ul .neos-dynatree-node {
-    padding-left: 0;
-  }
-  ul ul .neos-dynatree-node {
-    padding-left: 9px;
-  }
-  ul ul ul .neos-dynatree-node {
-    padding-left: 21px;
-  }
-  ul ul ul ul .neos-dynatree-node {
-    padding-left: 33px;
-  }
-  ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 45px;
-  }
-  ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 57px;
-  }
-  ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 69px;
-  }
-  ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 81px;
-  }
-  ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 93px;
-  }
-  ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 105px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 117px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 129px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 141px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 153px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 165px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 177px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 189px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 201px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 213px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 225px;
-  }
 }
 
-.neos-tree-drag-in-progress {
-	ul.neos-dynatree-container .neos-dynatree-node {
-		cursor: move;
+// For some reason this sass is not nesting right. On sassmeister.com it works :(
+// So the rules below are generated by the following sass code.
+//
+// $selector: 'ul';
+// $levels: 10;
+// $padding: 0px;
+// @for $level from 1 through 10 {
+//     $selector: if($level == 1, 'ul.neos-tree-container', selector-nest($selector, 'ul')) !global;
 
-		.neos-dynatree-expander,
-		span + span,
-		a {
-			cursor: move;
-		}
-	}
+//     #{$selector} ul .neos-tree-node {
+//       z-index: $level * 10;
+//       > span:first-child {
+//         $addition: if($level == 2, 9px, 12px);
+//         $padding: if($level == 1, $padding, $padding+$addition);
+//         padding-left: $padding;
+//         &.neos-tree-title {
+//           padding-left: $padding + 24px;
+//         }
+//       }
+//     }
+// }
+ul.neos-tree-container ul .neos-tree-node {
+	z-index: 10;
+}
+
+ul.neos-tree-container ul .neos-tree-node > span:first-child {
+	padding-left: 0px;
+}
+
+ul.neos-tree-container ul .neos-tree-node > span:first-child.neos-tree-title {
+	padding-left: 24px;
+}
+
+ul.neos-tree-container ul ul .neos-tree-node {
+	z-index: 20;
+}
+
+ul.neos-tree-container ul ul .neos-tree-node > span:first-child {
+	padding-left: 9px;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child.neos-tree-title {
+	padding-left: 33px;
+}
+
+ul.neos-tree-container ul ul ul .neos-tree-node {
+	z-index: 30;
+}
+
+ul.neos-tree-container ul ul ul .neos-tree-node > span:first-child {
+	padding-left: 21px;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child.neos-tree-title {
+	padding-left: 45px;
+}
+
+ul.neos-tree-container ul ul ul ul .neos-tree-node {
+	z-index: 40;
+}
+
+ul.neos-tree-container ul ul ul ul .neos-tree-node > span:first-child {
+	padding-left: 33px;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child.neos-tree-title {
+	padding-left: 57px;
+}
+
+ul.neos-tree-container ul ul ul ul ul .neos-tree-node {
+	z-index: 50;
+}
+
+ul.neos-tree-container ul ul ul ul ul .neos-tree-node > span:first-child {
+	padding-left: 45px;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child.neos-tree-title {
+	padding-left: 69px;
+}
+
+ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node {
+	z-index: 60;
+}
+
+ul.neos-tree-container ul ul ul ul ul ul .neos-tree-node > span:first-child {
+	padding-left: 57px;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child.neos-tree-title {
+	padding-left: 81px;
+}
+
+ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node {
+	z-index: 70;
+}
+
+ul.neos-tree-container ul ul ul ul ul ul ul .neos-tree-node > span:first-child {
+	padding-left: 69px;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child.neos-tree-title {
+	padding-left: 93px;
+}
+
+ul.neos-tree-container ul ul ul ul ul ul ul ul .neos-tree-node {
+	z-index: 80;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child {
+	padding-left: 81px;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child.neos-tree-title {
+	padding-left: 105px;
+}
+
+ul.neos-tree-container ul ul ul ul ul ul ul ul ul .neos-tree-node {
+	z-index: 90;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child {
+	padding-left: 93px;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child.neos-tree-title {
+	padding-left: 117px;
+}
+
+ul.neos-tree-container ul ul ul ul ul ul ul ul ul ul .neos-tree-node {
+	z-index: 100;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child {
+	padding-left: 105px;
+}
+
+ul.neos-tree-container
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	ul
+	.neos-tree-node
+	> span:first-child.neos-tree-title {
+	padding-left: 129px;
 }

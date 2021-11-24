@@ -112,12 +112,28 @@
 
 						&.neos-active {
 							background-color: #fff;
+
+							.neos-media-assetsource-icon {
+								filter: invert(.5) sepia(1) saturate(5) hue-rotate(175deg);
+							}
+
+							&:hover {
+								background-color: $blue;
+								
+								.neos-media-assetsource-icon {
+									filter: none;
+								}
+							}
 						}
 
 						&:not(.neos-active) {
 							&:hover {
 								background-color: #fff;
 								color: $blue;
+
+								.neos-media-assetsource-icon {
+									filter: invert(.5) sepia(1) saturate(5) hue-rotate(175deg);
+								}
 							}
 
 							&.neos-drag-active::after {
@@ -387,6 +403,11 @@
 						font-weight: 400;
 						font-size: $generalFontSize;
 						line-height: 1.5;
+
+						> img {
+							height: 16px;
+							width: auto;
+						}
 
 						&.neos-active {
 							color: $blue;

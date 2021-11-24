@@ -1,0 +1,151 @@
+prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
+  site = null
+  styles = ${[]}
+  username = ''
+  flashMessages = ${[]}
+
+  renderer = Neos.Fusion:Join {
+    doctype = '<!DOCTYPE html>'
+    doctype.@position = 'start 100'
+
+    content = Neos.Fusion:Component {
+      @apply.props = ${props}
+
+      backgroundImageSource = Neos.Fusion:ResourceUri {
+        @if.set = ${this.path}
+        path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
+      }
+
+      headerComment = ${Configuration.setting('Neos.Neos.headerComment')}
+
+      renderer = afx`
+        <html lang="en">
+            {props.headerComment}
+            <head>
+                <meta charset="utf-8" />
+                <meta name="robots" content="noindex" />
+                <title>{I18n.translate('login.index.title', 'Login to')} {props.site.name}</title>
+                <Neos.Fusion:Loop items={props.styles}>
+                    <link rel="stylesheet" @children="attributes.href">
+                        <Neos.Fusion:ResourceUri path={item}/>
+                    </link>
+                </Neos.Fusion:Loop>
+                <style type="text/css" @if.set={props.backgroundImageSource}>{'
+                    .neos-login-box:before {
+                        background-image: url(' + props.backgroundImageSource + ');
+                    }
+                '}</style>
+            </head>
+            <body class="neos" style={'background-image:url(' + props.backgroundImageSource + ')'} style.@if.set={props.backgroundImageSource}>
+                <div class="neos-modal-centered">
+                    <main class="neos-login-main">
+                        <div class={['neos-login-box', props.backgroundImageSource ? 'background-image-active' : null]}>
+                            <figure class="neos-login-box-logo">
+                                <img class="neos-login-box-logo-resource" @children="attributes.src" width="200px" height="200px" alt="Neos Logo">
+                                    <Neos.Fusion:ResourceUri path="resource://Neos.Neos/Public/Images/Login/Logo.svg" />
+                                </img>
+                            </figure>
+
+                            <h1 class="neos-login-heading">
+                                {I18n.id('login.index.title').value('Login to').package('Neos.Neos').source('Main')} <strong>{site.name}</strong>
+                            </h1>
+
+                            <div class="neos-login-body neos">
+                                <Neos.Neos:Component.Login.Form
+                                    username={props.username}
+                                    flashMessages={props.flashMessages}
+                                />
+                            </div>
+                        </div>
+                    </main>
+                    <footer class="neos-login-footer">
+                        <p>
+                            <a href="http://neos.io" target="_blank">Neos</a> –&nbsp;
+                            © 2006-{Date.format('now', 'Y')} This is free software, licensed under GPL3 or higher, and you are welcome to redistribute it under certain conditions;&nbsp;
+                            Neos comes with ABSOLUTELY NO WARRANTY;&nbsp;
+                            See <a href="http://neos.io" target="_blank">neos.io</a> for more details. Obstructing the appearance of this notice is prohibited by law.
+                        </p>
+                    </footer>
+                </div>
+
+                <script>{"
+                    if (document.querySelector('#username').value) {
+                        document.querySelector('#password').focus();
+                    }
+                    document.querySelector('form').addEventListener('submit', function() {
+                        document.querySelector('.neos-login-btn').classList.toggle('neos-hidden');
+                        document.querySelector('.neos-login-btn.neos-disabled').classList.toggle('neos-hidden');
+                    });
+                    try {
+                        document.querySelector('form[name=\"login\"] input[name=\"lastVisitedNode\"]').value = sessionStorage.getItem('Neos.Neos.lastVisitedNode');
+                    } catch(e) {}
+                "}</script>
+            </body>
+        </html>
+      `
+    }
+  }
+}
+
+prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
+  username = ''
+
+  severityMapping = Neos.Fusion:DataStructure {
+    OK = 'success'
+    Notice = 'notice'
+    Warning = 'warning'
+    Error = 'error'
+  }
+
+  renderer = afx`
+    <Neos.Fusion.Form:Form form.target.action="authenticate" attributes.name="login">
+        <Neos.Fusion.Form:Hidden field.name="lastVisitedNode" />
+        <fieldset>
+            <div class="neos-controls">
+                <Neos.Fusion.Form:Input
+                    field.name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]"
+                    field.value={props.username}
+                    attributes.required="required"
+                    attributes.id="username"
+                    attributes.placeholder={I18n.id('username').value('Username').package('Neos.Neos').source('Main')}
+                    attributes.class="neos-span12"
+                    attributes.aria-label={I18n.id('username').value('Username').package('Neos.Neos').source('Main')}
+                />
+            </div>
+            <div class="neos-controls">
+                <Neos.Fusion.Form:Password
+                    field.name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]"
+                    attributes.required="required"
+                    attributes.id="password"
+                    attributes.placeholder={I18n.id('password').value('Password').package('Neos.Neos').source('Main')}
+                    attributes.class="neos-span12"
+                    attributes.autofocus="autofocus"
+                    attributes.autofocus.@if.usernameSet={props.username}
+                    attributes.aria-label={I18n.id('password').value('Password').package('Neos.Neos').source('Main')}
+                />
+            </div>
+
+            <div class="neos-actions">
+                <Neos.Fusion.Form:Button attributes.class="neos-span5 neos-pull-right neos-button neos-login-btn">
+                    {I18n.id('login').value('Login').package('Neos.Neos').source('Main').translate()}
+                </Neos.Fusion.Form:Button>
+                <Neos.Fusion.Form:Button attributes.class="neos-span5 neos-pull-right neos-button neos-login-btn neos-disabled neos-hidden">
+                    {I18n.id('authenticating').value('Authenticating').package('Neos.Neos').source('Main').translate()} <span class="neos-ellipsis"></span>
+                </Neos.Fusion.Form:Button>
+
+                <Neos.Fusion:Loop items={props.flashMessages} itemName="flashMessage">
+                    <div class={'neos-tooltip neos-bottom neos-in neos-tooltip-' + props.severityMapping[flashMessage.severity]}>
+                        <script @if.error={flashMessage.severity == 'Error'}>
+                            {"document.querySelector('fieldset').classList.add('effect--shake');"}
+                        </script>
+                        <div class="neos-tooltip-arrow"></div>
+                        <div class="neos-tooltip-inner" role="alert">
+                            {I18n.id('flashMessage.' + flashMessage.code).value(flashMessage).package('Neos.Neos').source('Main')}
+                        </div>
+                    </div>
+                </Neos.Fusion:Loop>
+            </div>
+        </fieldset>
+    </Neos.Fusion.Form:Form>
+  `
+}

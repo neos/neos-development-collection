@@ -34,7 +34,7 @@ class BackendControllerSecurityTest extends FunctionalTestCase
     {
         $backendRedirectionServiceMock = $this->getMockBuilder(BackendRedirectionService::class)->getMock();
         $backendRedirectionServiceMock
-            ->expects(self::any())
+            ->expects(self::atLeastOnce())
             ->method('getAfterLoginRedirectionUri')
             ->willReturn('http://localhost/');
 
@@ -44,9 +44,6 @@ class BackendControllerSecurityTest extends FunctionalTestCase
         $account = $this->authenticateRoles(['Neos.Neos:Administrator']);
         $account->setAccountIdentifier('admin');
         $this->browser->request('http://localhost/neos/login');
-
-        // dummy assertion to avoid PHPUnit warning
-        self::assertTrue(true);
     }
 
     /**

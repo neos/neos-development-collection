@@ -12,10 +12,15 @@
     nodeTypes:
       '*': false
       'Neos.Neos:Document': true
+  postprocessors:
+    'CreationDialogPostprocessor':
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor'
   options:
     nodeCreationHandlers:
       documentTitle:
         nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\DocumentTitleNodeCreationHandler'
+      creationDialogProperties:
+        nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\CreationDialogPropertiesCreationHandler'
   ui:
     label: 'Document'
     group: 'general'
@@ -27,15 +32,6 @@
           label: i18n
           position: 10
           icon: 'icon-file'
-    creationDialog:
-      elements:
-        title:
-          type: string
-          ui:
-            label: i18n
-            editor: 'Neos.Neos/Inspector/Editors/TextFieldEditor'
-          validation:
-            'Neos.Neos/Validation/NotEmptyValidator': []
   properties:
     _nodeType:
       ui:
@@ -47,6 +43,7 @@
       ui:
         label: i18n
         reloadPageIfChanged: true
+        showInCreationDialog: true
         inspector:
           group: 'document'
       validation:

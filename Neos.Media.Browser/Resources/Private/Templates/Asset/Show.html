@@ -11,7 +11,7 @@
                     <a href="#" role="tab">Overview</a>
                 </li>
                 <li role="presentation">
-                    <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier, overviewAction: 'show'}">Variants</f:link.action>
+                    <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier, overviewAction: 'show'}" addQueryString="true">Variants</f:link.action>
                 </li>
             </ul>
         </f:if>
@@ -39,7 +39,7 @@
                             </f:if>
                             <tr>
                                 <th>{neos:backend.translate(id: 'metadata.filename', package: 'Neos.Media.Browser')}</th>
-                                <td><a href="{assetProxy.importStream}" target="_blank">{assetProxy.filename}</a></td>
+                                <td><a href="{assetProxy.originalUri}" target="_blank">{assetProxy.filename}</a></td>
                             </tr>
                             <tr>
                                 <th>{neos:backend.translate(id: 'metadata.lastModified', package: 'Neos.Media.Browser')}</th>
@@ -78,14 +78,14 @@
             </div>
         </div>
         <div class="neos-footer">
-            <f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', package: 'Neos.Neos')}</f:link.action>
+            <f:link.action action="index" class="neos-button" addQueryString="true">{neos:backend.translate(id: 'back', package: 'Neos.Neos')}</f:link.action>
         </div>
 </f:section>
 
 <f:section name="ContentImage">
     <label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
     <div class="neos-preview-image">
-        <a href="{assetProxy.importStream}" target="_blank">
+        <a href="{assetProxy.originalUri}" target="_blank">
             <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
         </a>
     </div>

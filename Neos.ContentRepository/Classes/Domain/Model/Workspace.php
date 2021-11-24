@@ -33,7 +33,7 @@ class Workspace
     /**
      * This prefix determines if a given workspace (name) is a user workspace.
      */
-    const PERSONAL_WORKSPACE_PREFIX = 'user-';
+    public const PERSONAL_WORKSPACE_PREFIX = 'user-';
 
     /**
      * @var string
@@ -49,7 +49,7 @@ class Workspace
      * @var string
      * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=200 })
      */
-    protected $title;
+    protected $title = '';
 
     /**
      * An optional user-defined description
@@ -156,7 +156,7 @@ class Workspace
      * @param integer $initializationCause
      * @return void
      */
-    public function initializeObject($initializationCause)
+    public function initializeObject($initializationCause): void
     {
         if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->rootNodeData = new NodeData('/', $this);
@@ -174,7 +174,7 @@ class Workspace
      * @return string Name of this workspace
      * @api
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -185,7 +185,7 @@ class Workspace
      * @return string
      * @api
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -197,7 +197,7 @@ class Workspace
      * @return void
      * @api
      */
-    public function setTitle($title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -208,7 +208,7 @@ class Workspace
      * @return string
      * @api
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -220,7 +220,7 @@ class Workspace
      * @return void
      * @api
      */
-    public function setDescription($description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -228,10 +228,10 @@ class Workspace
     /**
      * Returns the workspace owner.
      *
-     * @return UserInterface
+     * @return UserInterface|null
      * @api
      */
-    public function getOwner()
+    public function getOwner(): ?UserInterface
     {
         if ($this->owner === null) {
             return null;
@@ -245,7 +245,7 @@ class Workspace
      * @param UserInterface|string|null $user The new user, or user's UUID
      * @api
      */
-    public function setOwner($user)
+    public function setOwner($user): void
     {
         // Note: We need to do a bit of uuid juggling here, because we can't bind the workspaces Owner to a specific
         // implementation, and creating entity relations via interfaces is not supported by Flow. Since the property
@@ -268,10 +268,10 @@ class Workspace
     /**
      * Checks if this workspace is a user's personal workspace
      *
-     * @return boolean
+     * @return bool
      * @api
      */
-    public function isPersonalWorkspace()
+    public function isPersonalWorkspace(): bool
     {
         return strpos($this->name, static::PERSONAL_WORKSPACE_PREFIX) === 0;
     }
@@ -279,10 +279,10 @@ class Workspace
     /**
      * Checks if this workspace is shared only across users with access to internal workspaces, for example "reviewers"
      *
-     * @return boolean
+     * @return bool
      * @api
      */
-    public function isPrivateWorkspace()
+    public function isPrivateWorkspace(): bool
     {
         return $this->owner !== null && !$this->isPersonalWorkspace();
     }
@@ -290,10 +290,10 @@ class Workspace
     /**
      * Checks if this workspace is shared across all editors
      *
-     * @return boolean
+     * @return bool
      * @api
      */
-    public function isInternalWorkspace()
+    public function isInternalWorkspace(): bool
     {
         return $this->baseWorkspace !== null && $this->owner === null;
     }
@@ -301,10 +301,10 @@ class Workspace
     /**
      * Checks if this workspace is public to everyone, even without authentication
      *
-     * @return boolean
+     * @return bool
      * @api
      */
-    public function isPublicWorkspace()
+    public function isPublicWorkspace(): bool
     {
         return $this->baseWorkspace === null && $this->owner === null;
     }
@@ -317,7 +317,7 @@ class Workspace
      * @param Workspace $baseWorkspace
      * @return void
      */
-    public function setBaseWorkspace(Workspace $baseWorkspace)
+    public function setBaseWorkspace(Workspace $baseWorkspace): void
     {
         $oldBaseWorkspace = $this->baseWorkspace;
         if ($oldBaseWorkspace !== $baseWorkspace) {
@@ -329,10 +329,10 @@ class Workspace
     /**
      * Returns the base workspace, if any
      *
-     * @return Workspace
+     * @return Workspace|null
      * @api
      */
-    public function getBaseWorkspace()
+    public function getBaseWorkspace(): ?Workspace
     {
         return $this->baseWorkspace;
     }
@@ -342,7 +342,7 @@ class Workspace
      *
      * @return Workspace[]
      */
-    public function getBaseWorkspaces()
+    public function getBaseWorkspaces(): array
     {
         $baseWorkspaces = [];
         $baseWorkspace = $this->baseWorkspace;
@@ -360,7 +360,7 @@ class Workspace
      *
      * @return NodeData
      */
-    public function getRootNodeData()
+    public function getRootNodeData(): NodeData
     {
         return $this->rootNodeData;
     }
@@ -374,7 +374,7 @@ class Workspace
      * @return void
      * @api
      */
-    public function publish(Workspace $targetWorkspace)
+    public function publish(Workspace $targetWorkspace): void
     {
         $sourceNodes = $this->publishingService->getUnpublishedNodes($this);
         $this->publishNodes($sourceNodes, $targetWorkspace);
@@ -390,7 +390,7 @@ class Workspace
      * @return void
      * @api
      */
-    public function publishNodes(array $nodes, Workspace $targetWorkspace)
+    public function publishNodes(array $nodes, Workspace $targetWorkspace): void
     {
         foreach ($nodes as $node) {
             $this->publishNode($node, $targetWorkspace);
@@ -407,7 +407,7 @@ class Workspace
      * @return void
      * @api
      */
-    public function publishNode(NodeInterface $nodeToPublish, Workspace $targetWorkspace)
+    public function publishNode(NodeInterface $nodeToPublish, Workspace $targetWorkspace): void
     {
         if ($this->publishNodeCanBeSkipped($nodeToPublish, $targetWorkspace)) {
             return;
@@ -437,8 +437,9 @@ class Workspace
      * @param NodeInterface $node The node to be published
      * @param Workspace $targetWorkspace The target workspace
      * @return bool
+     * @throws WorkspaceException
      */
-    protected function publishNodeCanBeSkipped(NodeInterface $node, Workspace $targetWorkspace)
+    protected function publishNodeCanBeSkipped(NodeInterface $node, Workspace $targetWorkspace): bool
     {
         if ($this->baseWorkspace === null) {
             return true;
@@ -459,7 +460,6 @@ class Workspace
         return false;
     }
 
-
     /**
      * Replace the node data of a node instance with a given target node data
      *
@@ -470,7 +470,7 @@ class Workspace
      * @param NodeData $targetNodeData The existing node data in the target workspace
      * @return void
      */
-    protected function replaceNodeData(NodeInterface $sourceNode, NodeData $targetNodeData)
+    protected function replaceNodeData(NodeInterface $sourceNode, NodeData $targetNodeData): void
     {
         $sourceNodeData = $sourceNode->getNodeData();
 
@@ -515,7 +515,7 @@ class Workspace
      * @param Workspace $sourceWorkspace The workspace the node is currently located
      * @param Workspace $targetWorkspace The workspace the node is being published to
      */
-    protected function moveNodeVariantsInOtherWorkspaces($nodeIdentifier, $targetPath, Workspace $sourceWorkspace, Workspace $targetWorkspace)
+    protected function moveNodeVariantsInOtherWorkspaces($nodeIdentifier, $targetPath, Workspace $sourceWorkspace, Workspace $targetWorkspace): void
     {
         $nodeDataVariants = $this->nodeDataRepository->findByNodeIdentifier($nodeIdentifier);
         /** @var NodeData $nodeDataVariant */
@@ -564,7 +564,7 @@ class Workspace
      * @param Workspace $targetWorkspace The workspace to publish to
      * @return void
      */
-    protected function moveNodeVariantToTargetWorkspace(NodeInterface $nodeToPublish, Workspace $targetWorkspace)
+    protected function moveNodeVariantToTargetWorkspace(NodeInterface $nodeToPublish, Workspace $targetWorkspace): void
     {
         $nodeData = $nodeToPublish->getNodeData();
         $this->adjustShadowNodeDataForNodePublishing($nodeData, $targetWorkspace, $nodeData);
@@ -593,7 +593,7 @@ class Workspace
      * @param NodeData $targetNodeData
      * @return void
      */
-    protected function adjustShadowNodeDataForNodePublishing(NodeData $sourceNodeData, Workspace $targetWorkspace, NodeData $targetNodeData)
+    protected function adjustShadowNodeDataForNodePublishing(NodeData $sourceNodeData, Workspace $targetWorkspace, NodeData $targetNodeData): void
     {
         /** @var NodeData $sourceShadowNodeData */
         $sourceShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
@@ -662,10 +662,10 @@ class Workspace
      * A node count of 1 means that no changes are pending in this workspace
      * because a workspace always contains at least its Root Node.
      *
-     * @return integer
+     * @return int
      * @api
      */
-    public function getNodeCount()
+    public function getNodeCount(): int
     {
         return $this->nodeDataRepository->countByWorkspace($this);
     }
@@ -678,7 +678,7 @@ class Workspace
      * @return void
      * @throws WorkspaceException if the specified workspace is not a base workspace of this workspace
      */
-    protected function verifyPublishingTargetWorkspace(Workspace $targetWorkspace)
+    protected function verifyPublishingTargetWorkspace(Workspace $targetWorkspace): void
     {
         $baseWorkspace = $this;
         while ($baseWorkspace === null || $targetWorkspace->getName() !== $baseWorkspace->getName()) {
@@ -695,9 +695,9 @@ class Workspace
      *
      * @param NodeInterface $node The reference node to find a corresponding variant for
      * @param Workspace $targetWorkspace The target workspace to look in
-     * @return NodeData Either a regular node, a shadow node or null
+     * @return NodeData|null Either a regular node, a shadow node or null
      */
-    protected function findCorrespondingNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace)
+    protected function findCorrespondingNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace): ?NodeData
     {
         $nodeData = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace, $node->getDimensions(), true);
         if ($nodeData === null || $nodeData->getWorkspace() !== $targetWorkspace) {
@@ -715,7 +715,7 @@ class Workspace
      * @return void
      * @Flow\Signal
      */
-    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null)
+    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null): void
     {
     }
 
@@ -730,7 +730,7 @@ class Workspace
      * @return void
      * @Flow\Signal
      */
-    protected function emitBeforeNodePublishing(NodeInterface $node, Workspace $targetWorkspace)
+    protected function emitBeforeNodePublishing(NodeInterface $node, Workspace $targetWorkspace): void
     {
     }
 
@@ -745,7 +745,7 @@ class Workspace
      * @return void
      * @Flow\Signal
      */
-    protected function emitAfterNodePublishing(NodeInterface $node, Workspace $targetWorkspace)
+    protected function emitAfterNodePublishing(NodeInterface $node, Workspace $targetWorkspace): void
     {
     }
 }

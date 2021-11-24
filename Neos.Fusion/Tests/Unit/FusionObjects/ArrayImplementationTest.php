@@ -41,12 +41,12 @@ class ArrayImplementationTest extends UnitTestCase
         return [
             [
                 'Position end should put element to end',
-                ['second' => ['__meta' => ['position' => 'end']], 'first' => []],
+                ['second' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
                 ['/first', '/second']
             ],
             [
                 'Position start should put element to start',
-                ['second' => [], 'first' => ['__meta' => ['position' => 'start']]],
+                ['second' => ['__meta' => []], 'first' => ['__meta' => ['position' => 'start']]],
                 ['/first', '/second']
             ],
             [
@@ -66,42 +66,42 @@ class ArrayImplementationTest extends UnitTestCase
             ],
             [
                 'Position before adds before named element if present',
-                ['second' => [], 'first' => ['__meta' => ['position' => 'before second']]],
+                ['second' => ['__meta' => []], 'first' => ['__meta' => ['position' => 'before second']]],
                 ['/first', '/second']
             ],
             [
                 'Position before adds after start if named element not present',
-                ['third' => [], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
+                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
                 ['/first', '/second', '/third']
             ],
             [
                 'Position before uses priority when referencing the same element; The higher the priority the closer before the element gets added.',
-                ['third' => [], 'second' => ['__meta' => ['position' => 'before third 12']], 'first' => ['__meta' => ['position' => 'before third']]],
+                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third 12']], 'first' => ['__meta' => ['position' => 'before third']]],
                 ['/first', '/second', '/third']
             ],
             [
                 'Position before works recursively',
-                ['third' => [], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before second']]],
+                ['third' => ['__meta' => []], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before second']]],
                 ['/first', '/second', '/third']
             ],
             [
                 'Position after adds after named element if present',
-                ['second' => ['__meta' => ['position' => 'after first']], 'first' => []],
+                ['second' => ['__meta' => ['position' => 'after first']], 'first' => ['__meta' => []]],
                 ['/first', '/second']
             ],
             [
                 'Position after adds before end if named element not present',
-                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => []],
+                ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => ['__meta' => []]],
                 ['/first', '/second', '/third']
             ],
             [
                 'Position after uses priority when referencing the same element; The higher the priority the closer after the element gets added.',
-                ['third' => ['__meta' => ['position' => 'after first']], 'second' => ['__meta' => ['position' => 'after first 12']], 'first' => []],
+                ['third' => ['__meta' => ['position' => 'after first']], 'second' => ['__meta' => ['position' => 'after first 12']], 'first' => ['__meta' => []]],
                 ['/first', '/second', '/third']
             ],
             [
                 'Position after works recursively',
-                ['third' => ['__meta' => ['position' => 'after second']], 'second' => ['__meta' => ['position' => 'after first']], 'first' => []],
+                ['third' => ['__meta' => ['position' => 'after second']], 'second' => ['__meta' => ['position' => 'after first']], 'first' => ['__meta' => []]],
                 ['/first', '/second', '/third']
             ]
         ];

@@ -40,15 +40,6 @@ line 75
 
 
 
-jquery.dynatree.js
-jquery.dynatree.min.js
-jQuery Dynatree Version 1.2.1
-/Resources/Public/Library/jquery-dynatree/js/jquery.dynatree.js
-_setDndStatus: function(){
-	--- var pos = $target.offset();
-	+++ var pos = $target.position();
-}
-
 plupload from http://plupload.com
 Version 1.5b (2011-09-11)
 - deleted "examples" directory

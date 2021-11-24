@@ -18,13 +18,14 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\ProvidesOriginalUriInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Psr\Http\Message\UriInterface;
 
-final class NeosAssetProxy implements AssetProxyInterface
+final class NeosAssetProxy implements AssetProxyInterface, ProvidesOriginalUriInterface
 {
     /**
      * @var NeosAssetSource
@@ -174,10 +175,18 @@ final class NeosAssetProxy implements AssetProxyInterface
     /**
      * @return null|UriInterface
      */
-    public function getImportStream(): ?UriInterface
+    public function getOriginalUri(): ?UriInterface
     {
         $uriString = $this->resourceManager->getPublicPersistentResourceUri($this->asset->getResource());
         return $uriString !== false ? new Uri($uriString) : null;
+    }
+
+    /**
+     * @return resource
+     */
+    public function getImportStream()
+    {
+        return $this->asset->getResource()->getStream();
     }
 
     /**

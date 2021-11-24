@@ -11,6 +11,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 
 /**
  * A Fusion Component-Object
@@ -51,37 +52,32 @@ class ComponentImplementation extends ArrayImplementation
      * @param array $context
      * @return array
      */
-    protected function prepare($context)
+    protected function prepare(array $context): array
     {
-        $context['props'] = $this->getProps();
+        $context['props'] = $this->getProps($context);
         return $context;
     }
 
     /**
      * Calculate the component props
      *
-     * @return array
+     * @param array $context
+     * @return \ArrayAccess
      */
-    protected function getProps()
+    protected function getProps(array $context): \ArrayAccess
     {
         $sortedChildFusionKeys = $this->sortNestedFusionKeys();
-        $props = [];
-        foreach ($sortedChildFusionKeys as $key) {
-            try {
-                $props[$key] = $this->fusionValue($key);
-            } catch (\Exception $e) {
-                $props[$key] = $this->runtime->handleRenderingException($this->path . '/' . $key, $e);
-            }
-        }
+        $props = new LazyProps($this, $this->path, $this->runtime, $sortedChildFusionKeys, $context);
         return $props;
     }
+
     /**
      * Evaluate the renderer with the give context and return
      *
-     * @param $context
+     * @param array $context
      * @return mixed
      */
-    protected function render($context)
+    protected function render(array $context)
     {
         $this->runtime->pushContextArray($context);
         $result = $this->runtime->render($this->path . '/renderer');

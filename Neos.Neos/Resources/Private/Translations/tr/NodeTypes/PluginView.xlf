@@ -7,10 +7,10 @@
 			<target state="translated">Eklenti Görünümü</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target state="translated">Eklenti Görünümü</target><alt-trans><target>Eklenti Görünümleri</target></alt-trans></trans-unit>
+			<target state="translated">Eklenti Görünümü</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target state="translated">Ana Görünüm</target><alt-trans><target>Üstatlık Görünümü</target></alt-trans></trans-unit>
+			<target state="translated">Ana Görünüm</target></trans-unit>
       <trans-unit id="properties.view" xml:space="preserve">
 				<source>Plugin View</source>
 			<target state="translated">Eklenti Görünümü</target></trans-unit>

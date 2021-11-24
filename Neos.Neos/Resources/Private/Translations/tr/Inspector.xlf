@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target state="translated">Netlik</target><alt-trans><target>Görünürlük</target></alt-trans></trans-unit>
+			<target state="translated">Netlik</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
 			<target state="translated">Belge</target></trans-unit>

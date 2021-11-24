@@ -4,7 +4,7 @@
   "license": "BSD-3-Clause",
   "description": "This is a comprehensive library for generating differences between two strings or arrays",
   "require": {
-    "php": "^7.0"
+    "php": "^7.2"
   },
   "autoload": {
     "psr-4": {

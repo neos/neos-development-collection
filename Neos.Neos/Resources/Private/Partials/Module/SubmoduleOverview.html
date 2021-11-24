@@ -2,18 +2,9 @@
 <f:if condition="{moduleConfiguration.submodules}">
 	<div class="neos-row-fluid">
 		<f:for each="{moduleConfiguration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration" iteration="iterator">
-			<f:if condition="{submoduleConfiguration.enabled} !== false">
-				<f:if condition="{submoduleConfiguration.privilegeTarget}">
-					<f:then>
-						<f:security.ifAccess privilegeTarget="{submoduleConfiguration.privilegeTarget}">
-							<f:render section="submodule" arguments="{_all}" />
-						</f:security.ifAccess>
-					</f:then>
-					<f:else>
-						<f:render section="submodule" arguments="{_all}" />
-					</f:else>
-				</f:if>
-			</f:if>
+			<neos:backend.ifModuleAccessible modulePath="{moduleConfiguration.path}/{submoduleIdentifier}" moduleConfiguration="{submoduleConfiguration}">
+				<f:render section="submodule" arguments="{_all}" />
+			</neos:backend.ifModuleAccessible>
 		</f:for>
 	</div>
 </f:if>

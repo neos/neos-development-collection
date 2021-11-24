@@ -14,8 +14,6 @@ namespace Neos\Neos\View;
 use function GuzzleHttp\Psr7\parse_response;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Locale;
-use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
@@ -30,11 +28,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class FusionView extends AbstractView
 {
-    /**
-     * @Flow\Inject
-     * @var Service
-     */
-    protected $i18nService;
+    use FusionViewI18nTrait;
 
     /**
      * This contains the supported options, their default values, descriptions and types.
@@ -82,13 +76,7 @@ class FusionView extends AbstractView
         $currentSiteNode = $this->getCurrentSiteNode();
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
-        $dimensions = $currentNode->getContext()->getDimensions();
-        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
-            $currentLocale = new Locale($dimensions['language'][0]);
-            $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            array_shift($dimensions['language']);
-            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => true, 'order' => $dimensions['language']]);
-        }
+        $this->setFallbackRuleFromDimension($currentNode);
 
         $fusionRuntime->pushContextArray([
             'node' => $currentNode,

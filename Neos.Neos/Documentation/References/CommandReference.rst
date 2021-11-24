@@ -133,13 +133,13 @@ Removes content dimensions from the root and sites nodes
 
 **Examples:**
 
-./flow node:repair
+``./flow node:repair``
 
-./flow node:repair --node-type Neos.NodeTypes:Page
+``./flow node:repair --node-type Neos.NodeTypes:Page``
 
-./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
+``./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions``
 
-./flow node:repair --skip removeUndefinedProperties
+``./flow node:repair --skip removeUndefinedProperties``
 
 
 

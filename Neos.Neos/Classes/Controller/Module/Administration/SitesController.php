@@ -248,7 +248,7 @@ class SitesController extends AbstractModuleController
         $generatorService = $this->objectManager->get(GeneratorService::class);
         $generatorService->generateSitePackage($packageKey, $siteName);
 
-        $this->flashMessageContainer->addMessage(new Message(sprintf('Site Packages "%s" was created.', htmlspecialchars($packageKey))));
+        $this->controllerContext->getFlashMessageContainer()->addMessage(new Message(sprintf('Site Packages "%s" was created.', htmlspecialchars($packageKey))));
         $this->forward('importSite', null, null, ['packageKey' => $packageKey]);
     }
 

@@ -16,7 +16,7 @@
 			<target state="final">Selecteer formulier identifier</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target state="needs-translation">Please select a valid Form identifier in the inspector.</target></trans-unit>
+			<target state="translated">Selecteer een geldige formulieridentificatie in de inspecteur.</target></trans-unit>
     </body>
   </file>
 </xliff>

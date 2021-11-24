@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Plugin View</source>
-			<target state="final">ត្រួតពិនិត្យកម្មវិធីជំនួយ</target><alt-trans><target>ត្រួតពិនិត្យមើលកម្មវិធីជំនួយ</target></alt-trans></trans-unit>
+			<target state="final">ត្រួតពិនិត្យកម្មវិធីជំនួយ</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve" approved="yes">
 				<source>Plugin Views</source>
 			<target state="final">ត្រួតពិនិត្យកម្មវិធីជំនួយ</target></trans-unit>
@@ -13,7 +13,7 @@
 			<target state="final">ការត្រួតពិនិត្យលើមេ</target></trans-unit>
       <trans-unit id="properties.view" xml:space="preserve" approved="yes">
 				<source>Plugin View</source>
-			<target state="final">ត្រួតពិនិត្យកម្មវិធីជំនួយ</target><alt-trans><target>ត្រួតពិនិត្យមើលកម្មវិធីជំនួយ</target></alt-trans></trans-unit>
+			<target state="final">ត្រួតពិនិត្យកម្មវិធីជំនួយ</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -76,13 +76,13 @@
 			<target state="translated">Bekijk materiaal</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
-			<target state="final">Bestand bewerken</target><alt-trans><target>Asset bewerken</target></alt-trans></trans-unit>
+			<target state="final">Bestand bewerken</target></trans-unit>
       <trans-unit id="deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
-			<target state="final">Bestand verwijderen</target><alt-trans><target>Asset verwijderen</target></alt-trans></trans-unit>
+			<target state="final">Bestand verwijderen</target></trans-unit>
       <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target state="final">Weet u zeker dat u bestand "{0}" wilt verwijderen?</target><alt-trans><target>Weet u zeker dat u asset "{0}" wilt verwijderen?</target></alt-trans></trans-unit>
+			<target state="final">Weet u zeker dat u bestand "{0}" wilt verwijderen?</target></trans-unit>
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete collection "{0}"?</source>
 			<target state="final">Weet u zeker dat u collectie "{0}" wilt verwijderen?</target></trans-unit>
@@ -91,13 +91,13 @@
 			<target state="final">Weet u zeker dat u tag "{0}" wilt verwijderen?</target></trans-unit>
       <trans-unit id="message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the asset.</source>
-			<target state="final">Dit verwijderd het bestand.</target><alt-trans><target>Dit verwijderd de asset.</target></alt-trans></trans-unit>
+			<target state="final">Dit verwijderd het bestand.</target></trans-unit>
       <trans-unit id="message.willDeleteCollection" xml:space="preserve" approved="yes">
 				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target state="final">Dit verwijderd de collectie, maar niet de bestanden die deze bevat.</target><alt-trans><target>Dit verwijderd de collectie, maar niet de assets die deze bevat.</target></alt-trans></trans-unit>
+			<target state="final">Dit verwijderd de collectie, maar niet de bestanden die deze bevat.</target></trans-unit>
       <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="yes">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target state="final">Dit verwijderd de tag, maar niet de bestanden die deze gebruikt.</target><alt-trans><target>Dit verwijderd de tag, maar niet de assets die deze gebruikt.</target></alt-trans></trans-unit>
+			<target state="final">Dit verwijderd de tag, maar niet de bestanden die deze gebruikt.</target></trans-unit>
       <trans-unit id="message.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target state="final">Deze bewerking kan niet ongedaan worden gemaakt.</target></trans-unit>
@@ -115,7 +115,7 @@
 			<target state="final">Sla op</target></trans-unit>
       <trans-unit id="message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the asset</source>
-			<target state="final">Ja, verwijder het bestand</target><alt-trans><target>Ja, verwijder de asset</target></alt-trans></trans-unit>
+			<target state="final">Ja, verwijder het bestand</target></trans-unit>
       <trans-unit id="message.confirmDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Yes, delete the collection</source>
 			<target state="final">Ja, verwijder de collectie</target></trans-unit>
@@ -127,7 +127,7 @@
 			<target state="final">Bewerk {0}</target></trans-unit>
       <trans-unit id="search.title" xml:space="preserve" approved="yes">
 				<source>Search in assets</source>
-			<target state="final">Zoek binnen de bestanden</target><alt-trans><target>Zoek binnen assets</target></alt-trans></trans-unit>
+			<target state="final">Zoek binnen de bestanden</target></trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve" approved="yes">
 				<source>Search</source>
 			<target state="final">Zoeken</target></trans-unit>
@@ -142,22 +142,22 @@
 			<target state="final">Upload</target></trans-unit>
       <trans-unit id="filterOptions" xml:space="preserve" approved="yes">
 				<source>Filter options</source>
-			<target state="final">Filter opties</target><alt-trans><target>Filteropties</target></alt-trans></trans-unit>
+			<target state="final">Filter opties</target></trans-unit>
       <trans-unit id="filter.title.all" xml:space="preserve" approved="yes">
 				<source>Display all asset types</source>
-			<target state="final">Alle bestandstypen weergeven</target><alt-trans><target>Alle asset types weergeven</target></alt-trans></trans-unit>
+			<target state="final">Alle bestandstypen weergeven</target></trans-unit>
       <trans-unit id="filter.title.images" xml:space="preserve" approved="yes">
 				<source>Only display image assets</source>
-			<target state="final">Alleen afbeeldingen weergeven</target><alt-trans><target>Alleen afbeelding assets weergeven</target></alt-trans></trans-unit>
+			<target state="final">Alleen afbeeldingen weergeven</target></trans-unit>
       <trans-unit id="filter.title.documents" xml:space="preserve" approved="yes">
 				<source>Only display document assets</source>
-			<target state="final">Toon enkel documenten</target><alt-trans><target>Toon enkel document assets</target></alt-trans></trans-unit>
+			<target state="final">Toon enkel documenten</target></trans-unit>
       <trans-unit id="filter.title.video" xml:space="preserve" approved="yes">
 				<source>Only display video assets</source>
-			<target state="final">Toon enkel videobestanden</target><alt-trans><target>Toon enkel video assets</target></alt-trans></trans-unit>
+			<target state="final">Toon enkel videobestanden</target></trans-unit>
       <trans-unit id="filter.title.audio" xml:space="preserve" approved="yes">
 				<source>Only display audio assets</source>
-			<target state="final">Toon enkel audiobestanden</target><alt-trans><target>Toon enkel audio assets</target></alt-trans></trans-unit>
+			<target state="final">Toon enkel audiobestanden</target></trans-unit>
       <trans-unit id="filter.all" xml:space="preserve" approved="yes">
 				<source>All</source>
 			<target state="final">Alle</target></trans-unit>
@@ -187,7 +187,7 @@
 			<target state="translated">Verbindingsfout</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="translated">Media bron</target><alt-trans><target>Mediabron</target></alt-trans></trans-unit>
+			<target state="translated">Media bron</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
 			<target state="translated">Media bronnen</target></trans-unit>
@@ -238,7 +238,7 @@
 			<target state="final">Alle</target></trans-unit>
       <trans-unit id="untaggedAssets" xml:space="preserve" approved="yes">
 				<source>Untagged assets</source>
-			<target state="final">Bestanden zonder tag</target><alt-trans><target>Assets niet voorzien van tag</target></alt-trans></trans-unit>
+			<target state="final">Bestanden zonder tag</target></trans-unit>
       <trans-unit id="untagged" xml:space="preserve" approved="yes">
 				<source>Untagged</source>
 			<target state="final">Zonder tag</target></trans-unit>
@@ -256,13 +256,13 @@
 			<target state="final">Kies bestand</target></trans-unit>
       <trans-unit id="noAssetsFound" xml:space="preserve" approved="yes">
 				<source>No Assets found.</source>
-			<target state="final">Geen bestanden gevonden.</target><alt-trans><target>Geen assets gevonden.</target></alt-trans></trans-unit>
+			<target state="final">Geen bestanden gevonden.</target></trans-unit>
       <trans-unit id="basics" xml:space="preserve" approved="yes">
 				<source>Basics</source>
 			<target state="final">Basis</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
-			<target state="final">Verwijderen</target><alt-trans><target>Verwijder</target></alt-trans></trans-unit>
+			<target state="final">Verwijderen</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
 			<target state="final">Klik om te verwijderen</target></trans-unit>
@@ -304,13 +304,13 @@
 			<target state="final">Voorbeeld</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">Downloaden</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">Volgende</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">Vorige</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="final">Kan het bestand niet uploaden</target></trans-unit>
@@ -325,13 +325,13 @@
 			<target state="final">voor het bestand</target></trans-unit>
       <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target state="final">Slechts enkele van de bestanden zijn geüpload. Vernieuw de pagina om die te zien.</target><alt-trans><target>Slechts enkele van de bestanden zijn geüpload. Vernieuw de pagina om te zien die.</target></alt-trans></trans-unit>
+			<target state="final">Slechts enkele van de bestanden zijn geüpload. Vernieuw de pagina om die te zien.</target></trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve" approved="yes">
 				<source>Tagging the asset failed.</source>
-			<target state="final">Taggen van bestand is mislukt.</target><alt-trans><target>Taggen van asset is mislukt.</target></alt-trans></trans-unit>
+			<target state="final">Taggen van bestand is mislukt.</target></trans-unit>
       <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
 				<source>Adding the asset to the collection failed.</source>
-			<target state="final">Het toevoegen van het bestand aan de collectie is niet gelukt.</target><alt-trans><target>Het toevoegen van de asset aan de collectie is niet gelukt.</target></alt-trans></trans-unit>
+			<target state="final">Het toevoegen van het bestand aan de collectie is niet gelukt.</target></trans-unit>
       <trans-unit id="creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
 			<target state="final">Wordt aangemaakt</target></trans-unit>
@@ -356,28 +356,28 @@
 			<target state="translated">Vervang "{filename}"</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-			<target state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+			<target state="translated">Je kunt dit bestand vervangen door een nieuw bestand te uploaden. Eenmaal vervangen, zal het nieuwe bestand worden gebruikt op alle plaatsen waar de asset op uw website wordt gebruikt.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
 				<source>Note</source>
-			<target state="needs-translation">Note</target></trans-unit>
+			<target state="translated">Notitie</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-			<target state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+			<target state="translated">Deze operatie vervangt de asset in alle gepubliceerde of ongepubliceerde werkruimten, inclusief de live website.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
 				<source>Choose a new file</source>
-			<target state="needs-translation">Choose a new file</target></trans-unit>
+			<target state="translated">Kies een nieuw bestand</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
 				<source>Currently the asset is used {usageCount} times.</source>
-			<target state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+			<target state="translated">Momenteel wordt de asset {usageCount} keer gebruikt.</target></trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve">
 				<source>Show all usages</source>
-			<target state="needs-translation">Show all usages</target></trans-unit>
+			<target state="translated">Toon alle toepassingen</target></trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
 				<source>Currently the asset is not in used anywhere on the website.</source>
-			<target state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+			<target state="translated">Momenteel wordt de asset nergens op de website gebruikt.</target></trans-unit>
       <trans-unit id="replace.previewFile" xml:space="preserve">
 				<source>Preview current file</source>
-			<target state="needs-translation">Preview current file</target></trans-unit>
+			<target state="translated">Voorbeeld huidige bestand</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve" approved="yes">
 				<source>Could not replace asset</source>
 			<target state="final">Kon het bestand niet vervangen</target></trans-unit>
@@ -422,13 +422,13 @@
 			<target state="translated">Genereer een redirect van de originele locatie van het bestand naar de nieuwe locatie</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target state="translated">'Bronnen van type "{0}' kunnen alleen worden vervangen door een vergelijkbare bron. Kreeg type "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target state="translated">Geen toegang tot werkplaats "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target state="needs-translation">No document node found for this node</target></trans-unit>
+			<target state="translated">Geen documentnode gevonden voor deze node</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -28,12 +28,14 @@
     'processor1':
       postprocessor: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
       postprocessorOptions:
-        someOption: 'someValue'
-    'processor2':
-      postprocessor: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
-      postprocessorOptions:
         someOption: 'someOverriddenValue'
         someOtherOption: 'someOtherValue'
+    'processor2':
+      position: start
+      postprocessor: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
+      postprocessorOptions:
+        someOption: 'someValue'
+
 
 'Neos.ContentRepository.Testing:NodeTypeWithReferences':
   properties:

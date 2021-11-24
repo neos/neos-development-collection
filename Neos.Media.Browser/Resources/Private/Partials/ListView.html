@@ -85,7 +85,7 @@
             'deleteAssetLabel': '{neos:backend.translate(id: \'deleteAsset\', package: \'Neos.Media.Browser\')}'
         }">
             <f:for each="{paginatedAssetProxies}" as="assetProxy" iteration="iterator">
-                <tr class="asset draggable-asset{f:if(condition: '{assetProxy.tags -> f:count()} === 0', then: ' neos-media-untagged')}"
+                <tr class="asset draggable-asset{f:if(condition: '{assetProxy.asset.tags -> f:count()} === 0', then: ' neos-media-untagged')}"
                     data-asset-identifier="{assetProxy.identifier}"
                     data-local-asset-identifier="{assetProxy.localAssetIdentifier}"
                     data-asset-source-identifier="{assetProxy.assetSource.identifier}"
@@ -109,7 +109,7 @@
                     <td>{assetProxy.fileSize -> f:format.bytes()}</td>
                     <td><span class="neos-label">{assetProxy.mediaType}</span></td>
                     <td class="tags">
-                        <f:for each="{assetProxy.tags}" as="tag">
+                        <f:for each="{assetProxy.asset.tags}" as="tag">
                             <span class="neos-label">{tag.label}</span>
                         </f:for>
                     </td>
@@ -123,13 +123,13 @@
                                     <f:if condition="!{activeAssetSource.readOnly}">
                                         <f:then>
                                             <li>
-                                                <f:link.action action="edit" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+                                                <f:link.action action="edit" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" addQueryString="true" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
                                                     <i class="fas fa-edit icon-white"></i> {editLabel}
                                                 </f:link.action>
                                             </li>
                                             <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
                                                 <li>
-                                                    <f:link.action action="replaceAssetResource" arguments="{assetSourceIdentifier: activeAssetSource.identifier, asset: assetProxy.asset}" data="{asset-identifier: '{assetProxy.identifier}'}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+                                                    <f:link.action action="replaceAssetResource" arguments="{assetSourceIdentifier: activeAssetSource.identifier, asset: assetProxy.asset}" addQueryString="true" title="{replaceAssetResourceLabel}" data="{asset-identifier: '{assetProxy.identifier}', neos-toggle: 'tooltip', placement: 'left'}">
                                                         <i class="fas fa-random icon-white"></i> {replaceAssetResourceLabel}
                                                     </f:link.action>
                                                 </li>
@@ -142,7 +142,7 @@
                                         </f:then>
                                         <f:else>
                                             <li>
-                                                <f:link.action action="show" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" title="{viewAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+                                                <f:link.action action="show" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" addQueryString="true" title="{viewAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
                                                     <i class="fas fa-eye icon-white"></i> {viewLabel}
                                                 </f:link.action>
                                             </li>

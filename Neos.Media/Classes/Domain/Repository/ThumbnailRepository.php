@@ -17,6 +17,7 @@ use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Repository;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 
 /**
@@ -44,14 +45,14 @@ class ThumbnailRepository extends Repository
      * @param callable $callback
      * @return \Generator
      */
-    public function iterate(IterableResult $iterator, callable $callback = null)
+    public function iterate(IterableResult $iterator, callable $callback = null): ?\Generator
     {
         $iteration = 0;
         foreach ($iterator as $object) {
             $object = current($object);
             yield $object;
             if ($callback !== null) {
-                call_user_func($callback, $iteration, $object);
+                $callback($iteration, $object);
             }
             $iteration++;
         }
@@ -63,7 +64,7 @@ class ThumbnailRepository extends Repository
      * @param string $configurationHash Optional filtering by configuration hash (preset)
      * @return IterableResult
      */
-    public function findAllIterator($configurationHash = null)
+    public function findAllIterator($configurationHash = null): IterableResult
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -83,7 +84,7 @@ class ThumbnailRepository extends Repository
      *
      * @return IterableResult
      */
-    public function findUngeneratedIterator()
+    public function findUngeneratedIterator(): IterableResult
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -99,7 +100,7 @@ class ThumbnailRepository extends Repository
      *
      * @return integer
      */
-    public function countUngenerated()
+    public function countUngenerated(): int
     {
         $query = $this->createQuery();
         $query->matching($query->logicalAnd($query->equals('resource', null), $query->equals('staticResource', null)));
@@ -111,20 +112,16 @@ class ThumbnailRepository extends Repository
      *
      * @param AssetInterface $asset The asset to render a thumbnail for
      * @param ThumbnailConfiguration $configuration
-     * @return \Neos\Media\Domain\Model\Thumbnail The thumbnail or NULL
+     * @return Thumbnail The thumbnail or NULL
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneByAssetAndThumbnailConfiguration(AssetInterface $asset, ThumbnailConfiguration $configuration)
+    public function findOneByAssetAndThumbnailConfiguration(AssetInterface $asset, ThumbnailConfiguration $configuration): ?Thumbnail
     {
-        /**
-         * @var $query \Doctrine\ORM\Query
-         */
         $query = $this->entityManager->createQuery('SELECT t FROM Neos\Media\Domain\Model\Thumbnail t WHERE t.originalAsset = :originalAsset AND t.configurationHash = :configurationHash');
         $query->setParameter('originalAsset', $this->persistenceManager->getIdentifierByObject($asset));
         $query->setParameter('configurationHash', $configuration->getHash());
 
         $query->setMaxResults(1);
-        $result = $query->getOneOrNullResult();
-
-        return $result;
+        return $query->getOneOrNullResult();
     }
 }

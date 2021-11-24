@@ -1056,7 +1056,8 @@ class NodeDataRepository extends Repository
                 $queryBuilder->expr()->orx()
                     ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
                     ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
+            )
                 ->setParameter('parentPathHash', md5($pathStartingPoint))
                 ->setParameter('pathHash', md5($pathStartingPoint))
                 ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
@@ -1234,13 +1235,10 @@ class NodeDataRepository extends Repository
      */
     public function persistEntities()
     {
-        foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
-            if ($className === $this->entityClassName) {
-                $this->entityManager->flush($entities);
-                $this->emitRepositoryObjectsPersisted();
-                break;
-            }
-        }
+        // Flush all entities to circumvent an issue in Doctrine 2.x which reevaluates all changes
+        // for each change again when called individually leading to n^2 changeset calculations.
+        $this->entityManager->flush();
+        $this->emitRepositoryObjectsPersisted();
     }
 
     /**
@@ -1289,17 +1287,19 @@ class NodeDataRepository extends Repository
         $reducedNodes = [];
 
         $minimalDimensionPositionsByIdentifier = [];
+
+        $workspaceNames = array_map(
+            function (Workspace $workspace) {
+                return $workspace->getName();
+            },
+            $workspaces
+        );
+
         foreach ($nodes as $node) {
             /** @var NodeData $node */
             $nodeDimensions = $node->getDimensionValues();
 
             // Find the position of the workspace, a smaller value means more priority
-            $workspaceNames = array_map(
-                function (Workspace $workspace) {
-                    return $workspace->getName();
-                },
-                $workspaces
-            );
             $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
             if ($workspacePosition === false) {
                 throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
@@ -1318,12 +1318,19 @@ class NodeDataRepository extends Repository
                 if (isset($nodeDimensions[$dimensionName])) {
                     foreach ($nodeDimensions[$dimensionName] as $nodeDimensionValue) {
                         $position = array_search($nodeDimensionValue, $dimensionValues);
-                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            $position) : $position;
+                        if ($position === false) {
+                            $position = PHP_INT_MAX;
+                        }
+                        $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min(
+                            $dimensionPositions[$dimensionName],
+                            $position
+                        ) : $position;
                     }
                 } else {
-                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min($dimensionPositions[$dimensionName],
-                            PHP_INT_MAX) : PHP_INT_MAX;
+                    $dimensionPositions[$dimensionName] = isset($dimensionPositions[$dimensionName]) ? min(
+                        $dimensionPositions[$dimensionName],
+                        PHP_INT_MAX
+                    ) : PHP_INT_MAX;
                 }
             }
             $dimensionPositions[] = $workspacePosition;
@@ -1560,7 +1567,8 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX()
                     ->add($queryBuilder->expr()->eq('n.parentPathHash', ':parentPathHash'))
-                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath')))
+                    ->add($queryBuilder->expr()->like('n.parentPath', ':parentPath'))
+            )
                 ->setParameter('parentPathHash', md5($parentPath))
                 ->setParameter('parentPath', rtrim($parentPath, '/') . '/%');
         }
@@ -1581,7 +1589,8 @@ class NodeDataRepository extends Repository
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX()
                     ->add($queryBuilder->expr()->eq('n.pathHash', ':pathHash'))
-                    ->add($queryBuilder->expr()->like('n.path', ':path')))
+                    ->add($queryBuilder->expr()->like('n.path', ':path'))
+            )
                 ->setParameter('pathHash', md5($path))
                 ->setParameter('path', rtrim($path, '/') . '/%');
         }
@@ -1594,6 +1603,8 @@ class NodeDataRepository extends Repository
      */
     protected function addIdentifierConstraintToQueryBuilder(QueryBuilder $queryBuilder, $identifier)
     {
+        // TODO: We should add type hints in next major because this query becomes really SLOW if you use an integer here.
+        $identifier = (string)$identifier;
         $queryBuilder->andWhere('n.identifier = :identifier')
             ->setParameter('identifier', $identifier);
     }
@@ -1607,6 +1618,10 @@ class NodeDataRepository extends Repository
      */
     protected function filterNodeDataByBestMatchInContext(array $nodeDataObjects, Workspace $workspace, array $dimensions, $includeRemovedNodes = false)
     {
+        if (!$nodeDataObjects) {
+            return [];
+        }
+
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
         $nonPersistedNodes = [];
         $nodeIdentifier = [];

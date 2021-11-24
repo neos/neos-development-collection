@@ -18,6 +18,7 @@ use Neos\Fusion\Exception as FusionException;
  *
  * //fusionPath items *Collection
  * //fusionPath itemRenderer the Fusion object which is triggered for each item
+ * //fusionPath keyRenderer the Fusion object which is triggered for each item to render the key in the result collection
  */
 class MapImplementation extends AbstractFusionObject
 {
@@ -85,24 +86,36 @@ class MapImplementation extends AbstractFusionObject
         $iterationName = $this->getIterationName();
         $collectionTotalCount = count($collection);
 
+        $keyRenderPath = $this->path . '/keyRenderer';
+        $keyRendererIsAvailable = $this->runtime->canRender($keyRenderPath);
+
         $itemRenderPath = $this->path . '/itemRenderer';
-        $fallbackRenderPath =  $this->path . '/content';
+        $fallbackRenderPath = $this->path . '/content';
+
         if ($this->runtime->canRender($itemRenderPath) === false && $this->runtime->canRender($fallbackRenderPath)) {
             $itemRenderPath = $fallbackRenderPath;
         }
 
+
         foreach ($collection as $collectionKey => $collectionElement) {
             $context = $this->runtime->getCurrentContext();
             $context[$itemName] = $collectionElement;
+
             if ($itemKey !== null) {
                 $context[$itemKey] = $collectionKey;
             }
+
             if ($iterationName !== null) {
                 $context[$iterationName] = $this->prepareIterationInformation($collectionTotalCount);
             }
 
             $this->runtime->pushContextArray($context);
-            $result[$collectionKey] =  $this->runtime->render($itemRenderPath);
+
+            if ($keyRendererIsAvailable) {
+                $collectionKey = $this->runtime->render($keyRenderPath);
+            }
+            $result[$collectionKey] = $this->runtime->render($itemRenderPath);
+
             $this->runtime->popContext();
             $this->numberOfRenderedNodes++;
         }

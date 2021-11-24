@@ -61,7 +61,7 @@
 			<target state="translated">Descendente</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target state="translated">Direção de classificação Ascendente</target><alt-trans><target>Ordenar direção Ascendente</target></alt-trans></trans-unit>
+			<target state="translated">Direção de classificação Ascendente</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
 			<target state="translated">Direção de classificação Decrescente</target></trans-unit>
@@ -73,7 +73,7 @@
 			<target state="translated">Ver</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="translated">Ver Pacote</target><alt-trans><target>Ver o ativo</target></alt-trans></trans-unit>
+			<target state="translated">Ver Pacote</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target state="translated">Editar item</target></trans-unit>
@@ -109,7 +109,7 @@
 			<target state="translated">Substituir</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target state="translated">Substituir o recurso do ativo</target><alt-trans><target>Substituir o recurso</target></alt-trans></trans-unit>
+			<target state="translated">Substituir o recurso do ativo</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target state="translated">Salvar</target></trans-unit>
@@ -229,7 +229,7 @@
 			<target state="translated">Digite um rótulo</target></trans-unit>
       <trans-unit id="createTag" xml:space="preserve">
 				<source>Create tag</source>
-			<target state="translated">Criar tag</target><alt-trans><target>Criar Tag</target></alt-trans></trans-unit>
+			<target state="translated">Criar tag</target></trans-unit>
       <trans-unit id="tags.title.all" xml:space="preserve">
 				<source>All assets</source>
 			<target state="translated">Todos os arquivos</target></trans-unit>
@@ -304,13 +304,13 @@
 			<target state="translated">Visualizar</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">Download</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">Próximo</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">Anterior</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target state="translated">Não foi possível carregar o arquivo</target></trans-unit>
@@ -386,7 +386,7 @@
 			<target state="translated">Mídia "{0}" foi substituída.</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target state="translated">A mídia "{0}" foi atualizada.</target><alt-trans><target>Ativo "{0}" foi atualizado.</target></alt-trans></trans-unit>
+			<target state="translated">A mídia "{0}" foi atualizada.</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
 			<target state="translated">A mídia "{0}" foi adicionada.</target></trans-unit>

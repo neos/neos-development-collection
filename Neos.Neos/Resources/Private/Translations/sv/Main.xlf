@@ -14,7 +14,7 @@
 			<target state="translated">Granska ändringar</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Tillämpa</target><alt-trans><target>Utför</target></alt-trans></trans-unit>
+			<target state="translated">Tillämpa</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
 			<target state="translated">Tillämpa ändringar</target></trans-unit>
@@ -335,16 +335,16 @@
 			<target state="translated">Beskrivning</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target state="needs-translation">Toggle content tree</target></trans-unit>
+			<target state="translated">Växla innehållsträd</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target state="needs-translation">Show publish options</target></trans-unit>
+			<target state="translated">Visa publiceringsalternativ</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Aktivera redigering i helskärmsläge</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Avaktivera redigering i helskärmsläge</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
 			<target state="translated">Visa förhandsgranskning</target></trans-unit>
@@ -399,7 +399,7 @@
 			<target state="translated">Är du säker på att du vill ignorera alla ändringar i den här arbetsytan?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="needs-translation">Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target></trans-unit>
+			<target state="translated">Är du säker på att du vill ignorera {numberOfChanges} ändring(ar) i denna arbetsyta?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target state="translated">Publicera alla</target></trans-unit>
@@ -414,7 +414,7 @@
 			<target state="translated">Väntande ändringar</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target state="translated">Din personliga arbetsyta innehåller för närvarande opublicerade ändringar. För att växla till en annan arbetsyta måste du antingen publicera eller ignorera opublicerade ändringar först.</target><alt-trans><target>Din personliga arbetsyta innehåller för närvarande opublicerade ändringar. För att växla till en annan arbetsyta måste du antingen publicera eller kassera opublicerade ändringar först.</target></alt-trans></trans-unit>
+			<target state="translated">Din personliga arbetsyta innehåller för närvarande opublicerade ändringar. För att växla till en annan arbetsyta måste du antingen publicera eller ignorera opublicerade ändringar först.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
 			<target state="translated">Granska dina ändringar, publicera eller ignorera dem och välj sedan en ny arbetsyta igen.</target></trans-unit>
@@ -444,7 +444,7 @@
 			<target state="translated">Släng</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target state="translated">Tillämpa</target><alt-trans><target>Utför</target></alt-trans></trans-unit>
+			<target state="translated">Tillämpa</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target state="translated">Välj ett plugin</target></trans-unit>
@@ -492,7 +492,7 @@
 			<target state="translated">Denna text får ej överstiga {maximum} tecken.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Endast vanliga tecken (a till ö) och siffror är tillåtna.</target><alt-trans><target>Endast tecknen ifrån a till z och siffror tillåts</target></alt-trans></trans-unit>
+			<target state="translated">Endast vanliga tecken (a till ö) och siffror är tillåtna.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target state="translated">Det angivna ämnet är inte räkenbart.</target></trans-unit>
@@ -663,13 +663,13 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target state="needs-translation">Welcome to Neos</target></trans-unit>
+			<target state="translated">Välkommen till Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target state="translated">Gå till setup</target></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
-			<target state="needs-translation">Technical Information</target></trans-unit>
+			<target state="translated">Teknisk information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target state="translated">Saknar hemsida</target></trans-unit>
@@ -684,10 +684,10 @@
 			<target state="translated">Databasfel</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target state="translated">Det finns ingen databasanslutning ännu eller Neos databasschema har inte skapats.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target state="translated">Kör installationen för att konfigurera din databas.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Sidan hittades inte</target></trans-unit>
@@ -702,10 +702,10 @@
 			<target state="translated">Konfigurationen av den nodtyp som är tänkt för att återges här är inte tillgänglig. Förmodligen har du bytt namn på nodtypen och saknar en migrering eller du har helt enkelt felstavat det.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target state="translated">Oväntat fel när nod skapas</target><alt-trans><target>Oväntat fel när du skapar nod</target></alt-trans></trans-unit>
+			<target state="translated">Oväntat fel när nod skapas</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target state="translated">Oväntat fel när nod raderas</target><alt-trans><target>Oväntat fel när du raderar nod</target></alt-trans></trans-unit>
+			<target state="translated">Oväntat fel när nod raderas</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
 			<target state="translated">Oväntat fel när nod uppdateras</target></trans-unit>

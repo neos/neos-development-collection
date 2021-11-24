@@ -39,12 +39,28 @@ class Tag
     protected $assetCollections;
 
     /**
+     * @var Tag
+     * @ORM\ManyToOne(cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="SET NULL")
+     * @Flow\Lazy
+     */
+    protected $parent;
+
+    /**
+     * @var Collection<\Neos\Media\Domain\Model\Tag>
+     * @ORM\OneToMany(mappedBy="parent", orphanRemoval=true)
+     * @Flow\Lazy
+     */
+    protected $children;
+
+    /**
      * @param string $label
      */
     public function __construct($label)
     {
         $this->label = $label;
         $this->assetCollections = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     /**
@@ -53,7 +69,7 @@ class Tag
      * @param string $label
      * @return void
      */
-    public function setLabel($label)
+    public function setLabel(string $label): void
     {
         $this->label = $label;
     }
@@ -63,7 +79,7 @@ class Tag
      *
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -73,7 +89,7 @@ class Tag
      *
      * @return Collection
      */
-    public function getAssetCollections()
+    public function getAssetCollections(): Collection
     {
         return $this->assetCollections;
     }
@@ -84,7 +100,7 @@ class Tag
      * @param Collection $assetCollections
      * @return void
      */
-    public function setAssetCollections(Collection $assetCollections)
+    public function setAssetCollections(Collection $assetCollections): void
     {
         foreach ($this->assetCollections as $existingAssetCollection) {
             $existingAssetCollection->removeTag($this);
@@ -98,5 +114,41 @@ class Tag
             }
         }
         $this->assetCollections = $assetCollections;
+    }
+
+    /**
+     * @return Tag|null
+     */
+    public function getParent(): ?Tag
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param Tag $parent
+     */
+    public function setParent(Tag $parent): void
+    {
+        $this->parent = $parent;
+        $parent->addChild($this);
+    }
+
+    /**
+     * @param Tag $child
+     */
+    public function addChild(Tag $child): void
+    {
+        if (!$this->children->contains($child)) {
+            $this->children->add($child);
+            $child->setParent($this);
+        }
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
     }
 }

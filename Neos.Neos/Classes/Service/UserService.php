@@ -50,6 +50,12 @@ class UserService
     protected $defaultLanguageIdentifier;
 
     /**
+     * @Flow\Inject
+     * @var \Neos\Flow\Security\Context
+     */
+    protected $securityContext;
+
+    /**
      * Returns the current backend user
      *
      * @return User
@@ -70,7 +76,7 @@ class UserService
     {
         $workspaceName = $this->getPersonalWorkspaceName();
         if ($workspaceName !== null) {
-            return $this->workspaceRepository->findOneByName($this->getPersonalWorkspaceName());
+            return $this->workspaceRepository->findOneByName($workspaceName);
         }
     }
 
@@ -89,7 +95,10 @@ class UserService
             return null;
         }
 
-        $username = $this->userDomainService->getUsername($currentUser);
+        $username = $this->userDomainService->getUsername(
+            $currentUser,
+            $this->securityContext->getAccount()->getAuthenticationProviderName()
+        );
         return ($username === null ? null : UserUtility::getPersonalWorkspaceNameForUsername($username));
     }
 

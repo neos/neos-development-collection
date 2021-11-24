@@ -1,5 +1,5 @@
 up:
-  comments: 'Alter NodeTypes of subpackages that are extracted from Neos.Demo to their respective namespaces'
+  comments: 'Alter NodeTypes of subpackages that are extracted from Neos.NodeTypes to their respective namespaces'
   migration:
     -
       filters:

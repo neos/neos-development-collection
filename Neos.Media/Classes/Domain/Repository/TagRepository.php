@@ -12,12 +12,19 @@ namespace Neos\Media\Domain\Repository;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\QueryResult;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
+use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Media\Domain\Model\Tag;
 
 /**
  * A repository for Tags
+ *
+ * @method Tag findOneByLabel(string $label)
+ * @method QueryResult findByParent(Tag $tag)
  *
  * @Flow\Scope("singleton")
  */
@@ -31,18 +38,20 @@ class TagRepository extends Repository
     /**
      * @param string $searchTerm
      * @return QueryResultInterface
+     * @throws InvalidQueryException
      */
-    public function findBySearchTerm($searchTerm)
+    public function findBySearchTerm($searchTerm): QueryResultInterface
     {
         $query = $this->createQuery();
         return $query->matching($query->like('label', '%' . $searchTerm . '%'))->execute();
     }
 
     /**
-     * @param array<AssetCollection> $assetCollection
+     * @param array<AssetCollection> $assetCollections
      * @return QueryResultInterface
+     * @throws InvalidQueryException
      */
-    public function findByAssetCollections(array $assetCollections)
+    public function findByAssetCollections(array $assetCollections): QueryResultInterface
     {
         $query = $this->createQuery();
         $constraints = [];

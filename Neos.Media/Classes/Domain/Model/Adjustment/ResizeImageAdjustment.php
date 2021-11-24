@@ -76,7 +76,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @var string
      * @ORM\Column(nullable = true)
      */
-    protected $ratioMode;
+    protected $ratioMode = ImageInterface::RATIOMODE_INSET;
 
     /**
      * @var boolean
@@ -237,6 +237,14 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function setRatioMode(string $ratioMode): void
     {
+        if ($ratioMode === '') {
+            $ratioMode = ImageInterface::RATIOMODE_INSET;
+        }
+        $supportedModes = [ImageInterface::RATIOMODE_INSET, ImageInterface::RATIOMODE_OUTBOUND];
+        if (!in_array($ratioMode, $supportedModes, true)) {
+            throw new \InvalidArgumentException(sprintf('Invalid mode "%s" specified, supported modes are: "%s" (but use the ImageInterface::RATIOMODE_* constants)', $ratioMode, implode('", "', $supportedModes)), 1574686876);
+        }
+
         $this->ratioMode = $ratioMode;
     }
 
@@ -294,8 +302,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function applyToImage(ImagineImageInterface $image)
     {
-        $ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
-        return $this->resize($image, $ratioMode, $this->filter);
+        return $this->resize($image, $this->ratioMode, $this->filter);
     }
 
     /**
@@ -344,9 +351,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     protected function calculateWithFixedDimensions(BoxInterface $originalDimensions, int $requestedWidth, int $requestedHeight): BoxInterface
     {
-        $ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
-
-        if ($ratioMode === ImageInterface::RATIOMODE_OUTBOUND) {
+        if ($this->ratioMode === ImageInterface::RATIOMODE_OUTBOUND) {
             return $this->calculateOutboundBox($originalDimensions, $requestedWidth, $requestedHeight);
         }
 
@@ -448,8 +453,11 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
         if ($mode !== ImageInterface::RATIOMODE_INSET &&
             $mode !== ImageInterface::RATIOMODE_OUTBOUND
         ) {
-            throw new \InvalidArgumentException('Invalid mode specified');
+            throw new \InvalidArgumentException('Invalid mode specified', 1574686891);
         }
+
+        $autorotateFilter = new \Imagine\Filter\Basic\Autorotate();
+        $autorotateFilter->apply($image);
 
         $imageSize = $image->getSize();
         $requestedDimensions = $this->calculateDimensions($imageSize);

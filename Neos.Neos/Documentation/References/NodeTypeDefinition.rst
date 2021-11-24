@@ -289,7 +289,7 @@ The following options are allowed for defining a NodeType:
 
         ``placeholder``
           A text that is shown when the field is empty. Supports i18n.
-        
+
         ``autoparagraph``
           When configured to false, automatic creation of paragraphs is disabled for this property and <enter>
           key would create soft line breaks instead (equivalent to configuring an editable on a span tag).
@@ -360,6 +360,11 @@ The following options are allowed for defining a NodeType:
 
       ``editorListeners`` (removed since Neos 3.3)
         This feature has been removed in favor of `Depending Properties`_ with Neos 3.3
+
+    ``showInCreationDialog`` (since Neos 5.1)
+      If `true` the corresponding property will appear in the Node Creation Dialog. Editor configuration
+      will be copied from the respective ``ui.inspector`` settings in that case and can be overridden with
+      the ``creationDialog.elements.<propertyName>``, see `Node Creation Dialog Configuration`_
 
   ``validation``
     A list of validators to use on the property. Below each validator type any options for the validator

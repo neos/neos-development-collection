@@ -16,7 +16,7 @@
                     </p>
                     <span class="neos-file-input">
                         <label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'replaceAsset.chooseNewFile', package: 'Neos.Media.Browser')} <i class="fas fa-file"></i></label>
-                        <f:form.upload id="resource" name="resource" additionalAttributes="{required: 'required'}"/>
+                        <f:form.upload id="resource" name="resource" additionalAttributes="{required: 'required', accept: constraints.mediaTypeAcceptAttribute}"/>
                     </span>
                 </fieldset>
                 <fieldset>
@@ -26,7 +26,7 @@
                             <span></span> {neos:backend.translate(id: 'replace.options.keepOriginalFilename', arguments: {0: asset.resource.filename}, package: 'Neos.Media.Browser')}
                         </label>
                     </div>
-                    <f:if condition="{redirectPackageEnabled}">
+                    <f:if condition="{createAssetRedirectsOptionEnabled}">
                         <div>
                             <label class="neos-checkbox neos-inline">
                                 <f:form.checkbox name="options[generateRedirects]" value="1" checked="true"/>
@@ -40,7 +40,7 @@
                     <f:if condition="{asset.inUse}">
                         <f:then>
                             <p class="neos-buffer-below"><i class="fas fa-exclamation-sign"></i> {neos:backend.translate(id: 'replace.usageCount', arguments: {usageCount: asset.usageCount}, package: 'Neos.Media.Browser')}</p>
-                            <f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">
+                            <f:link.action action="relatedNodes" arguments="{asset:asset}" addQueryString="true" class="neos-button">
                                 {neos:backend.translate(id: 'replace.allUsages', package: 'Neos.Media.Browser')}
                             </f:link.action>
                         </f:then>
@@ -59,6 +59,7 @@
             <a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
             <f:form.submit id="replace" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'replaceAssetResource', package: 'Neos.Media.Browser')}"/>
         </div>
+        <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
     </f:form>
 </f:section>
 

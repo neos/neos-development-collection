@@ -41,11 +41,11 @@
 								</f:else>
 							</f:if>
 						</td>
-						<td><span title="{workspace.name}" data-neos-toggle="tooltip">{workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span></td>
+						<td><span title="{workspace.description}" data-neos-toggle="tooltip">{workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span></td>
 						<td>
 							<f:if condition="{workspace.baseWorkspace}">
 								<f:then>
-									<span title="{workspace.baseWorkspace.name}" data-neos-toggle="tooltip">{workspace.baseWorkspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
+									<span title="{workspace.baseWorkspace.description}" data-neos-toggle="tooltip">{workspace.baseWorkspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
 								</f:then>
 								<f:else>
 									<span>-</span>

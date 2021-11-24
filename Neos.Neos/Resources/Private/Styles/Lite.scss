@@ -1,0 +1,81 @@
+// Core variables and mixins
+@import "Foundation/variables";
+@import "Foundation/mixins";
+@import "Constants";
+@import "Mixins";
+@import "Fonts";
+@import "FontAwesome/fontawesome.scss";
+@import "FontAwesome/brands.scss";
+@import "FontAwesome/regular.scss";
+@import "FontAwesome/solid.scss";
+@import "Icons";
+
+// Reusable CSS variables for all backend modules
+@import "CSSVariables";
+
+// CSS Reset
+@import "Foundation/reset";
+@import "Reset";
+
+.neos {
+	// Grid system and page structure
+	@import "Foundation/grid";
+	@import "Foundation/layouts";
+
+	// Base CSS
+	@import "Foundation/forms";
+	@import "Foundation/tables";
+
+	// Components: common
+	@import "Foundation/dropdowns";
+	@import "Foundation/wells";
+	@import "Foundation/component-animations";
+	@import "Foundation/close";
+	@import "Foundation/thumbnails";
+
+	// Components: Buttons & Alerts
+	@import "Foundation/buttons";
+	@import "Foundation/button-groups";
+
+	// Components: Nav
+	@import "Foundation/breadcrumbs";
+
+	// Components: Modals, Tooltips & Popovers
+	@import "Foundation/modals";
+	@import "Foundation/tooltip";
+	@import "Foundation/popovers";
+
+	// Components: Misc
+	@import "Foundation/labels-badges";
+
+	// Utility classes
+	@import "Foundation/utilities"; // Has to be last to override when necessary
+
+	// Large desktops
+	@import "Foundation/responsive-1200px-min";
+
+	// Tablets to regular desktops
+	@import "Foundation/responsive-768px-979px";
+
+	// Phones to portrait tablets and narrow desktops
+	@import "Foundation/responsive-767px-max";
+
+	// Neos font definition
+	font-size: 14px;
+	line-height: 1em;
+	text-align: left;
+	color: $textOnGray;
+	@include font;
+
+	@import "Tree";
+	@import "General";
+	@import "TopBar/TopBar";
+	@import "TopBar/UserMenu";
+	@import "Menu/MenuPanel";
+	@import "Modules/Modules";
+	@import "Modules/Widget";
+	@import "Notifications";
+	@import "Widget/pagination";
+}
+
+@import "Global";

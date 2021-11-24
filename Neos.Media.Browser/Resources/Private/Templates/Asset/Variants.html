@@ -8,10 +8,10 @@
 
     <ul class="neos-nav neos-nav-tabs" role="tablist">
         <li role="presentation">
-            <f:link.action action="{overviewAction}" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}">Overview</f:link.action>
+            <f:link.action action="{overviewAction}" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" addQueryString="true">Overview</f:link.action>
         </li>
         <li role="presentation" class="neos-active">
-            <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}">Variants</f:link.action>
+            <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" addQueryString="true">Variants</f:link.action>
         </li>
     </ul>
 
@@ -21,7 +21,9 @@
         <script id="variants-information" type="application/json">{variantsInformation -> f:format.json() -> f:format.raw()}</script>
         <script id="original-information" type="application/json">{originalInformation -> f:format.json() -> f:format.raw()}</script>
     </div>
-    <f:form action="update" controller="ImageVariant" package="Neos.Media.Browser" format="json" id="postHelper" method="post" useParentRequest="true"></f:form>
+    <f:form action="update" controller="ImageVariant" package="Neos.Media.Browser" format="json" id="postHelper" method="post" useParentRequest="{isSubRequest}">
+        <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
+    </f:form>
 </f:section>
 
 <f:section name="Scripts">

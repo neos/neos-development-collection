@@ -28,7 +28,7 @@
 			<target state="translated">标题</target></trans-unit>
       <trans-unit id="field.copyrightnotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target state="needs-translation">Copyright Notice</target></trans-unit>
+			<target state="translated">版权声明</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			<target state="translated">上次修改</target></trans-unit>
@@ -70,10 +70,10 @@
 			<target state="translated">拖放式操作标记或集合</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target state="needs-translation">View</target></trans-unit>
+			<target state="translated">查看</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="needs-translation">View asset</target></trans-unit>
+			<target state="translated">查看资产</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target state="translated">编辑素材</target></trans-unit>
@@ -88,7 +88,7 @@
 			<target state="translated">你真的想要删除集合"{0}"吗?</target></trans-unit>
       <trans-unit id="message.reallyDeleteTag" xml:space="preserve">
 				<source>Do you really want to delete tag "{0}"?</source>
-			<target state="translated">你真的想要删除标签"{0}"吗?</target><alt-trans><target>你真的想要删除标记"{0}"吗?</target></alt-trans></trans-unit>
+			<target state="translated">你真的想要删除标签"{0}"吗?</target></trans-unit>
       <trans-unit id="message.willBeDeleted" xml:space="preserve">
 				<source>This will delete the asset.</source>
 			<target state="translated">这将删除该素材。</target></trans-unit>
@@ -184,13 +184,13 @@
 			<target state="translated">缩略视图</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target state="needs-translation">Connection error</target></trans-unit>
+			<target state="translated">连接失败</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="needs-translation">Media source</target></trans-unit>
+			<target state="translated">媒体来源</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="needs-translation">Media sources</target></trans-unit>
+			<target state="translated">媒体来源</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			<target state="translated">集合</target></trans-unit>
@@ -298,25 +298,25 @@
 			<target state="translated">标题</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target state="needs-translation">Copyright Notice</target></trans-unit>
+			<target state="translated">版权声明</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target state="translated">预览</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">下载</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">继续</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">返回</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target state="translated">不能上传文件</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target state="translated">没有选择文件</target></trans-unit>
+			<target state="translated">未选择文件</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="translated">文件大小不能超过{1}, 当前大小{0}</target></trans-unit>
@@ -325,7 +325,7 @@
 			<target state="translated">为文件</target></trans-unit>
       <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target state="translated">部分文件上传成功, 请刷新页面查看</target><alt-trans><target>部分文件上传成功,请刷新页面查看</target></alt-trans></trans-unit>
+			<target state="translated">部分文件上传成功, 请刷新页面查看</target></trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve">
 				<source>Tagging the asset failed.</source>
 			<target state="translated">标记素材失败。</target></trans-unit>
@@ -376,22 +376,22 @@
 			<target state="translated">预览当前文件</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target state="translated">无法替换素材</target><alt-trans><target>无法替换资产</target></alt-trans></trans-unit>
+			<target state="translated">无法替换素材</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target state="translated">素材 "{0}" 已被替换。</target><alt-trans><target>资产"{0}"已被替换。</target></alt-trans></trans-unit>
+			<target state="translated">素材 "{0}" 已被替换。</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target state="translated">素材 "{0}" 已更新。</target><alt-trans><target>素材 "{0}" 已被更新。</target></alt-trans><alt-trans><target>资产"{0}"已更新。</target></alt-trans></trans-unit>
+			<target state="translated">素材 "{0}" 已更新。</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
-			<target state="translated">素材 "{0}" 已添加。</target><alt-trans><target>资产"{0}"已添加。</target></alt-trans></trans-unit>
+			<target state="translated">素材 "{0}" 已添加。</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
-			<target state="translated">素材 "{0}" 已删除。</target><alt-trans><target>素材 "{0}" 已被删除。</target></alt-trans><alt-trans><target>资产"{0}"已被删除。</target></alt-trans></trans-unit>
+			<target state="translated">素材 "{0}" 已删除。</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			<target state="translated">无法删除素材。</target><alt-trans><target>无法删除资产。</target></alt-trans></trans-unit>
+			<target state="translated">无法删除素材。</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			<target state="translated">"{0}"标签已经存在，并且被添加到集合。</target></trans-unit>
@@ -406,7 +406,7 @@
 			<target state="translated">标签 {0} 已删除。</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target state="translated">收藏 “{0}” 已建立。</target><alt-trans><target>收藏 “{{0}” 已建立。</target></alt-trans></trans-unit>
+			<target state="translated">收藏 “{0}” 已建立。</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
 			<target state="translated">收藏 “{0}” 已更新。</target></trans-unit>

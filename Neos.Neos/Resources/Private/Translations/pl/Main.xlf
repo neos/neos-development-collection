@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target state="final">Auto-publikacja</target><alt-trans><target>Publikacja automatyczna</target></alt-trans><alt-trans><target>Automatyczna publikacja</target></alt-trans></trans-unit>
+			<target state="final">Auto-publikacja</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
 			<target state="final">Automatyczna publikacja do {0}</target></trans-unit>
@@ -32,7 +32,7 @@
 			<target state="final">Pisz, aby szukać</target></trans-unit>
       <trans-unit id="content" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target state="final">Treść</target><alt-trans><target>Zawartość</target></alt-trans></trans-unit>
+			<target state="final">Treść</target></trans-unit>
       <trans-unit id="node" xml:space="preserve" approved="yes">
 				<source>Node</source>
 			<target state="final">Węzeł</target></trans-unit>
@@ -41,7 +41,7 @@
 			<target state="final">Widok treści</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
-			<target state="final">Utwórz po</target><alt-trans><target>Stwórz po</target></alt-trans></trans-unit>
+			<target state="final">Utwórz po</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve" approved="yes">
 				<source>Create new</source>
 			<target state="final">Utwórz nowy</target></trans-unit>
@@ -77,7 +77,7 @@
 			<target state="final">Edycja / Podgląd</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="final">Edytuj</target><alt-trans><target>Edycja</target></alt-trans></trans-unit>
+			<target state="final">Edytuj</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
 			<target state="final">Ukryj / Pokaż</target></trans-unit>
@@ -161,7 +161,7 @@
 			<target state="final">Przełącz menu publikacji</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
 				<source>Target workspace</source>
-			<target state="final">Docelowy obszar roboczy</target><alt-trans><target>Przestrzeń robocza</target></alt-trans></trans-unit>
+			<target state="final">Docelowy obszar roboczy</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
 				<source>Current workspace</source>
 			<target state="final">Bieżący obszar roboczy</target></trans-unit>
@@ -200,7 +200,7 @@
 			<target state="final">Etykieta</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Content Type</source>
-			<target state="final">Typ zawartości</target><alt-trans><target>Typ węzła</target></alt-trans><alt-trans><target>Węzeł</target></alt-trans></trans-unit>
+			<target state="final">Typ zawartości</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target state="final">Ścieżka</target></trans-unit>
@@ -335,7 +335,7 @@
 			<target state="final">Opis</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve" approved="yes">
 				<source>Toggle content tree</source>
-			<target state="final">Przełącz drzewo zawartości</target><alt-trans><target>Przełącz strukturę treści</target></alt-trans></trans-unit>
+			<target state="final">Przełącz drzewo zawartości</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve" approved="yes">
 				<source>Show publish options</source>
 			<target state="final">Pokaż opcje publikowania</target></trans-unit>
@@ -351,7 +351,7 @@
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target state="final">Ogólny</target><alt-trans><target>ogólny</target></alt-trans></trans-unit>
+			<target state="final">Ogólny</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve" approved="yes">
 				<source>Structure</source>
 			<target state="final">Struktura</target></trans-unit>
@@ -361,16 +361,16 @@
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click {0} to continue to the page.</source>
-			<target state="final">Kliknij {0}, aby przejść do strony.</target><alt-trans><target>Kliknij tutaj, aby przejść do strony {0}.</target></alt-trans></trans-unit>
+			<target state="final">Kliknij {0}, aby przejść do strony.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
 				<source>Click {0} to see the file.</source>
-			<target state="final">Kliknij {0} aby zobaczyć plik.</target><alt-trans><target>Kliknij tutaj, aby przejść o zasobu {0}.</target></alt-trans></trans-unit>
+			<target state="final">Kliknij {0} aby zobaczyć plik.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
 				<source>Click {0} to open the link.</source>
-			<target state="final">Kliknij {0}, aby otworzyć odnośnik.</target><alt-trans><target>Kliknij tutaj, aby przejść do strony rozszerzenia {0}.</target></alt-trans></trans-unit>
+			<target state="final">Kliknij {0}, aby otworzyć odnośnik.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
 				<source>(no target has been selected)</source>
-			<target state="final">(cel nie został wybrany)</target><alt-trans><target>(strona docelowa nie została ustawiona)</target></alt-trans></trans-unit>
+			<target state="final">(cel nie został wybrany)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target state="final">To jest skrót do pierwszej podstrony. &lt;br /&gt;Kliknij {0}, aby do niej przejść.</target></trans-unit>
@@ -414,10 +414,10 @@
 			<target state="final">Oczekujące zmiany</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target state="final">Twoja osobista przestrzeń robocza zawiera obecnie nieopublikowane zmiany. W celu przełączenia się na inny obszar roboczy musisz opublikować wprowadzone zmiany lub je odrzucić.</target><alt-trans><target>Twoja obecna przestrzeń robocza zawiera nieopublikowane zmiany. W celu przełączenia się na inny obszar roboczy należy opublikować wprowadzone zmiany lub je zaniechać.</target></alt-trans></trans-unit>
+			<target state="final">Twoja osobista przestrzeń robocza zawiera obecnie nieopublikowane zmiany. W celu przełączenia się na inny obszar roboczy musisz opublikować wprowadzone zmiany lub je odrzucić.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target state="final">Przejrzyj swoje zmiany, opublikuj je lub odrzuć, a następnie wybierz nową docelową przestrzeń roboczą.</target><alt-trans><target>Proszę zweryfikować wprowadzone zmiany, opublikować je lub anulować a kolejno wybrać nową przestrzeń roboczą.</target></alt-trans></trans-unit>
+			<target state="final">Przejrzyj swoje zmiany, opublikuj je lub odrzuć, a następnie wybierz nową docelową przestrzeń roboczą.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
 				<source>Editing Modes</source>
 			<target state="final">Tryby edycji</target></trans-unit>
@@ -435,7 +435,7 @@
 			<target state="final">Niektóre pola nie zostały poprawnie wypełnione.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve" approved="yes">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target state="final">Pola oznaczone jako błędne nie są jeszcze prawidłowo wypełnione. Uzupełnij je poprawnie.</target><alt-trans><target>Oznaczone pola zawierają błędy. Proszę popraw je.</target></alt-trans></trans-unit>
+			<target state="final">Pola oznaczone jako błędne nie są jeszcze prawidłowo wypełnione. Uzupełnij je poprawnie.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve" approved="yes">
 				<source>Continue editing</source>
 			<target state="final">Kontynuuj edycję</target></trans-unit>
@@ -447,10 +447,10 @@
 			<target state="final">Zastosuj</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve" approved="yes">
 				<source>Select a Plugin</source>
-			<target state="final">Wybierz wtyczkę</target><alt-trans><target>Wybierz plugin</target></alt-trans></trans-unit>
+			<target state="final">Wybierz wtyczkę</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve" approved="yes">
 				<source>No plugin configured</source>
-			<target state="final">Brak skonfigurowanych wtyczek</target><alt-trans><target>Brak skonfigurowanych pluginów</target></alt-trans></trans-unit>
+			<target state="final">Brak skonfigurowanych wtyczek</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve" approved="yes">
 				<source>view is displayed on page</source>
 			<target state="final">Widok jest wyświetlany na stronie</target></trans-unit>
@@ -462,7 +462,7 @@
 			<target state="final">Nie wybrano daty</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
 				<source>Edit code</source>
-			<target state="final">Edytuj kod</target><alt-trans><target>Edycja kodu</target></alt-trans></trans-unit>
+			<target state="final">Edytuj kod</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve" approved="yes">
 				<source>Paste a link, or type to search</source>
 			<target state="final">Wklej link, lub pisz aby wyszukać</target></trans-unit>
@@ -504,7 +504,7 @@
 			<target state="final">Podana wartość nie jest poprawną datą.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve" approved="yes">
 				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-			<target state="final">Podana data musi zawierać się między {{formatEarliestDate}} i {{formatLatestDate}}</target><alt-trans><target>Podane daty musi zawierać się między {{formatEarliestDate}} i {{formatLatestDate}}</target></alt-trans></trans-unit>
+			<target state="final">Podana data musi zawierać się między {{formatEarliestDate}} i {{formatLatestDate}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve" approved="yes">
 				<source>The given date must be after {formatEarliestDate}</source>
 			<target state="final">Podana data musi być po {{formatEarliestDate}}</target></trans-unit>
@@ -531,10 +531,10 @@
 			<target state="final">Oczekiwana jest poprawna liczba.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target state="final">Proszę podać poprawną liczbę pomiędzy {{minimum}} a {{maximum}}</target><alt-trans><target>Proszę podać poprawną cyfrę od {{minimum}} do {{maximum}}</target></alt-trans></trans-unit>
+			<target state="final">Proszę podać poprawną liczbę pomiędzy {{minimum}} a {{maximum}}</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target state="final">Podany ciąg znaków nie odpowiada wzorcowi ({pattern})</target><alt-trans><target>Podany ciąg znaków nie odpowiada wzorcowi ({{pattern}})</target></alt-trans></trans-unit>
+			<target state="final">Podany ciąg znaków nie odpowiada wzorcowi ({pattern})</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
 			<target state="final">Oczekiwany jest poprawny ciąg znaków.</target></trans-unit>
@@ -555,7 +555,7 @@
 			<target state="final">Ten {nodeTypeLabel} nie istnieje jeszcze w {currentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve" approved="yes">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target state="final">Możesz utworzyć go teraz, rozpoczynając z pustym {nodeTypeLabel} lub skopiować całą zawartość z obecnie widocznego {nodeTypeLabel}, który znajduje się w {currentDocumentDimensionChoiceText}.</target><alt-trans><target>Możesz stworzyć go teraz, rozpocząć z pustym {nodeTypeLabel} lub skopiować całą zawartość z obecnie widocznego {nodeTypeLabel}, który znajduje się w {currentDocumentDimensionChoiceText}.</target></alt-trans></trans-unit>
+			<target state="final">Możesz utworzyć go teraz, rozpoczynając z pustym {nodeTypeLabel} lub skopiować całą zawartość z obecnie widocznego {nodeTypeLabel}, który znajduje się w {currentDocumentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve" approved="yes">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
 			<target state="final">Dodatkowo, są {numberOfNodesMissingInRootline} dokumenty przodkowie, które również nie istnieją w wybranym wariancie i które także zostaną utworzone.</target></trans-unit>
@@ -567,22 +567,22 @@
 			<target state="final">Utwórz i kopiuj</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target state="final">Treść</target><alt-trans><target>Zawartość</target></alt-trans></trans-unit>
+			<target state="final">Treść</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve" approved="yes">
 				<source>Toggle menu group</source>
 			<target state="final">Przełącz grupę menu</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve" approved="yes">
 				<source>Toggle sticky menu mode</source>
-			<target state="final">Przełącz tryb menu przyczepionego</target><alt-trans><target>Przełącz menu w tryb uproszczony</target></alt-trans></trans-unit>
+			<target state="final">Przełącz tryb menu przyczepionego</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target state="final">Czy na pewno chcesz usunąć</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
 				<source>This will delete the element</source>
-			<target state="final">Spowoduje to usunięcie elementu</target><alt-trans><target>To spowoduje usunięcie strony</target></alt-trans></trans-unit>
+			<target state="final">Spowoduje to usunięcie elementu</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
 				<source>and it's children</source>
-			<target state="final">wraz z jego dziećmi</target><alt-trans><target>wraz z jej podstronami</target></alt-trans></trans-unit>
+			<target state="final">wraz z jego dziećmi</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
 			<target state="final">Tę operację można cofnąć w panelu zarządzania obszarem roboczym.</target></trans-unit>
@@ -624,7 +624,7 @@
 			<target state="final">Wystąpił błąd podczas zapisywania</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target state="final">Przeładuj stronę aby spróbować rozwiązać ten problem.</target><alt-trans><target>Przeładuj stronę, co może pomóc rozwiązać ten problem.</target></alt-trans></trans-unit>
+			<target state="final">Przeładuj stronę aby spróbować rozwiązać ten problem.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve" approved="yes">
 				<source>Reload the backend</source>
 			<target state="final">Przeładuj backend</target></trans-unit>
@@ -647,7 +647,7 @@
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>Login to</source>
-			<target state="final">Logowanie do</target><alt-trans><target>Logowanie do TYPO3 Neos</target></alt-trans></trans-unit>
+			<target state="final">Logowanie do</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve" approved="yes">
 				<source>Authenticating</source>
 			<target state="final">Uwierzytelnianie</target></trans-unit>
@@ -678,13 +678,13 @@
 			<target state="final">Prawdopodobnie żadna strona nie została zdefiniowana, witryna nie zawiera strony głównej, bądź nie można określić aktywnej strony.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target state="final">Powinieneś ustawić domenę strony lub zaimportować nową stronę w ustawieniach.</target><alt-trans><target>Możesz chcieć ustawić domenę strony lub zaimportować nową stronę w ustawieniach.</target></alt-trans></trans-unit>
+			<target state="final">Powinieneś ustawić domenę strony lub zaimportować nową stronę w ustawieniach.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target state="final">Błąd bazy danych</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="translated">Nie ma jeszcze połączenia z bazą danych lub nie został utworzony schemat bazy danych Neosa.</target><alt-trans><target>Brak połączenia bazy danych lub nie został jeszcze utworzony schemat Neos bazy danych.</target></alt-trans></trans-unit>
+			<target state="translated">Nie ma jeszcze połączenia z bazą danych lub nie został utworzony schemat bazy danych Neosa.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
 			<target state="translated">Uruchom instalator, aby skonfigurować bazę danych.</target></trans-unit>
@@ -696,10 +696,10 @@
 			<target state="final">Niestety, żądana strona nie została odnaleziona.</target></trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve" approved="yes">
 				<source>Invalid NodeType</source>
-			<target state="final">Niepoprawny węzeł</target><alt-trans><target>Niepoprawny NodeType</target></alt-trans></trans-unit>
+			<target state="final">Niepoprawny węzeł</target></trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target state="final">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę węzła i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target><alt-trans><target>Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę NodeType i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target></alt-trans></trans-unit>
+			<target state="final">Konfiguracja węzła (NodeType), który miał być w tym miejscu wyświetlony nie jest dostępna. Prawdopodobnie zmieniłeś nazwę węzła i nie wykonałeś migracji lub po prostu zrobiłeś literówkę.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve" approved="yes">
 				<source>Unexpected error while creating node</source>
 			<target state="final">Wystąpił nieoczekiwany błąd podczas tworzenia węzła</target></trans-unit>

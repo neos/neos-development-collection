@@ -20,6 +20,9 @@ privilegeTargets:
     'Neos.Neos:PublicFrontendAccess':
       matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->showAction())'
 
+    'Neos.Neos:ContentPreview':
+      matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->previewAction())'
+
     'Neos.Neos:BackendLogin':
       matcher: 'method(Neos\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
 
@@ -172,6 +175,10 @@ roles:
         permission: GRANT
 
       -
+        privilegeTarget: 'Neos.Neos:ContentPreview'
+        permission: GRANT
+
+      -
         privilegeTarget: 'Neos.Neos:Backend.Module.Content'
         permission: GRANT
 
@@ -248,6 +255,18 @@ roles:
 
   'Neos.Neos:Editor':
     parentRoles: ['Neos.Neos:AbstractEditor', 'Neos.Neos:LivePublisher']
+
+  'Neos.Neos:UserManager':
+    privileges:
+      -
+        privilegeTarget: 'Neos.Neos:Backend.GeneralAccess'
+        permission: GRANT
+      -
+        privilegeTarget: 'Neos.Neos:Backend.Module.Administration'
+        permission: GRANT
+      -
+        privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Users'
+        permission: GRANT
 
   'Neos.Neos:Administrator':
     parentRoles: ['Neos.Neos:Editor']

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target state="translated">返回</target><alt-trans><target>后退</target></alt-trans></trans-unit>
+			<target state="translated">返回</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target state="translated">取消</target></trans-unit>
@@ -119,13 +119,13 @@
 			<target state="translated">审查</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
-			<target state="translated">放弃所选的更改</target><alt-trans><target>舍弃选择的更改</target></alt-trans></trans-unit>
+			<target state="translated">放弃所选的更改</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
 				<source>Publish selected changes</source>
 			<target state="translated">发布选择的更改</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target state="translated">舍弃所有更改</target><alt-trans><target>放弃所有更改</target></alt-trans></trans-unit>
+			<target state="translated">舍弃所有更改</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target state="translated">发布所有更改</target></trans-unit>
@@ -163,9 +163,6 @@
       <trans-unit id="workspaces.workspaceHasBeenUpdated">
         <source>The workspace "{0}" has been updated.</source>
         <target state="translated">工作区 "{0}" 已更新。</target>
-        <alt-trans>
-          <target>工作区 {0} 已更新。</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies">
         <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
@@ -221,25 +218,25 @@
 			<target state="translated">该模块概述了影响此Neos安装的所有相关事件。</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos</source>
-			<target state="translated">最近发生的事件/操作:</target><alt-trans><target>最近发生的事件:</target></alt-trans></trans-unit>
+			<target state="translated">最近发生的事件/操作:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target state="translated">没有可以显示的记录。</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} 创建了 {1} {2}。</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} 删除了 {1} {2}。</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target state="translated">{0} 创建了 {2} 的变体 {1} "{3}"。</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} 修改了 {1} "{2}"。</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} 移动了 {1} {2}。</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
 			<target state="translated">{0} 复制了 {1} "{2}"。</target></trans-unit>
@@ -327,7 +324,7 @@
 			<target state="translated">个人资料</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target state="translated">名</target><alt-trans><target>姓氏</target></alt-trans></trans-unit>
+			<target state="translated">名字</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target state="translated">姓氏</target></trans-unit>
@@ -351,7 +348,7 @@
 			<target state="translated">标题</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target state="translated">名</target><alt-trans><target>姓氏</target></alt-trans></trans-unit>
+			<target state="translated">名字</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
 			<target state="translated">中间名</target></trans-unit>
@@ -436,6 +433,12 @@
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
 			<target state="needs-translation">Edit user</target></trans-unit>
+      <trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
+				<source>Not enough privileges to edit this user</source>
+			<target state="needs-translation">Not enough privileges to edit this user</target></trans-unit>
+      <trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
+				<source>Not enough privileges to delete this user</source>
+			<target state="needs-translation">Not enough privileges to delete this user</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
 			<target state="needs-translation">Delete user</target></trans-unit>
@@ -537,7 +540,7 @@
 			<target state="translated">站点管理模块为您提供了所有站点的概览。你可以编辑、 添加和删除信息关于您的站点，如添加新的域。</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target state="needs-translation">Add new site</target></trans-unit>
+			<target state="translated">添加新站点</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target state="translated">创建站点</target></trans-unit>
@@ -576,7 +579,7 @@
 			<target state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target state="needs-translation">Yes, delete the site</target></trans-unit>
+			<target state="translated">是，删除站点</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
 			<target state="needs-translation">Import a site</target></trans-unit>
@@ -606,13 +609,13 @@
 			<target state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			<target state="needs-translation">No sites available</target></trans-unit>
+			<target state="translated">无可用站点</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
-			<target state="needs-translation">New site</target></trans-unit>
+			<target state="translated">新站点</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
@@ -624,16 +627,16 @@
 			<target state="needs-translation">Edit domain</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">域名数据</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
-			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
+			<target state="translated">例如：www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
 			<target state="needs-translation">State</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
-			<target state="needs-translation">Create</target></trans-unit>
+			<target state="translated">创建</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target state="translated">配置</target></trans-unit>

@@ -16,7 +16,9 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -100,6 +102,12 @@ class ContentCacheFlusher
      * @var ContentContext[]
      */
     protected $contexts = [];
+
+    /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
 
     /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via ContentRepository's Node
@@ -209,6 +217,7 @@ class ContentCacheFlusher
     {
         $this->tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
         $this->tagsToFlush['Node_' . $cacheIdentifier] = sprintf('which were tagged with "Node_%s" because that identifier has changed.', $cacheIdentifier);
+        $this->tagsToFlush['NodeDynamicTag_' . $cacheIdentifier] = sprintf('which were tagged with "NodeDynamicTag_%s" because that identifier has changed.', $cacheIdentifier);
 
         // Note, as we don't have a node here we cannot go up the structure.
         $tagName = 'DescendantOf_' . $cacheIdentifier;
@@ -250,6 +259,14 @@ class ContentCacheFlusher
      */
     public function registerAssetChange(AssetInterface $asset)
     {
+        // In Nodes only assets are referenced, never asset variants directly. When an asset
+        // variant is updated, it is passed as $asset, but since it is never "used" by any node
+        // no flushing of corresponding entries happens. Thus we instead us the original asset
+        // of the variant.
+        if ($asset instanceof AssetVariantInterface) {
+            $asset = $asset->getOriginalAsset();
+        }
+
         if (!$asset->isInUse()) {
             return;
         }
@@ -262,7 +279,9 @@ class ContentCacheFlusher
             }
 
             $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
-            $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            $this->securityContext->withoutAuthorizationChecks(function () use ($reference, &$node) {
+                $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            });
 
             if (!$node instanceof NodeInterface) {
                 $this->systemLogger->warning(sprintf('Found a node reference from node with identifier %s in workspace %s to asset %s, but the node could not be fetched.', $reference->getNodeIdentifier(), $reference->getWorkspaceName(), $this->persistenceManager->getIdentifierByObject($asset)), LogEnvironment::fromMethodName(__METHOD__));

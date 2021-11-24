@@ -155,7 +155,7 @@
 			<target state="translated">Det finns inga opublicerade ändringar i den här arbetsytan.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target state="translated">Vill du verkligen ignorera alla ändringar i arbetsytan "{0}"?</target><alt-trans><target>Vill du verkligen ta bort alla ändringar i arbetsytan "{0}"?</target></alt-trans></trans-unit>
+			<target state="translated">Vill du verkligen ignorera alla ändringar i arbetsytan "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
         <source>A workspace with this title already exists.</source>
         <target state="translated">Det finns redan en arbetsyta med denna titel.</target>
@@ -234,22 +234,22 @@
 			<target state="translated">{0} raderade {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target state="translated">{0} skapade en variant {1} av {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} förändrade {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} flyttade {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
 			<target state="translated">{0} kopierade {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target state="translated">{0} döpte om {1} "{2}" till "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0} förändrade innehållet på {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target state="translated">{0} skapade en ny användare "{1}" för {2}.</target></trans-unit>
@@ -361,7 +361,7 @@
 			<target state="translated">Efternamn</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target state="translated">Annat namn</target><alt-trans><target>Andra namn</target></alt-trans></trans-unit>
+			<target state="translated">Annat namn</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target state="translated">Konton</target></trans-unit>
@@ -437,6 +437,12 @@
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
 			<target state="translated">Redigera användare</target></trans-unit>
+      <trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
+				<source>Not enough privileges to edit this user</source>
+			<target state="needs-translation">Not enough privileges to edit this user</target></trans-unit>
+      <trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
+				<source>Not enough privileges to delete this user</source>
+			<target state="needs-translation">Not enough privileges to delete this user</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
 			<target state="translated">Radera användare</target></trans-unit>
@@ -607,13 +613,13 @@
 			<target state="translated">VendorName.MyPackageKey</target></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			<target state="needs-translation">No sites available</target></trans-unit>
+			<target state="translated">Inga webbplatser tillgängliga</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="translated">&lt;em&gt;Neos Kickstarter&lt;/em&gt; paket är inste installerat. Installera det för att snabbstarta nya sidor.</target></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
-			<target state="needs-translation">New site</target></trans-unit>
+			<target state="translated">Ny sajt</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="translated">Är du säker på att du vill radera "{0}"? Denna åtegärd går inte att ångra.</target></trans-unit>
@@ -625,13 +631,13 @@
 			<target state="translated">Ändra domän</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">Domändata</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
-			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
+			<target state="translated">t.ex. www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
-			<target state="needs-translation">State</target></trans-unit>
+			<target state="translated">Tillstånd</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
 			<target state="translated">Skapa</target></trans-unit>

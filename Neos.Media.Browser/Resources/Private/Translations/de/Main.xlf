@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve" approved="yes">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target state="final">Asset per Drag &amp; Drop auf eine Sammlung / einen Tag ziehen, um es hinzuzufügen.</target><alt-trans><target>Drag&amp;Drop ein Asset auf eine Sammlung / Tag um sie hinzuzufügen.</target></alt-trans></trans-unit>
+			<target state="final">Asset per Drag &amp; Drop auf eine Sammlung / einen Tag ziehen, um es hinzuzufügen.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
 				<source>Keep the filename "{0}"</source>
 			<target state="final">Den Dateinamen "{0}" beibehalten</target></trans-unit>
@@ -43,7 +43,7 @@
 			<target state="final">Tags</target></trans-unit>
       <trans-unit id="sortByName" xml:space="preserve" approved="yes">
 				<source>Sort by name</source>
-			<target state="final">Nach Namen sortieren</target><alt-trans><target>Nach Name sortieren</target></alt-trans></trans-unit>
+			<target state="final">Nach Namen sortieren</target></trans-unit>
       <trans-unit id="sortByLastModified" xml:space="preserve" approved="yes">
 				<source>Sort by last modified</source>
 			<target state="final">Nach Änderungsdatum sortieren</target></trans-unit>
@@ -58,7 +58,7 @@
 			<target state="final">Aufsteigend</target></trans-unit>
       <trans-unit id="sortDirection.desc" xml:space="preserve" approved="yes">
 				<source>Descending</source>
-			<target state="final">Absteigend</target><alt-trans><target>Absteigende Reihenfolge</target></alt-trans></trans-unit>
+			<target state="final">Absteigend</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve" approved="yes">
 				<source>Sort direction Ascending</source>
 			<target state="final">Sortierrichtung Aufsteigend</target></trans-unit>
@@ -97,7 +97,7 @@
 			<target state="final">Dadurch wird die Sammlung gelöscht, aber nicht die darin enthaltenen Assets.</target></trans-unit>
       <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="yes">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target state="final">Dadurch wird das Tag gelöscht, aber nicht die Assets denen es zugeordnet wurde.</target><alt-trans><target>Dadurch wird das Tag gelöscht, aber nicht die Assets, denen es zugeordnet wurde.</target></alt-trans></trans-unit>
+			<target state="final">Dadurch wird das Tag gelöscht, aber nicht die Assets denen es zugeordnet wurde.</target></trans-unit>
       <trans-unit id="message.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target state="final">Dieser Vorgang kann nicht rückgängig gemacht werden.</target></trans-unit>
@@ -115,7 +115,7 @@
 			<target state="final">Speichern</target></trans-unit>
       <trans-unit id="message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the asset</source>
-			<target state="final">Ja, Asset löschen</target><alt-trans><target>Ja, bitte das Asset löschen</target></alt-trans></trans-unit>
+			<target state="final">Ja, Asset löschen</target></trans-unit>
       <trans-unit id="message.confirmDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Yes, delete the collection</source>
 			<target state="final">Ja, bitte die Sammlung löschen</target></trans-unit>
@@ -139,7 +139,7 @@
 			<target state="final">"{0}" gefunden</target></trans-unit>
       <trans-unit id="upload" xml:space="preserve" approved="yes">
 				<source>Upload</source>
-			<target state="final">Hochladen</target><alt-trans><target>Upload</target></alt-trans></trans-unit>
+			<target state="final">Hochladen</target></trans-unit>
       <trans-unit id="filterOptions" xml:space="preserve" approved="yes">
 				<source>Filter options</source>
 			<target state="final">Filteroptionen</target></trans-unit>
@@ -259,7 +259,7 @@
 			<target state="final">Es wurden keine Assets gefunden.</target></trans-unit>
       <trans-unit id="basics" xml:space="preserve" approved="yes">
 				<source>Basics</source>
-			<target state="final">Allgemeines</target><alt-trans><target>Grundlagen</target></alt-trans></trans-unit>
+			<target state="final">Allgemeines</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
 			<target state="final">Löschen</target></trans-unit>
@@ -289,7 +289,7 @@
 			<target state="final">Typ</target></trans-unit>
       <trans-unit id="metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
-			<target state="final">Bezeichner</target><alt-trans><target>Bezeichnung</target></alt-trans></trans-unit>
+			<target state="final">Bezeichner</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve" approved="yes">
 				<source>Title</source>
 			<target state="final">Titel</target></trans-unit>
@@ -304,13 +304,13 @@
 			<target state="final">Vorschau</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="needs-translation">Download</target></trans-unit>
+			<target state="translated">Download</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="needs-translation">Next</target></trans-unit>
+			<target state="translated">Nächster</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="needs-translation">Previous</target></trans-unit>
+			<target state="translated">Vorheriger</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="final">Datei kann nicht hochgeladen werden</target></trans-unit>
@@ -325,7 +325,7 @@
 			<target state="final">für die Datei</target></trans-unit>
       <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target state="final">Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite um zu sehen, welche.</target><alt-trans><target>Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite, um zu sehen, welche.</target></alt-trans></trans-unit>
+			<target state="final">Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite um zu sehen, welche.</target></trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve" approved="yes">
 				<source>Tagging the asset failed.</source>
 			<target state="final">Beim Zuordnen des Tags ist ein Fehler aufgetreten.</target></trans-unit>
@@ -350,10 +350,10 @@
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
-			<target state="final">Verweise auf "{asset}"</target><alt-trans><target>Verweist auf "{asset}"</target></alt-trans></trans-unit>
+			<target state="final">Verweise auf "{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve" approved="yes">
 				<source>Replace "{filename}"</source>
-			<target state="final">"{filename}" ersetzen</target><alt-trans><target>Datei "{filename}" ersetzen</target></alt-trans></trans-unit>
+			<target state="final">"{filename}" ersetzen</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve" approved="yes">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
 			<target state="final">Sie können durch Hochladen einer neuen Datei die Vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target></trans-unit>
@@ -368,7 +368,7 @@
 			<target state="final">Neue Datei auswählen</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve" approved="yes">
 				<source>Currently the asset is used {usageCount} times.</source>
-			<target state="final">Derzeit wird die Datei {usageCount} mal verwendet.</target><alt-trans><target>Derzeit wird die Datei {usageCount} Mal verwendet.</target></alt-trans></trans-unit>
+			<target state="final">Derzeit wird die Datei {usageCount} mal verwendet.</target></trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve" approved="yes">
 				<source>Show all usages</source>
 			<target state="final">Zeige alle Verwendungen</target></trans-unit>
@@ -398,7 +398,7 @@
 			<target state="final">Asset konnte nicht gelöscht werden.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target state="final">Tag "{0}" ist bereits vorhanden und wurde zur Sammlung hinzugefügt.</target><alt-trans><target>Tag "{0}" ist bereits vorhanden und wurde der Sammlung hinzugefügt.</target></alt-trans></trans-unit>
+			<target state="final">Tag "{0}" ist bereits vorhanden und wurde zur Sammlung hinzugefügt.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" has been created.</source>
 			<target state="final">Tag "{0}" wurde erstellt.</target></trans-unit>
@@ -419,10 +419,10 @@
 			<target state="final">Sammlung "{0}" wurde gelöscht.</target></trans-unit>
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve" approved="yes">
 				<source>Generate redirects from original file url to the new url</source>
-			<target state="final">Erstelle Weiterleitungen vom ursprünglichen Dateipfad auf die neue URL</target><alt-trans><target>Erstelle Redirects von der Original-URL auf die Neue</target></alt-trans></trans-unit>
+			<target state="final">Erstelle Weiterleitungen vom ursprünglichen Dateipfad auf die neue URL</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve" approved="yes">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="final">'Ressourcen vom Typ "{0}" können nur mit Ressourcen ähnlichen Typs ersetzt werden. Typ "{1}" erkannt'</target><alt-trans><target>'Eine Ressource vom Typ "{0}" kann nur mit einer Ressource ähnlichen Typs ersetzt werden. Typ "{1}" erkannt'</target></alt-trans></trans-unit>
+			<target state="final">'Ressourcen vom Typ "{0}" können nur mit Ressourcen ähnlichen Typs ersetzt werden. Typ "{1}" erkannt'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve" approved="yes">
 				<source>No access to workspace "{0}"</source>
 			<target state="final">Kein Zugriff auf den Arbeitsbereich "{0}"</target></trans-unit>

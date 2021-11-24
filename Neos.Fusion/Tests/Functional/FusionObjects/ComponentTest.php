@@ -56,4 +56,24 @@ class ComponentTest extends AbstractFusionObjectTest
         $view->setFusionPath('component/sandboxRenderer');
         self::assertEquals('Hello ', $view->render());
     }
+
+    /**
+     * @test
+     */
+    public function componentLazyRenderer()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('component/lazyRenderer');
+        self::assertEquals('Hello', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function componentWrapperRenderer()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('component/wrapperRenderer');
+        self::assertEquals('Default content', $view->render());
+    }
 }

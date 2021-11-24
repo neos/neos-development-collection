@@ -1,0 +1,161 @@
+`5.3.4 (2021-08-25) <https://github.com/neos/neos-development-collection/releases/tag/5.3.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Don’t skip childnodes when discarding nodes <https://github.com/neos/neos-development-collection/pull/3409>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Previously autocreated childnodes like ContentCollections were ignored
+when discarding selected nodes via the workspace module.
+
+When deleting a node and discarding the change the auto created children
+would then stay deleted in the database and the backend would show no
+content/errors.
+
+The behaviour is now the same as for publishing nodes and the direct
+child nodes are included in the discard if the node has auto-created
+child nodes or is a document.
+
+* Fixes: `#3274 <https://github.com/neos/neos-development-collection/issues/3274>`_, #3387
+* See: `#3275 <https://github.com/neos/neos-development-collection/issues/3275>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent repeated queries for non existing nodes <https://github.com/neos/neos-development-collection/pull/3375>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+The first level node cache stores non existing nodes as `null`.
+This should have prevented repeated queries for the same non existing nodes.
+But `isset` returns `false` for a stored value of `null` in this case
+therefore saying that the node is unknown unstead of non existing,
+which triggers another db query.
+With this change, `null` is now returned and no additional query triggered by the context.
+
+**How I did it**
+
+The node cache returns the stored value of `null` instead of `false`.
+
+**How to verify it**
+
+Run test or manually query a CR context for non existing identifiers multiple times.
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Only document Nodes should appear in Breadcrumb <https://github.com/neos/neos-development-collection/pull/3389>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+When rendering the Breadcrumb menu in a Content node, the Content node itself is no longer added to the menu.
+
+This is done by replacing `q(node).add(...)` with `q(documentNode).add(...)`
+
+* Packages: ``Browser`` ``Neos``
+
+`Fix/rebuild compiled files <https://github.com/neos/neos-development-collection/pull/3385>`_
+---------------------------------------------------------------------------------------------
+
+**What I did**
+I suspected my problems described in #3382 are the result of outdated code in compiled sources. So I tried to rebuild them.
+
+**How I did it**
+
+```
+cd Packages/Neos/Neos.Neos/
+git clone -b 4.3 https://github.com/neos/neos-development-collection /tmp/neos-development-collection
+cp -a /tmp/neos-development-collection/Scripts/ Scripts/
+cd Scripts/
+
+mkdir gems
+bundler install --path gems
+
+sed -i "s/ContentModuleBootstrap/LegacyUiBootstrap/; s/ContentModule-built/LegacyUiBootstrap-built/; s/Content\\/Inspector\\/.*,//g" build.js
+
+npx grunt build-js
+```
+
+and for the yarn part:
+```
+cd Packages/Neos/Neos.Neos
+yarn build:production
+```
+
+* Packages: ``Neos``
+
+`Collect affected nodes for each dimension to remove undefined properties <https://github.com/neos/neos-development-collection/pull/3379>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+If you run `removeUndefinedProperties` of the `./flow node:repair` command not all undefined properties get removed.
+
+Currently the affected nodes get indexed by the node identifier. But this identifier is the same for all dimensions. So the list of nodes reflects all dimensions, but the actual removal just run on ONE node of any dimension. So you have to run the command n-times (n = number of dimensions).
+
+**Expected behavior**
+Remove all undefined properties in all dimensions
+
+**Actual behavior**
+Removes just undefinded properties of a node in one dimension
+
+**How to test**
+* Set up with more than one dimension
+* Create a node with properties in more than one dimension
+* Remove a property definition of that node
+* run `./flow node:repair`
+* run again to see, if it had removed all properties in the run before
+* Packages: ``ContentRepository``
+
+`BUGFIX: Fix cascade argument of childEvents relation <https://github.com/neos/neos-development-collection/pull/3370>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+#3341 build failures made me aware of this
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix depth comparison in hasHiddenNodeParent(…) <https://github.com/neos/neos-development-collection/pull/3364>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+The comparison in this is wrong. Because the depth is 0-based, but the nodes returned by getNodesOnPath(…) contain the root node, less-than-or-equal must be used.
+
+* Fixes: `#3363 <https://github.com/neos/neos-development-collection/issues/3363>`_
+* Packages: ``Neos``
+
+`BUGFIX: Skip unnecessary queries for nodedata <https://github.com/neos/neos-development-collection/pull/3357>`_
+----------------------------------------------------------------------------------------------------------------
+
+**What I did and how I did it**
+
+1.  Prevent node queries when is is clear that there would be an empty result
+2. Prevent childnode count queries, when the children are already known due to previously cached query results for the same children
+
+**How to verify it**
+
+In the Neos page `/en/features.html` this reduces the number of queries from 138 to 133.
+In larger projects with more complex components this has a larger effect.
+
+In a large project this reduced the SQL query count on one page from 1379 to 1115 (~23%) and the resulting rendering time by ~20%.
+
+- [x ] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Don’t evaluate reference nodes collection twice <https://github.com/neos/neos-development-collection/pull/3356>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The condition in fluid evaluates the „referenceNodes“ and the result
+is not cached. Therefore when the variable is used for the output
+the whole code is evaluated again.
+
+* Resolves: `#3355 <https://github.com/neos/neos-development-collection/issues/3355>`_
+* Packages: ``ContentReferences``
+
+`BUGFIX: Avoid use of removed isMethodSafe() <https://github.com/neos/neos-development-collection/pull/3354>`_
+--------------------------------------------------------------------------------------------------------------
+
+This has obviously been forgotten in the past… and since it's not used
+by the new UI, that wasn't noticed yet.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.3.3...5.3.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\Service;
 
 /*
@@ -177,7 +178,7 @@ class UserService
      *
      * @param string $username The username
      * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Neos.Neos:Backend"
-     * @return User The user, or null if the user does not exist
+     * @return User|null The user, or null if the user does not exist
      * @throws Exception
      * @api
      */
@@ -235,14 +236,30 @@ class UserService
      */
     public function getCurrentUser()
     {
-        if ($this->securityContext->canBeInitialized() === true) {
-            $account = $this->securityContext->getAccount();
-            if ($account !== null) {
-                return $this->getUser($account->getAccountIdentifier());
-            }
+        if ($this->securityContext->canBeInitialized() === false) {
+            return null;
         }
 
-        return null;
+        $tokens = $this->securityContext->getAuthenticationTokens();
+        $user = array_reduce($tokens, function ($foundUser, TokenInterface $token) {
+            if ($foundUser !== null) {
+                return $foundUser;
+            }
+
+            $account = $token->getAccount();
+            if ($account === null) {
+                return $foundUser;
+            }
+
+            $user = $this->getNeosUserForAccount($account);
+            if ($user === null) {
+                return $foundUser;
+            }
+
+            return $user;
+        }, null);
+
+        return $user;
     }
 
     /**
@@ -556,7 +573,7 @@ class UserService
     /**
      * Reactivates the given user
      *
-     * @param User $user The user to deactivate
+     * @param User $user The user to activate
      * @return void
      * @api
      */
@@ -593,7 +610,9 @@ class UserService
     {
         /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
-            $account->setExpirationDate($this->now);
+            $account->setExpirationDate(
+                \DateTime::createFromFormat(\DateTimeInterface::ATOM, $this->now->format(\DateTimeInterface::ATOM))
+            );
             $this->accountRepository->update($account);
         }
         $this->emitUserDeactivated($user);
@@ -695,6 +714,16 @@ class UserService
     }
 
     /**
+     * @return bool
+     * @throws NoSuchRoleException
+     * @throws \Neos\Flow\Security\Exception
+     */
+    public function currentUserIsAdministrator(): bool
+    {
+        return $this->securityContext->hasRole('Neos.Neos:Administrator');
+    }
+
+    /**
      * Returns the default authentication provider name
      *
      * @return string
@@ -757,8 +786,9 @@ class UserService
      *
      * @param User $user The user
      * @return array
+     * @throws NoSuchRoleException
      */
-    protected function getAllRoles(User $user)
+    public function getAllRoles(User $user): array
     {
         $roles = [
             'Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody'),
@@ -784,6 +814,7 @@ class UserService
 
         return $roles;
     }
+
 
     /**
      * Creates a personal workspace for the given user's account if it does not exist already.
@@ -860,5 +891,15 @@ class UserService
         }
 
         return $user;
+    }
+
+    /**
+     * @param Account $account
+     * @return User|null
+     */
+    private function getNeosUserForAccount(Account $account):? User
+    {
+        $user = $this->partyService->getAssignedPartyOfAccount($account);
+        return ($user instanceof User) ? $user : null;
     }
 }

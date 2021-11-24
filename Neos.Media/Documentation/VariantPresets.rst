@@ -56,61 +56,58 @@ regular expression, including delimiters ("~" in the example below).
 The following example shows the required structure and possible fields of the presets configuration:
 
 .. code-block:: yaml
-```yaml
-Neos:
-  Media:
-    variantPresets:
-      'Flownative.Demo:Preset1':
-        label: 'Demo Preset 1'
-        mediaTypePatterns: ['~image/(jpe?g|png)~', '~image/vnd\.adobe\.photoshop~']
-        variants:
-          'wide':
-            label: 'Wide'
-            description: 'An optional description'
-            icon: ''
-            adjustments:
-              crop:
-                type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
-                options:
-                  aspectRatio: '16:9'
-          'portrait':
-            label: 'Portrait'
-            description: ''
-            icon: ''
-            adjustments:
-              crop:
-                type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
-                options:
-                  aspectRatio: '3:4'
-          'square':
-            label: 'Square'
-            description: ''
-            icon: ''
-            adjustments:
-              crop:
-                type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
-                options:
-                  aspectRatio: '1:1'
-```
+
+  Neos:
+    Media:
+      variantPresets:
+        'Flownative.Demo:Preset1':
+          label: 'Demo Preset 1'
+          mediaTypePatterns: ['~image/(jpe?g|png)~', '~image/vnd\.adobe\.photoshop~']
+          variants:
+            'wide':
+              label: 'Wide'
+              description: 'An optional description'
+              icon: ''
+              adjustments:
+                crop:
+                  type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
+                  options:
+                    aspectRatio: '16:9'
+            'portrait':
+              label: 'Portrait'
+              description: ''
+              icon: ''
+              adjustments:
+                crop:
+                  type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
+                  options:
+                    aspectRatio: '3:4'
+            'square':
+              label: 'Square'
+              description: ''
+              icon: ''
+              adjustments:
+                crop:
+                  type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
+                  options:
+                    aspectRatio: '1:1'
 
 The automatic variant generation for new assets has to be enabled via setting as
 by default this feature is disabled.
 
 .. code-block:: yaml
-```yaml
-Neos:
-  Media:
-    autoCreateImageVariantPresets: true
-```
+
+  Neos:
+    Media:
+      autoCreateImageVariantPresets: true
 
 To show and edit the variants in the media module the variants tab has to be enabled.
 
 .. code-block:: yaml
-```yaml
-Neos:
-  Media:
-    Browser:
-      features:
-        variantsTab:
-          enable: true
-```
+
+  Neos:
+    Media:
+      Browser:
+        features:
+          variantsTab:
+            enable: true

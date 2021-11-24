@@ -32,9 +32,6 @@
 			<trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
 				<source>Delete workspace</source>
 			</trans-unit>
-			<trans-unit id="workspaces.editWorkspace" xml:space="preserve">
-				<source>Edit workspace</source>
-			</trans-unit>
 			<trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>
 			</trans-unit>
@@ -428,6 +425,12 @@
 			<trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
 			</trans-unit>
+			<trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
+				<source>Not enough privileges to edit this user</source>
+			</trans-unit>
+			<trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
+				<source>Not enough privileges to delete this user</source>
+			</trans-unit>
 			<trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
 			</trans-unit>
@@ -602,7 +605,7 @@
 				<source>No sites available</source>
 			</trans-unit>
 			<trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
-				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+				<source>The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</source>
 			</trans-unit>
 			<trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>

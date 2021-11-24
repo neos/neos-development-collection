@@ -47,3 +47,4 @@ Neos:
       I18n: 'Neos\Flow\I18n\EelHelper\TranslationHelper'
       File: 'Neos\Eel\Helper\FileHelper'
       q: 'Neos\Eel\FlowQuery\FlowQuery::q'
+      BaseUri: 'Neos\Fusion\Eel\BaseUriHelper'

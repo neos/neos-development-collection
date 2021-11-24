@@ -85,7 +85,6 @@ class Package extends BasePackage
         });
 
         $dispatcher->connect(AssetService::class, 'assetUpdated', ContentCacheFlusher::class, 'registerAssetChange', false);
-        $dispatcher->connect(AssetService::class, 'assetResourceReplaced', ContentCacheFlusher::class, 'registerAssetChange', false);
 
         $dispatcher->connect(ContentController::class, 'assetUploaded', SiteService::class, 'assignUploadedAssetToSiteAssetCollection');
 

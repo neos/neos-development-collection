@@ -1,6 +1,6 @@
 |Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter| |Pull Reminders|
 
-.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=5.0
+.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/neos-development-collection
 .. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
@@ -10,10 +10,10 @@
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
    :target: https://raw.githubusercontent.com/neos/neos-development-collection/4.3/LICENSE
-.. |Docs| image:: https://img.shields.io/badge/documentation-5.0-blue.svg
+.. |Docs| image:: https://img.shields.io/badge/documentation-master-blue.svg
    :target: https://neos.readthedocs.org/en/4.3/
    :alt: Documentation
-.. |API| image:: https://img.shields.io/badge/API%20docs-5.0-blue.svg
+.. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
    :target: http://neos.github.io/neos/4.3/
    :alt: API Docs
 .. |Slack| image:: http://slack.neos.io/badge.svg
@@ -43,3 +43,28 @@ This repository is a collection of packages for the Neos content application pla
 The repository is used for development and all pull requests should go into it.
 
 If you want to install Neos, please have a look at the documentation: https://neos.readthedocs.org/en/latest/
+
+Contributing
+============
+
+If you want to contribute to Neos and want to set up a development environment, then follow these steps:
+
+``composer create-project neos/neos-development-distribution neos-development dev-master --keep-vcs``
+
+Note the **-distribution** package you create a project from, instead of just checking out this repository.
+
+The code of the CMS can then be found inside ``Packages/Neos``, which itself is the neos-development-collection Git repository (due to the ``--keep-vcs`` option above). You commit changes and create pull requests from this repository.
+To commit changes to Neos switch into the ``Neos`` directory (``cd Packages/Neos``) and do all Git-related work (``git add .``, ``git commit``, etc) there.
+If you want to contribute to the Neos UI, please take a look at the explanations at https://github.com/neos/neos-ui#contributing on how to work with that.
+If you want to contribute to the Flow Framework, you find that inside the ``Packages/Framework`` folder. See https://github.com/neos/flow-development-collection
+
+In the root directory of the development distribution, you can do the following things:
+
+To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml`` for unit or ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml`` for functional/integration tests.
+
+To switch the branch you intend to work on:
+``git checkout 3.3 && composer update``
+
+.. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 3.3 currently), or master for new features.
+
+For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506

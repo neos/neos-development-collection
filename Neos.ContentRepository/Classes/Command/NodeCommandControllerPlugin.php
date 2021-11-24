@@ -504,7 +504,7 @@ HELPTEXT;
                     }
 
                     $taskDescription = sprintf('Set default value for property named "<i>%s</i>" in "<i>%s</i>" (<i>%s</i>)', $propertyName, $node->getPath(), $node->getNodeType()->getName());
-                    $taskClosure = function () use ($node, $propertyName ,$defaultValue) {
+                    $taskClosure = function () use ($node, $propertyName, $defaultValue) {
                         $node->setProperty($propertyName, $defaultValue);
                     };
                     $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
@@ -744,7 +744,7 @@ HELPTEXT;
                     }
                 }
                 if ($undefinedProperties !== []) {
-                    $nodesWithUndefinedPropertiesNodes[$node->getIdentifier()] = ['node' => $node, 'undefinedProperties' => $undefinedProperties];
+                    $nodesWithUndefinedPropertiesNodes[] = ['node' => $node, 'undefinedProperties' => $undefinedProperties];
                     foreach ($undefinedProperties as $undefinedProperty) {
                         $undefinedPropertiesCount++;
                         $this->dispatch(self::EVENT_NOTICE, sprintf('Found undefined property named "<i>%s</i>" in "<i>%s</i>" (<i>%s</i>)', $undefinedProperty, $node->getPath(), $node->getNodeType()->getName()));
@@ -1071,7 +1071,9 @@ HELPTEXT;
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
-            ->add('where', $queryBuilder->expr()->orX(
+            ->add(
+                'where',
+                $queryBuilder->expr()->orX(
                     $queryBuilder->expr()->notIn('n.workspace', $workspaceNames),
                     $queryBuilder->expr()->isNull('n.workspace')
                 )

@@ -1,0 +1,108 @@
+:root {
+	// Neos backend variables
+	--base-font-size: #{$baseFontSize};
+
+	/* Color palette */
+	--grayDarker: #{$grayDarker};
+	--grayDark: #{$grayDark};
+	--grayMedium: #{$grayMedium};
+	--grayLight: #{$grayLight};
+	--grayLighter: #{$grayLighter};
+	--textOnWhite: #{$textOnWhite};
+	--textContrast: #{$textContrast};
+	--textOnGray: #{$textOnGray};
+	--textSubtle: #{$textSubtle};
+	--textSubtleLight: #{$textSubtleLight};
+	--blue: #{$blue};
+	--blueLight: #{$blueLight};
+	--blueDark: #{$blueDark};
+	--green: #{$green};
+	--warning: #{$warning};
+	--orange: #{$orange};
+
+	/* Sizes & margins */
+	--unit: #{$unit};
+	--defaultMargin: #{$defaultMargin};
+	--relatedMargin: #{$relatedMargin};
+	--tightMargin: #{$tightMargin};
+	--wideMargin: #{$wideMargin};
+
+	/* Components */
+	--inspectorWidth: #{$inspectorWidth};
+	--navigatePanelWidth: #{$navigatePanelWidth};
+	--menuWidth: #{$menuWidth};
+	--editPreviewPanelHeight: #{$editPreviewPanelHeight};
+	--menuButtonWidth: #{$menuButtonWidth};
+	--generalFontSize: #{$generalFontSize};
+
+	--zindexTooltip: #{$zindexTooltip};
+	--errorText: #{$errorText};
+	--successText: #{$successText};
+	--warningText: #{$warningText};
+	--infoText: #{$infoText};
+
+	// Variables from Neos UI for usage in standalone react components
+	--spacing-GoldenUnit: #{$unit};
+	--spacing-Full: #{$defaultMargin};
+	--spacing-Half: #{$relatedMargin};
+	--spacing-Quarter: #{$tightMargin};
+
+	--size-SidebarWidth: #{$navigatePanelWidth};
+
+	--transition-Fast: .1s;
+	--transition-Default: .25s;
+	--transition-Slow: .5s;
+
+	--zIndex-SecondaryToolbar-LinkIconButtonFlyout: 1;
+	--zIndex-FlashMessageContainer: 6;
+	--zIndex-LoadingIndicatorContainer: 5;
+	--zIndex-SecondaryInspector-Context: 1;
+	--zIndex-SecondaryInspector-Iframe: 2;
+	--zIndex-SecondaryInspector-Close: 3;
+	--zIndex-SecondaryInspectorElevated-Context: 1;
+	--zIndex-SecondaryInspectorElevated-DropdownContents: 2;
+	--zIndex-Dialog-Context: 1;
+	--zIndex-FullScreenClose-Context: 1;
+	--zIndex-Drawer-Context: 1;
+	--zIndex-Bar-Context: 1;
+	--zIndex-PrimaryToolbar: 4;
+	--zIndex-CheckboxInput-Context: 1;
+	--zIndex-DropdownContents-Context: 1;
+	--zIndex-SelectBoxContents: 3;
+	--zIndex-NotInlineEditableOverlay-Context: 1;
+	--zIndex-CalendarFakeInputMirror-Context: 1;
+	--zIndex-RdtPicker-Context: 1;
+	--zIndex-SideBar-DropTargetBefore: 1;
+	--zIndex-SideBar-DropTargetAfter: 2;
+	--zIndex-WrapperDropdown-Context: 1;
+	--zIndex-UnappliedChangesOverlay-Context: 1;
+	--zIndex-NodeToolBar: 2147483646;
+
+	--fontSize-Base: #{$generalFontSize};
+	--fontSize-Small: 12px;
+	--fontsHeadings-Family: Noto Sans;
+	--fontsHeadings-Style: Regular;
+	--fontsHeadings-CssWeight: 400;
+	--fontsCopy-Family: Noto Sans;
+	--fontsCopy-Style: Regular;
+	--fontsCopy-CssWeight: 400;
+
+	--colors-PrimaryViolet: #26224C;
+	--colors-PrimaryVioletHover: #342f5f;
+	--colors-PrimaryBlue: #00ADEE;
+	--colors-PrimaryBlueHover: #35c3f8;
+	--colors-ContrastDarkest: #{$grayDarker};
+	--colors-ContrastDarker: #{$grayDark};
+	--colors-ContrastDark: #{$grayLight};
+	--colors-ContrastNeutral: #{$grayMedium};
+	--colors-ContrastBright: #999;
+	--colors-ContrastBrighter: #{$textSubtleLight};
+	--colors-ContrastBrightest: #{$textOnGray};
+	--colors-Success: #{$green};
+	--colors-SuccessHover: #0bb344;
+	--colors-Warn: #{$orange};
+	--colors-WarnHover: #fda23d;
+	--colors-Error: #{$warning};
+	--colors-ErrorHover: #ff6a3c;
+	--colors-UncheckedCheckboxTick: #5B5B5B;
+}

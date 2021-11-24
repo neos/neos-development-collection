@@ -76,7 +76,21 @@ class PublishingService extends \Neos\ContentRepository\Domain\Service\Publishin
             );
         }
 
-        $this->discardNodes($nodes);
+        parent::discardNodes($nodes);
+    }
+
+    /**
+     * Discards the given nodes.
+     *
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes The nodes to discard
+     * @return void
+     * @api
+     */
+    public function discardNodes(array $nodes)
+    {
+        foreach ($nodes as $node) {
+            $this->discardNode($node);
+        }
     }
 
     /**
