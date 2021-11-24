@@ -1,0 +1,32 @@
+`7.2.2 (2021-11-24) <https://github.com/neos/neos-development-collection/releases/tag/7.2.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: prevent failure for disabled superTypes <https://github.com/neos/neos-development-collection/pull/3518>`_
+------------------------------------------------------------------------------------------------------------------
+
+When there are disabled ``superTypes`` in NodeTypes, an exception is thrown.
+This happens when a superType is disabled in a NodeType and no specific editor is defined.
+
+```yaml
+'My.Package:FormElement':
+  superTypes:
+    'Neos.Form.Builder:FormElement': true
+    'Neos.Form.Builder:LabelMixin': false
+  properties:
+    property:
+      type: string
+      ui:
+        label: i18n
+```
+
+This issue was introduced in `#3395 <https://github.com/neos/neos-development-collection/issues/3395>`_
+
+Closes `#3520 <https://github.com/neos/neos-development-collection/issues/3520>`_
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.2.1...7.2.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
