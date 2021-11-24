@@ -50,6 +50,7 @@ interface ParserInterface
      * @param string $namespace The namespace, for example "Neos.Neos"
      * @return void
      * @api
+     * @deprecated with version 7.3 will be removed with 8.0
      */
     public function setObjectTypeNamespace($alias, $namespace);
 }

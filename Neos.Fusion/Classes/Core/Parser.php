@@ -260,6 +260,7 @@ class Parser implements ParserInterface
      * with that namespace and name must be defined elsewhere.
      *
      * These namespaces are _not_ used for resolution of processor class names.
+     * @deprecated with version 7.3 will be removed with 8.0
      * @var array
      */
     protected $objectTypeNamespaces = [
@@ -317,6 +318,7 @@ class Parser implements ParserInterface
      * @return void
      * @throws Fusion\Exception
      * @api
+     * @deprecated with version 7.3 will be removed with 8.0
      */
     public function setObjectTypeNamespace($alias, $namespace)
     {
