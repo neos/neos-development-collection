@@ -86,7 +86,7 @@ Feature: Add New Property
             type: 'AddNewProperty'
             settings:
               newPropertyName: 'aDateOutsideSchema'
-              serializedValue: '2013-09-09T12:04:12'
+              serializedValue: '2013-09-09T12:04:12+00:00'
               type: 'DateTime'
     """
     # the original content stream has not been touched
