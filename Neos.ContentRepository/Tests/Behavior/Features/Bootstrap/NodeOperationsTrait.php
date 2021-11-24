@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
@@ -11,6 +12,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
@@ -93,7 +95,7 @@ trait NodeOperationsTrait
             foreach ($rows as $row) {
                 $path = $row['Path'];
                 $name = implode('', array_slice(explode('/', $path), -1, 1));
-                $parentPath = implode('/', array_slice(explode('/', $path), 0, -1)) ? : '/';
+                $parentPath = implode('/', array_slice(explode('/', $path), 0, -1)) ?: '/';
 
                 $context = $this->getContextForProperties($row, true);
 
@@ -368,7 +370,7 @@ trait NodeOperationsTrait
         } else {
             $node = $this->iShouldHaveOneNode();
             $retrievedNode = $node->getNode($path);
-            $this->currentNodes = $retrievedNode ? [ $retrievedNode ] : [];
+            $this->currentNodes = $retrievedNode ? [$retrievedNode] : [];
         }
     }
 
@@ -382,7 +384,7 @@ trait NodeOperationsTrait
         } else {
             $node = $this->iShouldHaveOneNode();
             $retrievedNode = $node->getContext()->getCurrentSiteNode();
-            $this->currentNodes = $retrievedNode ? [ $retrievedNode ] : [];
+            $this->currentNodes = $retrievedNode ? [$retrievedNode] : [];
         }
     }
 
@@ -583,6 +585,85 @@ trait NodeOperationsTrait
             $this->resetNodeInstances();
         }
     }
+
+    /**
+     * @var \Exception|null
+     */
+    protected $lastException;
+
+    /**
+     * @Given /^I move the node (before|after|into) the node with path "([^"]*)" and exceptions are caught$/
+     */
+    public function iMoveTheNodeIntoTheNodeWithPathAndExceptionsAreCaught($action, $referenceNodePath)
+    {
+        try {
+            $this->iMoveTheNodeIntoTheNodeWithPath($action, $referenceNodePath);
+            $this->lastException = null;
+        } catch (\Exception $e) {
+            $this->lastException = $e;
+        }
+    }
+
+    /**
+     * @Then /^the last caught exception should be of type "([^"]*)" with message:$/
+     * @param string $shortExceptionName
+     * @param PyStringNode $expectedMessage
+     * @throws ReflectionException
+     */
+    public function theLastCauShouldHaveThrownWithMessage(string $shortExceptionName, $expectedMessage)
+    {
+        Assert::assertNotNull($this->lastException, 'Command did not throw exception');
+        $lastCommandExceptionShortName = (new \ReflectionClass($this->lastException))->getShortName();
+        Assert::assertSame($shortExceptionName, $lastCommandExceptionShortName, sprintf('Actual exception: %s (%s): %s', get_class($this->lastException), $this->lastException->getCode(), $this->lastException->getMessage()));
+
+        Assert::assertSame(trim($expectedMessage->getRaw()), trim($this->lastException->getMessage()));
+    }
+
+    /**
+     * @Given /^I move the node (before|after|into) the node with path "([^"]*)" in the following context:$/
+     */
+    public function iMoveTheNodeIntoTheNodeWithPathInTheFollowingContext($action, $referenceNodePath, $referenceNodeContextTable)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($action), 'string', escapeshellarg($referenceNodePath)));
+        } else {
+            $rows = $referenceNodeContextTable->getHash();
+            $referenceNodeContext = $this->getContextForProperties($rows[0]);
+
+            $node = $this->iShouldHaveOneNode();
+            $referenceNode = $referenceNodeContext->getNode($referenceNodePath);
+            switch ($action) {
+                case 'before':
+                    $node->moveBefore($referenceNode);
+                    break;
+                case 'after':
+                    $node->moveAfter($referenceNode);
+                    break;
+                case 'into':
+                    $node->moveInto($referenceNode);
+                    break;
+                default:
+                    throw new \InvalidArgumentException('Unknown move action "' . $action . '"');
+            }
+
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
+            $this->resetNodeInstances();
+        }
+    }
+
+    /**
+     * @Given /^I move the node (before|after|into) the node with path "([^"]*)" in the following context and exceptions are caught:$/
+     */
+    public function iMoveTheNodeIntoTheNodeWithPathInTheFollowingContextAndExceptionsAreCaught($action, $referenceNodePath, $referenceNodeContextTable)
+    {
+        try {
+            $this->iMoveTheNodeIntoTheNodeWithPathInTheFollowingContext($action, $referenceNodePath, $referenceNodeContextTable);
+            $this->lastException = null;
+        } catch (\Exception $e) {
+            $this->lastException = $e;
+        }
+    }
+
 
     /**
      * @Then /^I should have one node$/
@@ -948,6 +1029,20 @@ trait NodeOperationsTrait
 
         $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
         $this->resetNodeInstances();
+    }
+
+    /**
+     * @Then the node should be connected to the root
+     */
+    public function theNodeShouldBeConnectedToTheRoot()
+    {
+        $node = $this->iShouldHaveOneNode();
+
+        while ($node->getParentPath() !== '/') {
+            $parent = $node->getParent();
+            Assert::assertNotNull($parent, 'Parent node of "' . $node->getContextPath() . '" was not found.');
+            $node = $parent;
+        }
     }
 
     /**
