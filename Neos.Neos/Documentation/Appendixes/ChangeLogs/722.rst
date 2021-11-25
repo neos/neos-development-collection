@@ -1,4 +1,4 @@
-`7.2.2 (2021-11-24) <https://github.com/neos/neos-development-collection/releases/tag/7.2.2>`_
+`7.2.2 (2021-11-25) <https://github.com/neos/neos-development-collection/releases/tag/7.2.2>`_
 ==============================================================================================
 
 Overview of merged pull requests
