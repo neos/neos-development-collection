@@ -12,53 +12,63 @@ This is the package bundle you can install alongside a plain Neos to play around
 
 🚫 Will not be supported
 
-| Feature                     | Current CR | Event Sourced CR |
-| --------------------------- |:----------:|:----------------:|
-| **Basics**                  |            |                  |
-| Create/ Edit / Delete Nodes |     ✅     |        ✅        |
-| Shortcut Handling           |     ✅     |        ⏩        |
-| Query Nodes                 |     ✅     |        ✅        |
-| Cut / Copy / Paste          |     ✅     |        ✅        |
-| Move Nodes                  |     ✅     |        ✅        |
-| Hide Nodes                  |     ✅     |        ✅        |
-| History                     |    (✅)    |                  |
-| Basic Workspaces            |     ✅     |        ✅        |
-| Workspace Module            |     ✅     |         ⏩       |
-| Nested Workspaces           |     ✅     |                  |
-| Undo / Redo                 |     🚫     |                  |
-| Setting Start / End time    |     ✅     |        EASY      |
-| Resolving Referencing Nodes |     🚫     |        ✅        |
-| Menu Rendering              |    ✅      |       ✅         |
-| Dimension Menu Rendering    |    ✅      |       ✅         |
-| Supporting "not in menu"    |    ✅      |       ✅         |
-| Change node type            |    ✅      |       ✅         |
-| **Advanced**                |            |                  |
-| Dimensions                  |     ✅     |        ✅        |
-| Dimension Fallback          |     ✅     |        ✅        |
-| Multiple Sites              |     ✅     |        ✅        |
-| Permissions / Policy        |     ✅     |                  |
-| **Maintenance**             |            |                  |
-| Export / Import             |     ✅     |       ✅⏩      |
-| Node Migrations             |     ✅     |        ⏩ (MEDIUM)|
-| Node Repair                 |     ✅     |        ✅        |
-| Integrity Checks            |     🚫     |        ⏩        |
-| **API**                     |            |                  |
-| Separate Read and Write API |     🚫     |        ✅        |
-| More convenient write API   |            |                  |
-| FlowQuery is compatible     |    ✅      |       ✅         |
-| Advanced test cases         |    🚫      |       ✅         |
-| Don't use ORM, but direct SQL queries|    🚫      |       ✅         |
-| Asynchronous operations possible |    🚫      |       ✅         |
-| performant node moving     |    🚫      |       ✅         |
-| performant node deletion   |    🚫      |       ✅         |
-| near-constant read performance |    🚫      |       ✅         |
-| **User Interface**         |            |                  |
+| Feature                                   | Current CR | Event Sourced CR |
+| ----------------------------------------- |:----------:|:----------------:|
+| **Basics**                                |            |                  |
+| Create/ Edit / Delete Nodes               |     ✅     |        ✅        |
+| Shortcut Handling                         |     ✅     |        ⏩        |
+| Query Nodes                               |     ✅     |        ✅        |
+| Cut / Copy / Paste                        |     ✅     |        ✅        |
+| Move Nodes                                |     ✅     |        ✅        |
+| Hide Nodes                                |     ✅     |        ✅        |
+| History                                   |    (✅)    |                  |
+| Basic Workspaces                          |     ✅     |        ✅        |
+| Workspace Module                          |     ✅     |         ⏩       |
+| Nested Workspaces                         |     ✅     |                  |
+| Undo / Redo                               |     🚫     |                  |
+| Setting Start / End time                  |     ✅     |                  |
+| Resolving Referencing Nodes               |     🚫     |        ✅        |
+| Menu Rendering                            |    ✅      |       ✅         |
+| Dimension Menu Rendering                  |    ✅      |       ✅         |
+| Supporting "not in menu"                  |    ✅      |       ✅         |
+| Change node type                          |    ✅      |       ✅         |
+| **Advanced**                              |            |                  |
+| Dimensions                                |     ✅     |        ✅        |
+| Dimension Fallback                        |     ✅     |        ✅        |
+| Multiple Sites                            |     ✅     |        ✅        |
+| Permissions / Policy                      |     ✅     |                  |
+| **Maintenance**                           |            |                 |
+| Export / Import                           |     ✅     |       ✅⏩       |
+| Node Migrations                           |     ✅     |        ✅        |
+| Structure Adjustments a.k.a. node:repair  |     ✅     |        ✅        |
+| Integrity Checks                          |     🚫     |        ✅        |
+| **API**                                   |            |                  |
+| Separate Read and Write API               |     🚫     |        ✅        |
+| More convenient write API                 |            |                  |
+| Extensible Read API                       | (✅) custom Node | ✅ NodeAccessors |
+| FlowQuery is compatible                   |    ✅      |       ✅         |
+| Advanced test cases                       |    🚫      |       ✅         |
+| Don't use ORM, but direct SQL queries     |    🚫      |       ✅         |
+| Asynchronous operations possible          |    🚫      |       ✅         |
+| performant node moving                    |    🚫      |       ✅         |
+| performant node deletion                  |    🚫      |       ✅         |
+| near-constant read performance            |    🚫      |       ✅         |
+| performant URL generation (routing)       |    🚫      |       ✅         |
+| MySQL support                             |    ✅      |       ✅         |
+| Postgres support                          |    ✅      |       ⏩ (much higher performance) |
+| usage without Neos/Flow                   |    🚫      |       prepared         |
+| extensible property serialization         |    🚫      |       ✅ through Symfony Serializer         |
+| traverse node references in both directions |    🚫      |       ✅   |
+| content merge conflict detection          |    🚫      |       ✅   |
+| content merge conflict resolution         |    🚫      |       ⏩   |
+| **User Interface**                        |            |                  |
 | Ensure node deletion can be published in UI    |   ✅     |                |
-| Support Dimension Constraints    |   ✅     |               |
-| Publish Workspace              |   ✅     |   ✅         |
-| Publish Current Page           |   ✅     |   ✅          |
-| Discard all                    |   ✅     |   ✅          |
-| Discard Current Page           |   ✅     |   ✅          |
+| Support Dimension Constraints             |   ✅     |               |
+| Publish Workspace                         |   ✅     |   ✅         |
+| Publish Current Page                      |   ✅     |   ✅          |
+| Discard all                               |   ✅     |   ✅          |
+| Discard Current Page                      |   ✅     |   ✅          |
+| Change node type in UI                    |   ✅     |   ✅          |
 
 ## Requirements
 
