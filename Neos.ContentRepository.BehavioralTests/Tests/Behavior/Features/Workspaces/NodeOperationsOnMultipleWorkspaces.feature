@@ -45,7 +45,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | nodeName                      | "pet"                                    |
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
-    And the intermediary command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "cs-identifier"              |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -61,7 +61,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
     And the graph projection is fully up to date
 
   Scenario: Set property of a node
-    Given the intermediary command SetNodeProperties is executed with payload:
+    Given the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "user-cs-identifier"         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |

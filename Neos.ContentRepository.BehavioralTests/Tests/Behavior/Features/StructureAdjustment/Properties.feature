@@ -98,7 +98,7 @@ Feature: Properties
           type: string
           defaultValue: "foo"
     """
-    And the intermediary command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "cs-identifier"              |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"     |

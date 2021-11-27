@@ -38,7 +38,7 @@ Feature: Single Node operations on live workspace
     And the graph projection is fully up to date
 
   Scenario: Set property of a node
-    Given the intermediary command SetNodeProperties is executed with payload:
+    Given the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "cs-identifier"              |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -63,7 +63,7 @@ Feature: Single Node operations on live workspace
       | text | Hello |
 
   Scenario: Error on invalid dimension space point
-    Given the intermediary command SetNodeProperties is executed with payload and exceptions are caught:
+    Given the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value               |
       | contentStreamIdentifier   | "cs-identifier"     |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"  |

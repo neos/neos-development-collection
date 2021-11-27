@@ -108,7 +108,7 @@ Feature: Node References with Dimensions
     And the graph projection is fully up to date
 
     # after forking, the reference must still exist on the forked content stream (no surprises here).
-    When I am in content stream "user-cs-identifier" and Dimension Space Point {"language": "de"}
+    When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -116,7 +116,7 @@ Feature: Node References with Dimensions
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
 
-    When I am in content stream "user-cs-identifier" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "user-cs-identifier" and dimension space point {"language": "ch"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -124,7 +124,7 @@ Feature: Node References with Dimensions
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
 
-    When I am in content stream "user-cs-identifier" and Dimension Space Point {"language": "en"}
+    When I am in content stream "user-cs-identifier" and dimension space point {"language": "en"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value |
       | referenceProperty | []    |
@@ -134,14 +134,14 @@ Feature: Node References with Dimensions
 
     # after then modifying the node's properties (thus triggering copy-on-write), the reference property
     # should still exist (this was a BUG)
-    And the intermediary command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                  |
       | contentStreamIdentifier   | "user-cs-identifier"                   |
       | nodeAggregateIdentifier   | "source-nodandaise"                    |
       | originDimensionSpacePoint | {"language": "de"}                     |
       | propertyValues            | {"text": "Modified in live workspace"} |
     And the graph projection is fully up to date
-    When I am in content stream "user-cs-identifier" and Dimension Space Point {"language": "de"}
+    When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -149,7 +149,7 @@ Feature: Node References with Dimensions
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
 
-    When I am in content stream "user-cs-identifier" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "user-cs-identifier" and dimension space point {"language": "ch"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -157,7 +157,7 @@ Feature: Node References with Dimensions
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
 
-    When I am in content stream "user-cs-identifier" and Dimension Space Point {"language": "en"}
+    When I am in content stream "user-cs-identifier" and dimension space point {"language": "en"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value |
       | referenceProperty | []    |
@@ -185,7 +185,7 @@ Feature: Node References with Dimensions
     And the graph projection is fully up to date
 
     # after specialization, the reference must still exist on the specialized node
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -194,7 +194,7 @@ Feature: Node References with Dimensions
       | referenceProperty | ["source-nodandaise"] |
 
     # the reference must also exist on the non-touched nodes
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -202,7 +202,7 @@ Feature: Node References with Dimensions
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value |
       | referenceProperty | []    |
@@ -221,7 +221,7 @@ Feature: Node References with Dimensions
     And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
@@ -230,7 +230,7 @@ Feature: Node References with Dimensions
       | referenceProperty | ["source-nodandaise"] |
 
     # unmodified on the untouched nodes
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -238,7 +238,7 @@ Feature: Node References with Dimensions
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value |
       | referenceProperty | []    |
@@ -266,7 +266,7 @@ Feature: Node References with Dimensions
 
 
     # on the specialization, the reference exists.
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -275,7 +275,7 @@ Feature: Node References with Dimensions
       | referenceProperty | ["source-nodandaise"] |
 
     # on the other nodes, the reference does not exist.
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value |
       | referenceProperty | []    |
@@ -283,7 +283,7 @@ Feature: Node References with Dimensions
       | Key               | Value |
       | referenceProperty | []    |
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value |
       | referenceProperty | []    |
@@ -320,7 +320,7 @@ Feature: Node References with Dimensions
     And the graph projection is fully up to date
 
     # after creating a peer, the reference must still exist on the peer node
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -329,7 +329,7 @@ Feature: Node References with Dimensions
       | referenceProperty | ["source-nodandaise"] |
 
     # the reference must also exist on the non-touched nodes
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -337,7 +337,7 @@ Feature: Node References with Dimensions
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -357,7 +357,7 @@ Feature: Node References with Dimensions
     And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
@@ -366,7 +366,7 @@ Feature: Node References with Dimensions
       | referenceProperty | ["source-nodandaise"] |
 
     # unmodified on the untouched nodes
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -374,7 +374,7 @@ Feature: Node References with Dimensions
       | Key               | Value                 |
       | referenceProperty | ["source-nodandaise"] |
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -384,7 +384,7 @@ Feature: Node References with Dimensions
 
   Scenario: Create a reference, then create a generalization of the source node; and the references should exist on the generalization
     # We need to create a new ch-only node to test this; as by default, only a german node already exists shining through in ch
-    And the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
       | nodeAggregateIdentifier       | "ch-only"                                           |
@@ -413,7 +413,7 @@ Feature: Node References with Dimensions
     And the graph projection is fully up to date
 
     # after generalizing, the reference must still exist on the generalized node
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node aggregate "ch-only" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |
@@ -422,7 +422,7 @@ Feature: Node References with Dimensions
       | referenceProperty | ["ch-only"] |
 
     # the reference must also exist on the non-touched node
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect the node aggregate "ch-only" to have the references:
       | Key               | Value                 |
       | referenceProperty | ["anthony-destinode"] |

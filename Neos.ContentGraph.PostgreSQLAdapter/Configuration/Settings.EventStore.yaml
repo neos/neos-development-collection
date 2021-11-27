@@ -2,6 +2,6 @@ Neos:
   EventSourcing:
     EventStore:
       stores:
-        'ContentRepository':
+        'DISABLEDContentRepository':
           listeners:
             'Neos\ContentGraph\PostgreSQLAdapter\.*': true

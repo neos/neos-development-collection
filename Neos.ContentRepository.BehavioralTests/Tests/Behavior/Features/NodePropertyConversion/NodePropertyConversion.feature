@@ -57,7 +57,7 @@ Feature: Node Property Conversion
       | initialPropertyValues         | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
     And the graph projection is fully up to date
 
-    When the intermediary command SetNodeProperties is executed with payload:
+    When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
       | contentStreamIdentifier   | "cs-identifier"                                    |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                 |

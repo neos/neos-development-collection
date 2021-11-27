@@ -44,7 +44,7 @@ Feature: Workspace based content publishing
 
     And the graph projection is fully up to date
 
-    And the intermediary command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "cs-identifier"              |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -96,7 +96,7 @@ Feature: Workspace based content publishing
       | workspaceOwner             | "owner-identifier"            |
 
   Scenario: modify the property in the nested workspace and publish afterwards works
-    When the intermediary command SetNodeProperties is executed with payload:
+    When the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "user-cs-identifier"         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -132,7 +132,7 @@ Feature: Workspace based content publishing
 
   Scenario: modify the property in the nested workspace, do modification in live workspace; publish afterwards will not work because rebase is missing; then rebase and publish
 
-    When the intermediary command SetNodeProperties is executed with payload:
+    When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                  |
       | contentStreamIdentifier   | "user-cs-identifier"                   |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
@@ -140,7 +140,7 @@ Feature: Workspace based content publishing
       | propertyValues            | {"text": "Modified in user workspace"} |
       | initiatingUserIdentifier  | "initiating-user-identifier"           |
     And the graph projection is fully up to date
-    And the intermediary command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                  |
       | contentStreamIdentifier   | "cs-identifier"                        |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
@@ -180,7 +180,7 @@ Feature: Workspace based content publishing
 
   Scenario: modify the property in the nested workspace, publish, modify again and publish again (e.g. a workspace can be re-used after publishing for other changes)
 
-    When the intermediary command SetNodeProperties is executed with payload:
+    When the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "user-cs-identifier"         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -198,7 +198,7 @@ Feature: Workspace based content publishing
     And the graph projection is fully up to date
     When I am in the active content stream of workspace "live" and dimension space point {}
 
-    When the intermediary command SetNodeProperties is executed with payload:
+    When the command SetNodeProperties is executed with payload:
       | Key                       | Value                          |
       | contentStreamIdentifier   | $this->contentStreamIdentifier |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"             |
@@ -222,7 +222,7 @@ Feature: Workspace based content publishing
       | text | Modified anew |
 
   Scenario: Discarding a full workspace works
-    When the intermediary command SetNodeProperties is executed with payload:
+    When the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "user-cs-identifier"         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -251,7 +251,7 @@ Feature: Workspace based content publishing
       | text | Original |
 
   Scenario: Discarding a full workspace shows the most up-to-date base workspace when the base WS was modified in the meantime
-    When the intermediary command SetNodeProperties is executed with payload:
+    When the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "user-cs-identifier"         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -260,7 +260,7 @@ Feature: Workspace based content publishing
       | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    And the intermediary command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                  |
       | contentStreamIdentifier   | "cs-identifier"                        |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |

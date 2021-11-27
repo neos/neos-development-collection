@@ -41,7 +41,7 @@ Feature: Add New Property
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     # Node /document
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
@@ -53,7 +53,7 @@ Feature: Add New Property
     And the graph projection is fully up to date
 
     # Node /doc2
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "other"                                   |
@@ -90,19 +90,19 @@ Feature: Add New Property
               type: 'DateTime'
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "cs-identifier" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
 
-    When I am in content stream "migration-cs" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
-    Then I expect a node identified by aggregate identifier "other" to exist in the subgraph
-    And I expect this node to have the properties:
+    Then I expect node aggregate identifier "other" to lead to node migration-cs;other;{}
+    And I expect this node to have the following properties:
       | Key                | Value                     | Type     |
       | text               | fixed value               | string   |
       | aDateOutsideSchema | 2013-09-09T12:04:12+00:00 | DateTime |

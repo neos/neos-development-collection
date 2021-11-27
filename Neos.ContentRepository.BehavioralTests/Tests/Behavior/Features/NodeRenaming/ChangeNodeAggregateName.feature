@@ -58,7 +58,7 @@ Feature: Change node name
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     # we read the node initially, to ensure it is filled in the cache (to check whether cache clearing actually works)
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and dimension space point {}
     Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
       | Name | NodeAggregateIdentifier |
       | dog  | nody-mc-nodeface        |
@@ -70,7 +70,7 @@ Feature: Change node name
       | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    When I am in content stream "cs-identifier" and dimension space point {}
     Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
       | Name | NodeAggregateIdentifier |
       | cat  | nody-mc-nodeface        |

@@ -45,7 +45,7 @@ Feature: Rename Node Aggregate
       | nodeAggregateClassification | "root"                                                                     |
     And the graph projection is fully up to date
     # Node /document (in "de")
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
@@ -86,20 +86,20 @@ Feature: Rename Node Aggregate
 
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node "sir-david-nodenborough" to have the name "foo"
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect the node "sir-david-nodenborough" to have the name "foo"
 
     # the node was changed inside the new content stream, across all dimensions
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect the node "sir-david-nodenborough" to have the name "other"
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
     Then I expect the node "sir-david-nodenborough" to have the name "other"
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "en"}
+    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
     Then I expect the node "sir-david-nodenborough" to have the name "other"
 
 

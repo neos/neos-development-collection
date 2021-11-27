@@ -36,7 +36,7 @@ Feature: Adjust node types with a node migration
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     # Node /document
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
@@ -79,11 +79,11 @@ Feature: Adjust node types with a node migration
               newType: 'Neos.ContentRepository.Testing:OtherDocument'
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
     # the node type was changed inside the new content stream
-    When I am in content stream "migration-cs" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"

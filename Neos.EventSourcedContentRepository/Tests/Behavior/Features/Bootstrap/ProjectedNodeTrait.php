@@ -44,7 +44,7 @@ trait ProjectedNodeTrait
 
     abstract protected function getCurrentSubgraphs(): ContentSubgraphs;
 
-    abstract protected function getRootNodeAggregateIdentifier(): NodeAggregateIdentifier;
+    abstract protected function getRootNodeAggregateIdentifier(): ?NodeAggregateIdentifier;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 

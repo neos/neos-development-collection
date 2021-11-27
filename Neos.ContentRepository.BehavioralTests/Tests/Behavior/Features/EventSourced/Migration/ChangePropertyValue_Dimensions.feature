@@ -48,7 +48,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | nodeAggregateClassification | "root"                                                                     |
     And the graph projection is fully up to date
     # Node /document (in "de")
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
@@ -94,41 +94,41 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch"}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
 
 
     # the node was changed inside the new content stream, but only in DE (and shined through to CH; not in EN)
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
       | Key  | Value       | Type   |
       | text | fixed value | string |
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    And I expect this node to have the following properties:
       | Key  | Value       | Type   |
       | text | fixed value | string |
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
 
@@ -165,16 +165,16 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # the node was changed inside the new content stream, but only in DE
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
       | Key  | Value       | Type   |
       | text | fixed value | string |
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
     # !!! CH is still unmodified
-    And I expect this node to have the properties:
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
 
@@ -213,16 +213,16 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # the node was changed inside the new content stream in DE and EN
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
       | Key  | Value       | Type   |
       | text | fixed value | string |
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
     # !!! CH is modified now
-    And I expect this node to have the properties:
+    And I expect this node to have the following properties:
       | Key  | Value       | Type   |
       | text | fixed value | string |
 
@@ -252,15 +252,15 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # neither DE or CH is modified
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
 
@@ -290,14 +290,14 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # neither DE or CH is modified
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    And I expect this node to have the following properties:
       | Key  | Value         | Type   |
       | text | Original text | string |
