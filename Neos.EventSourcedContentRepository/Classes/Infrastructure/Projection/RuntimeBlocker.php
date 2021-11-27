@@ -88,7 +88,7 @@ final class RuntimeBlocker
                     $ids .= '   ' . $event->getIdentifier();
                 }
 
-                throw new \RuntimeException(sprintf('TIMEOUT while waiting for event(s) %s for projector "%s"', $ids, get_class($projector)), 1550232279);
+                throw new \RuntimeException(sprintf('TIMEOUT while waiting for event(s) %s for projector "%s" - check the error logs for details.', $ids, get_class($projector)), 1550232279);
             }
         }
     }

@@ -176,7 +176,7 @@ class TetheredNodeAdjustments
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::NODE_IS_NOT_TETHERED_BUT_SHOULD_BE,
-                'This node should be a tethered node, but is not.',
+                'This node should be a tethered node, but is not.  This can not be fixed automatically right now (TODO)',
                 $this->runtimeBlocker
             );
         }

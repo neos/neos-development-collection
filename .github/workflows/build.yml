@@ -82,15 +82,15 @@ jobs:
           cp ../${{ env.NEOS_CR_FOLDER }}/.travis_composer.json ./composer.json
           cat composer.json
 
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/composer
-            ${{ env.NEOS_DIST_FOLDER }}/Packages
-          key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
-          restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
+#      - name: Cache Composer packages
+#        id: composer-cache
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cache/composer
+#            ${{ env.NEOS_DIST_FOLDER }}/Packages
+#          key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
+#          restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
 
       - name: Install dependencies
         run: |
@@ -133,6 +133,10 @@ jobs:
           ./flow behat:setup
           bin/behat -f progress -c Packages/CR/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
           bin/behat -f progress -c Packages/CR/Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist
+          # TODO: fix routing tests in CI
+          # cd Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Behavior
+          # ../../../../../bin/behat -f progress -c behat.yml.dist Features/Routing
+          # TODO add the non-routing tests as well
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]')"

@@ -21,6 +21,10 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * All variants in a NodeAggregate have the same NodeName - and this can be changed here.
+ * This is the case because Node Names are usually only used for tethered nodes (=autocreated in the old CR);
+ * as then the Node Name is used for querying.
+ *
  * @Flow\Proxy(false)
  */
 final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface

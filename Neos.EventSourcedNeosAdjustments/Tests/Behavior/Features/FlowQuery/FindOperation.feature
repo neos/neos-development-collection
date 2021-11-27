@@ -50,7 +50,7 @@ Feature: The FlowQuery find operation
     Then I expect a node identified by aggregate identifier "nodewyn-tetherton" to exist in the FlowQuery context
 
   Scenario: Find named descendant, e.g. via q(node).find('parent/child')
-    When the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
+    When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                            | nodeName |
       | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document | parent   |
       | nody-mc-nodeface        | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document | child    |
@@ -61,7 +61,7 @@ Feature: The FlowQuery find operation
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the FlowQuery context
 
   Scenario: Find named node by absolute path, e.g. via q(node).find('/parent/child')
-    When the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
+    When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                            | nodeName |
       | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document | parent   |
       | nody-mc-nodeface        | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document | child    |
@@ -72,7 +72,7 @@ Feature: The FlowQuery find operation
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the FlowQuery context
 
   Scenario: Find node by identifier, e.g. via q(node).find('#nody-mc-nodeface')
-    When the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
+    When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                            | nodeName |
       | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document | parent   |
       | nody-mc-nodeface        | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document | child    |
@@ -84,7 +84,7 @@ Feature: The FlowQuery find operation
 
   Scenario: Find nodes by node type, e.g. via q(node).find('[instanceof Neos.ContentRepository.Testing:Document]')
 
-    When the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
+    When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier    | parentNodeAggregateIdentifier | nodeTypeName                                              |
       | sir-david-nodenborough     | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document                   |
       | sir-nodeward-nodington-iii | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document                   |

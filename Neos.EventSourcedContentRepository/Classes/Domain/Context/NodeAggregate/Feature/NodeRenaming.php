@@ -33,6 +33,7 @@ trait NodeRenaming
 
     public function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): CommandResult
     {
+        $this->getReadSideMemoryCacheManager()->disableCache();
         // TODO: check if CS exists
         // TODO: check if aggregate exists and delegate to it
         // TODO: check if aggregate is root

@@ -51,13 +51,23 @@ final class PropertyConverter
                 NodeTypeName::fromString($nodeType->getName())
             );
 
-            try {
-                $propertyValue = $this->serializer->normalize($propertyValue);
-            } catch (NotEncodableValueException | NotNormalizableValueException $e) {
-                throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
-            }
+            if ($propertyValue !== null) {
+                try {
+                    $propertyValue = $this->serializer->normalize($propertyValue);
+                } catch (NotEncodableValueException | NotNormalizableValueException $e) {
+                    throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
+                }
 
-            $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, (string)$propertyType);
+                $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, (string)$propertyType);
+            } else {
+                if (array_key_exists($propertyName, $nodeType->getProperties())) {
+                    // $propertyValue == null and defined in node types -> we want to set the $propertyName to NULL
+                    $serializedPropertyValues[$propertyName] = new SerializedPropertyValue(null, (string)$propertyType);
+                } else {
+                    // $propertyValue == null and not defined in NodeTypes -> we want to unset $propertyName!
+                    $serializedPropertyValues[$propertyName] = null;
+                }
+            }
         }
 
         return SerializedPropertyValues::fromArray($serializedPropertyValues);
