@@ -61,6 +61,20 @@ class NodePublishIntegrityCheckService
     protected $contextFactory;
 
 
+    // MovedTo handling:
+    // when moving /foo/a to /bar/a, the following node records exist in the user WS:
+    // Persistence_Object_Identifier | Identifier    |    Path    | isRemoved | movedTo |
+    // 789                           | 12345         |    /foo/a  | true      | 91011   |   <-- the OLD NODE points to the NEW location
+    // 91011                         | 12345         |    /bar/a  | false     | null    |   <-- this is the node we receive on publish from the UI.
+
+    // the UI sends us the already-moved node and says "publish me" (the SECOND one in the table above).
+
+    // In case of deletion, the UI sends us the REMOVED node and says "publish me"
+
+    /**
+     * @param array $nodesToPublish
+     * @param Workspace $targetWorkspace this is the workspace we publish to; so normally the base workspace of the user's workspace.
+     */
     public function ensureIntegrityForPublishingOfNodes(array $nodesToPublish, Workspace $targetWorkspace): void
     {
         // TODO: !!!!!! DIMENSION SUPPORT?
@@ -70,18 +84,67 @@ class NodePublishIntegrityCheckService
         // the context of the to-be-published nodes is the source workspace.
         foreach ($nodesToPublish as $node) {
             assert($node instanceof NodeInterface);
+
+            // PREPARATION: Build $contextOfTargetWorkspace
+            $contextProperties = $node->getContext()->getProperties();
+            $contextProperties['workspaceName'] = $targetWorkspace->getName();
+            // we want to show hidden nodes and nodes with access restrictions
+            $contextProperties['invisibleContentShown'] = true;
+            $contextProperties['inaccessibleContentShown'] = true;
+            // we do not want to show removed nodes, as a removed node (= a shadow node) should be as "not existing"
+            $contextProperties['removedContentShown'] = false;
+
+            $contextOfTargetWorkspace = $this->contextFactory->create($contextProperties);
+
+
             // CHECK 1: TODO: an der Originalstelle darf nach dem Publish kein Kind mehr existieren (das würde sonst disconnected werden)
-            // Originalstelle: wenn verschoben wurde
+
+            // 1 a) Originalstelle finden, wenn Node verschoben wurde.
+            $moveSourceShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
+            if ($moveSourceShadowNodeData) {
+                // we have a MOVE.
+
+                $originalPath = $moveSourceShadowNodeData->getPath();
+                // b) now, we find all children in $originalPath in the base workspace (e.g. live)
+                $originalNodeInTargetWorkspace = $contextOfTargetWorkspace->getNode($originalPath);
+                if ($originalNodeInTargetWorkspace) {
+                    // original node DOES exist in the target workspace
+                    $childNodes = $originalNodeInTargetWorkspace->getChildNodes();
+
+                    // -> wenn ein Kindknoten im publish erzeugt wirc, dann ist ein FEHLER.
+                    if ($nodesToPublish->containsExistingChildNodesOf($originalPath)) {
+                        throw new \RuntimeException('TODO');
+                    }
+                    if (count($childNodes) > 0) {
+                        // Es gab an der Originalstelle vorher Kinder
+                        // -> diese Kinder müssen entweder verschoben oder gelöscht werden im selben Publish.
+                        // -> sobald wir EINEN Kindknoten finden, welcher NICHT verschoben wurde und nicht gelöscht wurde, ist das ein FEHLER.
+                        foreach ($childNodes as $childNode) {
+                            assert($childNode instanceof NodeInterface);
+                            $childIsMovedAway = $nodesToPublish->isMovedFrom($childNode->getPath());
+                            $childNodeIsRemoved = $nodesToPublish->isRemoved($childNode->getPath());
+
+                            $childStillExists = !$childIsMovedAway && !$childNodeIsRemoved;
+                            if ($childStillExists) {
+                                throw new \RuntimeException('TODO');
+                            }
+                        }
+                    }
+                } else {
+                    // original node does not exist anymore in the target workspace
+                    // f.e. because somebody else deleted it in the meantime.
+                    // => We do not need to do anything in this case, because then, also no children exist anymore.
+                }
+
+                // Laden aller Kinder, die gerade an der Originalstelle hängen im LIVE workspace.
+            } else {
+                // no MOVE, as we did not find $moveSourceShadowNodeData
+                // => we do not need to do anything.
+            }
 
 
             //////////////////////////////////////////////////////////
             // CHECK 2: an der Zielstelle muss nach dem Publish der Parent existieren
-            $contextProperties = $node->getContext()->getProperties();
-            $contextProperties['workspaceName'] = $targetWorkspace->getName();
-            $contextProperties['invisibleContentShown'] = true;
-            //$contextProperties['removedContentShown'] = true; TODO TRUE ODER FALSE?
-            $contextProperties['inaccessibleContentShown'] = true;
-            $contextOfTargetWorkspace = $this->contextFactory->create($contextProperties);
 
 
             $parentNodeExistsInTargetWorkspace = $contextOfTargetWorkspace->getNode($node->getParentPath()) !== null;

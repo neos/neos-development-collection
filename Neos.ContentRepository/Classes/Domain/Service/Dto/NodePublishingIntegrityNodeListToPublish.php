@@ -61,20 +61,34 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
     }
 
     /**
-     * @param string $path
+     * @param string $sourcePath
      * @return bool TRUE if a node was moved from $path in this batch, FALSE otherwise.
      */
-    public function isMovedFrom(string $path): bool
+    public function isMovedFrom(string $sourcePath): bool
     {
         foreach ($this->nodesToPublish as $node) {
-            $referencedShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
-            if ($referencedShadowNodeData) {
-                // TODO: Dimensions??
-                // we now that $node was moved from $referencedShadowNodeData->getPath() to $node->getPath();
-                if ($referencedShadowNodeData->getPath() === $path) {
-                    // YES, a node was moved from $path to a new location. The new location now
-                    // is $node->getPath().
+            if ($node->getNodeData()->getMovedTo() !== null) {
+                // shadow node -> that shadow node contains the source path where the move started
+                //
+                // NOTE: this case will usually not happen (as far as we understand right now), as the UI
+                // will only send us the TARGET node of a move, and not the associated shadow node.
+                if ($node->getPath() === $sourcePath) {
                     return true;
+                }
+            } else {
+                // NO shadow node -> $node contains the TARGET path where the move has ended.
+                //
+                // Thus, to find out whether a move has happened from $sourcePath, we need to check whether any other
+                // node exists with movedTo == $node, to determine the source path
+                $referencedShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
+                if ($referencedShadowNodeData) {
+                    // TODO: Dimensions??
+                    // we now that $node was moved from $referencedShadowNodeData->getPath() to $node->getPath();
+                    if ($referencedShadowNodeData->getPath() === $sourcePath) {
+                        // YES, a node was moved from $path to a new location. The new location now
+                        // is $node->getPath().
+                        return true;
+                    }
                 }
             }
         }
