@@ -98,7 +98,7 @@ class NodePublishIntegrityCheckService
             $contextOfTargetWorkspace = $this->contextFactory->create($contextProperties);
 
             //////////////////////////////////////////////////////////
-            // CHECK 1: TODO: an der Originalstelle darf nach dem Publish kein Kind mehr existieren (das würde sonst disconnected werden)
+            // CHECK 1: an der Originalstelle darf nach dem Publish kein Kind mehr existieren (das würde sonst disconnected werden)
 
             // 1 a) Originalstelle finden, wenn Node verschoben wurde.
             $moveSourceShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
@@ -117,8 +117,6 @@ class NodePublishIntegrityCheckService
 
             //////////////////////////////////////////////////////////
             // CHECK 2: an der Zielstelle muss nach dem Publish der Parent existieren
-
-
             $parentNodeExistsInTargetWorkspace = $contextOfTargetWorkspace->getNode($node->getParentPath()) !== null;
             if ($parentNodeExistsInTargetWorkspace) {
                 // Parent gab es schon und er wurde nicht beeinträchtigt durch Publish (ggf. nur Properties geändert) -> OK
@@ -134,10 +132,10 @@ class NodePublishIntegrityCheckService
                 }
             } else {
                 // Parent gab es noch nicht und er wird im selben Publish angelegt -> OK
-                // Parent gab es noch nicht und er wird NICHT im selben Publish angelegt -> error
 
                 // existing == non-shadow, non-deleted
                 if (!$nodesToPublish->isExistingNode($node->getParentPath())) {
+                    // Parent gab es noch nicht und er wird NICHT im selben Publish angelegt
                     throw new \RuntimeException('TODO: ....'); // TODO: error liste
                 }
             }
@@ -159,6 +157,7 @@ class NodePublishIntegrityCheckService
             $childNodes = $originalNodeInTargetWorkspace->getChildNodes();
 
             // -> wenn ein Kindknoten im publish erzeugt wird, dann ist ein FEHLER.
+            // TODO Implement
             if ($nodesToPublish->containsExistingChildNodesOf($originalPath)) {
                 throw new \RuntimeException('TODO');
             }
