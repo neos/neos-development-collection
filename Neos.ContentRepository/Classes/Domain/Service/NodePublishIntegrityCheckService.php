@@ -85,6 +85,7 @@ class NodePublishIntegrityCheckService
         foreach ($nodesToPublish as $node) {
             assert($node instanceof NodeInterface);
 
+            //////////////////////////////////////////////////////////
             // PREPARATION: Build $contextOfTargetWorkspace
             $contextProperties = $node->getContext()->getProperties();
             $contextProperties['workspaceName'] = $targetWorkspace->getName();
@@ -96,7 +97,7 @@ class NodePublishIntegrityCheckService
 
             $contextOfTargetWorkspace = $this->contextFactory->create($contextProperties);
 
-
+            //////////////////////////////////////////////////////////
             // CHECK 1: TODO: an der Originalstelle darf nach dem Publish kein Kind mehr existieren (das würde sonst disconnected werden)
 
             // 1 a) Originalstelle finden, wenn Node verschoben wurde.
@@ -105,41 +106,12 @@ class NodePublishIntegrityCheckService
                 // we have a MOVE.
 
                 $originalPath = $moveSourceShadowNodeData->getPath();
-                // b) now, we find all children in $originalPath in the base workspace (e.g. live)
-                $originalNodeInTargetWorkspace = $contextOfTargetWorkspace->getNode($originalPath);
-                if ($originalNodeInTargetWorkspace) {
-                    // original node DOES exist in the target workspace
-                    $childNodes = $originalNodeInTargetWorkspace->getChildNodes();
+                $this->assertThatNodeDoesNotHaveChildrenAfterPublish($originalPath, $contextOfTargetWorkspace, $nodesToPublish);
 
-                    // -> wenn ein Kindknoten im publish erzeugt wirc, dann ist ein FEHLER.
-                    if ($nodesToPublish->containsExistingChildNodesOf($originalPath)) {
-                        throw new \RuntimeException('TODO');
-                    }
-                    if (count($childNodes) > 0) {
-                        // Es gab an der Originalstelle vorher Kinder
-                        // -> diese Kinder müssen entweder verschoben oder gelöscht werden im selben Publish.
-                        // -> sobald wir EINEN Kindknoten finden, welcher NICHT verschoben wurde und nicht gelöscht wurde, ist das ein FEHLER.
-                        foreach ($childNodes as $childNode) {
-                            assert($childNode instanceof NodeInterface);
-                            $childIsMovedAway = $nodesToPublish->isMovedFrom($childNode->getPath());
-                            $childNodeIsRemoved = $nodesToPublish->isRemoved($childNode->getPath());
-
-                            $childStillExists = !$childIsMovedAway && !$childNodeIsRemoved;
-                            if ($childStillExists) {
-                                throw new \RuntimeException('TODO');
-                            }
-                        }
-                    }
-                } else {
-                    // original node does not exist anymore in the target workspace
-                    // f.e. because somebody else deleted it in the meantime.
-                    // => We do not need to do anything in this case, because then, also no children exist anymore.
-                }
-
-                // Laden aller Kinder, die gerade an der Originalstelle hängen im LIVE workspace.
-            } else {
-                // no MOVE, as we did not find $moveSourceShadowNodeData
-                // => we do not need to do anything.
+            } elseif ($node->isRemoved()) {
+                // no MOVE, as we did not find $moveSourceShadowNodeData, but a DELETION (isRemoved=true)
+                // => the deletion should not lead to any disconnected child nodes.
+                $this->assertThatNodeDoesNotHaveChildrenAfterPublish($node->getPath(), $contextOfTargetWorkspace, $nodesToPublish);
             }
 
 
@@ -177,5 +149,38 @@ class NodePublishIntegrityCheckService
         // TODO:if ($checkResult->hasIntegrityViolations()) {
         // TODO:   throw new NodeMoveIntegrityViolationException($checkResult->getPlainMessage(), 1635413769);
         // TODO:}
+    }
+
+    private function assertThatNodeDoesNotHaveChildrenAfterPublish(string $originalPath, Context $contextOfTargetWorkspace, NodePublishingIntegrityNodeListToPublish $nodesToPublish) {
+        // now, we find all children in $originalPath in the base workspace (e.g. live)
+        $originalNodeInTargetWorkspace = $contextOfTargetWorkspace->getNode($originalPath);
+        if ($originalNodeInTargetWorkspace) {
+            // original node DOES exist in the target workspace
+            $childNodes = $originalNodeInTargetWorkspace->getChildNodes();
+
+            // -> wenn ein Kindknoten im publish erzeugt wird, dann ist ein FEHLER.
+            if ($nodesToPublish->containsExistingChildNodesOf($originalPath)) {
+                throw new \RuntimeException('TODO');
+            }
+            if (count($childNodes) > 0) {
+                // Es gab an der Originalstelle vorher Kinder
+                // -> diese Kinder müssen entweder verschoben oder gelöscht werden im selben Publish.
+                // -> sobald wir EINEN Kindknoten finden, welcher NICHT verschoben wurde und nicht gelöscht wurde, ist das ein FEHLER.
+                foreach ($childNodes as $childNode) {
+                    assert($childNode instanceof NodeInterface);
+                    $childIsMovedAway = $nodesToPublish->isMovedFrom($childNode->getPath());
+                    $childNodeIsRemoved = $nodesToPublish->isRemoved($childNode->getPath());
+
+                    $childStillExists = !$childIsMovedAway && !$childNodeIsRemoved;
+                    if ($childStillExists) {
+                        throw new \RuntimeException('TODO');
+                    }
+                }
+            }
+        } else {
+            // original node does not exist anymore in the target workspace
+            // f.e. because somebody else deleted it in the meantime.
+            // => We do not need to do anything in this case, because then, also no children exist anymore.
+        }
     }
 }
