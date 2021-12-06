@@ -66,9 +66,9 @@ class NodeSearchService implements NodeSearchServiceInterface
 
         $searchTerm = is_string($term) ? [$term] : $term;
 
-        foreach ($searchTerm as $term) {
-            if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $term) !== 0) {
-                $nodeByIdentifier = $context->getNodeByIdentifier($term);
+        foreach ($searchTerm as $termvalue) {
+            if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $termvalue) !== 0) {
+                $nodeByIdentifier = $context->getNodeByIdentifier($termvalue);
                 if ($nodeByIdentifier !== null && $this->nodeSatisfiesSearchNodeTypes($nodeByIdentifier, $searchNodeTypes)) {
                     $searchResult[$nodeByIdentifier->getPath()] = $nodeByIdentifier;
                 }
