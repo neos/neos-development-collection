@@ -50,6 +50,11 @@ trait NodeOperationsTrait
     private $nodeTypesConfiguration = [];
 
     /**
+     * @var \Exception|null
+     */
+    protected $lastException;
+
+    /**
      * @return mixed
      */
     abstract protected function getObjectManager(): ObjectManagerInterface;
@@ -407,6 +412,19 @@ trait NodeOperationsTrait
     }
 
     /**
+     * @When /^I publish the node and exceptions are caught$/
+     */
+    public function iPublishTheNodeAndExceptionsAreCaught()
+    {
+        try {
+            $this->iPublishTheNode();
+            $this->lastException = null;
+        } catch (\Exception $exception) {
+            $this->lastException = $exception;
+        }
+    }
+
+    /**
      * @When /^I publish the workspace "([^"]*)"$/
      */
     public function iPublishTheWorkspace($sourceWorkspaceName)
@@ -585,11 +603,6 @@ trait NodeOperationsTrait
             $this->resetNodeInstances();
         }
     }
-
-    /**
-     * @var \Exception|null
-     */
-    protected $lastException;
 
     /**
      * @Given /^I move the node (before|after|into) the node with path "([^"]*)" and exceptions are caught$/
