@@ -13,12 +13,10 @@ namespace Neos\ContentRepository\Domain\Service\Dto;
  */
 
 use ArrayIterator;
-use Exception;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodePublishIntegrityCheckService;
 use Neos\Flow\Annotations as Flow;
-use Traversable;
 
 /**
  * Node List to publish - internal implementation detail of {@see NodePublishIntegrityCheckService}
@@ -36,7 +34,7 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
      * @Flow\Inject
      * @var NodeDataRepository
      */
-    private $nodeDataRepository;
+    protected $nodeDataRepository;
 
     /**
      * @param NodeInterface[] $nodesToPublish
@@ -132,4 +130,19 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
     }
 
 
+    /**+
+     * @param string $path
+     * @return bool TRUE if node is in publish bulk, FALSE otherwise
+     */
+    public function containsExistingChildNodesOf(string $path)
+    {
+        foreach ($this->nodesToPublish as $node) {
+            // TODO: check all parents?
+            if ($node->getParentPath() === $path) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

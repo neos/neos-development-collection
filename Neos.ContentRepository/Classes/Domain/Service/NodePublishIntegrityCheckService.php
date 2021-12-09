@@ -12,14 +12,11 @@ namespace Neos\ContentRepository\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Service\Dto\NodeMoveIntegrityCheckResult;
-use Neos\ContentRepository\Domain\Service\Dto\NodeMoveIntegrityCheckResultPart;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Dto\NodePublishingIntegrityNodeListToPublish;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
-use Neos\ContentRepository\Exception\NodeMoveIntegrityViolationException;
+use Neos\ContentRepository\Exception\NodePublishingIntegrityCheckViolationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Controller\BackendServiceController;
 
@@ -60,6 +57,12 @@ class NodePublishIntegrityCheckService
      */
     protected $contextFactory;
 
+    /**
+     * @Flow\Inject
+     * @var NodeDataRepository
+     */
+    protected $nodeDataRepository;
+
 
     // MovedTo handling:
     // when moving /foo/a to /bar/a, the following node records exist in the user WS:
@@ -98,73 +101,62 @@ class NodePublishIntegrityCheckService
             $contextOfTargetWorkspace = $this->contextFactory->create($contextProperties);
 
             //////////////////////////////////////////////////////////
-            // CHECK 1: an der Originalstelle darf nach dem Publish kein Kind mehr existieren (das würde sonst disconnected werden)
-
-            // 1 a) Originalstelle finden, wenn Node verschoben wurde.
+            /// CHECK 1) On the source location of the node there must be no child nodes anymore.
+            ///          child nodes on the source location would get disconnected on publish
             $moveSourceShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
             if ($moveSourceShadowNodeData) {
                 // we have a MOVE.
-
                 $originalPath = $moveSourceShadowNodeData->getPath();
                 $this->assertThatNodeDoesNotHaveChildrenAfterPublish($originalPath, $contextOfTargetWorkspace, $nodesToPublish);
-
             } elseif ($node->isRemoved()) {
-                // no MOVE, as we did not find $moveSourceShadowNodeData, but a DELETION (isRemoved=true)
+                // we have a DELETION (isRemoved=true), as we did not find $moveSourceShadowNodeData
                 // => the deletion should not lead to any disconnected child nodes.
                 $this->assertThatNodeDoesNotHaveChildrenAfterPublish($node->getPath(), $contextOfTargetWorkspace, $nodesToPublish);
             }
 
 
             //////////////////////////////////////////////////////////
-            // CHECK 2: an der Zielstelle muss nach dem Publish der Parent existieren
+            /// CHECK 2) On the target location a parent must exist after publish
             $parentNodeExistsInTargetWorkspace = $contextOfTargetWorkspace->getNode($node->getParentPath()) !== null;
             if ($parentNodeExistsInTargetWorkspace) {
-                // Parent gab es schon und er wurde nicht beeinträchtigt durch Publish (ggf. nur Properties geändert) -> OK
-                // Parent gab es schon und er wird im selben Publish verschoben -> error
-                // Parent gab es schon und er wird im selben Publish gelöscht -> error
+                // parent already exists in target workspace and was not modified by publish => OK
 
+                // parent already exists and it gets moved in the same publish => ERROR
                 if ($nodesToPublish->isMovedFrom($node->getParentPath())) {
-                    throw new \RuntimeException('TODO: ....'); // TODO: error liste
+                    throw new NodePublishingIntegrityCheckViolationException('TODO: ....'); // TODO: error liste
                 }
 
+                // parent already exists and it gets removed in the same publish => ERROR
                 if ($nodesToPublish->isRemoved($node->getParentPath())) {
-                    throw new \RuntimeException('TODO: ....'); // TODO: error liste
+                    throw new NodePublishingIntegrityCheckViolationException('TODO: ....'); // TODO: error liste
                 }
             } else {
-                // Parent gab es noch nicht und er wird im selben Publish angelegt -> OK
-
+                // parent did not exist and will be created in the same publish => OK
                 // existing == non-shadow, non-deleted
                 if (!$nodesToPublish->isExistingNode($node->getParentPath())) {
-                    // Parent gab es noch nicht und er wird NICHT im selben Publish angelegt
-                    throw new \RuntimeException('TODO: ....'); // TODO: error liste
+                    // parent did not exists and it will NOT be created in the same publish
+                    throw new NodePublishingIntegrityCheckViolationException('TODO: ....'); // TODO: error liste
                 }
             }
-
         }
-
-
-        // TODO: $checkResult = $this->checkIntegrityForDocumentNodeMove($nodeToMove, NodePaths::getParentPath($destinationPath));
-        // TODO:if ($checkResult->hasIntegrityViolations()) {
-        // TODO:   throw new NodeMoveIntegrityViolationException($checkResult->getPlainMessage(), 1635413769);
-        // TODO:}
     }
 
-    private function assertThatNodeDoesNotHaveChildrenAfterPublish(string $originalPath, Context $contextOfTargetWorkspace, NodePublishingIntegrityNodeListToPublish $nodesToPublish) {
+    private function assertThatNodeDoesNotHaveChildrenAfterPublish(string $originalPath, Context $contextOfTargetWorkspace, NodePublishingIntegrityNodeListToPublish $nodesToPublish)
+    {
         // now, we find all children in $originalPath in the base workspace (e.g. live)
         $originalNodeInTargetWorkspace = $contextOfTargetWorkspace->getNode($originalPath);
         if ($originalNodeInTargetWorkspace) {
             // original node DOES exist in the target workspace
             $childNodes = $originalNodeInTargetWorkspace->getChildNodes();
 
-            // -> wenn ein Kindknoten im publish erzeugt wird, dann ist ein FEHLER.
-            // TODO Implement
+            // when a child node gets created in the publish => ERROR
             if ($nodesToPublish->containsExistingChildNodesOf($originalPath)) {
-                throw new \RuntimeException('TODO');
+                throw new NodePublishingIntegrityCheckViolationException('TODO');
             }
             if (count($childNodes) > 0) {
-                // Es gab an der Originalstelle vorher Kinder
-                // -> diese Kinder müssen entweder verschoben oder gelöscht werden im selben Publish.
-                // -> sobald wir EINEN Kindknoten finden, welcher NICHT verschoben wurde und nicht gelöscht wurde, ist das ein FEHLER.
+                // Before move child nodes existed at source location
+                // those child nodes must be moved or deleted in the same publish
+                // as soon as we find any child node not getting moved or removed => ERROR
                 foreach ($childNodes as $childNode) {
                     assert($childNode instanceof NodeInterface);
                     $childIsMovedAway = $nodesToPublish->isMovedFrom($childNode->getPath());
@@ -172,14 +164,14 @@ class NodePublishIntegrityCheckService
 
                     $childStillExists = !$childIsMovedAway && !$childNodeIsRemoved;
                     if ($childStillExists) {
-                        throw new \RuntimeException('TODO');
+                        throw new NodePublishingIntegrityCheckViolationException('TODO');
                     }
                 }
             }
-        } else {
-            // original node does not exist anymore in the target workspace
-            // f.e. because somebody else deleted it in the meantime.
-            // => We do not need to do anything in this case, because then, also no children exist anymore.
         }
+        // else:
+        // original node does not exist anymore in the target workspace
+        // f.e. because somebody else deleted it in the meantime.
+        // => We do not need to do anything in this case, because then, also no children exist anymore.
     }
 }
