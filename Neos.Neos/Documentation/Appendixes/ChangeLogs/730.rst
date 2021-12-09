@@ -4,25 +4,6 @@
 Overview of merged pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`FEATURE: Change wallpaper for login <https://github.com/neos/neos-development-collection/pull/3533>`_
-------------------------------------------------------------------------------------------------------
-
-**What I did**
-Replaces the JPG and WebP file of the wallpaper.
-
-**How I did it**
-Used imageOptim to minimize the image from @kdambekalns with Gruetzli and convert the image also to a WebP.
-
-**How to verify it**
-Check the wonderful new login screen.
-Thanks to @kdambekalns for providing such a nice picture from Saxony-Anhalt (Germany) ❤️ 
-
-* Resolves: `#3522 <https://github.com/neos/neos-development-collection/issues/3522>`_
-
-!`Screenshot 2021-12-07 at 00 54 19 <https://user-images.githubusercontent.com/1014126/144941468-55cb4a29-f073-4c5c-b9cd-7ce90a8149f5.png>`_
-
-
-
 * Packages: ``Media`` ``Neos``
 
 `FEATURE: Add Neos.CliSetup package <https://github.com/neos/neos-development-collection/pull/3505>`_
@@ -41,13 +22,6 @@ The solution is implemented as a separate package in the development collection 
 
 * Resolves: `#3506 <https://github.com/neos/neos-development-collection/issues/3506>`_
 
-Todos after merging:
-
-- [x] configure package subsplit https://github.com/neos/slicer/pull/13
-- [x] register package via packagist
-- [x] adjust package to neos-dev-distribution (post-create-project-script, set-dependencies.sh) https://github.com/neos/neos-development-distribution/pull/75
-- [x] adjust neos-base-distributions (require + post-create-project-script) https://github.com/neos/neos-base-distribution/pull/54
-
 * Packages: ``CliSetup``
 
 `FEATURE: AFX shorthand for @if and @process / generate keys <https://github.com/neos/neos-development-collection/pull/3428>`_
@@ -62,7 +36,6 @@ Multiple meta properties transpile to: '@if.if_1' and '@if.if_2'
 ```html
 # afx
 <Vendor.Site:Prototype @if={eel1} image.@if={eel2} />
-
 ```
 
 ```ts
@@ -73,18 +46,6 @@ Vendor.Site:Prototype {
 }
 ```
 
-**What I did**
-before the attributes are handed into the big loop and converted to fusion, some keys are modified.
-Each attribute key string that ends with either ``@if`` or ``@process`` will get an auto generated key.
-
-**Improvements i did not do yet.**
-I think the function ``generatePathForShorthandFusionMetaPath`` could be integrated in the for loop succeeding it (we would save one loop then) but i did not want to create spaghetti yet. (The generation relies on a ``global`` index list wich will decide the next number - easier would be a random number or a not path aware incrementing count. (a simple i++))
-
-btw watch out:
-The global editorconfig from neos removes wanted whitespaces from the AfxServiceTest.php...
-
-**How to verify it**
-added some tests ; )
 
 Resolves: https://github.com/neos/fusion-afx/issues/29
 
@@ -185,12 +146,6 @@ You can see, that the the quoted attribute ``'@foo.bar'`` will still be split at
 ```
 To archive the 'expected' ast, the SPLIT_PATTERN_OBJECTPATH in the parser was adjusted to ignore dots inside of quotes.
 
-**What I did**
-- Fusion parser: dont split paths at dots, who are inside quotes.
-- AFX: allow quoted attribute identifiers.
-- added some tests.
-
-
 * Packages: ``Neos`` ``Fusion.Afx`` ``Fusion``
 
 `FEATURE: Allow setting the position of backend modules <https://github.com/neos/neos-development-collection/pull/3434>`_
@@ -203,12 +158,6 @@ inside backend modules other than the content module.
 The content module needs an additional change in the Neos.UI.
 
 * Relates: `#3433 <https://github.com/neos/neos-development-collection/issues/3433>`_
-
-**How I did it**
-
-Call the ``PositionalArraySorter`` on the array of submodules for each group.
-
-**How to verify it**
 
 Try the following setting to move the media module after the workspace module:
 
@@ -348,9 +297,6 @@ So we use a structure like
     4. check the drop down
 
 
-!`Screenshot 2021-11-03 at 10 27 50 <https://user-images.githubusercontent.com/1014126/140036446-fedcdc33-d80d-4ea4-95b0-41fa385d9d53.png>`_
-
-
 * Fixes: `#3488 <https://github.com/neos/neos-development-collection/issues/3488>`_ 
 
 * Packages: ``Media.Browser`` ``Neos``
@@ -371,13 +317,11 @@ from ``Neos.Neos.userInterface.inspector.editors`` are applied even if no corres
 `BUGFIX: NodeTypesLoader respect package overrides <https://github.com/neos/neos-development-collection/pull/3508>`_
 --------------------------------------------------------------------------------------------------------------------
 
-**What I did**
 
 The NodeTypesLoader introduced in FLOW 7.2 does not allow to override NodeTypes in the newly introduced ``NodeTypes`` directory. This is because, the ``Configuration`` directory is loaded in a separate loop after the ``NodeTypes`` directory.  
 
 For example, the NodeType ``Neos.Neos:ContentCollection`` cannot be overriden in the ``NodeTypes`` directory, because it is loaded in ``Neos.Neos/Configuration``. This means, everything defined in the ``NodeTypes`` directory of a custom package is overriden by the ``Neos.Neos/Configuration`` NodeType.
 
-**How I did it**
 
 This PR uses a single ``$packages`` loop to first load from the ``NodeTypes`` directory, directly followed by the ``Configuration`` for a given ``$package``.
 
