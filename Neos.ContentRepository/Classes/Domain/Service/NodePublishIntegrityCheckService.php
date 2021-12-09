@@ -58,7 +58,7 @@ class NodePublishIntegrityCheckService
     protected $contextFactory;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
@@ -81,7 +81,7 @@ class NodePublishIntegrityCheckService
     public function ensureIntegrityForPublishingOfNodes(array $nodesToPublish, Workspace $targetWorkspace): void
     {
         // TODO: !!!!!! DIMENSION SUPPORT?
-        $nodesToPublish = NodePublishingIntegrityNodeListToPublish::createForNodes($nodesToPublish);
+        $nodesToPublish = NodePublishingIntegrityNodeListToPublish::createForNodes($nodesToPublish, $this->nodeDataRepository);
 
         // NodesToPublish is an array of nodes.
         // the context of the to-be-published nodes is the source workspace.

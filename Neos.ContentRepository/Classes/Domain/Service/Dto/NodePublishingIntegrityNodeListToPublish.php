@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Node List to publish - internal implementation detail of {@see NodePublishIntegrityCheckService}
  *
- * @internal
+ * @Flow\Proxy(false)
  */
 final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggregate
 {
@@ -31,7 +31,6 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
     private array $nodesToPublish;
 
     /**
-     * @Flow\Inject
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
@@ -39,18 +38,20 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
     /**
      * @param NodeInterface[] $nodesToPublish
      */
-    private function __construct(array $nodesToPublish)
+    private function __construct(array $nodesToPublish, NodeDataRepository $nodeDataRepository)
     {
         $this->nodesToPublish = $nodesToPublish;
+        $this->nodeDataRepository = $nodeDataRepository;
     }
 
     /**
      * @param NodeInterface[] $nodesToPublish
+     * @param NodeDataRepository $nodeDataRepository
      * @return static
      */
-    public static function createForNodes(array $nodesToPublish): self
+    public static function createForNodes(array $nodesToPublish, NodeDataRepository $nodeDataRepository): self
     {
-        return new self($nodesToPublish);
+        return new self($nodesToPublish, $nodeDataRepository);
     }
 
     public function getIterator(): iterable

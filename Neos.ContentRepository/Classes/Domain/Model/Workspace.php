@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
+use Neos\ContentRepository\Domain\Service\NodePublishIntegrityCheckService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -131,6 +132,12 @@ class Workspace
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodePublishIntegrityCheckService
+     */
+    protected $nodePublishIntegrityCheckService;
 
     /**
      * Constructs a new workspace
@@ -392,6 +399,7 @@ class Workspace
      */
     public function publishNodes(array $nodes, Workspace $targetWorkspace): void
     {
+        $this->nodePublishIntegrityCheckService->ensureIntegrityForPublishingOfNodes($nodes, $targetWorkspace);
         foreach ($nodes as $node) {
             $this->publishNode($node, $targetWorkspace);
         }

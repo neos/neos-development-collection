@@ -83,7 +83,7 @@ Feature: Node publishing integrity check
     Then I should have 0 nodes
 
   # We move a parent and its child and only publish the child => ERROR
-  Scenario: moves /site/cr/subpage underneath /site/other/ and only publishes /site/other/subpage/nested => SHOULD FAIL
+  Scenario: moves /sites/cr/subpage underneath /sites/other/ and only publishes /sites/other/subpage/nested => SHOULD FAIL
     Given I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | de       |
@@ -96,24 +96,24 @@ Feature: Node publishing integrity check
     And I publish the node and exceptions are caught
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
     """
-      Exception: TODO
+      TODO: ....
     """
 
     # Assertions: node was NOT published
-    When I get a node by path "/site/other/subpage/nested" with the following context:
+    When I get a node by path "/sites/other/subpage/nested" with the following context:
       | Workspace |
       | live      |
     Then I should have 0 nodes
 
     # Assertion: the node still exists at the old location
-    When I get a node by path "/site/cr/subpage/nested" with the following context:
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
       | Workspace |
       | live      |
     Then I should have one node
     And the node should be connected to the root
 
   # We move a parent and its child and only publish the parent-node => ERROR
-  Scenario: moves /site/cr/subpage underneath /site/other/ and only publishes /site/other/subpage => SHOULD FAIL
+  Scenario: moves /sites/cr/subpage underneath /sites/other/ and only publishes /sites/other/subpage => SHOULD FAIL
     Given I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | de       |
@@ -124,19 +124,20 @@ Feature: Node publishing integrity check
       | Workspace  | Language |
       | user-admin | de       |
     And I publish the node and exceptions are caught
+
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
     """
-      Exception: TODO
+      TODO: ....
     """
 
     # Assertions: node was NOT published
-    When I get a node by path "/site/other/subpage" with the following context:
+    When I get a node by path "/sites/other/subpage" with the following context:
       | Workspace |
       | live      |
     Then I should have 0 nodes
 
     # Assertion: the node still exists at the old location
-    When I get a node by path "/site/cr/subpage" with the following context:
+    When I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace |
       | live      |
     Then I should have one node
