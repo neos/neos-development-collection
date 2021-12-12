@@ -26,6 +26,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Exception\D
 use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
@@ -61,13 +62,16 @@ final class DimensionSpaceCommandHandler
 
     protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
-    public function __construct(EventStore $eventStore, ReadSideMemoryCacheManager $readSideMemoryCacheManager, ContentGraphInterface $contentGraph, ContentDimensionZookeeper $contentDimensionZookeeper, InterDimensionalVariationGraph $interDimensionalVariationGraph)
+    protected RuntimeBlocker $runtimeBlocker;
+
+    public function __construct(EventStore $eventStore, ReadSideMemoryCacheManager $readSideMemoryCacheManager, ContentGraphInterface $contentGraph, ContentDimensionZookeeper $contentDimensionZookeeper, InterDimensionalVariationGraph $interDimensionalVariationGraph, RuntimeBlocker $runtimeBlocker)
     {
         $this->eventStore = $eventStore;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
         $this->contentGraph = $contentGraph;
         $this->contentDimensionZookeeper = $contentDimensionZookeeper;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
+        $this->runtimeBlocker = $runtimeBlocker;
     }
 
 
@@ -94,7 +98,7 @@ final class DimensionSpaceCommandHandler
             )
         );
         $this->eventStore->commit($streamName, $events);
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     public function handleAddDimensionShineThrough(Command\AddDimensionShineThrough $command): CommandResult
@@ -118,7 +122,7 @@ final class DimensionSpaceCommandHandler
             )
         );
         $this->eventStore->commit($streamName, $events);
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     /**
