@@ -22,6 +22,7 @@ Feature: Publishing hide/show scenario of nodes
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "user-id"       |
     And the graph projection is fully up to date
     And I have the following NodeTypes configuration:
     """
@@ -85,17 +86,19 @@ Feature: Publishing hide/show scenario of nodes
 
     # SETUP: hide two nodes in USER workspace
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "user-cs-identifier"     |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "user-cs-identifier"                   |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                        |
-      | contentStreamIdentifier      | "user-cs-identifier"         |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
-      | coveredDimensionSpacePoint   | {}                           |
-      | nodeVariantSelectionStrategy | "allVariants"                |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "user-cs-identifier"                   |
+      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii"           |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
@@ -118,17 +121,19 @@ Feature: Publishing hide/show scenario of nodes
   Scenario: (ShowNode) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "cs-identifier"                        |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
-      | coveredDimensionSpacePoint   | {}                           |
-      | nodeVariantSelectionStrategy | "allVariants"                |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "cs-identifier"                        |
+      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii"           |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     Given the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |

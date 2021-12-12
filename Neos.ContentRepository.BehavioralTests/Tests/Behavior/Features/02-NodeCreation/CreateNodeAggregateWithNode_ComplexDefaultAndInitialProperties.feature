@@ -39,6 +39,7 @@ Feature: Create a node aggregate with complex default values
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier   | "user-id"            |
     And I am in content stream "cs-identifier"
     And I am in dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:

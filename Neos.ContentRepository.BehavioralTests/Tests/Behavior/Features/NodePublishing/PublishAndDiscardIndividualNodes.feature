@@ -15,6 +15,7 @@ Feature: Publishing and discard individual nodes (basics)
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "user-id"       |
     And the graph projection is fully up to date
     And I have the following NodeTypes configuration:
     """
@@ -77,26 +78,26 @@ Feature: Publishing and discard individual nodes (basics)
     And the graph projection is fully up to date
     # modify nodes in user WS
     And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                                                |
-      | contentStreamIdentifier   | "user-cs-identifier"                                 |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                             |
-      | originDimensionSpacePoint | {}                                                   |
-      | propertyValues            | {"text": "Modified t1"} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                         |
+      | Key                       | Value                        |
+      | contentStreamIdentifier   | "user-cs-identifier"         |
+      | nodeAggregateIdentifier   | "sir-david-nodenborough"     |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "Modified t1"}      |
+      | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                                                |
-      | contentStreamIdentifier   | "user-cs-identifier"                                 |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                   |
-      | originDimensionSpacePoint | {}                                                   |
-      | propertyValues            | {"text": "Modified t2"} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                         |
+      | Key                       | Value                        |
+      | contentStreamIdentifier   | "user-cs-identifier"         |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "Modified t2"}      |
+      | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                                                    |
-      | contentStreamIdentifier   | "user-cs-identifier"                                     |
-      | nodeAggregateIdentifier   | "sir-nodeward-nodington-iii"                             |
-      | originDimensionSpacePoint | {}                                                       |
-      | propertyValues            | {"image": "Modified image"} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                             |
+      | Key                       | Value                        |
+      | contentStreamIdentifier   | "user-cs-identifier"         |
+      | nodeAggregateIdentifier   | "sir-nodeward-nodington-iii" |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"image": "Modified image"}  |
+      | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
   ################

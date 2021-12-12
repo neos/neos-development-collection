@@ -8,6 +8,7 @@ Feature: Linking between multiple websites
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "u"             |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                        |
       | contentStreamIdentifier     | "cs-identifier"              |

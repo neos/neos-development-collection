@@ -12,6 +12,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "user-id"       |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
@@ -27,9 +28,9 @@ Feature: If content streams are not in use anymore by the workspace, they can be
 
   Scenario: on creating a nested workspace, the new content stream is marked as IN_USE_BY_WORKSPACE.
     When the command CreateWorkspace is executed with payload:
-      | Key                     | Value                |
-      | workspaceName           | "user-test"          |
-      | baseWorkspaceName       | "live"               |
+      | Key                        | Value                |
+      | workspaceName              | "user-test"          |
+      | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
@@ -43,9 +44,9 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
     When the command "RebaseWorkspace" is executed with payload:
-      | Key           | Value       |
-      | workspaceName | "user-test" |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | Key                      | Value                        |
+      | workspaceName            | "user-test"                  |
+      | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
@@ -61,9 +62,9 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
     When the command "RebaseWorkspace" is executed with payload:
-      | Key           | Value       |
-      | workspaceName | "user-test" |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | Key                      | Value                        |
+      | workspaceName            | "user-test"                  |
+      | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
     # now, we have one unused content stream (the old content stream of the user-test workspace)
 
@@ -85,9 +86,9 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | newContentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
     When the command "RebaseWorkspace" is executed with payload:
-      | Key           | Value       |
-      | workspaceName | "user-test" |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | Key                      | Value                        |
+      | workspaceName            | "user-test"                  |
+      | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
     # now, we have one unused content stream (the old content stream of the user-test workspace)
 
@@ -117,9 +118,9 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     # however, we are not allowed to drop the content stream from the event store yet, because the "user-cs-identifier" is based
     # on the (no-longer-in-direct-use) review-cs-identifier.
     When the command "RebaseWorkspace" is executed with payload:
-      | Key           | Value       |
-      | workspaceName | "review" |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | Key                      | Value                        |
+      | workspaceName            | "review"                     |
+      | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I prune unused content streams
