@@ -81,8 +81,8 @@ Feature: Add Dimension Specialization
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     And I expect this node to have the following properties:
-      | Key  | Value | Type   |
-      | text | hello | string |
+      | Key  | Value   | Type   |
+      | text | "hello" | string |
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
@@ -91,14 +91,15 @@ Feature: Add Dimension Specialization
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value | Type   |
-      | text | hello | string |
+      | Key  | Value   | Type   |
+      | text | "hello" | string |
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    # shine through added
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     And I expect this node to have the following properties:
-      | Key  | Value | Type   |
-      | text | hello | string |
+      | Key  | Value   | Type   |
+      | text | "hello" | string |
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -106,7 +107,7 @@ Feature: Add Dimension Specialization
 
     # finally, we MODIFY the node and ensure that the modification is visible in both DSPs (as otherwise the shine through would not have worked
     # as expected)
-    And the command SetNodeProperties is executed with payload and exceptions are caught:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "migration-cs"               |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"     |
@@ -117,20 +118,21 @@ Feature: Add Dimension Specialization
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value   | Type   |
-      | text | changed | string |
+      | Key  | Value     | Type   |
+      | text | "changed" | string |
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    # ch shines through to the DE node
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value   | Type   |
-      | text | changed | string |
+      | Key  | Value     | Type   |
+      | text | "changed" | string |
 
     # the original content stream was untouched
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value | Type   |
-      | text | hello | string |
+      | Key  | Value   | Type   |
+      | text | "hello" | string |
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
@@ -140,11 +142,12 @@ Feature: Add Dimension Specialization
   Scenario: Success Case - disabled nodes stay disabled
 
     When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {"language": "de"}       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "cs-identifier"                        |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {"language": "de"}                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
     # ensure the node is disabled
@@ -182,12 +185,11 @@ Feature: Add Dimension Specialization
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     When VisibilityConstraints are set to "frontend"
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
-
 
 
   Scenario: Error case - there's already an edge in the target dimension
@@ -198,11 +200,12 @@ Feature: Add Dimension Specialization
 
     # we create a node in CH
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
-      | contentStreamIdentifier | "cs-identifier"          |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
-      | sourceOrigin            | {"language":"de"}        |
-      | targetOrigin            | {"language":"en"}        |
+      | Key                      | Value                    |
+      | contentStreamIdentifier  | "cs-identifier"          |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough" |
+      | sourceOrigin             | {"language":"de"}        |
+      | targetOrigin             | {"language":"en"}        |
+      | initiatingUserIdentifier | "foo"                    |
 
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:

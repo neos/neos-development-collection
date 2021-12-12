@@ -10,7 +10,7 @@ use Neos\EventSourcedContentRepository\Migration\Transformations\GlobalTransform
 use Neos\EventSourcedContentRepository\Migration\Transformations\NodeAggregateBasedTransformationInterface;
 use Neos\EventSourcedContentRepository\Migration\Transformations\NodeBasedTransformationInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 
 final class Transformations
 {
@@ -29,7 +29,6 @@ final class Transformations
      * @var NodeBasedTransformationInterface[]
      */
     protected array $nodeBasedTransformations = [];
-
 
     public function __construct(array $transformationObjects)
     {

@@ -15,7 +15,7 @@ namespace Neos\EventSourcedContentRepository\Migration\Transformations;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 
 /**
  * A node-aggregate-based transformation, like changing the node aggregate type
