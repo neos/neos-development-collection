@@ -20,6 +20,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -74,6 +75,37 @@ final class ContentGraph implements ContentGraphInterface
         }
 
         return $this->subgraphs[$index];
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
+     * @return NodeInterface|null
+     * @throws DBALException
+     */
+    public function findNodeByIdentifiers(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        OriginDimensionSpacePoint $originDimensionSpacePoint
+    ): ?NodeInterface {
+        $connection = $this->client->getConnection();
+
+        // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
+        $nodeRow = $connection->executeQuery(
+            'SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
+                  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
+                  AND h.contentstreamidentifier = :contentStreamIdentifier',
+            [
+                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            ]
+        )->fetch();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $originDimensionSpacePoint, Domain\Context\Parameters\VisibilityConstraints::withoutRestrictions()) : null;
     }
 
     /**
