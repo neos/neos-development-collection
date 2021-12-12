@@ -198,7 +198,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | initiatingUserIdentifier         | "user"                             |
     And the graph projection is fully up to date
     When I am in content stream "cs-identifier" and dimension space point {"market": "DE", "language": "de"}
-    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier","nodeAggregateIdentifier":"nody-mc-nodeface","originDimensionSpacePoint":{"market":"DE","language":"de"}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE","language":"de"}
 
 
   Scenario: Try to move a node to a parent whose node type does not allow child nodes of the node's type
