@@ -229,4 +229,18 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
             $this->nodeAggregateIdentifierMapping
         );
     }
+
+    public function withNodeAggregateIdentifierMapping(NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping): self
+    {
+        return new self(
+            $this->contentStreamIdentifier,
+            $this->nodeToInsert,
+            $this->targetDimensionSpacePoint,
+            $this->initiatingUserIdentifier,
+            $this->targetParentNodeAggregateIdentifier,
+            $this->targetSucceedingSiblingNodeAggregateIdentifier,
+            $this->targetNodeName,
+            $nodeAggregateIdentifierMapping
+        );
+    }
 }
