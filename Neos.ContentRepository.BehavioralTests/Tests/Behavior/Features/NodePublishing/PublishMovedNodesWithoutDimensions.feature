@@ -78,6 +78,7 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
       | newParentNodeAggregateIdentifier            | null                     |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
+      | initiatingUserIdentifier                    | "user"                   |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key           | Value                                                                                                                               |
       | workspaceName | "user"                                                                                                                              |
@@ -118,6 +119,7 @@ Feature: Publishing moved nodes without dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | null                         |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-david-nodenborough"     |
+      | initiatingUserIdentifier                    | "user"                       |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key           | Value                                                                                                                                   |
       | workspaceName | "user"                                                                                                                                  |
@@ -168,6 +170,7 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier          | "sir-david-nodenborough"     |
       | dimensionSpacePoint              | {}                           |
       | newParentNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+      | initiatingUserIdentifier         | "user"                       |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key           | Value                                                                                                                               |
       | workspaceName | "user"                                                                                                                              |
@@ -213,6 +216,7 @@ Feature: Publishing moved nodes without dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+      | initiatingUserIdentifier                    | "user"                       |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key           | Value                                                                                                                         |
       | workspaceName | "user"                                                                                                                        |

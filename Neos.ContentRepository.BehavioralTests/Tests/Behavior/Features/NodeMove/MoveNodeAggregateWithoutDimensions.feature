@@ -71,6 +71,7 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                         | {}                       |
       | newParentNodeAggregateIdentifier            | null                     |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
+      | initiatingUserIdentifier                    | "user"                   |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
@@ -107,6 +108,7 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | null                         |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-david-nodenborough"     |
+      | initiatingUserIdentifier                    | "user"                       |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
@@ -153,6 +155,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier          | "sir-david-nodenborough"     |
       | dimensionSpacePoint              | {}                           |
       | newParentNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+      | initiatingUserIdentifier         | "user"                       |
 
     Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasMoved" with payload:
@@ -201,6 +204,7 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+      | initiatingUserIdentifier                    | "user"                       |
     Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 5 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasMoved" with payload:
       | Key                     | Expected                                                                                                                                                                                                                                                                                                                                |
