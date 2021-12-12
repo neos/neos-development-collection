@@ -74,15 +74,15 @@ Feature: Change Property
     When I am in content stream "cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value           | Type   |
-      | text | "Original text" | string |
+      | Key  | Value           |
+      | text | "Original text" |
 
     # the node type was changed inside the new content stream
     When I am in content stream "migration-cs" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | "fixed value" | string |
+      | Key  | Value         |
+      | text | "fixed value" |
 
   Scenario: Ignoring transformation if property does not exist on node
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -105,8 +105,8 @@ Feature: Change Property
     When I am in content stream "migration-cs" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value           | Type   |
-      | text | "Original text" | string |
+      | Key  | Value           |
+      | text | "Original text" |
 
   Scenario: replacement using default currentValuePlaceholder
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -128,8 +128,8 @@ Feature: Change Property
     When I am in content stream "migration-cs" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value               | Type   |
-      | text | "bla Original text" | string |
+      | Key  | Value               |
+      | text | "bla Original text" |
 
   Scenario: replacement using alternative currentValuePlaceholder
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -152,8 +152,8 @@ Feature: Change Property
     When I am in content stream "migration-cs" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value               | Type   |
-      | text | "bla Original text" | string |
+      | Key  | Value               |
+      | text | "bla Original text" |
 
   Scenario: using search/replace
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -176,8 +176,8 @@ Feature: Change Property
     When I am in content stream "migration-cs" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value              | Type   |
-      | text | "alternative text" | string |
+      | Key  | Value              |
+      | text | "alternative text" |
 
   Scenario: using search/replace including placeholder (all options)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -201,5 +201,5 @@ Feature: Change Property
     When I am in content stream "migration-cs" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value                  | Type   |
-      | text | "bla alternative text" | string |
+      | Key  | Value                  |
+      | text | "bla alternative text" |

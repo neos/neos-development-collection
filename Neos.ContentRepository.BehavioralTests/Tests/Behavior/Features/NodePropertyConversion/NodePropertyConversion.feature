@@ -43,8 +43,8 @@ Feature: Node Property Conversion
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key          | Value                     | Type     |
-      | dateProperty | 1997-07-16T19:20:30+05:00 | DateTime |
+      | Key          | Value                          |
+      | dateProperty | Date:1997-07-16T19:20:30+05:00 |
 
   Scenario: DateTime objects at Node Property Updating
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -70,5 +70,5 @@ Feature: Node Property Conversion
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key          | Value                     | Type     |
-      | dateProperty | 1997-07-19T19:20:30+05:00 | DateTime |
+      | Key          | Value                          |
+      | dateProperty | Date:1997-07-19T19:20:30+05:00 |

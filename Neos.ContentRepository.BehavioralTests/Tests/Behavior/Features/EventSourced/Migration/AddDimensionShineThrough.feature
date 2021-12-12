@@ -81,8 +81,8 @@ Feature: Add Dimension Specialization
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     And I expect this node to have the following properties:
-      | Key  | Value   | Type   |
-      | text | "hello" | string |
+      | Key  | Value   |
+      | text | "hello" |
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
@@ -91,15 +91,15 @@ Feature: Add Dimension Specialization
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value   | Type   |
-      | text | "hello" | string |
+      | Key  | Value   |
+      | text | "hello" |
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
     # shine through added
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     And I expect this node to have the following properties:
-      | Key  | Value   | Type   |
-      | text | "hello" | string |
+      | Key  | Value   |
+      | text | "hello" |
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -118,21 +118,21 @@ Feature: Add Dimension Specialization
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value     | Type   |
-      | text | "changed" | string |
+      | Key  | Value     |
+      | text | "changed" |
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
     # ch shines through to the DE node
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value     | Type   |
-      | text | "changed" | string |
+      | Key  | Value     |
+      | text | "changed" |
 
     # the original content stream was untouched
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value   | Type   |
-      | text | "hello" | string |
+      | Key  | Value   |
+      | text | "hello" |
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 

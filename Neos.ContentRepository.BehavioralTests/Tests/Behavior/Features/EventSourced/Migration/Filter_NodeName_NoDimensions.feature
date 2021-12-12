@@ -100,29 +100,29 @@ Feature: Filter - Node Name
     When I am in content stream "cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "na-name1" to lead to node cs-identifier;na-name1;{}
     And I expect this node to have the following properties:
-      | Key  | Value            | Type   |
-      | text | "Original name1" | string |
+      | Key  | Value            |
+      | text | "Original name1" |
     Then I expect node aggregate identifier "na-name2" to lead to node cs-identifier;na-name2;{}
     And I expect this node to have the following properties:
-      | Key  | Value            | Type   |
-      | text | "Original name2" | string |
+      | Key  | Value            |
+      | text | "Original name2" |
     Then I expect node aggregate identifier "na-without-name" to lead to node cs-identifier;na-without-name;{}
     And I expect this node to have the following properties:
-      | Key  | Value          | Type   |
-      | text | "no node name" | string |
+      | Key  | Value          |
+      | text | "no node name" |
 
     # we filter based on the node name
     When I am in content stream "migration-cs" and dimension space point {}
     Then I expect node aggregate identifier "na-name1" to lead to node migration-cs;na-name1;{}
     # only changed here
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | "fixed value" | string |
+      | Key  | Value         |
+      | text | "fixed value" |
     Then I expect node aggregate identifier "na-name2" to lead to node migration-cs;na-name2;{}
     And I expect this node to have the following properties:
-      | Key  | Value            | Type   |
-      | text | "Original name2" | string |
+      | Key  | Value            |
+      | text | "Original name2" |
     Then I expect node aggregate identifier "na-without-name" to lead to node migration-cs;na-without-name;{}
     And I expect this node to have the following properties:
-      | Key  | Value          | Type   |
-      | text | "no node name" | string |
+      | Key  | Value          |
+      | text | "no node name" |
