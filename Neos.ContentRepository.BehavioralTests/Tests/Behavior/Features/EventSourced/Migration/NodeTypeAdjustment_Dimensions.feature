@@ -86,7 +86,7 @@ Feature: Adjust node types with a node migration
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     # ... also in the fallback dimension
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
     # the node type was changed inside the new content stream
@@ -95,5 +95,5 @@ Feature: Adjust node types with a node migration
     And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"
     # ... also in the fallback dimension
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"
