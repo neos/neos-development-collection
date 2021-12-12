@@ -5,6 +5,7 @@ Feature: Enable a node aggregate
 
   These are the test cases without dimensions being involved
 
+  # TODO
   Background:
     Given I have no content dimensions
     And I have the following NodeTypes configuration:
@@ -90,6 +91,7 @@ Feature: Enable a node aggregate
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
 
     Then I expect exactly 9 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 8 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
@@ -144,7 +146,7 @@ Feature: Enable a node aggregate
       | NodeDiscriminator                        |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to be referenced by:
-      | Key        | Value                      |
+      | Key        | Value                                       |
       | references | ["cs-identifier;preceding-nodenborough;{}"] |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -175,6 +177,7 @@ Feature: Enable a node aggregate
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
     Then I expect exactly 10 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 9 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
       | Key                          | Expected                 |
@@ -214,7 +217,7 @@ Feature: Enable a node aggregate
       | cs-identifier;sir-david-nodenborough;{}  |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to have the following references:
-      | Key        | Value                      |
+      | Key        | Value                                       |
       | references | ["cs-identifier;sir-david-nodenborough;{}"] |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -225,7 +228,7 @@ Feature: Enable a node aggregate
       | NodeDiscriminator                        |
       | cs-identifier;succeeding-nodenborough;{} |
     And I expect this node to be referenced by:
-      | Key        | Value                      |
+      | Key        | Value                                       |
       | references | ["cs-identifier;preceding-nodenborough;{}"] |
     And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding-document" to lead to node cs-identifier;succeeding-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -256,6 +259,7 @@ Feature: Enable a node aggregate
       | nodeAggregateIdentifier      | "nody-mc-nodeface" |
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
+      | initiatingUserIdentifier     | "user"             |
     Then I expect exactly 10 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 9 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
       | Key                          | Expected           |

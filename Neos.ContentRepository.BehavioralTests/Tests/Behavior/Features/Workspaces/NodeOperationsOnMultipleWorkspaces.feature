@@ -59,6 +59,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
   Scenario: Set property of a node

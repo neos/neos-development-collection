@@ -62,6 +62,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to remove a node aggregate in a non-existing dimension space point
@@ -71,6 +72,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier      | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint   | {"undeclared": "undefined"} |
       | nodeVariantSelectionStrategy | "allVariants"               |
+      | initiatingUserIdentifier     | "user"                      |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to remove a non-existing node aggregate
@@ -80,6 +82,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier      | "i-do-not-exist" |
       | coveredDimensionSpacePoint   | {}               |
       | nodeVariantSelectionStrategy | "allVariants"    |
+      | initiatingUserIdentifier     | "user"           |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Remove node works
@@ -90,6 +93,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
       | coveredDimensionSpacePoint   | {}                       |
+      | initiatingUserIdentifier     | "user"                   |
     And the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 1 nodes
 
@@ -102,4 +106,5 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier      | "lord-tetherton" |
       | nodeVariantSelectionStrategy | "allVariants"    |
       | coveredDimensionSpacePoint   | {}               |
+      | initiatingUserIdentifier     | "user"           |
     Then the last command should have thrown an exception of type "TetheredNodeAggregateCannotBeRemoved"

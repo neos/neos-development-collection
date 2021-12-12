@@ -5,6 +5,8 @@ Feature: Enable a node aggregate
 
   These are the base test cases for the NodeAggregateCommandHandler to block invalid commands.
 
+  ## TODO
+
   Background:
     Given I have no content dimensions
     And I have the following NodeTypes configuration:
@@ -13,12 +15,12 @@ Feature: Enable a node aggregate
     'Neos.ContentRepository.Testing:Document': []
     """
     And the event RootWorkspaceWasCreated was published with payload:
-      | Key                            | Value                                  |
-      | workspaceName                  | "live"                                 |
-      | workspaceTitle                 | "Live"                                 |
-      | workspaceDescription           | "The live workspace"                   |
-      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier     | "cs-identifier"                        |
+      | Key                        | Value                                  |
+      | workspaceName              | "live"                                 |
+      | workspaceTitle             | "Live"                                 |
+      | workspaceDescription       | "The live workspace"                   |
+      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                  |
       | contentStreamIdentifier     | "cs-identifier"                        |
@@ -46,6 +48,7 @@ Feature: Enable a node aggregate
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to enable a node aggregate in a non-existing dimension space point
@@ -55,6 +58,7 @@ Feature: Enable a node aggregate
       | nodeAggregateIdentifier      | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint   | {"undeclared": "undefined"} |
       | nodeVariantSelectionStrategy | "allVariants"               |
+      | initiatingUserIdentifier     | "user"                      |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to enable a non-existing node aggregate
@@ -64,6 +68,7 @@ Feature: Enable a node aggregate
       | nodeAggregateIdentifier      | "i-do-not-exist" |
       | coveredDimensionSpacePoint   | {}               |
       | nodeVariantSelectionStrategy | "allVariants"    |
+      | initiatingUserIdentifier     | "user"           |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to enable an already enabled node aggregate
@@ -74,4 +79,5 @@ Feature: Enable a node aggregate
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint"

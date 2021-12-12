@@ -69,6 +69,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier      | "nody-mc-nodeface"   |
       | nodeVariantSelectionStrategy | "allVariants"        |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | initiatingUserIdentifier     | "user"               |
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 1 node
@@ -85,9 +86,9 @@ Feature: Remove NodeAggregate
   Scenario: In USER workspace, removing a NodeAggregate removes all nodes completely; leaving the live workspace untouched
 
     When the command "ForkContentStream" is executed with payload:
-      | Key                           | Value                |
-      | contentStreamIdentifier       | "user-cs-identifier" |
-      | sourceContentStreamIdentifier | "live-cs-identifier" |
+      | Key                           | Value                        |
+      | contentStreamIdentifier       | "user-cs-identifier"         |
+      | sourceContentStreamIdentifier | "live-cs-identifier"         |
       | initiatingUserIdentifier      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
@@ -97,6 +98,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier      | "nody-mc-nodeface"   |
       | nodeVariantSelectionStrategy | "allVariants"        |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | initiatingUserIdentifier     | "user"               |
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes

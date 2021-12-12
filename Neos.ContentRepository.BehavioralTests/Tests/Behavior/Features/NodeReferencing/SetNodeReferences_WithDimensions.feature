@@ -67,21 +67,21 @@ Feature: Node References with Dimensions
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
-      | Key               | Value                                                                                     |
+      | Key               | Value                                                  |
       | referenceProperty | ["cs-identifier;anthony-destinode;{"language": "de"}"] |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
-      | Key               | Value                 |
+      | Key               | Value                                                 |
       | referenceProperty | ["cs-identifier;source-nodandaise{"language": "de"}"] |
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
-      | Key               | Value                                                                                     |
+      | Key               | Value                                                  |
       | referenceProperty | ["cs-identifier;anthony-destinode;{"language": "de"}"] |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
-      | Key               | Value                 |
+      | Key               | Value                                                 |
       | referenceProperty | ["cs-identifier;source-nodandaise{"language": "de"}"] |
 
     # todo: does this case even make sense?
@@ -464,6 +464,7 @@ Feature: Node References with Dimensions
       | nodeAggregateIdentifier      | "anthony-destinode" |
       | nodeVariantSelectionStrategy | "onlyGivenVariant"  |
       | coveredDimensionSpacePoint   | {"language":"ch"}   |
+      | initiatingUserIdentifier     | "user"              |
     And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload and exceptions are caught:

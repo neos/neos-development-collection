@@ -57,6 +57,7 @@ Feature: Workspace based content publishing
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
   Scenario: Basic events are emitted

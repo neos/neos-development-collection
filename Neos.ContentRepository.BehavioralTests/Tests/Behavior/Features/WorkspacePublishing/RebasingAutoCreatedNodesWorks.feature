@@ -49,6 +49,7 @@ Feature: Rebasing auto-created nodes works
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
   Scenario: complex scenario (to reproduce the bug) -- see the feature description

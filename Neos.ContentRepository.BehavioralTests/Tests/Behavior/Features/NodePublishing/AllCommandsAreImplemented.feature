@@ -82,6 +82,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: hide two nodes in USER workspace
@@ -139,6 +140,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: show two nodes in USER workspace
@@ -148,12 +150,14 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
     Given the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | contentStreamIdentifier      | "user-cs-identifier"         |
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
+      | initiatingUserIdentifier     | "user"                       |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
@@ -222,6 +226,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
@@ -231,6 +236,7 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -238,6 +244,7 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
+      | initiatingUserIdentifier     | "user"                       |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
@@ -264,6 +271,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
@@ -273,12 +281,14 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | contentStreamIdentifier      | "user-cs-identifier"         |
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
+      | initiatingUserIdentifier     | "user"                       |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
@@ -305,6 +315,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: set two node references in USER workspace
@@ -366,6 +377,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: set two new nodes in USER workspace

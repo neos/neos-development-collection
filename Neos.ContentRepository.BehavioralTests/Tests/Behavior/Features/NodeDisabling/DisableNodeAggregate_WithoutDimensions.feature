@@ -27,6 +27,8 @@ Feature: Disable a node aggregate
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
       | nodeAggregateClassification | "root"                        |
+
+    ## TODOD!!!
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
       | nodeAggregateIdentifier       | "preceding-nodenborough"                  |
