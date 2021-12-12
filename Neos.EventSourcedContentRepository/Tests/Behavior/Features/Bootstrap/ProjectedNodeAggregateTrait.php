@@ -170,10 +170,10 @@ trait ProjectedNodeAggregateTrait
     {
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) {
             Assert::assertEmpty(
-                $this->getContentGraphs()[$adapterName]->findParentNodeAggregates(
+                iterator_to_array($this->getContentGraphs()[$adapterName]->findParentNodeAggregates(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $nodeAggregate->getIdentifier()
-                ),
+                )),
                 'Did not expect parent node aggregates in adapter "' . $adapterName . '".'
             );
         });
@@ -192,10 +192,10 @@ trait ProjectedNodeAggregateTrait
             }, $expectedNodeAggregateIdentifiers->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (ReadableNodeAggregateInterface $parentNodeAggregate) {
                 return $parentNodeAggregate->getContentStreamIdentifier() . ';' . $parentNodeAggregate->getIdentifier();
-            }, $this->getContentGraphs()[$adapterName]->findParentNodeAggregates(
+            }, iterator_to_array($this->getContentGraphs()[$adapterName]->findParentNodeAggregates(
                 $nodeAggregate->getContentStreamIdentifier(),
                 $nodeAggregate->getIdentifier())
-            ));
+            )));
             Assert::assertSame(
                 $expectedDiscriminators,
                 $actualDiscriminators,
@@ -211,10 +211,10 @@ trait ProjectedNodeAggregateTrait
     {
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) {
             Assert::assertEmpty(
-                $this->getContentGraphs()[$adapterName]->findChildNodeAggregates(
+                iterator_to_array($this->getContentGraphs()[$adapterName]->findChildNodeAggregates(
                     $nodeAggregate->getContentStreamIdentifier(),
                     $nodeAggregate->getIdentifier()
-                ),
+                )),
                 'No child node aggregates were expected in adapter "' . $adapterName . '".'
             );
         });
@@ -233,10 +233,10 @@ trait ProjectedNodeAggregateTrait
             }, $expectedNodeAggregateIdentifiers->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (ReadableNodeAggregateInterface $parentNodeAggregate) {
                 return $parentNodeAggregate->getContentStreamIdentifier() . ':' . $parentNodeAggregate->getIdentifier();
-            }, $this->getContentGraphs()[$adapterName]->findChildNodeAggregates(
+            }, iterator_to_array($this->getContentGraphs()[$adapterName]->findChildNodeAggregates(
                 $nodeAggregate->getContentStreamIdentifier(),
                 $nodeAggregate->getIdentifier()
-            )));
+            ))));
 
             Assert::assertSame(
                 $expectedDiscriminators,
