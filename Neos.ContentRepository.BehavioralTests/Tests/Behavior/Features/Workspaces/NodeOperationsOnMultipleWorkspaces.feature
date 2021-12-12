@@ -83,25 +83,25 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
     And I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value    |
-      | text | Original |
+      | Key  | Value      |
+      | text | "Original" |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value   |
-      | text | Changed |
+      | Key  | Value     |
+      | text | "Changed" |
 
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nodingers-cat" and node path "child/pet" to lead to node cs-identifier;nodingers-cat;{}
     When I go to the parent node of node aggregate "nodingers-cat"
     Then I expect this node to have the following properties:
-      | Key  | Value    |
-      | text | Original |
+      | Key  | Value      |
+      | text | "Original" |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nodingers-cat" and node path "child/pet" to lead to node user-cs-identifier;nodingers-cat;{}
     When I go to the parent node of node aggregate "nodingers-cat"
     Then I expect this node to have the following properties:
-      | Key  | Value   |
-      | text | Changed |
+      | Key  | Value     |
+      | text | "Changed" |

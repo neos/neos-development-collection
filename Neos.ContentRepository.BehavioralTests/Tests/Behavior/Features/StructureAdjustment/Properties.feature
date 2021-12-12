@@ -48,7 +48,7 @@ Feature: Properties
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key    | Value |
-      | myProp | Foo   |
+      | myProp | "Foo" |
 
   Scenario: The property is removed
     When I have the following additional NodeTypes configuration:
@@ -86,8 +86,8 @@ Feature: Properties
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key       | Value |
-      | myProp    | Foo   |
-      | otherProp | foo   |
+      | myProp    | "Foo" |
+      | otherProp | "foo" |
 
   Scenario: a new property default value is not set if the value already contains the empty string
     When I have the following additional NodeTypes configuration:

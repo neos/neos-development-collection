@@ -60,8 +60,8 @@ Feature: Single Node operations on live workspace
     And I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value |
-      | text | Hello |
+      | Key  | Value   |
+      | text | "Hello" |
 
   Scenario: Error on invalid dimension space point
     Given the command SetNodeProperties is executed with payload and exceptions are caught:

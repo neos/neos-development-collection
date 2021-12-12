@@ -109,14 +109,14 @@ Feature: Workspace based content publishing
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value    |
-      | text | Original |
+      | Key  | Value      |
+      | text | "Original" |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value    |
-      | text | Modified |
+      | Key  | Value      |
+      | text | "Modified" |
 
     # PUBLISHING
     When the command "PublishWorkspace" is executed with payload:
@@ -128,8 +128,8 @@ Feature: Workspace based content publishing
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value    |
-      | text | Modified |
+      | Key  | Value      |
+      | text | "Modified" |
 
   Scenario: modify the property in the nested workspace, do modification in live workspace; publish afterwards will not work because rebase is missing; then rebase and publish
 
@@ -176,8 +176,8 @@ Feature: Workspace based content publishing
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value                      |
-      | text | Modified in user workspace |
+      | Key  | Value                        |
+      | text | "Modified in user workspace" |
 
   Scenario: modify the property in the nested workspace, publish, modify again and publish again (e.g. a workspace can be re-used after publishing for other changes)
 
@@ -219,8 +219,8 @@ Feature: Workspace based content publishing
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value         |
-      | text | Modified anew |
+      | Key  | Value           |
+      | text | "Modified anew" |
 
   Scenario: Discarding a full workspace works
     When the command SetNodeProperties is executed with payload:
@@ -235,8 +235,8 @@ Feature: Workspace based content publishing
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value    |
-      | text | Modified |
+      | Key  | Value      |
+      | text | "Modified" |
 
     # Discarding
     When the command DiscardWorkspace is executed with payload:
@@ -248,8 +248,8 @@ Feature: Workspace based content publishing
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value    |
-      | text | Original |
+      | Key  | Value      |
+      | text | "Original" |
 
   Scenario: Discarding a full workspace shows the most up-to-date base workspace when the base WS was modified in the meantime
     When the command SetNodeProperties is executed with payload:
@@ -280,5 +280,5 @@ Feature: Workspace based content publishing
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value                      |
-      | text | Modified in live workspace |
+      | Key  | Value                        |
+      | text | "Modified in live workspace" |

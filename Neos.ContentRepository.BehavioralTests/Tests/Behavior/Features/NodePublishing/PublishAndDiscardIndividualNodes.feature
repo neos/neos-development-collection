@@ -114,30 +114,30 @@ Feature: Publishing and discard individual nodes (basics)
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | Initial t1 |
+      | Key  | Value        |
+      | text | "Initial t1" |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | Initial t2 |
+      | Key  | Value        |
+      | text | "Initial t2" |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
   Scenario: It is possible to publish no node
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
@@ -149,30 +149,30 @@ Feature: Publishing and discard individual nodes (basics)
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | Initial t1 |
+      | Key  | Value        |
+      | text | "Initial t1" |
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | Initial t2 |
+      | Key  | Value        |
+      | text | "Initial t2" |
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value         |
-      | image | Initial image |
+      | Key   | Value           |
+      | image | "Initial image" |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
   Scenario: It is possible to publish all nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
@@ -184,30 +184,30 @@ Feature: Publishing and discard individual nodes (basics)
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
 
   ################
@@ -224,16 +224,16 @@ Feature: Publishing and discard individual nodes (basics)
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value         |
-      | image | Initial image |
+      | Key   | Value           |
+      | image | "Initial image" |
 
   Scenario: It is possible to discard no node
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
@@ -245,16 +245,16 @@ Feature: Publishing and discard individual nodes (basics)
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
   Scenario: It is possible to discard all nodes
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
@@ -266,16 +266,16 @@ Feature: Publishing and discard individual nodes (basics)
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | Initial t1 |
+      | Key  | Value        |
+      | text | "Initial t1" |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | Initial t2 |
+      | Key  | Value        |
+      | text | "Initial t2" |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value         |
-      | image | Initial image |
+      | Key   | Value           |
+      | image | "Initial image" |
 
   Scenario: When discarding a node, the live workspace does not change.
     # discard "sir-nodeward-nodington-iii"
@@ -289,14 +289,14 @@ Feature: Publishing and discard individual nodes (basics)
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | Initial t1 |
+      | Key  | Value        |
+      | text | "Initial t1" |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | Initial t2 |
+      | Key  | Value        |
+      | text | "Initial t2" |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have the following properties:
-      | Key   | Value         |
-      | image | Initial image |
+      | Key   | Value           |
+      | image | "Initial image" |
 
