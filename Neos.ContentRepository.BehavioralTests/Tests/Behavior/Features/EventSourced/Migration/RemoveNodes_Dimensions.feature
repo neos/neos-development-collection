@@ -58,11 +58,12 @@ Feature: Remove Nodes
 
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
-      | contentStreamIdentifier | "cs-identifier"          |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
-      | sourceOrigin            | {"language":"de"}        |
-      | targetOrigin            | {"language":"en"}        |
+      | Key                      | Value                    |
+      | contentStreamIdentifier  | "cs-identifier"          |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough" |
+      | sourceOrigin             | {"language":"de"}        |
+      | targetOrigin             | {"language":"en"}        |
+      | initiatingUserIdentifier | "user"                   |
     And the graph projection is fully up to date
 
 
@@ -91,7 +92,7 @@ Feature: Remove Nodes
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
@@ -137,7 +138,7 @@ Feature: Remove Nodes
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
@@ -147,7 +148,7 @@ Feature: Remove Nodes
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
@@ -207,7 +208,7 @@ Feature: Remove Nodes
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
@@ -248,7 +249,7 @@ Feature: Remove Nodes
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
@@ -265,7 +266,6 @@ Feature: Remove Nodes
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
-
 
 
   Scenario: Remove nodes in a shine-through dimension space point (DE,CH)
@@ -295,7 +295,7 @@ Feature: Remove Nodes
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
@@ -333,7 +333,7 @@ Feature: Remove Nodes
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
