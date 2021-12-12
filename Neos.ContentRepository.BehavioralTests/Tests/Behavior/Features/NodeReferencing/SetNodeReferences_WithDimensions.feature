@@ -29,6 +29,7 @@ Feature: Node References with Dimensions
       | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamIdentifier | "cs-identifier"                        |
     And the graph projection is fully up to date
+    Given I am in content stream "cs-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
       | contentStreamIdentifier  | "cs-identifier"                        |
@@ -44,6 +45,7 @@ Feature: Node References with Dimensions
       | originDimensionSpacePoint     | {"language": "de"}                                  |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"              |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
+      | initiatingUserIdentifier      | "user"                                              |
     And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                               |
@@ -51,6 +53,7 @@ Feature: Node References with Dimensions
       | originDimensionSpacePoint     | {"language": "de"}                                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
+      | initiatingUserIdentifier      | "user"                                              |
     And the graph projection is fully up to date
 
 
@@ -62,6 +65,7 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "de"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
@@ -98,6 +102,7 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "de"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     When the command "ForkContentStream" is executed with payload:
@@ -140,6 +145,7 @@ Feature: Node References with Dimensions
       | nodeAggregateIdentifier   | "source-nodandaise"                    |
       | originDimensionSpacePoint | {"language": "de"}                     |
       | propertyValues            | {"text": "Modified in live workspace"} |
+      | initiatingUserIdentifier  | "user"                                 |
     And the graph projection is fully up to date
     When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
     Then I expect the node aggregate "source-nodandaise" to have the references:
@@ -174,14 +180,16 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "de"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
-      | contentStreamIdentifier | "cs-identifier"     |
-      | nodeAggregateIdentifier | "source-nodandaise" |
-      | sourceOrigin            | {"language":"de"}   |
-      | targetOrigin            | {"language":"ch"}   |
+      | Key                      | Value               |
+      | contentStreamIdentifier  | "cs-identifier"     |
+      | nodeAggregateIdentifier  | "source-nodandaise" |
+      | sourceOrigin             | {"language":"de"}   |
+      | targetOrigin             | {"language":"ch"}   |
+      | initiatingUserIdentifier | "user"              |
     And the graph projection is fully up to date
 
     # after specialization, the reference must still exist on the specialized node
@@ -218,6 +226,7 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "ch"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["source-nodandaise"] |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
@@ -248,11 +257,12 @@ Feature: Node References with Dimensions
 
   Scenario: specialize the source node, only set reference on the specialization. Then, the reference should only appear on the specialization
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
-      | contentStreamIdentifier | "cs-identifier"     |
-      | nodeAggregateIdentifier | "source-nodandaise" |
-      | sourceOrigin            | {"language":"de"}   |
-      | targetOrigin            | {"language":"ch"}   |
+      | Key                      | Value               |
+      | contentStreamIdentifier  | "cs-identifier"     |
+      | nodeAggregateIdentifier  | "source-nodandaise" |
+      | sourceOrigin             | {"language":"de"}   |
+      | targetOrigin             | {"language":"ch"}   |
+      | initiatingUserIdentifier | "user"              |
     And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
@@ -262,6 +272,7 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "ch"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
 
@@ -295,11 +306,12 @@ Feature: Node References with Dimensions
   Scenario: Create a reference, then create a peer variant of the source node; and the references should exist on the peer
     # prerequisite: "anthony-destinode" also exists in EN
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
-      | contentStreamIdentifier | "cs-identifier"     |
-      | nodeAggregateIdentifier | "anthony-destinode" |
-      | sourceOrigin            | {"language":"de"}   |
-      | targetOrigin            | {"language":"en"}   |
+      | Key                      | Value               |
+      | contentStreamIdentifier  | "cs-identifier"     |
+      | nodeAggregateIdentifier  | "anthony-destinode" |
+      | sourceOrigin             | {"language":"de"}   |
+      | targetOrigin             | {"language":"en"}   |
+      | initiatingUserIdentifier | "user"              |
     And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
@@ -309,14 +321,16 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "de"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
-      | contentStreamIdentifier | "cs-identifier"     |
-      | nodeAggregateIdentifier | "source-nodandaise" |
-      | sourceOrigin            | {"language":"de"}   |
-      | targetOrigin            | {"language":"en"}   |
+      | Key                      | Value               |
+      | contentStreamIdentifier  | "cs-identifier"     |
+      | nodeAggregateIdentifier  | "source-nodandaise" |
+      | sourceOrigin             | {"language":"de"}   |
+      | targetOrigin             | {"language":"en"}   |
+      | initiatingUserIdentifier | "user"              |
     And the graph projection is fully up to date
 
     # after creating a peer, the reference must still exist on the peer node
@@ -354,6 +368,7 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "en"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["source-nodandaise"] |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
@@ -401,15 +416,17 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "ch"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     # here we generalize
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value             |
-      | contentStreamIdentifier | "cs-identifier"   |
-      | nodeAggregateIdentifier | "ch-only"         |
-      | sourceOrigin            | {"language":"ch"} |
-      | targetOrigin            | {"language":"de"} |
+      | Key                      | Value             |
+      | contentStreamIdentifier  | "cs-identifier"   |
+      | nodeAggregateIdentifier  | "ch-only"         |
+      | sourceOrigin             | {"language":"ch"} |
+      | targetOrigin             | {"language":"de"} |
+      | initiatingUserIdentifier | "user"            |
     And the graph projection is fully up to date
 
     # after generalizing, the reference must still exist on the generalized node
@@ -438,6 +455,7 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "ch"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | initiatingUserIdentifier            | "user"                |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied"
 
 
@@ -449,15 +467,17 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "de"}  |
       | referenceName                       | "referenceProperty" |
       | destinationNodeAggregateIdentifiers | ["mytarget"]        |
+      | initiatingUserIdentifier            | "user"              |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Error on target which exists, but not in this dimension space point
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
-      | contentStreamIdentifier | "cs-identifier"     |
-      | nodeAggregateIdentifier | "source-nodandaise" |
-      | sourceOrigin            | {"language":"de"}   |
-      | targetOrigin            | {"language":"ch"}   |
+      | Key                      | Value               |
+      | contentStreamIdentifier  | "cs-identifier"     |
+      | nodeAggregateIdentifier  | "source-nodandaise" |
+      | sourceOrigin             | {"language":"de"}   |
+      | targetOrigin             | {"language":"ch"}   |
+      | initiatingUserIdentifier | "user"              |
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value               |
       | contentStreamIdentifier      | "cs-identifier"     |
@@ -474,4 +494,5 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint     | {"language": "ch"}    |
       | referenceName                       | "referenceProperty"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
+      | initiatingUserIdentifier            | "user"                |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"

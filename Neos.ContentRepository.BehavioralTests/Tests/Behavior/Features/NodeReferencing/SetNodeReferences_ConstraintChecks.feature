@@ -58,6 +58,7 @@ Feature: Constraint checks on SetNodeReferences
       | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
       | referenceName                       | "referenceProperty"   |
+      | initiatingUserIdentifier            | "user"                |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet" with code 1521386692
 
   Scenario: Try to reference nodes in a non-existent node aggregate
@@ -66,6 +67,7 @@ Feature: Constraint checks on SetNodeReferences
       | sourceNodeAggregateIdentifier       | "i-do-not-exist"      |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
       | referenceName                       | "referenceProperty"   |
+      | initiatingUserIdentifier            | "user"                |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist" with code 1541678486
 
   Scenario: Try to reference a non-existent node aggregate
@@ -74,6 +76,7 @@ Feature: Constraint checks on SetNodeReferences
       | sourceNodeAggregateIdentifier       | "source-nodandaise" |
       | destinationNodeAggregateIdentifiers | ["i-do-not-exist"]  |
       | referenceName                       | "referenceProperty" |
+      | initiatingUserIdentifier            | "user"              |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist" with code 1541678486
 
   Scenario: Try to reference nodes in an undefined property:
@@ -82,6 +85,7 @@ Feature: Constraint checks on SetNodeReferences
       | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
       | referenceName                       | "i-do-not-exist"      |
+      | initiatingUserIdentifier            | "user"                |
     Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1618670106
 
   Scenario: Try to reference nodes in a property that is not of type reference(s):
@@ -90,6 +94,7 @@ Feature: Constraint checks on SetNodeReferences
       | sourceNodeAggregateIdentifier       | "source-nodandaise"    |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"]  |
       | referenceName                       | "nonReferenceProperty" |
+      | initiatingUserIdentifier            | "user"                 |
     Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1618670106
 
   # @todo: Introduce reference node type constraints
@@ -101,6 +106,7 @@ Feature: Constraint checks on SetNodeReferences
       | sourceOriginDimensionSpacePoint     | {"undeclared":"undefined"} |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"]      |
       | referenceName                       | "referenceProperty"        |
+      | initiatingUserIdentifier            | "user"                     |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound" with code 1520260137
 
   Scenario: Try to reference nodes in an origin dimension space point the source node aggregate does not occupy
@@ -113,4 +119,5 @@ Feature: Constraint checks on SetNodeReferences
       | sourceOriginDimensionSpacePoint     | {"language":"de"}     |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
       | referenceName                       | "referenceProperty"   |
+      | initiatingUserIdentifier            | "user"                |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied" with code 1552595396
