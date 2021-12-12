@@ -205,7 +205,7 @@ class ContentRepositoryExportService
             NodeTypeName::fromString('Neos.Neos:Sites')
         );
 
-        $this->commandResult = CommandResult::createEmpty($this->runtimeBlocker);
+        $this->commandResult = CommandResult::createEmpty();
 
         $streamName = $this->contentStreamName();
         $event = new ContentStreamWasCreated(

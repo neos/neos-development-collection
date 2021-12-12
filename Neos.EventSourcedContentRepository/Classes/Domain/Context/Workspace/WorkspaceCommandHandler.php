@@ -134,7 +134,7 @@ final class WorkspaceCommandHandler
         }
 
         // When the workspace is created, we first have to fork the content stream
-        $commandResult = CommandResult::createEmpty($this->runtimeBlocker);
+        $commandResult = CommandResult::createEmpty();
         $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $command->getNewContentStreamIdentifier(),
@@ -179,7 +179,7 @@ final class WorkspaceCommandHandler
             throw new WorkspaceAlreadyExists(sprintf('The workspace %s already exists', $command->getWorkspaceName()), 1505848624450);
         }
 
-        $commandResult = CommandResult::createEmpty($this->runtimeBlocker);
+        $commandResult = CommandResult::createEmpty();
         $contentStreamIdentifier = $command->getNewContentStreamIdentifier();
         $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleCreateContentStream(
             new CreateContentStream(
