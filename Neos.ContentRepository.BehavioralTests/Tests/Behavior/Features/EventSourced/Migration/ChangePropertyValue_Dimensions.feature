@@ -61,11 +61,12 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
-      | contentStreamIdentifier | "cs-identifier"          |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
-      | sourceOrigin            | {"language":"de"}        |
-      | targetOrigin            | {"language":"en"}        |
+      | Key                      | Value                    |
+      | contentStreamIdentifier  | "cs-identifier"          |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough" |
+      | sourceOrigin             | {"language":"de"}        |
+      | targetOrigin             | {"language":"en"}        |
+      | initiatingUserIdentifier | "user"                   |
     And the graph projection is fully up to date
 
 
@@ -101,7 +102,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | text | "Original text" |
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
@@ -121,7 +122,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | text | "fixed value" |
 
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
@@ -135,11 +136,12 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
   Scenario: change materialized "de" node, should NOT shine through in "ch" (as it was materialized beforehand) (includeSpecializations = FALSE - default)
     # Node /document (in "ch")
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
-      | contentStreamIdentifier | "cs-identifier"          |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
-      | sourceOrigin            | {"language":"de"}        |
-      | targetOrigin            | {"language":"ch"}        |
+      | Key                      | Value                    |
+      | contentStreamIdentifier  | "cs-identifier"          |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough" |
+      | sourceOrigin             | {"language":"de"}        |
+      | targetOrigin             | {"language":"ch"}        |
+      | initiatingUserIdentifier | "system-user"            |
     And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -182,11 +184,12 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
   Scenario: change materialized "de" node; and with includeSpecializations = TRUE, also the CH node is modified
     # Node /document (in "ch")
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
-      | contentStreamIdentifier | "cs-identifier"          |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
-      | sourceOrigin            | {"language":"de"}        |
-      | targetOrigin            | {"language":"ch"}        |
+      | Key                      | Value                    |
+      | contentStreamIdentifier  | "cs-identifier"          |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough" |
+      | sourceOrigin             | {"language":"de"}        |
+      | targetOrigin             | {"language":"ch"}        |
+      | initiatingUserIdentifier | "system-user"            |
     And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -259,7 +262,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | text | "Original text" |
 
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
@@ -297,7 +300,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | text | "Original text" |
 
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
