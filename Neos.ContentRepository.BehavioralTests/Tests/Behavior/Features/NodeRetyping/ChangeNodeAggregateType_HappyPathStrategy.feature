@@ -57,6 +57,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                        |
       | nodeName                      | "parent"                                        |
       | initialPropertyValues         | {}                                              |
+      | initiatingUserIdentifier      | "user"                                          |
 
     And the graph projection is fully up to date
 
@@ -76,14 +77,16 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                   |
+      | initiatingUserIdentifier      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
-      | Key                     | Value                                            |
-      | contentStreamIdentifier | "cs-identifier"                                  |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"                         |
-      | newNodeTypeName         | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
-      | strategy                | "happypath"                                      |
+      | Key                      | Value                                            |
+      | contentStreamIdentifier  | "cs-identifier"                                  |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough"                         |
+      | newNodeTypeName          | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
+      | strategy                 | "happypath"                                      |
+      | initiatingUserIdentifier | "user"                                           |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change to a node type that disallows already present grandchildren with the HAPPYPATH conflict resolution strategy
@@ -116,6 +119,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | parentNodeAggregateIdentifier              | "lady-eleonode-rootford"                        |
       | nodeName                                   | "parent2"                                       |
       | tetheredDescendantNodeAggregateIdentifiers | {"autocreated": "autocreated-child"}            |
+      | initiatingUserIdentifier                   | "user"                                          |
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
@@ -126,14 +130,16 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | parentNodeAggregateIdentifier | "autocreated-child"                        |
       | initialPropertyValues         | {}                                         |
+      | initiatingUserIdentifier      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
-      | Key                     | Value                                            |
-      | contentStreamIdentifier | "cs-identifier"                                  |
-      | nodeAggregateIdentifier | "parent2-na"                                     |
-      | newNodeTypeName         | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
-      | strategy                | "happypath"                                      |
+      | Key                      | Value                                            |
+      | contentStreamIdentifier  | "cs-identifier"                                  |
+      | nodeAggregateIdentifier  | "parent2-na"                                     |
+      | newNodeTypeName          | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
+      | strategy                 | "happypath"                                      |
+      | initiatingUserIdentifier | "user"                                           |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Change node type successfully
@@ -145,22 +151,25 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                   |
       | initialPropertyValues         | {}                                         |
+      | initiatingUserIdentifier      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                 |
-      | contentStreamIdentifier | "cs-identifier"       |
-      | nodeAggregateIdentifier | "nodea-identifier-de" |
-      | sourceOrigin            | {"language":"de"}     |
-      | targetOrigin            | {"language":"gsw"}    |
+      | Key                      | Value                 |
+      | contentStreamIdentifier  | "cs-identifier"       |
+      | nodeAggregateIdentifier  | "nodea-identifier-de" |
+      | sourceOrigin             | {"language":"de"}     |
+      | targetOrigin             | {"language":"gsw"}    |
+      | initiatingUserIdentifier | "user"                |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
-      | Key                     | Value                                      |
-      | contentStreamIdentifier | "cs-identifier"                            |
-      | nodeAggregateIdentifier | "nodea-identifier-de"                      |
-      | newNodeTypeName         | "Neos.ContentRepository.Testing:NodeTypeB" |
-      | strategy                | "happypath"                                |
+      | Key                      | Value                                      |
+      | contentStreamIdentifier  | "cs-identifier"                            |
+      | nodeAggregateIdentifier  | "nodea-identifier-de"                      |
+      | newNodeTypeName          | "Neos.ContentRepository.Testing:NodeTypeB" |
+      | strategy                 | "happypath"                                |
+      | initiatingUserIdentifier | "user"                                     |
     And the graph projection is fully up to date
 
     # the type has changed

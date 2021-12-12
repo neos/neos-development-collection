@@ -41,6 +41,7 @@ Feature: Properties
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | initiatingUserIdentifier      | "user"                                    |
     And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 

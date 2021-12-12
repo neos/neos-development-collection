@@ -75,7 +75,6 @@ class PropertyAdjustment
                             $node,
                             StructureAdjustment::OBSOLETE_PROPERTY,
                             'The property "' . $propertyKey . '" is not defined anymore in the current NodeType schema. Suggesting to remove it.',
-                            $this->runtimeBlocker,
                             function () use ($node, $propertyKey) {
                                 $this->readSideMemoryCacheManager->disableCache();
                                 return $this->removeProperty($node, $propertyKey);
@@ -92,7 +91,6 @@ class PropertyAdjustment
                             $node,
                             StructureAdjustment::NON_DESERIALIZABLE_PROPERTY,
                             $message,
-                            $this->runtimeBlocker,
                             function () use ($node, $propertyKey) {
                                 $this->readSideMemoryCacheManager->disableCache();
                                 return $this->removeProperty($node, $propertyKey);
@@ -111,7 +109,6 @@ class PropertyAdjustment
                             $node,
                             StructureAdjustment::MISSING_DEFAULT_VALUE,
                             'The property "' . $propertyKey . '" is is missing in the node. Suggesting to add it.',
-                            $this->runtimeBlocker,
                             function () use ($node, $propertyKey, $defaultValue) {
                                 $this->readSideMemoryCacheManager->disableCache();
                                 return $this->addProperty($node, $propertyKey, $defaultValue);

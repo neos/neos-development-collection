@@ -5,7 +5,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
-use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
@@ -17,16 +16,13 @@ class DimensionAdjustment
 {
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
-    protected RuntimeBlocker $runtimeBlocker;
 
     public function __construct(
         ProjectedNodeIterator $projectedNodeIterator,
-        InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        RuntimeBlocker $runtimeBlocker
+        InterDimensionalVariationGraph $interDimensionalVariationGraph
     ) {
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->runtimeBlocker = $runtimeBlocker;
     }
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
@@ -54,8 +50,7 @@ class DimensionAdjustment
                         yield StructureAdjustment::createForNode(
                             $node,
                             StructureAdjustment::NODE_COVERS_GENERALIZATION_OR_PEERS,
-                            $message,
-                            $this->runtimeBlocker
+                            $message
                         );
                     }
                 }

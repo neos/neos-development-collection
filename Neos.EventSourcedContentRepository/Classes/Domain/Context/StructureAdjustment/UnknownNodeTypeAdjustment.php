@@ -67,7 +67,6 @@ class UnknownNodeTypeAdjustment
                 $nodeAggregate,
                 StructureAdjustment::NODE_TYPE_MISSING,
                 'The node type "' . $nodeTypeName->jsonSerialize() . '" is not found; so the node should be removed (or converted)',
-                $this->runtimeBlocker,
                 function () use ($nodeAggregate) {
                     $this->readSideMemoryCacheManager->disableCache();
                     return $this->removeNodeAggregate($nodeAggregate);

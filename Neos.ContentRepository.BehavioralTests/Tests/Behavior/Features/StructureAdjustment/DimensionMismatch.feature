@@ -43,6 +43,7 @@ Feature: Dimension mismatch
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language": "en"}                        |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | initiatingUserIdentifier      | "user"                                    |
     And the graph projection is fully up to date
 
     When I have the following content dimensions:

@@ -6,7 +6,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\
 use Neos\Error\Messages\Message;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
-use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
