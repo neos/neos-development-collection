@@ -93,16 +93,16 @@ Feature: Add New Property
     When I am in content stream "cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
     When I am in content stream "migration-cs" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
     Then I expect node aggregate identifier "other" to lead to node migration-cs;other;{}
     And I expect this node to have the following properties:
       | Key                | Value                     | Type     |
-      | text               | fixed value               | string   |
+      | text               | "fixed value"             | string   |
       | aDateOutsideSchema | 2013-09-09T12:04:12+00:00 | DateTime |

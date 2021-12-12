@@ -113,16 +113,16 @@ Feature: Filter - Property Value
     When I am in content stream "cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "na-name1" to lead to node cs-identifier;na-name1;{}
     And I expect this node to have the following properties:
-      | Key  | Value          | Type   |
-      | text | Original name1 | string |
+      | Key  | Value            | Type   |
+      | text | "Original name1" | string |
     Then I expect node aggregate identifier "na-name2" to lead to node cs-identifier;na-name2;{}
     And I expect this node to have the following properties:
-      | Key  | Value  | Type   |
-      | text | value2 | string |
+      | Key  | Value    | Type   |
+      | text | "value2" | string |
     Then I expect node aggregate identifier "na-null-value" to lead to node cs-identifier;na-null-value;{}
     And I expect this node to have the following properties:
       | Key  | Value | Type   |
-      | text |       | string |
+      | text | ""    | string |
 
     Then I expect node aggregate identifier "na-no-text" to lead to node cs-identifier;na-no-text;{}
     And I expect this node to not have the property "text"
@@ -132,16 +132,16 @@ Feature: Filter - Property Value
     Then I expect node aggregate identifier "na-name1" to lead to node migration-cs;na-name1;{}
     # only changed here
     And I expect this node to have the following properties:
-      | Key  | Value       | Type   |
-      | text | fixed value | string |
+      | Key  | Value         | Type   |
+      | text | "fixed value" | string |
     Then I expect node aggregate identifier "na-name2" to lead to node migration-cs;na-name2;{}
     And I expect this node to have the following properties:
-      | Key  | Value  | Type   |
-      | text | value2 | string |
+      | Key  | Value    | Type   |
+      | text | "value2" | string |
     Then I expect node aggregate identifier "na-null-value" to lead to node migration-cs;na-null-value;{}
     And I expect this node to have the following properties:
       | Key  | Value | Type   |
-      | text |       | string |
+      | text | ""    | string |
 
     Then I expect node aggregate identifier "na-no-text" to lead to node migration-cs;na-no-text;{}
     And I expect this node to not have the property "text"

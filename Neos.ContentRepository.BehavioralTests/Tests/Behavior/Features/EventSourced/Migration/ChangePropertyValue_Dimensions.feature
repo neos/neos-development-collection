@@ -97,40 +97,40 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "ch"}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
 
     # the node was changed inside the new content stream, but only in DE (and shined through to CH; not in EN)
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value       | Type   |
-      | text | fixed value | string |
+      | Key  | Value         | Type   |
+      | text | "fixed value" | string |
 
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
     And I expect this node to have the following properties:
-      | Key  | Value       | Type   |
-      | text | fixed value | string |
+      | Key  | Value         | Type   |
+      | text | "fixed value" | string |
 
     When I am in content stream "migration-cs" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
   Scenario: change materialized "de" node, should NOT shine through in "ch" (as it was materialized beforehand) (includeSpecializations = FALSE - default)
     # Node /document (in "ch")
@@ -168,15 +168,15 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value       | Type   |
-      | text | fixed value | string |
+      | Key  | Value         | Type   |
+      | text | "fixed value" | string |
 
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
     # !!! CH is still unmodified
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
 
   Scenario: change materialized "de" node; and with includeSpecializations = TRUE, also the CH node is modified
@@ -216,15 +216,15 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value       | Type   |
-      | text | fixed value | string |
+      | Key  | Value         | Type   |
+      | text | "fixed value" | string |
 
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
     # !!! CH is modified now
     And I expect this node to have the following properties:
-      | Key  | Value       | Type   |
-      | text | fixed value | string |
+      | Key  | Value         | Type   |
+      | text | "fixed value" | string |
 
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = FALSE - default)
@@ -255,14 +255,14 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = TRUE)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -293,11 +293,11 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
     When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |

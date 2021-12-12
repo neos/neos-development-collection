@@ -83,15 +83,15 @@ Feature: Rename Property
     When I am in content stream "cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+      | Key  | Value           | Type   |
+      | text | "Original text" | string |
 
     # the node type was changed inside the new content stream
     When I am in content stream "migration-cs" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
-      | Key     | Value         | Type   |
-      | newText | Original text | string |
+      | Key     | Value           | Type   |
+      | newText | "Original text" | string |
     And I expect this node to not have the property "text"
 
 

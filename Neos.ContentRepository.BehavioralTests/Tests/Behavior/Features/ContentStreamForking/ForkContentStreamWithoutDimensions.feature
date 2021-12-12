@@ -78,14 +78,14 @@ Feature: ForkContentStream Without Dimensions
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value          |
-      | text | original value |
+      | text | "original value" |
 
     # forked content stream
     When I am in content stream "user-cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value          |
-      | text | modified value |
+      | text | "modified value" |
 
   # this is a "reverse" scenario of the scenario above.
   Scenario: When a change is applied on the live content stream AFTER the fork, it is NOT visible in the forked content stream.
@@ -108,11 +108,11 @@ Feature: ForkContentStream Without Dimensions
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value          |
-      | text | modified value |
+      | text | "modified value" |
 
     # forked content stream
     When I am in content stream "user-cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value          |
-      | text | original value |
+      | text | "original value" |
