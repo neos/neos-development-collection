@@ -43,6 +43,7 @@ use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Feature
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeDisabling;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeModification;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeMove;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeProperties;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeReferencing;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRemoval;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRenaming;
@@ -78,6 +79,7 @@ trait EventSourcedTrait
     use NodeDisabling;
     use NodeModification;
     use NodeMove;
+    use NodeProperties;
     use NodeReferencing;
     use NodeRemoval;
     use NodeRenaming;
