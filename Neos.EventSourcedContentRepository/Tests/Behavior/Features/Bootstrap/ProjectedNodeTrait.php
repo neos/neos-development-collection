@@ -287,7 +287,7 @@ trait ProjectedNodeTrait
                     // we accept 10s offset for the projector to be fine
                     Assert::assertLessThan($actualPropertyValue, $expectedPropertyValue->sub(new \DateInterval('PT10S')), 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($actualPropertyValue));
                 } else {
-                    Assert::assertEquals($expectedPropertyValue, $actualPropertyValue, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualPropertyValue)) . ' in adapter "' . $adapterName . '"';
+                    Assert::assertEquals($expectedPropertyValue, $actualPropertyValue, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($actualPropertyValue) . ' in adapter "' . $adapterName . '"');
                 }
             }
         });
@@ -310,7 +310,7 @@ trait ProjectedNodeTrait
                 }
         }
 
-        return \json_decode($serializedPropertyValue, true);
+        return \json_decode($serializedPropertyValue, true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
