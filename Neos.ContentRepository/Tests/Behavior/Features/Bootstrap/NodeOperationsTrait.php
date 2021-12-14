@@ -14,12 +14,14 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodePublishIntegrityCheckService;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
 use Neos\ContentRepository\Exception\NodeConstraintException;
@@ -29,6 +31,7 @@ use Neos\Flow\Tests\Functional\Command\TableNode;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
+use function Webmozart\Assert\Tests\StaticAnalysis\null;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -73,6 +76,14 @@ trait NodeOperationsTrait
     private function getPersistenceManager()
     {
         return $this->getObjectManager()->get(PersistenceManagerInterface::class);
+    }
+
+    /**
+     * @return NodePublishIntegrityCheckService
+     */
+    private function getNodePublishIntegrityCheckService()
+    {
+        return $this->getObjectManager()->get(NodePublishIntegrityCheckService::class);
     }
 
     /**
@@ -422,6 +433,69 @@ trait NodeOperationsTrait
         } catch (\Exception $exception) {
             $this->lastException = $exception;
         }
+    }
+
+    /**
+     * @When /^I publish the following nodes with integrity check:$/
+     */
+    public function iPublishTheFollowingNodesWithIntegrityCheck($table)
+    {
+        $rows = $table->getHash();
+        /** @var NodeInterface[] $nodes */
+        $nodes = [];
+        foreach ($rows as $row) {
+            $context = $this->getContextForProperties([
+                'Workspace' => $row['Workspace'],
+                'Language' => $row['Language'],
+                'ShowRemovedNodes' => true,
+            ]);
+
+            $node = $context->getNode($row['path']);
+            Assert::assertNotNull($node, 'Node to publish must not be null');
+            $nodes[] = $node;
+
+            $nodeType = $node->getNodeType();
+            if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
+                $nodes = array_merge($nodes, $this->collectAllContentChildNodes($node));
+            }
+        }
+
+        Assert::assertGreaterThan(0, count($nodes), 'List of nodes to publish must contain at least one node');
+
+        $this->getNodePublishIntegrityCheckService()->ensureIntegrityForPublishingOfNodes($nodes, $nodes[0]->getWorkspace()->getBaseWorkspace());
+
+        $publishingService = $this->getPublishingService();
+        $publishingService->publishNodes($nodes, $nodes[0]->getWorkspace()->getBaseWorkspace());
+
+        $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
+        $this->resetNodeInstances();
+    }
+
+    /**
+     * @When /^I publish the following nodes with integrity check and exceptions are caught:$/
+     */
+    public function iPublishTheFollowingNodesWithIntegrityCheckAndExceptionsAreCaught($table)
+    {
+        try {
+            $this->iPublishTheFollowingNodesWithIntegrityCheck($table);
+            $this->lastException = null;
+        } catch (\Exception $exception) {
+            $this->lastException = $exception;
+        }
+    }
+
+    /**
+     * @param NodeInterface $parentNode
+     * @param array $collectedNodes
+     * @return array
+     */
+    protected function collectAllContentChildNodes(NodeInterface $parentNode, $collectedNodes = [])
+    {
+        foreach ($parentNode->getChildNodes('!Neos.Neos:Document') as $contentNode) {
+            $collectedNodes[] = $contentNode;
+            $collectedNodes = array_merge($collectedNodes, $this->collectAllContentChildNodes($contentNode));
+        }
+        return $collectedNodes;
     }
 
     /**
@@ -1119,6 +1193,10 @@ trait NodeOperationsTrait
                 $this->createWorkspaceIfNeeded($contextProperties['workspaceName']);
             } else {
                 $this->createWorkspaceIfNeeded();
+            }
+
+            if (isset($humanReadableContextProperties['ShowRemovedNodes'])) {
+                $contextProperties['removedContentShown'] = $humanReadableContextProperties['ShowRemovedNodes'];
             }
 
             if (isset($humanReadableContextProperties['Hidden'])) {

@@ -47,7 +47,32 @@ Feature: Node publishing integrity check
     Given I have the following content dimensions:
       | Identifier | Default | Presets |
       | language   | de      | de=de   |
-    Given I have the following nodes:
+
+    # The 'Neos.ContentRepository.Testing:Page' does not has 'Neos.Neos:Document' as supertype
+    # and is by default no aggregate. This changes the behaviour of the PublishingService!
+    And I have the following NodeTypes configuration:
+    """
+    'unstructured':
+      constraints:
+        nodeTypes:
+          '*': true
+
+    'Neos.Neos:ContentCollection': {}
+    'Neos.Neos:Document':
+      abstract: true
+      aggregate: true
+    'Neos.ContentRepository.Testing:Page':
+      superTypes:
+        'Neos.Neos:Document': true
+      childNodes:
+        main:
+          type: 'Neos.Neos:ContentCollection'
+      properties:
+        title:
+          type: string
+    """
+
+    And I have the following nodes:
       | Identifier                           | Path                     | Node Type                           | Properties            | Language |
       | 86198d18-8c4a-41eb-95fa-56223b2a3a97 | /sites                   | unstructured                        |                       | de       |
       | 594cd631-cf19-4072-9ee8-f8d840e85f5f | /sites/cr                | Neos.ContentRepository.Testing:Page | {"title": "CR SEITE"} | de       |
@@ -56,18 +81,16 @@ Feature: Node publishing integrity check
       | 94d5a8a2-d0d2-427b-af0a-2e4152f102ee | /sites/other             | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | de       |
     And I am authenticated with role "Neos.Neos:Editor"
 
-  # We only move a single document node. No parents, no children. This should always work
-  Scenario: moves /site/cr/subpage/nested underneath /site/other/ and publishes /site/other/nested => SHOULD WORK
+  Scenario: We only move a single document node. No parents, no document children (only content) => SHOULD WORK
     Given I get a node by path "/sites/cr/subpage/nested" with the following context:
       | Workspace  | Language |
       | user-admin | de       |
 
     # move node and publish
     When I move the node into the node with path "/sites/other"
-    And I get a node by path "/sites/other/nested" with the following context:
-      | Workspace  | Language |
-      | user-admin | de       |
-    And I publish the node
+    When I publish the following nodes with integrity check:
+      | path                | Workspace  | Language |
+      | /sites/other/nested | user-admin | de       |
 
     # Assertions: node was published successfully
     And I get a node by path "/sites/other/nested" with the following context:
@@ -82,21 +105,18 @@ Feature: Node publishing integrity check
       | live      |
     Then I should have 0 nodes
 
-  # We move a parent and its child and only publish the child => ERROR
-  Scenario: moves /sites/cr/subpage underneath /sites/other/ and only publishes /sites/other/subpage/nested => SHOULD FAIL
+  Scenario: We move a parent and its child and only publish the child => child would be disconnected in live workspace => SHOULD FAIL
     Given I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | de       |
+    And I move the node into the node with path "/sites/other"
 
-    # move nodes and publish
-    When I move the node into the node with path "/sites/other"
-    When I get a node by path "/sites/other/subpage/nested" with the following context:
-      | Workspace  | Language |
-      | user-admin | de       |
-    And I publish the node and exceptions are caught
+    When I publish the following nodes with integrity check and exceptions are caught:
+      | path                        | Workspace  | Language |
+      | /sites/other/subpage/nested | user-admin | de       |
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
     """
-      TODO: ....
+      parent did not exists and it will NOT be created in the same publish
     """
 
     # Assertions: node was NOT published
@@ -112,22 +132,19 @@ Feature: Node publishing integrity check
     Then I should have one node
     And the node should be connected to the root
 
-  # We move a parent and its child and only publish the parent-node => ERROR
-  Scenario: moves /sites/cr/subpage underneath /sites/other/ and only publishes /sites/other/subpage => SHOULD FAIL
+  Scenario: We move a parent and its child and only publish the parent-node => child would be disconnected in live workspace => SHOULD FAIL
     Given I get a node by path "/sites/cr/subpage" with the following context:
       | Workspace  | Language |
       | user-admin | de       |
 
     # move nodes and publish
-    When I move the node into the node with path "/sites/other"
-    When I get a node by path "/sites/other/subpage" with the following context:
-      | Workspace  | Language |
-      | user-admin | de       |
-    And I publish the node and exceptions are caught
-
+    And I move the node into the node with path "/sites/other"
+    When I publish the following nodes with integrity check and exceptions are caught:
+      | path                 | Workspace  | Language |
+      | /sites/other/subpage | user-admin | de       |
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
     """
-      TODO: ....
+    child node at path /sites/cr/subpage/nested still exists after publish
     """
 
     # Assertions: node was NOT published
@@ -142,3 +159,294 @@ Feature: Node publishing integrity check
       | live      |
     Then I should have one node
     And the node should be connected to the root
+
+  Scenario: We move a parent and its child and publish both together => SHOULD WORK
+    Given I get a node by path "/sites/cr/subpage" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+
+    # move nodes and publish
+    When I move the node into the node with path "/sites/other"
+    And I publish the following nodes with integrity check:
+      | path                        | Workspace  | Language |
+      | /sites/other/subpage        | user-admin | de       |
+      | /sites/other/subpage/nested | user-admin | de       |
+
+    # Assertions: nodes were published successfully
+    And I get a node by path "/sites/other/subpage" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+    And I get a node by path "/sites/other/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+
+    # Assertions: node does not exists on source location anymore
+    When I get a node by path "/sites/cr/subpage" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+
+  Scenario: We delete a child-document, move the parent to a new location and publish both changes => SHOULD WORK
+    Given I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I remove the node
+
+    And I get a node by path "/sites/cr/subpage" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I move the node into the node with path "/sites/other"
+
+    When I publish the following nodes with integrity check:
+      | path                     | Workspace  | Language |
+      | /sites/cr/subpage/nested | user-admin | de       |
+      | /sites/other/subpage     | user-admin | de       |
+
+    # Assertions: node was published successfully
+    And I get a node by path "/sites/other/subpage" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+    And I get a node by path "/sites/other/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+
+    # Assertions: node does not exists on source location anymore
+    When I get a node by path "/sites/cr/subpage" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+
+  Scenario: We delete a child-document, move the parent to a new location and publish ONLY the moved parent => SHOULD FAIL
+    Given I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I remove the node
+
+    And I get a node by path "/sites/cr/subpage" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I move the node into the node with path "/sites/other"
+    When I publish the following nodes with integrity check and exceptions are caught:
+      | path                 | Workspace  | Language |
+      | /sites/other/subpage | user-admin | de       |
+    Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
+    """
+    child node at path /sites/cr/subpage/nested still exists after publish
+    """
+
+    # Assertions: nodes were not published
+    When I get a node by path "/sites/other/subpage" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+    And I get a node by path "/sites/other/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+
+    # Assertions: nodes still exist on source location
+    When I get a node by path "/sites/cr/subpage" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+
+  # At the end of the publish, the child-page stays at the original location and in the user-workspace
+  # the child was moved together with the new parent, so no node gets disconnected
+  Scenario: We move a child-document and the new parent gets moved to another location, we only publish the new parent => SHOULD WORK
+    Given I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I move the node into the node with path "/sites/other"
+
+    Given I get a node by path "/sites/other" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I move the node into the node with path "/sites/cr"
+
+    When I publish the following nodes with integrity check:
+      | path            | Workspace  | Language |
+      | /sites/cr/other | user-admin | de       |
+
+    # Assertions: node was published
+    When I get a node by path "/sites/cr/other" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+
+    # Assertions: nested page still at old location in live workspace
+    And I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+
+    # Assertions: nodes still exist on source location
+    When I get a node by path "/sites/cr/subpage" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+
+  Scenario: We move a node, remove the new parent and publish both changes => SHOULD FAIL
+    Given I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I move the node into the node with path "/sites/other"
+
+    Given I get a node by path "/sites/other" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I remove the node
+
+    When I publish the following nodes with integrity check and exceptions are caught:
+      | path              | Workspace  | Language |
+      | /sites/other        | user-admin | de       |
+      | /sites/other/nested | user-admin | de       |
+    Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
+    """
+    Target parent gets removed in same publish!
+    """
+
+    # Assertions: node was not published
+    When I get a node by path "/sites/other/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+
+    # Assertions: nodes still exist on source location
+    When I get a node by path "/sites/other" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+
+  Scenario: We create a new node, move a node in the created node and publish both changes => SHOULD WORK
+    # create the node with path /sites/new
+    Given I have the following nodes:
+      | Identifier                           | Path       | Node Type                           | Properties            | Language | Workspace  |
+      | 65e8bb46-901d-4baf-b864-415994848906 | /sites/new | Neos.ContentRepository.Testing:Page | {"title": "CR SEITE"} | de       | user-admin |
+
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I move the node into the node with path "/sites/new"
+    And I publish the following nodes with integrity check:
+      | path              | Workspace  | Language |
+      | /sites/new        | user-admin | de       |
+      | /sites/new/nested | user-admin | de       |
+
+    # Assertions: nodes were published
+    When I get a node by path "/sites/new" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+    And I get a node by path "/sites/new/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+
+    # Assertions: node does not exist on source location
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+
+  Scenario: We create a new node, move a node in the created node and publish ONLY the moved node => SHOULD FAIL
+    # create the node with path /sites/new
+    Given I have the following nodes:
+      | Identifier                           | Path       | Node Type                           | Properties            | Language | Workspace  |
+      | 65e8bb46-901d-4baf-b864-415994848906 | /sites/new | Neos.ContentRepository.Testing:Page | {"title": "CR SEITE"} | de       | user-admin |
+
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I move the node into the node with path "/sites/new"
+    And I publish the following nodes with integrity check and exceptions are caught:
+      | path              | Workspace  | Language |
+      | /sites/new/nested | user-admin | de       |
+    Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
+    """
+    parent did not exists and it will NOT be created in the same publish
+    """
+
+    # Assertions: node was not published
+    When I get a node by path "/sites/new/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes
+
+    # Assertions: node still exists on source location
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+
+  Scenario: We move a node, change a property of the new parent node and publish both changes => SHOULD WORK
+    Given I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+
+    When I move the node into the node with path "/sites/other"
+    And I get a node by path "/sites/other" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I set the node property "title" to "new title for other page"
+    And I publish the following nodes with integrity check:
+      | path                | Workspace  | Language |
+      | /sites/other        | user-admin | de       |
+      | /sites/other/nested | user-admin | de       |
+
+    # Assertions: nodes were published
+    When I get a node by path "/sites/other" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+    And the node property "title" should be "new title for other page"
+
+    Then I get a node by path "/sites/other/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node should be connected to the root
+
+    # Assertions: node does not exist on source location
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have 0 nodes

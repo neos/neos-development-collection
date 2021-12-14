@@ -139,7 +139,7 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
     {
         foreach ($this->nodesToPublish as $node) {
             // TODO: check all parents?
-            if ($node->getParentPath() === $path) {
+            if ($node->getParentPath() === $path && !$node->isRemoved()) {
                 return true;
             }
         }
