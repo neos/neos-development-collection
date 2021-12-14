@@ -427,6 +427,51 @@ Options Reference:
 
 **all TextFieldEditor options apply**
 
+Property Type: string | integer ``RangeEditor`` -- Range Editor for selecting numeric values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The minimum, maximum and step size can be defined. Additionally a unit label as well as a special label for the minimum and maximum value can be defined.
+
+If a certain value should be entered the current value can also be clicked to enter the desired value directly.
+
+
+    opacity:
+      type: integer
+      ui:
+        inspector:
+          editor: 'Neos.Neos/Inspector/Editors/RangeEditor'
+          editorOptions:
+            minLabel: Invisible
+            maxLabel: Opaque
+            min: 0
+            max: 100
+            step: 5
+            unit: px
+
+
+Options Reference:
+
+``min`` (integer)
+	The lowest value in the range of permitted values. This value must be less than or equal to the value of the max attribute
+  
+``max`` (integer)
+	The greatest value in the range of permitted values. This value must be greater than or equal to the value of the min attribute.
+  
+``step`` (integer)
+	The step attribute is a number that specifies the granularity that the value must adhere to.
+  
+``unit`` (string)
+  The value gets displayed beside the current value, as well after the minmal value (only if ``minLabel`` is not set) and after the maximal value (only if ``maxLabel`` is not set) 
+
+``minLabel`` (string)
+	If set, this value is displayed instead of the minimum value 
+  
+``maxLabel`` (string)
+	If set, this value is displayed instead of the maximum value
+ 
+``disabled`` (boolean)
+	If ``true``, disables the RangeEditor.
+
 Property Type: reference / references ``ReferenceEditor`` / ``ReferencesEditor`` -- Reference Selection Editors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
