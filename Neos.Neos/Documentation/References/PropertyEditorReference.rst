@@ -427,13 +427,14 @@ Options Reference:
 
 **all TextFieldEditor options apply**
 
-Property Type: string | integer ``RangeEditor`` -- Range Editor for selecting numeric values
+Property Type: string / integer ``RangeEditor`` -- Range Editor for selecting numeric values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The minimum, maximum and step size can be defined. Additionally a unit label as well as a special label for the minimum and maximum value can be defined.
 
 If a certain value should be entered the current value can also be clicked to enter the desired value directly.
 
+::
 
     opacity:
       type: integer
@@ -470,7 +471,7 @@ Options Reference:
 	If set, this value is displayed instead of the maximum value
  
 ``disabled`` (boolean)
-	If ``true``, disables the RangeEditor.
+	If set to ``true``, the range editor gets disabled.
 
 Property Type: reference / references ``ReferenceEditor`` / ``ReferencesEditor`` -- Reference Selection Editors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
