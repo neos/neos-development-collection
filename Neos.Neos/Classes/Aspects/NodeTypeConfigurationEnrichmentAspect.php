@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Aspects;
 
 /*
@@ -11,11 +12,11 @@ namespace Neos\Neos\Aspects;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Arrays;
-use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * @Flow\Scope("singleton")
@@ -124,6 +125,11 @@ class NodeTypeConfigurationEnrichmentAspect
             if (isset($propertyConfiguration['ui']['help']['message']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['help'], 'message')) {
                 $propertyConfiguration['ui']['help']['message'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'ui.help.message');
             }
+
+            $hasValidator = isset($propertyConfiguration['validation']);
+            if ($hasValidator && is_array($propertyConfiguration['validation'])) {
+                $this->applyValidationLabels($nodeTypeLabelIdPrefix, $propertyName, $propertyConfiguration);
+            }
         }
     }
 
@@ -153,6 +159,31 @@ class NodeTypeConfigurationEnrichmentAspect
                 }
             }
             return $thumbnailUrl;
+        }
+    }
+
+    /**
+     * @param string $nodeTypeLabelIdPrefix
+     * @param string $propertyName
+     * @param array $propertyConfiguration
+     * @return void
+     */
+    protected function applyValidationLabels($nodeTypeLabelIdPrefix, $propertyName, array &$propertyConfiguration)
+    {
+        $hasValidator = isset($propertyConfiguration['validation']);
+        if ($hasValidator && is_array($propertyConfiguration['validation'])) {
+            foreach ($propertyConfiguration['validation'] as $validatorName => $validatorOptions) {
+                if ($this->shouldFetchTranslation($validatorOptions, 'validationErrorMessage')) {
+                    $validatorNamePieces = explode('/', $validatorName);
+                    $validatorNameForLabel = lcFirst(array_pop($validatorNamePieces));
+                    $path = 'validation.' . $validatorNameForLabel . '.validationErrorMessage';
+                    $propertyConfiguration['validation'][$validatorName]['validationErrorMessage'] = $this->getPropertyConfigurationTranslationId(
+                        $nodeTypeLabelIdPrefix,
+                        $propertyName,
+                        $path
+                    );
+                }
+            }
         }
     }
 
