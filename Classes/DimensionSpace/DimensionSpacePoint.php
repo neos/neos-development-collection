@@ -63,16 +63,16 @@ class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, Pro
 
     public static function fromArray(array $data): self
     {
-        return new static($data);
+        return new self($data);
     }
 
     /**
      * @param string $jsonString A JSON string representation, see jsonSerialize
      * @return DimensionSpacePoint
      */
-    final public static function fromJsonString(string $jsonString): self
+    public static function fromJsonString(string $jsonString): self
     {
-        return new static(json_decode($jsonString, true));
+        return new self(json_decode($jsonString, true));
     }
 
     /**
