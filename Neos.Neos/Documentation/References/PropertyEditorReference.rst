@@ -465,7 +465,7 @@ Options Reference:
   The value gets displayed beside the current value, as well after the minimal value (only if ``minLabel`` is not set) and after the maximal value (only if ``maxLabel`` is not set).
 
 ``minLabel`` (string)
-	If set, this value is displayed instead of the minimum value 
+	If set, this value is displayed instead of the minimum value.
   
 ``maxLabel`` (string)
 	If set, this value is displayed instead of the maximum value.
