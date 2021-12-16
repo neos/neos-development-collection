@@ -430,7 +430,7 @@ Options Reference:
 Property Type: string / integer ``RangeEditor`` -- Range Editor for selecting numeric values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The minimum, maximum and step size can be defined. Additionally a unit label as well as a special label for the minimum and maximum value can be defined.
+The minimum, maximum and step size can be defined. Additionally, a unit label as well as a special label for the minimum and maximum value can be defined.
 
 If a certain value should be entered, the current value can also be clicked to enter the desired value directly.
 
