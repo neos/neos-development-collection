@@ -28,7 +28,7 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
     /**
      * @var NodeInterface[]
      */
-    private array $nodesToPublish;
+    private $nodesToPublish;
 
     /**
      * @var NodeDataRepository
