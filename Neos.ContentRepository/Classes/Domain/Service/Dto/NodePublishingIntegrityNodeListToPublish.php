@@ -81,7 +81,6 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
                 // node exists with movedTo == $node, to determine the source path
                 $referencedShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
                 if ($referencedShadowNodeData) {
-                    // TODO: Dimensions??
                     // we now that $node was moved from $referencedShadowNodeData->getPath() to $node->getPath();
                     if ($referencedShadowNodeData->getPath() === $sourcePath) {
                         // YES, a node was moved from $path to a new location. The new location now
@@ -102,7 +101,6 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
     public function isRemoved(string $path): bool
     {
         foreach ($this->nodesToPublish as $node) {
-            // TODO: Dimensions??
             if ($node->getPath() === $path) {
                 return $node->isRemoved();
             }
@@ -119,7 +117,6 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
     public function isExistingNode(string $path): bool
     {
         foreach ($this->nodesToPublish as $node) {
-            // TODO: Dimensions??
             if ($node->getPath() === $path) {
                 // we do not need to check for movedTo; because: if movedTo is set, removed is also set.
                 return !$node->isRemoved();
@@ -138,7 +135,6 @@ final class NodePublishingIntegrityNodeListToPublish implements \IteratorAggrega
     public function containsExistingChildNodesOf(string $path)
     {
         foreach ($this->nodesToPublish as $node) {
-            // TODO: check all parents?
             if ($node->getParentPath() === $path && !$node->isRemoved()) {
                 return true;
             }

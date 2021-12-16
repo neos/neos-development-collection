@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -23,7 +24,7 @@ use Neos\Neos\Ui\Controller\BackendServiceController;
 /**
  * This is an internal service to prevent disconnected nodes when publishing after move.
  *
- * It is called from various places in the upper layers of publishing, e.g.+
+ * It is called from various places in the upper layers of publishing, e.g.
  * - {@see BackendServiceController::publishAction()} for publishing from the content module
  * - TODO for publishing from the workspace module
  *
@@ -74,14 +75,55 @@ class NodePublishIntegrityCheckService
     // In case of deletion, the UI sends us the REMOVED node and says "publish me"
 
     /**
-     * @param array $nodesToPublish
+     * @param NodeInterface[] $nodesToPublish
      * @param Workspace $targetWorkspace this is the workspace we publish to; so normally the base workspace of the user's workspace.
      */
     public function ensureIntegrityForPublishingOfNodes(array $nodesToPublish, Workspace $targetWorkspace): void
     {
-        // TODO: !!!!!! DIMENSION SUPPORT?
         print_r('!!!!!!!!!!! CALL FOR' . PHP_EOL);
+        foreach ($nodesToPublish as $node) {
+            print_r("\t" . $node->getPath() . PHP_EOL);
+        }
+
+        if (count($nodesToPublish) === 0) {
+            return;
+        }
+
+        $sourceWorkspace = $nodesToPublish[0]->getWorkspace()->getName();
         $nodesToPublish = NodePublishingIntegrityNodeListToPublish::createForNodes($nodesToPublish, $this->nodeDataRepository);
+
+        // Changes in a single dimension can effect other dimensions and can result in disconnected nodes
+        // For this reason, we iterate over every dimension and check, if any node in the nodes to publish
+        // could effect the dimension.
+        $contentDimensionsAndPresets = $this->contentDimensionPresetSource->getAllPresets();
+        foreach ($contentDimensionsAndPresets as $dimension => $dimensionConfiguration) {
+            $contextProperties = [];
+            $contextProperties['dimensions'][$dimension] = array_keys($dimensionConfiguration['presets']);
+            $contextProperties['workspaceName'] = $sourceWorkspace;
+            $contextProperties['removedContentShown'] = true;
+            $context = $this->contextFactory->create($contextProperties);
+
+            $filteredNodes = [];
+            foreach ($nodesToPublish as $node) {
+                assert($node instanceof NodeInterface);
+                $nodeInPreset = $context->getNodeByIdentifier($node->getIdentifier());
+                if ($nodeInPreset && $nodeInPreset->getNodeData()->getIdentifier() === $node->getNodeData()->getIdentifier()) {
+                    $filteredNodes[] = $node;
+                }
+            }
+
+            if (count($filteredNodes) === 0) {
+                continue;
+            }
+
+            $filteredNodesToPublish = NodePublishingIntegrityNodeListToPublish::createForNodes($filteredNodes, $this->nodeDataRepository);
+            $this->applyIntegrityCheckForChangeSet($filteredNodesToPublish, $targetWorkspace);
+        }
+    }
+
+    private function applyIntegrityCheckForChangeSet(NodePublishingIntegrityNodeListToPublish $nodesToPublish, Workspace $targetWorkspace)
+    {
+        print_r('!!!!!!!!!!! run check for the following nodes:' . PHP_EOL);
         foreach ($nodesToPublish as $node) {
             print_r("\t" . $node->getPath() . PHP_EOL);
         }
@@ -91,7 +133,7 @@ class NodePublishIntegrityCheckService
         foreach ($nodesToPublish as $node) {
             assert($node instanceof NodeInterface);
             print_r('###########################################' . PHP_EOL);
-            print_r('START INTEGRITY CHECK FOR '. $node->getPath() . PHP_EOL);
+            print_r('START INTEGRITY CHECK FOR ' . $node->getPath() . PHP_EOL);
 
             //////////////////////////////////////////////////////////
             // PREPARATION: Build $contextOfTargetWorkspace
