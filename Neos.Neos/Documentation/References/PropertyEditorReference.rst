@@ -468,7 +468,7 @@ Options Reference:
 	If set, this value is displayed instead of the minimum value 
   
 ``maxLabel`` (string)
-	If set, this value is displayed instead of the maximum value
+	If set, this value is displayed instead of the maximum value.
  
 ``disabled`` (boolean)
 	If set to ``true``, the range editor gets disabled.
