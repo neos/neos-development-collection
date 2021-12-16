@@ -453,7 +453,7 @@ If a certain value should be entered the current value can also be clicked to en
 Options Reference:
 
 ``min`` (integer)
-	The lowest value in the range of permitted values. This value must be less than or equal to the value of the max attribute
+	The lowest value in the range of permitted values. This value must be less than or equal to the value of the max attribute.
   
 ``max`` (integer)
 	The greatest value in the range of permitted values. This value must be greater than or equal to the value of the min attribute.
