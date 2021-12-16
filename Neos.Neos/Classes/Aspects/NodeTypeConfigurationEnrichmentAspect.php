@@ -166,9 +166,10 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param string $nodeTypeLabelIdPrefix
      * @param string $propertyName
      * @param array $propertyConfiguration
+     * @param bool $isCreationDialogElement
      * @return void
      */
-    protected function applyValidationLabels($nodeTypeLabelIdPrefix, $propertyName, array &$propertyConfiguration)
+    protected function applyValidationLabels($nodeTypeLabelIdPrefix, $propertyName, array &$propertyConfiguration, $isCreationDialogElement = false): void
     {
         $hasValidator = isset($propertyConfiguration['validation']);
         if ($hasValidator && is_array($propertyConfiguration['validation'])) {
@@ -177,14 +178,31 @@ class NodeTypeConfigurationEnrichmentAspect
                     $validatorNamePieces = explode('/', $validatorName);
                     $validatorNameForLabel = lcFirst(array_pop($validatorNamePieces));
                     $path = 'validation.' . $validatorNameForLabel . '.validationErrorMessage';
-                    $propertyConfiguration['validation'][$validatorName]['validationErrorMessage'] = $this->getPropertyConfigurationTranslationId(
+                    $propertyConfiguration['validation'][$validatorName]['validationErrorMessage'] = $this->getValidationElementConfigurationTranslationId(
                         $nodeTypeLabelIdPrefix,
                         $propertyName,
-                        $path
+                        $path,
+                        $isCreationDialogElement
                     );
                 }
             }
         }
+    }
+
+    /**
+     * Returns translation ID for the validation configuration.
+     *
+     * @param string $nodeTypeLabelIdPrefix
+     * @param string $propertyName
+     * @param string $path
+     * @param bool $isCreationDialogElement
+     * @return string
+     */
+    protected function getValidationElementConfigurationTranslationId(string $nodeTypeLabelIdPrefix, string $propertyName, string $path, bool $isCreationDialogElement): string
+    {
+        return $isCreationDialogElement ?
+            $this->getCreationDialogElementsConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path) :
+            $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path);
     }
 
     /**
@@ -195,7 +213,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param callable $translationIdGenerator
      * @return void
      */
-    protected function applyEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $editorName, array &$editorOptions, $translationIdGenerator)
+    protected function applyEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $editorName, array &$editorOptions, $translationIdGenerator): void
     {
         switch ($editorName) {
             case 'Neos.Neos/Inspector/Editors/SelectBoxEditor':
@@ -275,6 +293,11 @@ class NodeTypeConfigurationEnrichmentAspect
         if (is_array($creationDialogConfiguration)) {
             $creationDialogConfiguration = &$configuration['ui']['creationDialog']['elements'];
             foreach ($creationDialogConfiguration as $elementName => &$elementConfiguration) {
+                $hasValidator = isset($elementConfiguration['validation']);
+                if ($hasValidator && is_array($elementConfiguration['validation'])) {
+                    $this->applyValidationLabels($nodeTypeLabelIdPrefix, $elementName, $elementConfiguration, true);
+                }
+
                 if (isset($elementConfiguration['ui']['editor']) && isset($elementConfiguration['ui']['editorOptions'])) {
                     $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $elementName) {
                         return $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'creationDialog', $elementName . '.' . $path);
@@ -339,6 +362,19 @@ class NodeTypeConfigurationEnrichmentAspect
     protected function getPropertyConfigurationTranslationId($nodeTypeSpecificPrefix, $propertyName, $labelPath)
     {
         return $nodeTypeSpecificPrefix . 'properties.' . $propertyName . '.' . $labelPath;
+    }
+
+    /**
+     * Generates a creation dialog element configuration-label with the given $nodeTypeSpecificPrefix.
+     *
+     * @param string $nodeTypeSpecificPrefix
+     * @param string $elementName
+     * @param string $labelPath
+     * @return string
+     */
+    protected function getCreationDialogElementsConfigurationTranslationId($nodeTypeSpecificPrefix, $elementName, $labelPath)
+    {
+        return $nodeTypeSpecificPrefix . 'ui.creationDialog.elements.' . $elementName . '.' . $labelPath;
     }
 
     /**
