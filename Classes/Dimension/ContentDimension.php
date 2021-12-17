@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,6 +10,11 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValuesAreMissing;
 use Neos\Utility\Arrays;
 
 /**
@@ -21,25 +22,22 @@ use Neos\Utility\Arrays;
  */
 final class ContentDimension
 {
-    /**
-     * @var ContentDimensionIdentifier
-     */
-    protected $identifier;
+    public readonly ContentDimensionIdentifier $identifier;
 
     /**
      * An array of dimension values, indexed by their identifiers
      *
-     * @var array|ContentDimensionValue[]
+     * @var array<string,ContentDimensionValue>
      */
-    protected $values = [];
+    public readonly array $values;
 
     /**
      * all Content Dimension Values indexed by "specialization", so
      * you can answer questions like "what's the next-most generic value for the given value"
      *
-     * @var array|ContentDimensionValue[]
+     * @var array<string,ContentDimensionValue>
      */
-    protected $generalizations;
+    public readonly array $generalizations;
 
     /**
      * all Content Dimension Values indexed by "generalization", so
@@ -47,127 +45,86 @@ final class ContentDimension
      *
      * returns an *array* of specializations for each key; so this is effectively an array of arrays
      *
-     * @var array|ContentDimensionValue[][]
+     * @var array<string,array<string,ContentDimensionValue>>
      */
-    protected $specializations;
+    public readonly array $specializations;
 
-    /**
-     * @var ContentDimensionValue
-     */
-    protected $defaultValue;
+    public readonly ContentDimensionValue $defaultValue;
 
     /**
      * General configuration like UI, detection etc.
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $configuration;
+    public readonly array $configuration;
+
+    public readonly ContentDimensionValueSpecializationDepth $maximumDepth;
 
     /**
-     * @var ContentDimensionValueSpecializationDepth
-     */
-    protected $maximumDepth;
-
-    /**
-     * @param ContentDimensionIdentifier $identifier
-     * @param array|ContentDimensionValue[] $values
-     * @param ContentDimensionValue $defaultValue
-     * @param array|ContentDimensionValueVariationEdge[] $variationEdges
-     * @param array $configuration
-     * @throws Exception\ContentDimensionValuesAreMissing
+     * @param array<string,ContentDimensionValue> $values
+     * @param array<string,mixed> $configuration
+     * @throws ContentDimensionValuesAreMissing
      */
     public function __construct(
         ContentDimensionIdentifier $identifier,
         array $values,
         ContentDimensionValue $defaultValue,
-        array $variationEdges = [],
+        ContentDimensionValueVariationEdges $variationEdges,
         array $configuration = []
     ) {
         if (empty($values)) {
-            throw new Exception\ContentDimensionValuesAreMissing('Content dimension ' . $identifier . ' does not have any values defined', 1516576422);
+            throw ContentDimensionValuesAreMissing::inADimension($identifier);
         }
         $this->identifier = $identifier;
+        $maximumDepth = ContentDimensionValueSpecializationDepth::zero();
+        $dimensionValues = [];
         foreach ($values as $value) {
-            $this->values[(string)$value] = $value;
-            if (is_null($this->maximumDepth) || $value->getSpecializationDepth()->isGreaterThan($this->maximumDepth)) {
-                $this->maximumDepth = $value->getSpecializationDepth();
+            $dimensionValues[(string)$value] = $value;
+            if ($value->specializationDepth->isGreaterThan($maximumDepth)) {
+                $maximumDepth = $value->specializationDepth;
             }
         }
+        $this->maximumDepth = $maximumDepth;
         $this->defaultValue = $defaultValue;
-        if (!empty($variationEdges)) {
-            foreach ($variationEdges as $variationEdge) {
-                $this->generalizations[(string)$variationEdge->getSpecialization()] = $variationEdge->getGeneralization();
-                $this->specializations[(string)$variationEdge->getGeneralization()][(string)$variationEdge->getSpecialization()] = $variationEdge->getSpecialization();
-            }
+        $this->values = $dimensionValues;
+        $generalizations = [];
+        $specializations = [];
+        foreach ($variationEdges as $variationEdge) {
+            $generalizations[(string)$variationEdge->specialization] = $variationEdge->generalization;
+            $specializations[(string)$variationEdge->generalization][(string)$variationEdge->specialization] = $variationEdge->specialization;
         }
+        $this->generalizations = $generalizations;
+        $this->specializations = $specializations;
         $this->configuration = $configuration;
     }
 
-    /**
-     * @return ContentDimensionIdentifier
-     */
-    public function getIdentifier(): ContentDimensionIdentifier
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * @return array|ContentDimensionValue[]
-     */
-    public function getValues(): array
-    {
-        return $this->values;
-    }
-
-    /**
-     * @param string $value
-     * @return ContentDimensionValue|null
-     */
     public function getValue(string $value): ?ContentDimensionValue
     {
         return $this->values[$value] ?? null;
     }
 
     /**
-     * @return ContentDimensionValue
-     */
-    public function getDefaultValue(): ContentDimensionValue
-    {
-        return $this->defaultValue;
-    }
-
-    /**
-     * @return array|ContentDimensionValue[]
+     * @return array<string,ContentDimensionValue>
      */
     public function getRootValues(): array
     {
         return array_filter($this->values, function (ContentDimensionValue $dimensionValue) {
-            return $dimensionValue->getSpecializationDepth()->getDepth() === 0;
+            return $dimensionValue->specializationDepth->isZero();
         });
     }
 
-    /**
-     * @param ContentDimensionValue $dimensionValue
-     * @return ContentDimensionValue|null
-     */
     public function getGeneralization(ContentDimensionValue $dimensionValue): ?ContentDimensionValue
     {
         return $this->generalizations[(string)$dimensionValue] ?? null;
     }
 
     /**
-     * @param ContentDimensionValue $dimensionValue
-     * @return array|ContentDimensionValue[]
+     * @return array<string,ContentDimensionValue>
      */
     public function getSpecializations(ContentDimensionValue $dimensionValue): array
     {
         return $this->specializations[(string)$dimensionValue] ?? [];
     }
 
-    /**
-     * @param ContentDimensionValue $dimensionValue
-     * @param callable $callback
-     * @return void
-     */
     public function traverseGeneralizations(ContentDimensionValue $dimensionValue, callable $callback): void
     {
         $callback($dimensionValue);
@@ -177,9 +134,6 @@ final class ContentDimension
     }
 
     /**
-     * @param ContentDimensionValue $generalization
-     * @param ContentDimensionValue $specialization
-     * @return ContentDimensionValueSpecializationDepth
      * @throws Exception\GeneralizationIsInvalid
      */
     public function calculateSpecializationDepth(
@@ -198,23 +152,17 @@ final class ContentDimension
             }
         }
 
-        throw new Exception\GeneralizationIsInvalid('"' . $specialization . '" is no specialization of "' . $generalization . '" in dimension "' . $this->getIdentifier() . '".');
+        throw Exception\GeneralizationIsInvalid::becauseComparedValueIsNoSpecialization(
+            $generalization,
+            $specialization,
+            $this->identifier
+        );
     }
 
-    /**
-     * @return ContentDimensionValueSpecializationDepth
-     */
-    public function getMaximumDepth(): ContentDimensionValueSpecializationDepth
+    public function getConfigurationValue(string $path): mixed
     {
-        return $this->maximumDepth;
-    }
+        $configuration = $this->configuration;
 
-    /**
-     * @param string $path
-     * @return mixed
-     */
-    public function getConfigurationValue(string $path)
-    {
-        return Arrays::getValueByPath($this->configuration, $path);
+        return Arrays::getValueByPath($configuration, $path);
     }
 }

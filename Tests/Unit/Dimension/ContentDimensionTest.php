@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -11,6 +9,11 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
+
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValuesAreMissing;
 use Neos\ContentRepository\DimensionSpace\Dimension\Exception\GeneralizationIsInvalid;
@@ -21,49 +24,62 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class ContentDimensionTest extends UnitTestCase
 {
-    /**
-     * @var Dimension\ContentDimension
-     */
-    protected $subject;
+    protected ?Dimension\ContentDimension $subject;
 
     /**
-     * @var array|Dimension\ContentDimensionValue[]
+     * @var array<string,Dimension\ContentDimensionValue>
      */
-    protected $values;
+    protected array $values;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $dimensionIdentifier = new Dimension\ContentDimensionIdentifier('market');
-        $this->values['world'] = new Dimension\ContentDimensionValue('world', new Dimension\ContentDimensionValueSpecializationDepth(0), []);
-        $this->values['eu'] = new Dimension\ContentDimensionValue('eu', new Dimension\ContentDimensionValueSpecializationDepth(1), []);
+        $this->values['world'] = new Dimension\ContentDimensionValue(
+            'world',
+            new Dimension\ContentDimensionValueSpecializationDepth(0),
+            Dimension\ContentDimensionConstraintSet::createEmpty()
+        );
+        $this->values['eu'] = new Dimension\ContentDimensionValue(
+            'eu',
+            new Dimension\ContentDimensionValueSpecializationDepth(1),
+            Dimension\ContentDimensionConstraintSet::createEmpty()
+        );
         $euEdge = new Dimension\ContentDimensionValueVariationEdge($this->values['eu'], $this->values['world']);
-        $this->values['de'] = new Dimension\ContentDimensionValue('de', new Dimension\ContentDimensionValueSpecializationDepth(2), []);
+        $this->values['de'] = new Dimension\ContentDimensionValue(
+            'de',
+            new Dimension\ContentDimensionValueSpecializationDepth(2),
+            Dimension\ContentDimensionConstraintSet::createEmpty()
+        );
         $deEdge = new Dimension\ContentDimensionValueVariationEdge($this->values['de'], $this->values['eu']);
-        $this->values['us'] = new Dimension\ContentDimensionValue('us', new Dimension\ContentDimensionValueSpecializationDepth(1), []);
+        $this->values['us'] = new Dimension\ContentDimensionValue(
+            'us',
+            new Dimension\ContentDimensionValueSpecializationDepth(1),
+            Dimension\ContentDimensionConstraintSet::createEmpty()
+        );
         $usEdge = new Dimension\ContentDimensionValueVariationEdge($this->values['us'], $this->values['world']);
 
-        $this->subject = new Dimension\ContentDimension($dimensionIdentifier, $this->values, $this->values['world'], [$euEdge, $deEdge, $usEdge]);
+        $this->subject = new Dimension\ContentDimension(
+            $dimensionIdentifier,
+            $this->values,
+            $this->values['world'],
+            new Dimension\ContentDimensionValueVariationEdges([$euEdge, $deEdge, $usEdge])
+        );
     }
 
-    /**
-     * @test
-     */
-    public function initializationThrowsExceptionWithoutAnyDimensionValuesGiven()
+    public function testInitializationThrowsExceptionWithoutAnyDimensionValuesGiven()
     {
         $this->expectException(ContentDimensionValuesAreMissing::class);
         new Dimension\ContentDimension(
             new Dimension\ContentDimensionIdentifier('dimension'),
             [],
-            new Dimension\ContentDimensionValue('default')
+            new Dimension\ContentDimensionValue('default'),
+            Dimension\ContentDimensionValueVariationEdges::createEmpty()
         );
     }
 
-    /**
-     * @test
-     */
-    public function getValueReturnsValueForMatchingIdentifier()
+    public function testGetValueReturnsValueForMatchingIdentifier()
     {
         $this->assertSame(
             $this->values['world'],
@@ -71,10 +87,7 @@ class ContentDimensionTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function getValueReturnsNullForNonMatchingIdentifier()
+    public function testGetValueReturnsNullForNonMatchingIdentifier()
     {
         $this->assertSame(
             null,
@@ -82,10 +95,7 @@ class ContentDimensionTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function getRootValuesReturnsAllAndOnlyRootValues()
+    public function testGetRootValuesReturnsAllAndOnlyRootValues()
     {
         $this->assertSame(
             ['world' => $this->values['world']],
@@ -93,10 +103,7 @@ class ContentDimensionTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function getGeneralizationCorrectlyDeterminesGeneralization()
+    public function testGetGeneralizationCorrectlyDeterminesGeneralization()
     {
         $this->assertSame(
             $this->values['world'],
@@ -104,10 +111,7 @@ class ContentDimensionTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function getSpecializationsCorrectlyDeterminesSpecializations()
+    public function testGetSpecializationsCorrectlyDeterminesSpecializations()
     {
         $this->assertSame(
             [
@@ -119,10 +123,9 @@ class ContentDimensionTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws GeneralizationIsInvalid
      */
-    public function calculateSpecializationDepthReturnsZeroForValueItself()
+    public function testCalculateSpecializationDepthReturnsZeroForValueItself()
     {
         $this->assertEquals(
             new Dimension\ContentDimensionValueSpecializationDepth(0),
@@ -131,10 +134,9 @@ class ContentDimensionTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws GeneralizationIsInvalid
      */
-    public function calculateSpecializationDepthCalculatesCorrectDepthForSpecialization()
+    public function testCalculateSpecializationDepthCalculatesCorrectDepthForSpecialization()
     {
         $this->assertEquals(
             new Dimension\ContentDimensionValueSpecializationDepth(1),
@@ -146,23 +148,17 @@ class ContentDimensionTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function calculateSpecializationDepthThrowsExceptionForDisconnectedValues()
+    public function testCalculateSpecializationDepthThrowsExceptionForDisconnectedValues()
     {
         $this->expectException(GeneralizationIsInvalid::class);
         $this->subject->calculateSpecializationDepth($this->values['us'], $this->values['eu']);
     }
 
-    /**
-     * @test
-     */
-    public function getMaximumDepthCorrectlyDeterminesMaximumDepth()
+    public function testGetMaximumDepthCorrectlyDeterminesMaximumDepth()
     {
         $this->assertEquals(
             new Dimension\ContentDimensionValueSpecializationDepth(2),
-            $this->subject->getMaximumDepth()
+            $this->subject->maximumDepth
         );
     }
 }

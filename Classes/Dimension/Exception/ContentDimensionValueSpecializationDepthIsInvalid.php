@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,9 +10,17 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
+
 /**
- * The invalid content dimension value specialization depth exception
+ * The exception to be thrown if an invalid content dimension value specialization depth was tried to be initialized
  */
 class ContentDimensionValueSpecializationDepthIsInvalid extends \DomainException
 {
+    public static function becauseItMustBeNonNegative(int $attemptedValue): self
+    {
+        return new self('Specialization depths cannot be negative, ' . $attemptedValue . ' given.', 1516573132);
+    }
 }

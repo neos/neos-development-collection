@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,9 +10,22 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
+
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
+
 /**
- * The missing content dimension values exception
+ * The exception to be thrown if content dimension values are missing
  */
 class ContentDimensionValuesAreMissing extends \DomainException
 {
+    public static function inADimension(ContentDimensionIdentifier $dimensionIdentifier): self
+    {
+        return new self(
+            'Content dimension ' . $dimensionIdentifier . ' does not have any values defined',
+            1516576422
+        );
+    }
 }

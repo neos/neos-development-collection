@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -13,6 +9,10 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception;
 
 /**
  * The exception to be thrown if two content subgraph variation weights are to be compared that cannot, e.g. if they compose of different dimension combinations

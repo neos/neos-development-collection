@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,9 +10,17 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
+
 /**
- * The invalid content dimension value exception
+ * The exception to be thrown if an invalid content dimension value was attempted to be initialized
  */
 class ContentDimensionValueIsInvalid extends \DomainException
 {
+    public static function becauseItMustNoteBeEmpty(): self
+    {
+        return new self('Content dimension values must not be empty.', 1516573481);
+    }
 }

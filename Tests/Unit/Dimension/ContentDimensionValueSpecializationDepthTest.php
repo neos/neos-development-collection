@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -11,6 +9,11 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
+
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
 use Neos\Flow\Tests\UnitTestCase;
@@ -20,19 +23,13 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class ContentDimensionValueSpecializationDepthTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
-    public function initializationThrowsExceptionForNegativeDepth()
+    public function testInitializationThrowsExceptionForNegativeDepth()
     {
         $this->expectException(ContentDimensionValueSpecializationDepthIsInvalid::class);
         new Dimension\ContentDimensionValueSpecializationDepth(random_int(PHP_INT_MIN, -1));
     }
 
-    /**
-     * @test
-     */
-    public function isGreaterThanReturnsTrueForGreaterValue()
+    public function testIsGreaterThanReturnsTrueForGreaterValue()
     {
         $subject = new Dimension\ContentDimensionValueSpecializationDepth(1);
 
@@ -42,10 +39,7 @@ class ContentDimensionValueSpecializationDepthTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function isGreaterThanReturnsFalseForLesserValue()
+    public function testIsGreaterThanReturnsFalseForLesserValue()
     {
         $subject = new Dimension\ContentDimensionValueSpecializationDepth(0);
 
@@ -55,10 +49,7 @@ class ContentDimensionValueSpecializationDepthTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function isGreaterThanReturnsFalseForEqualValue()
+    public function testIsGreaterThanReturnsFalseForEqualValue()
     {
         $subject = new Dimension\ContentDimensionValueSpecializationDepth(0);
 
@@ -68,10 +59,7 @@ class ContentDimensionValueSpecializationDepthTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function isZeroReturnsTrueForDepthZero()
+    public function testIsZeroReturnsTrueForDepthZero()
     {
         $subject = new Dimension\ContentDimensionValueSpecializationDepth(0);
 
@@ -81,10 +69,7 @@ class ContentDimensionValueSpecializationDepthTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function isZeroReturnsFalseForDepthGreaterZero()
+    public function testIsZeroReturnsFalseForDepthGreaterZero()
     {
         $subject = new Dimension\ContentDimensionValueSpecializationDepth(random_int(1, PHP_INT_MAX));
 

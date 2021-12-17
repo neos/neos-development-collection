@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,49 +10,41 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionIdentifierIsInvalid;
+
 /**
  * The content dimension identifier value object
  */
 final class ContentDimensionIdentifier implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
-    protected $identifier;
+    public readonly string $identifier;
 
     /**
-     * @param string $identifier
-     * @throws Exception\ContentDimensionIdentifierIsInvalid
+     * @throws ContentDimensionIdentifierIsInvalid
      */
     public function __construct(string $identifier)
     {
         if (empty($identifier)) {
-            throw new Exception\ContentDimensionIdentifierIsInvalid('Content dimension identifiers must not be empty.', 1515166615);
+            throw ContentDimensionIdentifierIsInvalid::becauseItMustNotBeEmpty();
         }
         $this->identifier = $identifier;
     }
 
-    /**
-     * @param ContentDimensionIdentifier $otherContentDimensionIdentifier
-     * @return bool
-     */
-    public function equals(ContentDimensionIdentifier $otherContentDimensionIdentifier): bool
+    public function equals(ContentDimensionIdentifier $other): bool
     {
-        return $this->__toString() === $otherContentDimensionIdentifier->__toString();
+        return $this->identifier === $other->identifier;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString(): string
+    public function jsonSerialize(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @return string
-     */
-    public function jsonSerialize(): string
+    public function __toString(): string
     {
         return $this->identifier;
     }

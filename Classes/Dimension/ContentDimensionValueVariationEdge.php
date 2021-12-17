@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,44 +10,17 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
 /**
- * The content dimension variation edge domain model
+ * A directed edge connecting two dimension space points declaring them specialization and generalization
  */
 final class ContentDimensionValueVariationEdge
 {
-    /**
-     * @var ContentDimensionValue
-     */
-    protected $generalization;
-
-    /**
-     * @var ContentDimensionValue
-     */
-    protected $specialization;
-
-    /**
-     * @param ContentDimensionValue $specialization
-     * @param ContentDimensionValue $generalization
-     */
-    public function __construct(ContentDimensionValue $specialization, ContentDimensionValue $generalization)
-    {
-        $this->specialization = $specialization;
-        $this->generalization = $generalization;
-    }
-
-    /**
-     * @return ContentDimensionValue
-     */
-    public function getSpecialization(): ContentDimensionValue
-    {
-        return $this->specialization;
-    }
-
-    /**
-     * @return ContentDimensionValue
-     */
-    public function getGeneralization(): ContentDimensionValue
-    {
-        return $this->generalization;
-    }
+    public function __construct(
+        public readonly ContentDimensionValue $specialization,
+        public readonly ContentDimensionValue $generalization,
+    ) {}
 }

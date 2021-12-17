@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\Dimension;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,73 +10,61 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
+use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
+
 /**
- * The content dimension value specialization depth value object
+ * The value object describing the specialization depth between two content dimension values
+ *
+ *   0 --> A ◀─┐
+ *   1 --> │   │
+ *         B   │ <-- 2
+ *   1 --> │   │
+ *         C ──┘
  */
 final class ContentDimensionValueSpecializationDepth implements \JsonSerializable
 {
-    /**
-     * @var int
-     */
-    protected $depth;
+    public readonly int $depth;
 
     /**
-     * @param int $depth
-     * @throws Exception\ContentDimensionValueSpecializationDepthIsInvalid
+     * @throws ContentDimensionValueSpecializationDepthIsInvalid
      */
     public function __construct(int $depth)
     {
         if ($depth < 0) {
-            throw new Exception\ContentDimensionValueSpecializationDepthIsInvalid('Specialization depths cannot be negative.', 1516573132);
+            throw ContentDimensionValueSpecializationDepthIsInvalid::becauseItMustBeNonNegative($depth);
         }
         $this->depth = $depth;
     }
 
-    /**
-     * @param ContentDimensionValueSpecializationDepth $otherDepth
-     * @return bool
-     */
-    public function isGreaterThan(ContentDimensionValueSpecializationDepth $otherDepth): bool
+    public static function zero(): self
     {
-        return $this->depth > $otherDepth->getDepth();
+        return new self(0);
     }
 
-    /**
-     * @return bool
-     */
+    public function isGreaterThan(ContentDimensionValueSpecializationDepth $otherDepth): bool
+    {
+        return $this->depth > $otherDepth->depth;
+    }
+
     public function isZero(): bool
     {
         return $this->depth === 0;
     }
 
-    /**
-     * @return int
-     */
-    public function getDepth(): int
+    public function increment(): self
     {
-        return $this->depth;
+        return new self($this->depth + 1);
     }
 
-    /**
-     * @return ContentDimensionValueSpecializationDepth
-     */
-    public function increment(): ContentDimensionValueSpecializationDepth
+    public function decreaseBy(ContentDimensionValueSpecializationDepth $other): self
     {
-        return new ContentDimensionValueSpecializationDepth($this->depth + 1);
+        return new self($this->depth - $other->depth);
     }
 
-    /**
-     * @param ContentDimensionValueSpecializationDepth $otherDepth
-     * @return ContentDimensionValueSpecializationDepth
-     */
-    public function decreaseBy(ContentDimensionValueSpecializationDepth $otherDepth)
-    {
-        return new ContentDimensionValueSpecializationDepth($this->depth - $otherDepth->getDepth());
-    }
-
-    /**
-     * @return int
-     */
     public function jsonSerialize(): int
     {
         return $this->depth;

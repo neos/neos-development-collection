@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
-
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
@@ -14,6 +10,10 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
+
 use Neos\ContentRepository\DimensionSpace\Dimension;
 
 /**
@@ -22,35 +22,24 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 final class ContentDimensionZookeeper
 {
     /**
-     * @var Dimension\ContentDimensionSourceInterface
+     * @var array<int,array<string,Dimension\ContentDimensionValue>>
      */
-    protected $contentDimensionSource;
+    private ?array $allowedCombinations = null;
 
-    /**
-     * @var array|Dimension\ContentDimensionValue[][]
-     */
-    protected $allowedCombinations;
-
-    /**
-     * @param Dimension\ContentDimensionSourceInterface $contentDimensionSource
-     */
-    public function __construct(Dimension\ContentDimensionSourceInterface $contentDimensionSource)
-    {
-        $this->contentDimensionSource = $contentDimensionSource;
+    public function __construct(
+        private Dimension\ContentDimensionSourceInterface $contentDimensionSource
+    ) {
     }
 
-    /**
-     * @return void
-     */
     protected function initializeAllowedCombinations(): void
     {
         if (!empty($this->contentDimensionSource->getContentDimensionsOrderedByPriority())) {
-            /** @var Dimension\ContentDimensionValue[][] $dimensionCombinations */
+            /** @var array<int,array<string,Dimension\ContentDimensionValue>> $dimensionCombinations */
             $dimensionCombinations = [];
             foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
                 if (empty($dimensionCombinations)) {
-                    foreach ($contentDimension->getValues() as $serializedValue => $dimensionValue) {
-                        $dimensionCombinations[] = [(string)$contentDimension->getIdentifier() => $dimensionValue];
+                    foreach ($contentDimension->values as $serializedValue => $dimensionValue) {
+                        $dimensionCombinations[] = [(string)$contentDimension->identifier => $dimensionValue];
                     }
                 } else {
                     $this->extendCombinationsWithDimension($dimensionCombinations, $contentDimension);
@@ -63,26 +52,29 @@ final class ContentDimensionZookeeper
     }
 
     /**
-     * @param array|Dimension\ContentDimensionValue[][] $dimensionCombinations
-     * @param Dimension\ContentDimension $contentDimension
+     * @param array<int,array<string,Dimension\ContentDimensionValue>> $dimensionCombinations
      */
     protected function extendCombinationsWithDimension(
-        array & $dimensionCombinations,
+        array &$dimensionCombinations,
         Dimension\ContentDimension $contentDimension
     ): void {
         $currentDimensionCombinations = [];
         foreach ($dimensionCombinations as $dimensionCombination) {
-            foreach ($contentDimension->getValues() as $currentDimensionValue) {
+            foreach ($contentDimension->values as $currentDimensionValue) {
                 foreach ($dimensionCombination as $otherDimensionIdentifier => $otherDimensionValue) {
-                    if (!$currentDimensionValue->canBeCombinedWith(new Dimension\ContentDimensionIdentifier($otherDimensionIdentifier),
-                            $otherDimensionValue)
-                        || !$otherDimensionValue->canBeCombinedWith($contentDimension->getIdentifier(),
-                            $currentDimensionValue)) {
+                    if (!$currentDimensionValue->canBeCombinedWith(
+                            new Dimension\ContentDimensionIdentifier($otherDimensionIdentifier),
+                            $otherDimensionValue
+                        )
+                        || !$otherDimensionValue->canBeCombinedWith(
+                            $contentDimension->identifier,
+                            $currentDimensionValue)
+                    ) {
                         continue 2;
                     }
                 }
                 $newDimensionCombination = $dimensionCombination;
-                $newDimensionCombination[(string)$contentDimension->getIdentifier()] = $currentDimensionValue;
+                $newDimensionCombination[(string)$contentDimension->identifier] = $currentDimensionValue;
                 $currentDimensionCombinations[] = $newDimensionCombination;
             }
         }
@@ -91,7 +83,7 @@ final class ContentDimensionZookeeper
     }
 
     /**
-     * @return array|Dimension\ContentDimensionValue[][]
+     * @return array<int,array<string,Dimension\ContentDimensionValue>>
      */
     public function getAllowedCombinations(): array
     {
@@ -102,9 +94,6 @@ final class ContentDimensionZookeeper
         return $this->allowedCombinations;
     }
 
-    /**
-     * @return DimensionSpacePointSet
-     */
     public function getAllowedDimensionSubspace(): DimensionSpacePointSet
     {
         $points = [];
@@ -114,8 +103,9 @@ final class ContentDimensionZookeeper
             foreach ($dimensionCombination as $contentDimensionIdentifier => $contentDimensionValue) {
                 $coordinates[$contentDimensionIdentifier] = (string)$contentDimensionValue;
             }
-            $point = new DimensionSpacePoint($coordinates);
-            $points[$point->getHash()] = $point;
+
+            $point = DimensionSpacePoint::instance($coordinates);
+            $points[$point->hash] = $point;
         }
 
         return new DimensionSpacePointSet($points);
