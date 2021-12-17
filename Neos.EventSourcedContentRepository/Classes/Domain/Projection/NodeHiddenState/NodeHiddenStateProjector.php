@@ -50,9 +50,7 @@ class NodeHiddenStateProjector implements ProjectorInterface
 
     public function reset(): void
     {
-        $this->transactional(function () {
-            $this->getDatabaseConnection()->executeStatement('TRUNCATE table neos_contentrepository_projection_nodehiddenstate');
-        });
+        $this->getDatabaseConnection()->executeStatement('TRUNCATE table neos_contentrepository_projection_nodehiddenstate');
     }
 
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)

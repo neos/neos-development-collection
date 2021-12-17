@@ -65,12 +65,10 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
     public function reset(): void
     {
         parent::reset();
-        $this->getDatabaseConnection()->transactional(function () {
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
-        });
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
     }
 
     /**
