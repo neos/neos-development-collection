@@ -80,10 +80,10 @@ class NodePublishIntegrityCheckService
      */
     public function ensureIntegrityForPublishingOfNodes(array $nodesToPublish, Workspace $targetWorkspace): void
     {
-        print_r('!!!!!!!!!!! CALL FOR' . PHP_EOL);
-        foreach ($nodesToPublish as $node) {
-            print_r("\t" . $node->getPath() . PHP_EOL);
-        }
+        # print_r('!!!!!!!!!!! CALL FOR' . PHP_EOL);
+        # foreach ($nodesToPublish as $node) {
+            # print_r("\t" . $node->getPath() . PHP_EOL);
+        # }
 
         if (count($nodesToPublish) === 0) {
             return;
@@ -123,17 +123,17 @@ class NodePublishIntegrityCheckService
 
     private function applyIntegrityCheckForChangeSet(NodePublishingIntegrityNodeListToPublish $nodesToPublish, Workspace $targetWorkspace)
     {
-        print_r('!!!!!!!!!!! run check for the following nodes:' . PHP_EOL);
-        foreach ($nodesToPublish as $node) {
-            print_r("\t" . $node->getPath() . PHP_EOL);
-        }
+        # print_r('!!!!!!!!!!! run check for the following nodes:' . PHP_EOL);
+        # foreach ($nodesToPublish as $node) {
+            # print_r("\t" . $node->getPath() . PHP_EOL);
+        # }
 
         // NodesToPublish is an array of nodes.
         // the context of the to-be-published nodes is the source workspace.
         foreach ($nodesToPublish as $node) {
             assert($node instanceof NodeInterface);
-            print_r('###########################################' . PHP_EOL);
-            print_r('START INTEGRITY CHECK FOR ' . $node->getPath() . PHP_EOL);
+            # print_r('###########################################' . PHP_EOL);
+            # print_r('START INTEGRITY CHECK FOR ' . $node->getPath() . PHP_EOL);
 
             //////////////////////////////////////////////////////////
             // PREPARATION: Build $contextOfTargetWorkspace
@@ -195,7 +195,7 @@ class NodePublishIntegrityCheckService
     {
         // now, we find all children in $originalPath in the base workspace (e.g. live)
         $originalNodeInTargetWorkspace = $contextOfTargetWorkspace->getNode($originalPath);
-        print_r("\t looking at original path " . $originalPath . PHP_EOL);
+        # print_r("\t looking at original path " . $originalPath . PHP_EOL);
         if ($originalNodeInTargetWorkspace) {
             // original node DOES exist in the target workspace
             $childNodes = $originalNodeInTargetWorkspace->getChildNodes();
@@ -209,13 +209,13 @@ class NodePublishIntegrityCheckService
                 // those child nodes must be moved or deleted in the same publish
                 // as soon as we find any child node not getting moved or removed => ERROR
                 foreach ($childNodes as $childNode) {
-                    print_r("\t\tchild => " . $childNode->getPath() . PHP_EOL);
+                    # print_r("\t\tchild => " . $childNode->getPath() . PHP_EOL);
                     assert($childNode instanceof NodeInterface);
                     $childIsMovedAway = $nodesToPublish->isMovedFrom($childNode->getPath());
                     $childIsRemoved = $nodesToPublish->isRemoved($childNode->getPath());
 
-                    print_r("\t\t\t moved?" . ($childIsMovedAway ? 'yes' : 'no') . PHP_EOL);
-                    print_r("\t\t\t removed?" . ($childIsRemoved ? 'yes' : 'no') . PHP_EOL);
+                    # print_r("\t\t\t moved?" . ($childIsMovedAway ? 'yes' : 'no') . PHP_EOL);
+                    # print_r("\t\t\t removed?" . ($childIsRemoved ? 'yes' : 'no') . PHP_EOL);
 
                     $childGetsMovedOrRemovedInPublish = $childIsMovedAway || $childIsRemoved;
                     if (!$childGetsMovedOrRemovedInPublish) {

@@ -456,7 +456,7 @@ trait NodeOperationsTrait
 
             $nodeType = $node->getNodeType();
             if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
-                $nodes = array_merge($nodes, $this->collectAllContentChildNodes($node));
+                $nodes = $this->getPublishingService()->collectAllContentChildNodes($node, $nodes);
             }
         }
 
@@ -482,20 +482,6 @@ trait NodeOperationsTrait
         } catch (\Exception $exception) {
             $this->lastException = $exception;
         }
-    }
-
-    /**
-     * @param NodeInterface $parentNode
-     * @param array $collectedNodes
-     * @return array
-     */
-    protected function collectAllContentChildNodes(NodeInterface $parentNode, $collectedNodes = [])
-    {
-        foreach ($parentNode->getChildNodes('!Neos.Neos:Document') as $contentNode) {
-            $collectedNodes[] = $contentNode;
-            $collectedNodes = array_merge($collectedNodes, $this->collectAllContentChildNodes($contentNode));
-        }
-        return $collectedNodes;
     }
 
     /**

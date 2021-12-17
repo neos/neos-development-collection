@@ -98,7 +98,7 @@ class PublishingService extends \Neos\ContentRepository\Domain\Service\Publishin
      * @param array $collectedNodes
      * @return array
      */
-    protected function collectAllContentChildNodes(NodeInterface $parentNode, $collectedNodes = [])
+    public function collectAllContentChildNodes(NodeInterface $parentNode, $collectedNodes = [])
     {
         foreach ($parentNode->getChildNodes('!Neos.Neos:Document') as $contentNode) {
             $collectedNodes[] = $contentNode;
