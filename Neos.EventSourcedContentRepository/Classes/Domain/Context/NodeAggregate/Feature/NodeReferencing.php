@@ -51,7 +51,7 @@ trait NodeReferencing
         $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->getReferenceName());
         foreach ($command->getDestinationNodeAggregateIdentifiers() as $destinationNodeAggregateIdentifier) {
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $destinationNodeAggregateIdentifier);
-            $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getSourceOriginDimensionSpacePoint());
+            $this->requireNodeAggregateToCoverDimensionSpacePoint($destinationNodeAggregate, $command->getSourceOriginDimensionSpacePoint());
 
             // @todo check reference node type constraints
         }
