@@ -448,7 +448,7 @@ trait ProjectedNodeTrait
                 if (isset($row['NodeDiscriminator'])) {
                     $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
                     $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualChildNodes[$index]);
-                    Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
+                    Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . json_encode($expectedNodeDiscriminator->jsonSerialize()). ' Actual: ' . json_encode($actualNodeDiscriminator));
                 }
             }
         });

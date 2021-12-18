@@ -190,12 +190,13 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
-      | Key                      | Value                                      |
-      | contentStreamIdentifier  | "cs-identifier"                            |
-      | nodeAggregateIdentifier  | "nodea-identifier-de"                      |
-      | newNodeTypeName          | "Neos.ContentRepository.Testing:NodeTypeB" |
-      | strategy                 | "delete"                                   |
-      | initiatingUserIdentifier | "user"                                     |
+      | Key                                        | Value                                      |
+      | contentStreamIdentifier                    | "cs-identifier"                            |
+      | nodeAggregateIdentifier                    | "nodea-identifier-de"                      |
+      | newNodeTypeName                            | "Neos.ContentRepository.Testing:NodeTypeB" |
+      | strategy                                   | "delete"                                   |
+      | initiatingUserIdentifier                   | "user"                                     |
+      | tetheredDescendantNodeAggregateIdentifiers | { "child-of-type-b": "child-of-type-b-id"} |
     And the graph projection is fully up to date
 
     # the type has changed
@@ -207,8 +208,8 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"gsw"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
     And I expect this node to have the following child nodes:
-      | Name            | NodeDiscriminator                                |
-      | child-of-type-b | cs-identifier;child-of-type-b;{"language":"gsw"} |
+      | Name            | NodeDiscriminator                                   |
+      | child-of-type-b | cs-identifier;child-of-type-b-id;{"language":"gsw"} |
 
   Scenario: When changing node type, a non-allowed tethered node should stay (Tethered nodes are not taken into account when checking constraints)
     And I have the following additional NodeTypes configuration:
@@ -225,14 +226,15 @@ Feature: Change node aggregate type - behavior of DELETE strategy
           'Neos.ContentRepository.Testing:ChildOfNodeTypeB': false
     """
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                      |
-      | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "nodea-identifier-de"                      |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
-      | originDimensionSpacePoint     | {"language":"de"}                          |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                   |
-      | initialPropertyValues         | {}                                         |
-      | initiatingUserIdentifier      | "user"                                     |
+      | Key                                        | Value                                      |
+      | contentStreamIdentifier                    | "cs-identifier"                            |
+      | nodeAggregateIdentifier                    | "nodea-identifier-de"                      |
+      | nodeTypeName                               | "Neos.ContentRepository.Testing:NodeTypeA" |
+      | originDimensionSpacePoint                  | {"language":"de"}                          |
+      | parentNodeAggregateIdentifier              | "lady-eleonode-rootford"                   |
+      | initialPropertyValues                      | {}                                         |
+      | initiatingUserIdentifier                   | "user"                                     |
+      | tetheredDescendantNodeAggregateIdentifiers | { "child-of-type-a": "child-of-type-a-id"} |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -245,12 +247,13 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
-      | Key                      | Value                                      |
-      | contentStreamIdentifier  | "cs-identifier"                            |
-      | nodeAggregateIdentifier  | "nodea-identifier-de"                      |
-      | newNodeTypeName          | "Neos.ContentRepository.Testing:NodeTypeB" |
-      | strategy                 | "delete"                                   |
-      | initiatingUserIdentifier | "user"                                     |
+      | Key                                        | Value                                      |
+      | contentStreamIdentifier                    | "cs-identifier"                            |
+      | nodeAggregateIdentifier                    | "nodea-identifier-de"                      |
+      | newNodeTypeName                            | "Neos.ContentRepository.Testing:NodeTypeB" |
+      | strategy                                   | "delete"                                   |
+      | initiatingUserIdentifier                   | "user"                                     |
+      | tetheredDescendantNodeAggregateIdentifiers | { "child-of-type-b": "child-of-type-b-id"} |
     And the graph projection is fully up to date
 
     # the type has changed
@@ -260,6 +263,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     # BOTH tethered child nodes still need to exist
     And I expect this node to have the following child nodes:
-      | Name            | NodeDiscriminator                               |
-      | child-of-type-a | cs-identifier;child-of-type-a;{"language":"de"} |
-      | child-of-type-b | cs-identifier;child-of-type-b;{"language":"de"} |
+      | Name            | NodeDiscriminator                                  |
+      | child-of-type-a | cs-identifier;child-of-type-a-id;{"language":"de"} |
+      | child-of-type-b | cs-identifier;child-of-type-b-id;{"language":"de"} |

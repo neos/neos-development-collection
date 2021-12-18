@@ -78,6 +78,7 @@ trait NodeTypeChange
         ReadableNodeAggregateInterface $parentNodeAggregate,
         NodeInterface $parentNode,
         NodeName $tetheredNodeName,
+        NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
         NodeType $expectedTetheredNodeType,
         UserIdentifier $initiatingUserIdentifier
     ): DomainEvents;
@@ -165,10 +166,12 @@ trait NodeTypeChange
                     $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
                     $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName($node->getNodeAggregateIdentifier(), $tetheredNodeName);
                     if ($tetheredNode === null) {
+                        $tetheredNodeAggregateIdentifier = $command->getTetheredDescendantNodeAggregateIdentifiers()->getNodeAggregateIdentifier(NodePath::fromString($tetheredNodeName->jsonSerialize()));
                         $events = $events->appendEvents($this->createEventsForMissingTetheredNode(
                             $nodeAggregate,
                             $node,
                             $tetheredNodeName,
+                            $tetheredNodeAggregateIdentifier,
                             $expectedTetheredNodeType,
                             $command->getInitiatingUserIdentifier()
                         ));

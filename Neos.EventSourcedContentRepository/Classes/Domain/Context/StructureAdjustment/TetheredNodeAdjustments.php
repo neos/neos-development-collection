@@ -101,7 +101,7 @@ class TetheredNodeAdjustments
                             function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
                                 $this->readSideMemoryCacheManager->disableCache();
 
-                                $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType, UserIdentifier::forSystemUser());
+                                $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, null, $expectedTetheredNodeType, UserIdentifier::forSystemUser());
 
                                 $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
                                 $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
