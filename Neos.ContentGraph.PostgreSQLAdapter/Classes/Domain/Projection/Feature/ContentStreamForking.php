@@ -28,7 +28,7 @@ trait ContentStreamForking
      */
     public function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
-        $this->transactional(function () use($event) {
+        $this->transactional(function () use ($event) {
             $parameters = [
                 'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier(),
                 'targetContentStreamIdentifier' => (string)$event->getContentStreamIdentifier()

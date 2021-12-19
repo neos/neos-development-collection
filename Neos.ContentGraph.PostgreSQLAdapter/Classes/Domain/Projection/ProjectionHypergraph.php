@@ -15,7 +15,6 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query\ProjectionHypergraphQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\DbalClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -48,8 +47,7 @@ final class ProjectionHypergraph
      */
     public function findNodeRecordByRelationAnchorPoint(
         NodeRelationAnchorPoint $relationAnchorPoint
-    ): ?NodeRecord
-    {
+    ): ?NodeRecord {
         $query = /** @lang PostgreSQL */
             'SELECT n.*
             FROM ' . NodeRecord::TABLE_NAME .' n
@@ -71,8 +69,7 @@ final class ProjectionHypergraph
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): ?NodeRecord
-    {
+    ): ?NodeRecord {
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier);
         $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
             ->withNodeAggregateIdentifier($nodeAggregateIdentifier);
@@ -131,8 +128,7 @@ final class ProjectionHypergraph
 
     public function findSucceedingSiblingNodeRecordByOrigin(
 
-    ): ?NodeRecord
-    {
+    ): ?NodeRecord {
         $query = /** @lang PostgreSQL */
             'SELECT * FROM neos_contentgraph_node sn,
     (
@@ -232,7 +228,7 @@ final class ProjectionHypergraph
         }
 
         $hierarchyHyperrelations = [];
-        foreach($this->getDatabaseConnection()->executeQuery($query, $parameters, $types) as $row) {
+        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types) as $row) {
             $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -267,7 +263,7 @@ final class ProjectionHypergraph
         $types['affectedDimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
 
         $hierarchyHyperrelations = [];
-        foreach($this->getDatabaseConnection()->executeQuery($query, $parameters, $types) as $row) {
+        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types) as $row) {
             $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -291,7 +287,7 @@ final class ProjectionHypergraph
         ];
 
         $referenceHyperrelations = [];
-        foreach($this->getDatabaseConnection()->executeQuery($query, $parameters) as $row) {
+        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters) as $row) {
             $referenceHyperrelations[] = ReferenceHyperrelationRecord::fromDatabaseRow($row);
         }
 

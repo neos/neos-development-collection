@@ -130,5 +130,4 @@ trait WorkspaceCreation
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
             ->handleRebaseWorkspace($command);
     }
-
 }

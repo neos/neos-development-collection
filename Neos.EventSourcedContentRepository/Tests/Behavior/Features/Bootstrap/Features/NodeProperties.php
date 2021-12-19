@@ -80,7 +80,7 @@ trait NodeProperties
      */
     public function iExpectThisNodeToNotHaveTheProperty(string $propertyName)
     {
-        $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use($propertyName) {
+        $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($propertyName) {
             Assert::assertFalse($currentNode->hasProperty($propertyName), 'Node should not exist for adapter ' . $adapterName);
         });
     }

@@ -40,7 +40,7 @@ final class NodeAggregateIdentifiers
         foreach ($array as $item) {
             if (is_string($item)) {
                 $values[$item] = NodeAggregateIdentifier::fromString($item);
-            } elseif($item instanceof NodeAggregateIdentifier) {
+            } elseif ($item instanceof NodeAggregateIdentifier) {
                 $values[(string)$item] = $item;
             } else {
                 throw new \InvalidArgumentException(get_class() . ' can only consist of ' . NodeAggregateIdentifier::class . ' objects.', 1616841637);

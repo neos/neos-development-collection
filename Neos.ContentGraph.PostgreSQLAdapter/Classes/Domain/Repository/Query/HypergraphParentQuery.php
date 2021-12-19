@@ -33,7 +33,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
             'SELECT ' . ($fieldsToFetch
                 ? implode(', ', $fieldsToFetch)
                 : 'pn.origindimensionspacepoint, pn.nodeaggregateidentifier, pn.nodetypename, pn.classification, pn.properties, pn.nodename,
-                ph.contentstreamidentifier, ph.dimensionspacepoint' ) . '
+                ph.contentstreamidentifier, ph.dimensionspacepoint') . '
             FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ph
             JOIN ' . NodeRecord::TABLE_NAME . ' pn ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
             JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ch ON ch.parentnodeanchor = pn.relationanchorpoint

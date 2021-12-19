@@ -26,7 +26,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGe
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node disabling feature set for the hypergraph projector
@@ -44,7 +43,7 @@ trait NodeVariation
      */
     public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
-        $this->transactional(function () use($event) {
+        $this->transactional(function () use ($event) {
             $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
                 $event->getContentStreamIdentifier(),
                 $event->getSourceOrigin(),
@@ -69,7 +68,7 @@ trait NodeVariation
 
     public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
-        $this->transactional(function () use($event) {
+        $this->transactional(function () use ($event) {
             $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
                 $event->getContentStreamIdentifier(),
                 $event->getSourceOrigin(),

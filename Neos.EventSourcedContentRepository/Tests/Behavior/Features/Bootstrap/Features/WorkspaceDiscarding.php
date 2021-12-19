@@ -66,7 +66,7 @@ trait WorkspaceDiscarding
     public function theCommandDiscardIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $nodeAddresses = array_map(function(array $serializedNodeAddress) {
+        $nodeAddresses = array_map(function (array $serializedNodeAddress) {
             return NodeAddress::fromArray($serializedNodeAddress);
         }, $commandArguments['nodeAddresses']);
         $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])

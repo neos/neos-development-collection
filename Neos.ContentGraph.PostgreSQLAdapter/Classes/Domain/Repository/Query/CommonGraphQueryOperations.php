@@ -15,9 +15,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 
 trait CommonGraphQueryOperations
 {
@@ -60,7 +58,7 @@ trait CommonGraphQueryOperations
             AND ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
                 }
             }
-        } elseif(!empty($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
+        } elseif (!empty($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
             $query .= '
             AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
         }

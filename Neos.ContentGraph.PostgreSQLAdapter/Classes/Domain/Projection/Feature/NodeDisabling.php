@@ -18,7 +18,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node disabling feature set for the hypergraph projector
@@ -30,7 +29,7 @@ trait NodeDisabling
      */
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
-        $this->transactional(function() use($event) {
+        $this->transactional(function () use ($event) {
             $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint = $this->getProjectionHypergraph()->findDescendantNodeAggregateIdentifiers(
                 $event->getContentStreamIdentifier(),
                 $event->getAffectedDimensionSpacePoints(),
@@ -55,7 +54,7 @@ trait NodeDisabling
      */
     public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
-        $this->transactional(function() use($event) {
+        $this->transactional(function () use ($event) {
             $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(
                 $event->getContentStreamIdentifier(),
                 $event->getAffectedDimensionSpacePoints(),

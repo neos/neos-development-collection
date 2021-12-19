@@ -20,7 +20,6 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\Mapping\DefaultEventToListenerMappingProvider;
 use Neos\EventSourcing\EventListener\Mapping\EventToListenerMapping;
 use Neos\EventSourcing\EventPublisher\DeferEventPublisher;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * @internal

@@ -45,7 +45,7 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
     WHERE sn.nodeaggregateidentifier != :nodeAggregateIdentifier
       ' . $queryMode->renderCondition();
 
-    //AND sn.relationanchorpoint = ANY(sh.childnodeanchors[(array_position(sh.childnodeanchors, sh.relationanchorpoint)):])';
+        //AND sn.relationanchorpoint = ANY(sh.childnodeanchors[(array_position(sh.childnodeanchors, sh.relationanchorpoint)):])';
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,

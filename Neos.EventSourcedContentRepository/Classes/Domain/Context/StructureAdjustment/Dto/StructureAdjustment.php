@@ -59,7 +59,8 @@ class StructureAdjustment extends Message
     ): self {
         return new self(
             'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- ' . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
-            null, [
+            null,
+            [
                 'contentStream' => $node->getContentStreamIdentifier()->jsonSerialize(),
                 'dimensionSpacePoint' => json_encode($node->getOriginDimensionSpacePoint()->jsonSerialize()),
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier()->jsonSerialize(),

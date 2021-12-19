@@ -97,7 +97,8 @@ class TetheredNodeAdjustments
                         // $nestedNode not found - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
                         yield StructureAdjustment::createForNode(
                             $node,
-                            StructureAdjustment::TETHERED_NODE_MISSING, 'The tethered child node "' . $tetheredNodeName . '" is missing.',
+                            StructureAdjustment::TETHERED_NODE_MISSING,
+                            'The tethered child node "' . $tetheredNodeName . '" is missing.',
                             function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
                                 $this->readSideMemoryCacheManager->disableCache();
 

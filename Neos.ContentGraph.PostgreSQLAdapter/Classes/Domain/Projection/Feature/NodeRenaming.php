@@ -17,7 +17,6 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node disabling feature set for the hypergraph projector
@@ -31,7 +30,7 @@ trait NodeRenaming
      */
     public function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
     {
-        $this->transactional(function () use($event) {
+        $this->transactional(function () use ($event) {
             foreach ($this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier()
@@ -39,7 +38,7 @@ trait NodeRenaming
                 $this->copyOnWrite(
                     $event->getContentStreamIdentifier(),
                     $originNode,
-                    function(NodeRecord $nodeRecord) use ($event) {
+                    function (NodeRecord $nodeRecord) use ($event) {
                         $nodeRecord->nodeName = $event->getNewNodeName();
                     }
                 );
