@@ -16,18 +16,22 @@
     },
     "replace": {
         "neos/contentgraph-doctrinedbaladapter": "self.version",
+        "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
         "neos/eventsourcedcontentrepository-security": "self.version",
         "neos/event-sourced-content-repository": "self.version",
         "neos/event-sourced-neos-adjustments": "self.version"
     },
-    "suggest": [],
+    "suggest": {},
     "autoload": {
         "psr-4": {
             "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
                 "Neos.ContentGraph.DoctrineDbalAdapter/Classes"
             ],
+            "Neos\\ContentGraph\\PostgreSQLAdapter\\": [
+                "Neos.ContentGraph.PostgreSQLAdapter/Classes"
+              ],
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
             ],
@@ -61,6 +65,9 @@
             ],
             "Neos\\EventSourcedContentRepository\\Tests\\": [
                 "Neos.EventSourcedContentRepository/Tests"
+            ],
+            "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": [
+                "Neos.ContentGraph.PostgreSQLAdapter/Tests"
             ]
         }
     }

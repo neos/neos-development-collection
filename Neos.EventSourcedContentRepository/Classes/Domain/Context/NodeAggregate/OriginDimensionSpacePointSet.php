@@ -29,12 +29,12 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     /**
      * @var array|OriginDimensionSpacePoint[]
      */
-    private $points;
+    private array $points;
 
     /**
      * @var \ArrayIterator
      */
-    private $iterator;
+    private \ArrayIterator $iterator;
 
     /**
      * @param array|OriginDimensionSpacePoint[] $points Array of dimension space points
@@ -62,7 +62,17 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
             $originDimensionSpacePoints[] = OriginDimensionSpacePoint::fromDimensionSpacePoint($point);
         }
 
-        return new static($originDimensionSpacePoints);
+        return new self($originDimensionSpacePoints);
+    }
+
+    public static function fromJsonString(string $jsonString): self
+    {
+        $dimensionSpacePoints = [];
+        foreach (json_decode($jsonString, true) as $coordinates) {
+            $dimensionSpacePoints[] = new OriginDimensionSpacePoint($coordinates);
+        }
+
+        return new self($dimensionSpacePoints);
     }
 
     public function toDimensionSpacePointSet(): DimensionSpacePointSet

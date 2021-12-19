@@ -27,12 +27,13 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\Node
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeReferencing;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRemoval;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRenaming;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRetyping;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeTypeChange;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeSerialization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeVariation;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\TetheredNodeInternals;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 
@@ -47,60 +48,47 @@ final class NodeAggregateCommandHandler
     use NodeReferencing;
     use NodeRemoval;
     use NodeRenaming;
-    use NodeRetyping;
+    use NodeTypeChange;
     use NodeVariation;
     use TetheredNodeInternals;
 
-    /**
-     * @var ContentStream\ContentStreamRepository
-     */
-    protected $contentStreamRepository;
+    private ContentStream\ContentStreamRepository $contentStreamRepository;
 
     /**
      * Used for constraint checks against the current outside configuration state of node types
-     *
-     * @var NodeTypeManager
      */
-    protected $nodeTypeManager;
+    private NodeTypeManager $nodeTypeManager;
 
     /**
      * The graph projection used for soft constraint checks
-     *
-     * @var ContentGraphInterface
      */
-    protected $contentGraph;
+    private ContentGraphInterface $contentGraph;
 
     /**
      * Used for variation resolution from the current outside state of content dimensions
-     *
-     * @var DimensionSpace\InterDimensionalVariationGraph
      */
-    protected $interDimensionalVariationGraph;
+    private DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
     /**
      * Used for constraint checks against the current outside configuration state of content dimensions
      */
-    protected DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper;
+    private DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper;
 
     /**
      * Used for publishing events
-     *
-     * @var NodeAggregateEventPublisher
      */
-    protected $nodeEventPublisher;
+    private NodeAggregateEventPublisher $nodeEventPublisher;
 
-    /**
-     * @var ReadSideMemoryCacheManager
-     */
-    protected $readSideMemoryCacheManager;
+    private ReadSideMemoryCacheManager $readSideMemoryCacheManager;
 
     protected PropertyConverter $propertyConverter;
 
     /**
      * can be disabled in {@see NodeAggregateCommandHandler::withoutAnchestorNodeTypeConstraintChecks()}
-     * @var bool
      */
-    protected $ancestorNodeTypeConstraintChecksEnabled = true;
+    private bool $ancestorNodeTypeConstraintChecksEnabled = true;
+
+    private RuntimeBlocker $runtimeBlocker;
 
     public function __construct(
         ContentStream\ContentStreamRepository $contentStreamRepository,
@@ -110,6 +98,7 @@ final class NodeAggregateCommandHandler
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         NodeAggregateEventPublisher $nodeEventPublisher,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        RuntimeBlocker $runtimeBlocker,
         PropertyConverter $propertyConverter
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
@@ -119,6 +108,7 @@ final class NodeAggregateCommandHandler
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->nodeEventPublisher = $nodeEventPublisher;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
+        $this->runtimeBlocker = $runtimeBlocker;
         $this->propertyConverter = $propertyConverter;
     }
 
@@ -160,6 +150,16 @@ final class NodeAggregateCommandHandler
     protected function areAncestorNodeTypeConstraintChecksEnabled(): bool
     {
         return $this->ancestorNodeTypeConstraintChecksEnabled;
+    }
+
+    public function getRuntimeBlocker(): RuntimeBlocker
+    {
+        return $this->runtimeBlocker;
+    }
+
+    public function getPropertyConverter(): PropertyConverter
+    {
+        return $this->propertyConverter;
     }
 
     /**

@@ -71,7 +71,7 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
      */
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['newNodeTypeName']),

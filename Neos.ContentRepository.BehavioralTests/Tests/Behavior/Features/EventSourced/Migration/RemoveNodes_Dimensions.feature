@@ -45,7 +45,7 @@ Feature: Remove Nodes
       | nodeAggregateClassification | "root"                                                                     |
     And the graph projection is fully up to date
     # Node /document (in "de")
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
@@ -58,11 +58,12 @@ Feature: Remove Nodes
 
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
-      | contentStreamIdentifier | "cs-identifier"          |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
-      | sourceOrigin            | {"language":"de"}        |
-      | targetOrigin            | {"language":"en"}        |
+      | Key                      | Value                    |
+      | contentStreamIdentifier  | "cs-identifier"          |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough" |
+      | sourceOrigin             | {"language":"de"}        |
+      | targetOrigin             | {"language":"en"}        |
+      | initiatingUserIdentifier | "user"                   |
     And the graph projection is fully up to date
 
 
@@ -87,24 +88,24 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in DE and CH (shine-through)
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -133,24 +134,24 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in DE
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -203,24 +204,24 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in CH
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -244,28 +245,27 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in CH
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
-
 
 
   Scenario: Remove nodes in a shine-through dimension space point (DE,CH)
@@ -291,24 +291,24 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in CH
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -329,24 +329,24 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in CH
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "en"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors

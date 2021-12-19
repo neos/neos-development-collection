@@ -16,10 +16,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAg
  */
 trait NodeMove
 {
-    /**
-     * @var ProjectionContentGraph
-     */
-    protected $projectionContentGraph;
+    protected ProjectionContentGraph $projectionContentGraph;
 
     /**
      * @param NodeAggregateWasMoved $event

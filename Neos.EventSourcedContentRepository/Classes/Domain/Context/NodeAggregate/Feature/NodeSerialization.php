@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyType;
@@ -36,7 +37,11 @@ trait NodeSerialization
         $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
         $defaultValues = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
+            $propertyType = PropertyType::fromNodeTypeDeclaration(
+                $nodeType->getPropertyType($propertyName),
+                PropertyName::fromString($propertyName),
+                $nodeTypeName
+            );
             $defaultValues[$propertyName] = $this->propertyConverter->deserializePropertyValue(
                 new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
             );

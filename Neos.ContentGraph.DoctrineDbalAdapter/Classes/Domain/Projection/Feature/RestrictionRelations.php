@@ -11,10 +11,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 
 trait RestrictionRelations
 {
-    /**
-     * @var ProjectionContentGraph
-     */
-    protected $projectionContentGraph;
+    protected ProjectionContentGraph $projectionContentGraph;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -57,10 +54,10 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
         $this->getDatabaseConnection()->executeUpdate(
             '
                 -- GraphProjector::removeAllRestrictionRelationsUnderneathNodeAggregate
- 
+
                 delete r.* from
                     neos_contentgraph_restrictionrelation r
-                    join 
+                    join
                      (
                         -- we build a recursive tree
                         with recursive tree as (
@@ -129,7 +126,7 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
         $this->getDatabaseConnection()->executeUpdate(
             '
                 -- GraphProjector::removeAllRestrictionRelationsInSubtreeImposedByAncestors
- 
+
                 DELETE r.*
                     FROM neos_contentgraph_restrictionrelation r
                     WHERE r.contentstreamidentifier = :contentStreamIdentifier

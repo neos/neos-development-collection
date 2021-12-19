@@ -67,19 +67,19 @@ class MoveBefore extends AbstractStructuralChange
 
             $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($succeedingSibling->findParentNode()->getNodeAggregateIdentifier());
 
-            $command = new MoveNodeAggregate(
-                $subject->getContentStreamIdentifier(),
-                $subject->getDimensionSpacePoint(),
-                $subject->getNodeAggregateIdentifier(),
-                $hasEqualParentNode ? null : $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
-                $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
-                $succeedingSibling->getNodeAggregateIdentifier(),
-                RelationDistributionStrategy::gatherAll(),
-                $this->getInitiatingUserIdentifier()
-            );
-
             $this->contentCacheFlusher->registerNodeChange($subject);
-            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
+                new MoveNodeAggregate(
+                    $subject->getContentStreamIdentifier(),
+                    $subject->getDimensionSpacePoint(),
+                    $subject->getNodeAggregateIdentifier(),
+                    $hasEqualParentNode ? null : $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
+                    $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
+                    $succeedingSibling->getNodeAggregateIdentifier(),
+                    RelationDistributionStrategy::gatherAll(),
+                    $this->getInitiatingUserIdentifier()
+                )
+            )->blockUntilProjectionsAreUpToDate();
 
             $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
             $updateParentNodeInfo->setNode($succeedingSibling->findParentNode());

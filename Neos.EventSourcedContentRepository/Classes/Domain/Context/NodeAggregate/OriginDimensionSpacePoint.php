@@ -25,9 +25,23 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
  */
 final class OriginDimensionSpacePoint extends DimensionSpacePoint
 {
+    public static function fromArray(array $data): self
+    {
+        return new self($data);
+    }
+
+    /**
+     * @param string $jsonString A JSON string representation, see jsonSerialize
+     * @return DimensionSpacePoint
+     */
+    public static function fromJsonString(string $jsonString): self
+    {
+        return new self(json_decode($jsonString, true));
+    }
+
     public static function fromDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
     {
-        return new static($dimensionSpacePoint->getCoordinates());
+        return new self($dimensionSpacePoint->getCoordinates());
     }
 
     public function toDimensionSpacePoint(): DimensionSpacePoint

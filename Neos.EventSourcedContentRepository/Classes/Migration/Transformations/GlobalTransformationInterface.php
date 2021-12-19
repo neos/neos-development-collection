@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Migration\Transformations;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 
 /**
  * A globally-done transformation, like changing dimension space points globally.

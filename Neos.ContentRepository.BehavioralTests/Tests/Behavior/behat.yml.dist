@@ -5,11 +5,11 @@
 
 default:
   autoload:
-    '': "%paths.base%/Features/Bootstrap"
+    '': "%paths.base%/Bootstrap"
   suites:
     cr:
       paths:
-        - "%paths.base%/Features/EventSourced/"
+        - "%paths.base%/Features/"
       contexts:
         - FeatureContext:
 

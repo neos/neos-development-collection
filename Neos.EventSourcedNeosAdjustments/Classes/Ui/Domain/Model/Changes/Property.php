@@ -246,15 +246,16 @@ class Property extends AbstractChange
                     }
                 }
 
-                $command = new SetNodeReferences(
-                    $node->getContentStreamIdentifier(),
-                    $node->getNodeAggregateIdentifier(),
-                    $node->getOriginDimensionSpacePoint(),
-                    new NodeAggregateIdentifierCollection($destinationNodeAggregateIdentifiers),
-                    PropertyName::fromString($propertyName),
-                    $this->getInitiatingUserIdentifier()
+                $commandResult = $this->nodeAggregateCommandHandler->handleSetNodeReferences(
+                    new SetNodeReferences(
+                        $node->getContentStreamIdentifier(),
+                        $node->getNodeAggregateIdentifier(),
+                        $node->getOriginDimensionSpacePoint(),
+                        new NodeAggregateIdentifierCollection($destinationNodeAggregateIdentifiers),
+                        PropertyName::fromString($propertyName),
+                        $this->getInitiatingUserIdentifier()
+                    )
                 );
-                $this->nodeAggregateCommandHandler->handleSetNodeReferences($command)->blockUntilProjectionsAreUpToDate();
             } else {
                 $value = $this->nodePropertyConversionService->convert(
                     $node->getNodeType(),
@@ -264,54 +265,62 @@ class Property extends AbstractChange
 
                 // TODO: Make changing the node type a separated, specific/defined change operation.
                 if ($propertyName[0] !== '_' || $propertyName === '_hiddenInIndex') {
-                    $command = new SetNodeProperties(
-                        $node->getContentStreamIdentifier(),
-                        $node->getNodeAggregateIdentifier(),
-                        $node->getOriginDimensionSpacePoint(),
-                        PropertyValuesToWrite::fromArray(
-                            [
-                                $propertyName => $value
-                            ]
-                        ),
-                        $this->getInitiatingUserIdentifier()
+                    $commandResult = $this->nodeAggregateCommandHandler->handleSetNodeProperties(
+                        new SetNodeProperties(
+                            $node->getContentStreamIdentifier(),
+                            $node->getNodeAggregateIdentifier(),
+                            $node->getOriginDimensionSpacePoint(),
+                            PropertyValuesToWrite::fromArray(
+                                [
+                                    $propertyName => $value
+                                ]
+                            ),
+                            $this->getInitiatingUserIdentifier()
+                        )
                     );
-                    $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
                 } else {
                     // property starts with "_"
                     if ($propertyName === '_nodeType') {
-                        $command = new ChangeNodeAggregateType(
-                            $node->getContentStreamIdentifier(),
-                            $node->getNodeAggregateIdentifier(),
-                            NodeTypeName::fromString($value),
-                            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete(),
-                            $userIdentifier
+                        $commandResult = $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType(
+                            $command = new ChangeNodeAggregateType(
+                                $node->getContentStreamIdentifier(),
+                                $node->getNodeAggregateIdentifier(),
+                                NodeTypeName::fromString($value),
+                                NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete(),
+                                $userIdentifier
+                            )
                         );
-                        $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType($command)->blockUntilProjectionsAreUpToDate();
                     } elseif ($propertyName === '_hidden') {
                         if ($value === true) {
-                            $command = new DisableNodeAggregate(
-                                $node->getContentStreamIdentifier(),
-                                $node->getNodeAggregateIdentifier(),
-                                $node->getOriginDimensionSpacePoint(),
-                                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
-                                $userIdentifier
+                            $commandResult = $this->nodeAggregateCommandHandler->handleDisableNodeAggregate(
+                                new DisableNodeAggregate(
+                                    $node->getContentStreamIdentifier(),
+                                    $node->getNodeAggregateIdentifier(),
+                                    $node->getOriginDimensionSpacePoint(),
+                                    NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                    $userIdentifier
+                                )
                             );
-                            $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                         } else {
                             // unhide
-                            $command = new EnableNodeAggregate(
-                                $node->getContentStreamIdentifier(),
-                                $node->getNodeAggregateIdentifier(),
-                                $node->getOriginDimensionSpacePoint(),
-                                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
-                                $userIdentifier
+                            $commandResult = $this->nodeAggregateCommandHandler->handleEnableNodeAggregate(
+                                new EnableNodeAggregate(
+                                    $node->getContentStreamIdentifier(),
+                                    $node->getNodeAggregateIdentifier(),
+                                    $node->getOriginDimensionSpacePoint(),
+                                    NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                    $userIdentifier
+                                )
                             );
-                            $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                         }
                     } else {
                         throw new \Exception("TODO FIX");
                     }
                 }
+            }
+
+            if ($commandResult) {
+                $commandResult->blockUntilProjectionsAreUpToDate();
             }
 
             // !!! REMEMBER: we are not allowed to use $node anymore, because it may have been modified by the commands above.

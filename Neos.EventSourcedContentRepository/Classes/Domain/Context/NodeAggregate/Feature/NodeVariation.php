@@ -22,7 +22,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 
 trait NodeVariation
@@ -32,6 +33,8 @@ trait NodeVariation
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
+
+    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
      * @param CreateNodeVariant $command
@@ -80,6 +83,6 @@ trait NodeVariation
             $this->getNodeAggregateEventPublisher()->publishMany($streamName->getEventStreamName(), $events);
         });
 
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 }

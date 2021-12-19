@@ -56,7 +56,6 @@ abstract class AbstractChange implements ChangeInterface
      */
     protected $persistenceManager;
 
-
     /**
      * Set the subject
      */

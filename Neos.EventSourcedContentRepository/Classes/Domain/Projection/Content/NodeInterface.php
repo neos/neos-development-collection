@@ -12,6 +12,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -66,4 +68,6 @@ interface NodeInterface extends \Neos\ContentRepository\Domain\Projection\Conten
      * @return VisibilityConstraints
      */
     public function getVisibilityConstraints(): VisibilityConstraints;
+
+    public function getClassification(): NodeAggregateClassification;
 }

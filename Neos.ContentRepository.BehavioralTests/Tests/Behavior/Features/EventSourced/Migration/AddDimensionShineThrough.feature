@@ -47,7 +47,7 @@ Feature: Add Dimension Specialization
       | nodeAggregateClassification | "root"                                                   |
     And the graph projection is fully up to date
     # Node /document
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
@@ -77,28 +77,29 @@ Feature: Add Dimension Specialization
               to: { language: 'ch' }
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
-    And I expect this node to have the properties:
-      | Key  | Value | Type   |
-      | text | hello | string |
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    And I expect this node to have the following properties:
+      | Key  | Value   |
+      | text | "hello" |
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
 
     # now, we find the node underneath both DimensionSpacePoints
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value | Type   |
-      | text | hello | string |
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
+      | Key  | Value   |
+      | text | "hello" |
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    # shine through added
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
-    And I expect this node to have the properties:
-      | Key  | Value | Type   |
-      | text | hello | string |
+    And I expect this node to have the following properties:
+      | Key  | Value   |
+      | text | "hello" |
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -106,7 +107,7 @@ Feature: Add Dimension Specialization
 
     # finally, we MODIFY the node and ensure that the modification is visible in both DSPs (as otherwise the shine through would not have worked
     # as expected)
-    And the intermediary command SetNodeProperties is executed with payload and exceptions are caught:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "migration-cs"               |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"     |
@@ -114,25 +115,26 @@ Feature: Add Dimension Specialization
       | propertyValues            | {"text": "changed"}          |
       | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the graph projection is fully up to date
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value   | Type   |
-      | text | changed | string |
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value   | Type   |
-      | text | changed | string |
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
+      | Key  | Value     |
+      | text | "changed" |
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    # ch shines through to the DE node
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
+      | Key  | Value     |
+      | text | "changed" |
 
     # the original content stream was untouched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value | Type   |
-      | text | hello | string |
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    And I expect this node to have the following properties:
+      | Key  | Value   |
+      | text | "hello" |
+    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
@@ -140,18 +142,19 @@ Feature: Add Dimension Specialization
   Scenario: Success Case - disabled nodes stay disabled
 
     When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {"language": "de"}       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "cs-identifier"                        |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {"language": "de"}                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
     # ensure the node is disabled
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
@@ -172,22 +175,21 @@ Feature: Add Dimension Specialization
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     When VisibilityConstraints are set to "frontend"
 
     # The visibility edges were modified
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "ch"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     When VisibilityConstraints are set to "frontend"
 
     When I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors
-
 
 
   Scenario: Error case - there's already an edge in the target dimension
@@ -198,11 +200,12 @@ Feature: Add Dimension Specialization
 
     # we create a node in CH
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
-      | contentStreamIdentifier | "cs-identifier"          |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
-      | sourceOrigin            | {"language":"de"}        |
-      | targetOrigin            | {"language":"en"}        |
+      | Key                      | Value                    |
+      | contentStreamIdentifier  | "cs-identifier"          |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough" |
+      | sourceOrigin             | {"language":"de"}        |
+      | targetOrigin             | {"language":"en"}        |
+      | initiatingUserIdentifier | "foo"                    |
 
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:

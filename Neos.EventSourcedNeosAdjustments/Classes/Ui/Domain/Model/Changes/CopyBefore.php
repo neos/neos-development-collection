@@ -70,7 +70,8 @@ class CopyBefore extends AbstractStructuralChange
 
             $this->contentCacheFlusher->registerNodeChange($subject);
 
-            $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)->blockUntilProjectionsAreUpToDate();
+            $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
+                ->blockUntilProjectionsAreUpToDate();
 
             $newlyCreatedNode = $parentNodeOfSucceedingSibling->findNamedChildNode($command->getTargetNodeName());
             $this->finish($newlyCreatedNode);

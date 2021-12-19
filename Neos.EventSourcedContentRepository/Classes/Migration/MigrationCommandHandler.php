@@ -14,7 +14,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\Worksp
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -74,7 +74,7 @@ class MigrationCommandHandler
         }
 
         $contentStreamForReading = $workspace->getCurrentContentStreamIdentifier();
-
+        // TODO: I believe the logic for submigrations is not yet fully working
         foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
             $contentStreamForWriting = $command->getOrCreateContentStreamIdentifierForWriting($step);
             $this->contentStreamCommandHandler->handleCreateWorkspace(

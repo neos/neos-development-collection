@@ -40,13 +40,16 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyCovered;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsAbstract;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\ReferenceCannotBeSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 trait ConstraintChecks
 {
@@ -95,6 +98,13 @@ trait ConstraintChecks
         }
     }
 
+    protected function requireNodeTypeToNotBeAbstract(NodeType $nodeType): void
+    {
+        if ($nodeType->isAbstract()) {
+            throw NodeTypeIsAbstract::butWasNotSupposedToBe(NodeTypeName::fromString($nodeType->getName()));
+        }
+    }
+
     /**
      * @param NodeType $nodeType
      * @throws NodeTypeIsNotOfTypeRoot
@@ -140,6 +150,25 @@ trait ConstraintChecks
             }
             $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($tetheredChildNodeType);
         }
+    }
+
+    protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
+    {
+        $nodeType = $this->getNodeTypeManager()->getNodeType((string) $nodeTypeName);
+        if (!isset($nodeType->getProperties()[(string)$propertyName])) {
+        }
+    }
+
+    protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
+    {
+        $nodeType = $this->getNodeTypeManager()->getNodeType((string) $nodeTypeName);
+        if (isset($nodeType->getProperties()[(string)$propertyName])) {
+            $propertyType = $nodeType->getPropertyType((string)$propertyName);
+            if ($propertyType === 'reference' || $propertyType === 'references') {
+                return;
+            }
+        }
+        throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($propertyName, $nodeTypeName);
     }
 
     /**

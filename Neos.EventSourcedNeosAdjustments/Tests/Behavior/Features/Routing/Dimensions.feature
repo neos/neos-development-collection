@@ -33,7 +33,7 @@ Feature: Routing functionality with multiple content dimensions
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"DE", "language":"de"} |
     And the graph projection is fully up to date
-    And the intermediary command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
       | nodeAggregateIdentifier   | "carl-destinode"                 |

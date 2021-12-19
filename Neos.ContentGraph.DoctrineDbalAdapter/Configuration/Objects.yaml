@@ -1,9 +1,11 @@
+Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface:
+  className: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph'
 Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
-  properties:
-    'processedEventsCache':
+  arguments:
+    2:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
-            value: Neos_ContentGraph_ProcessedEvents
+            value: Neos_ContentGraph_DoctrineDbalAdapter_ProcessedEvents

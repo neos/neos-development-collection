@@ -164,7 +164,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"     | "lady-eleonode-rootford/shernode-homes/c"   | "c"                      | "shernode-homes"              | "a"                              | null                              |
 
   Scenario: ab(> b1)c => a(> b > b1)c (moving b & b1 below a)
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                                      | Value                                                |
       | contentStreamIdentifier                  | "cs-identifier"                                      |
       | nodeAggregateIdentifier                  | "b1"                                                 |
@@ -192,7 +192,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"      | "lady-eleonode-rootford/shernode-homes/c"      | "c"                      | "shernode-homes"              | "a"                              | null                              |
 
   Scenario: ab(> b1)c => a(> b1)bc (moving b1 below a)
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                                      | Value                                                |
       | contentStreamIdentifier                  | "cs-identifier"                                      |
       | nodeAggregateIdentifier                  | "b1"                                                 |

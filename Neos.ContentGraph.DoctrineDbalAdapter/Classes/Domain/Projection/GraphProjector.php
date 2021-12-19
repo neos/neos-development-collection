@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\RestrictionRelations;
@@ -38,10 +39,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNo
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The alternate reality-aware graph projector for the Doctrine backend
+ * The alternate reality-aware graph projector for the general Doctrine DBAL backend
  *
  * @Flow\Scope("singleton")
  */
@@ -53,11 +55,19 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
 
     const RELATION_DEFAULT_OFFSET = 128;
 
-    /**
-     * @Flow\Inject
-     * @var ProjectionContentGraph
-     */
-    protected $projectionContentGraph;
+    protected ProjectionContentGraph $projectionContentGraph;
+
+    private DbalClient $databaseClient;
+
+    public function __construct(
+        DbalClient $eventStorageDatabaseClient,
+        VariableFrontend $processedEventsCache,
+        ProjectionContentGraph $projectionContentGraph
+    ) {
+        $this->databaseClient = $eventStorageDatabaseClient;
+        $this->projectionContentGraph = $projectionContentGraph;
+        parent::__construct($eventStorageDatabaseClient, $processedEventsCache);
+    }
 
     /**
      * @throws \Throwable
@@ -65,12 +75,10 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
     public function reset(): void
     {
         parent::reset();
-        $this->getDatabaseConnection()->transactional(function () {
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
-        });
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
     }
 
     /**
@@ -1000,6 +1008,7 @@ insert ignore into neos_contentgraph_restrictionrelation
         return $result;
     }
 
+
     protected function copyReferenceRelations(NodeRelationAnchorPoint $sourceRelationAnchorPoint, NodeRelationAnchorPoint $destinationRelationAnchorPoint): void
     {
         $this->getDatabaseConnection()->executeStatement('
@@ -1150,5 +1159,18 @@ insert ignore into neos_contentgraph_restrictionrelation
                 'targetDimensionSpacePointHash' => (string)$event->getTarget()->getHash()
             ]);
         });
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    protected function transactional(callable $operations): void
+    {
+        $this->getDatabaseConnection()->transactional($operations);
+    }
+
+    protected function getDatabaseConnection(): Connection
+    {
+        return $this->databaseClient->getConnection();
     }
 }

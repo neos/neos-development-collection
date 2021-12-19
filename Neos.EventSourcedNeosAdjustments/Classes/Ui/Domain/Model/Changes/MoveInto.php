@@ -104,19 +104,19 @@ class MoveInto extends AbstractStructuralChange
             $nodeAccessor = $this->nodeAccessorManager->accessorFor($subject->getContentStreamIdentifier(), $subject->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
             $hasEqualParentNode = $nodeAccessor->findParentNode($subject)->getNodeAggregateIdentifier()->equals($this->getParentNode()->getNodeAggregateIdentifier());
 
-            $command = new MoveNodeAggregate(
-                $subject->getContentStreamIdentifier(),
-                $subject->getDimensionSpacePoint(),
-                $subject->getNodeAggregateIdentifier(),
-                $hasEqualParentNode ? null : $this->getParentNode()->getNodeAggregateIdentifier(),
-                null,
-                null,
-                RelationDistributionStrategy::gatherAll(),
-                $this->getInitiatingUserIdentifier()
-            );
-
             $this->contentCacheFlusher->registerNodeChange($subject);
-            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
+                new MoveNodeAggregate(
+                    $subject->getContentStreamIdentifier(),
+                    $subject->getDimensionSpacePoint(),
+                    $subject->getNodeAggregateIdentifier(),
+                    $hasEqualParentNode ? null : $this->getParentNode()->getNodeAggregateIdentifier(),
+                    null,
+                    null,
+                    RelationDistributionStrategy::gatherAll(),
+                    $this->getInitiatingUserIdentifier()
+                )
+            )->blockUntilProjectionsAreUpToDate();
 
             $updateParentNodeInfo = new UpdateNodeInfo();
             $updateParentNodeInfo->setNode($this->getParentNode());

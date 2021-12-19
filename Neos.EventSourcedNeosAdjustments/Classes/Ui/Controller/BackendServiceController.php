@@ -218,12 +218,13 @@ class BackendServiceController extends ActionController
             foreach ($nodeContextPaths as $contextPath) {
                 $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
             }
-            $command = new PublishIndividualNodesFromWorkspace(
-                $workspaceName,
-                $nodeAddresses,
-                $this->getCurrentUserIdentifier()
-            );
-            $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
+            $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace(
+                PublishIndividualNodesFromWorkspace::create(
+                    $workspaceName,
+                    $nodeAddresses,
+                    $this->getCurrentUserIdentifier()
+                )
+            )->blockUntilProjectionsAreUpToDate();
 
             $success = new Success();
             $success->setMessage(sprintf('Published %d change(s) to %s.', count($nodeContextPaths), $targetWorkspaceName));
@@ -256,12 +257,13 @@ class BackendServiceController extends ActionController
             foreach ($nodeContextPaths as $contextPath) {
                 $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
             }
-            $command = new DiscardIndividualNodesFromWorkspace(
-                $workspaceName,
-                $nodeAddresses,
-                $this->getCurrentUserIdentifier()
-            );
-            $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
+            $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace(
+                DiscardIndividualNodesFromWorkspace::create(
+                    $workspaceName,
+                    $nodeAddresses,
+                    $this->getCurrentUserIdentifier()
+                )
+            )->blockUntilProjectionsAreUpToDate();
 
             $success = new Success();
             $success->setMessage(sprintf('Discarded %d node(s).', count($nodeContextPaths)));

@@ -10,7 +10,10 @@ Feature: Run integrity violation detection regarding reference relations
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Testing:Document': []
+    'Neos.ContentRepository.Testing:Document':
+      properties:
+        referenceProperty:
+          type: reference
     """
     And the event RootWorkspaceWasCreated was published with payload:
       | Key                        | Value                                  |
@@ -49,12 +52,13 @@ Feature: Run integrity violation detection regarding reference relations
 
   Scenario: Detach a reference relation from its source
     When the command SetNodeReferences is executed with payload:
-      | Key                                 | Value                 |
-      | contentStreamIdentifier             | "cs-identifier"       |
-      | sourceOriginDimensionSpacePoint     | {"language":"de"}     |
-      | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
-      | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
-      | referenceName                       | "referenceProperty"   |
+      | Key                                 | Value                                  |
+      | contentStreamIdentifier             | "cs-identifier"                        |
+      | sourceOriginDimensionSpacePoint     | {"language":"de"}                      |
+      | sourceNodeAggregateIdentifier       | "source-nodandaise"                    |
+      | destinationNodeAggregateIdentifiers | ["anthony-destinode"]                  |
+      | referenceName                       | "referenceProperty"                    |
+      | initiatingUserIdentifier            | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
     And I detach the following reference relation from its source:
       | Key                                | Value               |

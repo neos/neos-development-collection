@@ -12,7 +12,7 @@ final class ValueObjectArrayDenormalizer implements DenormalizerInterface
         return $type::fromArray($data);
     }
 
-    public function supportsDenormalization($data, $type, string $format = null)
+    public function supportsDenormalization($data, $type, string $format = null): bool
     {
         return is_array($data) && class_exists($type) && method_exists($type, 'fromArray');
     }

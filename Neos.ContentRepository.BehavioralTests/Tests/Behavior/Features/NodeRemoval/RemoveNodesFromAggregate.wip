@@ -1,0 +1,377 @@
+@fixtures
+Feature: Remove Nodes from Aggregate
+
+  As a user of the CR I want to be able to remove a node.
+
+  This feature tests the following combinations:
+  - workspaces:
+  - (1) LIVE
+  - (2) USER workspace
+  - children:
+  - (A) WITHOUT children
+  - (B) WITH children
+  - Dimensions:
+  - (a) with dimension shine-through - when both DimensionSpacePoints are scheduled to be deleted, the node is actually removed fully.
+  - (b) with explicit variant in another dimension (deleting the "child dimension" node; node still needs to exist in "parent dimension")
+
+  Background:
+    Given I have the following content dimensions:
+      | Identifier | Default | Values  | Generalizations |
+      | language   | de      | de, gsw | gsw->de         |
+    And I have the following NodeTypes configuration:
+    """
+    'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:Document': []
+    """
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                      | Value                                  |
+      | workspaceName            | "live"                                 |
+      | workspaceTitle           | "Live"                                 |
+      | workspaceDescription     | "The live workspace"                   |
+      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamIdentifier  | "live-cs-identifier"                   |
+    And the graph projection is fully up to date
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key                      | Value                                  |
+      | contentStreamIdentifier  | "live-cs-identifier"                   |
+      | nodeAggregateIdentifier  | "lady-eleonode-nodesworth"             |
+      | nodeTypeName             | "Neos.ContentRepository:Root"          |
+      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
+    # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
+    # Node /document
+    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+      | Key                           | Value                                     |
+      | contentStreamIdentifier       | "live-cs-identifier"                      |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint     | {"language":"de"}                         |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                |
+      | nodeName                      | "document"                                |
+    # We also want to add a child node to make sure it is correctly removed when the parent is removed
+    # Node /document/child-document
+    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+      | Key                           | Value                                     |
+      | contentStreamIdentifier       | "live-cs-identifier"                      |
+      | nodeAggregateIdentifier       | "nodimus-prime"                           |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint     | {"language":"de"}                         |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateIdentifier | "nody-mc-nodeface"                        |
+      | nodeName                      | "child-document"                          |
+    # We also want to add a grandchild node to make sure it is correctly removed when the parent is removed
+    # Node /document/child-document/grandchild-document
+    And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+      | Key                           | Value                                     |
+      | contentStreamIdentifier       | "live-cs-identifier"                      |
+      | nodeAggregateIdentifier       | "nodasaurus-rex"                          |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint     | {"language":"de"}                         |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateIdentifier | "nodimus-prime"                           |
+      | nodeName                      | "grandchild-document"                     |
+    And the graph projection is fully up to date
+
+  ########################
+  # Section: EXTRA testcases
+  ########################
+  Scenario: (Exception) Trying to remove a non existing node should fail with an exception
+    When the command RemoveNodesFromAggregate was published with payload and exceptions are caught:
+      | Key                     | Value                                  |
+      | contentStreamIdentifier | "live-cs-identifier"                   |
+      | nodeAggregateIdentifier | "non-existing-agg-identifier"          |
+      | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] |
+    Then the last command should have thrown an exception of type "NodeAggregateNotFound"
+
+  Scenario: (Exception) Trying to remove a node in a parent dimension without specializing the corresponding specialization dimension throw an exception
+    When the command RemoveNodesFromAggregate was published with payload and exceptions are caught:
+      | Key                     | Value                |
+      | contentStreamIdentifier | "live-cs-identifier" |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
+      | dimensionSpacePointSet  | [{"language":"de"}]  |
+    Then the last command should have thrown an exception of type "SpecializedDimensionsMustBePartOfDimensionSpacePointSet"
+
+
+  ########################
+  # Section: 1.A.*
+  ########################
+  Scenario: (1.A.a) In LIVE workspace, removing a node WITHOUT children leads also to removal of the node in the specializations of its dimension space point if specified
+    When the command RemoveNodesFromAggregate was published with payload:
+      | Key                     | Value                                  |
+      | contentStreamIdentifier | "live-cs-identifier"                   |
+      | nodeAggregateIdentifier | "nodasaurus-rex"                       |
+      | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] |
+    And the graph projection is fully up to date
+
+    Then I expect the graph projection to consist of exactly 3 nodes
+    And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nodimus-prime;{"language":"de"} to exist in the content graph
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"de"}
+    Then I expect the subgraph projection to consist of exactly 3 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node live-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/child-document" to lead to node live-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect the subgraph projection to consist of exactly 3 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node live-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/child-document" to lead to node live-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}
+
+  Scenario: (1.A.b) In LIVE workspace, removing a node WITHOUT children does not lead to removal of its generalization
+    When the command RemoveNodesFromAggregate was published with payload:
+      | Key                     | Value                |
+      | contentStreamIdentifier | "live-cs-identifier" |
+      | nodeAggregateIdentifier | "nodasaurus-rex"     |
+      | dimensionSpacePointSet  | [{"language":"gsw"}] |
+    And the graph projection is fully up to date
+
+    Then I expect the graph projection to consist of exactly 4 nodes
+    And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nodimus-prime;{"language":"de"} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nodasaurus-rex;{"language":"de"} to exist in the content graph
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"de"}
+    Then I expect the subgraph projection to consist of exactly 4 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node live-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/child-document" to lead to node live-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodasaurus-rex" and node path "document/child-document/grandchild-document" to lead to node live-cs-identifier;nodasaurus-rex", "originDimensionSpacePoint":{"language":"de"}
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect the subgraph projection to consist of exactly 3 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node live-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/child-document" to lead to node live-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}
+
+  ########################
+  # Section: 1.B.*
+  ########################
+  Scenario: (1.B.a) In LIVE workspace, removing a node WITH children also leads to the removal of their specializations
+
+    When the command RemoveNodesFromAggregate was published with payload:
+      | Key                     | Value                |
+      | contentStreamIdentifier | "live-cs-identifier" |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
+      | dimensionSpacePointSet  | [{"language":"de"}]  |
+    And the graph projection is fully up to date
+
+    Then I expect the graph projection to consist of exactly 1 nodes
+    And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"de"}
+    Then I expect the subgraph projection to consist of exactly 1 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect the subgraph projection to consist of exactly 1 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+
+
+  Scenario: (1.B.b) In LIVE workspace, removing a node WITH children does not lead to the removal of their generalizations
+    When the command RemoveNodesFromAggregate was published with payload:
+      | Key                     | Value                |
+      | contentStreamIdentifier | "live-cs-identifier" |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
+      | dimensionSpacePointSet  | [{"language":"gsw"}] |
+    And the graph projection is fully up to date
+
+    Then I expect the graph projection to consist of exactly 4 nodes
+    And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nodimus-prime;{"language":"de"} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nodasaurus-rex;{"language":"de"} to exist in the content graph
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"de"}
+    Then I expect the subgraph projection to consist of exactly 4 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node live-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/child-document" to lead to node live-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodasaurus-rex" and node path "document/child-document/grandchild-document" to lead to node live-cs-identifier;nodasaurus-rex", "originDimensionSpacePoint":{"language":"de"}
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect the subgraph projection to consist of exactly 1 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+
+
+  ########################
+  # Section: 2.A.*
+  ########################
+  Scenario: (2.A.a) In USER workspace, removing a node WITHOUT children also leads to its removal in the specializations of its subgraph
+    When the command "ForkContentStream" is executed with payload:
+      | Key                           | Value                |
+      | contentStreamIdentifier       | "user-cs-identifier" |
+      | sourceContentStreamIdentifier | "live-cs-identifier" |
+    And the graph projection is fully up to date
+    When the command RemoveNodesFromAggregate was published with payload:
+      | Key                     | Value                                  |
+      | contentStreamIdentifier | "user-cs-identifier"                   |
+      | nodeAggregateIdentifier | "nodasaurus-rex"                        |
+      | dimensionSpacePointSet  | [{"language":"de"}] |
+    And the graph projection is fully up to date
+
+    Then I expect the graph projection to consist of exactly 4 nodes
+    And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nodimus-prime;{"language":"de"} to exist in the content graph
+    And I expect a node identified by live-cs-identifier;nodasaurus-rex;{"language":"de"} to exist in the content graph
+
+    When I am in content stream "user-cs-identifier" and dimension space point {"language":"de"}
+    Then I expect the subgraph projection to consist of exactly 3 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node user-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node user-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/child-document" to lead to node user-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}
+
+    When I am in content stream "user-cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect the subgraph projection to consist of exactly 3 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node user-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node user-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/child-document" to lead to node user-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}
+
+    # ensure LIVE ContentStream is untouched
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"de"}
+    Then I expect the subgraph projection to consist of exactly 4 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node live-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/child-document" to lead to node live-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodasaurus-rex" and node path "document/child-document/grandchild-document" to lead to node live-cs-identifier;nodasaurus-rex", "originDimensionSpacePoint":{"language":"de"}
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect the subgraph projection to consist of exactly 4 nodes
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node live-cs-identifier;lady-eleonode-nodesworth", "originDimensionSpacePoint":{}
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node live-cs-identifier;nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/child-document" to lead to node live-cs-identifier;nodimus-prime", "originDimensionSpacePoint":{"language":"de"}
+    And I expect node aggregate identifier "nodasaurus-rex" and node path "document/child-document/grandchild-document" to lead to node live-cs-identifier;nodasaurus-rex", "originDimensionSpacePoint":{"language":"de"}
+
+
+  Scenario: (2.A.b) In USER workspace, removing a node WITHOUT children does not lead to removal of the node in the parent dimension
+    When the command CreateNodeVariant is executed with payload:
+      | Key                       | Value                 |
+      | contentStreamIdentifier   | "live-cs-identifier"  |
+      | nodeAggregateIdentifier   | "nodimus-prime"       |
+      | sourceOrigin | {"language":"de"}     |
+      | targetOrigin | {"language":"gsw"}    |
+      | specializationIdentifier  | "cdoc-identifier-gsw" |
+
+    When the command "ForkContentStream" is executed with payload:
+      | Key                           | Value                |
+      | contentStreamIdentifier       | "user-cs-identifier" |
+      | sourceContentStreamIdentifier | "live-cs-identifier" |
+    And the graph projection is fully up to date
+
+    When the command RemoveNodesFromAggregate was published with payload:
+      | Key                     | Value                |
+      | contentStreamIdentifier | "user-cs-identifier" |
+      | nodeAggregateIdentifier | "nodimus-prime"      |
+      | dimensionSpacePointSet  | [{"language":"gsw"}] |
+    And the graph projection is fully up to date
+
+    When I am in content stream "user-cs-identifier" and dimension space point {"language":"de"}
+    Then I expect a node "doc-identifier-de" to exist in the graph projection
+    Then I expect a node "cdoc-identifier-de" to exist in the graph projection
+    And I expect the path "document" to lead to the node "doc-identifier-de"
+    And I expect a node "gcdoc-identifier-de" to exist in the graph projection
+    And I expect the path "document/child-document/grandchild-document" to lead to the node "gcdoc-identifier-de"
+
+    When I am in content stream "user-cs-identifier" and dimension space point {"language":"gsw"}
+    And I expect a node "doc-identifier-gsw" not to exist in the graph projection
+    And I expect a node "cdoc-identifier-de" not to exist in the graph projection
+    And I expect a node "gcdoc-identifier-de" not to exist in the graph projection
+
+    # ensure LIVE ContentStream is untouched
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"de"}
+    And I expect the path "document" to lead to the node "doc-identifier-de"
+    Then I expect a node "cdoc-identifier-de" to exist in the graph projection
+    And I expect the path "document/child-document" to lead to the node "cdoc-identifier-de"
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"gsw"}
+    And I expect the path "document" to lead to the node "doc-identifier-de"
+    Then I expect a node "cdoc-identifier-gsw" to exist in the graph projection
+    And I expect the path "document/child-document" to lead to the node "cdoc-identifier-gsw"
+
+
+  ########################
+  # Section: 2.B.*
+  ########################
+  Scenario: (2.B.a) In USER workspace, removing a node WITH children leads also to removal of the node in the shine-through dimensions if specified
+
+    When the command "ForkContentStream" is executed with payload:
+      | Key                           | Value                |
+      | contentStreamIdentifier       | "user-cs-identifier" |
+      | sourceContentStreamIdentifier | "live-cs-identifier" |
+    And the graph projection is fully up to date
+
+    When the command RemoveNodesFromAggregate was published with payload:
+      | Key                     | Value                                  |
+      | contentStreamIdentifier | "user-cs-identifier"                   |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"                     |
+      | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] |
+    And the graph projection is fully up to date
+
+    When I am in content stream "user-cs-identifier" and dimension space point {"language":"de"}
+    Then I expect a node "doc-identifier-de" not to exist in the graph projection
+    Then I expect a node "cdoc-identifier-de" not to exist in the graph projection
+
+    When I am in content stream "user-cs-identifier" and dimension space point {"language":"gsw"}
+    Then I expect a node "doc-identifier-de" not to exist in the graph projection
+    Then I expect a node "cdoc-identifier-de" not to exist in the graph projection
+
+    # ensure LIVE ContentStream is untouched
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"de"}
+    And I expect the path "document" to lead to the node "doc-identifier-de"
+    Then I expect a node "cdoc-identifier-de" to exist in the graph projection
+    And I expect the path "document/child-document" to lead to the node "cdoc-identifier-de"
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"gsw"}
+    And I expect the path "document" to lead to the node "doc-identifier-de"
+    Then I expect a node "cdoc-identifier-de" to exist in the graph projection
+    And I expect the path "document/child-document" to lead to the node "cdoc-identifier-de"
+
+
+  Scenario: (2.B.b) In USER workspace, removing a node WITH children does not lead to removal of the node in the parent dimension
+    When the command CreateNodeVariant is executed with payload:
+      | Key                       | Value                |
+      | contentStreamIdentifier   | "live-cs-identifier" |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
+      | sourceOrigin | {"language":"de"}    |
+      | targetOrigin | {"language":"gsw"}   |
+      | specializationIdentifier  | "doc-identifier-gsw" |
+
+    When the command "ForkContentStream" is executed with payload:
+      | Key                           | Value                |
+      | contentStreamIdentifier       | "user-cs-identifier" |
+      | sourceContentStreamIdentifier | "live-cs-identifier" |
+    And the graph projection is fully up to date
+
+    When the command RemoveNodesFromAggregate was published with payload:
+      | Key                     | Value                |
+      | contentStreamIdentifier | "user-cs-identifier" |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
+      | dimensionSpacePointSet  | [{"language":"gsw"}] |
+    And the graph projection is fully up to date
+
+    When I am in content stream "user-cs-identifier" and dimension space point {"language":"de"}
+    Then I expect a node "doc-identifier-de" to exist in the graph projection
+    Then I expect a node "cdoc-identifier-de" to exist in the graph projection
+    And I expect the path "document" to lead to the node "doc-identifier-de"
+    And I expect a node "gcdoc-identifier-de" to exist in the graph projection
+    And I expect the path "document/child-document/grandchild-document" to lead to the node "gcdoc-identifier-de"
+
+    When I am in content stream "user-cs-identifier" and dimension space point {"language":"gsw"}
+    And I expect a node "doc-identifier-gsw" not to exist in the graph projection
+    And I expect a node "cdoc-identifier-de" not to exist in the graph projection
+    And I expect a node "gcdoc-identifier-de" not to exist in the graph projection
+
+    # ensure LIVE ContentStream is untouched
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"de"}
+    And I expect the path "document" to lead to the node "doc-identifier-de"
+    Then I expect a node "cdoc-identifier-de" to exist in the graph projection
+    And I expect the path "document/child-document" to lead to the node "cdoc-identifier-de"
+
+    When I am in content stream "live-cs-identifier" and dimension space point {"language":"gsw"}
+    And I expect the path "document" to lead to the node "doc-identifier-gsw"
+    Then I expect a node "cdoc-identifier-de" to exist in the graph projection
+    And I expect the path "document/child-document" to lead to the node "cdoc-identifier-de"

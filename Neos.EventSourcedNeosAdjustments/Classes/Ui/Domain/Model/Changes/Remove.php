@@ -72,15 +72,15 @@ class Remove extends AbstractChange
             // we have to schedule an the update workspace info before we actually delete the node; otherwise we cannot find the parent nodes anymore.
             $this->updateWorkspaceInfo();
 
-            $command = new RemoveNodeAggregate(
-                $node->getContentStreamIdentifier(),
-                $node->getNodeAggregateIdentifier(),
-                $node->getDimensionSpacePoint(),
-                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
-                $this->getInitiatingUserIdentifier()
-            );
-
-            $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+            $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(
+                new RemoveNodeAggregate(
+                    $node->getContentStreamIdentifier(),
+                    $node->getNodeAggregateIdentifier(),
+                    $node->getDimensionSpacePoint(),
+                    NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                    $this->getInitiatingUserIdentifier()
+                )
+            )->blockUntilProjectionsAreUpToDate();
 
             $removeNode = new RemoveNode($node, $parentNode);
             $this->feedbackCollection->add($removeNode);

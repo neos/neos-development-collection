@@ -94,3 +94,4 @@ Neos:
           'Neos.Neos.Ui:CopyInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyInto
           'Neos.Neos.Ui:CopyAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyAfter
           'Neos.Neos.Ui:CopyBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyBefore
+

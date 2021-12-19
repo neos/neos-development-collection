@@ -41,7 +41,7 @@ Feature: Change Property
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     # Node /document
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
@@ -71,18 +71,18 @@ Feature: Change Property
               newSerializedValue: 'fixed value'
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+    When I am in content stream "cs-identifier" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value           |
+      | text | "Original text" |
 
     # the node type was changed inside the new content stream
-    When I am in content stream "migration-cs" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value       | Type   |
-      | text | fixed value | string |
+    When I am in content stream "migration-cs" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value         |
+      | text | "fixed value" |
 
   Scenario: Ignoring transformation if property does not exist on node
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -102,11 +102,11 @@ Feature: Change Property
               newSerializedValue: 'fixed value'
     """
     # we did not change anything because notExisting does not exist
-    When I am in content stream "migration-cs" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value         | Type   |
-      | text | Original text | string |
+    When I am in content stream "migration-cs" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value           |
+      | text | "Original text" |
 
   Scenario: replacement using default currentValuePlaceholder
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -125,11 +125,11 @@ Feature: Change Property
               property: 'text'
               newSerializedValue: 'bla {current}'
     """
-    When I am in content stream "migration-cs" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value             | Type   |
-      | text | bla Original text | string |
+    When I am in content stream "migration-cs" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value               |
+      | text | "bla Original text" |
 
   Scenario: replacement using alternative currentValuePlaceholder
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -149,11 +149,11 @@ Feature: Change Property
               currentValuePlaceholder: '{otherPlaceholder}'
               newSerializedValue: 'bla {otherPlaceholder}'
     """
-    When I am in content stream "migration-cs" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value             | Type   |
-      | text | bla Original text | string |
+    When I am in content stream "migration-cs" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value               |
+      | text | "bla Original text" |
 
   Scenario: using search/replace
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -173,11 +173,11 @@ Feature: Change Property
               search: 'Original'
               replace: 'alternative'
     """
-    When I am in content stream "migration-cs" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value            | Type   |
-      | text | alternative text | string |
+    When I am in content stream "migration-cs" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value              |
+      | text | "alternative text" |
 
   Scenario: using search/replace including placeholder (all options)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -198,8 +198,8 @@ Feature: Change Property
               search: 'Original'
               replace: 'alternative'
     """
-    When I am in content stream "migration-cs" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
-    And I expect this node to have the properties:
-      | Key  | Value                | Type   |
-      | text | bla alternative text | string |
+    When I am in content stream "migration-cs" and dimension space point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    And I expect this node to have the following properties:
+      | Key  | Value                  |
+      | text | "bla alternative text" |

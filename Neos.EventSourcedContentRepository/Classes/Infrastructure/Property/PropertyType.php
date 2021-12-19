@@ -12,7 +12,9 @@ namespace Neos\EventSourcedContentRepository\Infrastructure\Property;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Intermediary\Domain\Exception\PropertyTypeIsInvalid;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\PropertyTypeIsInvalid;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\UriInterface;
 
@@ -44,8 +46,11 @@ final class PropertyType
         $this->isNullable = $isNullable;
     }
 
-    public static function fromNodeTypeDeclaration(string $declaration): self
-    {
+    public static function fromNodeTypeDeclaration(
+        string $declaration,
+        PropertyName $propertyName,
+        NodeTypeName $nodeTypeName
+    ): self {
         if (\mb_strpos($declaration, '?') === 0) {
             $declaration = \mb_substr($declaration, 1);
             $isNullable = true;
@@ -53,7 +58,7 @@ final class PropertyType
         // we always assume nullability for now
         $isNullable = true;
         if ($declaration === 'reference' || $declaration === 'references') {
-            throw PropertyTypeIsInvalid::becauseItIsReference();
+            throw PropertyTypeIsInvalid::becauseItIsReference($propertyName, $nodeTypeName);
         }
         if ($declaration === 'bool' || $declaration === 'boolean') {
             return self::bool($isNullable);
@@ -79,7 +84,7 @@ final class PropertyType
             && !class_exists($className)
             && !interface_exists($className)
             && !preg_match(self::PATTERN_ARRAY_OF, $declaration)) {
-            throw PropertyTypeIsInvalid::becauseItIsUndefined($declaration);
+            throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
         }
 
         return new self($declaration, $isNullable);

@@ -13,9 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -38,16 +36,38 @@ final class DiscardIndividualNodesFromWorkspace
     private UserIdentifier $initiatingUserIdentifier;
 
     /**
+     * Content Stream Identifier of the newly created fork, which contains the remaining changes which were not removed
+     *
+     * @var ContentStreamIdentifier
+     */
+    private ContentStreamIdentifier $newContentStreamIdentifier;
+
+    /**
      * @param WorkspaceName $workspaceName
      * @param array|NodeAddress[] $nodeAddresses
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier)
+    private function __construct(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier)
     {
         $this->workspaceName = $workspaceName;
         $this->nodeAddresses = $nodeAddresses;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
     }
+
+    public static function create(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier): self
+    {
+        return new self($workspaceName, $nodeAddresses, $initiatingUserIdentifier, ContentStreamIdentifier::create());
+    }
+
+    /**
+     * Call this method if you want to run this command fully deterministically, f.e. during test cases
+     */
+    public static function createFullyDeterministic(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier): self
+    {
+        return new self($workspaceName, $nodeAddresses, $initiatingUserIdentifier, $newContentStreamIdentifier);
+    }
+
 
     public function getWorkspaceName(): WorkspaceName
     {
@@ -67,21 +87,11 @@ final class DiscardIndividualNodesFromWorkspace
         return $this->initiatingUserIdentifier;
     }
 
-    public static function fromArray(array $array): self
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
     {
-        $nodeAddresses = [];
-        foreach ($array['nodeAddresses'] as $nodeAddressArray) {
-            $nodeAddresses[] = new NodeAddress(
-                ContentStreamIdentifier::fromString($nodeAddressArray['contentStreamIdentifier']),
-                new DimensionSpacePoint($nodeAddressArray['dimensionSpacePoint']),
-                NodeAggregateIdentifier::fromString($nodeAddressArray['nodeAggregateIdentifier']),
-                null
-            );
-        }
-        return new static(
-            new WorkspaceName($array['workspaceName']),
-            $nodeAddresses,
-            UserIdentifier::fromString($array['initiatingUserIdentifier'])
-        );
+        return $this->newContentStreamIdentifier;
     }
 }

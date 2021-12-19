@@ -70,7 +70,6 @@ final class EditorContentStreamZookeeper
      */
     protected $workspaceCommandHandler;
 
-
     /**
      * This method is called whenever a login happens (AuthenticationProviderManager::class, 'authenticatedToken'), using
      * Signal/Slot
@@ -110,20 +109,24 @@ final class EditorContentStreamZookeeper
                         $workspaceName = $workspaceName->increment($similarlyNamedWorkspaces);
                     }
 
-                    $this->workspaceCommandHandler->handleCreateWorkspace(new CreateWorkspace(
-                        $workspaceName->toContentRepositoryWorkspaceName(),
-                        $baseWorkspace->getWorkspaceName(),
-                        new WorkspaceTitle((string) $user->getName()),
-                        new WorkspaceDescription(''),
-                        $userIdentifier,
-                        $editorsNewContentStreamIdentifier,
-                        $userIdentifier
-                    ))->blockUntilProjectionsAreUpToDate();
+                    $this->workspaceCommandHandler->handleCreateWorkspace(
+                        new CreateWorkspace(
+                            $workspaceName->toContentRepositoryWorkspaceName(),
+                            $baseWorkspace->getWorkspaceName(),
+                            new WorkspaceTitle((string) $user->getName()),
+                            new WorkspaceDescription(''),
+                            $userIdentifier,
+                            $editorsNewContentStreamIdentifier,
+                            $userIdentifier
+                        )
+                    )->blockUntilProjectionsAreUpToDate();
                 } else {
-                    $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
-                        $workspace->getWorkspaceName(),
-                        $userIdentifier
-                    ))->blockUntilProjectionsAreUpToDate();
+                    $this->workspaceCommandHandler->handleRebaseWorkspace(
+                        RebaseWorkspace::create(
+                            $workspace->getWorkspaceName(),
+                            $userIdentifier
+                        )
+                    )->blockUntilProjectionsAreUpToDate();
                 }
             }
         }

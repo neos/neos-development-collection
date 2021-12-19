@@ -14,7 +14,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\PropertyCollection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
@@ -29,6 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Property\PropertyConverter;
 use Neos\Flow\Annotations as Flow;
@@ -57,7 +57,7 @@ final class NodeFactory
     public function mapNodeRowToNode(array $nodeRow, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints): NodeInterface
     {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $nodeClassName = $nodeType->getConfiguration('class') ?: \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node::class;
+        $nodeClassName = $nodeType->getConfiguration('class') ?: Node::class;
         if (!class_exists($nodeClassName)) {
             throw ContentProjection\Exception\NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
         }
@@ -209,7 +209,7 @@ final class NodeFactory
                 $nodeTypeNames[$rawNodeAggregateIdentifier],
                 $nodeNames[$rawNodeAggregateIdentifier],
                 new OriginDimensionSpacePointSet($occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier]),
-                $nodesByOccupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier],
+                $nodes,
                 $coverageByOccupantsByNodeAggregate[$rawNodeAggregateIdentifier],
                 new DimensionSpacePointSet($coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier]),
                 $nodesByCoveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier],

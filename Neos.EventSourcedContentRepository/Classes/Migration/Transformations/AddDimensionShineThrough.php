@@ -16,7 +16,7 @@ namespace Neos\EventSourcedContentRepository\Migration\Transformations;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\DimensionSpaceCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 
 /**
  * Add a Dimension Space Point Shine-Through; basically making all content available not just in the source(original) DSP, but also

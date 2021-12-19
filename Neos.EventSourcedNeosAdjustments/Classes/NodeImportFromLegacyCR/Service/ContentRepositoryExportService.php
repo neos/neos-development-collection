@@ -43,12 +43,13 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\Helpers\NodeAggregateIdentifierAndNodeTypeForLegacyImport;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -142,6 +143,12 @@ class ContentRepositoryExportService
      * @var DimensionSpacePoint
      */
     private $alreadyCreatedNodeAggregateIdentifiers;
+
+    /**
+     * @Flow\Inject
+     * @var RuntimeBlocker
+     */
+    protected $runtimeBlocker;
 
     /**
      * @var CommandResult
@@ -334,45 +341,47 @@ class ContentRepositoryExportService
                     ))->blockUntilProjectionsAreUpToDate();
                 } else {
                     $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePath, $nodeTypeName);
-                    $command = new CreateNodeAggregateWithNode(
-                        $this->contentStreamIdentifier,
-                        $nodeAggregateIdentifier,
-                        $nodeTypeName,
-                        $originDimensionSpacePoint,
-                        UserIdentifier::forSystemUser(),
-                        $parentNodeAggregateIdentifierAndNodeType->getNodeAggregateIdentifier(),
-                        null,
-                        $nodeName,
-                        PropertyValuesToWrite::fromArray($propertyValues),
-                        $nodeAggregateIdentifiersByNodePaths
-                        // TODO: tethered descendant IDs
-                    );
-
-                    $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)
-                        ->blockUntilProjectionsAreUpToDate();
+                    $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode(
+                        new CreateNodeAggregateWithNode(
+                            $this->contentStreamIdentifier,
+                            $nodeAggregateIdentifier,
+                            $nodeTypeName,
+                            $originDimensionSpacePoint,
+                            UserIdentifier::forSystemUser(),
+                            $parentNodeAggregateIdentifierAndNodeType->getNodeAggregateIdentifier(),
+                            null,
+                            $nodeName,
+                            PropertyValuesToWrite::fromArray($propertyValues),
+                            $nodeAggregateIdentifiersByNodePaths
+                        )
+                    )->blockUntilProjectionsAreUpToDate();
                 }
             }
 
             // publish reference edges
             foreach ($propertyReferences as $propertyName => $references) {
-                $this->nodeAggregateCommandHandler->handleSetNodeReferences(new SetNodeReferences(
-                    $this->contentStreamIdentifier,
-                    $nodeAggregateIdentifier,
-                    $originDimensionSpacePoint,
-                    NodeAggregateIdentifierCollection::fromArray($references),
-                    PropertyName::fromString($propertyName),
-                    UserIdentifier::forSystemUser()
-                ))->blockUntilProjectionsAreUpToDate();
+                $this->nodeAggregateCommandHandler->handleSetNodeReferences(
+                    new SetNodeReferences(
+                        $this->contentStreamIdentifier,
+                        $nodeAggregateIdentifier,
+                        $originDimensionSpacePoint,
+                        NodeAggregateIdentifierCollection::fromArray($references),
+                        PropertyName::fromString($propertyName),
+                        UserIdentifier::forSystemUser()
+                    )
+                )->blockUntilProjectionsAreUpToDate();
             }
 
             if ($isHidden === true) {
-                $this->nodeAggregateCommandHandler->handleDisableNodeAggregate(new DisableNodeAggregate(
-                    $this->contentStreamIdentifier,
-                    $nodeAggregateIdentifier,
-                    $originDimensionSpacePoint,
-                    NodeVariantSelectionStrategyIdentifier::virtualSpecializations(),
-                    UserIdentifier::forSystemUser()
-                ));
+                $this->nodeAggregateCommandHandler->handleDisableNodeAggregate(
+                    new DisableNodeAggregate(
+                        $this->contentStreamIdentifier,
+                        $nodeAggregateIdentifier,
+                        $originDimensionSpacePoint,
+                        NodeVariantSelectionStrategyIdentifier::virtualSpecializations(),
+                        UserIdentifier::forSystemUser()
+                    )
+                )->blockUntilProjectionsAreUpToDate();
             }
 
             $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = $originDimensionSpacePoint;
@@ -546,8 +555,7 @@ class ContentRepositoryExportService
         $publishedEvents = DomainEvents::withSingleEvent($event);
         $this->eventStore->commit($streamName, $publishedEvents);
 
-        CommandResult::fromPublishedEvents(
-            $publishedEvents
-        )->blockUntilProjectionsAreUpToDate();
+        $commandResult = CommandResult::fromPublishedEvents($publishedEvents, $this->runtimeBlocker);
+        $commandResult->blockUntilProjectionsAreUpToDate();
     }
 }

@@ -16,7 +16,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -24,26 +25,35 @@ use Ramsey\Uuid\Uuid;
 
 trait NodeReferencing
 {
+    use ConstraintChecks;
+
     abstract protected function getReadSideMemoryCacheManager(): ReadSideMemoryCacheManager;
 
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
+    abstract protected function getRuntimeBlocker(): RuntimeBlocker;
+
     /**
      * @param SetNodeReferences $command
      * @return CommandResult
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function handleSetNodeReferences(SetNodeReferences $command): CommandResult
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
-        // Check if source node exists
-        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSourceNodeAggregateIdentifier());
-        $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getSourceOriginDimensionSpacePoint());
-
-        // check if targets exist
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireDimensionSpacePointToExist($command->getSourceOriginDimensionSpacePoint());
+        $sourceNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSourceNodeAggregateIdentifier());
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint($sourceNodeAggregate, $command->getSourceOriginDimensionSpacePoint());
+        $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->getNodeTypeName(), $command->getReferenceName());
         foreach ($command->getDestinationNodeAggregateIdentifiers() as $destinationNodeAggregateIdentifier) {
-            $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $destinationNodeAggregateIdentifier);
-            $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getSourceOriginDimensionSpacePoint());
+            $destinationNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $destinationNodeAggregateIdentifier);
+            $this->requireNodeAggregateToCoverDimensionSpacePoint($destinationNodeAggregate, $command->getSourceOriginDimensionSpacePoint());
+
+            // @todo check reference node type constraints
         }
 
         $events = null;
@@ -67,6 +77,6 @@ trait NodeReferencing
             );
         });
 
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
 }

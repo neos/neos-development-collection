@@ -25,7 +25,7 @@ Feature: Properties can be changed
     Then the feedback contains "Neos.Neos.Ui:UpdateWorkspaceInfo"
     Then the feedback contains "Neos.Neos.Ui:UpdateNodeInfo"
 
-    Then I expect a node identified by aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" to exist in the subgraph
-    And I expect the current Node to have the properties:
+    Then I expect node aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" to lead to node cs-identifier;d17caff2-f50c-d30b-b735-9b9216de02e9;{"language": "en_US"}
+    Then I expect this node to have the following properties:
       | Key   | Value                 |
       | title | <h1>new title XX</h1> |

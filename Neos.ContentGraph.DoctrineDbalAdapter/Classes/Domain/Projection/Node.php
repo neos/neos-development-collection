@@ -22,6 +22,7 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 
 /**
@@ -71,6 +72,11 @@ final class Node implements NodeInterface
         $this->classification = $classification;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->visibilityConstraints = $visibilityConstraints;
+    }
+
+    public function getClassification(): NodeAggregateClassification
+    {
+        return $this->classification;
     }
 
     /**

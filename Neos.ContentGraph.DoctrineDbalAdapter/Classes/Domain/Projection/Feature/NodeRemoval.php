@@ -17,10 +17,7 @@ use Neos\Flow\Log\SystemLoggerInterface;
  */
 trait NodeRemoval
 {
-    /**
-     * @var ProjectionContentGraph
-     */
-    protected $projectionContentGraph;
+    protected ProjectionContentGraph $projectionContentGraph;
 
     /**
      * @var SystemLoggerInterface

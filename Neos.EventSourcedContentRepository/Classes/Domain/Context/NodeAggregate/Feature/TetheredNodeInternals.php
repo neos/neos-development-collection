@@ -61,6 +61,7 @@ trait TetheredNodeInternals
         ReadableNodeAggregateInterface $parentNodeAggregate,
         NodeInterface $parentNode,
         NodeName $tetheredNodeName,
+        ?NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
         NodeType $expectedTetheredNodeType,
         UserIdentifier $initiatingUserIdentifier
     ): DomainEvents {
@@ -79,7 +80,7 @@ trait TetheredNodeInternals
                 DecoratedEvent::addIdentifier(
                     new NodeAggregateWithNodeWasCreated(
                         $parentNode->getContentStreamIdentifier(),
-                        NodeAggregateIdentifier::forAutoCreatedChildNode($tetheredNodeName, $parentNode->getNodeAggregateIdentifier()),
+                        $tetheredNodeAggregateIdentifier !== null ? $tetheredNodeAggregateIdentifier : NodeAggregateIdentifier::forAutoCreatedChildNode($tetheredNodeName, $parentNode->getNodeAggregateIdentifier()),
                         NodeTypeName::fromString($expectedTetheredNodeType->getName()),
                         $parentNode->getOriginDimensionSpacePoint(),
                         $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),

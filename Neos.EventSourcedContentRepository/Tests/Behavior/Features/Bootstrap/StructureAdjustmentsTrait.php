@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap;
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -16,8 +15,8 @@ namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\EventSourcedContentRepository\StructureAdjustment\Dto\StructureAdjustment;
-use Neos\EventSourcedContentRepository\StructureAdjustment\StructureAdjustmentService;
+use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\StructureAdjustment;
+use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\StructureAdjustmentService;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 
@@ -26,7 +25,10 @@ use PHPUnit\Framework\Assert;
  */
 trait StructureAdjustmentsTrait
 {
-    protected StructureAdjustmentService $structureAdjustmentService;
+    /**
+     * @var StructureAdjustmentService
+     */
+    protected $structureAdjustmentService;
 
     /**
      * @return ObjectManagerInterface

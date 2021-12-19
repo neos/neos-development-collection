@@ -8,7 +8,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
@@ -48,7 +48,7 @@ class WorkspaceMaintenanceService
         $outdatedWorkspaces = $this->workspaceFinder->findOutdated();
 
         foreach ($outdatedWorkspaces as $workspace) {
-            $this->lastCommandResult = $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
+            $this->lastCommandResult = $this->workspaceCommandHandler->handleRebaseWorkspace(RebaseWorkspace::create(
                 $workspace->getWorkspaceName(),
                 UserIdentifier::forSystemUser()
             ));

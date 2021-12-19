@@ -14,7 +14,9 @@ namespace Neos\EventSourcedContentRepository\Infrastructure\Property;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
@@ -42,11 +44,14 @@ final class PropertyConverter
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
             // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
             $nodeType->getOptions();
-            $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
+
+            $propertyType = PropertyType::fromNodeTypeDeclaration(
+                $nodeType->getPropertyType($propertyName),
+                PropertyName::fromString($propertyName),
+                NodeTypeName::fromString($nodeType->getName())
+            );
 
             if ($propertyValue !== null) {
-                $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
-
                 try {
                     $propertyValue = $this->serializer->normalize($propertyValue);
                 } catch (NotEncodableValueException | NotNormalizableValueException $e) {

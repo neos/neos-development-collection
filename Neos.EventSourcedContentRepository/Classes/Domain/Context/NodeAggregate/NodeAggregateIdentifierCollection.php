@@ -45,12 +45,14 @@ final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \Js
 
     public static function fromArray(array $array): self
     {
-        $nodeAggregateIdentifiers = [];
-        foreach ($array as $i => $rawNodeAggregateIdentifier) {
-            $nodeAggregateIdentifiers[$i] = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
-        }
+        return new self(array_map(function (string $serializedNodeAggregateIdentifier) {
+            return NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
+        }, $array));
+    }
 
-        return new self($nodeAggregateIdentifiers);
+    public static function fromJsonString(string $jsonString): self
+    {
+        return self::fromArray(\json_decode($jsonString, true));
     }
 
     public function jsonSerialize(): array
@@ -58,6 +60,14 @@ final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \Js
         return $this->nodeAggregateIdentifiers;
     }
 
+    public function __toString(): string
+    {
+        return \json_encode($this->nodeAggregateIdentifiers);
+    }
+
+    /**
+     * @return \ArrayIterator|NodeAggregateIdentifier[]
+     */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->nodeAggregateIdentifiers);

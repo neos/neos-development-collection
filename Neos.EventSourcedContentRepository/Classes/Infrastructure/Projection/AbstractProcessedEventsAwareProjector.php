@@ -2,48 +2,33 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Infrastructure\Projection;
 
-use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\AppliedEventsStorage\DoctrineAppliedEventsStorage;
 use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\Flow\Annotations as Flow;
 
 abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsAwareProjectorInterface
 {
+    private bool $assumeProjectorRunsSynchronously = false;
 
     /**
-     * @Flow\Inject
-     * @var VariableFrontend
+     * @var array|string[]
      */
-    protected $processedEventsCache;
+    private array $processedEventIdentifiers = [];
 
-    /**
-     * @var DbalClient
-     */
-    private $client;
+    private DoctrineAppliedEventsStorage $doctrineAppliedEventsStorage;
 
-    /**
-     * @var bool
-     */
-    private $assumeProjectorRunsSynchronously = false;
+    private VariableFrontend $processedEventsCache;
 
-    /**
-     * @var string[]
-     */
-    private $processedEventIdentifiers = [];
-
-    /**
-     * @var DoctrineAppliedEventsStorage
-     */
-    private $doctrineAppliedEventsStorage;
-
-    public function injectDbalClient(DbalClient $client): void
+    public function __construct(DbalClient $client, VariableFrontend $processedEventsCache)
     {
-        $this->client = $client;
-        $this->doctrineAppliedEventsStorage = new DoctrineAppliedEventsStorage($this->getDatabaseConnection(), get_class($this));
+        $this->doctrineAppliedEventsStorage = new DoctrineAppliedEventsStorage(
+            $client->getConnection(),
+            get_class($this)
+        );
+        $this->processedEventsCache = $processedEventsCache;
     }
 
     public function assumeProjectorRunsSynchronously(): void
@@ -55,21 +40,6 @@ abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsA
     {
         $this->processedEventIdentifiers = [];
         $this->processedEventsCache->flush();
-    }
-
-    protected function getDatabaseConnection(): Connection
-    {
-        return $this->client->getConnection();
-    }
-
-    /**
-     * @param callable $operations
-     * @throws \Exception
-     * @throws \Throwable
-     */
-    protected function transactional(callable $operations): void
-    {
-        $this->getDatabaseConnection()->transactional($operations);
     }
 
     public function hasProcessed(DomainEvents $events): bool

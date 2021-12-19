@@ -1,6 +1,15 @@
 Neos:
   EventSourcedContentRepository:
     contentDimensions: {}
+    unstableInternalWillChangeLater:
+      testing:
+        projectorsToBeReset: {}
+        # DoctrineDbal: Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph
+        activeContentGraphs: {}
+      projection:
+        defaultProjectorsToBeBlocked:
+          'Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector': true
+          'Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector': true
     nodeAccessorFactories:
       contentSubgraph:
         position: end
@@ -32,7 +41,6 @@ Neos:
         className: Neos\EventSourcedContentRepository\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
       ProxyAwareObjectNormalizer:
         className: Neos\EventSourcing\EventStore\Normalizer\ProxyAwareObjectNormalizer
-
 
   EventSourcing:
     EventStore:

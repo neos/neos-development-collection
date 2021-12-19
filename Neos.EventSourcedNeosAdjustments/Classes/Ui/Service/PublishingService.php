@@ -130,14 +130,18 @@ class PublishingService
         );
 
         // TODO: only rebase if necessary!
-        $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
-            $workspaceName,
-            $userIdentifier
-        ))->blockUntilProjectionsAreUpToDate();
+        $this->workspaceCommandHandler->handleRebaseWorkspace(
+            RebaseWorkspace::create(
+                $workspaceName,
+                $userIdentifier
+            )
+        )->blockUntilProjectionsAreUpToDate();
 
-        $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace(
-            $workspaceName,
-            $userIdentifier
-        ))->blockUntilProjectionsAreUpToDate();
+        $this->workspaceCommandHandler->handlePublishWorkspace(
+            new PublishWorkspace(
+                $workspaceName,
+                $userIdentifier
+            )
+        );
     }
 }

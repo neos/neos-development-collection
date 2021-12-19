@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-namespace Neos\ContentRepository\Intermediary\Tests\Behavior\Features\Bootstrap;
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -30,15 +29,15 @@ use PHPUnit\Framework\Assert;
  */
 trait ReadModelInstantiationTrait
 {
-    private ?ContentStreamIdentifier $contentStreamIdentifier = null;
+    protected ?ContentStreamIdentifier $contentStreamIdentifier = null;
 
-    private ?DimensionSpacePoint $dimensionSpacePoint = null;
+    protected ?DimensionSpacePoint $dimensionSpacePoint = null;
+
+    protected ?NodeInterface $currentReadModel = null;
+
+    protected ?\Exception $lastInstantiationException = null;
 
     private ContentGraphInterface $contentGraph;
-
-    protected NodeInterface $currentReadModel;
-
-    private ?\Exception $lastInstantiationException = null;
 
     abstract protected function getObjectManager(): ObjectManagerInterface;
 
@@ -67,15 +66,17 @@ trait ReadModelInstantiationTrait
      */
     public function theReadModelWithNodeAggregateIdentifierXIsInstantiated(string $rawNodeAggregateIdentifier): void
     {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $this->contentStreamIdentifier,
-            $this->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
+        foreach ($this->getContentGraphs() as $adapterName => $contentGraph) {
+            $subgraph = $contentGraph->getSubgraphByIdentifier(
+                $this->contentStreamIdentifier,
+                $this->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            );
 
-        $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier));
+            $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier));
 
-        $this->currentReadModel = $node;
+            $this->currentReadModel = $node;
+        }
     }
 
     /**

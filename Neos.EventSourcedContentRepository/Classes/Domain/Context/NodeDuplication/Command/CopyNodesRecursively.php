@@ -111,6 +111,9 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         $this->nodeAggregateIdentifierMapping = $nodeAggregateIdentifierMapping;
     }
 
+    /**
+     * @todo reference start node by address instead of passing it
+     */
     public static function create(
         ContentSubgraphInterface $subgraph,
         NodeInterface $startNode,
@@ -224,6 +227,20 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
             $this->targetSucceedingSiblingNodeAggregateIdentifier,
             $this->targetNodeName,
             $this->nodeAggregateIdentifierMapping
+        );
+    }
+
+    public function withNodeAggregateIdentifierMapping(NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping): self
+    {
+        return new self(
+            $this->contentStreamIdentifier,
+            $this->nodeToInsert,
+            $this->targetDimensionSpacePoint,
+            $this->initiatingUserIdentifier,
+            $this->targetParentNodeAggregateIdentifier,
+            $this->targetSucceedingSiblingNodeAggregateIdentifier,
+            $this->targetNodeName,
+            $nodeAggregateIdentifierMapping
         );
     }
 }

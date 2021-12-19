@@ -45,7 +45,7 @@ Feature: Move dimension space point
       | nodeAggregateClassification | "root"                                                   |
     And the graph projection is fully up to date
     # Node /document
-    When the intermediary command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
@@ -74,16 +74,16 @@ Feature: Move dimension space point
               to: { language: 'de_DE' }
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
 
     # we find the node underneath the new DimensionSpacePoint, but not underneath the old.
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de_DE"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    When I am in content stream "migration-cs" and dimension space point {"language": "de_DE"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de_DE"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
     When I run integrity violation detection
@@ -93,18 +93,19 @@ Feature: Move dimension space point
   Scenario: Success Case - disabled nodes stay disabled
 
     When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {"language": "de"}       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "cs-identifier"                        |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {"language": "de"}                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
     # ensure the node is disabled
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
@@ -125,17 +126,17 @@ Feature: Move dimension space point
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     When VisibilityConstraints are set to "frontend"
 
     # The visibility edges were modified
-    When I am in content stream "migration-cs" and Dimension Space Point {"language": "de_DE"}
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" not to exist in the subgraph
+    When I am in content stream "migration-cs" and dimension space point {"language": "de_DE"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de_DE"}
     When VisibilityConstraints are set to "frontend"
 
     When I run integrity violation detection
