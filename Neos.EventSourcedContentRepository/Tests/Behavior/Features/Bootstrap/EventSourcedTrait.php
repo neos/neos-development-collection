@@ -26,6 +26,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
@@ -198,6 +199,18 @@ trait EventSourcedTrait
         }
 
         return $eventPayload;
+    }
+
+    /**
+     * called by {@see readPayloadTable()} above, from RebasingAutoCreatedChildNodesWorks.feature
+     * @return NodeAggregateIdentifier
+     */
+    protected function currentNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        $currentNodes = $this->currentNodes->getArrayCopy();
+        $firstNode = reset($currentNodes);
+        assert($firstNode instanceof NodeInterface);
+        return $firstNode->getNodeAggregateIdentifier();
     }
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite
