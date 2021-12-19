@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
@@ -120,7 +121,7 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) use ($expectedClassification) {
             Assert::assertTrue(
                 $expectedClassification->equals($nodeAggregate->getClassification()),
-                'Node aggregate classifications do not match in adapter "' . $adapterName . '". Expected "' . $expectedClassification . '", got "'. $nodeAggregate->getClassification() . '".'
+                'Node aggregate classifications do not match in adapter "' . $adapterName . '". Expected "' . $expectedClassification . '", got "' . $nodeAggregate->getClassification() . '".'
             );
         });
     }
@@ -136,7 +137,7 @@ trait ProjectedNodeAggregateTrait
             Assert::assertSame(
                 (string)$expectedNodeTypeName,
                 (string)$nodeAggregate->getNodeTypeName(),
-                'Node types do not match in adapter "' . $adapterName . '". Expected "' . $expectedNodeTypeName . '", got "'. $nodeAggregate->getNodeTypeName() . '".'
+                'Node types do not match in adapter "' . $adapterName . '". Expected "' . $expectedNodeTypeName . '", got "' . $nodeAggregate->getNodeTypeName() . '".'
             );
         });
     }
@@ -147,7 +148,7 @@ trait ProjectedNodeAggregateTrait
     public function iExpectThisNodeAggregateToBeUnnamed(): void
     {
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) {
-            Assert::assertNull($nodeAggregate->getNodeName(), 'Did not expect node name for adapter "'. $adapterName . '"');
+            Assert::assertNull($nodeAggregate->getNodeName(), 'Did not expect node name for adapter "' . $adapterName . '"');
         });
     }
 
@@ -159,7 +160,7 @@ trait ProjectedNodeAggregateTrait
     {
         $expectedNodeName = NodeName::fromString($serializedExpectedNodeName);
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) use ($expectedNodeName) {
-            Assert::assertSame((string)$expectedNodeName, (string)$nodeAggregate->getNodeName(), 'Node names do not match in adapter "'. $adapterName . '", expected "' . $expectedNodeName . '", got "' . $nodeAggregate->getNodeName() . '".');
+            Assert::assertSame((string)$expectedNodeName, (string)$nodeAggregate->getNodeName(), 'Node names do not match in adapter "' . $adapterName . '", expected "' . $expectedNodeName . '", got "' . $nodeAggregate->getNodeName() . '".');
         });
     }
 
@@ -194,9 +195,9 @@ trait ProjectedNodeAggregateTrait
                 return $parentNodeAggregate->getContentStreamIdentifier() . ';' . $parentNodeAggregate->getIdentifier();
             }, iterator_to_array(
                 $this->getContentGraphs()[$adapterName]->findParentNodeAggregates(
-                $nodeAggregate->getContentStreamIdentifier(),
-                $nodeAggregate->getIdentifier()
-            )
+                    $nodeAggregate->getContentStreamIdentifier(),
+                    $nodeAggregate->getIdentifier()
+                )
             )));
             Assert::assertSame(
                 $expectedDiscriminators,
