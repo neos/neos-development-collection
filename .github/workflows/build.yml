@@ -131,6 +131,7 @@ jobs:
         #if: env.BEHAT == true
         run: |
           ./flow behat:setup
+          ./flow doctrine:migrate
           # for whatever reason, the eventstore setup sometimes needs to be run twice.
           ./flow eventstore:setup ContentRepository; ./flow eventstore:setup ContentRepository
           bin/behat -f progress -c Packages/CR/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
