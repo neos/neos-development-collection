@@ -13,7 +13,6 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures;
  * source code.
  */
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\PropertyCollection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -24,6 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 
@@ -158,5 +158,10 @@ final class Thing implements NodeInterface
 
     public function getVisibilityConstraints(): VisibilityConstraints
     {
+    }
+
+    public function getClassification(): NodeAggregateClassification
+    {
+        // TODO: Implement getClassification() method.
     }
 }
