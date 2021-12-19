@@ -106,7 +106,7 @@ Neos\EventSourcedContentRepository\Infrastructure\Projection\DefaultBlockedProje
   scope: singleton
   arguments:
     1:
-      setting: 'Neos.EventSourcedContentRepository.projection.defaultProjectorsToBeBlocked'
+      setting: 'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.projection.defaultProjectorsToBeBlocked'
 
 Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker:
   scope: singleton

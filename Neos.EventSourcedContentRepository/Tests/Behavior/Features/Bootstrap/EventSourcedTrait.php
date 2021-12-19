@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
@@ -58,6 +59,7 @@ use Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
@@ -126,17 +128,28 @@ trait EventSourcedTrait
     {
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
-        $this->contentGraphs = new ContentGraphs([
-            'DoctrineDbal' => $this->getObjectManager()->get(DbalContentGraph::class),
-            'PostgreSQL' => $this->getObjectManager()->get(PostgreSQLContentHypergraph::class)
-        ]);
+        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
+
+        $activeContentGraphsConfig = $configurationManager->getConfiguration(
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.testing.activeContentGraphs'
+        );
+        $activeContentGraphs = [];
+        foreach ($activeContentGraphsConfig as $name => $className) {
+            if (is_string($className)) {
+                $activeContentGraphs[$name] = $this->getObjectManager()->get($className);
+            }
+        }
+        if (count($activeContentGraphs) === 0) {
+            throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
+        }
+        $this->contentGraphs = new ContentGraphs($activeContentGraphs);
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
 
-        $configurationManager = $this->getObjectManager()->get(\Neos\Flow\Configuration\ConfigurationManager::class);
         foreach ($configurationManager->getConfiguration(
-            \Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.EventSourcedContentRepository.testing.projectorsToBeReset'
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.testing.projectorsToBeReset'
         ) ?: [] as $projectorClassName => $toBeReset) {
             if ($toBeReset) {
                 $this->projectorsToBeReset[] = $this->getObjectManager()->get($projectorClassName);
@@ -183,10 +196,10 @@ trait EventSourcedTrait
                 $propertyOrMethodName = substr($line['Value'], strlen('$this->'));
                 if (method_exists($this, $propertyOrMethodName)) {
                     // is method
-                    $value = (string) $this->$propertyOrMethodName();
+                    $value = (string)$this->$propertyOrMethodName();
                 } else {
                     // is property
-                    $value = (string) $this->$propertyOrMethodName;
+                    $value = (string)$this->$propertyOrMethodName;
                 }
             } else {
                 // default case

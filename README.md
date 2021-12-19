@@ -123,6 +123,60 @@ See https://github.com/neos/neos-development-distribution/tree/event-sourced
 - [ ] Implement Node Repair
 - [ ] (further TODOs here; this list is not complete yet)
 
+# Development of the Postgres Adapter
+
+By default, the Mysql Adapter is active right now, as Postgres is still in development.
+
+To activate Postgres, right now, the following steps are needed **in your distribution**:
+
+```yaml
+# Configuration/Objects.yaml
+
+Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface:
+  className: 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
+```
+
+**if you want to run Postgres and MySQL side by side for the tests, you need the following config:**
+
+```yaml
+# Configuration/Settings.yaml
+
+Neos:
+  EventSourcedContentRepository:
+    unstableInternalWillChangeLater:
+      testing:
+        projectorsToBeReset:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+        activeContentGraphs:
+          'Postgres': 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
+      projection:
+        defaultProjectorsToBeBlocked:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+
+```
+
+**if you want to run Postgres without MySQL, you need the following config:**
+
+```yaml
+# Configuration/Settings.yaml
+
+Neos:
+  EventSourcedContentRepository:
+    unstableInternalWillChangeLater:
+      testing:
+        projectorsToBeReset:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': false
+        activeContentGraphs:
+          'Postgres': 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
+          'DoctrineDBAL': false
+      projection:
+        defaultProjectorsToBeBlocked:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': false
+```
+
+
 # Technical Description (for developers)
 
 This section should give an overview about the different involved packages, to ease understanding the different moving parts.
@@ -231,3 +285,4 @@ A `NodeAddress` is an external representation of a node (used in routing). TODO:
   - custom `NodeInfoHelper`, calling to a custom `NodePropertyConverterService`
 - adjust the *DimensionSwitcher* JS component in `Resources/Private/UiAdapter`
 - TODO: this is not everything yet.
+
