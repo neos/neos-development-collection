@@ -122,7 +122,7 @@ final class EditorContentStreamZookeeper
                     )->blockUntilProjectionsAreUpToDate();
                 } else {
                     $this->workspaceCommandHandler->handleRebaseWorkspace(
-                        new RebaseWorkspace(
+                        RebaseWorkspace::create(
                             $workspace->getWorkspaceName(),
                             $userIdentifier
                         )

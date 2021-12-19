@@ -161,7 +161,7 @@ Feature: Workspace based content publishing
     Then the last command should have thrown an exception of type "BaseWorkspaceHasBeenModifiedInTheMeantime"
 
     # REBASING + Publishing: works now (TODO soft constraint check for old value)
-    When the command "RebaseWorkspace" is executed with payload:
+    When the command RebaseWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
       | initiatingUserIdentifier | "initiating-user-identifier" |

@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
@@ -27,18 +28,26 @@ final class RebaseWorkspace
 
     private UserIdentifier $initiatingUserIdentifier;
 
-    public function __construct(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier)
+    private ContentStreamIdentifier $rebasedContentStreamIdentifier;
+
+    public function __construct(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $rebasedContentStreamIdentifier)
     {
         $this->workspaceName = $workspaceName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->rebasedContentStreamIdentifier = $rebasedContentStreamIdentifier;
     }
 
-    public static function fromArray(array $array): self
+    public static function create(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier): self
     {
-        return new self(
-            new WorkspaceName($array['workspaceName']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier'])
-        );
+        return new self($workspaceName, $initiatingUserIdentifier, ContentStreamIdentifier::create());
+    }
+
+    /**
+     * Call this method if you want to run this command fully deterministically, f.e. during test cases
+     */
+    public static function createFullyDeterministic(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier): self
+    {
+        return new self($workspaceName, $initiatingUserIdentifier, $newContentStreamIdentifier);
     }
 
     public function getWorkspaceName(): WorkspaceName
@@ -49,5 +58,13 @@ final class RebaseWorkspace
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    /**
+     * Name of the new content stream which is created during the rebase
+     */
+    public function getRebasedContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->rebasedContentStreamIdentifier;
     }
 }

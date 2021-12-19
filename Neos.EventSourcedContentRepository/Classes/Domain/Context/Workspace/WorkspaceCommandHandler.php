@@ -361,7 +361,7 @@ final class WorkspaceCommandHandler
         // TODO: please check the code below in-depth. it does:
         // - fork a new content stream
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
-        $rebasedContentStream = ContentStreamIdentifier::create();
+        $rebasedContentStream = $command->getRebasedContentStreamIdentifier();
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $rebasedContentStream,

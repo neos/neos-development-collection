@@ -79,7 +79,7 @@ Feature: Rebasing auto-created nodes works
       | initiatingUserIdentifier  | "initiating-user-identifier"                   |
     And the graph projection is fully up to date
 
-    When the command "RebaseWorkspace" is executed with payload:
+    When the command RebaseWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
       | initiatingUserIdentifier | "initiating-user-identifier" |
