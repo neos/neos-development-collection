@@ -43,10 +43,14 @@ trait WorkspaceDiscarding
         $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
+        $newContentStreamIdentifier = isset($commandArguments['newContentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['newContentStreamIdentifier'])
+            : ContentStreamIdentifier::create();
 
-        $command = new DiscardWorkspace(
+        $command = DiscardWorkspace::createFullyDeterministic(
             new WorkspaceName($commandArguments['workspaceName']),
-            $initiatingUserIdentifier
+            $initiatingUserIdentifier,
+            $newContentStreamIdentifier
         );
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()

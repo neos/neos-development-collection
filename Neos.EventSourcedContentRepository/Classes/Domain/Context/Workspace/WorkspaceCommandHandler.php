@@ -730,7 +730,7 @@ final class WorkspaceCommandHandler
         $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
 
-        $newContentStream = ContentStreamIdentifier::create();
+        $newContentStream = $command->getNewContentStreamIdentifier();
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $newContentStream,

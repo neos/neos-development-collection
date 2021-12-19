@@ -16,6 +16,7 @@ use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -64,5 +65,40 @@ trait WorkspacePublishing
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
             ->handlePublishIndividualNodesFromWorkspace($command);
+    }
+
+    /**
+     * @Given /^the command PublishWorkspace is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandPublishWorkspaceIsExecuted(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
+            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
+            : $this->getCurrentUserIdentifier();
+
+        $command = new PublishWorkspace(
+            new WorkspaceName($commandArguments['workspaceName']),
+            $initiatingUserIdentifier
+        );
+
+        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
+            ->handlePublishWorkspace($command);
+    }
+
+    /**
+     * @Given /^the command PublishWorkspace is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandPublishWorkspaceIsExecutedAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandPublishWorkspaceIsExecuted($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
     }
 }

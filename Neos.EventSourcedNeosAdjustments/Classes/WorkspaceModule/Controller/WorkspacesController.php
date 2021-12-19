@@ -489,7 +489,7 @@ class WorkspacesController extends AbstractModuleController
     public function discardWorkspaceAction(WorkspaceName $workspace)
     {
         $this->workspaceCommandHandler->handleDiscardWorkspace(
-            new DiscardWorkspace(
+            DiscardWorkspace::create(
                 $workspace,
                 $this->getCurrentUserIdentifier()
             )

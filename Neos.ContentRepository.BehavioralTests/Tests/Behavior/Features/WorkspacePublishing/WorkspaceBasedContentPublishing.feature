@@ -18,10 +18,10 @@ Feature: Workspace based content publishing
           type: string
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
-      | initiatingUserIdentifier   | "user-id"       |
+      | Key                        | Value                        |
+      | workspaceName              | "live"                       |
+      | newContentStreamIdentifier | "cs-identifier"              |
+      | initiatingUserIdentifier   | "initiating-user-identifier" |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -53,11 +53,12 @@ Feature: Workspace based content publishing
       | propertyValues            | {"text": "Original"}         |
       | initiatingUserIdentifier  | "initiating-user-identifier" |
     And the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
-      | newContentStreamIdentifier | "user-cs-identifier" |
-      | initiatingUserIdentifier   | "user"               |
+      | Key                        | Value                        |
+      | workspaceName              | "user-test"                  |
+      | baseWorkspaceName          | "live"                       |
+      | newContentStreamIdentifier | "user-cs-identifier"         |
+      | initiatingUserIdentifier   | "initiating-user-identifier" |
+      | workspaceOwner             | "owner-identifier"           |
     And the graph projection is fully up to date
 
   Scenario: Basic events are emitted
@@ -120,7 +121,7 @@ Feature: Workspace based content publishing
       | text | "Modified" |
 
     # PUBLISHING
-    When the command "PublishWorkspace" is executed with payload:
+    When the command PublishWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
       | initiatingUserIdentifier | "initiating-user-identifier" |
@@ -152,7 +153,7 @@ Feature: Workspace based content publishing
     And the graph projection is fully up to date
 
     # PUBLISHING without rebase: error
-    When the command "PublishWorkspace" is executed with payload and exceptions are caught:
+    When the command PublishWorkspace is executed with payload and exceptions are caught:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
       | initiatingUserIdentifier | "initiating-user-identifier" |
@@ -166,7 +167,7 @@ Feature: Workspace based content publishing
       | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    And the command "PublishWorkspace" is executed with payload:
+    And the command PublishWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
       | initiatingUserIdentifier | "initiating-user-identifier" |
@@ -193,7 +194,7 @@ Feature: Workspace based content publishing
     And the graph projection is fully up to date
 
     # PUBLISHING
-    And the command "PublishWorkspace" is executed with payload:
+    And the command PublishWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
       | initiatingUserIdentifier | "initiating-user-identifier" |
@@ -211,7 +212,7 @@ Feature: Workspace based content publishing
     And the graph projection is fully up to date
 
     # PUBLISHING
-    And the command "PublishWorkspace" is executed with payload:
+    And the command PublishWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
       | initiatingUserIdentifier | "initiating-user-identifier" |
@@ -241,13 +242,14 @@ Feature: Workspace based content publishing
 
     # Discarding
     When the command DiscardWorkspace is executed with payload:
-      | Key                      | Value                        |
-      | workspaceName            | "user-test"                  |
-      | initiatingUserIdentifier | "initiating-user-identifier" |
+      | Key                        | Value                         |
+      | workspaceName              | "user-test"                   |
+      | initiatingUserIdentifier   | "initiating-user-identifier"  |
+      | newContentStreamIdentifier | "user-cs-identifier-modified" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
       | text | "Original" |
@@ -273,13 +275,14 @@ Feature: Workspace based content publishing
 
     # Discarding
     When the command DiscardWorkspace is executed with payload:
-      | Key                      | Value                        |
-      | workspaceName            | "user-test"                  |
-      | initiatingUserIdentifier | "initiating-user-identifier" |
+      | Key                        | Value                         |
+      | workspaceName              | "user-test"                   |
+      | initiatingUserIdentifier   | "initiating-user-identifier"  |
+      | newContentStreamIdentifier | "user-cs-identifier-modified" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value                        |
       | text | "Modified in live workspace" |

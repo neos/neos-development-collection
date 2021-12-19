@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
@@ -27,10 +28,31 @@ final class DiscardWorkspace
 
     private UserIdentifier $initiatingUserIdentifier;
 
-    public function __construct(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier)
+    /**
+     * Content Stream Identifier of the newly created fork, which contains the remaining changes which were not removed
+     *
+     * @var ContentStreamIdentifier
+     */
+    private ContentStreamIdentifier $newContentStreamIdentifier;
+
+    private function __construct(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier)
     {
         $this->workspaceName = $workspaceName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->newContentStreamIdentifier = $newContentStreamIdentifier;
+    }
+
+    public static function create(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier): self
+    {
+        return new self($workspaceName, $initiatingUserIdentifier, ContentStreamIdentifier::create());
+    }
+
+    /**
+     * Call this method if you want to run this command fully deterministically, f.e. during test cases
+     */
+    public static function createFullyDeterministic(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier): self
+    {
+        return new self($workspaceName, $initiatingUserIdentifier, $newContentStreamIdentifier);
     }
 
     public function getWorkspaceName(): WorkspaceName
@@ -41,5 +63,10 @@ final class DiscardWorkspace
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    public function getNewContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->newContentStreamIdentifier;
     }
 }

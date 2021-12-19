@@ -36,7 +36,7 @@ final class DiscardIndividualNodesFromWorkspace
     private UserIdentifier $initiatingUserIdentifier;
 
     /**
-     * Content Stream Identifier of the new
+     * Content Stream Identifier of the newly created fork, which contains the remaining changes which were not removed
      *
      * @var ContentStreamIdentifier
      */
