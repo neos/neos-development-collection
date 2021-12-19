@@ -102,6 +102,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"} |
       | newParentNodeAggregateIdentifier            | null                |
       | newSucceedingSiblingNodeAggregateIdentifier | "anthony-destinode" |
+      | initiatingUserIdentifier                    | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -131,6 +132,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateIdentifier            | null                |
       | newSucceedingSiblingNodeAggregateIdentifier | "anthony-destinode" |
       | relationDistributionStrategy                | "gatherAll"         |
+      | initiatingUserIdentifier                    | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -160,6 +162,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"} |
       | newParentNodeAggregateIdentifier            | null                |
       | newSucceedingSiblingNodeAggregateIdentifier | "berta-destinode"   |
+      | initiatingUserIdentifier                    | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -189,6 +192,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"} |
       | newParentNodeAggregateIdentifier            | null                |
       | newSucceedingSiblingNodeAggregateIdentifier | "berta-destinode"   |
+      | initiatingUserIdentifier                    | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -228,6 +232,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                        | {"language": "mul"} |
       | newParentNodeAggregateIdentifier           | null                |
       | newPrecedingSiblingNodeAggregateIdentifier | "berta-destinode"   |
+      | initiatingUserIdentifier                   | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -266,6 +271,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"} |
       | newParentNodeAggregateIdentifier            | null                |
       | newSucceedingSiblingNodeAggregateIdentifier | null                |
+      | initiatingUserIdentifier                    | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -295,6 +301,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"} |
       | newSucceedingSiblingNodeAggregateIdentifier | "anthony-destinode" |
       | relationDistributionStrategy                | "scatter"           |
+      | initiatingUserIdentifier                    | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -326,6 +333,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"} |
       | newSucceedingSiblingNodeAggregateIdentifier | "berta-destinode"   |
       | relationDistributionStrategy                | "scatter"           |
+      | initiatingUserIdentifier                    | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -357,6 +365,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateIdentifier      | "nody-mc-nodeface"  |
       | dimensionSpacePoint          | {"language": "mul"} |
       | relationDistributionStrategy | "scatter"           |
+      | initiatingUserIdentifier     | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -388,6 +397,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "de"}      |
       | newSucceedingSiblingNodeAggregateIdentifier | "anthony-destinode"     |
       | relationDistributionStrategy                | "gatherSpecializations" |
+      | initiatingUserIdentifier                    | "user"                  |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -429,6 +439,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "de"}      |
       | newSucceedingSiblingNodeAggregateIdentifier | "berta-destinode"       |
       | relationDistributionStrategy                | "gatherSpecializations" |
+      | initiatingUserIdentifier                    | "user"                  |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -471,6 +482,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateIdentifier      | "nody-mc-nodeface"      |
       | dimensionSpacePoint          | {"language": "de"}      |
       | relationDistributionStrategy | "gatherSpecializations" |
+      | initiatingUserIdentifier     | "user"                  |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}

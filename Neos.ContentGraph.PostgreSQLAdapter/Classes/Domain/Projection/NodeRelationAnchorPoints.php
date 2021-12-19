@@ -29,7 +29,7 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
         foreach ($array as $item) {
             if (is_string($item)) {
                 $values[] = NodeRelationAnchorPoint::fromString($item);
-            } elseif($item instanceof NodeRelationAnchorPoint) {
+            } elseif ($item instanceof NodeRelationAnchorPoint) {
                 $values[] = $item;
             } else {
                 throw new \InvalidArgumentException(get_class() . ' can only consist of ' . NodeRelationAnchorPoint::class . ' objects.', 1616603754);

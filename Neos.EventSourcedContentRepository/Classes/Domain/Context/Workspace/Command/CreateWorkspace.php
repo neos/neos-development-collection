@@ -61,19 +61,6 @@ final class CreateWorkspace
         $this->workspaceOwner = $workspaceOwner;
     }
 
-    public static function fromArray(array $array): self
-    {
-        return new static(
-            new WorkspaceName($array['workspaceName']),
-            new WorkspaceName($array['baseWorkspaceName']),
-            new WorkspaceTitle($array['workspaceTitle']),
-            new WorkspaceDescription($array['workspaceDescription']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier']),
-            isset($array['newContentStreamIdentifier']) ? ContentStreamIdentifier::fromString($array['newContentStreamIdentifier']) : null,
-            isset($array['workspaceOwner']) ? UserIdentifier::fromString($array['workspaceOwner']) : null
-        );
-    }
-
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;

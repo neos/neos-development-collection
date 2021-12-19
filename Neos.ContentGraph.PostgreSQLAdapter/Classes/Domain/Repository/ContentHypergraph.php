@@ -172,7 +172,7 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
     ): array {
-        $query = HypergraphChildQuery::create($contentStreamIdentifier,$parentNodeAggregateIdentifier);
+        $query = HypergraphChildQuery::create($contentStreamIdentifier, $parentNodeAggregateIdentifier);
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
@@ -251,9 +251,9 @@ final class ContentHypergraph implements ContentGraphInterface
         // TODO: Implement findProjectedNodeAggregateIdentifiersInContentStream() method.
     }
 
-    public function findProjectedNodeTypes(): iterable
+    public function findUsedNodeTypeNames(): iterable
     {
-        // TODO: Implement findProjectedNodeTypes() method.
+        // TODO: Implement findUsedNodeTypeNames() method.
     }
 
     public function enableCache(): void

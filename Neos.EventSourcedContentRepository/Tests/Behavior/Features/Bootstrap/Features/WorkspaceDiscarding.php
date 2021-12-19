@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\F
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardWorkspace;
@@ -42,10 +43,14 @@ trait WorkspaceDiscarding
         $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
+        $newContentStreamIdentifier = isset($commandArguments['newContentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['newContentStreamIdentifier'])
+            : ContentStreamIdentifier::create();
 
-        $command = new DiscardWorkspace(
+        $command = DiscardWorkspace::createFullyDeterministic(
             new WorkspaceName($commandArguments['workspaceName']),
-            $initiatingUserIdentifier
+            $initiatingUserIdentifier,
+            $newContentStreamIdentifier
         );
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
@@ -61,17 +66,21 @@ trait WorkspaceDiscarding
     public function theCommandDiscardIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $nodeAddresses = array_map(function(array $serializedNodeAddress) {
+        $nodeAddresses = array_map(function (array $serializedNodeAddress) {
             return NodeAddress::fromArray($serializedNodeAddress);
         }, $commandArguments['nodeAddresses']);
         $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
+        $newContentStreamIdentifier = isset($commandArguments['newContentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['newContentStreamIdentifier'])
+            : ContentStreamIdentifier::create();
 
-        $command = new DiscardIndividualNodesFromWorkspace(
+        $command = DiscardIndividualNodesFromWorkspace::createFullyDeterministic(
             new WorkspaceName($commandArguments['workspaceName']),
             $nodeAddresses,
-            $initiatingUserIdentifier
+            $initiatingUserIdentifier,
+            $newContentStreamIdentifier
         );
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()

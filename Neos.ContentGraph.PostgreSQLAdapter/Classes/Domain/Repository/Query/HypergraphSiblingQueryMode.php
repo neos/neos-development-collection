@@ -28,7 +28,7 @@ final class HypergraphSiblingQueryMode
 
     private function __construct(
         string $value
-    ){
+    ) {
         $this->value = $value;
     }
 

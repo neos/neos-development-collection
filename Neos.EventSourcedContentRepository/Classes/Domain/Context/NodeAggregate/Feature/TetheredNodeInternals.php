@@ -61,10 +61,18 @@ trait TetheredNodeInternals
         ReadableNodeAggregateInterface $parentNodeAggregate,
         NodeInterface $parentNode,
         NodeName $tetheredNodeName,
+        ?NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
         NodeType $expectedTetheredNodeType,
         UserIdentifier $initiatingUserIdentifier
     ): DomainEvents {
         $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName($parentNode->getContentStreamIdentifier(), $parentNode->getNodeAggregateIdentifier(), $tetheredNodeName);
+
+        $tmp = [];
+        foreach ($childNodeAggregates as $childNodeAggregate) {
+            $tmp[] = $childNodeAggregate;
+        }
+        $childNodeAggregates = $tmp;
+
         if (count($childNodeAggregates) === 0) {
 
             // there is no tethered child node aggregate already; let's create it!
@@ -72,7 +80,7 @@ trait TetheredNodeInternals
                 DecoratedEvent::addIdentifier(
                     new NodeAggregateWithNodeWasCreated(
                         $parentNode->getContentStreamIdentifier(),
-                        NodeAggregateIdentifier::forAutoCreatedChildNode($tetheredNodeName, $parentNode->getNodeAggregateIdentifier()),
+                        $tetheredNodeAggregateIdentifier !== null ? $tetheredNodeAggregateIdentifier : NodeAggregateIdentifier::forAutoCreatedChildNode($tetheredNodeName, $parentNode->getNodeAggregateIdentifier()),
                         NodeTypeName::fromString($expectedTetheredNodeType->getName()),
                         $parentNode->getOriginDimensionSpacePoint(),
                         $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),

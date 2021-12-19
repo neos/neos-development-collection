@@ -19,7 +19,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 class CopyAfter extends AbstractStructuralChange
 {

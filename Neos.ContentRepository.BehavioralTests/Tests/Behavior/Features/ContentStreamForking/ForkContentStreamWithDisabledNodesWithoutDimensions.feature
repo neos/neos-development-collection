@@ -51,18 +51,20 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | contentStreamIdentifier      | "cs-identifier"    |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
-      | coveredDimensionSpacePoint   | {}                 |
-      | nodeVariantSelectionStrategy | "allVariants"      |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "cs-identifier"                        |
+      | nodeAggregateIdentifier      | "the-great-nodini"                     |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
   Scenario: on ForkContentStream, the disabled nodes in the target content stream should still be invisible.
     When the command ForkContentStream is executed with payload:
-      | Key                           | Value                |
-      | sourceContentStreamIdentifier | "cs-identifier"      |
-      | contentStreamIdentifier       | "user-cs-identifier" |
+      | Key                           | Value                                  |
+      | sourceContentStreamIdentifier | "cs-identifier"                        |
+      | contentStreamIdentifier       | "user-cs-identifier"                   |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
 
     When the graph projection is fully up to date
 
@@ -72,8 +74,8 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
     And VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name           | NodeDiscriminator                       |
-      | court-magician | user-cs-identifier;the-great-nodini;{}} |
+      | Name           | NodeDiscriminator                      |
+      | court-magician | user-cs-identifier;the-great-nodini;{} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
       | Level | NodeAggregateIdentifier |
       | 0     | lady-eleonode-rootford  |

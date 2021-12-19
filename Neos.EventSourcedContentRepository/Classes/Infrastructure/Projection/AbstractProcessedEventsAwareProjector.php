@@ -8,7 +8,6 @@ use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\AppliedEventsStorage\DoctrineAppliedEventsStorage;
 use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\Flow\Annotations as Flow;
 
 abstract class AbstractProcessedEventsAwareProjector implements ProcessedEventsAwareProjectorInterface
 {

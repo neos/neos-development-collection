@@ -112,6 +112,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"}      |
       | newParentNodeAggregateIdentifier            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateIdentifier | "anthony-destinode"      |
+      | initiatingUserIdentifier                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -141,6 +142,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateIdentifier            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateIdentifier | "anthony-destinode"      |
       | relationDistributionStrategy                | "gatherAll"              |
+      | initiatingUserIdentifier                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -170,6 +172,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"}      |
       | newParentNodeAggregateIdentifier            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateIdentifier | "berta-destinode"        |
+      | initiatingUserIdentifier                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -199,6 +202,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"}      |
       | newParentNodeAggregateIdentifier            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateIdentifier | "berta-destinode"        |
+      | initiatingUserIdentifier                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -238,6 +242,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                        | {"language": "mul"}      |
       | newParentNodeAggregateIdentifier           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateIdentifier | "berta-destinode"        |
+      | initiatingUserIdentifier                   | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -276,6 +281,7 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"}      |
       | newParentNodeAggregateIdentifier            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
+      | initiatingUserIdentifier                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -306,6 +312,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateIdentifier            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
       | relationDistributionStrategy                | "scatter"                |
+      | initiatingUserIdentifier                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -333,6 +340,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateIdentifier            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
       | relationDistributionStrategy                | "gatherSpecializations"  |
+      | initiatingUserIdentifier                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -370,6 +378,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateIdentifier            | "lady-abigail-nodenborough" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                        |
       | relationDistributionStrategy                | "scatter"                   |
+      | initiatingUserIdentifier                    | "user"                      |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
@@ -381,6 +390,7 @@ Feature: Move a node with content dimensions
       | newPrecedingSiblingNodeAggregateIdentifier  | "anthony-destinode"      |
       | newSucceedingSiblingNodeAggregateIdentifier | "berta-destinode"        |
       | relationDistributionStrategy                | "gatherAll"              |
+      | initiatingUserIdentifier                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -414,6 +424,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateIdentifier            | "lady-abigail-nodenborough" |
       | newSucceedingSiblingNodeAggregateIdentifier | null                        |
       | relationDistributionStrategy                | "scatter"                   |
+      | initiatingUserIdentifier                    | "user"                      |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
@@ -424,6 +435,7 @@ Feature: Move a node with content dimensions
       | newPrecedingSiblingNodeAggregateIdentifier  | "anthony-destinode" |
       | newSucceedingSiblingNodeAggregateIdentifier | "berta-destinode"   |
       | relationDistributionStrategy                | "gatherAll"         |
+      | initiatingUserIdentifier                    | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}

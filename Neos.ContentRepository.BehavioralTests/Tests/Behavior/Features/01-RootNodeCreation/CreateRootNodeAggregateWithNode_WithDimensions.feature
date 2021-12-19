@@ -16,11 +16,12 @@ Feature: Create a root node aggregate
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier   | "user-id"            |
     And I am in content stream "cs-identifier"
 
   Scenario: Create the initial root node aggregate using valid payload with dimensions
@@ -81,9 +82,9 @@ Feature: Create a root node aggregate
 
   Scenario: Create a root node aggregate using valid payload without dimensions
     Given the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                                       |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                    |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
+      | Key                     | Value                         |
+      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
     When the command CreateRootNodeAggregateWithNode is executed with payload:

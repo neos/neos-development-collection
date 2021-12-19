@@ -12,53 +12,63 @@ This is the package bundle you can install alongside a plain Neos to play around
 
 🚫 Will not be supported
 
-| Feature                     | Current CR | Event Sourced CR |
-| --------------------------- |:----------:|:----------------:|
-| **Basics**                  |            |                  |
-| Create/ Edit / Delete Nodes |     ✅     |        ✅        |
-| Shortcut Handling           |     ✅     |        ⏩        |
-| Query Nodes                 |     ✅     |        ✅        |
-| Cut / Copy / Paste          |     ✅     |        ✅        |
-| Move Nodes                  |     ✅     |        ✅        |
-| Hide Nodes                  |     ✅     |        ✅        |
-| History                     |    (✅)    |                  |
-| Basic Workspaces            |     ✅     |        ✅        |
-| Workspace Module            |     ✅     |         ⏩       |
-| Nested Workspaces           |     ✅     |                  |
-| Undo / Redo                 |     🚫     |                  |
-| Setting Start / End time    |     ✅     |        EASY      |
-| Resolving Referencing Nodes |     🚫     |        ✅        |
-| Menu Rendering              |    ✅      |       ✅         |
-| Dimension Menu Rendering    |    ✅      |       ✅         |
-| Supporting "not in menu"    |    ✅      |       ✅         |
-| Change node type            |    ✅      |       ✅         |
-| **Advanced**                |            |                  |
-| Dimensions                  |     ✅     |        ✅        |
-| Dimension Fallback          |     ✅     |        ✅        |
-| Multiple Sites              |     ✅     |        ✅        |
-| Permissions / Policy        |     ✅     |                  |
-| **Maintenance**             |            |                  |
-| Export / Import             |     ✅     |       ✅⏩      |
-| Node Migrations             |     ✅     |        ⏩ (MEDIUM)|
-| Node Repair                 |     ✅     |        ✅        |
-| Integrity Checks            |     🚫     |        ⏩        |
-| **API**                     |            |                  |
-| Separate Read and Write API |     🚫     |        ✅        |
-| More convenient write API   |            |                  |
-| FlowQuery is compatible     |    ✅      |       ✅         |
-| Advanced test cases         |    🚫      |       ✅         |
-| Don't use ORM, but direct SQL queries|    🚫      |       ✅         |
-| Asynchronous operations possible |    🚫      |       ✅         |
-| performant node moving     |    🚫      |       ✅         |
-| performant node deletion   |    🚫      |       ✅         |
-| near-constant read performance |    🚫      |       ✅         |
-| **User Interface**         |            |                  |
+| Feature                                   | Current CR | Event Sourced CR |
+| ----------------------------------------- |:----------:|:----------------:|
+| **Basics**                                |            |                  |
+| Create/ Edit / Delete Nodes               |     ✅     |        ✅        |
+| Shortcut Handling                         |     ✅     |        ⏩        |
+| Query Nodes                               |     ✅     |        ✅        |
+| Cut / Copy / Paste                        |     ✅     |        ✅        |
+| Move Nodes                                |     ✅     |        ✅        |
+| Hide Nodes                                |     ✅     |        ✅        |
+| History                                   |    (✅)    |                  |
+| Basic Workspaces                          |     ✅     |        ✅        |
+| Workspace Module                          |     ✅     |         ⏩       |
+| Nested Workspaces                         |     ✅     |                  |
+| Undo / Redo                               |     🚫     |                  |
+| Setting Start / End time                  |     ✅     |                  |
+| Resolving Referencing Nodes               |     🚫     |        ✅        |
+| Menu Rendering                            |    ✅      |       ✅         |
+| Dimension Menu Rendering                  |    ✅      |       ✅         |
+| Supporting "not in menu"                  |    ✅      |       ✅         |
+| Change node type                          |    ✅      |       ✅         |
+| **Advanced**                              |            |                  |
+| Dimensions                                |     ✅     |        ✅        |
+| Dimension Fallback                        |     ✅     |        ✅        |
+| Multiple Sites                            |     ✅     |        ✅        |
+| Permissions / Policy                      |     ✅     |                  |
+| **Maintenance**                           |            |                 |
+| Export / Import                           |     ✅     |       ✅⏩       |
+| Node Migrations                           |     ✅     |        ✅        |
+| Structure Adjustments a.k.a. node:repair  |     ✅     |        ✅        |
+| Integrity Checks                          |     🚫     |        ✅        |
+| **API**                                   |            |                  |
+| Separate Read and Write API               |     🚫     |        ✅        |
+| More convenient write API                 |            |                  |
+| Extensible Read API                       | (✅) custom Node | ✅ NodeAccessors |
+| FlowQuery is compatible                   |    ✅      |       ✅         |
+| Advanced test cases                       |    🚫      |       ✅         |
+| Don't use ORM, but direct SQL queries     |    🚫      |       ✅         |
+| Asynchronous operations possible          |    🚫      |       ✅         |
+| performant node moving                    |    🚫      |       ✅         |
+| performant node deletion                  |    🚫      |       ✅         |
+| near-constant read performance            |    🚫      |       ✅         |
+| performant URL generation (routing)       |    🚫      |       ✅         |
+| MySQL support                             |    ✅      |       ✅         |
+| Postgres support                          |    ✅      |       ⏩ (much higher performance) |
+| usage without Neos/Flow                   |    🚫      |       prepared         |
+| extensible property serialization         |    🚫      |       ✅ through Symfony Serializer         |
+| traverse node references in both directions |    🚫      |       ✅   |
+| content merge conflict detection          |    🚫      |       ✅   |
+| content merge conflict resolution         |    🚫      |       ⏩   |
+| **User Interface**                        |            |                  |
 | Ensure node deletion can be published in UI    |   ✅     |                |
-| Support Dimension Constraints    |   ✅     |               |
-| Publish Workspace              |   ✅     |   ✅         |
-| Publish Current Page           |   ✅     |   ✅          |
-| Discard all                    |   ✅     |   ✅          |
-| Discard Current Page           |   ✅     |   ✅          |
+| Support Dimension Constraints             |   ✅     |               |
+| Publish Workspace                         |   ✅     |   ✅         |
+| Publish Current Page                      |   ✅     |   ✅          |
+| Discard all                               |   ✅     |   ✅          |
+| Discard Current Page                      |   ✅     |   ✅          |
+| Change node type in UI                    |   ✅     |   ✅          |
 
 ## Requirements
 
@@ -112,6 +122,60 @@ See https://github.com/neos/neos-development-distribution/tree/event-sourced
 - [?] fix node tree filter
 - [ ] Implement Node Repair
 - [ ] (further TODOs here; this list is not complete yet)
+
+# Development of the Postgres Adapter
+
+By default, the Mysql Adapter is active right now, as Postgres is still in development.
+
+To activate Postgres, right now, the following steps are needed **in your distribution**:
+
+```yaml
+# Configuration/Objects.yaml
+
+Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface:
+  className: 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
+```
+
+**if you want to run Postgres and MySQL side by side for the tests, you need the following config:**
+
+```yaml
+# Configuration/Settings.yaml
+
+Neos:
+  EventSourcedContentRepository:
+    unstableInternalWillChangeLater:
+      testing:
+        projectorsToBeReset:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+        activeContentGraphs:
+          'Postgres': 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
+      projection:
+        defaultProjectorsToBeBlocked:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+
+```
+
+**if you want to run Postgres without MySQL, you need the following config:**
+
+```yaml
+# Configuration/Settings.yaml
+
+Neos:
+  EventSourcedContentRepository:
+    unstableInternalWillChangeLater:
+      testing:
+        projectorsToBeReset:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': false
+        activeContentGraphs:
+          'Postgres': 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
+          'DoctrineDBAL': false
+      projection:
+        defaultProjectorsToBeBlocked:
+          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': false
+```
+
 
 # Technical Description (for developers)
 
@@ -221,3 +285,4 @@ A `NodeAddress` is an external representation of a node (used in routing). TODO:
   - custom `NodeInfoHelper`, calling to a custom `NodePropertyConverterService`
 - adjust the *DimensionSwitcher* JS component in `Resources/Private/UiAdapter`
 - TODO: this is not everything yet.
+

@@ -131,7 +131,7 @@ class PublishingService
 
         // TODO: only rebase if necessary!
         $this->workspaceCommandHandler->handleRebaseWorkspace(
-            new RebaseWorkspace(
+            RebaseWorkspace::create(
                 $workspaceName,
                 $userIdentifier
             )

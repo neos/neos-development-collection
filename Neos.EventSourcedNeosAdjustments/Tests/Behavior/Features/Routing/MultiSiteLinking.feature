@@ -8,6 +8,7 @@ Feature: Linking between multiple websites
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "u"             |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                        |
       | contentStreamIdentifier     | "cs-identifier"              |
@@ -25,7 +26,7 @@ Feature: Linking between multiple websites
     #        earl-o-documentbourgh
     #
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
-    And the following CreateNodeAggregateWithNodeAndSerializedProperties commands are executed for content stream "cs-identifier" and origin "{}":
+    And the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues                    | nodeName |
       | homepage1               | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-1   |
       | sir-david-nodenborough  | homepage1                     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node2    |

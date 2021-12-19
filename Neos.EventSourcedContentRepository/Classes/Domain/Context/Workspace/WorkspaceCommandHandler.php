@@ -134,7 +134,7 @@ final class WorkspaceCommandHandler
         }
 
         // When the workspace is created, we first have to fork the content stream
-        $commandResult = CommandResult::createEmpty($this->runtimeBlocker);
+        $commandResult = CommandResult::createEmpty();
         $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $command->getNewContentStreamIdentifier(),
@@ -179,7 +179,7 @@ final class WorkspaceCommandHandler
             throw new WorkspaceAlreadyExists(sprintf('The workspace %s already exists', $command->getWorkspaceName()), 1505848624450);
         }
 
-        $commandResult = CommandResult::createEmpty($this->runtimeBlocker);
+        $commandResult = CommandResult::createEmpty();
         $contentStreamIdentifier = $command->getNewContentStreamIdentifier();
         $commandResult = $commandResult->merge($this->contentStreamCommandHandler->handleCreateContentStream(
             new CreateContentStream(
@@ -361,7 +361,7 @@ final class WorkspaceCommandHandler
         // TODO: please check the code below in-depth. it does:
         // - fork a new content stream
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
-        $rebasedContentStream = ContentStreamIdentifier::create();
+        $rebasedContentStream = $command->getRebasedContentStreamIdentifier();
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $rebasedContentStream,
@@ -559,7 +559,7 @@ final class WorkspaceCommandHandler
         }
 
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
-        $matchingContentStream = ContentStreamIdentifier::create();
+        $matchingContentStream = $command->getContentStreamIdentifierForMatchingPart();
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $matchingContentStream,
@@ -578,7 +578,7 @@ final class WorkspaceCommandHandler
         }
 
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
-        $remainingContentStream = ContentStreamIdentifier::create();
+        $remainingContentStream = $command->getContentStreamIdentifierForRemainingPart();
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $remainingContentStream,
@@ -663,7 +663,7 @@ final class WorkspaceCommandHandler
         }
 
         // 2) fork a new contentStream, based on the base WS, and apply the commands to keep
-        $newContentStream = ContentStreamIdentifier::create();
+        $newContentStream = $command->getNewContentStreamIdentifier();
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $newContentStream,
@@ -730,7 +730,7 @@ final class WorkspaceCommandHandler
         $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
 
-        $newContentStream = ContentStreamIdentifier::create();
+        $newContentStream = $command->getNewContentStreamIdentifier();
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $newContentStream,

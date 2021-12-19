@@ -19,7 +19,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceHyperrelationRecord;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node referencing feature set for the hypergraph projector
@@ -33,7 +32,7 @@ trait NodeReferencing
      */
     public function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
-        $this->transactional(function() use($event) {
+        $this->transactional(function () use ($event) {
             $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
                 $event->getContentStreamIdentifier(),
                 $event->getSourceOriginDimensionSpacePoint(),
@@ -44,7 +43,8 @@ trait NodeReferencing
                 $anchorPoint = $this->copyOnWrite(
                     $event->getContentStreamIdentifier(),
                     $nodeRecord,
-                    function (NodeRecord $node) {}
+                    function (NodeRecord $node) {
+                    }
                 );
                 $existingReferenceRelation = $this->getProjectionHypergraph()->findReferenceRelationByOrigin(
                     $anchorPoint,

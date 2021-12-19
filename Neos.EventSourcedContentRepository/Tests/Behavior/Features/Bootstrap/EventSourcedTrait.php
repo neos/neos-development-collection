@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
@@ -14,8 +15,6 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph as DbalContentGraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph as PostgreSQLContentHypergraph;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -26,6 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
@@ -43,6 +43,7 @@ use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Feature
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeDisabling;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeModification;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeMove;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeProperties;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeReferencing;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRemoval;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\Features\NodeRenaming;
@@ -56,6 +57,7 @@ use Neos\EventSourcedContentRepository\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
@@ -78,6 +80,7 @@ trait EventSourcedTrait
     use NodeDisabling;
     use NodeModification;
     use NodeMove;
+    use NodeProperties;
     use NodeReferencing;
     use NodeRemoval;
     use NodeRenaming;
@@ -123,17 +126,28 @@ trait EventSourcedTrait
     {
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
-        $this->contentGraphs = new ContentGraphs([
-            'DoctrineDbal' => $this->getObjectManager()->get(DbalContentGraph::class),
-            'PostgreSQL' => $this->getObjectManager()->get(PostgreSQLContentHypergraph::class)
-        ]);
+        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
+
+        $activeContentGraphsConfig = $configurationManager->getConfiguration(
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.testing.activeContentGraphs'
+        );
+        $activeContentGraphs = [];
+        foreach ($activeContentGraphsConfig as $name => $className) {
+            if (is_string($className)) {
+                $activeContentGraphs[$name] = $this->getObjectManager()->get($className);
+            }
+        }
+        if (count($activeContentGraphs) === 0) {
+            throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
+        }
+        $this->contentGraphs = new ContentGraphs($activeContentGraphs);
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
 
-        $configurationManager = $this->getObjectManager()->get(\Neos\Flow\Configuration\ConfigurationManager::class);
         foreach ($configurationManager->getConfiguration(
-            \Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.EventSourcedContentRepository.testing.projectorsToBeReset'
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.testing.projectorsToBeReset'
         ) ?: [] as $projectorClassName => $toBeReset) {
             if ($toBeReset) {
                 $this->projectorsToBeReset[] = $this->getObjectManager()->get($projectorClassName);
@@ -180,10 +194,10 @@ trait EventSourcedTrait
                 $propertyOrMethodName = substr($line['Value'], strlen('$this->'));
                 if (method_exists($this, $propertyOrMethodName)) {
                     // is method
-                    $value = (string) $this->$propertyOrMethodName();
+                    $value = (string)$this->$propertyOrMethodName();
                 } else {
                     // is property
-                    $value = (string) $this->$propertyOrMethodName;
+                    $value = (string)$this->$propertyOrMethodName;
                 }
             } else {
                 // default case
@@ -196,6 +210,18 @@ trait EventSourcedTrait
         }
 
         return $eventPayload;
+    }
+
+    /**
+     * called by {@see readPayloadTable()} above, from RebasingAutoCreatedChildNodesWorks.feature
+     * @return NodeAggregateIdentifier
+     */
+    protected function currentNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        $currentNodes = $this->currentNodes->getArrayCopy();
+        $firstNode = reset($currentNodes);
+        assert($firstNode instanceof NodeInterface);
+        return $firstNode->getNodeAggregateIdentifier();
     }
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite
@@ -283,27 +309,29 @@ trait EventSourcedTrait
      */
     public function theSubtreeForNodeAggregateWithNodeTypesAndLevelsDeepShouldBe(string $nodeAggregateIdentifier, string $nodeTypeConstraints, int $maximumLevels, TableNode $table)
     {
-        $expectedRows = $table->getHash();
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifier);
-        $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeConstraints);
+        foreach ($this->getContentGraphs() as $adapterName => $contentGraph) {
+            $expectedRows = $table->getHash();
+            $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifier);
+            $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeConstraints);
 
-        $subtree = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findSubtrees([$nodeAggregateIdentifier], (int)$maximumLevels, $nodeTypeConstraints);
+            $subtree = $contentGraph
+                ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+                ->findSubtrees([$nodeAggregateIdentifier], (int)$maximumLevels, $nodeTypeConstraints);
 
-        /** @var SubtreeInterface[] $flattenedSubtree */
-        $flattenedSubtree = [];
-        self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
+            /** @var SubtreeInterface[] $flattenedSubtree */
+            $flattenedSubtree = [];
+            self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
 
-        Assert::assertEquals(count($expectedRows), count($flattenedSubtree), 'number of expected subtrees do not match');
+            Assert::assertEquals(count($expectedRows), count($flattenedSubtree), 'number of expected subtrees do not match (adapter: ' . $adapterName . ')');
 
-        foreach ($expectedRows as $i => $expectedRow) {
-            $expectedLevel = (int)$expectedRow['Level'];
-            $actualLevel = $flattenedSubtree[$i]->getLevel();
-            Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel);
-            $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($expectedRow['NodeAggregateIdentifier']);
-            $actualNodeAggregateIdentifier = $flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier();
-            Assert::assertTrue($expectedNodeAggregateIdentifier->equals($actualNodeAggregateIdentifier), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateIdentifier . '", actual: "' . $actualNodeAggregateIdentifier . '"');
+            foreach ($expectedRows as $i => $expectedRow) {
+                $expectedLevel = (int)$expectedRow['Level'];
+                $actualLevel = $flattenedSubtree[$i]->getLevel();
+                Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel . ' (adapter: ' . $adapterName . ')');
+                $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($expectedRow['NodeAggregateIdentifier']);
+                $actualNodeAggregateIdentifier = $flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier();
+                Assert::assertTrue($expectedNodeAggregateIdentifier->equals($actualNodeAggregateIdentifier), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateIdentifier . '", actual: "' . $actualNodeAggregateIdentifier . '" (adapter: ' . $adapterName . ')');
+            }
         }
     }
 

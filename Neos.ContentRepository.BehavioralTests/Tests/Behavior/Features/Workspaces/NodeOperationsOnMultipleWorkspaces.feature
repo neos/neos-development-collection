@@ -15,6 +15,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -45,7 +46,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | nodeName                      | "pet"                                    |
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
-    And the intermediary command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "cs-identifier"              |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -58,10 +59,11 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
   Scenario: Set property of a node
-    Given the intermediary command SetNodeProperties is executed with payload:
+    Given the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "user-cs-identifier"         |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -82,25 +84,25 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
     And I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value    |
-      | text | Original |
+      | Key  | Value      |
+      | text | "Original" |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value   |
-      | text | Changed |
+      | Key  | Value     |
+      | text | "Changed" |
 
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nodingers-cat" and node path "child/pet" to lead to node cs-identifier;nodingers-cat;{}
     When I go to the parent node of node aggregate "nodingers-cat"
     Then I expect this node to have the following properties:
-      | Key  | Value    |
-      | text | Original |
+      | Key  | Value      |
+      | text | "Original" |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nodingers-cat" and node path "child/pet" to lead to node user-cs-identifier;nodingers-cat;{}
     When I go to the parent node of node aggregate "nodingers-cat"
     Then I expect this node to have the following properties:
-      | Key  | Value   |
-      | text | Changed |
+      | Key  | Value     |
+      | text | "Changed" |

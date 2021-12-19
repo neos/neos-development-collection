@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
@@ -101,5 +102,32 @@ trait WorkspaceCreation
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
             ->handleCreateWorkspace($command);
+    }
+
+
+    /**
+     * @When /^the command RebaseWorkspace is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandRebaseWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $userIdentifier = isset($commandArguments['initiatingUserIdentifier'])
+            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
+            : $this->getCurrentUserIdentifier();
+
+        $rebasedContentStreamIdentifier = isset($commandArguments['rebasedContentStreamIdentifier'])
+            ? ContentStreamIdentifier::fromString($commandArguments['rebasedContentStreamIdentifier'])
+            : ContentStreamIdentifier::create();
+
+        $command = RebaseWorkspace::createFullyDeterministic(
+            new WorkspaceName($commandArguments['workspaceName']),
+            $userIdentifier,
+            $rebasedContentStreamIdentifier,
+        );
+
+        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
+            ->handleRebaseWorkspace($command);
     }
 }

@@ -106,8 +106,8 @@ Feature: Tethered Nodes integrity violations
     When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     And I get the node at path "document/some-new-child"
     And I expect this node to have the following properties:
-      | Key | Value              |
-      | foo | my default applied |
+      | Key | Value                |
+      | foo | "my default applied" |
 
   Scenario: Adding the same
     Given I have the following additional NodeTypes configuration:

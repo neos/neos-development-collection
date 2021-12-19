@@ -55,6 +55,15 @@ Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCom
           1:
             value: 'ContentRepository'
 
+Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\DimensionSpaceCommandHandler:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
 
 Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository:
   arguments:
@@ -97,7 +106,7 @@ Neos\EventSourcedContentRepository\Infrastructure\Projection\DefaultBlockedProje
   scope: singleton
   arguments:
     1:
-      setting: 'Neos.EventSourcedContentRepository.projection.defaultProjectorsToBeBlocked'
+      setting: 'Neos.EventSourcedContentRepository.unstableInternalWillChangeLater.projection.defaultProjectorsToBeBlocked'
 
 Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker:
   scope: singleton

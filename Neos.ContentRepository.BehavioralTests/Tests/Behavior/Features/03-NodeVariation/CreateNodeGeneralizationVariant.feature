@@ -31,6 +31,7 @@ Feature: Create node generalization
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier   | "user-id"            |
     And I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |

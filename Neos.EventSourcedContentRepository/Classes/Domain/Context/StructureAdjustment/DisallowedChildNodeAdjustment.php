@@ -129,7 +129,6 @@ class DisallowedChildNodeAdjustment
                         $node,
                         StructureAdjustment::DISALLOWED_CHILD_NODE,
                         $message,
-                        $this->runtimeBlocker,
                         function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
                             $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeNodeInSingleDimensionSpacePoint($nodeAggregate, $coveredDimensionSpacePoint);

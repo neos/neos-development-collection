@@ -97,12 +97,12 @@ class TetheredNodeAdjustments
                         // $nestedNode not found - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
                         yield StructureAdjustment::createForNode(
                             $node,
-                            StructureAdjustment::TETHERED_NODE_MISSING, 'The tethered child node "' . $tetheredNodeName . '" is missing.',
-                            $this->runtimeBlocker,
+                            StructureAdjustment::TETHERED_NODE_MISSING,
+                            'The tethered child node "' . $tetheredNodeName . '" is missing.',
                             function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
                                 $this->readSideMemoryCacheManager->disableCache();
 
-                                $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType, UserIdentifier::forSystemUser());
+                                $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, null, $expectedTetheredNodeType, UserIdentifier::forSystemUser());
 
                                 $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
                                 $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
@@ -125,7 +125,6 @@ class TetheredNodeAdjustments
                         $tetheredNodeAggregate,
                         StructureAdjustment::DISALLOWED_TETHERED_NODE,
                         'The tethered child node "' . $tetheredNodeAggregate->getNodeName()->jsonSerialize() . '" should be removed.',
-                        $this->runtimeBlocker,
                         function () use ($tetheredNodeAggregate) {
                             $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeNodeAggregate($tetheredNodeAggregate);
@@ -154,7 +153,6 @@ class TetheredNodeAdjustments
                             $node,
                             StructureAdjustment::TETHERED_NODE_WRONGLY_ORDERED,
                             'Tethered nodes wrongly ordered, expected: ' . implode(', ', array_keys($expectedTetheredNodes)) . ' - actual: ' . implode(', ', array_keys($actualTetheredChildNodes)),
-                            $this->runtimeBlocker,
                             function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
                                 $this->readSideMemoryCacheManager->disableCache();
                                 return $this->reorderNodes(
@@ -176,8 +174,7 @@ class TetheredNodeAdjustments
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::NODE_IS_NOT_TETHERED_BUT_SHOULD_BE,
-                'This node should be a tethered node, but is not.',
-                $this->runtimeBlocker
+                'This node should be a tethered node, but is not.  This can not be fixed automatically right now (TODO)'
             );
         }
     }
@@ -188,8 +185,7 @@ class TetheredNodeAdjustments
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::TETHERED_NODE_TYPE_WRONG,
-                'should be of type "' . $expectedNodeType . '", but was "' . $node->getNodeTypeName()->getValue() . '".',
-                $this->runtimeBlocker
+                'should be of type "' . $expectedNodeType . '", but was "' . $node->getNodeTypeName()->getValue() . '".'
             );
         }
     }

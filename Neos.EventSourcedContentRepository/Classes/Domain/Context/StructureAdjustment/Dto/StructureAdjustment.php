@@ -6,7 +6,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\
 use Neos\Error\Messages\Message;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
-use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
@@ -31,8 +30,6 @@ class StructureAdjustment extends Message
 
     private string $type;
 
-    private RuntimeBlocker $runtimeBlocker;
-
     /**
      * Constructs this error
      *
@@ -44,14 +41,12 @@ class StructureAdjustment extends Message
      */
     private function __construct(
         string $message,
-        RuntimeBlocker $runtimeBlocker,
         ?int $code = null,
         array $arguments = [],
         string $type = '',
         ?\Closure $adjustment = null
     ) {
         parent::__construct($message, $code, $arguments);
-        $this->runtimeBlocker = $runtimeBlocker;
         $this->adjustment = $adjustment;
         $this->type = $type;
     }
@@ -60,13 +55,12 @@ class StructureAdjustment extends Message
         NodeInterface $node,
         string $type,
         string $errorMessage,
-        RuntimeBlocker $runtimeBlocker,
         ?\Closure $remediation = null
     ): self {
         return new self(
             'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- ' . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
-            $runtimeBlocker,
-            null, [
+            null,
+            [
                 'contentStream' => $node->getContentStreamIdentifier()->jsonSerialize(),
                 'dimensionSpacePoint' => json_encode($node->getOriginDimensionSpacePoint()->jsonSerialize()),
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier()->jsonSerialize(),
@@ -81,12 +75,10 @@ class StructureAdjustment extends Message
         ReadableNodeAggregateInterface $nodeAggregate,
         string $type,
         string $errorMessage,
-        RuntimeBlocker $runtimeBlocker,
         ?\Closure $remediation = null
     ): self {
         return new self(
             'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- ' . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
-            $runtimeBlocker,
             null,
             [
                 'contentStream' => $nodeAggregate->getContentStreamIdentifier()->jsonSerialize(),
@@ -101,7 +93,7 @@ class StructureAdjustment extends Message
     public function fix(): CommandResult
     {
         if ($this->adjustment === null) {
-            return CommandResult::createEmpty($this->runtimeBlocker);
+            return CommandResult::createEmpty();
         }
 
         $adjustment = $this->adjustment;

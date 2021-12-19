@@ -41,6 +41,7 @@ Feature: Properties
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | initiatingUserIdentifier      | "user"                                    |
     And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
@@ -48,7 +49,7 @@ Feature: Properties
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key    | Value |
-      | myProp | Foo   |
+      | myProp | "Foo" |
 
   Scenario: The property is removed
     When I have the following additional NodeTypes configuration:
@@ -86,8 +87,8 @@ Feature: Properties
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key       | Value |
-      | myProp    | Foo   |
-      | otherProp | foo   |
+      | myProp    | "Foo" |
+      | otherProp | "foo" |
 
   Scenario: a new property default value is not set if the value already contains the empty string
     When I have the following additional NodeTypes configuration:
@@ -98,7 +99,7 @@ Feature: Properties
           type: string
           defaultValue: "foo"
     """
-    And the intermediary command SetNodeProperties is executed with payload:
+    And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "cs-identifier"              |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"     |

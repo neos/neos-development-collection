@@ -48,7 +48,7 @@ class WorkspaceMaintenanceService
         $outdatedWorkspaces = $this->workspaceFinder->findOutdated();
 
         foreach ($outdatedWorkspaces as $workspace) {
-            $this->lastCommandResult = $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
+            $this->lastCommandResult = $this->workspaceCommandHandler->handleRebaseWorkspace(RebaseWorkspace::create(
                 $workspace->getWorkspaceName(),
                 UserIdentifier::forSystemUser()
             ));

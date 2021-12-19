@@ -20,7 +20,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node removal feature set for the hypergraph projector
@@ -32,7 +31,7 @@ trait NodeRemoval
      */
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        $this->transactional(function() use($event) {
+        $this->transactional(function () use ($event) {
             $nodeRecordsToBeRemoved = [];
             foreach ($event->getAffectedCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
                 $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByCoverage(

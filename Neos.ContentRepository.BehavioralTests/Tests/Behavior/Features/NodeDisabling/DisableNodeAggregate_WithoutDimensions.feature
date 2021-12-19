@@ -27,6 +27,8 @@ Feature: Disable a node aggregate
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
       | nodeAggregateClassification | "root"                        |
+    And the graph projection is fully up to date
+
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
       | nodeAggregateIdentifier       | "preceding-nodenborough"                  |
@@ -54,6 +56,7 @@ Feature: Disable a node aggregate
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "succeeding-document"                     |
       | nodeAggregateClassification   | "regular"                                 |
+    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |

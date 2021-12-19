@@ -22,6 +22,7 @@ Feature: Create a root node aggregate
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier   | "user-id"            |
     And I am in content stream "cs-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
@@ -46,8 +47,8 @@ Feature: Create a root node aggregate
 
   Scenario: Try to create a root node aggregate of an abstract root node type:
     When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                     | Value                                    |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"                       |
+      | Key                     | Value                                         |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"                            |
       | nodeTypeName            | "Neos.ContentRepository.Testing:AbstractRoot" |
     Then the last command should have thrown an exception of type "NodeTypeIsAbstract"
 

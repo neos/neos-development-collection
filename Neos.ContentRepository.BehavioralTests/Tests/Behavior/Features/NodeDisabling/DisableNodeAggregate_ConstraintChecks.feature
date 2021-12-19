@@ -41,42 +41,47 @@ Feature: Disable a node
 
   Scenario: Try to disable a node aggregate in a non-existing content stream
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "i-do-not-exist"         |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "i-do-not-exist"                       |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to disable a node aggregate in a non-existing dimension space point
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                       |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"    |
-      | coveredDimensionSpacePoint   | {"undeclared": "undefined"} |
-      | nodeVariantSelectionStrategy | "allVariants"               |
+      | Key                          | Value                                  |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {"undeclared": "undefined"}            |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to disable a non-existing node aggregate
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value            |
-      | nodeAggregateIdentifier      | "i-do-not-exist" |
-      | coveredDimensionSpacePoint   | {}               |
-      | nodeVariantSelectionStrategy | "allVariants"    |
+      | Key                          | Value                                  |
+      | nodeAggregateIdentifier      | "i-do-not-exist"                       |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to disable an already disabled node aggregate
     Given the event NodeAggregateWasDisabled was published with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "cs-identifier"                        |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | affectedDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                    |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDisablesDimensionSpacePoint"
 
   Scenario: Try to disable a node aggregate in a dimension space point it does not cover
@@ -84,9 +89,10 @@ Feature: Disable a node
       | Identifier | Default | Values       | Generalizations |
       | language   | mul     | mul, de, gsw | gsw->de->mul    |
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                    |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {"language": "de"}       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {"language": "de"}                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
 
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"

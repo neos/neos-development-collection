@@ -24,6 +24,7 @@ Feature: Create node variant
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier   | "user-id"            |
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |

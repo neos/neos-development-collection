@@ -21,6 +21,7 @@ Feature: Publishing moved nodes without dimensions
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                  |
@@ -67,6 +68,7 @@ Feature: Publishing moved nodes without dimensions
       | workspaceName              | "user"               |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
   Scenario: Publish the move of a node to the end of its siblings
@@ -77,10 +79,12 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
       | newParentNodeAggregateIdentifier            | null                     |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
+      | initiatingUserIdentifier                    | "user"                   |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key           | Value                                                                                                                               |
-      | workspaceName | "user"                                                                                                                              |
-      | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
+      | Key                      | Value                                                                                                                               |
+      | workspaceName            | "user"                                                                                                                              |
+      | nodeAddresses            | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
+      | initiatingUserIdentifier | "user"                                                                                                                              |
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
@@ -117,10 +121,12 @@ Feature: Publishing moved nodes without dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | null                         |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-david-nodenborough"     |
+      | initiatingUserIdentifier                    | "user"                       |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key           | Value                                                                                                                                   |
-      | workspaceName | "user"                                                                                                                                  |
-      | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
+      | Key                      | Value                                                                                                                                   |
+      | workspaceName            | "user"                                                                                                                                  |
+      | nodeAddresses            | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
+      | initiatingUserIdentifier | "user"                                                                                                                                  |
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
@@ -167,10 +173,12 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier          | "sir-david-nodenborough"     |
       | dimensionSpacePoint              | {}                           |
       | newParentNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+      | initiatingUserIdentifier         | "user"                       |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key           | Value                                                                                                                               |
-      | workspaceName | "user"                                                                                                                              |
-      | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
+      | Key                      | Value                                                                                                                               |
+      | workspaceName            | "user"                                                                                                                              |
+      | nodeAddresses            | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
+      | initiatingUserIdentifier | "user"                                                                                                                              |
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 5 nodes
@@ -212,10 +220,12 @@ Feature: Publishing moved nodes without dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+      | initiatingUserIdentifier                    | "user"                       |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key           | Value                                                                                                                         |
-      | workspaceName | "user"                                                                                                                        |
-      | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}] |
+      | Key                      | Value                                                                                                                         |
+      | workspaceName            | "user"                                                                                                                        |
+      | nodeAddresses            | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}] |
+      | initiatingUserIdentifier | "user"                                                                                                                        |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes

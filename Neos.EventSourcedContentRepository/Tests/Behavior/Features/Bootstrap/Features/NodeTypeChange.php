@@ -49,8 +49,8 @@ trait NodeTypeChange
         $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
-        $tetheredDescendantNodeAggregateIdentifiers = isset($array['tetheredDescendantNodeAggregateIdentifiers'])
-            ? NodeAggregateIdentifiersByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIdentifiers'])
+        $tetheredDescendantNodeAggregateIdentifiers = isset($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
+            ? NodeAggregateIdentifiersByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
             : null;
 
         $command = new ChangeNodeAggregateType(

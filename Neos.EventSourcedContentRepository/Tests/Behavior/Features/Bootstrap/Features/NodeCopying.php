@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeAggregateIdentifierMapping;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\ContentGraphs;
@@ -47,14 +48,14 @@ trait NodeCopying
     public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentGraphs = $this->getContentGraphs();
+        $contentGraphs = $this->getContentGraphs()->getArrayCopy();
         $contentGraph = reset($contentGraphs);
         $subgraph = $contentGraph->getSubgraphByIdentifier(
             $this->getCurrentContentStreamIdentifier(),
             $this->getCurrentDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
-        $currentNodes = $this->getCurrentNodes();
+        $currentNodes = $this->getCurrentNodes()->getArrayCopy();
         $currentNode = reset($currentNodes);
         $targetDimensionSpacePoint = isset($commandArguments['targetDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['targetDimensionSpacePoint'])
@@ -78,6 +79,7 @@ trait NodeCopying
             $targetSucceedingSiblingNodeAggregateIdentifier,
             $targetNodeName
         );
+        $command = $command->withNodeAggregateIdentifierMapping(NodeAggregateIdentifierMapping::fromArray($commandArguments['nodeAggregateIdentifierMapping']));
 
         $this->lastCommandOrEventResult = $this->getNodeDuplicationCommandHandler()
             ->handleCopyNodesRecursively($command);

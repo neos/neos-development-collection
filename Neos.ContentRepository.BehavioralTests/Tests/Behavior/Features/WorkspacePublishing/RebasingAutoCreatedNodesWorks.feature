@@ -32,6 +32,7 @@ Feature: Rebasing auto-created nodes works
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -48,6 +49,7 @@ Feature: Rebasing auto-created nodes works
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
   Scenario: complex scenario (to reproduce the bug) -- see the feature description
@@ -77,7 +79,7 @@ Feature: Rebasing auto-created nodes works
       | initiatingUserIdentifier  | "initiating-user-identifier"                   |
     And the graph projection is fully up to date
 
-    When the command "RebaseWorkspace" is executed with payload:
+    When the command RebaseWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
       | initiatingUserIdentifier | "initiating-user-identifier" |

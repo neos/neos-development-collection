@@ -219,7 +219,7 @@ class BackendServiceController extends ActionController
                 $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
             }
             $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace(
-                new PublishIndividualNodesFromWorkspace(
+                PublishIndividualNodesFromWorkspace::create(
                     $workspaceName,
                     $nodeAddresses,
                     $this->getCurrentUserIdentifier()
@@ -258,7 +258,7 @@ class BackendServiceController extends ActionController
                 $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
             }
             $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace(
-                new DiscardIndividualNodesFromWorkspace(
+                DiscardIndividualNodesFromWorkspace::create(
                     $workspaceName,
                     $nodeAddresses,
                     $this->getCurrentUserIdentifier()

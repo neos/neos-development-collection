@@ -16,6 +16,7 @@ Feature: Single Node operations on live workspace
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -38,7 +39,7 @@ Feature: Single Node operations on live workspace
     And the graph projection is fully up to date
 
   Scenario: Set property of a node
-    Given the intermediary command SetNodeProperties is executed with payload:
+    Given the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | contentStreamIdentifier   | "cs-identifier"              |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
@@ -59,5 +60,14 @@ Feature: Single Node operations on live workspace
     And I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
-      | Key  | Value |
-      | text | Hello |
+      | Key  | Value   |
+      | text | "Hello" |
+
+  Scenario: Error on invalid dimension space point
+    Given the command SetNodeProperties is executed with payload and exceptions are caught:
+      | Key                       | Value               |
+      | contentStreamIdentifier   | "cs-identifier"     |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"  |
+      | originDimensionSpacePoint | {"not": "existing"} |
+      | propertyValues            | {"text": "Hello"}   |
+    Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied"

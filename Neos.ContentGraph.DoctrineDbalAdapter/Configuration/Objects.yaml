@@ -1,3 +1,5 @@
+Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface:
+  className: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph'
 Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
   arguments:
     2:

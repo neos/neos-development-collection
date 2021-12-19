@@ -22,6 +22,7 @@ Feature: Publishing hide/show scenario of nodes
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
+      | initiatingUserIdentifier   | "user-id"       |
     And the graph projection is fully up to date
     And I have the following NodeTypes configuration:
     """
@@ -30,6 +31,8 @@ Feature: Publishing hide/show scenario of nodes
       properties:
         text:
           type: string
+        referenceProperty:
+          type: reference
     'Neos.ContentRepository.Testing:Image':
       properties:
         image:
@@ -81,24 +84,27 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: hide two nodes in USER workspace
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "user-cs-identifier"     |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "user-cs-identifier"                   |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                        |
-      | contentStreamIdentifier      | "user-cs-identifier"         |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
-      | coveredDimensionSpacePoint   | {}                           |
-      | nodeVariantSelectionStrategy | "allVariants"                |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "user-cs-identifier"                   |
+      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii"           |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
-    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user-test"                                                                                                                         |
       | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
@@ -118,22 +124,25 @@ Feature: Publishing hide/show scenario of nodes
   Scenario: (ShowNode) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "cs-identifier"                        |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
-      | coveredDimensionSpacePoint   | {}                           |
-      | nodeVariantSelectionStrategy | "allVariants"                |
+      | Key                          | Value                                  |
+      | contentStreamIdentifier      | "cs-identifier"                        |
+      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii"           |
+      | coveredDimensionSpacePoint   | {}                                     |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
     Given the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: show two nodes in USER workspace
@@ -143,19 +152,22 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
     Given the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | contentStreamIdentifier      | "user-cs-identifier"         |
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
+      | initiatingUserIdentifier     | "user"                       |
     And the graph projection is fully up to date
 
-    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
-      | Key                      | Value                                                                                                                               |
-      | workspaceName            | "user-test"                                                                                                                         |
-      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                                     | Value                                                                                                                               |
+      | workspaceName                           | "user-test"                                                                                                                         |
+      | nodeAddresses                           | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier                | "initiating-user-identifier"                                                                                                        |
+      | contentStreamIdentifierForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
@@ -164,9 +176,9 @@ Feature: Publishing hide/show scenario of nodes
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
-    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-modified;sir-david-nodenborough;{}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-modified;sir-nodeward-nodington-iii;{}
 
 
     # @todo check why these won't run
@@ -192,7 +204,7 @@ Feature: Publishing hide/show scenario of nodes
      # | newNodeName             | "imagemod"                   |
    # And the graph projection is fully up to date
 
-   # When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
+   # When the command PublishIndividualNodesFromWorkspace is executed with payload:
    #   | Key           | Value                                                                                                                               |
    #   | workspaceName | "user-test"                                                                                                                         |
     #  | nodeAddresses | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
@@ -217,6 +229,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
@@ -226,6 +239,7 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -233,9 +247,10 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
+      | initiatingUserIdentifier     | "user"                       |
     And the graph projection is fully up to date
 
-    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user-test"                                                                                                                         |
       | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
@@ -259,6 +274,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
@@ -268,15 +284,17 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | initiatingUserIdentifier     | "user"                   |
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | contentStreamIdentifier      | "user-cs-identifier"         |
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
+      | initiatingUserIdentifier     | "user"                       |
     And the graph projection is fully up to date
 
-    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user-test"                                                                                                                         |
       | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
@@ -300,6 +318,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: set two node references in USER workspace
@@ -321,11 +340,12 @@ Feature: Publishing hide/show scenario of nodes
       | initiatingUserIdentifier            | "initiating-user-identifier"   |
     And the graph projection is fully up to date
 
-    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
-      | Key                      | Value                                                                                                                               |
-      | workspaceName            | "user-test"                                                                                                                         |
-      | nodeAddresses            | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                                        |
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                                     | Value                                                                                                                               |
+      | workspaceName                           | "user-test"                                                                                                                         |
+      | nodeAddresses                           | [{"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier                | "initiating-user-identifier"                                                                                                        |
+      | contentStreamIdentifierForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
@@ -342,18 +362,18 @@ Feature: Publishing hide/show scenario of nodes
       | referenceProperty | ["cs-identifier;sir-david-nodenborough;{}"] |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-modified;sir-david-nodenborough;{}
     And I expect this node to have the following references:
-      | Key               | Value                                                |
-      | referenceProperty | ["user-cs-identifier;sir-nodeward-nodington-iii;{}"] |
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
+      | Key               | Value                                                         |
+      | referenceProperty | ["user-cs-identifier-modified;sir-nodeward-nodington-iii;{}"] |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect this node to have the following references:
-      | Key               | Value                                                |
-      | referenceProperty | ["user-cs-identifier;sir-nodeward-nodington-iii;{}"] |
-    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{}
-    And I expect this node to have the following references:
-      | Key               | Value                                                                                     |
-      | referenceProperty | ["user-cs-identifier;sir-david-nodenborough;{}","user-cs-identifier;nody-mc-nodeface;{}"] |
+      | Key               | Value                                                         |
+      | referenceProperty | ["user-cs-identifier-modified;sir-nodeward-nodington-iii;{}"] |
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-modified;sir-nodeward-nodington-iii;{}
+    And I expect this node to be referenced by:
+      | Key               | Value                                                                                                       |
+      | referenceProperty | ["user-cs-identifier-modified;sir-david-nodenborough;{}","user-cs-identifier-modified;nody-mc-nodeface;{}"] |
 
   Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
     Given the command CreateWorkspace is executed with payload:
@@ -361,6 +381,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamIdentifier | "user-cs-identifier" |
+      | initiatingUserIdentifier   | "user"               |
     And the graph projection is fully up to date
 
     # SETUP: set two new nodes in USER workspace
@@ -372,6 +393,7 @@ Feature: Publishing hide/show scenario of nodes
       | originDimensionSpacePoint     | {}                                       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "foo"                                    |
+      | initiatingUserIdentifier      | "user-foo"                               |
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "user-cs-identifier"                     |
@@ -380,13 +402,15 @@ Feature: Publishing hide/show scenario of nodes
       | originDimensionSpacePoint     | {}                                       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "foo2"                                   |
+      | initiatingUserIdentifier      | "user-foo"                               |
     And the graph projection is fully up to date
 
-    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
-      | Key                      | Value                                                                                                                 |
-      | workspaceName            | "user-test"                                                                                                           |
-      | nodeAddresses            | [{"nodeAggregateIdentifier": "new1-agg", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                          |
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                                     | Value                                                                                                                 |
+      | workspaceName                           | "user-test"                                                                                                           |
+      | nodeAddresses                           | [{"nodeAggregateIdentifier": "new1-agg", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier                | "initiating-user-identifier"                                                                                          |
+      | contentStreamIdentifierForRemainingPart | "user-cs-identifier-modified"                                                                                         |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
@@ -394,8 +418,8 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect node aggregate identifier "new2-agg" to lead to no node
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "new1-agg" to lead to node user-cs-identifier;new1-agg;{}
-    Then I expect node aggregate identifier "new2-agg" to lead to node user-cs-identifier;new2-agg;{}
+    Then I expect node aggregate identifier "new1-agg" to lead to node user-cs-identifier-modified;new1-agg;{}
+    Then I expect node aggregate identifier "new2-agg" to lead to node user-cs-identifier-modified;new2-agg;{}
 
 
   # TODO: implement MoveNodeAggregate testcase

@@ -22,12 +22,12 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
           type: string
     """
     And the event RootWorkspaceWasCreated was published with payload:
-      | Key                            | Value                                  |
-      | workspaceName                  | "live"                                 |
-      | workspaceTitle                 | "Live"                                 |
-      | workspaceDescription           | "The live workspace"                   |
-      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier     | "cs-identifier"                        |
+      | Key                        | Value                                  |
+      | workspaceName              | "live"                                 |
+      | workspaceTitle             | "Live"                                 |
+      | workspaceDescription       | "The live workspace"                   |
+      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
       | contentStreamIdentifier     | "cs-identifier"                          |
@@ -72,11 +72,12 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
 
   Scenario: When a new node is added to an already existing aggregate underneath a hidden node, this one should be hidden as well
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
-      | contentStreamIdentifier | "cs-identifier"     |
-      | nodeAggregateIdentifier | "nodingers-cat"     |
-      | sourceOrigin            | {"language": "de"}  |
-      | targetOrigin            | {"language": "gsw"} |
+      | Key                      | Value               |
+      | contentStreamIdentifier  | "cs-identifier"     |
+      | nodeAggregateIdentifier  | "nodingers-cat"     |
+      | sourceOrigin             | {"language": "de"}  |
+      | targetOrigin             | {"language": "gsw"} |
+      | initiatingUserIdentifier | "user"              |
     And the graph projection is fully up to date
 
   #  When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}

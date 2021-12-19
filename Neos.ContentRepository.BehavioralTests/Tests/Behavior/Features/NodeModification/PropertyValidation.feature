@@ -40,7 +40,7 @@ Feature: Validate initial and default properties
       | initiatingUserIdentifier      | "initiating-user-identifier"                       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
     And the graph projection is fully up to date
-    And the intermediary command SetNodeProperties is executed with payload and exceptions are caught:
+    And the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                                           |
       | contentStreamIdentifier   | "cs-identifier"                                 |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                              |
@@ -59,7 +59,7 @@ Feature: Validate initial and default properties
       | initiatingUserIdentifier      | "initiating-user-identifier"                       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
     And the graph projection is fully up to date
-    And the intermediary command SetNodeProperties is executed with payload and exceptions are caught:
+    And the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                          |
       | contentStreamIdentifier   | "cs-identifier"                |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"             |

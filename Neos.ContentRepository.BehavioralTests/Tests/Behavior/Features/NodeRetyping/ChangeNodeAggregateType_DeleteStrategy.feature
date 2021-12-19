@@ -15,7 +15,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     'Neos.ContentRepository.Testing:ChildOfNodeTypeB': []
     'Neos.ContentRepository.Testing:NodeTypeA':
       childNodes:
-        childOfTypeA:
+        child-of-type-a:
           type: 'Neos.ContentRepository.Testing:ChildOfNodeTypeA'
       properties:
         text:
@@ -23,7 +23,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
           defaultValue: 'text'
     'Neos.ContentRepository.Testing:NodeTypeB':
       childNodes:
-        childOfTypeB:
+        child-of-type-b:
           type: 'Neos.ContentRepository.Testing:ChildOfNodeTypeB'
       properties:
         otherText:
@@ -56,6 +56,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                        |
       | nodeName                      | "parent"                                        |
       | initialPropertyValues         | {}                                              |
+      | initiatingUserIdentifier      | "user"                                          |
 
     And the graph projection is fully up to date
 
@@ -75,14 +76,16 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                   |
+      | initiatingUserIdentifier      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
-      | Key                     | Value                                            |
-      | contentStreamIdentifier | "cs-identifier"                                  |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"                         |
-      | newNodeTypeName         | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
-      | strategy                | "delete"                                         |
+      | Key                      | Value                                            |
+      | contentStreamIdentifier  | "cs-identifier"                                  |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough"                         |
+      | newNodeTypeName          | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
+      | strategy                 | "delete"                                         |
+      | initiatingUserIdentifier | "user"                                           |
     And the graph projection is fully up to date
 
     # the type has changed
@@ -125,6 +128,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | parentNodeAggregateIdentifier              | "lady-eleonode-rootford"                        |
       | nodeName                                   | "parent2"                                       |
       | tetheredDescendantNodeAggregateIdentifiers | {"autocreated": "autocreated-child"}            |
+      | initiatingUserIdentifier                   | "user"                                          |
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
@@ -135,14 +139,16 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | parentNodeAggregateIdentifier | "autocreated-child"                        |
       | initialPropertyValues         | {}                                         |
+      | initiatingUserIdentifier      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
-      | Key                     | Value                                            |
-      | contentStreamIdentifier | "cs-identifier"                                  |
-      | nodeAggregateIdentifier | "parent2-na"                                     |
-      | newNodeTypeName         | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
-      | strategy                | "delete"                                         |
+      | Key                      | Value                                            |
+      | contentStreamIdentifier  | "cs-identifier"                                  |
+      | nodeAggregateIdentifier  | "parent2-na"                                     |
+      | newNodeTypeName          | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
+      | strategy                 | "delete"                                         |
+      | initiatingUserIdentifier | "user"                                           |
     And the graph projection is fully up to date
 
     # the type has changed
@@ -154,7 +160,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "autocreated-child" to lead to node cs-identifier;autocreated-child;{"language":"de"}
     When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
-    Then I expect node aggregate identifier "autocreated-child" to lead to node cs-identifier;autocreated-child;{"language":"gsw"}
+    Then I expect node aggregate identifier "autocreated-child" to lead to node cs-identifier;autocreated-child;{"language":"de"}
 
     # the grandchild nodes have been removed
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
@@ -171,22 +177,26 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                   |
       | initialPropertyValues         | {}                                         |
+      | initiatingUserIdentifier      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                 |
-      | contentStreamIdentifier | "cs-identifier"       |
-      | nodeAggregateIdentifier | "nodea-identifier-de" |
-      | sourceOrigin            | {"language":"de"}     |
-      | targetOrigin            | {"language":"gsw"}    |
+      | Key                      | Value                 |
+      | contentStreamIdentifier  | "cs-identifier"       |
+      | nodeAggregateIdentifier  | "nodea-identifier-de" |
+      | sourceOrigin             | {"language":"de"}     |
+      | targetOrigin             | {"language":"gsw"}    |
+      | initiatingUserIdentifier | "user"                |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
-      | Key                     | Value                                      |
-      | contentStreamIdentifier | "cs-identifier"                            |
-      | nodeAggregateIdentifier | "nodea-identifier-de"                      |
-      | newNodeTypeName         | "Neos.ContentRepository.Testing:NodeTypeB" |
-      | strategy                | "delete"                                   |
+      | Key                                        | Value                                      |
+      | contentStreamIdentifier                    | "cs-identifier"                            |
+      | nodeAggregateIdentifier                    | "nodea-identifier-de"                      |
+      | newNodeTypeName                            | "Neos.ContentRepository.Testing:NodeTypeB" |
+      | strategy                                   | "delete"                                   |
+      | initiatingUserIdentifier                   | "user"                                     |
+      | tetheredDescendantNodeAggregateIdentifiers | { "child-of-type-b": "child-of-type-b-id"} |
     And the graph projection is fully up to date
 
     # the type has changed
@@ -198,8 +208,8 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"gsw"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
     And I expect this node to have the following child nodes:
-      | Name         | NodeDiscriminator                             |
-      | childOfTypeB | cs-identifier;childOfTypeB;{"language":"gsw"} |
+      | Name            | NodeDiscriminator                                   |
+      | child-of-type-b | cs-identifier;child-of-type-b-id;{"language":"gsw"} |
 
   Scenario: When changing node type, a non-allowed tethered node should stay (Tethered nodes are not taken into account when checking constraints)
     And I have the following additional NodeTypes configuration:
@@ -207,7 +217,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     'Neos.ContentRepository.Testing:NodeTypeB':
       childNodes:
         # !! NodeTypeB has BOTH childOfTypeA AND childOfTypeB as tethered child nodes...
-        childOfTypeA:
+        child-of-type-a:
           type: 'Neos.ContentRepository.Testing:ChildOfNodeTypeA'
       constraints:
         nodeTypes:
@@ -216,29 +226,34 @@ Feature: Change node aggregate type - behavior of DELETE strategy
           'Neos.ContentRepository.Testing:ChildOfNodeTypeB': false
     """
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                      |
-      | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "nodea-identifier-de"                      |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
-      | originDimensionSpacePoint     | {"language":"de"}                          |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                   |
-      | initialPropertyValues         | {}                                         |
+      | Key                                        | Value                                      |
+      | contentStreamIdentifier                    | "cs-identifier"                            |
+      | nodeAggregateIdentifier                    | "nodea-identifier-de"                      |
+      | nodeTypeName                               | "Neos.ContentRepository.Testing:NodeTypeA" |
+      | originDimensionSpacePoint                  | {"language":"de"}                          |
+      | parentNodeAggregateIdentifier              | "lady-eleonode-rootford"                   |
+      | initialPropertyValues                      | {}                                         |
+      | initiatingUserIdentifier                   | "user"                                     |
+      | tetheredDescendantNodeAggregateIdentifiers | { "child-of-type-a": "child-of-type-a-id"} |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                 |
-      | contentStreamIdentifier | "cs-identifier"       |
-      | nodeAggregateIdentifier | "nodea-identifier-de" |
-      | sourceOrigin            | {"language":"de"}     |
-      | targetOrigin            | {"language":"gsw"}    |
+      | Key                      | Value                 |
+      | contentStreamIdentifier  | "cs-identifier"       |
+      | nodeAggregateIdentifier  | "nodea-identifier-de" |
+      | sourceOrigin             | {"language":"de"}     |
+      | targetOrigin             | {"language":"gsw"}    |
+      | initiatingUserIdentifier | "user"                |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
-      | Key                     | Value                                      |
-      | contentStreamIdentifier | "cs-identifier"                            |
-      | nodeAggregateIdentifier | "nodea-identifier-de"                      |
-      | newNodeTypeName         | "Neos.ContentRepository.Testing:NodeTypeB" |
-      | strategy                | "delete"                                   |
+      | Key                                        | Value                                      |
+      | contentStreamIdentifier                    | "cs-identifier"                            |
+      | nodeAggregateIdentifier                    | "nodea-identifier-de"                      |
+      | newNodeTypeName                            | "Neos.ContentRepository.Testing:NodeTypeB" |
+      | strategy                                   | "delete"                                   |
+      | initiatingUserIdentifier                   | "user"                                     |
+      | tetheredDescendantNodeAggregateIdentifiers | { "child-of-type-b": "child-of-type-b-id"} |
     And the graph projection is fully up to date
 
     # the type has changed
@@ -248,6 +263,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     # BOTH tethered child nodes still need to exist
     And I expect this node to have the following child nodes:
-      | Name         | NodeDiscriminator                            |
-      | childOfTypeA | cs-identifier;childOfTypeA;{"language":"de"} |
-      | childOfTypeB | cs-identifier;childOfTypeB;{"language":"de"} |
+      | Name            | NodeDiscriminator                                  |
+      | child-of-type-a | cs-identifier;child-of-type-a-id;{"language":"de"} |
+      | child-of-type-b | cs-identifier;child-of-type-b-id;{"language":"de"} |

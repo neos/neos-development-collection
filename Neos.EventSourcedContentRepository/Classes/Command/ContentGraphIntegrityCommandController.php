@@ -11,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Command;
  * source code.
  */
 
-use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use Neos\EventSourcedContentRepository\Domain\Projection\Integrity\ProjectionIntegrityViolationDetectionRunner;
 use Neos\Flow\Cli\CommandController;
@@ -33,11 +32,11 @@ final class ContentGraphIntegrityCommandController extends CommandController
     public function runViolationDetectionCommand(string $outputMode = null): void
     {
         $outputMode = $this->resolveOutputMode($outputMode);
-        /** @var Result|Error[] $result */
+        /** @var Result $result */
         $result = $this->detectionRunner->run();
         switch ($outputMode) {
             case self::OUTPUT_MODE_CONSOLE:
-                foreach ($result as $error) {
+                foreach ($result->getErrors() as $error) {
                     $this->outputLine($error->getMessage());
                 }
                 break;

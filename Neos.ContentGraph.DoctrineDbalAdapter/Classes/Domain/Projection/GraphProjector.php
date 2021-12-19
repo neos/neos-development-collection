@@ -26,6 +26,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
+use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Event\DimensionSpacePointWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
@@ -74,12 +75,10 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
     public function reset(): void
     {
         parent::reset();
-        $this->transactional(function () {
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
-        });
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
     }
 
     /**
@@ -441,6 +440,9 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
             ', [
                 'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
             ]);
+
+            // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
+            // we do not need to copy reference edges here (but we need to do it during copy on write).
         });
     }
 
@@ -705,6 +707,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
+            // Do the actual specialization
             $sourceNode = $this->projectionContentGraph->findNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
 
             $specializedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getSpecializationOrigin());
@@ -723,6 +726,9 @@ insert ignore into neos_contentgraph_restrictionrelation
             ) as $hierarchyRelation) {
                 $hierarchyRelation->assignNewParentNode($specializedNode->relationAnchorPoint, null, $this->getDatabaseConnection());
             }
+
+            // Copy Reference Edges
+            $this->copyReferenceRelations($sourceNode->relationAnchorPoint, $specializedNode->relationAnchorPoint);
         });
     }
 
@@ -734,6 +740,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
+            // do the generalization
             $sourceNode = $this->projectionContentGraph->findNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
             $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
@@ -784,6 +791,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                     );
                 }
             }
+
+            // Copy Reference Edges
+            $this->copyReferenceRelations($sourceNode->relationAnchorPoint, $generalizedNode->relationAnchorPoint);
         });
     }
 
@@ -794,6 +804,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodePeerVariantWasCreated(Event\NodePeerVariantWasCreated $event)
     {
         $this->transactional(function () use ($event) {
+            // Do the peer variant creation itself
             $sourceNode = $this->projectionContentGraph->findNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
             $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
@@ -837,6 +848,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                     $sourceNode->nodeName
                 );
             }
+
+            // Copy Reference Edges
+            $this->copyReferenceRelations($sourceNode->relationAnchorPoint, $peerNode->relationAnchorPoint);
         });
     }
 
@@ -959,7 +973,7 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node". IMPORTANT: We need to reconnect
             // BOTH the incoming and outgoing edges.
-            $this->getDatabaseConnection()->executeUpdate(
+            $this->getDatabaseConnection()->executeStatement(
                 '
                 UPDATE neos_contentgraph_hierarchyrelation h
                     SET
@@ -977,6 +991,9 @@ insert ignore into neos_contentgraph_restrictionrelation
                     'contentStreamIdentifier' => (string)$contentStreamIdentifierWhereWriteOccurs
                 ]
             );
+
+            // reference relation rows need to be copied as well!
+            $this->copyReferenceRelations($anchorPoint, $copiedNode->relationAnchorPoint);
         } else {
             // No copy on write needed :)
 
@@ -989,6 +1006,159 @@ insert ignore into neos_contentgraph_restrictionrelation
             $node->updateToDatabase($this->getDatabaseConnection());
         }
         return $result;
+    }
+
+
+    protected function copyReferenceRelations(NodeRelationAnchorPoint $sourceRelationAnchorPoint, NodeRelationAnchorPoint $destinationRelationAnchorPoint): void
+    {
+        $this->getDatabaseConnection()->executeStatement('
+                INSERT INTO neos_contentgraph_referencerelation (
+                  nodeanchorpoint,
+                  name,
+                  position,
+                  destinationnodeaggregateidentifier
+                )
+                SELECT
+                  :destinationRelationAnchorPoint AS nodeanchorpoint,
+                  ref.name,
+                  ref.position,
+                  ref.destinationnodeaggregateidentifier
+                FROM
+                    neos_contentgraph_referencerelation ref
+                    WHERE ref.nodeanchorpoint = :sourceNodeAnchorPoint
+            ', [
+            'sourceNodeAnchorPoint' => (string)$sourceRelationAnchorPoint,
+            'destinationRelationAnchorPoint' => (string)$destinationRelationAnchorPoint
+        ]);
+    }
+
+    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event)
+    {
+        $this->transactional(function () use ($event) {
+            // the ordering is important - we first update the OriginDimensionSpacePoints, as we need the
+            // hierarchy relations for this query. Then, we update the Hierarchy Relations.
+
+            // 1) originDimensionSpacePoint on Node
+            $rel = $this->getDatabaseConnection()->executeQuery(
+                'SELECT n.relationanchorpoint, n.origindimensionspacepointhash FROM neos_contentgraph_node n
+                     INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+
+                     AND h.contentstreamidentifier = :contentStreamIdentifier
+                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                     -- find only nodes which have their ORIGIN at the source DimensionSpacePoint,
+                     -- as we need to rewrite these origins (using copy on write)
+                     AND n.origindimensionspacepointhash = :dimensionSpacePointHash
+                ',
+                [
+                    'dimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                ]
+            );
+            while ($res = $rel->fetchAssociative()) {
+                $relationAnchorPoint = NodeRelationAnchorPoint::fromString($res['relationanchorpoint']);
+                $this->updateNodeRecordWithCopyOnWrite($event->getContentStreamIdentifier(), $relationAnchorPoint, function (NodeRecord $nodeRecord) use ($event) {
+                    $nodeRecord->originDimensionSpacePoint = $event->getTarget()->jsonSerialize();
+                    $nodeRecord->originDimensionSpacePointHash = $event->getTarget()->getHash();
+                });
+            }
+
+            // 2) hierarchy relations
+            $this->getDatabaseConnection()->executeStatement(
+                '
+                UPDATE neos_contentgraph_hierarchyrelation h
+                    SET
+                        h.dimensionspacepoint = :newDimensionSpacePoint,
+                        h.dimensionspacepointhash = :newDimensionSpacePointHash
+                    WHERE
+                      h.dimensionspacepointhash = :originalDimensionSpacePointHash
+                      AND h.contentstreamidentifier = :contentStreamIdentifier
+                      ',
+                [
+                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                ]
+            );
+
+            // 3) restriction relations
+            $this->getDatabaseConnection()->executeStatement(
+                '
+                UPDATE neos_contentgraph_restrictionrelation r
+                    SET
+                        r.dimensionspacepointhash = :newDimensionSpacePointHash
+                    WHERE
+                      r.dimensionspacepointhash = :originalDimensionSpacePointHash
+                      AND r.contentstreamidentifier = :contentStreamIdentifier
+                      ',
+                [
+                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                ]
+            );
+        });
+    }
+
+    public function whenDimensionShineThroughWasAdded(ContentRepository\Context\DimensionSpace\Event\DimensionShineThroughWasAdded $event)
+    {
+        $this->transactional(function () use ($event) {
+            // 1) hierarchy relations
+            $this->getDatabaseConnection()->executeStatement(
+                '
+                INSERT INTO neos_contentgraph_hierarchyrelation (
+                  parentnodeanchor,
+                  childnodeanchor,
+                  `name`,
+                  position,
+                  dimensionspacepoint,
+                  dimensionspacepointhash,
+                  contentstreamidentifier
+                )
+                SELECT
+                  h.parentnodeanchor,
+                  h.childnodeanchor,
+                  h.name,
+                  h.position,
+                 :newDimensionSpacePoint AS dimensionspacepoint,
+                 :newDimensionSpacePointHash AS dimensionspacepointhash,
+                  h.contentstreamidentifier
+                FROM
+                    neos_contentgraph_hierarchyrelation h
+                    WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                    AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash',
+                [
+                    'contentStreamIdentifier' => $event->getContentStreamIdentifier()->jsonSerialize(),
+                    'sourceDimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
+                ]
+            );
+
+            // 2) restriction relations
+            $this->getDatabaseConnection()->executeUpdate('
+                INSERT INTO neos_contentgraph_restrictionrelation (
+                  contentstreamidentifier,
+                  dimensionspacepointhash,
+                  originnodeaggregateidentifier,
+                  affectednodeaggregateidentifier
+                )
+                SELECT
+                  r.contentstreamidentifier,
+                  :targetDimensionSpacePointHash,
+                  r.originnodeaggregateidentifier,
+                  r.affectednodeaggregateidentifier
+                FROM
+                    neos_contentgraph_restrictionrelation r
+                    WHERE r.contentstreamidentifier = :contentStreamIdentifier
+                    AND r.dimensionspacepointhash = :sourceDimensionSpacePointHash
+
+            ', [
+                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
+                'sourceDimensionSpacePointHash' => (string)$event->getSource()->getHash(),
+                'targetDimensionSpacePointHash' => (string)$event->getTarget()->getHash()
+            ]);
+        });
     }
 
     /**

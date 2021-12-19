@@ -30,7 +30,7 @@ Feature: Node References without Dimensions
       | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
-    And the following intermediary CreateNodeAggregateWithNode commands are executed:
+    And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                      |
       | source-nodandaise       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
       | anthony-destinode       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
@@ -43,6 +43,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
       | referenceName                       | "referenceProperty"   |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -61,6 +62,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "source-nodandaise"                   |
       | destinationNodeAggregateIdentifiers | ["berta-destinode", "carl-destinode"] |
       | referenceName                       | "referencesProperty"                  |
+      | initiatingUserIdentifier            | "user"                                |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -84,6 +86,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "source-nodandaise"                   |
       | destinationNodeAggregateIdentifiers | ["berta-destinode", "carl-destinode"] |
       | referenceName                       | "referencesProperty"                  |
+      | initiatingUserIdentifier            | "user"                                |
     And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
@@ -91,6 +94,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
       | referenceName                       | "referencesProperty"  |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -116,6 +120,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "source-nodandaise"                   |
       | destinationNodeAggregateIdentifiers | ["berta-destinode", "carl-destinode"] |
       | referenceName                       | "referencesProperty"                  |
+      | initiatingUserIdentifier            | "user"                                |
     And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
@@ -123,6 +128,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "source-nodandaise"                   |
       | destinationNodeAggregateIdentifiers | ["carl-destinode", "berta-destinode"] |
       | referenceName                       | "referencesProperty"                  |
+      | initiatingUserIdentifier            | "user"                                |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -137,6 +143,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "source-nodandaise"                   |
       | destinationNodeAggregateIdentifiers | ["berta-destinode", "carl-destinode"] |
       | referenceName                       | "referencesProperty"                  |
+      | initiatingUserIdentifier            | "user"                                |
     And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
@@ -144,6 +151,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "source-nodandaise"  |
       | destinationNodeAggregateIdentifiers | []                   |
       | referenceName                       | "referencesProperty" |
+      | initiatingUserIdentifier            | "user"               |
 
     And the graph projection is fully up to date
 
@@ -163,6 +171,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "source-nodandaise"   |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
       | referenceName                       | "referenceProperty"   |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
@@ -170,6 +179,7 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateIdentifier       | "berta-destinode"     |
       | destinationNodeAggregateIdentifiers | ["anthony-destinode"] |
       | referenceName                       | "referenceProperty"   |
+      | initiatingUserIdentifier            | "user"                |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}

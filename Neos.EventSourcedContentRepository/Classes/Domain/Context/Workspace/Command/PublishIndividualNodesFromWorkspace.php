@@ -13,9 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -38,15 +36,53 @@ final class PublishIndividualNodesFromWorkspace
     private UserIdentifier $initiatingUserIdentifier;
 
     /**
+     * during the publish process, we sort the events so that the events we want to publish
+     * come first. In this process, two new content streams are generated:
+     * - the first one contains all events which we want to publish
+     * - the second one is based on the first one, and contains all the remaining events (which we want to keep
+     *   in the user workspace).
+     *
+     * This property contains the identifier of the first content stream, so that this command
+     * can run fully deterministic - we need this for the test cases.
+     */
+    private ContentStreamIdentifier $contentStreamIdentifierForMatchingPart;
+
+    /**
+     * See the description of {@see $contentStreamIdentifierForMatchingPart}.
+     *
+     * This property contains the identifier of the second content stream, so that this command
+     * can run fully deterministic - we need this for the test cases.
+     */
+    private ContentStreamIdentifier $contentStreamIdentifierForRemainingPart;
+
+
+    /**
      * @param WorkspaceName $workspaceName
      * @param array|NodeAddress[] $nodeAddresses
      * @param UserIdentifier $initiatingUserIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifierForMatchingPart
+     * @param ContentStreamIdentifier $contentStreamIdentifierForRemainingPart
      */
-    public function __construct(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier)
+    private function __construct(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifierForMatchingPart, ContentStreamIdentifier $contentStreamIdentifierForRemainingPart)
     {
         $this->workspaceName = $workspaceName;
         $this->nodeAddresses = $nodeAddresses;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->contentStreamIdentifierForMatchingPart = $contentStreamIdentifierForMatchingPart;
+        $this->contentStreamIdentifierForRemainingPart = $contentStreamIdentifierForRemainingPart;
+    }
+
+    public static function create(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier): self
+    {
+        return new self($workspaceName, $nodeAddresses, $initiatingUserIdentifier, ContentStreamIdentifier::create(), ContentStreamIdentifier::create());
+    }
+
+    /**
+     * Call this method if you want to run this command fully deterministically, f.e. during test cases
+     */
+    public static function createFullyDeterministic(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifierForMatchingPart, ContentStreamIdentifier $contentStreamIdentifierForRemainingPart): self
+    {
+        return new self($workspaceName, $nodeAddresses, $initiatingUserIdentifier, $contentStreamIdentifierForMatchingPart, $contentStreamIdentifierForRemainingPart);
     }
 
     public function getWorkspaceName(): WorkspaceName
@@ -67,22 +103,20 @@ final class PublishIndividualNodesFromWorkspace
         return $this->initiatingUserIdentifier;
     }
 
-    public static function fromArray(array $array): self
-    {
-        $nodeAddresses = [];
-        foreach ($array['nodeAddresses'] as $nodeAddressArray) {
-            $nodeAddresses[] = new NodeAddress(
-                ContentStreamIdentifier::fromString($nodeAddressArray['contentStreamIdentifier']),
-                new DimensionSpacePoint($nodeAddressArray['dimensionSpacePoint']),
-                NodeAggregateIdentifier::fromString($nodeAddressArray['nodeAggregateIdentifier']),
-                null
-            );
-        }
 
-        return new self(
-            new WorkspaceName($array['workspaceName']),
-            $nodeAddresses,
-            UserIdentifier::fromString($array['initiatingUserIdentifier'])
-        );
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getContentStreamIdentifierForMatchingPart(): ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifierForMatchingPart;
+    }
+
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getContentStreamIdentifierForRemainingPart(): ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifierForRemainingPart;
     }
 }
