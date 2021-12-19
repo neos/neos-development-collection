@@ -371,7 +371,7 @@ Feature: Publishing hide/show scenario of nodes
       | Key               | Value                                                         |
       | referenceProperty | ["user-cs-identifier-modified;sir-nodeward-nodington-iii;{}"] |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-modified;sir-nodeward-nodington-iii;{}
-    And I expect this node to have the following references:
+    And I expect this node to be referenced by:
       | Key               | Value                                                                                                       |
       | referenceProperty | ["user-cs-identifier-modified;sir-david-nodenborough;{}","user-cs-identifier-modified;nody-mc-nodeface;{}"] |
 
@@ -393,6 +393,7 @@ Feature: Publishing hide/show scenario of nodes
       | originDimensionSpacePoint     | {}                                       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "foo"                                    |
+      | initiatingUserIdentifier      | "user-foo"                               |
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "user-cs-identifier"                     |
@@ -401,13 +402,15 @@ Feature: Publishing hide/show scenario of nodes
       | originDimensionSpacePoint     | {}                                       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "foo2"                                   |
+      | initiatingUserIdentifier      | "user-foo"                               |
     And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                      | Value                                                                                                                 |
-      | workspaceName            | "user-test"                                                                                                           |
-      | nodeAddresses            | [{"nodeAggregateIdentifier": "new1-agg", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-      | initiatingUserIdentifier | "initiating-user-identifier"                                                                                          |
+      | Key                                     | Value                                                                                                                 |
+      | workspaceName                           | "user-test"                                                                                                           |
+      | nodeAddresses                           | [{"nodeAggregateIdentifier": "new1-agg", "contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}}] |
+      | initiatingUserIdentifier                | "initiating-user-identifier"                                                                                          |
+      | contentStreamIdentifierForRemainingPart | "user-cs-identifier-modified"                                                                                         |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
@@ -415,8 +418,8 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect node aggregate identifier "new2-agg" to lead to no node
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "new1-agg" to lead to node user-cs-identifier;new1-agg;{}
-    Then I expect node aggregate identifier "new2-agg" to lead to node user-cs-identifier;new2-agg;{}
+    Then I expect node aggregate identifier "new1-agg" to lead to node user-cs-identifier-modified;new1-agg;{}
+    Then I expect node aggregate identifier "new2-agg" to lead to node user-cs-identifier-modified;new2-agg;{}
 
 
   # TODO: implement MoveNodeAggregate testcase
