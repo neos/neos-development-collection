@@ -15,6 +15,7 @@ Feature: Change node name
       | nodeAggregateClassification | "root"                        |
     And I have the following NodeTypes configuration:
     """
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Content': []
     """
 
@@ -59,9 +60,11 @@ Feature: Change node name
     And the graph projection is fully up to date
     # we read the node initially, to ensure it is filled in the cache (to check whether cache clearing actually works)
     When I am in content stream "cs-identifier" and dimension space point {}
-    Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
-      | Name | NodeAggregateIdentifier |
-      | dog  | nody-mc-nodeface        |
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    Then I expect this node to have the following child nodes:
+      | Name | NodeDiscriminator                 |
+      | dog  | cs-identifier;nody-mc-nodeface;{} |
+
     When the command "ChangeNodeAggregateName" is executed with payload:
       | Key                      | Value                        |
       | contentStreamIdentifier  | "cs-identifier"              |
@@ -70,7 +73,8 @@ Feature: Change node name
       | initiatingUserIdentifier | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {}
-    Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
-      | Name | NodeAggregateIdentifier |
-      | cat  | nody-mc-nodeface        |
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    Then I expect this node to have the following child nodes:
+      | Name | NodeDiscriminator                 |
+      | cat  | cs-identifier;nody-mc-nodeface;{} |
+
