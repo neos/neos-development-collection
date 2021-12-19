@@ -33,14 +33,6 @@ final class DiscardWorkspace
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    public static function fromArray(array $array): self
-    {
-        return new self(
-            new WorkspaceName($array['workspaceName']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier']),
-        );
-    }
-
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;

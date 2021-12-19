@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\F
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
@@ -45,10 +46,20 @@ trait WorkspacePublishing
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
 
-        $command = new PublishIndividualNodesFromWorkspace(
+        $contentStreamIdentifierForMatchingPart = isset($commandArguments['contentStreamIdentifierForMatchingPart'])
+            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifierForMatchingPart'])
+            : ContentStreamIdentifier::create();
+
+        $contentStreamIdentifierForRemainingPart = isset($commandArguments['contentStreamIdentifierForRemainingPart'])
+            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifierForRemainingPart'])
+            : ContentStreamIdentifier::create();
+
+        $command = PublishIndividualNodesFromWorkspace::createFullyDeterministic(
             new WorkspaceName($commandArguments['workspaceName']),
             $nodeAddresses,
-            $initiatingUserIdentifier
+            $initiatingUserIdentifier,
+            $contentStreamIdentifierForMatchingPart,
+            $contentStreamIdentifierForRemainingPart
         );
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()

@@ -23,4 +23,9 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 interface RebasableToOtherContentStreamsInterface
 {
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier);
+
+    /**
+     * called during deserialization from metadata
+     */
+    public static function fromArray(array $array): self;
 }
