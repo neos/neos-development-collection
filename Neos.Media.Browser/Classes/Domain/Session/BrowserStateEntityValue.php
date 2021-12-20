@@ -22,5 +22,4 @@ class BrowserStateEntityValue
     {
         return $this->class;
     }
-
 }
