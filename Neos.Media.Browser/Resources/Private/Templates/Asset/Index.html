@@ -198,7 +198,7 @@
             </li>
             <f:for each="{tags}" as="tag">
                 <li>
-                    <f:link.action action="index" title="{tag.object.label}" class="droppable-tag{f:if(condition: '{tag.object} === {activeTag}', then: ' neos-active')}" arguments="{tag: tag.object}" addQueryString="true" data="{tag-identifier: '{tag.object -> f:format.identifier()}'}">
+                    <f:link.action action="index" title="{tag.object.label}" class="droppable-tag{f:if(condition: '{tag.object} === {activeTag}', then: ' neos-active')}" arguments="{tag: tag.object, tagMode: 0}" addQueryString="true" data="{tag-identifier: '{tag.object -> f:format.identifier()}'}">
                         {tag.object.label}
                         <span class="count">{tag.count}</span>
                     </f:link.action>
@@ -319,10 +319,11 @@
     <script type="text/javascript">
         var uploadUrl = "{f:uri.action(action: 'upload', addQueryString: true, additionalParams: {__csrfToken: '{f:security.csrfToken()}'}, absolute: true) -> f:format.raw()}";
         var maximumFileUploadSize = {maximumFileUploadSize};
-
+<![CDATA[
         if (window.parent !== window && window.parent.NeosMediaBrowserCallbacks && window.parent.NeosMediaBrowserCallbacks.refreshThumbnail) {
             window.parent.NeosMediaBrowserCallbacks.refreshThumbnail();
         }
+]]>
     </script>
     <f:form action="tagAsset" addQueryString="true" id="tag-asset-form" format="json">
         <f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />

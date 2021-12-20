@@ -2,7 +2,12 @@ up:
   comments: 'Migrate from some node dimensions to default dimension values, adding missing dimension default values.'
   migration:
     -
-      filters: []
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'unstructured'
+            exclude: true
       transformations:
         -
           type: 'AddDimensions'

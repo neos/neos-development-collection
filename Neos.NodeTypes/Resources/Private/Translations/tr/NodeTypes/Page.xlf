@@ -16,13 +16,13 @@
 			<target state="translated">Yalnızca bu sayfa için düzen</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Inherit from parent</source>
-			<target state="translated">Ebeveynden miras almak</target></trans-unit>
+			<target state="translated">Üstten devral</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve">
 				<source>Layout for subpages of this page</source>
 			<target state="translated">Bu sayfanın alt sayfaları için düzen</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Inherit from parent</source>
-			<target state="translated">Ebeveynden miras almak</target></trans-unit>
+			<target state="translated">Üstten devral</target></trans-unit>
     </body>
   </file>
 </xliff>

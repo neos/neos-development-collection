@@ -7,6 +7,7 @@ prototype(Neos.NodeTypes.ContentReferences:ContentReferences) < prototype(Neos.N
     itemRenderer = Neos.Neos:ContentCase
     itemName = 'node'
   }
+  hasReferences = ${!!referenceNodesArray}
   @cache {
     mode = 'cached'
     entryIdentifier {

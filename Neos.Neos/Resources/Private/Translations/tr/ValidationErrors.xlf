@@ -5,11 +5,11 @@
       <!-- UserDoesNotExistValidator -->
       <trans-unit id="1325156008" xml:space="preserve">
 				<source>The username is already in use.</source>
-			<target state="translated">Bu hesap belirleyici (kullanıcı adı) zaten kullanılıyor.</target></trans-unit>
+			<target state="translated">Bu kullanıcı adı zaten kullanılıyor.</target></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
-			<target state="translated">"{0}" ana makine adı geçerli değildi.</target></trans-unit>
+			<target state="translated">"{0}" ana bilgisayar adı geçerli değildi.</target></trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve">
 				<source>The given password was empty.</source>

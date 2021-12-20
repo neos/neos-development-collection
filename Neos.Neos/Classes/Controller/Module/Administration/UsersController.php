@@ -68,6 +68,12 @@ class UsersController extends AbstractModuleController
     protected $tokenAndProviderFactory;
 
     /**
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
+     * @var array
+     */
+    protected $authenticationProviderSettings;
+
+    /**
      * @return void
      * @throws NoSuchArgumentException
      */
@@ -348,7 +354,10 @@ class UsersController extends AbstractModuleController
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())], 1412374678);
+        /** @var PersonName $personName */
+        $personName = $user->getName();
+        $name = $personName ? $personName->getFullName() : '';
+        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($name)], 1412374678);
         $this->redirect('edit', null, null, ['user' => $user]);
     }
 
@@ -381,9 +390,18 @@ class UsersController extends AbstractModuleController
      */
     protected function getAuthenticationProviders(): array
     {
-        $providerNames = array_keys($this->tokenAndProviderFactory->getProviders());
+        $providers = array_keys($this->tokenAndProviderFactory->getProviders());
+
+        $providerNames =[];
+        foreach ($providers as $authenticationProviderName) {
+            $providerNames[$authenticationProviderName] = [
+                'label' => ($this->authenticationProviderSettings[$authenticationProviderName]['label'] ?? $authenticationProviderName),
+                'identifier' => $authenticationProviderName
+            ];
+        }
+
         sort($providerNames);
-        return array_combine($providerNames, $providerNames);
+        return $providerNames;
     }
 
     /**

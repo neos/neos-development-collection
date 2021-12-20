@@ -319,10 +319,10 @@ class Parser implements ParserInterface
     public function setObjectTypeNamespace($alias, $namespace)
     {
         if (!is_string($alias)) {
-            throw new Fusion\Exception('The alias of a namespace must be valid string!', 1180600696);
+            throw new Fusion\Exception('The alias of a namespace must be valid string!' . $this->renderCurrentFileAndLineInformation(), 1180600696);
         }
         if (!is_string($namespace)) {
-            throw new Fusion\Exception('The namespace must be of type string!', 1180600697);
+            throw new Fusion\Exception('The namespace must be of type string!' . $this->renderCurrentFileAndLineInformation(), 1180600697);
         }
         $this->objectTypeNamespaces[$alias] = $namespace;
     }
@@ -381,7 +381,7 @@ class Parser implements ParserInterface
             } elseif (preg_match(self::SCAN_PATTERN_OBJECTDEFINITION, $fusionLine)) {
                 $this->parseObjectDefinition($fusionLine);
             } else {
-                throw new Fusion\Exception('Syntax error in line ' . $this->currentLineNumber . '. (' . $fusionLine . ')', 1180547966);
+                throw new Fusion\Exception('Syntax error in line ' . $this->currentLineNumber . '. (' . $fusionLine . ')' . $this->renderCurrentFileAndLineInformation(), 1180547966);
             }
         }
     }
@@ -402,7 +402,7 @@ class Parser implements ParserInterface
                     break;
                 case '*/':
                     if ($this->currentBlockCommentState !== true) {
-                        throw new Fusion\Exception('Unexpected closing block comment without matching opening block comment.', 1180615119);
+                        throw new Fusion\Exception('Unexpected closing block comment without matching opening block comment.' . $this->renderCurrentFileAndLineInformation(), 1180615119);
                     }
                     $this->currentBlockCommentState = false;
                     $this->parseFusionLine(substr($fusionLine, ($matches[1][1] + 2)));
@@ -413,7 +413,7 @@ class Parser implements ParserInterface
                     break;
             }
         } elseif ($this->currentBlockCommentState === false) {
-            throw new Fusion\Exception('No comment type matched although the comment scan regex matched the Fusion line (' . $fusionLine . ').', 1180614895);
+            throw new Fusion\Exception('No comment type matched although the comment scan regex matched the Fusion line (' . $fusionLine . ').' . $this->renderCurrentFileAndLineInformation(), 1180614895);
         }
     }
 
@@ -432,7 +432,7 @@ class Parser implements ParserInterface
             array_push($this->currentObjectPathStack, $this->getCurrentObjectPathPrefix() . $result);
         } else {
             if (count($this->currentObjectPathStack) < 1) {
-                throw new Fusion\Exception('Unexpected closing confinement without matching opening confinement. Check the number of your curly braces.', 1181575973);
+                throw new Fusion\Exception('Unexpected closing confinement without matching opening confinement. Check the number of your curly braces.' . $this->renderCurrentFileAndLineInformation(), 1181575973);
             }
             array_pop($this->currentObjectPathStack);
         }
@@ -449,7 +449,7 @@ class Parser implements ParserInterface
     {
         $result = preg_match(self::SPLIT_PATTERN_DECLARATION, $fusionLine, $matches);
         if ($result !== 1 || !(isset($matches['declarationType']) && isset($matches['declaration']))) {
-            throw new Fusion\Exception('Invalid declaration "' . $fusionLine . '"', 1180544656);
+            throw new Fusion\Exception('Invalid declaration "' . $fusionLine . '"' . $this->renderCurrentFileAndLineInformation(), 1180544656);
         }
 
         switch ($matches['declarationType']) {
@@ -473,7 +473,7 @@ class Parser implements ParserInterface
     {
         $result = preg_match(self::SPLIT_PATTERN_OBJECTDEFINITION, $fusionLine, $matches);
         if ($result !== 1) {
-            throw new Fusion\Exception('Invalid object definition "' . $fusionLine . '"', 1180548488);
+            throw new Fusion\Exception('Invalid object definition "' . $fusionLine . '"' . $this->renderCurrentFileAndLineInformation(), 1180548488);
         }
 
         $objectPath = $this->getCurrentObjectPathPrefix() . $matches['ObjectPath'];
@@ -551,11 +551,11 @@ class Parser implements ParserInterface
                 // parts of the TS rendering tree.
                 // Although this might work conceptually, it makes reasoning about the prototypical
                 // inheritance tree a lot more complex; that's why we forbid it right away.
-                throw new Fusion\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)', 1358418019);
+                throw new Fusion\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)' . $this->renderCurrentFileAndLineInformation(), 1358418019);
             } else {
                 // Either "source" or "target" are no prototypes. We do not support copying a
                 // non-prototype value to a prototype value or vice-versa.
-                throw new Fusion\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.', 1358418015);
+                throw new Fusion\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.' . $this->renderCurrentFileAndLineInformation(), 1358418015);
             }
         } else {
             $originalValue = $this->getValueFromObjectTree($sourceObjectPathArray);
@@ -576,7 +576,7 @@ class Parser implements ParserInterface
     {
         $result = preg_match(self::SPLIT_PATTERN_NAMESPACEDECLARATION, $namespaceDeclaration, $matches);
         if ($result !== 1 || !(isset($matches['alias']) && isset($matches['packageKey']))) {
-            throw new Fusion\Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
+            throw new Fusion\Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"' . $this->renderCurrentFileAndLineInformation(), 1180547190);
         }
 
         $namespaceAlias = $matches['alias'];
@@ -602,7 +602,7 @@ class Parser implements ParserInterface
             if ($this->contextPathAndFilename !== null) {
                 $include = dirname($this->contextPathAndFilename) . '/' . $include;
             } else {
-                throw new Fusion\Exception('Relative file inclusions are only possible if a context path and filename has been passed as second argument to parse()', 1329806940);
+                throw new Fusion\Exception('Relative file inclusions are only possible if a context path and filename has been passed as second argument to parse()' . $this->renderCurrentFileAndLineInformation(), 1329806940);
             }
         }
 
@@ -610,7 +610,7 @@ class Parser implements ParserInterface
         if (preg_match('#([^\*]*)\*\*/\*#', $include, $matches) === 1) {
             $basePath = $matches['1'];
             if (!is_dir($basePath)) {
-                throw new Fusion\Exception(sprintf('The path %s does not point to a directory.', $basePath), 1415033179);
+                throw new Fusion\Exception(sprintf('The path %s does not point to a directory.', $basePath) . $this->renderCurrentFileAndLineInformation(), 1415033179);
             }
             $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($basePath);
             $iterator = new \RecursiveIteratorIterator($recursiveDirectoryIterator);
@@ -618,7 +618,7 @@ class Parser implements ParserInterface
         } elseif (preg_match('#([^\*]*)\*#', $include, $matches) === 1) {
             $basePath = $matches['1'];
             if (!is_dir($basePath)) {
-                throw new Fusion\Exception(sprintf('The path %s does not point to a directory.', $basePath), 1415033180);
+                throw new Fusion\Exception(sprintf('The path %s does not point to a directory.', $basePath) . $this->renderCurrentFileAndLineInformation(), 1415033180);
             }
             $iterator = new \DirectoryIterator($basePath);
         }
@@ -630,7 +630,7 @@ class Parser implements ParserInterface
                     // Check if not trying to recursively include the current file via globbing
                     if (stat($pathAndFilename) !== stat($this->contextPathAndFilename)) {
                         if (!is_readable($pathAndFilename)) {
-                            throw new Fusion\Exception(sprintf('Could not include Fusion file "%s"', $pathAndFilename), 1347977018);
+                            throw new Fusion\Exception(sprintf('Could not include Fusion file "%s"', $pathAndFilename) . $this->renderCurrentFileAndLineInformation(), 1347977018);
                         }
                         $this->objectTree = $parser->parse(file_get_contents($pathAndFilename), $pathAndFilename, $this->objectTree, false);
                     }
@@ -638,7 +638,7 @@ class Parser implements ParserInterface
             }
         } else {
             if (!is_readable($include)) {
-                throw new Fusion\Exception(sprintf('Could not include Fusion file "%s"', $include), 1347977017);
+                throw new Fusion\Exception(sprintf('Could not include Fusion file "%s"', $include) . $this->renderCurrentFileAndLineInformation(), 1347977017);
             }
             $this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree, false);
         }
@@ -683,13 +683,13 @@ class Parser implements ParserInterface
                 } else {
                     $key = $objectPathSegment;
                     if (substr($key, 0, 2) === '__' && in_array($key, self::$reservedParseTreeKeys, true)) {
-                        throw new Fusion\Exception(sprintf('Reversed key "%s" used in object path "%s".', $key, $objectPath), 1437065270);
+                        throw new Fusion\Exception(sprintf('Reversed key "%s" used in object path "%s".', $key, $objectPath) . $this->renderCurrentFileAndLineInformation(), 1437065270);
                     }
                     $objectPathArray[] = $this->unquoteString($key);
                 }
             }
         } else {
-            throw new Fusion\Exception('Syntax error: Invalid object path "' . $objectPath . '".', 1180603499);
+            throw new Fusion\Exception('Syntax error: Invalid object path "' . $objectPath . '".' . $this->renderCurrentFileAndLineInformation(), 1180603499);
         }
 
         return $objectPathArray;
@@ -765,7 +765,7 @@ class Parser implements ParserInterface
 
                 if ($line === false) {
                     // if the last line we consumed is false, we have consumed the end of the file.
-                    throw new Fusion\Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue . '" was not closed.', 1417616064);
+                    throw new Fusion\Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue . '" was not closed.' . $this->renderCurrentFileAndLineInformation(), 1417616064);
                 }
             }
             // Trying to match multiline dsl-expressions
@@ -784,12 +784,12 @@ class Parser implements ParserInterface
                     $line = $this->getNextFusionLine();
                     if ($line === false) {
                         // if the last line we consumed is false, we have consumed the end of the file.
-                        throw new Fusion\Exception('Syntax error: A multi-line dsl expression starting with "' . $unparsedValue . '" was not closed.', 1490714685);
+                        throw new Fusion\Exception('Syntax error: A multi-line dsl expression starting with "' . $unparsedValue . '" was not closed.' . $this->renderCurrentFileAndLineInformation(), 1490714685);
                     }
                     $dslExpressionSoFar .= chr(10) . $line;
                 }
             } else {
-                throw new Fusion\Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
+                throw new Fusion\Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.' . $this->renderCurrentFileAndLineInformation(), 1180604192);
             }
         }
         return $processedValue;
@@ -800,12 +800,17 @@ class Parser implements ParserInterface
      * @param $code
      * @return mixed
      * @throws Exception
-     * @throws Fusion
+     * @throws Fusion\Exception
      */
     protected function invokeAndParseDsl($identifier, $code)
     {
         $dslObject = $this->dslFactory->create($identifier);
-        $transpiledFusion = $dslObject->transpile($code);
+        try {
+            $transpiledFusion = $dslObject->transpile($code);
+        } catch (\Exception $e) {
+            // convert all exceptions from dsl transpilation to fusion exception and add file and line info
+            throw new Fusion\Exception($e->getMessage() . $this->renderCurrentFileAndLineInformation(), 1180600696);
+        }
 
         $parser = new Parser();
         // transfer current namespaces to new parser
@@ -962,5 +967,20 @@ class Parser implements ParserInterface
                 $value = $quotedValue;
         }
         return str_replace('\\\\', '\\', $value);
+    }
+
+    /**
+     * Render a hint about the currently rendered file and líne that is to be used
+     * in Exception Messages to show where parser errors originate from
+     *
+     * @return string
+     */
+    protected function renderCurrentFileAndLineInformation(): string
+    {
+        if ($this->contextPathAndFilename) {
+            return chr(10) . $this->contextPathAndFilename . ':' . $this->currentLineNumber;
+        } else {
+            return '';
+        }
     }
 }

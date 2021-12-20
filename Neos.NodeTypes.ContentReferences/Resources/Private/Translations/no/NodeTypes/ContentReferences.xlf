@@ -13,7 +13,7 @@
 			<target state="translated">Velg</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
 				<source>No references selected</source>
-			<target state="needs-translation">No references selected</target></trans-unit>
+			<target state="translated">Ingen referanser er valgt</target></trans-unit>
     </body>
   </file>
 </xliff>

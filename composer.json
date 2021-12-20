@@ -29,7 +29,7 @@
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
         "neos/fusion-afx": "^1.4",
-        "neos/fusion-form": "^1.0",
+        "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
         "neos/kickstarter": "~6.3.0"
     },

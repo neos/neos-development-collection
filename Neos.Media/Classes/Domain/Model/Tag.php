@@ -40,7 +40,7 @@ class Tag
 
     /**
      * @var Tag
-     * @ORM\ManyToOne(cascade={"persist"})
+     * @ORM\ManyToOne(inversedBy="children", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="SET NULL")
      * @Flow\Lazy
      */

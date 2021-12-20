@@ -663,9 +663,9 @@
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
-			<target state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
-Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
-Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
+			<target state="translated">Le graphique de repli inter-dimensionnel affiche tous les replis possibles (affichés comme des arêtes) entre les sous-graphes (combinaisons de valeurs de dimension de contenu, affichées comme des nœuds).
+Les replis primaires sont marqués en bleu et toujours visibles, tandis que les replis moins prioritaires sont affichés au passage de la souris. Plus la priorité est élevée, plus l'opacité est grande.
+Cliquez sur l'un des nœuds pour ne voir que ses substituts et ses variantes. Cliquez à nouveau pour supprimer le filtre.</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
 				<source>Intra dimensional fallback graph</source>
 			<target state="translated">Graphique de repli interdimensionnel</target></trans-unit>
@@ -674,7 +674,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target state="translated">Interdimensionnel</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
-			<target state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
+			<target state="translated">Le graphique de repli intra-dimensionnel affiche les replis au sein de chaque dimension de contenu.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>

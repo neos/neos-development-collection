@@ -11,6 +11,7 @@ namespace Neos\ContentRepository;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Booting\Sequence;
 use Neos\Flow\Core\Bootstrap;
@@ -42,6 +43,14 @@ class Package extends BasePackage
         $dispatcher->connect(Node::class, 'nodePathChanged', function () use ($bootstrap) {
             $contextFactory = $bootstrap->getObjectManager()->get(ContextFactoryInterface::class);
             /** @var Context $contextInstance */
+            foreach ($contextFactory->getInstances() as $contextInstance) {
+                $contextInstance->getFirstLevelNodeCache()->flush();
+            }
+        });
+
+        // this fixes https://github.com/neos/neos-development-collection/issues/3173
+        $dispatcher->connect(Workspace::class, 'afterNodePublishing', function () use ($bootstrap) {
+            $contextFactory = $bootstrap->getObjectManager()->get(ContextFactoryInterface::class);
             foreach ($contextFactory->getInstances() as $contextInstance) {
                 $contextInstance->getFirstLevelNodeCache()->flush();
             }

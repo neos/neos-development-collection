@@ -6,7 +6,6 @@ This is a planned feature release and includes the following new feature as well
 
 Update procedure includes updating dependencies and running `./flow doctrine:migrate` as for  most updates.
 
-================
 What has changed
 ================
 
