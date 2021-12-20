@@ -12,6 +12,7 @@ namespace Neos\Media\Browser\Domain\Session;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 
 /**
  * A container for the state the media browser is in.
@@ -30,6 +31,13 @@ class BrowserState
      */
     protected $data = [];
 
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManager
+     */
+    protected $persistenceManager;
+
     /**
      * Set a $value for $key
      *
@@ -40,6 +48,10 @@ class BrowserState
      */
     public function set(string $key, $value)
     {
+        if (is_object($value) && $entityIdentifier = $this->persistenceManager->getIdentifierByObject($value)) {
+            $value = new BrowserStateEntityValue($entityIdentifier, get_class($value));
+        }
+
         if (!isset($this->data[$this->activeAssetSourceIdentifier])) {
             $this->initializeData($this->activeAssetSourceIdentifier);
         }
@@ -57,7 +69,14 @@ class BrowserState
         if (!isset($this->data[$this->activeAssetSourceIdentifier])) {
             $this->initializeData($this->activeAssetSourceIdentifier);
         }
-        return $this->data[$this->activeAssetSourceIdentifier][$key] ?? null;
+
+        $value = $this->data[$this->activeAssetSourceIdentifier][$key] ?? null;
+
+        if ($value instanceof BrowserStateEntityValue) {
+            $value = $this->persistenceManager->getObjectByIdentifier($value->getIdentifier(), $value->getClass());
+        }
+
+        return $value;
     }
 
     /**
@@ -88,5 +107,10 @@ class BrowserState
             'sortDirection' => 'DESC',
             'filter' => 'All'
         ];
+    }
+
+    public function __sleep()
+    {
+        return ['activeAssetSourceIdentifier', 'data'];
     }
 }
