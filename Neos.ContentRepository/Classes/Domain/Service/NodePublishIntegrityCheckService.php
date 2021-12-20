@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -80,60 +79,78 @@ class NodePublishIntegrityCheckService
      */
     public function ensureIntegrityForPublishingOfNodes(array $nodesToPublish, Workspace $targetWorkspace): void
     {
-        # print_r('!!!!!!!!!!! CALL FOR' . PHP_EOL);
-        # foreach ($nodesToPublish as $node) {
-            # print_r("\t" . $node->getPath() . PHP_EOL);
-        # }
+        print_r('!!!!!!!!!!! CALL FOR' . PHP_EOL);
+        foreach ($nodesToPublish as $node) {
+            print_r("\t" . $node->getPath() . PHP_EOL);
+        }
 
         if (count($nodesToPublish) === 0) {
             return;
         }
 
+        $changesGroupedByDimension = $this->groupChangesByDimension($nodesToPublish);
+        foreach ($changesGroupedByDimension as $dimensionAndPreset => $nodesInDimensionToPublish) {
+            print_r('Running check for dimension: ' . $dimensionAndPreset . PHP_EOL);
+            $this->applyIntegrityCheckForChangeSet($nodesInDimensionToPublish, $targetWorkspace);
+        }
+    }
+
+    /**
+     * @param NodeInterface[] $nodesToPublish
+     * @return array
+     */
+    protected function groupChangesByDimension(array $nodesToPublish): array
+    {
+        $changesByDimensionAndPresets = [];
         $sourceWorkspace = $nodesToPublish[0]->getWorkspace()->getName();
-        $nodesToPublish = NodePublishingIntegrityNodeListToPublish::createForNodes($nodesToPublish, $this->nodeDataRepository);
 
         // Changes in a single dimension can effect other dimensions and can result in disconnected nodes
         // For this reason, we iterate over every dimension and check, if any node in the nodes to publish
         // could effect the dimension.
         $contentDimensionsAndPresets = $this->contentDimensionPresetSource->getAllPresets();
         foreach ($contentDimensionsAndPresets as $dimension => $dimensionConfiguration) {
-            $contextProperties = [];
-            $contextProperties['dimensions'][$dimension] = array_keys($dimensionConfiguration['presets']);
-            $contextProperties['workspaceName'] = $sourceWorkspace;
-            $contextProperties['removedContentShown'] = true;
-            $context = $this->contextFactory->create($contextProperties);
+            foreach ($dimensionConfiguration['presets'] as $preset) {
+                $contextProperties = [];
+                // TODO: maybe break when more than one dimension is active
+                $contextProperties['dimensions'][$dimension] = $preset['values'];
+                $contextProperties['workspaceName'] = $sourceWorkspace;
+                $contextProperties['removedContentShown'] = true;
+                $context = $this->contextFactory->create($contextProperties);
 
-            $filteredNodes = [];
-            foreach ($nodesToPublish as $node) {
-                assert($node instanceof NodeInterface);
-                $nodeInPreset = $context->getNodeByIdentifier($node->getIdentifier());
-                if ($nodeInPreset && $nodeInPreset->getNodeData()->getIdentifier() === $node->getNodeData()->getIdentifier()) {
-                    $filteredNodes[] = $node;
+                $filteredNodes = [];
+                foreach ($nodesToPublish as $node) {
+                    assert($node instanceof NodeInterface);
+                    $nodeInPreset = $context->getNodeByIdentifier($node->getIdentifier());
+                    if ($nodeInPreset && $nodeInPreset->getNodeData() === $node->getNodeData()) {
+                        $filteredNodes[] = $node;
+                    }
                 }
-            }
 
-            if (count($filteredNodes) === 0) {
-                continue;
-            }
+                if (count($filteredNodes) === 0) {
+                    continue;
+                }
 
-            $filteredNodesToPublish = NodePublishingIntegrityNodeListToPublish::createForNodes($filteredNodes, $this->nodeDataRepository);
-            $this->applyIntegrityCheckForChangeSet($filteredNodesToPublish, $targetWorkspace);
+                $filteredNodesToPublish = NodePublishingIntegrityNodeListToPublish::createForNodes($filteredNodes, $this->nodeDataRepository);
+                $changesByDimensionAndPresets[$dimension . '-' . implode(',', $preset['values'])] = $filteredNodesToPublish;
+            }
         }
+
+        return $changesByDimensionAndPresets;
     }
 
     private function applyIntegrityCheckForChangeSet(NodePublishingIntegrityNodeListToPublish $nodesToPublish, Workspace $targetWorkspace)
     {
-        # print_r('!!!!!!!!!!! run check for the following nodes:' . PHP_EOL);
-        # foreach ($nodesToPublish as $node) {
-            # print_r("\t" . $node->getPath() . PHP_EOL);
-        # }
+        print_r('!!!!!!!!!!! run check for the following nodes:' . PHP_EOL);
+        foreach ($nodesToPublish as $node) {
+            print_r("\t" . $node->getPath() . PHP_EOL);
+        }
 
         // NodesToPublish is an array of nodes.
         // the context of the to-be-published nodes is the source workspace.
         foreach ($nodesToPublish as $node) {
             assert($node instanceof NodeInterface);
-            # print_r('###########################################' . PHP_EOL);
-            # print_r('START INTEGRITY CHECK FOR ' . $node->getPath() . PHP_EOL);
+            print_r('###########################################' . PHP_EOL);
+            print_r('START INTEGRITY CHECK FOR ' . $node->getPath() . PHP_EOL);
 
             //////////////////////////////////////////////////////////
             // PREPARATION: Build $contextOfTargetWorkspace
@@ -173,6 +190,7 @@ class NodePublishIntegrityCheckService
 
                 // parent already exists and it gets moved in the same publish => ERROR
                 if ($nodesToPublish->isMovedFrom($node->getParentPath())) {
+
                     throw new NodePublishingIntegrityCheckViolationException('Target parent gets moved away in same publish!'); // TODO: error liste
                 }
 
@@ -195,7 +213,7 @@ class NodePublishIntegrityCheckService
     {
         // now, we find all children in $originalPath in the base workspace (e.g. live)
         $originalNodeInTargetWorkspace = $contextOfTargetWorkspace->getNode($originalPath);
-        # print_r("\t looking at original path " . $originalPath . PHP_EOL);
+        print_r("\t looking at original path " . $originalPath . PHP_EOL);
         if ($originalNodeInTargetWorkspace) {
             // original node DOES exist in the target workspace
             $childNodes = $originalNodeInTargetWorkspace->getChildNodes();
@@ -209,13 +227,13 @@ class NodePublishIntegrityCheckService
                 // those child nodes must be moved or deleted in the same publish
                 // as soon as we find any child node not getting moved or removed => ERROR
                 foreach ($childNodes as $childNode) {
-                    # print_r("\t\tchild => " . $childNode->getPath() . PHP_EOL);
+                    print_r("\t\tchild => " . $childNode->getPath() . PHP_EOL);
                     assert($childNode instanceof NodeInterface);
                     $childIsMovedAway = $nodesToPublish->isMovedFrom($childNode->getPath());
                     $childIsRemoved = $nodesToPublish->isRemoved($childNode->getPath());
 
-                    # print_r("\t\t\t moved?" . ($childIsMovedAway ? 'yes' : 'no') . PHP_EOL);
-                    # print_r("\t\t\t removed?" . ($childIsRemoved ? 'yes' : 'no') . PHP_EOL);
+                    print_r("\t\t\t moved?" . ($childIsMovedAway ? 'yes' : 'no') . PHP_EOL);
+                    print_r("\t\t\t removed?" . ($childIsRemoved ? 'yes' : 'no') . PHP_EOL);
 
                     $childGetsMovedOrRemovedInPublish = $childIsMovedAway || $childIsRemoved;
                     if (!$childGetsMovedOrRemovedInPublish) {

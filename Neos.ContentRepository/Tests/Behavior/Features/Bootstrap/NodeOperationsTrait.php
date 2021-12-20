@@ -21,17 +21,16 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Domain\Service\NodePublishIntegrityCheckService;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
 use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Tests\Functional\Fixtures\NodePublishIntegrityCheckServiceTestImplementation;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\Functional\Command\TableNode;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
-use function Webmozart\Assert\Tests\StaticAnalysis\null;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -79,11 +78,11 @@ trait NodeOperationsTrait
     }
 
     /**
-     * @return NodePublishIntegrityCheckService
+     * @return NodePublishIntegrityCheckServiceTestImplementation
      */
     private function getNodePublishIntegrityCheckService()
     {
-        return $this->getObjectManager()->get(NodePublishIntegrityCheckService::class);
+        return $this->getObjectManager()->get(NodePublishIntegrityCheckServiceTestImplementation::class);
     }
 
     /**
@@ -440,28 +439,9 @@ trait NodeOperationsTrait
      */
     public function iPublishTheFollowingNodesWithIntegrityCheck($table)
     {
-        $rows = $table->getHash();
-        /** @var NodeInterface[] $nodes */
-        $nodes = [];
-        foreach ($rows as $row) {
-            $context = $this->getContextForProperties([
-                'Workspace' => $row['Workspace'],
-                'Language' => $row['Language'],
-                'ShowRemovedNodes' => true,
-            ]);
-
-            $node = $context->getNode($row['path']);
-            Assert::assertNotNull($node, 'Node to publish must not be null');
-            $nodes[] = $node;
-
-            $nodeType = $node->getNodeType();
-            if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
-                $nodes = $this->getPublishingService()->collectAllContentChildNodes($node, $nodes);
-            }
-        }
+        $nodes = $this->getNodesToPublish($table);
 
         Assert::assertGreaterThan(0, count($nodes), 'List of nodes to publish must contain at least one node');
-
         $this->getNodePublishIntegrityCheckService()->ensureIntegrityForPublishingOfNodes($nodes, $nodes[0]->getWorkspace()->getBaseWorkspace());
 
         $publishingService = $this->getPublishingService();
@@ -482,6 +462,50 @@ trait NodeOperationsTrait
         } catch (\Exception $exception) {
             $this->lastException = $exception;
         }
+    }
+
+    /**
+     * @Then /^only the languages "([^"]*)" are effected when publishing the following nodes:$/
+     */
+    public function onlyTheLanguagesAreEffectedWhenPublishingTheFollowingNodes(string $languages, $table)
+    {
+        $nodes = $this->getNodesToPublish($table);
+        $changesGroupedByDimensionsAndPresets = $this->getNodePublishIntegrityCheckService()->groupChangesByDimension($nodes);
+
+        $expectedEffectedDimensions = array_map(function ($entry) {
+            return trim($entry);
+        }, explode(';', $languages));
+        $actualEffectedDimensions = array_keys($changesGroupedByDimensionsAndPresets);
+        $actualEffectedDimensions = str_replace('language-', '', $actualEffectedDimensions);
+        Assert::assertEquals($expectedEffectedDimensions, $actualEffectedDimensions, 'Expected and actual effected language dimensions do not match!');
+    }
+
+    /**
+     * @param $table
+     * @return NodeInterface[]
+     */
+    protected function getNodesToPublish($table): array
+    {
+        $rows = $table->getHash();
+        $nodes = [];
+        foreach ($rows as $row) {
+            $context = $this->getContextForProperties([
+                'Workspace' => $row['Workspace'],
+                'Language' => $row['Language'],
+                'ShowRemovedNodes' => true,
+            ]);
+
+            $node = $context->getNode($row['path']);
+            Assert::assertNotNull($node, 'Node to publish must not be null');
+            $nodes[] = $node;
+
+            $nodeType = $node->getNodeType();
+            if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
+                $nodes = $this->getPublishingService()->collectAllContentChildNodes($node, $nodes);
+            }
+        }
+
+        return $nodes;
     }
 
     /**
@@ -681,9 +705,9 @@ trait NodeOperationsTrait
      * @Then /^the last caught exception should be of type "([^"]*)" with message:$/
      * @param string $shortExceptionName
      * @param PyStringNode $expectedMessage
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
-    public function theLastCauShouldHaveThrownWithMessage(string $shortExceptionName, $expectedMessage)
+    public function theLastCaughtExceptionShouldBeOfTypeWithMessage(string $shortExceptionName, $expectedMessage)
     {
         Assert::assertNotNull($this->lastException, 'Command did not throw exception');
         $lastCommandExceptionShortName = (new \ReflectionClass($this->lastException))->getShortName();

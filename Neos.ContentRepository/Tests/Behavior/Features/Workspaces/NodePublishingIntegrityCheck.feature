@@ -326,7 +326,7 @@ Feature: Node publishing integrity check
     And I remove the node
 
     When I publish the following nodes with integrity check and exceptions are caught:
-      | path              | Workspace  | Language |
+      | path                | Workspace  | Language |
       | /sites/other        | user-admin | de       |
       | /sites/other/nested | user-admin | de       |
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
@@ -449,4 +449,56 @@ Feature: Node publishing integrity check
     When I get a node by path "/sites/cr/subpage/nested" with the following context:
       | Workspace |
       | live      |
+    Then I should have 0 nodes
+
+
+  ######################################################################
+  ######################################################################
+  #######                                                        #######
+  #######               END OF SINGLE DIMENSION TESTS            #######
+  #######                                                        #######
+  #######   START OF MULTI DIMENSION TESTS WITHOUT FALLBACKS     #######
+  #######                                                        #######
+  ######################################################################
+  ######################################################################
+
+  # Basically a copy of "We only move a single document node. No parents, no document children (only content) => SHOULD WORK"
+  # but added a second language dimension to check that the algorithm can handle two or more language dimensions
+  Scenario: I got two language dimensions and publish changes in only in one of those
+    # we need to set the default to en, because otherwise the auto-created child-nodes are missing
+    # Reason: the getContextForProperties is called with $addDimensionDefaults=true (we do not know why)
+    # this leads to adding the default dimension when not already in Language
+    # This happens ONLY: in 'Given I have the following nodes:'
+    Given I have the following content dimensions:
+      | Identifier | Default | Presets      |
+      | language   | en      | de=de; en=en |
+    Given I have the following nodes:
+      | Identifier                           | Path                     | Node Type                           | Properties            | Language |
+      | 86198d18-8c4a-41eb-95fa-56223b2a3a97 | /sites                   | unstructured                        |                       | en       |
+      | 594cd631-cf19-4072-9ee8-f8d840e85f5f | /sites/cr                | Neos.ContentRepository.Testing:Page | {"title": "CR SEITE"} | en       |
+      | 7378845c-79cc-464c-90cf-03ec9ed551e8 | /sites/cr/subpage        | Neos.ContentRepository.Testing:Page | {"title": "Subpage"}  | en       |
+      | 97d7a295-a3ed-44ec-bed3-22d501920578 | /sites/cr/subpage/nested | Neos.ContentRepository.Testing:Page | {"title": "Nested"}   | en       |
+      | 94d5a8a2-d0d2-427b-af0a-2e4152f102ee | /sites/other             | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | en       |
+
+    Given I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace  | Language |
+      | user-admin | en       |
+
+    # move node and publish
+    When I move the node into the node with path "/sites/other"
+    When I publish the following nodes with integrity check:
+      | path                | Workspace  | Language |
+      | /sites/other/nested | user-admin | en       |
+
+    # Assertions: node was published successfully
+    And I get a node by path "/sites/other/nested" with the following context:
+      | Workspace | Language |
+      | live      | en       |
+    Then I should have one node
+    And the node should be connected to the root
+
+    # Assertions: node does not exists on source location anymore
+    When I get a node by path "/sites/cr/subpage/nested" with the following context:
+      | Workspace | Language |
+      | live      | en       |
     Then I should have 0 nodes
