@@ -13,12 +13,12 @@ use Neos\Flow\Annotations as Flow;
 class NodePublishIntegrityCheckServiceTestImplementation extends NodePublishIntegrityCheckService
 {
     /**
-     * This makes to {@link NodePublishIntegrityCheckService::groupChangesByDimension} available for testing
+     * This makes to {@link NodePublishIntegrityCheckService::groupChangesByEffectedDimensionAndPreset} available for testing
      * @param NodeInterface[] $nodesToPublish
      * @return array
      */
-    public function groupChangesByDimension(array $nodesToPublish): array
+    public function groupChangesByEffectedDimensionAndPreset(array $nodesToPublish): array
     {
-        return parent::groupChangesByDimension($nodesToPublish);
+        return parent::groupChangesByEffectedDimensionAndPreset($nodesToPublish);
     }
 }

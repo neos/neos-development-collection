@@ -470,7 +470,7 @@ trait NodeOperationsTrait
     public function onlyTheLanguagesAreEffectedWhenPublishingTheFollowingNodes(string $languages, $table)
     {
         $nodes = $this->getNodesToPublish($table);
-        $changesGroupedByDimensionsAndPresets = $this->getNodePublishIntegrityCheckService()->groupChangesByDimension($nodes);
+        $changesGroupedByDimensionsAndPresets = $this->getNodePublishIntegrityCheckService()->groupChangesByEffectedDimensionAndPreset($nodes);
 
         $expectedEffectedDimensions = array_map(function ($entry) {
             return trim($entry);

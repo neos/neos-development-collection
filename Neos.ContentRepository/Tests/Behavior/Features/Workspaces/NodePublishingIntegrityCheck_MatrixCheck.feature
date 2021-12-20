@@ -1,6 +1,21 @@
 @fixtures
 Feature: Node publishing integrity check - dimension matrix check
-  TODO: describe what we want to test here
+
+  This test is an extension of the NodePublishingIntegrityCheck.feature.
+  It checks that the NodePublishingIntegrityCheck correctly determines which dimensions are effected by a node publish.
+
+  +──────────────────────────────────────────────────────────+─────+─────+────────+
+  | Node changed:                                            | EN  | DE  | CH,DE  |
+  +──────────────────────────────────────────────────────────+─────+─────+────────+
+  | DE node, which is used as fallback for the CH dimension  |     | x   | x      |
+  | CH node, which shines through from DE dimension          |     | x   | x      |
+  | --------------                                           |     |     |        |
+  | DE node, where CH variant is materialized                |     | x   |        |
+  | Materialized CH variant                                  |     |     | x      |
+  | --------------                                           |     |     |        |
+  | CH only node                                             |     |     | x      |
+  | EN only node                                             | x   |     |        |
+  +──────────────────────────────────────────────────────────+─────+─────+────────+
 
   Background:
     Given I have the following content dimensions:
@@ -8,16 +23,16 @@ Feature: Node publishing integrity check - dimension matrix check
       | language   | en      | en=en; de=de; ch=ch,de |
 
     Given I have the following nodes:
-      | Identifier                           | Path                     | Node Type                           | Properties            | Language |
-      | 86198d18-8c4a-41eb-95fa-56223b2a3a97 | /sites                   | unstructured                        |                       | de       |
-      | 86198d18-8c4a-41eb-95fa-56223b2a3a97 | /sites                   | unstructured                        |                       | en       |
-      | 594cd631-cf19-4072-9ee8-f8d840e85f5f | /sites/cr                | Neos.ContentRepository.Testing:Page | {"title": "CR SEITE"} | de       |
-      | 594cd631-cf19-4072-9ee8-f8d840e85f5f | /sites/cr                | Neos.ContentRepository.Testing:Page | {"title": "CR SEITE"} | en       |
-      | 94d5a8a2-d0d2-427b-af0a-2e4152f102ee | /sites/other             | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | de       |
-      | 94d5a8a2-d0d2-427b-af0a-2e4152f102ee | /sites/other             | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | ch       |
-      | 94d5a8a2-d0d2-427b-af0a-2e4152f102ee | /sites/other             | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | en       |
-      | fe762cec-9d28-42cc-a165-295066941e0d | /sites/swiss-only        | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | ch       |
-      | 8752ece7-b99a-4b61-93a8-30af230cb023 | /sites/english-only      | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | en       |
+      | Identifier                           | Path                | Node Type                           | Properties            | Language |
+      | 86198d18-8c4a-41eb-95fa-56223b2a3a97 | /sites              | unstructured                        |                       | de       |
+      | 86198d18-8c4a-41eb-95fa-56223b2a3a97 | /sites              | unstructured                        |                       | en       |
+      | 594cd631-cf19-4072-9ee8-f8d840e85f5f | /sites/cr           | Neos.ContentRepository.Testing:Page | {"title": "CR SEITE"} | de       |
+      | 594cd631-cf19-4072-9ee8-f8d840e85f5f | /sites/cr           | Neos.ContentRepository.Testing:Page | {"title": "CR SEITE"} | en       |
+      | 94d5a8a2-d0d2-427b-af0a-2e4152f102ee | /sites/other        | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | de       |
+      | 94d5a8a2-d0d2-427b-af0a-2e4152f102ee | /sites/other        | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | ch       |
+      | 94d5a8a2-d0d2-427b-af0a-2e4152f102ee | /sites/other        | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | en       |
+      | fe762cec-9d28-42cc-a165-295066941e0d | /sites/swiss-only   | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | ch       |
+      | 8752ece7-b99a-4b61-93a8-30af230cb023 | /sites/english-only | Neos.ContentRepository.Testing:Page | {"title": "Other"}    | en       |
 
   Scenario: Changes to a node in the german dimension do also effect the swiss dimension, when swiss variant IS NOT materialized, does not effect the english dimension
     Given I get a node by path "/sites/cr" with the following context:
@@ -25,7 +40,7 @@ Feature: Node publishing integrity check - dimension matrix check
       | user-admin | de       |
     When I remove the node
     Then only the languages "de;ch,de" are effected when publishing the following nodes:
-      | path                     | Workspace  | Language |
+      | path      | Workspace  | Language |
       | /sites/cr | user-admin | de       |
 
   Scenario: Changes to a node in the swiss dimension, which shines through from german dimension, does effect german and swiss dimension, not the english dimension
@@ -34,7 +49,7 @@ Feature: Node publishing integrity check - dimension matrix check
       | user-admin | ch,de    |
     When I remove the node
     Then only the languages "de;ch,de" are effected when publishing the following nodes:
-      | path                     | Workspace  | Language |
+      | path      | Workspace  | Language |
       | /sites/cr | user-admin | de       |
 
   Scenario: Changes to a node in the german dimension, does NOT effect swiss dimension, when swiss variant IS materialized, does not effect the english dimension

@@ -25,13 +25,50 @@ use Neos\Neos\Ui\Controller\BackendServiceController;
  *
  * It is called from various places in the upper layers of publishing, e.g.
  * - {@see BackendServiceController::publishAction()} for publishing from the content module
- * - TODO for publishing from the workspace module
  *
- * Throws an error in case disconnected nodes might appear due to a publish.
+ * Throws an error in case disconnected nodes would appear due to a publish.
  *
  * ## How can disconnected nodes occur?
  *
- * (TODO: Copy description from https://github.com/neos/neos-development-collection/issues/3383)
+ * Let's say we have the following node structure in the beginning:
+ *
+ * |-- site
+ * . |-- cr
+ * . | |-- subpage
+ * . |   |-- nested
+ * . |-- other
+ *
+ * Now, user-demo moves /site/cr/subpage underneath /site/other/ in the user workspace. This means in the
+ * user workspace the following status exists:
+ * |-- site
+ * . |-- cr
+ * .   |-- subpage   SHADOW NODE in user-demo
+ * .     |-- nested  SHADOW NODE in user-demo
+ * . |-- other
+ * .   |-- subpage   user-demo
+ * .     |-- nested  user-demo
+ *
+ * Now, let's assume user-demo forgets about this (thus not publishing), and a few weeks later needs to do
+ * a text change on subpage:
+ * |-- site
+ * . |-- cr
+ * .   |-- subpage   live + SHADOW NODE in user-demo
+ * .     |-- nested  live + SHADOW NODE in user-demo
+ * . |-- other
+ * .   |-- subpage   user-demo <-- THIS node gets edited by user-demo
+ * .     |-- nested  user-demo
+ *
+ * Now user-demo publishes only  /sites/other/subpage which leads to the following structure:
+ * |-- site
+ * . |-- cr
+ * .   |-- [NODE DOES NOT EXIST ANYMORE]
+ * .     |-- nested  live + SHADOW NODE in user-demo   <-- !!BUG!!
+ * . |-- other
+ * .   |-- subpage
+ * .     |-- nested  user-demo
+ *
+ * The first "nested" node (marked with !!BUG!!) is NOT visible anymore in live, because the parent does not exist
+ * anymore. It's hard to detect this as user-demo, because user-demo sees the moved nested node.
  *
  * @Flow\Scope("singleton")
  */
@@ -63,19 +100,10 @@ class NodePublishIntegrityCheckService
     protected $nodeDataRepository;
 
 
-    // MovedTo handling:
-    // when moving /foo/a to /bar/a, the following node records exist in the user WS:
-    // Persistence_Object_Identifier | Identifier    |    Path    | isRemoved | movedTo |
-    // 789                           | 12345         |    /foo/a  | true      | 91011   |   <-- the OLD NODE points to the NEW location
-    // 91011                         | 12345         |    /bar/a  | false     | null    |   <-- this is the node we receive on publish from the UI.
-
-    // the UI sends us the already-moved node and says "publish me" (the SECOND one in the table above).
-
-    // In case of deletion, the UI sends us the REMOVED node and says "publish me"
-
     /**
      * @param NodeInterface[] $nodesToPublish
      * @param Workspace $targetWorkspace this is the workspace we publish to; so normally the base workspace of the user's workspace.
+     * @throws NodePublishingIntegrityCheckViolationException
      */
     public function ensureIntegrityForPublishingOfNodes(array $nodesToPublish, Workspace $targetWorkspace): void
     {
@@ -88,7 +116,7 @@ class NodePublishIntegrityCheckService
             return;
         }
 
-        $changesGroupedByDimension = $this->groupChangesByDimension($nodesToPublish);
+        $changesGroupedByDimension = $this->groupChangesByEffectedDimensionAndPreset($nodesToPublish);
         foreach ($changesGroupedByDimension as $dimensionAndPreset => $nodesInDimensionToPublish) {
             print_r('Running check for dimension: ' . $dimensionAndPreset . PHP_EOL);
             $this->applyIntegrityCheckForChangeSet($nodesInDimensionToPublish, $targetWorkspace);
@@ -96,10 +124,28 @@ class NodePublishIntegrityCheckService
     }
 
     /**
+     * This function checks which configured dimension presets are effected by the node changes.+
+     * Given an EN dimension and a DE Dimension which acts as fallback for a CH Dimension. The following table
+     * shows which dimensions are effected in which scenarios:
+     *
+     * +──────────────────────────────────────────────────────────+─────+─────+────────+
+     * | Node changed:                                            | EN  | DE  | CH,DE  |
+     * +──────────────────────────────────────────────────────────+─────+─────+────────+
+     * | DE node, which is used as fallback for the CH dimension  |     | x   | x      |
+     * | CH node, which shines through from DE dimension          |     | x   | x      |
+     * | --------------                                           |     |     |        |
+     * | DE node, where CH variant is materialized                |     | x   |        |
+     * | Materialized CH variant                                  |     |     | x      |
+     * | --------------                                           |     |     |        |
+     * | CH only node                                             |     |     | x      |
+     * | EN only node                                             | x   |     |        |
+     * +──────────────────────────────────────────────────────────+─────+─────+────────+
+     *
+     *
      * @param NodeInterface[] $nodesToPublish
-     * @return array
+     * @return array array key is $dimensionName-$presets (language-en, language-ch,de), values is the list of effected nodes
      */
-    protected function groupChangesByDimension(array $nodesToPublish): array
+    protected function groupChangesByEffectedDimensionAndPreset(array $nodesToPublish): array
     {
         $changesByDimensionAndPresets = [];
         $sourceWorkspace = $nodesToPublish[0]->getWorkspace()->getName();
@@ -138,6 +184,11 @@ class NodePublishIntegrityCheckService
         return $changesByDimensionAndPresets;
     }
 
+    /**
+     * @param NodePublishingIntegrityNodeListToPublish $nodesToPublish
+     * @param Workspace $targetWorkspace
+     * @throws NodePublishingIntegrityCheckViolationException
+     */
     private function applyIntegrityCheckForChangeSet(NodePublishingIntegrityNodeListToPublish $nodesToPublish, Workspace $targetWorkspace)
     {
         print_r('!!!!!!!!!!! run check for the following nodes:' . PHP_EOL);
@@ -209,6 +260,12 @@ class NodePublishIntegrityCheckService
         }
     }
 
+    /**
+     * @param string $originalPath
+     * @param Context $contextOfTargetWorkspace
+     * @param NodePublishingIntegrityNodeListToPublish $nodesToPublish
+     * @throws NodePublishingIntegrityCheckViolationException
+     */
     private function assertThatNodeDoesNotHaveChildrenAfterPublish(string $originalPath, Context $contextOfTargetWorkspace, NodePublishingIntegrityNodeListToPublish $nodesToPublish)
     {
         // now, we find all children in $originalPath in the base workspace (e.g. live)
