@@ -28,12 +28,12 @@ class AstBuilder
      */
     protected $objectTree = [];
 
-    public static function objectPathIsPrototype($path): bool
+    public static function objectPathIsPrototype(array $path): bool
     {
         return ($path[count($path) - 2] ?? null) === '__prototypes';
     }
 
-    public static function getParentPath($path): array
+    public static function getParentPath(array $path): array
     {
         if (self::objectPathIsPrototype($path)) {
             return array_slice($path, 0, -2);
@@ -51,19 +51,19 @@ class AstBuilder
         return $this->objectTree;
     }
 
-    public function removeValueInObjectTree($targetObjectPath)
+    public function removeValueInObjectTree(array $targetObjectPath): void
     {
         $this->setValueInObjectTree($targetObjectPath, null);
         $this->setValueInObjectTree($targetObjectPath, ['__stopInheritanceChain' => true]);
     }
 
-    public function copyValueInObjectTree($targetObjectPath, $sourceObjectPath)
+    public function copyValueInObjectTree(array $targetObjectPath, array $sourceObjectPath): void
     {
         $originalValue = $this->getValueFromObjectTree($sourceObjectPath);
         $this->setValueInObjectTree($targetObjectPath, $originalValue);
     }
 
-    public function inheritPrototypeInObjectTree($targetPrototypeObjectPath, $sourcePrototypeObjectPath)
+    public function inheritPrototypeInObjectTree(array $targetPrototypeObjectPath, array $sourcePrototypeObjectPath): void
     {
         if (count($targetPrototypeObjectPath) !== 2 || count($sourcePrototypeObjectPath) !== 2) {
             // one of the path has not a length of 2: this means
@@ -167,7 +167,7 @@ class AstBuilder
      * @return void
      * @throws Fusion\Exception
      */
-    public function buildPrototypeHierarchy()
+    public function buildPrototypeHierarchy(): void
     {
         if (isset($this->objectTree['__prototypes']) === false) {
             return;
