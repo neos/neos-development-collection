@@ -107,20 +107,17 @@ class NodePublishIntegrityCheckService
      */
     public function ensureIntegrityForPublishingOfNodes(array $nodesToPublish, Workspace $targetWorkspace): void
     {
-        print_r('!!!!!!!!!!! CALL FOR' . PHP_EOL);
-        foreach ($nodesToPublish as $node) {
-            print_r("\t" . $node->getPath() . PHP_EOL);
-        }
-
         if (count($nodesToPublish) === 0) {
             return;
         }
 
+        $integrityCheckResults = [];
         $changesGroupedByDimension = $this->groupChangesByEffectedDimensionAndPreset($nodesToPublish);
         foreach ($changesGroupedByDimension as $dimensionAndPreset => $nodesInDimensionToPublish) {
-            print_r('Running check for dimension: ' . $dimensionAndPreset . PHP_EOL);
-            $this->applyIntegrityCheckForChangeSet($nodesInDimensionToPublish, $targetWorkspace);
+            $integrityCheckResults[$dimensionAndPreset] = $this->applyIntegrityCheckForChangeSet($nodesInDimensionToPublish, $targetWorkspace);
         }
+
+        $this->throwExceptionWhenIntegrityGetsViolated($integrityCheckResults);
     }
 
     /**
@@ -157,7 +154,6 @@ class NodePublishIntegrityCheckService
         foreach ($contentDimensionsAndPresets as $dimension => $dimensionConfiguration) {
             foreach ($dimensionConfiguration['presets'] as $preset) {
                 $contextProperties = [];
-                // TODO: maybe break when more than one dimension is active
                 $contextProperties['dimensions'][$dimension] = $preset['values'];
                 $contextProperties['workspaceName'] = $sourceWorkspace;
                 $contextProperties['removedContentShown'] = true;
@@ -187,21 +183,16 @@ class NodePublishIntegrityCheckService
     /**
      * @param NodePublishingIntegrityNodeListToPublish $nodesToPublish
      * @param Workspace $targetWorkspace
-     * @throws NodePublishingIntegrityCheckViolationException
+     * @return string[] list of integrity violations
      */
-    private function applyIntegrityCheckForChangeSet(NodePublishingIntegrityNodeListToPublish $nodesToPublish, Workspace $targetWorkspace)
+    private function applyIntegrityCheckForChangeSet(NodePublishingIntegrityNodeListToPublish $nodesToPublish, Workspace $targetWorkspace): array
     {
-        print_r('!!!!!!!!!!! run check for the following nodes:' . PHP_EOL);
-        foreach ($nodesToPublish as $node) {
-            print_r("\t" . $node->getPath() . PHP_EOL);
-        }
+        $integrityViolations = [];
 
         // NodesToPublish is an array of nodes.
         // the context of the to-be-published nodes is the source workspace.
         foreach ($nodesToPublish as $node) {
             assert($node instanceof NodeInterface);
-            print_r('###########################################' . PHP_EOL);
-            print_r('START INTEGRITY CHECK FOR ' . $node->getPath() . PHP_EOL);
 
             //////////////////////////////////////////////////////////
             // PREPARATION: Build $contextOfTargetWorkspace
@@ -222,11 +213,13 @@ class NodePublishIntegrityCheckService
             if ($moveSourceShadowNodeData) {
                 // we have a MOVE.
                 $originalPath = $moveSourceShadowNodeData->getPath();
-                $this->assertThatNodeDoesNotHaveChildrenAfterPublish($originalPath, $contextOfTargetWorkspace, $nodesToPublish);
+                $integrityViolationsInNoChildrenCheck = $this->assertThatNodeDoesNotHaveChildrenAfterPublish($originalPath, $contextOfTargetWorkspace, $nodesToPublish);
+                $integrityViolations = array_merge($integrityViolations, $integrityViolationsInNoChildrenCheck);
             } elseif ($node->isRemoved()) {
                 // we have a DELETION (isRemoved=true), as we did not find $moveSourceShadowNodeData
                 // => the deletion should not lead to any disconnected child nodes.
-                $this->assertThatNodeDoesNotHaveChildrenAfterPublish($node->getPath(), $contextOfTargetWorkspace, $nodesToPublish);
+                $integrityViolationsInNoChildrenCheck = $this->assertThatNodeDoesNotHaveChildrenAfterPublish($node->getPath(), $contextOfTargetWorkspace, $nodesToPublish);
+                $integrityViolations = array_merge($integrityViolations, $integrityViolationsInNoChildrenCheck);
 
                 // in a simple removal, we do not need to check the future parent and therefore skip the second check
                 continue;
@@ -241,59 +234,57 @@ class NodePublishIntegrityCheckService
 
                 // parent already exists and it gets moved in the same publish => ERROR
                 if ($nodesToPublish->isMovedFrom($node->getParentPath())) {
-                    throw new NodePublishingIntegrityCheckViolationException('Target parent gets moved away in same publish!'); // TODO: error liste
+                    $integrityViolations[] = 'Target parent with path ' . $node->getParentPath() . ' gets moved away in same publish';
                 }
 
                 // parent already exists and it gets removed in the same publish => ERROR
                 if ($nodesToPublish->isRemoved($node->getParentPath())) {
-                    throw new NodePublishingIntegrityCheckViolationException('Target parent gets removed in same publish!'); // TODO: error liste
+                    $integrityViolations[] = 'Target parent with path ' . $node->getParentPath() . ' gets removed in same publish!';
                 }
             } else {
                 // parent did not exist and will be created in the same publish => OK
                 // existing == non-shadow, non-deleted
                 if (!$nodesToPublish->isExistingNode($node->getParentPath())) {
                     // parent did not exists and it will NOT be created in the same publish
-                    throw new NodePublishingIntegrityCheckViolationException('parent did not exists and it will NOT be created in the same publish'); // TODO: error liste
+                    $integrityViolations[] = 'Parent with path ' . $node->getParentPath() . ' did not exists and it will NOT be created in the same publish';
                 }
             }
         }
+        return $integrityViolations;
     }
 
     /**
      * @param string $originalPath
      * @param Context $contextOfTargetWorkspace
      * @param NodePublishingIntegrityNodeListToPublish $nodesToPublish
-     * @throws NodePublishingIntegrityCheckViolationException
+     * @return string[] list of integrity violations
      */
-    private function assertThatNodeDoesNotHaveChildrenAfterPublish(string $originalPath, Context $contextOfTargetWorkspace, NodePublishingIntegrityNodeListToPublish $nodesToPublish)
+    private function assertThatNodeDoesNotHaveChildrenAfterPublish(string $originalPath, Context $contextOfTargetWorkspace, NodePublishingIntegrityNodeListToPublish $nodesToPublish): array
     {
+        $integrityViolations = [];
+
         // now, we find all children in $originalPath in the base workspace (e.g. live)
         $originalNodeInTargetWorkspace = $contextOfTargetWorkspace->getNode($originalPath);
-        print_r("\t looking at original path " . $originalPath . PHP_EOL);
         if ($originalNodeInTargetWorkspace) {
             // original node DOES exist in the target workspace
             $childNodes = $originalNodeInTargetWorkspace->getChildNodes();
 
             // when a child node gets created in the publish => ERROR
             if ($nodesToPublish->containsExistingChildNodesOf($originalPath)) {
-                throw new NodePublishingIntegrityCheckViolationException('Some children still exist after publish!');
+                $integrityViolations[] = 'Some children of node with path ' . $originalPath . ' still exist after publish!';
             }
             if (count($childNodes) > 0) {
                 // Before move child nodes existed at source location
                 // those child nodes must be moved or deleted in the same publish
                 // as soon as we find any child node not getting moved or removed => ERROR
                 foreach ($childNodes as $childNode) {
-                    print_r("\t\tchild => " . $childNode->getPath() . PHP_EOL);
                     assert($childNode instanceof NodeInterface);
                     $childIsMovedAway = $nodesToPublish->isMovedFrom($childNode->getPath());
                     $childIsRemoved = $nodesToPublish->isRemoved($childNode->getPath());
 
-                    print_r("\t\t\t moved?" . ($childIsMovedAway ? 'yes' : 'no') . PHP_EOL);
-                    print_r("\t\t\t removed?" . ($childIsRemoved ? 'yes' : 'no') . PHP_EOL);
-
                     $childGetsMovedOrRemovedInPublish = $childIsMovedAway || $childIsRemoved;
                     if (!$childGetsMovedOrRemovedInPublish) {
-                        throw new NodePublishingIntegrityCheckViolationException('child node at path ' . $childNode->getPath() . ' still exists after publish');
+                        $integrityViolations[] = 'child node at path ' . $childNode->getPath() . ' still exists after publish';
                     }
                 }
             }
@@ -302,5 +293,24 @@ class NodePublishIntegrityCheckService
         // original node does not exist anymore in the target workspace
         // f.e. because somebody else deleted it in the meantime.
         // => We do not need to do anything in this case, because then, also no children exist anymore.
+        return $integrityViolations;
+    }
+
+    /**
+     * @param array $integrityViolations
+     * @throws NodePublishingIntegrityCheckViolationException
+     */
+    protected function throwExceptionWhenIntegrityGetsViolated(array $integrityViolations)
+    {
+        $msg = "";
+        foreach ($integrityViolations as $dimensionAndPreset => $violations) {
+            foreach ($violations as $violation) {
+                $msg .= $dimensionAndPreset . ': ' . $violation . PHP_EOL;
+            }
+        }
+
+        if ($msg !== "") {
+            throw new NodePublishingIntegrityCheckViolationException($msg);
+        }
     }
 }

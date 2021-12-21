@@ -116,7 +116,7 @@ Feature: Node publishing integrity check
       | /sites/other/subpage/nested | user-admin | de       |
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
     """
-      parent did not exists and it will NOT be created in the same publish
+      language-de: Parent with path /sites/other/subpage did not exists and it will NOT be created in the same publish
     """
 
     # Assertions: node was NOT published
@@ -144,7 +144,7 @@ Feature: Node publishing integrity check
       | /sites/other/subpage | user-admin | de       |
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
     """
-    child node at path /sites/cr/subpage/nested still exists after publish
+    language-de: child node at path /sites/cr/subpage/nested still exists after publish
     """
 
     # Assertions: node was NOT published
@@ -246,7 +246,7 @@ Feature: Node publishing integrity check
       | /sites/other/subpage | user-admin | de       |
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
     """
-    child node at path /sites/cr/subpage/nested still exists after publish
+    language-de: child node at path /sites/cr/subpage/nested still exists after publish
     """
 
     # Assertions: nodes were not published
@@ -331,7 +331,8 @@ Feature: Node publishing integrity check
       | /sites/other/nested | user-admin | de       |
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
     """
-    Target parent gets removed in same publish!
+    language-de: Target parent with path /sites/other gets removed in same publish!
+    language-de: Parent with path /sites/other/nested did not exists and it will NOT be created in the same publish
     """
 
     # Assertions: node was not published
@@ -400,7 +401,7 @@ Feature: Node publishing integrity check
       | /sites/new/nested | user-admin | de       |
     Then the last caught exception should be of type "NodePublishingIntegrityCheckViolationException" with message:
     """
-    parent did not exists and it will NOT be created in the same publish
+    language-de: Parent with path /sites/new did not exists and it will NOT be created in the same publish
     """
 
     # Assertions: node was not published
