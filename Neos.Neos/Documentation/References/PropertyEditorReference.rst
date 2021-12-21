@@ -462,7 +462,7 @@ Options Reference:
 	The step attribute is a number that specifies the granularity that the value must adhere to.
   
 ``unit`` (string)
-  The value gets displayed beside the current value, as well after the minimal value (only if ``minLabel`` is not set) and after the maximal value (only if ``maxLabel`` is not set).
+  The value gets displayed beside the current value, as well after the minimal value (only if ``minLabel`` is not set) and after the maximal value (only if ``maxLabel`` is not set). (The unit is just a visual indicator and will not be added to the resulting property value.)
 
 ``minLabel`` (string)
 	If set, this value is displayed instead of the minimum value.
