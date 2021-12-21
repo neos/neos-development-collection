@@ -426,11 +426,15 @@ trait NodeOperationsTrait
      */
     public function iPublishTheNodeAndExceptionsAreCaught()
     {
-        try {
-            $this->iPublishTheNode();
-            $this->lastException = null;
-        } catch (\Exception $exception) {
-            $this->lastException = $exception;
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__);
+        } else {
+            try {
+                $this->iPublishTheNode();
+                $this->lastException = null;
+            } catch (\Exception $exception) {
+                $this->lastException = $exception;
+            }
         }
     }
 
@@ -439,16 +443,20 @@ trait NodeOperationsTrait
      */
     public function iPublishTheFollowingNodesWithIntegrityCheck($table)
     {
-        $nodes = $this->getNodesToPublish($table);
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
+        } else {
+            $nodes = $this->getNodesToPublish($table);
 
-        Assert::assertGreaterThan(0, count($nodes), 'List of nodes to publish must contain at least one node');
-        $this->getNodePublishIntegrityCheckService()->ensureIntegrityForPublishingOfNodes($nodes, $nodes[0]->getWorkspace()->getBaseWorkspace());
+            Assert::assertGreaterThan(0, count($nodes), 'List of nodes to publish must contain at least one node');
+            $this->getNodePublishIntegrityCheckService()->ensureIntegrityForPublishingOfNodes($nodes, $nodes[0]->getWorkspace()->getBaseWorkspace());
 
-        $publishingService = $this->getPublishingService();
-        $publishingService->publishNodes($nodes, $nodes[0]->getWorkspace()->getBaseWorkspace());
+            $publishingService = $this->getPublishingService();
+            $publishingService->publishNodes($nodes, $nodes[0]->getWorkspace()->getBaseWorkspace());
 
-        $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
-        $this->resetNodeInstances();
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
+            $this->resetNodeInstances();
+        }
     }
 
     /**
@@ -456,11 +464,15 @@ trait NodeOperationsTrait
      */
     public function iPublishTheFollowingNodesWithIntegrityCheckAndExceptionsAreCaught($table)
     {
-        try {
-            $this->iPublishTheFollowingNodesWithIntegrityCheck($table);
-            $this->lastException = null;
-        } catch (\Exception $exception) {
-            $this->lastException = $exception;
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
+        } else {
+            try {
+                $this->iPublishTheFollowingNodesWithIntegrityCheck($table);
+                $this->lastException = null;
+            } catch (\Exception $exception) {
+                $this->lastException = $exception;
+            }
         }
     }
 
@@ -469,15 +481,19 @@ trait NodeOperationsTrait
      */
     public function onlyTheLanguagesAreEffectedWhenPublishingTheFollowingNodes(string $languages, $table)
     {
-        $nodes = $this->getNodesToPublish($table);
-        $changesGroupedByDimensionsAndPresets = $this->getNodePublishIntegrityCheckService()->groupChangesByEffectedDimensionAndPreset($nodes);
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', $languages, 'string', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
+        } else {
+            $nodes = $this->getNodesToPublish($table);
+            $changesGroupedByDimensionsAndPresets = $this->getNodePublishIntegrityCheckService()->groupChangesByEffectedDimensionAndPreset($nodes);
 
-        $expectedEffectedDimensions = array_map(function ($entry) {
-            return trim($entry);
-        }, explode(';', $languages));
-        $actualEffectedDimensions = array_keys($changesGroupedByDimensionsAndPresets);
-        $actualEffectedDimensions = str_replace('language-', '', $actualEffectedDimensions);
-        Assert::assertEquals($expectedEffectedDimensions, $actualEffectedDimensions, 'Expected and actual effected language dimensions do not match!');
+            $expectedEffectedDimensions = array_map(function ($entry) {
+                return trim($entry);
+            }, explode(';', $languages));
+            $actualEffectedDimensions = array_keys($changesGroupedByDimensionsAndPresets);
+            $actualEffectedDimensions = str_replace('language-', '', $actualEffectedDimensions);
+            Assert::assertEquals($expectedEffectedDimensions, $actualEffectedDimensions, 'Expected and actual effected language dimensions do not match!');
+        }
     }
 
     /**
@@ -1025,6 +1041,7 @@ trait NodeOperationsTrait
                 $this->nodeTypesConfiguration = Yaml::parse($nodeTypesConfiguration->getRaw());
                 $configuration = $this->nodeTypesConfiguration;
             }
+
             $this->getObjectManager()->get(NodeTypeManager::class)->overrideNodeTypes($configuration);
         }
     }
