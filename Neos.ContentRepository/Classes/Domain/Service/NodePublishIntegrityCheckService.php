@@ -241,7 +241,6 @@ class NodePublishIntegrityCheckService
 
                 // parent already exists and it gets moved in the same publish => ERROR
                 if ($nodesToPublish->isMovedFrom($node->getParentPath())) {
-
                     throw new NodePublishingIntegrityCheckViolationException('Target parent gets moved away in same publish!'); // TODO: error liste
                 }
 
