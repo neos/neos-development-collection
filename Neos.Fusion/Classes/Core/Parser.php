@@ -75,16 +75,7 @@ class Parser extends AbstractParser implements ParserInterface
      */
     public function parse(string $sourceCode, string $contextPathAndFilename = null, $objectTreeUntilNow = null, bool $buildPrototypeHierarchy = true): array
     {
-        if ($objectTreeUntilNow instanceof AstBuilder) {
-            $this->astBuilder = $objectTreeUntilNow;
-        } elseif ($objectTreeUntilNow === null) {
-            $this->astBuilder = new AstBuilder();
-        } elseif (\is_array($objectTreeUntilNow)) {
-            $this->astBuilder = new AstBuilder();
-            $this->astBuilder->setObjectTree($objectTreeUntilNow);
-        } else {
-            throw new Fusion\Exception('Cannot parse Fusion - $objectTreeUntilNow must be of type array or AstBuilder or null');
-        }
+        $this->astBuilder = self::initializeAstBuilder($objectTreeUntilNow);
 
         // TODO use dependency Injection, but this test doesnt like it Neos.Fusion/Tests/Unit/Core/ParserTest.php
         $this->lexer = new Lexer();
@@ -182,7 +173,7 @@ class Parser extends AbstractParser implements ParserInterface
      * ValueAssignment
      *  = ASSIGNMENT PathValue
      */
-    protected function parseValueAssignment($currentPath): void
+    protected function parseValueAssignment(array $currentPath): void
     {
         $this->expect(Token::ASSIGNMENT);
         $this->lazyExpect(Token::SPACE);
@@ -194,7 +185,7 @@ class Parser extends AbstractParser implements ParserInterface
      * ValueUnset
      *  = UNSET
      */
-    protected function parseValueUnset($currentPath): void
+    protected function parseValueUnset(array $currentPath): void
     {
         $this->expect(Token::UNSET);
         $this->astBuilder->removeValueInObjectTree($currentPath);
@@ -204,7 +195,7 @@ class Parser extends AbstractParser implements ParserInterface
      * ValueCopy
      *  = COPY ObjectPathAssignment
      */
-    protected function parseValueCopy($currentPath): void
+    protected function parseValueCopy(array $currentPath): void
     {
         $this->expect(Token::COPY);
         $this->lazyExpect(Token::SPACE);
@@ -339,15 +330,15 @@ class Parser extends AbstractParser implements ParserInterface
      */
     protected function includeAndParseFilesByPattern(string $filePattern): void
     {
-        $parser = new Parser();
-
+        $parser = new static();
         $filesToInclude = FilePatternResolver::resolveFilesByPattern($filePattern, $this->contextPathAndFilename, '.fusion');
         foreach ($filesToInclude as $file) {
             if (is_readable($file) === false) {
                 throw new Fusion\Exception("Could not read file '$file' of pattern '$filePattern'.", 1347977017);
             }
             // Check if not trying to recursively include the current file via globbing
-            if (stat($this->contextPathAndFilename) !== stat($file)) {
+            if ($this->contextPathAndFilename === null
+                || stat($this->contextPathAndFilename) !== stat($file)) {
                 $parser->parse(file_get_contents($file), $file, $this->astBuilder, false);
             }
         }
@@ -563,7 +554,7 @@ class Parser extends AbstractParser implements ParserInterface
                 ->build();
         }
 
-        $parser = new Parser();
+        $parser = new static();
         $temporaryAst = $parser->parse('value = ' . $transpiledFusion, $this->contextPathAndFilename, null, false);
         return $temporaryAst['value'];
     }
@@ -626,5 +617,25 @@ class Parser extends AbstractParser implements ParserInterface
             && in_array($pathKey, self::$reservedParseTreeKeys, true)) {
             throw new Fusion\Exception("Reversed key '$pathKey' used.", 1437065270);
         }
+    }
+
+    /**
+     * @param array|AstBuilder|null $objectTreeUntilNow Used internally for keeping track of the built object tree
+     * @throws Fusion\Exception
+     */
+    protected static function initializeAstBuilder($objectTreeUntilNow): AstBuilder
+    {
+        if ($objectTreeUntilNow instanceof AstBuilder === false && is_null($objectTreeUntilNow) === false && is_array($objectTreeUntilNow) === false) {
+            throw new Fusion\Exception('Cannot parse Fusion - $objectTreeUntilNow must be of type array or AstBuilder or null');
+        }
+        if ($objectTreeUntilNow === null) {
+            return new AstBuilder();
+        }
+        if (is_array($objectTreeUntilNow)) {
+            $astBuilder = new AstBuilder();
+            $astBuilder->setObjectTree($objectTreeUntilNow);
+            return $astBuilder;
+        }
+        return $objectTreeUntilNow;
     }
 }
