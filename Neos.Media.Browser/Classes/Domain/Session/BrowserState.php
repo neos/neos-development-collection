@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Media\Browser\Domain\Session;
 
 /*
