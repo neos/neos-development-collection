@@ -97,7 +97,8 @@ class NodeController extends ActionController
      * @param NodeInterface $node
      * @return string View output for the specified node
      * @throws NodeNotFoundException | UnresolvableShortcutException | NeosException
-     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     * We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     * @Flow\SkipCsrfProtection
      * @Flow\IgnoreValidation("node")
      */
     public function showAction(NodeInterface $node = null)
