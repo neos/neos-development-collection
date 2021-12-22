@@ -136,13 +136,14 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected function replaceLinkTargets($processedContent)
     {
         $setNoOpener = $this->fusionValue('setNoOpener');
+        $setExternal = $this->fusionValue('setExternal');
         $externalLinkTarget = \trim($this->fusionValue('externalLinkTarget'));
         $resourceLinkTarget = \trim($this->fusionValue('resourceLinkTarget'));
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
         $processedContent = \preg_replace_callback(
             '~<a\s+.*?href="(.*?)".*?>~i',
-            static function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $setNoOpener) {
+            static function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $setNoOpener, $setExternal) {
                 [$linkText, $linkHref] = $matches;
                 $uriHost = \parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
@@ -156,6 +157,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 }
                 if ($isExternalLink && $setNoOpener) {
                     $linkText = self::setAttribute('rel', 'noopener', $linkText);
+                }
+                if ($isExternalLink && $setExternal) {
+                    $linkText = self::setAttribute('rel', 'external', $linkText);
                 }
                 if (is_string($target) && strlen($target) !== 0) {
                     return self::setAttribute('target', $target, $linkText);
