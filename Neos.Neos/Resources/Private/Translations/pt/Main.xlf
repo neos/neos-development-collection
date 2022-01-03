@@ -229,7 +229,7 @@
       </trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
-        <target state="needs-translation">Save</target>
+        <target state="translated">Gravar</target>
       </trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
@@ -409,7 +409,7 @@
       </trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-        <target state="needs-translation">Click to delete</target>
+        <target state="translated">Clique para apagar</target>
       </trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
