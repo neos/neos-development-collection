@@ -141,7 +141,8 @@ class RuntimeTest extends UnitTestCase
 
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
 
-        $runtime = new Runtime($fusionAst, $controllerContext);;
+        $runtime = new Runtime($fusionAst, $controllerContext);
+        ;
 
         $renderedFusion = $runtime->render('root');
 
