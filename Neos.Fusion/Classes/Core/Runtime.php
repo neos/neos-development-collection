@@ -84,7 +84,7 @@ class Runtime
      *
      * @var array
      */
-    protected $currentContext = null;
+    protected $currentContext = [];
 
     /**
      * Reference to the current apply value
@@ -717,7 +717,7 @@ class Runtime
             $expression = '${' . $expression . '}';
         }
 
-        $contextVariables = array_merge($this->getDefaultContextVariables(), $this->currentContext ?? []);
+        $contextVariables = array_merge($this->getDefaultContextVariables(), $this->currentContext);
 
         if (isset($contextVariables['this'])) {
             throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current Fusion object.', 1344325044);

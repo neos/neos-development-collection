@@ -125,4 +125,26 @@ class RuntimeTest extends UnitTestCase
 
         $runtime->render('/foo/bar');
     }
+
+    /**
+     * @test
+     */
+    public function usingEelWorksWithoutSetFusionContext()
+    {
+        $fusionAst = [
+            'root' => [
+                '__eelExpression' => '\'foo\'',
+                '__value' => null,
+                '__objectType' => null,
+            ]
+        ];
+
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+
+        $runtime = new Runtime($fusionAst, $controllerContext);;
+
+        $renderedFusion = $runtime->render('root');
+
+        self::assertSame('foo', $renderedFusion);
+    }
 }
