@@ -431,6 +431,7 @@ class NodeImportService
                     $currentClassName = $reader->getAttribute('__classname');
                     $currentEncoding = $reader->getAttribute('__encoding');
 
+                    // handle self-closing tags
                     if ($reader->isEmptyElement) {
                         switch ($currentType) {
                             case 'array':
@@ -452,6 +453,21 @@ class NodeImportService
                     }
                     break;
                 case \XMLReader::END_ELEMENT:
+                    // handle empty tags
+                    if ($reader->name === $currentProperty && !isset($properties[$currentProperty])) {
+                        switch ($currentType) {
+                            case 'array':
+                                $properties[$currentProperty] = [];
+                                break;
+                            case 'string':
+                                $properties[$currentProperty] = '';
+                                break;
+                            default:
+                                $properties[$currentProperty] = null;
+                        }
+                        $currentType = null;
+                    }
+
                     if ($reader->name === 'properties') {
                         return $properties;
                     }

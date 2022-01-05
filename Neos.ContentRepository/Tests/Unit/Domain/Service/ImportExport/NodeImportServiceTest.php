@@ -71,6 +71,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'layout' => 'landingPage',
                 'uriPathSegment' => 'home',
                 'imageTitleText' => 'Photo by www.daniel-bischoff.photo',
+                'subpageLayout' => '',
             ],
             'accessRoles' => [],
             'hiddenBeforeDateTime' => new \DateTime('2015-10-01T03:45:04+02:00'),
@@ -191,6 +192,7 @@ class NodeImportServiceTest extends UnitTestCase
                     'title' => 'Home',
                     'layout' => 'landingPage',
                     'uriPathSegment' => 'home',
+                    'relatedDocuments' => [],
                     'image' =>
                         [
                             'targetType' => \Neos\Media\Domain\Model\ImageVariant::class,
@@ -242,7 +244,7 @@ class NodeImportServiceTest extends UnitTestCase
                                 ],
                         ],
                     'imageTitleText' => 'Photo by www.daniel-bischoff.photo',
-                    'relatedDocuments' => []
+                    'subpageLayout' => '',
                 ],
                 'accessRoles' => [],
                 'dimensionValues' => [
