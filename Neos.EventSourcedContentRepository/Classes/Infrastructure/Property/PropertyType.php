@@ -185,6 +185,9 @@ final class PropertyType
         if ($this->isArray()) {
             return is_array($propertyValue);
         }
+        if ($this->isDate()) {
+            return $propertyValue instanceof \DateTimeInterface;
+        }
         if ($this->isArrayOf()) {
             if (is_array($propertyValue)) {
                 $className = $this->getArrayOfClassName();
