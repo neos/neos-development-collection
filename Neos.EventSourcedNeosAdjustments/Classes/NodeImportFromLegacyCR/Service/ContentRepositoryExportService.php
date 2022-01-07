@@ -145,6 +145,14 @@ class ContentRepositoryExportService
     private $alreadyCreatedNodeAggregateIdentifiers;
 
     /**
+     * it can happen that the reference target has not been imported yet - that's why we collect all {@link SetNodeReferences}
+     * commands here in this array and run them **after** the general migration has run.
+     *
+     * @var SetNodeReferences[]
+     */
+    private $setNodeReferenceCommands = [];
+
+    /**
      * @Flow\Inject
      * @var RuntimeBlocker
      */
@@ -255,6 +263,14 @@ class ContentRepositoryExportService
         var_dump("NODE DATAS IN NEXT ITER: " . count($nodeDatasToExportAtNextIteration));
 
         $this->commandResult->blockUntilProjectionsAreUpToDate();
+
+        // Set References, now when the full import is done.
+        foreach ($this->setNodeReferenceCommands as $setNodeReferenceCommand) {
+            $this->commandResult = $this->nodeAggregateCommandHandler->handleSetNodeReferences($setNodeReferenceCommand);
+        }
+        $this->setNodeReferenceCommands = [];
+
+        $this->commandResult->blockUntilProjectionsAreUpToDate();
     }
 
     protected function exportNodeData(NodeData $nodeData, &$nodeDatasToExportAtNextIteration)
@@ -360,16 +376,14 @@ class ContentRepositoryExportService
 
             // publish reference edges
             foreach ($propertyReferences as $propertyName => $references) {
-                $this->nodeAggregateCommandHandler->handleSetNodeReferences(
-                    new SetNodeReferences(
-                        $this->contentStreamIdentifier,
-                        $nodeAggregateIdentifier,
-                        $originDimensionSpacePoint,
-                        NodeAggregateIdentifierCollection::fromArray($references),
-                        PropertyName::fromString($propertyName),
-                        UserIdentifier::forSystemUser()
-                    )
-                )->blockUntilProjectionsAreUpToDate();
+                $this->setNodeReferenceCommands[] = new SetNodeReferences(
+                    $this->contentStreamIdentifier,
+                    $nodeAggregateIdentifier,
+                    $originDimensionSpacePoint,
+                    NodeAggregateIdentifierCollection::fromArray($references),
+                    PropertyName::fromString($propertyName),
+                    UserIdentifier::forSystemUser()
+                );
             }
 
             if ($isHidden === true) {
