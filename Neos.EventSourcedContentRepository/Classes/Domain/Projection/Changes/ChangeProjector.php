@@ -57,9 +57,7 @@ class ChangeProjector implements ProjectorInterface
 
     public function reset(): void
     {
-        $this->transactional(function () {
-            $this->getDatabaseConnection()->executeStatement('TRUNCATE table neos_contentrepository_projection_change');
-        });
+        $this->getDatabaseConnection()->executeStatement('TRUNCATE table neos_contentrepository_projection_change');
     }
 
 
