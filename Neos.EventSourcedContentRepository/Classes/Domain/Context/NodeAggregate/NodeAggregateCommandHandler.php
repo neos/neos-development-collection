@@ -28,7 +28,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\Node
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRemoval;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeRenaming;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeTypeChange;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeSerialization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeVariation;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\TetheredNodeInternals;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -40,7 +39,6 @@ use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCach
 final class NodeAggregateCommandHandler
 {
     use ConstraintChecks;
-    use NodeSerialization;
     use NodeCreation;
     use NodeDisabling;
     use NodeModification;
