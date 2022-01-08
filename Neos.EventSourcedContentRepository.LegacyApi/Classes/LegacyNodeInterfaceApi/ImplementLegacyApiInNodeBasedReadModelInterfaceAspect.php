@@ -11,7 +11,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 
 /**
  * @Flow\Aspect
- * @Flow\Introduce("class(Neos\ContentRepository\Intermediary\Domain\AbstractReadModel)", interfaceName="Neos\EventSourcedContentRepository\LegacyApi\LegacyNodeInterfaceApi\LegacyNodeInterfaceApi")
+ * @Flow\Introduce("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface)", interfaceName="Neos\EventSourcedContentRepository\LegacyApi\LegacyNodeInterfaceApi\LegacyNodeInterfaceApi")
  */
 class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
 {
@@ -28,7 +28,7 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
     protected $nodeAccessorManager;
 
     /**
-     * @Flow\Around("method(Neos\ContentRepository\Intermediary\Domain\AbstractReadModel->getIdentifier())")
+     * @Flow\Around("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) && method(.*->getIdentifier())")
      */
     public function getIdentifier(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
     {
@@ -40,7 +40,7 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
     }
 
     /**
-     * @Flow\Around("method(Neos\ContentRepository\Intermediary\Domain\AbstractReadModel->getDepth())")
+     * @Flow\Around("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) && method(.*->getDepth())")
      */
     public function getDepth(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
     {
