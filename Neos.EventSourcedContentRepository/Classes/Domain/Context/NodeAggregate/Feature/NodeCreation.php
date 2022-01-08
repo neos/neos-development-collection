@@ -201,7 +201,10 @@ trait NodeCreation
             $command->getContentStreamIdentifier(),
             $command->getNodeAggregateIdentifier(),
             $command->getOriginDimensionSpacePoint(),
-            $this->serializeProperties($command->getPropertyValues(), $nodeTypeName),
+            $this->getPropertyConverter()->serializePropertyValues(
+                $command->getPropertyValues(),
+                $this->requireNodeType($nodeTypeName)
+            ),
             $command->getInitiatingUserIdentifier()
         );
 
