@@ -223,6 +223,8 @@ class Property extends AbstractChange
 
             $propertyName = $this->getPropertyName();
 
+            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+            $node->getNodeType()->getFullConfiguration();
             $propertyType = $node->getNodeType()->getPropertyType($propertyName);
             $userIdentifier = $this->getInitiatingUserIdentifier();
 
