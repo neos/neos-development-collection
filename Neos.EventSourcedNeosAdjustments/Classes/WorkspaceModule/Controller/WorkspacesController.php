@@ -53,7 +53,6 @@ use Neos\Neos\Service\PublishingService;
 use Neos\ContentRepository\Exception\WorkspaceException;
 use Neos\ContentRepository\TypeConverter\NodeConverter;
 use Neos\ContentRepository\Utility;
-use Neos\Neos\Utility\User as UserUtility;
 
 /**
  * The Neos Workspaces module controller

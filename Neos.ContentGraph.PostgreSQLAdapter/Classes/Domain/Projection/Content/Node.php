@@ -181,5 +181,4 @@ final class Node implements NodeInterface
             && $this->getDimensionSpacePoint()->equals($other->getDimensionSpacePoint())
             && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier());
     }
-
 }

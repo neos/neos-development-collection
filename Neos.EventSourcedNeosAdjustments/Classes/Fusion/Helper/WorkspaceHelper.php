@@ -22,7 +22,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceServi
 use Neos\Flow\Security\Context;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Service\UserService;
 
 /**
  * The Workspace helper for EEL contexts

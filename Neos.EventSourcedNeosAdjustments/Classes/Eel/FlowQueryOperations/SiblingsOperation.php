@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
