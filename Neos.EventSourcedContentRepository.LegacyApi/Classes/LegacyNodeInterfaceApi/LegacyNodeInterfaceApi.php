@@ -7,4 +7,8 @@ interface LegacyNodeInterfaceApi
     public function getIdentifier();
 
     public function getDepth();
+
+    public function getHiddenBeforeDateTime();
+
+    public function getHiddenAfterDateTime();
 }
