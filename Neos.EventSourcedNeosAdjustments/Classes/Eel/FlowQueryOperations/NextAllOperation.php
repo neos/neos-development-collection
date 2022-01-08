@@ -2,7 +2,7 @@
 namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,32 +12,33 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 
 /**
- * "parents" operation working on ContentRepository nodes. It iterates over all
- * context elements and returns the parent nodes or only those matching
+ * "nextAll" operation working on ContentRepository nodes. It iterates over all
+ * context elements and returns each following sibling or only those matching
  * the filter expression specified as optional argument.
  */
-class ParentsOperation extends AbstractOperation
+class NextAllOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
      *
      * @var string
      */
-    protected static $shortName = 'parents';
+    protected static $shortName = 'nextAll';
 
     /**
      * {@inheritdoc}
      *
      * @var integer
      */
-    protected static $priority = 110;
+    protected static $priority = 500;
 
     /**
      * @Flow\Inject
@@ -61,37 +62,45 @@ class ParentsOperation extends AbstractOperation
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
-     * @todo Compare to node type Neos.Neos:Site instead of path once it is available
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $parents = [];
-        /* @var NodeInterface $contextNode */
+        $output = [];
+        $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $node = $contextNode;
-            do {
-                $node = $this->nodeAccessorManager->accessorFor(
-                    $node->getContentStreamIdentifier(),
-                    $node->getDimensionSpacePoint(),
-                    $node->getVisibilityConstraints()
-                )->findParentNode($node);
-                if ($node === null) {
-                    // no parent found
-                    break;
-                }
-                // stop at sites
-                if ($node->getNodeTypeName()->equals(NodeTypeName::fromString('Neos.Neos:Sites'))) {
-                    break;
-                }
-                $parents[] = $node;
-            } while (true);
-        }
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $contextNode->getContentStreamIdentifier(),
+                $contextNode->getDimensionSpacePoint(),
+                $contextNode->getVisibilityConstraints()
+            );
 
-        $flowQuery->setContext($parents);
+            foreach ($this->getNextForNode($contextNode, $nodeAccessor) as $nextNode) {
+                if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()])) {
+                    $outputNodePaths[(string)$nextNode->getCacheEntryIdentifier()] = true;
+                    $output[] = $nextNode;
+                }
+            }
+        }
+        $flowQuery->setContext($output);
 
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);
         }
+    }
+
+    /**
+     * @param NodeInterface $contextNode The node for which the next node should be found
+     * @param NodeAccessorInterface $nodeAccessor
+     * @return Nodes The next nodes of $contextNode
+     */
+    protected function getNextForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
+    {
+        $parentNode = $nodeAccessor->findParentNode($contextNode);
+        if ($parentNode === null) {
+            return Nodes::empty();
+        }
+
+        return $nodeAccessor->findChildNodes($parentNode)->nextAll($contextNode);
     }
 }
