@@ -89,7 +89,7 @@ class LinkHelper implements ProtectedContextAwareInterface
             return $uri->getScheme();
         }
 
-        if (preg_match(ConvertUrisImplementation::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
+        if (is_string($uri) && preg_match(ConvertUrisImplementation::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
             return $matches[1];
         }
 
@@ -176,7 +176,7 @@ class LinkHelper implements ProtectedContextAwareInterface
                         throw new \RuntimeException(sprintf('Failed to get SubContentGraph for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
                     }
 
-                    $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($uri->getHost()));
+                    $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($matches[2]));
                     if ($node === null) {
                         return null;
                     }
@@ -184,7 +184,7 @@ class LinkHelper implements ProtectedContextAwareInterface
                 case 'asset':
                     /** @var AssetInterface|null $asset */
                     /** @noinspection OneTimeUseVariablesInspection */
-                    $asset = $this->assetRepository->findByIdentifier($uri->getHost());
+                    $asset = $this->assetRepository->findByIdentifier($matches[2]);
                     return $asset;
             }
         }
