@@ -369,7 +369,8 @@ class WorkspacesController extends AbstractModuleController
     public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace)
     {
         $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspace = $this->workspaceFinder->findOneByName(UserUtility::getPersonalWorkspaceNameForUsername($currentAccount->getAccountIdentifier()));
+        $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
+        $personalWorkspace = $this->workspaceFinder->findOneByName($personalWorkspaceName);
         /** @var Workspace $personalWorkspace */
 
         if ($personalWorkspace !== $targetWorkspace) {
