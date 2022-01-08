@@ -22,6 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFac
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
+use Neos\EventSourcedNeosAdjustments\Fusion\ConvertUrisImplementation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -84,10 +85,15 @@ class LinkHelper implements ProtectedContextAwareInterface
      */
     public function getScheme($uri): string
     {
-        if (!$uri instanceof UriInterface) {
-            $uri = new Uri($uri);
+        if ($uri instanceof UriInterface) {
+            return $uri->getScheme();
         }
-        return $uri->getScheme();
+
+        if (preg_match(ConvertUrisImplementation::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
+            return $matches[1];
+        }
+
+        return '';
     }
 
     /**
@@ -146,42 +152,43 @@ class LinkHelper implements ProtectedContextAwareInterface
         if (empty($uri)) {
             return null;
         }
-        if (!$uri instanceof UriInterface) {
-            $uri = new Uri($uri);
+        if ($uri instanceof UriInterface) {
+            $uri = (string)$uri;
         }
 
-        switch ($uri->getScheme()) {
-            case 'node':
-                if ($contextNode === null) {
-                    throw new \RuntimeException('node:// URI conversion requires a context node to be passed', 1409734235);
-                }
-                $contextNodeAddress = $this->nodeAddressFactory->createFromNode($contextNode);
-                if ($contextNodeAddress === null) {
-                    throw new \RuntimeException(sprintf('Failed to create node address for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
-                }
-                $visibilityConstraints = $contextNodeAddress->getWorkspaceName()->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $contextNode->getContentStreamIdentifier(),
-                    $contextNode->getDimensionSpacePoint(),
-                    $visibilityConstraints
-                );
-                if ($nodeAccessor === null) {
-                    throw new \RuntimeException(sprintf('Failed to get SubContentGraph for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
-                }
+        if (preg_match(ConvertUrisImplementation::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
+            switch ($matches[1]) {
+                case 'node':
+                    if ($contextNode === null) {
+                        throw new \RuntimeException('node:// URI conversion requires a context node to be passed', 1409734235);
+                    }
+                    $contextNodeAddress = $this->nodeAddressFactory->createFromNode($contextNode);
+                    if ($contextNodeAddress === null) {
+                        throw new \RuntimeException(sprintf('Failed to create node address for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
+                    }
+                    $visibilityConstraints = $contextNodeAddress->getWorkspaceName()->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
+                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                        $contextNode->getContentStreamIdentifier(),
+                        $contextNode->getDimensionSpacePoint(),
+                        $visibilityConstraints
+                    );
+                    if ($nodeAccessor === null) {
+                        throw new \RuntimeException(sprintf('Failed to get SubContentGraph for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
+                    }
 
-                $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($uri->getHost()));
-                if ($node === null) {
-                    return null;
-                }
-                return $node;
-            case 'asset':
-                /** @var AssetInterface|null $asset */
-                /** @noinspection OneTimeUseVariablesInspection */
-                $asset = $this->assetRepository->findByIdentifier($uri->getHost());
-                return $asset;
-            default:
-                return null;
+                    $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($uri->getHost()));
+                    if ($node === null) {
+                        return null;
+                    }
+                    return $node;
+                case 'asset':
+                    /** @var AssetInterface|null $asset */
+                    /** @noinspection OneTimeUseVariablesInspection */
+                    $asset = $this->assetRepository->findByIdentifier($uri->getHost());
+                    return $asset;
+            }
         }
+        return null;
     }
 
     /**
