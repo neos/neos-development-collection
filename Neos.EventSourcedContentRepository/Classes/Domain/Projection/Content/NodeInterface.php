@@ -70,4 +70,6 @@ interface NodeInterface extends \Neos\ContentRepository\Domain\Projection\Conten
     public function getVisibilityConstraints(): VisibilityConstraints;
 
     public function getClassification(): NodeAggregateClassification;
+
+    public function equals(NodeInterface $other): bool;
 }
