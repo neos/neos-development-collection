@@ -288,7 +288,7 @@ class AfxService
                         );
                     }
                 } elseif ($attribute['type'] === 'propList') {
-                    $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@apply.spread_' . $spreadIndex . ' = Neos.Fusion:RawArray {' . PHP_EOL;
+                    $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@apply.spread_' . $spreadIndex . ' = Neos.Fusion:DataStructure {' . PHP_EOL;
                     $fusion .=  self::propListToFusion($attribute['payload'], '', $indentation . self::INDENTATION);
                     $fusion .= $indentation . self::INDENTATION . '}' . PHP_EOL;
                 }
@@ -357,7 +357,7 @@ class AfxService
         } elseif (count($payload) === 1) {
             return self::astToFusion(array_shift($payload), $indentation);
         } else {
-            $fusion = 'Neos.Fusion:Array {' . PHP_EOL;
+            $fusion = 'Neos.Fusion:Join {' . PHP_EOL;
             foreach ($payload as $astNode) {
                 // detect key
                 $fusionName = 'item_' . $index;
