@@ -94,11 +94,7 @@ class ContentCacheFlusher
     private function fetchParentIfExistsForNode(NodeInterface $node): ?NodeInterface
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        try {
-            return $nodeAccessor->findParentNode($node);
-        } catch (NodeException $e) {
-            return null;
-        }
+        return $nodeAccessor->findParentNode($node);
     }
 
     /**

@@ -175,7 +175,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
         $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)
             ->blockUntilProjectionsAreUpToDate();
 
-        $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
+        $newlyCreatedNode = $this->nodeAccessorFor($parentNode)->findChildNodeConnectedThroughEdgeName($parentNode, $nodeName);
 
         $this->finish($newlyCreatedNode);
         // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed

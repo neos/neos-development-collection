@@ -45,7 +45,7 @@ class Create extends AbstractCreate
         $subject = $this->getSubject();
         $nodeType = $this->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($subject, $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($subject, $nodeType);
     }
 
     /**

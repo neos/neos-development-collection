@@ -15,6 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\TypeConverter;
 use Neos\Error\Messages\Error;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Property;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -122,7 +123,7 @@ class ChangeCollectionConverter extends AbstractTypeConverter
      * Convert array to change interface
      *
      * @param array $changeData
-     * @return ChangeInterface
+     * @return ChangeInterface|Error
      */
     protected function convertChangeData($changeData)
     {

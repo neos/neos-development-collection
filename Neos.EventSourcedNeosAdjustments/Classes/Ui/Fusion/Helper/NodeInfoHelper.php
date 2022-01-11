@@ -249,16 +249,6 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         return false;
     }
 
-    public static function isNodeTypeAllowedAsChildNode(NodeBasedReadModelInterface $node, NodeType $nodeType)
-    {
-        if (self::isAutoCreated($node)) {
-            return $node->findParentNode()->getNodeType()->allowsGrandchildNodeType((string)$node->getNodeName(), $nodeType);
-        } else {
-            return $node->getNodeType()->allowsChildNodeType($nodeType);
-        }
-    }
-
-
     /**
      * Get information for all children of the given parent node.
      *

@@ -72,7 +72,7 @@ class CopyInto extends AbstractStructuralChange
     {
         $nodeType = $this->getSubject()->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($this->getParentNode(), $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($this->getParentNode(), $nodeType);
     }
 
     public function getMode()
@@ -89,8 +89,12 @@ class CopyInto extends AbstractStructuralChange
     {
         if ($this->canApply()) {
             $subject = $this->getSubject();
-
             $command = CopyNodesRecursively::create(
+                $this->contentGraph->getSubgraphByIdentifier(
+                    $subject->getContentStreamIdentifier(),
+                    $subject->getDimensionSpacePoint(),
+                    $subject->getVisibilityConstraints()
+                ),
                 $subject,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($subject->getDimensionSpacePoint()),
                 UserIdentifier::forSystemUser(), // TODO
@@ -104,7 +108,8 @@ class CopyInto extends AbstractStructuralChange
             $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
                 ->blockUntilProjectionsAreUpToDate();
 
-            $newlyCreatedNode = $this->getParentNode()->findNamedChildNode($command->getTargetNodeName());
+            $parentNode = $this->getParentNode();
+            $newlyCreatedNode = $this->nodeAccessorFor($parentNode)->findChildNodeConnectedThroughEdgeName($parentNode, $command->getTargetNodeName());
             $this->finish($newlyCreatedNode);
             // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed
             $this->addNodeCreatedFeedback($newlyCreatedNode);
