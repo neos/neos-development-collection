@@ -193,7 +193,7 @@ class BackendController extends ActionController
         $this->view->assign('user', $user);
         $this->view->assign('documentNode', $node);
         $this->view->assign('site', $siteNode);
-        $this->view->assign('clipboardNode', $this->clipboard->getSerializedNodeAddresses());
+        $this->view->assign('clipboardNodes', $this->clipboard->getSerializedNodeAddresses());
         $this->view->assign('clipboardMode', $this->clipboard->getMode());
         $this->view->assign('headScripts', $this->styleAndJavascriptInclusionService->getHeadScripts());
         $this->view->assign('headStylesheets', $this->styleAndJavascriptInclusionService->getHeadStylesheets());
