@@ -118,6 +118,9 @@ class NodeTypeSchemaBuilder
         $nodeTypes = $this->nodeTypeManager->getNodeTypes(true);
         /** @var NodeType $nodeType */
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
+            if ($nodeType->isAbstract()) {
+                continue;
+            }
             $constraints[$nodeTypeName] = [
                 'nodeTypes' => [],
                 'childNodes' => []
