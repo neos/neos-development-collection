@@ -199,6 +199,7 @@ class BackendController extends ActionController
         $this->view->assign('headStylesheets', $this->styleAndJavascriptInclusionService->getHeadStylesheets());
         $this->view->assign('splashScreenPartial', $this->splashScreenPartial);
         $this->view->assign('sitesForMenu', $this->menuHelper->buildSiteList($this->getControllerContext()));
+        $this->view->assign('modulesForMenu', $this->menuHelper->buildModuleList($this->getControllerContext()));
 
         $this->view->assignMultiple([
             'subgraph' => $nodeAccessor
