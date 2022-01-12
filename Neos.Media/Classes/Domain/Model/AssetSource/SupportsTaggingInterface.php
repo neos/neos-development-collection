@@ -33,4 +33,11 @@ interface SupportsTaggingInterface
      * @return int
      */
     public function countUntagged(): int;
+
+
+    /**
+     * @param Tag $tag
+     * @return int
+     */
+    public function countByTag(Tag $tag): int;
 }
