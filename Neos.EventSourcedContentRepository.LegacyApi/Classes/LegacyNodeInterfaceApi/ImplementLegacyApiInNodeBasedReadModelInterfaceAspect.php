@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\LegacyApi\LegacyNodeInterfaceApi;
 
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Annotations as Flow;
@@ -26,6 +27,12 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
      * @var NodeAccessorManager
      */
     protected $nodeAccessorManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
 
     /**
      * @Flow\Around("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) && method(.*->getIdentifier())")
@@ -70,5 +77,17 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
         $this->legacyLogger->info('NodeInterface.getHiddenAfterDateTime() called (not supported)', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getHiddenAfterDateTime'));
         // not supported
         return null;
+    }
+
+    /**
+     * @Flow\Around("within(Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) && method(.*->getContextPath())")
+     */
+    public function getContextPath(\Neos\Flow\AOP\JoinPointInterface $joinPoint)
+    {
+        $this->legacyLogger->info('NodeInterface.getContextPath() called', LogEnvironment::fromMethodName(LegacyNodeInterfaceApi::class . '::getContextPath'));
+
+        /* @var NodeInterface $node */
+        $node = $joinPoint->getProxy();
+        return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
     }
 }

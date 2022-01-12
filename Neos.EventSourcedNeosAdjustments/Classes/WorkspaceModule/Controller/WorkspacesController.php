@@ -17,9 +17,13 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
@@ -401,57 +405,81 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Publish a single node
      *
-     * @param NodeInterface $node
-     * @param Workspace $selectedWorkspace
+     * @param NodeAddress $node
+     * @param WorkspaceName $selectedWorkspace
      */
-    public function publishNodeAction(NodeInterface $node, Workspace $selectedWorkspace)
+    public function publishNodeAction(NodeAddress $node, WorkspaceName $selectedWorkspace)
     {
-        $this->publishingService->publishNode($node);
+        $command = PublishIndividualNodesFromWorkspace::create(
+            $selectedWorkspace,
+            [$node],
+            UserIdentifier::fromString($this->securityContext->getAccount()->getAccountIdentifier())
+        );
+        $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
+
         $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenPublished', [], null, null, 'Modules', 'Neos.Neos'));
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->jsonSerialize()]);
     }
 
     /**
      * Discard a a single node
      *
-     * @param NodeInterface $node
-     * @param Workspace $selectedWorkspace
+     * @param NodeAddress $node
+     * @param WorkspaceName $selectedWorkspace
      * @throws WorkspaceException
      */
-    public function discardNodeAction(NodeInterface $node, Workspace $selectedWorkspace)
+    public function discardNodeAction(NodeAddress $node, WorkspaceName $selectedWorkspace)
     {
-        // Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
-        $this->publishingService->discardNode($node);
+        $command = DiscardIndividualNodesFromWorkspace::create(
+            $selectedWorkspace,
+            [$node],
+            UserIdentifier::fromString($this->securityContext->getAccount()->getAccountIdentifier())
+        );
+        $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
+
         $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenDiscarded', [], null, null, 'Modules', 'Neos.Neos'));
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->jsonSerialize()]);
     }
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
 
     /**
      * Publishes or discards the given nodes
      *
      * @param array $nodes <\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes
      * @param string $action
-     * @param Workspace $selectedWorkspace
+     * @param WorkspaceName $selectedWorkspace
      * @throws \Exception
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function publishOrDiscardNodesAction(array $nodes, $action, Workspace $selectedWorkspace = null)
+    public function publishOrDiscardNodesAction(array $nodes, $action, WorkspaceName $selectedWorkspace = null)
     {
-        $propertyMappingConfiguration = $this->propertyMapper->buildPropertyMappingConfiguration();
-        $propertyMappingConfiguration->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
-        foreach ($nodes as $key => $node) {
-            $nodes[$key] = $this->propertyMapper->convert($node, NodeInterface::class, $propertyMappingConfiguration);
+        $nodeAddresses = [];
+        foreach ($nodes as $node) {
+            $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($node);
         }
         switch ($action) {
             case 'publish':
-                foreach ($nodes as $node) {
-                    $this->publishingService->publishNode($node);
-                }
+                $command = PublishIndividualNodesFromWorkspace::create(
+                    $selectedWorkspace,
+                    $nodeAddresses,
+                    UserIdentifier::fromString($this->securityContext->getAccount()->getAccountIdentifier())
+                );
+                $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
                 $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenPublished', [], null, null, 'Modules', 'Neos.Neos'));
             break;
             case 'discard':
-                $this->publishingService->discardNodes($nodes);
+                $command = DiscardIndividualNodesFromWorkspace::create(
+                    $selectedWorkspace,
+                    $nodeAddresses,
+                    UserIdentifier::fromString($this->securityContext->getAccount()->getAccountIdentifier())
+                );
+                $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
                 $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', [], null, null, 'Modules', 'Neos.Neos'));
             break;
             default:
