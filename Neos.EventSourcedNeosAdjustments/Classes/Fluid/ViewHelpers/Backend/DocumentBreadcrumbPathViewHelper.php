@@ -27,8 +27,16 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
      */
     protected $escapeOutput = false;
 
-    public function render(NodeInterface $node)
+    public function initializeArguments()
     {
+        parent::initializeArguments();
+        $this->registerArgument('node', NodeInterface::class, 'Node', true);
+    }
+
+    public function render()
+    {
+        $node = $this->arguments['node'];
+        assert($node instanceof NodeInterface);
         $documentNodes = [];
         $flowQuery = new FlowQuery([$node]);
         $nodes = array_reverse($flowQuery->parents('[instanceof Neos.Neos:Document]')->get());

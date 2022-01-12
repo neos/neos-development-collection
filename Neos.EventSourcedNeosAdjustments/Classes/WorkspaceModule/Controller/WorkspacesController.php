@@ -552,31 +552,34 @@ class WorkspacesController extends AbstractModuleController
             $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $change->originDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
 
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
-            $pathParts = explode('/', (string)$node->findNodePath());
-            if (count($pathParts) > 2) {
-                $siteNodeName = $pathParts[2];
-                $q = new FlowQuery([$node]);
-                $document = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
+            if ($node) {
+                $pathParts = explode('/', (string)$subgraph->findNodePath($node->getNodeAggregateIdentifier()));
+                if (count($pathParts) > 2) {
+                    $siteNodeName = $pathParts[2];
+                    $q = new FlowQuery([$node]);
+                    $document = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
 
-                // $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
-                if ($document !== null) {
-                    $documentPath = implode('/', array_slice(explode('/', (string)$document->findNodePath()), 3));
-                    $relativePath = str_replace(sprintf('//%s/%s', $siteNodeName, $documentPath), '', $node->findNodePath());
-                    if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
-                        $siteChanges[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
-                    }
-                    $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
+                    // $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
+                    if ($document !== null) {
+                        assert($document instanceof NodeInterface);
+                        $documentPath = implode('/', array_slice(explode('/', (string)$subgraph->findNodePath($document->getNodeAggregateIdentifier())), 3));
+                        $relativePath = str_replace(sprintf('//%s/%s', $siteNodeName, $documentPath), '', $subgraph->findNodePath($node->getNodeAggregateIdentifier())->jsonSerialize());
+                        if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
+                            $siteChanges[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
+                        }
+                        $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
 
-                    $change = [
-                        'node' => $node,
-                        'isRemoved' => $change->deleted,
-                        'isNew' => false,
-                        'contentChanges' => $this->renderContentChanges($node, $change->contentStreamIdentifier)
-                    ];
-                    if ($node->getNodeType()->isOfType('Neos.Neos:Node')) {
-                        $change['configuration'] = $node->getNodeType()->getFullConfiguration();
+                        $change = [
+                            'node' => $node,
+                            'isRemoved' => $change->deleted,
+                            'isNew' => false,
+                            'contentChanges' => $this->renderContentChanges($node, $change->contentStreamIdentifier)
+                        ];
+                        if ($node->getNodeType()->isOfType('Neos.Neos:Node')) {
+                            $change['configuration'] = $node->getNodeType()->getFullConfiguration();
+                        }
+                        $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                     }
-                    $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                 }
             }
         }
