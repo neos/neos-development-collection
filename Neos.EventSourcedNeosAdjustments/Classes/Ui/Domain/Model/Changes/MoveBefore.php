@@ -17,7 +17,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveN
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class MoveBefore extends AbstractStructuralChange
 {
