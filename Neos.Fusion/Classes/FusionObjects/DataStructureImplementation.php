@@ -86,7 +86,7 @@ class DataStructureImplementation extends AbstractArrayFusionObject
     }
 
     /**
-     * Returns TRUE if the given property has no object type assigned
+     * Returns TRUE if the given property has no object type value or eel assigned, and was not unset.
      *
      * @param mixed $property
      * @return bool
@@ -96,6 +96,10 @@ class DataStructureImplementation extends AbstractArrayFusionObject
         if (!is_array($property)) {
             return false;
         }
-        return array_intersect_key(array_flip(Parser::$reservedParseTreeKeys), $property) === [];
+
+        $keysToIdentifyTypedProperty = array_flip(Parser::$reservedParseTreeKeys);
+        unset($keysToIdentifyTypedProperty['__meta']);
+
+        return array_intersect_key($keysToIdentifyTypedProperty, $property) === [];
     }
 }
