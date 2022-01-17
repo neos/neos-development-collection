@@ -51,7 +51,7 @@ prototype(Vendor.Site:Example) < prototype(Neos.Fusion:Component) {
 
     renderer = Neos.Fusion:Tag {
         tagName = 'div'
-        content = Neos.Fusion:Array {
+        content = Neos.Fusion:Join {
             headline = Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = ${props.title}
@@ -155,7 +155,7 @@ Is transpiled as:
 Vendor.Site:Component {
     title = 'example'
     @apply.spread_1 = ${data}
-    @apply.spread_2 = Neos.Fusion:RawArray {
+    @apply.spread_2 = Neos.Fusion:DataStructure {
         description = 'description'
     }
     @apply.spread_3 = ${moreData}
@@ -189,7 +189,7 @@ Neos.Fusion:Tag {
 
 #### Multiple tag-children
 
-If an AFX-tag contains more than one child the content is are rendered as `Neos.Fusion:Array` into the
+If an AFX-tag contains more than one child the content is are rendered as `Neos.Fusion:Join` into the
 `content`-attribute. The children are interpreted as string, eel-expression, html- or fusion-object-tag.
 
 The following AFX-Code:
@@ -201,7 +201,7 @@ Is transpiled as:
 ```
 Neos.Fusion:Tag {
     tagName = 'h1'
-    content = Neos.Fusion:Array {
+    content = Neos.Fusion:Join {
         item_1 = {props.title}
         item_2 = ': '
         item_3 = ${props.subtitle}
@@ -221,7 +221,7 @@ If no `@key`-property is given `index_x` is used starting by `x=1`.
 Is transpiled as:
 ```
 Vendor.Site:Prototype {
-    text = Neos.Fusion:Array {
+    text = Neos.Fusion:Join {
         title = Neos.Fusion:Tag {
             tagName = 'h2'
             content  = ${props.title}
@@ -312,7 +312,7 @@ Is transpiled as:
 ```
 Neos.Fusion:Tag {
 	tagName = 'h1'
-	contents = Neos.Fusion:Array {
+	contents = Neos.Fusion:Join {
 		item_1 = ${'eelExpression 1'}
 		item_2 = ${'eelExpression 2'}
 	}
@@ -330,7 +330,7 @@ Is transpiled as:
 ```
 Neos.Fusion:Tag {
 	tagName = 'h1'
-	contents = Neos.Fusion:Array {
+	contents = Neos.Fusion:Join {
 		item_1 = ${'eelExpression 1'}
 		item_2 = ' '
 		item_3 = ${'eelExpression 2'}
@@ -346,7 +346,7 @@ foo<!-- comment -->bar
 ```
 Is transpiled as:
 ```
-Neos.Fusion:Array {
+Neos.Fusion:Join {
     item_1 = 'foo'
     item_2 = 'bar'
 }
