@@ -21,7 +21,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateN
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class MoveInto extends AbstractStructuralChange
 {
@@ -87,7 +86,7 @@ class MoveInto extends AbstractStructuralChange
         $parent = $this->getParentNode();
         $nodeType = $this->getSubject()->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     /**

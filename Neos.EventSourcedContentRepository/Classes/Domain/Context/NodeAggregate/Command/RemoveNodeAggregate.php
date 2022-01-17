@@ -41,18 +41,47 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
 
     private UserIdentifier $initiatingUserIdentifier;
 
+    /**
+     * This is usually the NodeAggregateIdentifier of the parent node of the deleted node. It is needed for instance
+     * in the Neos UI for the following scenario:
+     * - when removing a node, you still need to be able to publish the removal.
+     * - For this to work, the Neos UI needs to know the identifier of the removed Node, **on the page
+     *   where the removal happened** (so that the user can decide to publish a single page INCLUDING the removal
+     *   on the page)
+     * - Because this command will *remove* the edge, we cannot know the position in the tree after doing the removal
+     *   anymore.
+     *
+     * That's why we need this field: For the Neos UI, it stores the document node of the removed node (see Remove.php),
+     * as that is what the UI needs lateron for the change display.
+     *
+     * @var NodeAggregateIdentifier|null
+     */
+    private ?NodeAggregateIdentifier $removalAttachmentPoint;
+
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $coveredDimensionSpacePoint,
+        ContentStreamIdentifier                $contentStreamIdentifier,
+        NodeAggregateIdentifier                $nodeAggregateIdentifier,
+        DimensionSpacePoint                    $coveredDimensionSpacePoint,
         NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
-        UserIdentifier $initiatingUserIdentifier
+        UserIdentifier                         $initiatingUserIdentifier,
+        ?NodeAggregateIdentifier               $removalAttachmentPoint = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
         $this->nodeVariantSelectionStrategy = $nodeVariantSelectionStrategy;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->removalAttachmentPoint = $removalAttachmentPoint;
+    }
+
+    public static function create(
+        ContentStreamIdentifier                $contentStreamIdentifier,
+        NodeAggregateIdentifier                $nodeAggregateIdentifier,
+        DimensionSpacePoint                    $coveredDimensionSpacePoint,
+        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        UserIdentifier                         $initiatingUserIdentifier
+    ): self {
+        return new self($contentStreamIdentifier, $nodeAggregateIdentifier, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy, $initiatingUserIdentifier);
     }
 
     public static function fromArray(array $array): self
@@ -62,7 +91,8 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
             NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier'])
+            UserIdentifier::fromString($array['initiatingUserIdentifier']),
+            isset($array['removalAttachmentPoint']) ? NodeAggregateIdentifier::fromString($array['removalAttachmentPoint']) : null
         );
     }
 
@@ -91,6 +121,32 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
         return $this->initiatingUserIdentifier;
     }
 
+    /**
+     * @return NodeAggregateIdentifier|null
+     */
+    public function getRemovalAttachmentPoint(): ?NodeAggregateIdentifier
+    {
+        return $this->removalAttachmentPoint;
+    }
+
+    /**
+     * {@see $removalAttachmentPoint} for extended docs on the background when you need this
+     *
+     * @param NodeAggregateIdentifier $removalAttachmentPoint
+     * @return $this
+     */
+    public function withRemovalAttachmentPoint(NodeAggregateIdentifier $removalAttachmentPoint): self
+    {
+        return new self(
+            $this->contentStreamIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->coveredDimensionSpacePoint,
+            $this->nodeVariantSelectionStrategy,
+            $this->initiatingUserIdentifier,
+            $removalAttachmentPoint
+        );
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -98,18 +154,20 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
             'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'removalAttachmentPoint' => $this->removalAttachmentPoint
         ];
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new RemoveNodeAggregate(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->coveredDimensionSpacePoint,
             $this->nodeVariantSelectionStrategy,
-            $this->initiatingUserIdentifier
+            $this->initiatingUserIdentifier,
+            $this->removalAttachmentPoint
         );
     }
 

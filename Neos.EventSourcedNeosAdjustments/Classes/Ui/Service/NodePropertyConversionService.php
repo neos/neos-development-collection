@@ -51,6 +51,8 @@ class NodePropertyConversionService
      */
     public function convert(NodeType $nodeType, $propertyName, $rawValue)
     {
+        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+        $nodeType->getFullConfiguration();
         $propertyType = $nodeType->getPropertyType($propertyName);
 
         switch ($propertyType) {

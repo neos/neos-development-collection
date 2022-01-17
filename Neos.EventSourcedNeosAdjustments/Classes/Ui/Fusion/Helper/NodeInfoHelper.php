@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
@@ -248,16 +247,6 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         }
         return false;
     }
-
-    public static function isNodeTypeAllowedAsChildNode(NodeBasedReadModelInterface $node, NodeType $nodeType)
-    {
-        if (self::isAutoCreated($node)) {
-            return $node->findParentNode()->getNodeType()->allowsGrandchildNodeType((string)$node->getNodeName(), $nodeType);
-        } else {
-            return $node->getNodeType()->allowsChildNodeType($nodeType);
-        }
-    }
-
 
     /**
      * Get information for all children of the given parent node.

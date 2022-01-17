@@ -6,5 +6,11 @@ interface LegacyNodeInterfaceApi
 {
     public function getIdentifier();
 
+    public function getContextPath();
+
     public function getDepth();
+
+    public function getHiddenBeforeDateTime();
+
+    public function getHiddenAfterDateTime();
 }

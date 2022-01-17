@@ -164,4 +164,9 @@ final class Thing implements NodeInterface
     {
         // TODO: Implement getClassification() method.
     }
+
+    public function equals(NodeInterface $other): bool
+    {
+        return false;
+    }
 }

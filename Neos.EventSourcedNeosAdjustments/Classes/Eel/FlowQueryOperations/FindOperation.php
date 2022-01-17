@@ -226,7 +226,7 @@ class FindOperation extends AbstractOperation
                 if ($nodePath->isAbsolute()) {
                     $rootNode = $node;
                     while (!$rootNode->isRoot()) {
-                        $rootNode = $rootNode->findParentNode();
+                        $rootNode = $nodeAccessor->findParentNode($rootNode);
                     }
                     $nodeByPath = $nodeAccessor->findNodeByPath($nodePath, $rootNode);
                 } else {

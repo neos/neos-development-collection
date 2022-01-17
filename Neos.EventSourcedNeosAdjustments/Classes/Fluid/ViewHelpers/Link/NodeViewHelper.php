@@ -214,7 +214,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         }
 
         $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($this->controllerContext->getRequest());
+        $uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());
         $uriBuilder->setFormat($this->arguments['format'])
             ->setCreateAbsoluteUri($this->arguments['absolute'])
             ->setArguments($this->arguments['arguments'])

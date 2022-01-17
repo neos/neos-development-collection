@@ -16,7 +16,6 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -94,11 +93,7 @@ class ContentCacheFlusher
     private function fetchParentIfExistsForNode(NodeInterface $node): ?NodeInterface
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        try {
-            return $nodeAccessor->findParentNode($node);
-        } catch (NodeException $e) {
-            return null;
-        }
+        return $nodeAccessor->findParentNode($node);
     }
 
     /**

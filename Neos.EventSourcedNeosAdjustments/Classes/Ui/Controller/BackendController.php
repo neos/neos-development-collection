@@ -20,12 +20,13 @@ use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Neos\Controller\Backend\MenuHelper;
@@ -108,6 +109,12 @@ class BackendController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
      * @var ContentGraphInterface
      */
     protected $contentGraph;
@@ -165,8 +172,9 @@ class BackendController extends ActionController
             $this->redirectToUri($this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos'));
         }
 
-        $workspaceName = $this->userService->getPersonalWorkspaceName();
-        $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
+        $currentAccount = $this->securityContext->getAccount();
+        $workspace = $this->workspaceFinder->findOneByName(NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName());
+
         $nodeAccessor = $this->nodeAccessorManager->accessorFor($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
 
         // we assume that the ROOT node is always stored in the CR as "physical" node; so it is safe
@@ -185,12 +193,13 @@ class BackendController extends ActionController
         $this->view->assign('user', $user);
         $this->view->assign('documentNode', $node);
         $this->view->assign('site', $siteNode);
-        $this->view->assign('clipboardNode', $this->clipboard->getSerializedNodeAddresses());
+        $this->view->assign('clipboardNodes', $this->clipboard->getSerializedNodeAddresses());
         $this->view->assign('clipboardMode', $this->clipboard->getMode());
         $this->view->assign('headScripts', $this->styleAndJavascriptInclusionService->getHeadScripts());
         $this->view->assign('headStylesheets', $this->styleAndJavascriptInclusionService->getHeadStylesheets());
         $this->view->assign('splashScreenPartial', $this->splashScreenPartial);
         $this->view->assign('sitesForMenu', $this->menuHelper->buildSiteList($this->getControllerContext()));
+        $this->view->assign('modulesForMenu', $this->menuHelper->buildModuleList($this->getControllerContext()));
 
         $this->view->assignMultiple([
             'subgraph' => $nodeAccessor

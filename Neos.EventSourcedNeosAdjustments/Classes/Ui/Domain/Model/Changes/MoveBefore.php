@@ -17,7 +17,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveN
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class MoveBefore extends AbstractStructuralChange
 {
@@ -35,10 +34,10 @@ class MoveBefore extends AbstractStructuralChange
      */
     public function canApply(): bool
     {
-        $parent = $this->getSiblingNode()->findParentNode();
+        $parent = $this->findParentNode($this->getSiblingNode());
         $nodeType = $this->getSubject()->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     public function getMode()
@@ -60,12 +59,12 @@ class MoveBefore extends AbstractStructuralChange
 
             $precedingSibling = null;
             try {
-                $precedingSibling = $subject->findParentNode()->findChildNodes()->previous($succeedingSibling);
+                $precedingSibling = $this->findChildNodes($this->findParentNode($subject))->previous($succeedingSibling);
             } catch (\InvalidArgumentException $e) {
                 // do nothing; $precedingSibling is null.
             }
 
-            $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($succeedingSibling->findParentNode()->getNodeAggregateIdentifier());
+            $hasEqualParentNode = $this->findParentNode($subject)->getNodeAggregateIdentifier()->equals($this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier());
 
             $this->contentCacheFlusher->registerNodeChange($subject);
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
@@ -73,7 +72,7 @@ class MoveBefore extends AbstractStructuralChange
                     $subject->getContentStreamIdentifier(),
                     $subject->getDimensionSpacePoint(),
                     $subject->getNodeAggregateIdentifier(),
-                    $hasEqualParentNode ? null : $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
+                    $hasEqualParentNode ? null : $this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier(),
                     $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
                     $succeedingSibling->getNodeAggregateIdentifier(),
                     RelationDistributionStrategy::gatherAll(),
@@ -82,11 +81,11 @@ class MoveBefore extends AbstractStructuralChange
             )->blockUntilProjectionsAreUpToDate();
 
             $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
-            $updateParentNodeInfo->setNode($succeedingSibling->findParentNode());
+            $updateParentNodeInfo->setNode($this->findParentNode($succeedingSibling));
 
             $this->feedbackCollection->add($updateParentNodeInfo);
 
-            $removeNode = new RemoveNode($subject, $this->getSiblingNode()->findParentNode());
+            $removeNode = new RemoveNode($subject, $this->findParentNode($this->getSiblingNode()));
             $this->feedbackCollection->add($removeNode);
 
             $this->finish($subject);

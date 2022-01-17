@@ -13,11 +13,13 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -42,6 +44,12 @@ class Remove extends AbstractChange
     protected $contentCacheFlusher;
 
     /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
+    /**
      * Checks whether this change can be applied to the subject
      *
      * @return boolean
@@ -64,7 +72,7 @@ class Remove extends AbstractChange
     {
         if ($this->canApply()) {
             $node = $this->getSubject();
-            $parentNode = $node->findParentNode();
+            $parentNode = $this->findParentNode($node);
 
             // we have to remember what parts of the content cache to flush before we actually delete the node; otherwise we cannot find the parent nodes anymore.
             $this->contentCacheFlusher->registerNodeChange($node);
@@ -72,14 +80,20 @@ class Remove extends AbstractChange
             // we have to schedule an the update workspace info before we actually delete the node; otherwise we cannot find the parent nodes anymore.
             $this->updateWorkspaceInfo();
 
+            $command = RemoveNodeAggregate::create(
+                $node->getContentStreamIdentifier(),
+                $node->getNodeAggregateIdentifier(),
+                $node->getDimensionSpacePoint(),
+                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                $this->getInitiatingUserIdentifier()
+            );
+            $closestDocumentParentNode = $this->closestDocumentParentNode($node);
+            if ($closestDocumentParentNode !== null) {
+                $command = $command->withRemovalAttachmentPoint($closestDocumentParentNode->getNodeAggregateIdentifier());
+            }
+
             $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(
-                new RemoveNodeAggregate(
-                    $node->getContentStreamIdentifier(),
-                    $node->getNodeAggregateIdentifier(),
-                    $node->getDimensionSpacePoint(),
-                    NodeVariantSelectionStrategyIdentifier::allSpecializations(),
-                    $this->getInitiatingUserIdentifier()
-                )
+                $command
             )->blockUntilProjectionsAreUpToDate();
 
             $removeNode = new RemoveNode($node, $parentNode);
@@ -90,5 +104,26 @@ class Remove extends AbstractChange
 
             $this->feedbackCollection->add($updateParentNodeInfo);
         }
+    }
+
+    protected function findParentNode(NodeInterface $node): ?NodeInterface
+    {
+        return $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        )->findParentNode($node);
+    }
+
+    protected function closestDocumentParentNode(NodeInterface $node): ?NodeInterface
+    {
+        do {
+            $node = $this->findParentNode($node);
+            if ($node !== null && $node->getNodeType()->isOfType('Neos.Neos:Document')) {
+                return $node;
+            }
+        } while ($node !== null);
+
+        return null;
     }
 }
