@@ -65,8 +65,7 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
         NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
         UserIdentifier                         $initiatingUserIdentifier,
         ?NodeAggregateIdentifier               $removalAttachmentPoint = null
-    )
-    {
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
@@ -75,13 +74,13 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
         $this->removalAttachmentPoint = $removalAttachmentPoint;
     }
 
-    public static function create(ContentStreamIdentifier                $contentStreamIdentifier,
-                                  NodeAggregateIdentifier                $nodeAggregateIdentifier,
-                                  DimensionSpacePoint                    $coveredDimensionSpacePoint,
-                                  NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
-                                  UserIdentifier                         $initiatingUserIdentifier
-    ): self
-    {
+    public static function create(
+        ContentStreamIdentifier                $contentStreamIdentifier,
+        NodeAggregateIdentifier                $nodeAggregateIdentifier,
+        DimensionSpacePoint                    $coveredDimensionSpacePoint,
+        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        UserIdentifier                         $initiatingUserIdentifier
+    ): self {
         return new self($contentStreamIdentifier, $nodeAggregateIdentifier, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy, $initiatingUserIdentifier);
     }
 
