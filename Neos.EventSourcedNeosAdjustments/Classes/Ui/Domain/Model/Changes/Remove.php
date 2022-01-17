@@ -80,14 +80,20 @@ class Remove extends AbstractChange
             // we have to schedule an the update workspace info before we actually delete the node; otherwise we cannot find the parent nodes anymore.
             $this->updateWorkspaceInfo();
 
+            $command = RemoveNodeAggregate::create(
+                $node->getContentStreamIdentifier(),
+                $node->getNodeAggregateIdentifier(),
+                $node->getDimensionSpacePoint(),
+                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                $this->getInitiatingUserIdentifier()
+            );
+            $closestDocumentParentNode = $this->closestDocumentParentNode($node);
+            if ($closestDocumentParentNode !== null) {
+                $command = $command->withRemovalAttachmentPoint($closestDocumentParentNode->getNodeAggregateIdentifier());
+            }
+
             $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(
-                new RemoveNodeAggregate(
-                    $node->getContentStreamIdentifier(),
-                    $node->getNodeAggregateIdentifier(),
-                    $node->getDimensionSpacePoint(),
-                    NodeVariantSelectionStrategyIdentifier::allSpecializations(),
-                    $this->getInitiatingUserIdentifier()
-                )
+                $command
             )->blockUntilProjectionsAreUpToDate();
 
             $removeNode = new RemoveNode($node, $parentNode);
@@ -107,5 +113,17 @@ class Remove extends AbstractChange
             $node->getDimensionSpacePoint(),
             $node->getVisibilityConstraints()
         )->findParentNode($node);
+    }
+
+    protected function closestDocumentParentNode(NodeInterface $node): ?NodeInterface
+    {
+        do {
+            $node = $this->findParentNode($node);
+            if ($node !== null && $node->getNodeType()->isOfType('Neos.Neos:Document')) {
+                return $node;
+            }
+        } while ($node !== null);
+
+        return null;
     }
 }

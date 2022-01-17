@@ -58,7 +58,7 @@ trait NodeRemoval
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();
 
-        $command = new RemoveNodeAggregate(
+        $command = RemoveNodeAggregate::create(
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
             $coveredDimensionSpacePoint,

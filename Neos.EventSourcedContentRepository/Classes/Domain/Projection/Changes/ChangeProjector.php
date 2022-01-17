@@ -129,7 +129,7 @@ class ChangeProjector implements ProjectorInterface
 
             foreach ($event->getAffectedOccupiedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $this->getDatabaseConnection()->executeUpdate(
-                    'INSERT INTO neos_contentrepository_projection_change (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint, originDimensionSpacePointHash, deleted, changed, moved)
+                    'INSERT INTO neos_contentrepository_projection_change (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint, originDimensionSpacePointHash, deleted, changed, moved, removalAttachmentPoint)
                         VALUES (
                             :contentStreamIdentifier,
                             :nodeAggregateIdentifier,
@@ -137,7 +137,8 @@ class ChangeProjector implements ProjectorInterface
                             :originDimensionSpacePointHash,
                             1,
                             0,
-                            0
+                            0,
+                            :removalAttachmentPoint
                         )
                     ',
                     [
@@ -145,6 +146,7 @@ class ChangeProjector implements ProjectorInterface
                         'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
                         'originDimensionSpacePoint' => json_encode($dimensionSpacePoint),
                         'originDimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                        'removalAttachmentPoint' => $event->getRemovalAttachmentPoint() !== null ? (string)$event->getRemovalAttachmentPoint() : null
                     ]
                 );
             }
