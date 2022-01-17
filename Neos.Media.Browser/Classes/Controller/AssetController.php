@@ -410,6 +410,12 @@ class AssetController extends ActionController
                     }
                 }
             }
+            // The variantsAction fetches the variants the same way, so having an originalAsset that is an instance of VariantSupportInterface should be sufficient
+            if ($assetProxy->getLocalAssetIdentifier() !== null) {
+                $asset = $this->persistenceManager->getObjectByIdentifier($assetProxy->getLocalAssetIdentifier(), Asset::class);
+                            /** @var VariantSupportInterface $originalAsset */
+                $originalAsset = ($asset instanceof AssetVariantInterface ? $asset->getOriginalAsset() : $asset);
+            }
 
             $this->view->assignMultiple([
                 'tags' => $tags,
@@ -417,7 +423,7 @@ class AssetController extends ActionController
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
                 'contentPreview' => $contentPreview,
                 'assetSource' => $assetSource,
-                'canShowVariants' => ($assetProxy instanceof NeosAssetProxy) && ($assetProxy->getAsset() instanceof VariantSupportInterface)
+                'canShowVariants' => isset($originalAsset) && ($originalAsset instanceof VariantSupportInterface)
             ]);
         } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
