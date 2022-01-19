@@ -41,13 +41,6 @@ class SearchOperation extends AbstractOperation
     protected static $priority = 110;
 
     /**
-     * {@inheritdoc}
-     *
-     * @var boolean
-     */
-    protected static $final = true;
-
-    /**
      * @Flow\Inject
      * @var NodeAccessorManager
      */
@@ -93,6 +86,6 @@ class SearchOperation extends AbstractOperation
             $this->nodeTypeConstraintFactory->parseFilterString($arguments[1] ?? ''),
             SearchTerm::fulltext($arguments[0] ?? '')
         );
-        $flowQuery->setContext($nodes);
+        $flowQuery->setContext(iterator_to_array($nodes));
     }
 }
