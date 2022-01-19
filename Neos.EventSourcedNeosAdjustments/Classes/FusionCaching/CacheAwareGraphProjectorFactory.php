@@ -122,5 +122,4 @@ class CacheAwareGraphProjectorFactory
     {
         $this->flushCache();
     }
-
 }
