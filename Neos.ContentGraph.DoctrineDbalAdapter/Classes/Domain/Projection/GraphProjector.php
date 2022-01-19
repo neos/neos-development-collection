@@ -40,6 +40,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\AbstractProcessedEventsAwareProjector;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
+use Neos\EventSourcing\EventStore\EventEnvelope;
+use Neos\EventSourcing\Projection\ProjectionManager;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -47,17 +50,20 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class GraphProjector extends AbstractProcessedEventsAwareProjector
+class GraphProjector extends AbstractProcessedEventsAwareProjector implements BeforeInvokeInterface
 {
     use RestrictionRelations;
     use NodeRemoval;
     use NodeMove;
+    use ProjectorEventHandlerTrait;
 
     const RELATION_DEFAULT_OFFSET = 128;
 
     protected ProjectionContentGraph $projectionContentGraph;
 
     private DbalClient $databaseClient;
+
+    private $doingFullReplayOfProjection = false;
 
     public function __construct(
         DbalClient $eventStorageDatabaseClient,
@@ -67,6 +73,17 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         $this->databaseClient = $eventStorageDatabaseClient;
         $this->projectionContentGraph = $projectionContentGraph;
         parent::__construct($eventStorageDatabaseClient, $processedEventsCache);
+    }
+
+    public function beforeInvoke(EventEnvelope $eventEnvelope): void
+    {
+        $this->triggerBeforeInvokeHandlers($eventEnvelope, $this->doingFullReplayOfProjection);
+    }
+
+    public function afterInvoke(EventEnvelope $eventEnvelope): void
+    {
+        $this->triggerAfterInvokeHandlers($eventEnvelope, $this->doingFullReplayOfProjection);
+        parent::afterInvoke($eventEnvelope);
     }
 
     /**
@@ -79,6 +96,14 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
         $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
         $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
+
+        /**
+         * Performance optimization: reset() is only called at the start of a {@see ProjectionManager::replay()}.
+         * In this case, we do not need to trigger cache flushes; so we need to remember here whether we run a full replay
+         * right now
+         */
+        $this->doingFullReplayOfProjection = true;
+        $this->assumeProjectorRunsSynchronously();
     }
 
     /**

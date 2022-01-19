@@ -75,7 +75,7 @@ class Remove extends AbstractChange
             $parentNode = $this->findParentNode($node);
 
             // we have to remember what parts of the content cache to flush before we actually delete the node; otherwise we cannot find the parent nodes anymore.
-            $this->contentCacheFlusher->registerNodeChange($node);
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($node->getContentStreamIdentifier(), $node->getNodeAggregateIdentifier());
 
             // we have to schedule an the update workspace info before we actually delete the node; otherwise we cannot find the parent nodes anymore.
             $this->updateWorkspaceInfo();
@@ -95,6 +95,7 @@ class Remove extends AbstractChange
             $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(
                 $command
             )->blockUntilProjectionsAreUpToDate();
+            $doFlushContentCache();
 
             $removeNode = new RemoveNode($node, $parentNode);
             $this->feedbackCollection->add($removeNode);

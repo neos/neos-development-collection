@@ -29,7 +29,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface
+final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
 {
     /**
      * The content stream identifier the node aggregate and its node were created in

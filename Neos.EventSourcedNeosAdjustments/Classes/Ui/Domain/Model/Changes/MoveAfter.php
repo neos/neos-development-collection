@@ -79,14 +79,18 @@ class MoveAfter extends AbstractStructuralChange
                 $this->getInitiatingUserIdentifier()
             );
 
-            $this->contentCacheFlusher->registerNodeChange($subject);
+            // we render content directly as response of this operation, so we need to flush the caches
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($subject->getContentStreamIdentifier(), $subject->getNodeAggregateIdentifier());
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)
                 ->blockUntilProjectionsAreUpToDate();
+            $doFlushContentCache();
+            if ($parentNodeOfPreviousSibling) {
+                $this->contentCacheFlusher->flushNodeAggregate($parentNodeOfPreviousSibling->getContentStreamIdentifier(), $parentNodeOfPreviousSibling->getNodeAggregateIdentifier());
 
-            $updateParentNodeInfo = new UpdateNodeInfo();
-            $updateParentNodeInfo->setNode($parentNodeOfPreviousSibling);
-
-            $this->feedbackCollection->add($updateParentNodeInfo);
+                $updateParentNodeInfo = new UpdateNodeInfo();
+                $updateParentNodeInfo->setNode($parentNodeOfPreviousSibling);
+                $this->feedbackCollection->add($updateParentNodeInfo);
+            }
 
             $removeNode = new RemoveNode($subject, $this->findParentNode($this->getSiblingNode()));
             $this->feedbackCollection->add($removeNode);
