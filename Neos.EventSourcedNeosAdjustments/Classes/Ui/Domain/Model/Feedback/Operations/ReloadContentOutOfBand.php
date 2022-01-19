@@ -175,7 +175,7 @@ class ReloadContentOutOfBand extends AbstractFeedback
             $this->getNode()->getDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         ));
-        $fusionView->setFusionPath($nodeDomAddress->getFusionPath());
+        $fusionView->setFusionPath($nodeDomAddress->getFusionPathForContentRendering());
 
         return $fusionView->render();
     }
