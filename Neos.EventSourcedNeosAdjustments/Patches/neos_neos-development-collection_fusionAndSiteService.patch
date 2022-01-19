@@ -56,14 +56,13 @@ index f0dc4bd8b..1e831ca3d 100644
          return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
      }
 diff --git a/Neos.Neos/Classes/Domain/Service/SiteService.php b/Neos.Neos/Classes/Domain/Service/SiteService.php
-index c9ab62afc..6047b7b84 100644
+index c9ab62afc..ae1bf4d51 100644
 --- a/Neos.Neos/Classes/Domain/Service/SiteService.php
 +++ b/Neos.Neos/Classes/Domain/Service/SiteService.php
-@@ -11,8 +11,10 @@ namespace Neos\Neos\Domain\Service;
-  * source code.
+@@ -12,7 +12,10 @@ namespace Neos\Neos\Domain\Service;
   */
  
--use Neos\ContentRepository\Domain\Model\NodeInterface;
+ use Neos\ContentRepository\Domain\Model\NodeInterface;
 +use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 +use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
  use Neos\Flow\Annotations as Flow;
@@ -71,7 +70,7 @@ index c9ab62afc..6047b7b84 100644
  use Neos\Flow\Persistence\PersistenceManagerInterface;
  use Neos\Media\Domain\Model\Asset;
  use Neos\Media\Domain\Repository\AssetCollectionRepository;
-@@ -53,6 +55,12 @@ class SiteService
+@@ -53,6 +56,12 @@ class SiteService
       */
      protected $siteRepository;
  
@@ -84,7 +83,7 @@ index c9ab62afc..6047b7b84 100644
      /**
       * @Flow\Inject
       * @var WorkspaceRepository
-@@ -117,17 +125,17 @@ class SiteService
+@@ -117,17 +126,17 @@ class SiteService
       * Note: This is usually triggered by the ContentController::assetUploaded signal
       *
       * @param Asset $asset
@@ -107,7 +106,7 @@ index c9ab62afc..6047b7b84 100644
          if ($site === null) {
              return;
          }
-@@ -136,7 +144,11 @@ class SiteService
+@@ -136,7 +145,11 @@ class SiteService
              return;
          }
          $assetCollection->addAsset($asset);
@@ -121,7 +120,7 @@ index c9ab62afc..6047b7b84 100644
  
      /**
 diff --git a/Neos.Neos/Classes/View/FusionView.php b/Neos.Neos/Classes/View/FusionView.php
-index 7af8ad843..6033412e7 100644
+index 7af8ad843..190244177 100644
 --- a/Neos.Neos/Classes/View/FusionView.php
 +++ b/Neos.Neos/Classes/View/FusionView.php
 @@ -12,6 +12,7 @@ namespace Neos\Neos\View;
@@ -132,8 +131,12 @@ index 7af8ad843..6033412e7 100644
  use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
  use Neos\Flow\Annotations as Flow;
  use Neos\Flow\Mvc\View\AbstractView;
-@@ -206,7 +207,7 @@ class FusionView extends AbstractView
-      * @param TraversableNodeInterface $currentSiteNode
+@@ -203,10 +204,10 @@ class FusionView extends AbstractView
+ 
+ 
+     /**
+-     * @param TraversableNodeInterface $currentSiteNode
++     * @param NodeInterface $currentSiteNode
       * @return \Neos\Fusion\Core\Runtime
       */
 -    protected function getFusionRuntime(TraversableNodeInterface $currentSiteNode)
