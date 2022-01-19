@@ -54,9 +54,11 @@ class CacheAwareGraphProjectorFactory
      */
     protected $queueName;
 
-    public function build(DbalClient             $eventStorageDatabaseClient,
-                          VariableFrontend       $processedEventsCache,
-                          ProjectionContentGraph $projectionContentGraph): GraphProjector
+    public function build(
+        DbalClient             $eventStorageDatabaseClient,
+        VariableFrontend       $processedEventsCache,
+        ProjectionContentGraph $projectionContentGraph
+    ): GraphProjector
     {
         $graphProjector = new GraphProjector($eventStorageDatabaseClient, $processedEventsCache, $projectionContentGraph);
         $graphProjector->onBeforeInvoke(function (EventEnvelope $eventEnvelope, bool $doingFullReplayOfProjection) {

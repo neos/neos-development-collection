@@ -38,7 +38,8 @@ trait ProjectorEventHandlerTrait
      * @param callable $handler ({@see EventEnvelope} $event, bool $doingFullReplayOfProjection)
      * @return void
      */
-    public function onBeforeInvoke(callable $handler): void {
+    public function onBeforeInvoke(callable $handler): void
+    {
         $this->beforeInvokeHandlers[] = $handler;
     }
 
@@ -46,7 +47,8 @@ trait ProjectorEventHandlerTrait
      * @param callable $handler ({@see EventEnvelope} $event, bool $doingFullReplayOfProjection)
      * @return void
      */
-    public function onAfterInvoke(callable $handler): void {
+    public function onAfterInvoke(callable $handler): void
+    {
         $this->afterInvokeHandlers[] = $handler;
     }
 
