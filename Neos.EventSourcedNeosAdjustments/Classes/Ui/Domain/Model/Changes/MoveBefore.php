@@ -66,7 +66,8 @@ class MoveBefore extends AbstractStructuralChange
 
             $hasEqualParentNode = $this->findParentNode($subject)->getNodeAggregateIdentifier()->equals($this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier());
 
-            $this->contentCacheFlusher->registerNodeChange($subject);
+            // we render content directly as response of this operation, so we need to flush the caches
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($subject->getContentStreamIdentifier(), $subject->getNodeAggregateIdentifier());
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
                 new MoveNodeAggregate(
                     $subject->getContentStreamIdentifier(),
@@ -79,11 +80,16 @@ class MoveBefore extends AbstractStructuralChange
                     $this->getInitiatingUserIdentifier()
                 )
             )->blockUntilProjectionsAreUpToDate();
+            $doFlushContentCache();
+            $parentOfSucceedingSibling = $this->findParentNode($succeedingSibling);
+            if ($parentOfSucceedingSibling) {
+                $this->contentCacheFlusher->flushNodeAggregate($parentOfSucceedingSibling->getContentStreamIdentifier(), $parentOfSucceedingSibling->getNodeAggregateIdentifier());
 
-            $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
-            $updateParentNodeInfo->setNode($this->findParentNode($succeedingSibling));
+                $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
+                $updateParentNodeInfo->setNode($parentOfSucceedingSibling);
 
-            $this->feedbackCollection->add($updateParentNodeInfo);
+                $this->feedbackCollection->add($updateParentNodeInfo);
+            }
 
             $removeNode = new RemoveNode($subject, $this->findParentNode($this->getSiblingNode()));
             $this->feedbackCollection->add($removeNode);

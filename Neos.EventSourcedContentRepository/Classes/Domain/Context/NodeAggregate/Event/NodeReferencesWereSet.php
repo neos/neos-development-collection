@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeReferencesWereSet implements DomainEventInterface, PublishableToOtherContentStreamsInterface
+final class NodeReferencesWereSet implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -87,5 +87,16 @@ final class NodeReferencesWereSet implements DomainEventInterface, PublishableTo
             $this->referenceName,
             $this->initiatingUserIdentifier
         );
+    }
+
+    /**
+     * this method is implemented for fulfilling the {@see EmbedsContentStreamAndNodeAggregateIdentifier} interface,
+     * needed for proper content cache flushing in Neos.
+     *
+     * @return NodeAggregateIdentifier
+     */
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        return $this->getSourceNodeAggregateIdentifier();
     }
 }

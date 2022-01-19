@@ -102,13 +102,14 @@ class CopyInto extends AbstractStructuralChange
                 NodeName::fromString(uniqid('node-'))
             );
 
-            $this->contentCacheFlusher->registerNodeChange($subject);
 
             $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
                 ->blockUntilProjectionsAreUpToDate();
 
             $parentNode = $this->getParentNode();
             $newlyCreatedNode = $this->nodeAccessorFor($parentNode)->findChildNodeConnectedThroughEdgeName($parentNode, $command->getTargetNodeName());
+            // we render content directly as response of this operation, so we need to flush the caches at the copy target
+            $this->contentCacheFlusher->flushNodeAggregate($newlyCreatedNode->getContentStreamIdentifier(), $newlyCreatedNode->getNodeAggregateIdentifier());
             $this->finish($newlyCreatedNode);
             // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed
             $this->addNodeCreatedFeedback($newlyCreatedNode);
