@@ -84,7 +84,7 @@ class Runtime
      *
      * @var array
      */
-    protected $currentContext = null;
+    protected $currentContext = [];
 
     /**
      * Reference to the current apply value
@@ -215,7 +215,7 @@ class Runtime
     public function popContext()
     {
         $lastItem = array_pop($this->contextStack);
-        $this->currentContext = end($this->contextStack);
+        $this->currentContext = empty($this->contextStack) ? [] : end($this->contextStack);
         return $lastItem;
     }
 

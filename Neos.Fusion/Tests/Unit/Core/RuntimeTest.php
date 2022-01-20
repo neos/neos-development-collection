@@ -125,4 +125,56 @@ class RuntimeTest extends UnitTestCase
 
         $runtime->render('/foo/bar');
     }
+
+    /**
+     * @test
+     */
+    public function runtimeCurrentContextStackWorksSimplePushPop()
+    {
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $runtime = new Runtime([], $controllerContext);
+
+        self::assertSame([], $runtime->getCurrentContext(), 'context should be empty at start.');
+
+        $runtime->pushContext('foo', 'bar');
+
+        self::assertSame(['foo' => 'bar'], $runtime->getCurrentContext(), 'Runtime context has "foo => bar".');
+
+        self::assertSame(['foo' => 'bar'], $runtime->popContext(), 'Runtime context returns "foo => bar" on pop.');
+
+        self::assertSame([], $runtime->getCurrentContext(), 'Runtime context should be empty again at end.');
+    }
+
+    /**
+     * @test
+     */
+    public function runtimeCurrentContextStack3PushesAndPops()
+    {
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $runtime = new Runtime([], $controllerContext);
+
+        self::assertSame([], $runtime->getCurrentContext(), 'empty at start');
+
+        $context1 = ['foo' => 'bar'];
+        $runtime->pushContext('foo', 'bar');
+        self::assertSame($context1, $runtime->getCurrentContext(), 'context1');
+
+        $context2 = ['foo' => 123, 'buz' => 'baz'];
+        $runtime->pushContextArray($context2);
+        self::assertSame($context2, $runtime->getCurrentContext(), 'context2 (which overrides the only key "foo" of context1)');
+
+        // $context3 = ['bla' => 456];
+        $all3MergedContext = ['foo' => 123, 'buz' => 'baz', 'bla' => 456];
+        $runtime->pushContext('bla', 456);
+        self::assertSame($all3MergedContext, $runtime->getCurrentContext(), 'context1 context2 context3');
+        self::assertSame($all3MergedContext, $runtime->popContext(), 'context1 context2 context3');
+
+        self::assertSame($context2, $runtime->getCurrentContext(), 'context2');
+        self::assertSame($context2, $runtime->popContext(), 'context2');
+
+        self::assertSame($context1, $runtime->getCurrentContext(), 'context1');
+        self::assertSame($context1, $runtime->popContext(), 'context1');
+
+        self::assertSame([], $runtime->getCurrentContext(), 'empty at end');
+    }
 }
