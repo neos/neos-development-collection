@@ -1,0 +1,63 @@
+`7.3.1 (2022-01-21) <https://github.com/neos/neos-development-collection/releases/tag/7.3.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fusion Runtime when no context is set, preparing it for Eel will fail <https://github.com/neos/neos-development-collection/pull/3549>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: `#3548 <https://github.com/neos/neos-development-collection/issues/3548>`_
+fixes: `#3556 <https://github.com/neos/neos-development-collection/issues/3556>`_
+
+added tests, that verify that the runtime context stack is working correctly.
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Update Noto Sans to latest version <https://github.com/neos/neos-development-collection/pull/3545>`_
+-------------------------------------------------------------------------------------------------------------
+
+We cannot use some accent signs with the font NotoSans. This has been fixed in the latest version of NotoSans. This change just updates the Font assets to the latest version of Noto fonts v20201206-phase3 as of 2020.12.06.
+
+
+**What I did**
+Replaced the Font assets to the latest version.
+
+**How to verify it**
+Go to a textfield in the backend module (e.g. the user management) and enter an accent like `
+
+Related to https://github.com/neos/neos-ui/issues/3006
+
+
+* Packages: ``Neos``
+
+`BUGFIX: move comment on @Flow\SkipCsrfProtection tag <https://github.com/neos/neos-development-collection/pull/3541>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When using Neos 7.2+ with the Flowpack.Neos.FrontendLogin package trying to login with a frontend leads to a CSRF protection error:
+
+``21-12-12 10:29:27 6580       DEBUG                          CSRF: token was empty but a valid token is required for Neos\\Neos\\Controller\\Frontend\\NodeController::showAction()``
+
+See `#2612 <https://github.com/neos/flow-development-collection/issues/2612>`_ – that discusses a change from Neos 7.1 to 7.2 where the tag changes in combination with a comment.
+
+This PR allows to use the FrontendLogin again.
+
+
+* Packages: ``Neos``
+
+`TASK: Add documentation of range slider <https://github.com/neos/neos-development-collection/pull/3537>`_
+----------------------------------------------------------------------------------------------------------
+
+Add documentation  for newly added range slider https://github.com/neos/neos-ui/pull/2986
+
+* Packages: ``Neos``
+
+`TASK: Adds 7.3.0 changelog <https://github.com/neos/neos-development-collection/pull/3535>`_
+---------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.3.0...7.3.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
