@@ -11,6 +11,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\Proxy\Compiler;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 use Neos\Utility\Exception\InvalidPositionException;
@@ -38,7 +39,7 @@ class DataStructureImplementation extends AbstractArrayFusionObject
         $result = [];
         foreach ($sortedChildFusionKeys as $key) {
             $propertyPath = $key;
-            if ($this->fusionObjectName === 'Neos.Fusion:DataStructure'
+            if ($this->isImplementationDataStructureImplementation()
                 && $this->isUntypedProperty($this->properties[$key])) {
                 $propertyPath .= '<Neos.Fusion:DataStructure>';
             }
@@ -102,5 +103,16 @@ class DataStructureImplementation extends AbstractArrayFusionObject
         unset($keysToIdentifyTypedProperty['__meta']);
 
         return array_intersect_key($keysToIdentifyTypedProperty, $property) === [];
+    }
+
+    /**
+     * Checks if the current instance (static) is really this very class (ignore proxy building)
+     * (fx. returns false, when this class was further inherited.)
+     *
+     */
+    private function isImplementationDataStructureImplementation(): bool
+    {
+        $classNameOfUnproxiedDataStructureImplementation = preg_replace('/' . Compiler::ORIGINAL_CLASSNAME_SUFFIX .  '$/', '', self::class);
+        return $classNameOfUnproxiedDataStructureImplementation === static::class;
     }
 }
