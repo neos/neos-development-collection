@@ -38,7 +38,8 @@ class DataStructureImplementation extends AbstractArrayFusionObject
         $result = [];
         foreach ($sortedChildFusionKeys as $key) {
             $propertyPath = $key;
-            if ($this->isUntypedProperty($this->properties[$key])) {
+            if ($this->fusionObjectName === 'Neos.Fusion:DataStructure'
+                && $this->isUntypedProperty($this->properties[$key])) {
                 $propertyPath .= '<Neos.Fusion:DataStructure>';
             }
             try {
