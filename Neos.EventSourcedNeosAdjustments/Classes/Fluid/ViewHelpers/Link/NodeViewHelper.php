@@ -187,6 +187,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     public function render(): string
     {
         $node = $this->arguments['node'];
+        if (!$node instanceof NodeInterface) {
+            $node = $this->getContextVariable($this->arguments['baseNodeName']);
+        }
         $nodeAddress = null;
 
         if ($node instanceof NodeInterface) {
