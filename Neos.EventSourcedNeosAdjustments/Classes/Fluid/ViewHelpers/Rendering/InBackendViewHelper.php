@@ -37,13 +37,24 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 class InBackendViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
-     * @param NodeInterface $node
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('node', NodeInterface::class, 'Node');
+    }
+
+    /**
      * @return boolean
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(NodeInterface $node = null)
+    public function render()
     {
-        $nodeAddress = $this->getNodeAddressOfContextNode($node);
+        $nodeAddress = $this->getNodeAddressOfContextNode($this->arguments['node']);
         return (!$nodeAddress->isInLiveWorkspace() && $this->hasAccessToBackend());
     }
 }

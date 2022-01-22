@@ -39,13 +39,25 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 class LiveViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('node', NodeInterface::class, 'Node');
+    }
+
+    /**
      * @param NodeInterface|null $node
      * @return boolean
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(?NodeInterface $node = null)
+    public function render()
     {
-        $nodeAddress = $this->getNodeAddressOfContextNode($node);
+        $nodeAddress = $this->getNodeAddressOfContextNode($this->arguments['node']);
         return $nodeAddress->isInLiveWorkspace();
     }
 }
