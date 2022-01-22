@@ -70,6 +70,12 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Discard Current Page                      |   ✅     |   ✅          |
 | Change node type in UI                    |   ✅     |   ✅          |
 
+## Package Compatibility
+
+- *Flowpack.NodeTemplates* is currently NOT supported because it works heavily with stateful Node objects.
+  In principle, it can be possible to build an API-compatible version based on the ES CR, by providing a "Node" shim
+  object.
+
 ## Requirements
 
 ### DB
