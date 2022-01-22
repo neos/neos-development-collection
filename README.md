@@ -16,14 +16,14 @@ This is the package bundle you can install alongside a plain Neos to play around
 | ----------------------------------------- |:----------:|:----------------:|
 | **Basics**                                |            |                  |
 | Create/ Edit / Delete Nodes               |     ✅     |        ✅        |
-| Shortcut Handling                         |     ✅     |        ⏩        |
+| Shortcut Handling                         |     ✅     |        ✅        |
 | Query Nodes                               |     ✅     |        ✅        |
 | Cut / Copy / Paste                        |     ✅     |        ✅        |
 | Move Nodes                                |     ✅     |        ✅        |
 | Hide Nodes                                |     ✅     |        ✅        |
 | History                                   |    (✅)    |                  |
 | Basic Workspaces                          |     ✅     |        ✅        |
-| Workspace Module                          |     ✅     |         ⏩       |
+| Workspace Module                          |     ✅     |         ✅       |
 | Nested Workspaces                         |     ✅     |                  |
 | Undo / Redo                               |     🚫     |                  |
 | Setting Start / End time                  |     ✅     |                  |
@@ -62,7 +62,7 @@ This is the package bundle you can install alongside a plain Neos to play around
 | content merge conflict detection          |    🚫      |       ✅   |
 | content merge conflict resolution         |    🚫      |       ⏩   |
 | **User Interface**                        |            |                  |
-| Ensure node deletion can be published in UI    |   ✅     |                |
+| Ensure node deletion can be published in UI    |   ✅     |     ✅          |
 | Support Dimension Constraints             |   ✅     |               |
 | Publish Workspace                         |   ✅     |   ✅         |
 | Publish Current Page                      |   ✅     |   ✅          |
