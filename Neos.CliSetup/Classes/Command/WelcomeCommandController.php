@@ -52,7 +52,7 @@ class WelcomeCommandController extends CommandController
             3. Configure the image handler:
                <info>./flow setup:imagehandler</info>
             4. Create an admin user:
-               <info>./flow user:create --roles Administrator admin admin Admin User </info>
+               <info>./flow user:create --roles Administrator username password firstname lastname </info>
             5. Create your own site package or require an existing one (choose one option):
                - <info>./flow kickstart:site Vendor.Site</info>
                - <info>composer require neos/demo && ./flow flow:package:rescan</info>
