@@ -1,6 +1,5 @@
-prototype(Neos.Fusion:Match) {
-  @class = 'Neos\\Fusion\\FusionObjects\\MatchImplementation'
-}
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
+prototype(Neos.Fusion:Match).@class = 'Neos\\Fusion\\FusionObjects\\MatchImplementation'
 
 match.empty = Neos.Fusion:Match {
   @subject = ''
@@ -26,4 +25,11 @@ match.errorWithoutMatch = Neos.Fusion:Match {
   @subject = 'foo'
   left = 'module--left'
   right = 'module--right'
+}
+
+match.defaultDataStructure = Neos.Fusion:Match {
+  @subject = 'foo'
+  @default = Neos.Fusion:DataStructure {
+    key = 'value'
+  }
 }
