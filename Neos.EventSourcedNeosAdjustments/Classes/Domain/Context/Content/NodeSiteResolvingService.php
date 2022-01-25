@@ -43,7 +43,7 @@ class NodeSiteResolvingService
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $nodeAddress->getContentStreamIdentifier(),
             $nodeAddress->getDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions()
+            $nodeAddress->isInLiveWorkspace() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions()
         );
         $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
         $previousNode = null;

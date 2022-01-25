@@ -298,8 +298,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         do {
             $shouldContinueTraversal = $callback($node);
-            // TODO: FIX visibility constraints
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getVisibilityConstraints());
             $node = $nodeAccessor->findParentNode($node);
         } while ($shouldContinueTraversal !== false && $node !== null);
     }

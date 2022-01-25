@@ -103,8 +103,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     private function findRootNode(NodeInterface $node): NodeInterface
     {
         while (true) {
-            // TODO: FIX visibility constraints
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getVisibilityConstraints());
             $parentNode = $nodeAccessor->findParentNode($node);
             if ($parentNode === null) {
                 // there is no parent, so the root node was the node before
@@ -118,8 +117,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     private function findNodeByPath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
     {
         foreach ($nodePath->getParts() as $nodeName) {
-            // TODO: FIX visibility constraints
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getVisibilityConstraints());
             $childNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($node, $nodeName);
             if ($childNode === null) {
                 // we cannot find the child node, so there is no node on this path
