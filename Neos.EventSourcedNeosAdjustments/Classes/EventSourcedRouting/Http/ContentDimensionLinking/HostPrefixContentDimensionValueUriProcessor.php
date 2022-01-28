@@ -34,7 +34,7 @@ final class HostPrefixContentDimensionValueUriProcessor implements ContentDimens
         array $overrideOptions = null
     ): Routing\Dto\UriConstraints {
         $prefixesToBeReplaced = [];
-        foreach ($contentDimension->getValues() as $availableContentDimensionValue) {
+        foreach ($contentDimension->values as $availableContentDimensionValue) {
             $resolutionValue = $availableContentDimensionValue->getConfigurationValue('resolution.value');
             if ($resolutionValue) {
                 $prefixesToBeReplaced[] = $resolutionValue;

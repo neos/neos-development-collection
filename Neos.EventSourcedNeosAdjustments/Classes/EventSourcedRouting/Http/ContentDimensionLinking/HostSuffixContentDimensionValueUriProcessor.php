@@ -34,7 +34,7 @@ final class HostSuffixContentDimensionValueUriProcessor implements ContentDimens
         array $overrideOptions = null
     ): Routing\Dto\UriConstraints {
         $hostSuffixesToBeReplaced = [];
-        foreach ($contentDimension->getValues() as $availableDimensionValue) {
+        foreach ($contentDimension->values as $availableDimensionValue) {
             $resolutionValue = $availableDimensionValue->getConfigurationValue('resolution.value');
             if ($resolutionValue) {
                 $hostSuffixesToBeReplaced[] = $resolutionValue;

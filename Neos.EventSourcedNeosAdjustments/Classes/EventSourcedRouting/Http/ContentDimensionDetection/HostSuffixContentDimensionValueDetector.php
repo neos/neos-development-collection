@@ -30,7 +30,7 @@ final class HostSuffixContentDimensionValueDetector implements ContentDimensionV
     {
         $host = $request->getUri()->getHost();
         $hostLength = mb_strlen($host);
-        foreach ($contentDimension->getValues() as $contentDimensionValue) {
+        foreach ($contentDimension->values as $contentDimensionValue) {
             $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value');
             $pivot = $hostLength - mb_strlen($resolutionValue);
 

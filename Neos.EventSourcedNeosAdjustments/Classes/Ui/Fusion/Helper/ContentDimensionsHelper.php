@@ -45,18 +45,18 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
 
         $result = [];
         foreach ($dimensions as $dimension) {
-            $result[(string)$dimension->getIdentifier()] = [
+            $result[(string)$dimension->identifier] = [
                 'label' => $dimension->getConfigurationValue('label'),
                 'icon' => $dimension->getConfigurationValue('icon'),
 
-                'default' => $dimension->getDefaultValue()->getValue(),
-                'defaultPreset' => $dimension->getDefaultValue()->getValue(),
+                'default' => $dimension->defaultValue->value,
+                'defaultPreset' => $dimension->defaultValue->value,
                 'presets' => []
             ];
 
-            foreach ($dimension->getValues() as $value) {
+            foreach ($dimension->values as $value) {
                 // TODO: make certain values hidable
-                $result[(string)$dimension->getIdentifier()]['presets'][$value->getValue()] = [
+                $result[(string)$dimension->identifier]['presets'][$value->value] = [
                     // TODO: name, uriSegment!
                     'values' => [$value->getValue()],
                     'label' => $value->getConfigurationValue('label')
@@ -78,7 +78,7 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
             $dimension = $this->contentDimensionSource->getDimension(new ContentDimensionIdentifier($dimensionName));
             $value = $dimension->getValue($dimensionValue);
             if ($value !== null) {
-                $allowedPresets[$dimensionName] = array_keys($dimension->getValues());
+                $allowedPresets[$dimensionName] = array_keys($dimension->values->values);
             }
         }
 

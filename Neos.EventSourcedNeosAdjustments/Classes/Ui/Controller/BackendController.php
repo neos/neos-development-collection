@@ -216,7 +216,7 @@ class BackendController extends ActionController
     {
         $coordinates = [];
         foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $dimension) {
-            $coordinates[(string)$dimension->getIdentifier()] = (string)$dimension->getDefaultValue();
+            $coordinates[(string)$dimension->identifier] = (string)$dimension->defaultValue;
         }
 
         return DimensionSpacePoint::instance($coordinates);

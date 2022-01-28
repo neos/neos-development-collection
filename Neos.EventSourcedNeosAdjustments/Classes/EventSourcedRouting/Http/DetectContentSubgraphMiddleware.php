@@ -119,7 +119,7 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
                 $allowEmptyValue = ($detectorOverrideOptions['allowEmptyValue'] ?? false)
                     || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $this->supportEmptySegmentForDimensions;
                 if ($allowEmptyValue || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $path === '/') {
-                    $coordinates[$rawDimensionIdentifier] = (string)$contentDimension->getDefaultValue();
+                    $coordinates[$rawDimensionIdentifier] = (string)$contentDimension->defaultValue;
                 }
             }
         }

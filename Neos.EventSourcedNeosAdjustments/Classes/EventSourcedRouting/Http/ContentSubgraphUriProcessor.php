@@ -80,7 +80,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
                     if (!isset($resolutionOptions['offset'])) {
                         $resolutionOptions['offset'] = $uriPathSegmentOffset;
                     }
-                    if ($contentDimensionValue !== $contentDimension->getDefaultValue()) {
+                    if ($contentDimensionValue->value !== $contentDimension->defaultValue->value) {
                         $allUriPathSegmentDetectableDimensionPresetsAreDefault = false;
                     }
                     $uriPathSegmentOffset++;

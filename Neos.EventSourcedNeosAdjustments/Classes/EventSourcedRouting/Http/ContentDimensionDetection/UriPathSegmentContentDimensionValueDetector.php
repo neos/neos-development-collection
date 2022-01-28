@@ -53,7 +53,7 @@ final class UriPathSegmentContentDimensionValueDetector implements ContentDimens
             }
             $detectedValue = $detectedValues[$options['offset']];
 
-            foreach ($contentDimension->getValues() as $contentDimensionValue) {
+            foreach ($contentDimension->values as $contentDimensionValue) {
                 $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value');
                 if ($resolutionValue === $detectedValue) {
                     return $contentDimensionValue;

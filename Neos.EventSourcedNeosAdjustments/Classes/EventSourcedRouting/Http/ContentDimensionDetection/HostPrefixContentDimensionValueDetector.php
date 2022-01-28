@@ -29,7 +29,7 @@ final class HostPrefixContentDimensionValueDetector implements ContentDimensionV
     public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue
     {
         $host = $request->getUri()->getHost();
-        foreach ($contentDimension->getValues() as $contentDimensionValue) {
+        foreach ($contentDimension->values as $contentDimensionValue) {
             $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value');
             if ($resolutionValue) {
                 if (mb_substr($host, 0, mb_strlen($resolutionValue)) === $resolutionValue) {

@@ -36,14 +36,14 @@ final class ContentDimensionValueDetectorResolver
                 $detector = new $detectorClassName();
                 if (!$detector instanceof ContentDimensionValueDetectorInterface) {
                     throw new Exception\InvalidContentDimensionValueDetectorException(
-                        '"' . $detectorClassName . '", configured as content dimension value detector for content dimension "' . $contentDimension->getIdentifier() . '", does not implement ' . ContentDimensionValueDetectorInterface::class . '. Please check your dimension configuration.',
+                        '"' . $detectorClassName . '", configured as content dimension value detector for content dimension "' . $contentDimension->identifier . '", does not implement ' . ContentDimensionValueDetectorInterface::class . '. Please check your dimension configuration.',
                         1510826082
                     );
                 }
                 return $detector;
             } else {
                 throw new Exception\InvalidContentDimensionValueDetectorException(
-                    'Could not resolve dimension preset detection component for dimension "' . $contentDimension->getIdentifier() . '". Please check your dimension configuration.',
+                    'Could not resolve dimension preset detection component for dimension "' . $contentDimension->identifier . '". Please check your dimension configuration.',
                     1510750184
                 );
             }

@@ -35,7 +35,7 @@ final class BackendUriContentDimensionValueDetector implements ContentDimensionV
             $path = mb_substr($path, 0, mb_strrpos($path, '.'));
         }
         $nodePathAndContext = WorkspaceNameAndDimensionSpacePointForUriSerialization::fromBackendUri($path);
-        $detectedValue = $nodePathAndContext->getDimensionSpacePoint()->getCoordinate($contentDimension->getIdentifier());
+        $detectedValue = $nodePathAndContext->getDimensionSpacePoint()->getCoordinate($contentDimension->identifier);
 
         return $detectedValue
             ? $contentDimension->getValue($detectedValue)

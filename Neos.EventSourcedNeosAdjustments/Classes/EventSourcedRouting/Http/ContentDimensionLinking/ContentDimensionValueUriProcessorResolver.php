@@ -45,7 +45,7 @@ final class ContentDimensionValueUriProcessorResolver
                 return $linkProcessor;
             } else {
                 throw new Exception\InvalidContentDimensionValueUriProcessorException(
-                    'Could not resolve dimension preset detection component for dimension "' . $contentDimension->getIdentifier() . '". Class "' . $linkProcessorClassName . '" does not exist. Please check your dimension configuration.',
+                    'Could not resolve dimension preset detection component for dimension "' . $contentDimension->identifier . '". Class "' . $linkProcessorClassName . '" does not exist. Please check your dimension configuration.',
                     1510839089
                 );
             }
