@@ -39,20 +39,20 @@ abstract class FusionTestCase extends TestCase implements ProtectedContextAwareI
      */
     abstract public static function getFixturesRootFusion(): string;
 
-    public function generateTestCasesFromFusionAst()
+    public function generateTestCasesFromFusionAst(): \Generator
     {
         $fusion = file_get_contents(static::getFixturesRootFusion());
 
         $parsedFusion = (new Parser())->parse($fusion, static::getFixturesRootFusion());
 
-        yield from GenerateTestCases::buildFromFirstLevelFusionTestObjects($parsedFusion);
+        yield from GenerateTestCases::generateFromFirstLevelFusionPaths($parsedFusion);
     }
 
     /**
      * @dataProvider generateTestCasesFromFusionAst
      * @test
      */
-    public function execute(string $fusionRenderPath, ?string $beforeHookPath, ?string $afterHookPath)
+    public function execute(string $fusionRenderPath, ?string $beforeHookPath, ?string $afterHookPath): void
     {
         TestCaseRunner::assertFusionRendersAsExpected($this, static::getFixturesRootFusion(), $fusionRenderPath, $beforeHookPath, $afterHookPath);
     }

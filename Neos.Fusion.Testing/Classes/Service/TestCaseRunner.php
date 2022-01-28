@@ -25,7 +25,7 @@ class TestCaseRunner
         $view->assign('self', $testCase);
         $view->assign('view', $view);
 
-        // @before eel hook
+        // @beforeRender eel hook
         if (isset($beforeHookPath)) {
             $view->setFusionPath($beforeHookPath);
             $view->render();
@@ -36,7 +36,7 @@ class TestCaseRunner
 
         $view->assign('result', $result);
 
-        // @after eel hook
+        // @afterRender eel hook
         if (isset($afterHookPath)) {
             $view->setFusionPath($afterHookPath);
             $view->render();

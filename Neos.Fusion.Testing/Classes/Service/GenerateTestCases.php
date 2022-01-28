@@ -13,7 +13,7 @@ class GenerateTestCases
     protected const BEFORE_RENDERER_HOOK_KEY = 'beforeRender';
     protected const AFTER_RENDERER_HOOK_KEY = 'afterRender';
 
-    public static function buildFromFirstLevelFusionTestObjects(array $fusionAst): \Generator
+    public static function generateFromFirstLevelFusionPaths(array $fusionAst): \Generator
     {
         foreach ($fusionAst as $testCasePath => $testCaseAst) {
 
@@ -34,18 +34,18 @@ class GenerateTestCases
              */
 
             ['__meta' => [
-                self::TEST_KEY => $testConfigurationScenarios,
-                self::FUSION_KEY => $testConfigurationProvider
+                self::TEST_KEY => $testConfigurationTestScenario,
+                self::FUSION_KEY => $testConfigurationFusionProvider
             ]] = $testCaseAst;
 
             $providerFusionPaths = [];
-            foreach ($testConfigurationProvider as $providerName => $_) {
+            foreach ($testConfigurationFusionProvider as $providerName => $_) {
                 $providerFusionPaths[$providerName] = "$testCasePath/__meta/" . self::FUSION_KEY . "/$providerName";
             }
 
-            foreach ($testConfigurationScenarios as $scenario => ['__meta' => $scenarioConfiguration]) {
+            foreach ($testConfigurationTestScenario as $testScenario => ['__meta' => $scenarioConfiguration]) {
 
-                $scenarioConfigurationFusionPath = "$testCasePath/__meta/" . self::TEST_KEY . "/$scenario/__meta";
+                $scenarioConfigurationFusionPath = "$testCasePath/__meta/" . self::TEST_KEY . "/$testScenario/__meta";
 
                 $beforeHookFusionPath = isset($scenarioConfiguration[self::BEFORE_RENDERER_HOOK_KEY])
                     ? $scenarioConfigurationFusionPath . '/' . self::BEFORE_RENDERER_HOOK_KEY
@@ -56,7 +56,7 @@ class GenerateTestCases
                     : null;
 
                 foreach ($providerFusionPaths as $providerName => $fusionPath) {
-                    yield "$testCasePath with: " . self::TEST_KEY . "[$scenario] " . self::FUSION_KEY . "[$providerName]" => [
+                    yield "$testCasePath with: " . self::TEST_KEY . "[$testScenario] " . self::FUSION_KEY . "[$providerName]" => [
                         $fusionPath,
                         $beforeHookFusionPath,
                         $afterHookFusionPath

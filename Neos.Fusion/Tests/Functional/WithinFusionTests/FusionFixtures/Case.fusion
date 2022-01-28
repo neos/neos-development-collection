@@ -1,95 +1,97 @@
 prototype(Neos.Fusion:Case).@class = 'Neos\\Fusion\\FusionObjects\\CaseImplementation'
 prototype(Neos.Fusion:Matcher).@class = 'Neos\\Fusion\\FusionObjects\\MatcherImplementation'
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
-//
-//caseTest.assertMatchingWorks {
-//  @scenario.condTrue {
-//    @before = ${ view.assignMultiple({cond: true}) }
-//    @after = ${ self.assertSame(actual, 'Xtestconditiontrue') }
-//  }
-//
-//  @scenario.condFalse {
-//    @before = ${ view.assign('cond', false) }
-//    @after = ${ self.assertSame(actual, 'Xtestconditionfalse') }
-//  }
-//}
-//
-//caseTest.assertMatchingWorks.@provider.numericMatching = Neos.Fusion:Case {
-//  100.condition = ${true}
-//  100.type = 'Neos.Fusion:Case.Test1'
-//
-//  20.condition = ${cond}
-//  20.type = 'Neos.Fusion:Case.Test2'
-//}
-//
-//caseTest.assertMatchingWorks.@provider.positionalMatching = Neos.Fusion:Case {
-//  foo.condition = ${true}
-//  foo.type = 'Neos.Fusion:Case.Test1'
-//  foo.@position = 'end'
-//
-//  z.condition = ${cond}
-//  z.type = 'Neos.Fusion:Case.Test2'
-//}
-//
-//prototype(Neos.Fusion:Case.Test1) < prototype(Neos.Fusion:TestRenderer) {
-//  test = 'testconditionfalse'
-//}
-//
-//prototype(Neos.Fusion:Case.Test2) < prototype(Neos.Fusion:TestRenderer) {
-//  test = 'testconditiontrue'
-//}
-//
-//caseTest.assertMatchingWorks.@provider.renderPath = Neos.Fusion:Case {
-//  foo.condition = ${cond}
-//  foo.renderPath = '/renderPathRenderer/true'
-//
-//  default.condition = ${true}
-//  default.renderPath = '/renderPathRenderer/false'
-//  default.@position = 'end'
-//}
-//
-//caseTest.assertMatchingWorks.@provider.renderPathWillWin = Neos.Fusion:Case {
-//  foo.type = 'Neos.Fusion:Case.Test1'
-//
-//  foo.condition = ${cond}
-//  foo.renderPath = '/renderPathRenderer/true'
-//
-//  default.condition = ${true}
-//  default.renderPath = '/renderPathRenderer/false'
-//  default.@position = 'end'
-//}
-//
-//renderPathRenderer.false = Neos.Fusion:Case.Test1
-//renderPathRenderer.true = Neos.Fusion:Case.Test2
-//
-//caseTest.assertMatchingWorks.@provider.ignoredPropertiesAreIgnored = Neos.Fusion:Case {
-//  @ignoreProperties = ${[1]}
-//
-//  1 = Neos.Fusion:TestRenderer {
-//    test = 'somethingwhichshallnotbeshown'
-//  }
-//
-//  100.condition = ${true}
-//  100.type = 'Neos.Fusion:Case.Test1'
-//
-//  20.condition = ${cond}
-//  20.type = 'Neos.Fusion:Case.Test2'
-//}
-//
-//caseTest.assertMatchingWorks.@provider.renderer = Neos.Fusion:Case {
-//  foo.condition = ${cond}
-//  foo.renderer = Neos.Fusion:TestRenderer {
-//    test = 'testconditiontrue'
-//  }
-//
-//  default.condition = ${true}
-//  default.renderer = Neos.Fusion:TestRenderer {
-//    test = 'testconditionfalse'
-//  }
-//  default.@position = 'end'
-//}
-//
-//caseTest.assertMatchingWorks.@provider.rendererWithType < caseTest.assertMatchingWorks.@provider.renderer {
-//  foo.type = 'Neos.Fusion:Case.Test1'
-//  default.type = 'Neos.Fusion:Case.Test1'
-//}
+
+prototype(Neos.Fusion:Case.Test1) < prototype(Neos.Fusion:TestRenderer) {
+  test = 'testconditionfalse'
+}
+
+prototype(Neos.Fusion:Case.Test2) < prototype(Neos.Fusion:TestRenderer) {
+  test = 'testconditiontrue'
+}
+
+renderPathRenderer.false = Neos.Fusion:Case.Test1
+renderPathRenderer.true = Neos.Fusion:Case.Test2
+
+case_assert_matching_works_test {
+
+  // setup and hooks, for cond = true
+  @test.condTrue {
+    @beforeRender = ${ view.assignMultiple({cond: true}) }
+    @afterRender = ${ self.assertSame(result, 'Xtestconditiontrue') }
+  }
+
+  @test.condFalse {
+    @beforeRender = ${ view.assign('cond', false) }
+    @afterRender = ${ self.assertSame(result, 'Xtestconditionfalse') }
+  }
+
+  @fusion.numericMatching = Neos.Fusion:Case {
+    100.condition = ${true}
+    100.type = 'Neos.Fusion:Case.Test1'
+
+    20.condition = ${cond}
+    20.type = 'Neos.Fusion:Case.Test2'
+  }
+
+  @fusion.positionalMatching = Neos.Fusion:Case {
+    foo.condition = ${true}
+    foo.type = 'Neos.Fusion:Case.Test1'
+    foo.@position = 'end'
+
+    z.condition = ${cond}
+    z.type = 'Neos.Fusion:Case.Test2'
+  }
+
+  @fusion.renderPath = Neos.Fusion:Case {
+    foo.condition = ${cond}
+    foo.renderPath = '/renderPathRenderer/true'
+
+    default.condition = ${true}
+    default.renderPath = '/renderPathRenderer/false'
+    default.@position = 'end'
+  }
+
+  @fusion.renderPathWillWin = Neos.Fusion:Case {
+    foo.type = 'Neos.Fusion:Case.Test1'
+
+    foo.condition = ${cond}
+    foo.renderPath = '/renderPathRenderer/true'
+
+    default.condition = ${true}
+    default.renderPath = '/renderPathRenderer/false'
+    default.@position = 'end'
+  }
+
+  @fusion.ignoredPropertiesAreIgnored = Neos.Fusion:Case {
+    @ignoreProperties = ${[1]}
+
+    1 = Neos.Fusion:TestRenderer {
+      test = 'somethingwhichshallnotbeshown'
+    }
+
+    100.condition = ${true}
+    100.type = 'Neos.Fusion:Case.Test1'
+
+    20.condition = ${cond}
+    20.type = 'Neos.Fusion:Case.Test2'
+  }
+
+  @fusion.renderer = Neos.Fusion:Case {
+    foo.condition = ${cond}
+    foo.renderer = Neos.Fusion:TestRenderer {
+      test = 'testconditiontrue'
+    }
+
+    default.condition = ${true}
+    default.renderer = Neos.Fusion:TestRenderer {
+      test = 'testconditionfalse'
+    }
+    default.@position = 'end'
+  }
+
+  @fusion.rendererWithType < .@fusion.renderer {
+    foo.type = 'Neos.Fusion:Case.Test1'
+    default.type = 'Neos.Fusion:Case.Test1'
+  }
+}
