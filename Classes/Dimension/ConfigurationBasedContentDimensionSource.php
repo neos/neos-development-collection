@@ -15,10 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 use Neos\ContentRepository\Domain\Model\InterDimension\VariationEdge;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The configuration based content dimension source
  */
+#[Flow\Proxy(false)]
 final class ConfigurationBasedContentDimensionSource implements ContentDimensionSourceInterface
 {
     const CONSTRAINT_IDENTIFIER_WILDCARD = '*';
@@ -26,12 +28,12 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     /**
      * @var array<string,mixed>
      */
-    protected array $dimensionConfiguration;
+    private array $dimensionConfiguration;
 
     /**
      * @var array<string,ContentDimension>
      */
-    protected ?array $contentDimensions = null;
+    private ?array $contentDimensions = null;
 
     /**
      * @param array<string,mixed> $dimensionConfiguration
@@ -45,7 +47,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
      * @throws Exception\ContentDimensionIdentifierIsInvalid
      * @throws Exception\ContentDimensionValueIsInvalid
      * @throws Exception\ContentDimensionValueSpecializationDepthIsInvalid
-     * @throws Exception\ContentDimensionValuesAreMissing
+     * @throws Exception\ContentDimensionValuesAreInvalid
      * @throws Exception\ContentDimensionDefaultValueIsMissing
      */
     protected function initializeDimensions(): void
@@ -83,7 +85,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
 
                 $this->contentDimensions[$rawDimensionIdentifier] = new ContentDimension(
                     $dimensionIdentifier,
-                    $values,
+                    new ContentDimensionValues($values),
                     $values[$dimensionConfiguration['defaultValue']],
                     new ContentDimensionValueVariationEdges($variationEdges),
                     $additionalConfiguration
@@ -152,7 +154,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
      * @throws Exception\ContentDimensionIdentifierIsInvalid
      * @throws Exception\ContentDimensionValueIsInvalid
      * @throws Exception\ContentDimensionValueSpecializationDepthIsInvalid
-     * @throws Exception\ContentDimensionValuesAreMissing
+     * @throws Exception\ContentDimensionValuesAreInvalid
      * @throws Exception\ContentDimensionDefaultValueIsMissing
      */
     public function getDimension(ContentDimensionIdentifier $dimensionIdentifier): ?ContentDimension
@@ -169,7 +171,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
      * @throws Exception\ContentDimensionIdentifierIsInvalid
      * @throws Exception\ContentDimensionValueIsInvalid
      * @throws Exception\ContentDimensionValueSpecializationDepthIsInvalid
-     * @throws Exception\ContentDimensionValuesAreMissing
+     * @throws Exception\ContentDimensionValuesAreInvalid
      * @throws Exception\ContentDimensionDefaultValueIsMissing
      */
     public function getContentDimensionsOrderedByPriority(): array

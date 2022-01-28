@@ -15,23 +15,23 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionIdentifierIsInvalid;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The content dimension identifier value object
  */
-final class ContentDimensionIdentifier implements \JsonSerializable
+#[Flow\Proxy(false)]
+final class ContentDimensionIdentifier implements \JsonSerializable, \Stringable
 {
-    public readonly string $identifier;
-
     /**
      * @throws ContentDimensionIdentifierIsInvalid
      */
-    public function __construct(string $identifier)
-    {
+    public function __construct(
+        public readonly string $identifier
+    ) {
         if (empty($identifier)) {
             throw ContentDimensionIdentifierIsInvalid::becauseItMustNotBeEmpty();
         }
-        $this->identifier = $identifier;
     }
 
     public function equals(ContentDimensionIdentifier $other): bool

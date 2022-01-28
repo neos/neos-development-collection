@@ -26,11 +26,11 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
  * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
  */
 #[Flow\Proxy(false)]
-class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
+class DimensionSpacePoint implements \JsonSerializable, \Stringable, CacheAwareInterface, ProtectedContextAwareInterface
 {
     private static array $instances = [];
 
-    private function __construct(
+    protected function __construct(
         /**
          * @var array<string,string>
          */
@@ -41,7 +41,7 @@ class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, Pro
     /**
      * @param array<string,string> $coordinates
      */
-    public static function instance(array $coordinates): self
+    public static function instance(array $coordinates): static
     {
         $identityComponents = $coordinates;
         ksort($identityComponents);

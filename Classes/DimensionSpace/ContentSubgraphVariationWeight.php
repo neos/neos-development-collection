@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The value object describing the weight of a variation edge between subgraphs A and B
@@ -29,18 +30,15 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
  *
  * @see Dimension\ContentDimensionValueSpecializationDepth
  */
-final class ContentSubgraphVariationWeight implements \JsonSerializable
+#[Flow\Proxy(false)]
+final class ContentSubgraphVariationWeight implements \JsonSerializable, \Stringable
 {
-    /**
-     * @var array<string,Dimension\ContentDimensionValueSpecializationDepth>
-     */
-    public readonly array $weight;
-
-    /**
-     * @param array<string,Dimension\ContentDimensionValueSpecializationDepth> $weight
-     */
-    public function __construct(array $weight)
-    {
+    public function __construct(
+        /**
+         * @var array<string,Dimension\ContentDimensionValueSpecializationDepth>
+         */
+        public readonly array $weight
+    ) {
         foreach ($weight as $dimensionIdentifier => $specializationDepth) {
             if (!$specializationDepth instanceof Dimension\ContentDimensionValueSpecializationDepth) {
                 throw new \InvalidArgumentException(
@@ -49,7 +47,6 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable
                 );
             }
         }
-        $this->weight = $weight;
     }
 
     public function getWeightInDimension(

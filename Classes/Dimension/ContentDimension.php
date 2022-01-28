@@ -14,23 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValuesAreMissing;
 use Neos\Utility\Arrays;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The content dimension domain model
  */
+#[Flow\Proxy(false)]
 final class ContentDimension
 {
-    public readonly ContentDimensionIdentifier $identifier;
-
-    /**
-     * An array of dimension values, indexed by their identifiers
-     *
-     * @var array<string,ContentDimensionValue>
-     */
-    public readonly array $values;
-
     /**
      * all Content Dimension Values indexed by "specialization", so
      * you can answer questions like "what's the next-most generic value for the given value"
@@ -49,43 +41,17 @@ final class ContentDimension
      */
     public readonly array $specializations;
 
-    public readonly ContentDimensionValue $defaultValue;
-
     /**
-     * General configuration like UI, detection etc.
-     * @var array<string,mixed>
-     */
-    public readonly array $configuration;
-
-    public readonly ContentDimensionValueSpecializationDepth $maximumDepth;
-
-    /**
-     * @param array<string,ContentDimensionValue> $values
      * @param array<string,mixed> $configuration
-     * @throws ContentDimensionValuesAreMissing
      */
     public function __construct(
-        ContentDimensionIdentifier $identifier,
-        array $values,
-        ContentDimensionValue $defaultValue,
+        public readonly ContentDimensionIdentifier $identifier,
+        public readonly ContentDimensionValues $values,
+        public readonly ContentDimensionValue $defaultValue,
         ContentDimensionValueVariationEdges $variationEdges,
-        array $configuration = []
+        /** General configuration like UI, detection etc. */
+        public readonly array $configuration = []
     ) {
-        if (empty($values)) {
-            throw ContentDimensionValuesAreMissing::inADimension($identifier);
-        }
-        $this->identifier = $identifier;
-        $maximumDepth = ContentDimensionValueSpecializationDepth::zero();
-        $dimensionValues = [];
-        foreach ($values as $value) {
-            $dimensionValues[(string)$value] = $value;
-            if ($value->specializationDepth->isGreaterThan($maximumDepth)) {
-                $maximumDepth = $value->specializationDepth;
-            }
-        }
-        $this->maximumDepth = $maximumDepth;
-        $this->defaultValue = $defaultValue;
-        $this->values = $dimensionValues;
         $generalizations = [];
         $specializations = [];
         foreach ($variationEdges as $variationEdge) {
@@ -94,12 +60,11 @@ final class ContentDimension
         }
         $this->generalizations = $generalizations;
         $this->specializations = $specializations;
-        $this->configuration = $configuration;
     }
 
     public function getValue(string $value): ?ContentDimensionValue
     {
-        return $this->values[$value] ?? null;
+        return $this->values->getValue($value);
     }
 
     /**
@@ -107,9 +72,7 @@ final class ContentDimension
      */
     public function getRootValues(): array
     {
-        return array_filter($this->values, function (ContentDimensionValue $dimensionValue) {
-            return $dimensionValue->specializationDepth->isZero();
-        });
+        return $this->values->getRootValues();
     }
 
     public function getGeneralization(ContentDimensionValue $dimensionValue): ?ContentDimensionValue
@@ -164,5 +127,10 @@ final class ContentDimension
         $configuration = $this->configuration;
 
         return Arrays::getValueByPath($configuration, $path);
+    }
+
+    public function getMaximumDepth(): ContentDimensionValueSpecializationDepth
+    {
+        return $this->values->maximumDepth;
     }
 }

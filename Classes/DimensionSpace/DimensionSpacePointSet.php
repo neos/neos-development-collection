@@ -22,7 +22,7 @@ use Neos\Flow\Annotations as Flow;
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
  */
 #[Flow\Proxy(false)]
-final class DimensionSpacePointSet implements \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable
+final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
      * @var array<string,DimensionSpacePoint>

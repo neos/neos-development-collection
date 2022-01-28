@@ -13,43 +13,31 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Content dimension constraints across multiple dimensions
  */
+#[Flow\Proxy(false)]
 final class ContentDimensionConstraints
 {
-    /**
-     * if TRUE, the logic is "all allowed, except..." (blacklist approach).
-     * if FALSE, the logic is "nothing allowed, except..." (whitelist approach).
-     */
-    public readonly bool $isWildcardAllowed;
-
-    /**
-     * An array of identifier restrictions, defined via value => bool, e.g.
-     * [
-     *      'foo' => true,
-     *      'bar' => false
-     * ]
-     *
-     * @var array<string,bool>
-     */
-    public readonly array $identifierRestrictions;
-
     public function __construct(
-        bool $wildcardAllowed = true,
-        array $identifierRestrictions = []
+        /**
+         * if TRUE, the logic is "all allowed, except..." (blacklist approach).
+         * if FALSE, the logic is "nothing allowed, except..." (whitelist approach).
+         */
+        public readonly bool $isWildcardAllowed = true,
+        /**
+         * An array of identifier restrictions, defined via value => bool, e.g.
+         * [
+         *      'foo' => true,
+         *      'bar' => false
+         * ]
+         *
+         * @var array<string,bool>
+         */
+        public readonly array $identifierRestrictions = []
     ) {
-        $this->isWildcardAllowed = $wildcardAllowed;
-        $this->identifierRestrictions = $identifierRestrictions;
-    }
-
-    /**
-     * @return array<string,bool>
-     */
-    public function getIdentifierRestrictions(): array
-    {
-        return $this->identifierRestrictions;
     }
 
     public function allowsCombinationWith(ContentDimensionValue $dimensionValue): bool

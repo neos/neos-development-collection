@@ -13,10 +13,12 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A set of content dimension value variation edges
  */
+#[Flow\Proxy(false)]
 final class ContentDimensionValueVariationEdges implements \IteratorAggregate
 {
     /**

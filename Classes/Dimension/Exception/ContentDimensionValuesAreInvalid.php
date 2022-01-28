@@ -14,18 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
-
 /**
- * The exception to be thrown if content dimension values are missing
+ * The exception to be thrown if content dimension values are tried to be initialized empty
  */
-class ContentDimensionValuesAreMissing extends \DomainException
+class ContentDimensionValuesAreInvalid extends \DomainException
 {
-    public static function inADimension(ContentDimensionIdentifier $dimensionIdentifier): self
+    public static function becauseTheyMustNotBeEmpty(): self
     {
         return new self(
-            'Content dimension ' . $dimensionIdentifier . ' does not have any values defined',
-            1516576422
+            'Content dimension values must not be empty.',
+            1643367405
         );
     }
 }

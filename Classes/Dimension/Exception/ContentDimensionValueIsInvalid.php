@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\DimensionSpace\Dimension\Exception;
  */
 class ContentDimensionValueIsInvalid extends \DomainException
 {
-    public static function becauseItMustNoteBeEmpty(): self
+    public static function becauseItMustNotBeEmpty(): self
     {
         return new self('Content dimension values must not be empty.', 1516573481);
     }

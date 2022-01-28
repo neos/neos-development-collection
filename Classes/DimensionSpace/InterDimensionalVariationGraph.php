@@ -15,11 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The inter dimensional variation graph domain model
  * Represents the specialization and generalization mechanism between dimension space points
  */
+#[Flow\Proxy(false)]
 class InterDimensionalVariationGraph
 {
     /**
@@ -128,7 +130,7 @@ class InterDimensionalVariationGraph
         if (is_null($this->weightNormalizationBase)) {
             $base = 0;
             foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
-                $base = max($base, $contentDimension->maximumDepth->depth + 1);
+                $base = max($base, $contentDimension->getMaximumDepth()->depth + 1);
             }
 
             $this->weightNormalizationBase = $base;

@@ -15,43 +15,31 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueIsInvalid;
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
 /**
  * A content dimension value in a single ContentDimension; e.g. the value "de" in the dimension "language".
  */
-final class ContentDimensionValue
+#[Flow\Proxy(false)]
+final class ContentDimensionValue implements \Stringable
 {
-    public readonly string $value;
-
-    public readonly ContentDimensionValueSpecializationDepth $specializationDepth;
-
-    public readonly ContentDimensionConstraintSet $constraints;
-
     /**
-     * General configuration like UI, detection etc.
-     *
-     * @var array<string,mixed>
-     */
-    public readonly array $configuration;
-
-    /**
-     * @param array<string,mixed> $configuration
      * @throws ContentDimensionValueIsInvalid
      */
     public function __construct(
-        string $value,
-        ContentDimensionValueSpecializationDepth $specializationDepth = null,
-        ContentDimensionConstraintSet $constraints = null,
-        array $configuration = []
+        public readonly string $value,
+        public readonly ContentDimensionValueSpecializationDepth $specializationDepth = new ContentDimensionValueSpecializationDepth(0),
+        public readonly ContentDimensionConstraintSet $constraints = new ContentDimensionConstraintSet([]),
+        /**
+         * General configuration like UI, detection etc.
+         * @var array<string,mixed>
+         */
+        public readonly array $configuration = []
     ) {
         if (empty($value)) {
-            throw ContentDimensionValueIsInvalid::becauseItMustNoteBeEmpty();
+            throw ContentDimensionValueIsInvalid::becauseItMustNotBeEmpty();
         }
-        $this->value = $value;
-        $this->specializationDepth = $specializationDepth ?: new ContentDimensionValueSpecializationDepth(0);
-        $this->constraints = $constraints ?: ContentDimensionConstraintSet::createEmpty();
-        $this->configuration = $configuration;
     }
 
     public function getConstraints(ContentDimensionIdentifier $dimensionIdentifier): ?ContentDimensionConstraints

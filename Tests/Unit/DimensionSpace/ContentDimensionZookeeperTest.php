@@ -20,15 +20,9 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class ContentDimensionZookeeperTest extends UnitTestCase
 {
-    /**
-     * @var DimensionSpace\ContentDimensionZookeeper
-     */
-    protected $subject;
+    protected ?DimensionSpace\ContentDimensionZookeeper $subject;
 
-    /**
-     * @var Fixtures\ExampleDimensionSource
-     */
-    protected $dimensionSource;
+    protected ?Fixtures\ExampleDimensionSource $dimensionSource;
 
     protected function setUp(): void
     {

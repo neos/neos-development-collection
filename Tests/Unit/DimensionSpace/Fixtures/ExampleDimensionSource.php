@@ -32,7 +32,7 @@ class ExampleDimensionSource implements Dimension\ContentDimensionSourceInterfac
                 'market' => new Dimension\ContentDimensionConstraints()
             ])
         );
-        $languageValues = [
+        $languageValues = new Dimension\ContentDimensionValues([
             'de' => new Dimension\ContentDimensionValue(
                 'de',
                 new Dimension\ContentDimensionValueSpecializationDepth(0),
@@ -65,7 +65,7 @@ class ExampleDimensionSource implements Dimension\ContentDimensionSourceInterfac
                     ])
                 ])
             )
-        ];
+        ]);
 
         $luxembourg = new Dimension\ContentDimensionValue(
             'LU',
@@ -78,7 +78,7 @@ class ExampleDimensionSource implements Dimension\ContentDimensionSourceInterfac
                 ])
             ])
         );
-        $marketValues = [
+        $marketValues = new Dimension\ContentDimensionValues([
             'CH' => new Dimension\ContentDimensionValue(
                 'CH',
                 new Dimension\ContentDimensionValueSpecializationDepth(0),
@@ -91,7 +91,7 @@ class ExampleDimensionSource implements Dimension\ContentDimensionSourceInterfac
                 ])
             ),
             'LU' => $luxembourg
-        ];
+        ]);
 
         $this->dimensions = [
             'market' => new Dimension\ContentDimension(

@@ -22,10 +22,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class ContentSubgraphVariationWeightTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
-    public function canBeComparedToReturnsTrueForEmptyComponents()
+    public function testCanBeComparedToReturnsTrueForEmptyComponents()
     {
         $weight = new DimensionSpace\ContentSubgraphVariationWeight([]);
         $weightToBeCompared = new DimensionSpace\ContentSubgraphVariationWeight([]);
@@ -33,10 +30,7 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
         $this->assertTrue($weight->canBeComparedTo($weightToBeCompared));
     }
 
-    /**
-     * @test
-     */
-    public function canBeComparedToReturnsTrueForSameComponents()
+    public function testCanBeComparedToReturnsTrueForSameComponents()
     {
         $weight = new DimensionSpace\ContentSubgraphVariationWeight([
             'dimensionA' => new Dimension\ContentDimensionValueSpecializationDepth(0),
@@ -50,10 +44,7 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
         $this->assertTrue($weight->canBeComparedTo($weightToBeCompared));
     }
 
-    /**
-     * @test
-     */
-    public function canBeComparedToReturnsFalseForDifferentComponents()
+    public function testCanBeComparedToReturnsFalseForDifferentComponents()
     {
         $weight = new DimensionSpace\ContentSubgraphVariationWeight([
             'dimensionA' => new Dimension\ContentDimensionValueSpecializationDepth(0),
@@ -67,10 +58,7 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
         $this->assertFalse($weight->canBeComparedTo($weightToBeCompared));
     }
 
-    /**
-     * @test
-     */
-    public function decreaseByThrowsExceptionForIncomparableWeights()
+    public function testDecreaseByThrowsExceptionForIncomparableWeights()
     {
         $this->expectException(ContentSubgraphVariationWeightsAreIncomparable::class);
         $weight = new DimensionSpace\ContentSubgraphVariationWeight([
@@ -85,10 +73,7 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
         $weight->decreaseBy($weightToDecreaseBy);
     }
 
-    /**
-     * @test
-     */
-    public function decreaseByThrowsExceptionForComponentsGreaterThanTheOriginal()
+    public function testDecreaseByThrowsExceptionForComponentsGreaterThanTheOriginal()
     {
         $this->expectException(ContentDimensionValueSpecializationDepthIsInvalid::class);
         $weight = new DimensionSpace\ContentSubgraphVariationWeight([
@@ -104,10 +89,9 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws ContentSubgraphVariationWeightsAreIncomparable
      */
-    public function decreaseByCorrectlyDecreasesEachComponent()
+    public function testDecreaseByCorrectlyDecreasesEachComponent()
     {
         $weight = new DimensionSpace\ContentSubgraphVariationWeight([
             'dimensionA' => new Dimension\ContentDimensionValueSpecializationDepth(3),
@@ -128,18 +112,20 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @dataProvider normalizationProvider
      * @param int $weightNormalizationBase
      * @param DimensionSpace\ContentSubgraphVariationWeight $weight
      * @param int $expectedNormalizedWeight
      */
-    public function normalizeCorrectlyCalculatesNormalizedWeight(int $weightNormalizationBase, DimensionSpace\ContentSubgraphVariationWeight $weight, int $expectedNormalizedWeight)
+    public function testNormalizeCorrectlyCalculatesNormalizedWeight(int $weightNormalizationBase, DimensionSpace\ContentSubgraphVariationWeight $weight, int $expectedNormalizedWeight)
     {
         $this->assertSame($expectedNormalizedWeight, $weight->normalize($weightNormalizationBase));
     }
 
-    public function normalizationProvider()
+    /**
+     * @return array<int,mixed>
+     */
+    public function normalizationProvider(): array
     {
         return [
             [

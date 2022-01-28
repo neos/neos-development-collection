@@ -616,7 +616,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $firstDummy = new Dimension\ContentDimensionValue('firstDummy', $firstDepth);
         $firstDimension = new Dimension\ContentDimension(
             new Dimension\ContentDimensionIdentifier('first'),
-            [$firstDummy],
+            new Dimension\ContentDimensionValues([$firstDummy]),
             $firstDummy,
             Dimension\ContentDimensionValueVariationEdges::createEmpty()
         );
@@ -625,7 +625,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $secondDummy = new Dimension\ContentDimensionValue('secondDummy', $secondDepth);
         $secondDimension = new Dimension\ContentDimension(
             new Dimension\ContentDimensionIdentifier('second'),
-            [$secondDummy],
+            new Dimension\ContentDimensionValues([$secondDummy]),
             $secondDummy,
             Dimension\ContentDimensionValueVariationEdges::createEmpty()
         );

@@ -13,10 +13,12 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A directed edge connecting two dimension space points declaring them specialization and generalization
  */
+#[Flow\Proxy(false)]
 final class ContentDimensionValueVariationEdge
 {
     public function __construct(

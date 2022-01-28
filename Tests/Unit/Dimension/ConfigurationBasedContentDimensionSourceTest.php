@@ -269,11 +269,11 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
 
         $this->assertEquals(
             new Dimension\ContentDimensionValueSpecializationDepth(1),
-            $dimensionA->maximumDepth
+            $dimensionA->getMaximumDepth()
         );
         $this->assertEquals(
             new Dimension\ContentDimensionValueSpecializationDepth(0),
-            $dimensionB->maximumDepth
+            $dimensionB->getMaximumDepth()
         );
     }
 

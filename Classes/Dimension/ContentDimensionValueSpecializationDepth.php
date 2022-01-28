@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The value object describing the specialization depth between two content dimension values
@@ -25,19 +26,18 @@ use Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionVa
  *   1 --> │   │
  *         C ──┘
  */
-final class ContentDimensionValueSpecializationDepth implements \JsonSerializable
+#[Flow\Proxy(false)]
+final class ContentDimensionValueSpecializationDepth implements \JsonSerializable, \Stringable
 {
-    public readonly int $depth;
-
     /**
      * @throws ContentDimensionValueSpecializationDepthIsInvalid
      */
-    public function __construct(int $depth)
-    {
+    public function __construct(
+        public readonly int $depth
+    ) {
         if ($depth < 0) {
             throw ContentDimensionValueSpecializationDepthIsInvalid::becauseItMustBeNonNegative($depth);
         }
-        $this->depth = $depth;
     }
 
     public static function zero(): self
@@ -68,5 +68,10 @@ final class ContentDimensionValueSpecializationDepth implements \JsonSerializabl
     public function jsonSerialize(): int
     {
         return $this->depth;
+    }
+
+    public function __toString(): string
+    {
+        return (string)$this->depth;
     }
 }
