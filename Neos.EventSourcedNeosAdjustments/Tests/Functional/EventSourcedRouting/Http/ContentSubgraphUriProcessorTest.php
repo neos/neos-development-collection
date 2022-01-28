@@ -13,6 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Tests\Functional\EventSourcedRouting\
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraints;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSet;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
@@ -38,18 +40,19 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $world = new ContentDimensionValue('WORLD', null, [], ['resolution' => ['value' => '.com']]);
-        $greatBritain = new ContentDimensionValue('GB', new ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => '.co.uk']]);
-        $germany = new ContentDimensionValue('DE', new ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => '.de']]);
+        $emptyConstraints = new ContentDimensionConstraintSet([]);
+        $world = new ContentDimensionValue('WORLD', null, $emptyConstraints, ['resolution' => ['value' => '.com']]);
+        $greatBritain = new ContentDimensionValue('GB', new ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => '.co.uk']]);
+        $germany = new ContentDimensionValue('DE', new ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => '.de']]);
 
-        $defaultSeller = new ContentDimensionValue('default', null, [], ['resolution' => ['value' => 'default']]);
-        $sellerA = new ContentDimensionValue('sellerA', new ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'sellerA']]);
+        $defaultSeller = new ContentDimensionValue('default', null, $emptyConstraints, ['resolution' => ['value' => 'default']]);
+        $sellerA = new ContentDimensionValue('sellerA', new ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => 'sellerA']]);
 
-        $defaultChannel = new ContentDimensionValue('default', null, [], ['resolution' => ['value' => 'default']]);
-        $channelA = new ContentDimensionValue('channelA', new ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'channelA']]);
+        $defaultChannel = new ContentDimensionValue('default', null, $emptyConstraints, ['resolution' => ['value' => 'default']]);
+        $channelA = new ContentDimensionValue('channelA', new ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => 'channelA']]);
 
-        $english = new ContentDimensionValue('en', null, [], ['resolution' => ['value' => '']]);
-        $german = new ContentDimensionValue('de', null, [], ['resolution' => ['value' => 'de.']]);
+        $english = new ContentDimensionValue('en', null, $emptyConstraints, ['resolution' => ['value' => '']]);
+        $german = new ContentDimensionValue('de', null, $emptyConstraints, ['resolution' => ['value' => 'de.']]);
 
         $contentDimensions = [
             'market' => new ContentDimension(

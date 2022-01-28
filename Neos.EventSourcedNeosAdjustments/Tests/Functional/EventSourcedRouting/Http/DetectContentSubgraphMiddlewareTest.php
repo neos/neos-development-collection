@@ -16,6 +16,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException;
 use Neos\Flow\Http;
@@ -43,18 +44,19 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $world = new Dimension\ContentDimensionValue('WORLD', null, [], ['resolution' => ['value' => 'com']]);
-        $greatBritain = new Dimension\ContentDimensionValue('GB', new Dimension\ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'co.uk']]);
-        $germany = new Dimension\ContentDimensionValue('DE', new Dimension\ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'de']]);
+        $emptyConstraints = new ContentDimensionConstraintSet([]);
+        $world = new Dimension\ContentDimensionValue('WORLD', null, $emptyConstraints, ['resolution' => ['value' => 'com']]);
+        $greatBritain = new Dimension\ContentDimensionValue('GB', new Dimension\ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => 'co.uk']]);
+        $germany = new Dimension\ContentDimensionValue('DE', new Dimension\ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => 'de']]);
 
-        $defaultSeller = new Dimension\ContentDimensionValue('default', null, [], ['resolution' => ['value' => 'default']]);
-        $sellerA = new Dimension\ContentDimensionValue('sellerA', new Dimension\ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'sellerA']]);
+        $defaultSeller = new Dimension\ContentDimensionValue('default', null, $emptyConstraints, ['resolution' => ['value' => 'default']]);
+        $sellerA = new Dimension\ContentDimensionValue('sellerA', new Dimension\ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => 'sellerA']]);
 
-        $defaultChannel = new Dimension\ContentDimensionValue('default', null, [], ['resolution' => ['value' => 'default']]);
-        $channelA = new Dimension\ContentDimensionValue('channelA', new Dimension\ContentDimensionValueSpecializationDepth(1), [], ['resolution' => ['value' => 'channelA']]);
+        $defaultChannel = new Dimension\ContentDimensionValue('default', null, $emptyConstraints, ['resolution' => ['value' => 'default']]);
+        $channelA = new Dimension\ContentDimensionValue('channelA', new Dimension\ContentDimensionValueSpecializationDepth(1), $emptyConstraints, ['resolution' => ['value' => 'channelA']]);
 
-        $english = new Dimension\ContentDimensionValue('en', null, [], ['resolution' => ['value' => 'en']]);
-        $german = new Dimension\ContentDimensionValue('de', null, [], ['resolution' => ['value' => 'de']]);
+        $english = new Dimension\ContentDimensionValue('en', null, $emptyConstraints, ['resolution' => ['value' => 'en']]);
+        $german = new Dimension\ContentDimensionValue('de', null, $emptyConstraints, ['resolution' => ['value' => 'de']]);
 
         $contentDimensions = [
             'market' => new Dimension\ContentDimension(
