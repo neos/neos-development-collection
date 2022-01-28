@@ -18,6 +18,7 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionConstraintSe
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValues;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueSpecializationDepth;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdge;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdges;
@@ -134,7 +135,7 @@ trait NodeOperationsTrait
                 }
                 $dimensions[$row['Identifier']] = new ContentDimension(
                     new ContentDimensionIdentifier($row['Identifier']),
-                    $dimensionValues,
+                    new ContentDimensionValues($dimensionValues),
                     $dimensionValues[$row['Default']],
                     new ContentDimensionValueVariationEdges($variationEdges),
                     $dimensionConfiguration

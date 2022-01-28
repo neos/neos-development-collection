@@ -59,16 +59,12 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         $contentDimensions = [
             'market' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('market'),
-                [
-                    $world->value => $world,
-                    $greatBritain->value => $greatBritain,
-                    $germany->value => $germany
-                ],
+                new Dimension\ContentDimensionValues([$world, $greatBritain, $germany]),
                 $world,
-                [
+                new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($greatBritain, $world),
                     new Dimension\ContentDimensionValueVariationEdge($germany, $world)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX
@@ -77,14 +73,11 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             ),
             'seller' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('seller'),
-                [
-                    $defaultSeller->value => $defaultSeller,
-                    $sellerA->value => $sellerA
-                ],
+                new Dimension\ContentDimensionValues([$defaultSeller, $sellerA]),
                 $defaultSeller,
-                [
+                new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($sellerA, $defaultSeller)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'options' => [
@@ -95,14 +88,11 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             ),
             'channel' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('channel'),
-                [
-                    $defaultChannel->value => $defaultChannel,
-                    $channelA->value => $channelA
-                ],
+                new Dimension\ContentDimensionValues([$defaultChannel, $channelA]),
                 $defaultChannel,
-                [
+                new Dimension\ContentDimensionValueVariationEdges([
                     new Dimension\ContentDimensionValueVariationEdge($channelA, $defaultChannel)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'options' => [
@@ -113,12 +103,9 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             ),
             'language' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('language'),
-                [
-                    $english->value => $english,
-                    $german->value => $german
-                ],
+                new Dimension\ContentDimensionValues([$english, $german]),
                 $english,
-                [],
+                new Dimension\ContentDimensionValueVariationEdges([]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX,

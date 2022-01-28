@@ -16,8 +16,10 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValues;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueSpecializationDepth;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdge;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdges;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -52,16 +54,12 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
         $contentDimensions = [
             'market' => new ContentDimension(
                 new ContentDimensionIdentifier('market'),
-                [
-                    $world->value => $world,
-                    $greatBritain->value => $greatBritain,
-                    $germany->value => $germany
-                ],
+                new ContentDimensionValues([$world, $greatBritain, $germany]),
                 $world,
-                [
+                new ContentDimensionValueVariationEdges([
                     new ContentDimensionValueVariationEdge($greatBritain, $world),
                     new ContentDimensionValueVariationEdge($germany, $world)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX
@@ -70,14 +68,11 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             ),
             'seller' => new ContentDimension(
                 new ContentDimensionIdentifier('seller'),
-                [
-                    $defaultSeller->value => $defaultSeller,
-                    $sellerA->value => $sellerA
-                ],
+                new ContentDimensionValues([$defaultSeller, $sellerA]),
                 $defaultSeller,
-                [
+                new ContentDimensionValueVariationEdges([
                     new ContentDimensionValueVariationEdge($sellerA, $defaultSeller)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT,
@@ -89,14 +84,11 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             ),
             'channel' => new ContentDimension(
                 new ContentDimensionIdentifier('channel'),
-                [
-                    $defaultChannel->value => $defaultChannel,
-                    $channelA->value => $channelA
-                ],
+                new ContentDimensionValues([$defaultChannel, $channelA]),
                 $defaultChannel,
-                [
+                new ContentDimensionValueVariationEdges([
                     new ContentDimensionValueVariationEdge($channelA, $defaultChannel)
-                ],
+                ]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT,
@@ -108,12 +100,9 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             ),
             'language' => new ContentDimension(
                 new ContentDimensionIdentifier('language'),
-                [
-                    $english->value => $english,
-                    $german->value => $german
-                ],
+                new ContentDimensionValues([$english, $german]),
                 $english,
-                [],
+                new ContentDimensionValueVariationEdges([]),
                 [
                     'resolution' => [
                         'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX,
