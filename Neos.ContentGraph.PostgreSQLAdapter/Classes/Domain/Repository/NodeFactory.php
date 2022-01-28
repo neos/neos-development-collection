@@ -155,14 +155,14 @@ final class NodeFactory
             if (!empty($nodeRow['nodename']) && is_null($nodeName)) {
                 $nodeName = NodeName::fromString($nodeRow['nodename']);
             }
-            $occupiedDimensionSpacePoints[$node->getOriginDimensionSpacePoint()->getHash()] = $node->getOriginDimensionSpacePoint();
-            $nodesByOccupiedDimensionSpacePoint[$node->getOriginDimensionSpacePoint()->getHash()] = $node;
+            $occupiedDimensionSpacePoints[$node->getOriginDimensionSpacePoint()->hash] = $node->getOriginDimensionSpacePoint();
+            $nodesByOccupiedDimensionSpacePoint[$node->getOriginDimensionSpacePoint()->hash] = $node;
 
             $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
-            $coverageByOccupant[$node->getOriginDimensionSpacePoint()->getHash()][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
-            $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->getHash()] = $node;
-            $occupationByCovered[$coveredDimensionSpacePoint->getHash()] = $node->getOriginDimensionSpacePoint();
+            $coverageByOccupant[$node->getOriginDimensionSpacePoint()->hash][$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
+            $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
+            $nodesByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->hash] = $node;
+            $occupationByCovered[$coveredDimensionSpacePoint->hash] = $node->getOriginDimensionSpacePoint();
             if (isset($nodeRow['disableddimensionspacepointhash']) && $nodeRow['disableddimensionspacepointhash']) {
                 $disabledDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']] = $coveredDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']];
             }
@@ -241,14 +241,14 @@ final class NodeFactory
             } else {
                 $nodeNames[$key] = null;
             }
-            $occupiedDimensionSpacePoints[$key][$node->getOriginDimensionSpacePoint()->getHash()] = $node->getOriginDimensionSpacePoint();
-            $nodesByOccupiedDimensionSpacePoint[$key][$node->getOriginDimensionSpacePoint()->getHash()] = $node;
+            $occupiedDimensionSpacePoints[$key][$node->getOriginDimensionSpacePoint()->hash] = $node->getOriginDimensionSpacePoint();
+            $nodesByOccupiedDimensionSpacePoint[$key][$node->getOriginDimensionSpacePoint()->hash] = $node;
 
             $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
-            $coveredDimensionSpacePoints[$key][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
-            $coverageByOccupant[$key][$node->getOriginDimensionSpacePoint()->getHash()][$coveredDimensionSpacePoint->getHash()] = $coveredDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePoint[$key][$coveredDimensionSpacePoint->getHash()] = $node;
-            $occupationByCovered[$key][$coveredDimensionSpacePoint->getHash()] = $node->getOriginDimensionSpacePoint();
+            $coveredDimensionSpacePoints[$key][$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
+            $coverageByOccupant[$key][$node->getOriginDimensionSpacePoint()->hash][$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
+            $nodesByCoveredDimensionSpacePoint[$key][$coveredDimensionSpacePoint->hash] = $node;
+            $occupationByCovered[$key][$coveredDimensionSpacePoint->hash] = $node->getOriginDimensionSpacePoint();
             if (!isset($disabledDimensionSpacePoints[$key])) {
                 $disabledDimensionSpacePoints[$key] = [];
             }

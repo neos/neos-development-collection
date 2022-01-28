@@ -115,7 +115,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
+            'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
             'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier
         ];
 
@@ -168,7 +168,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->getHash(),
+            'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
             'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier
         ];
 
@@ -312,7 +312,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'parentNodeAnchor' => (string)$parentNodeAnchor
         ];
 
@@ -339,7 +339,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'childNodeAnchor' => (string)$childNodeAnchor
         ];
 
@@ -394,7 +394,7 @@ final class ProjectionHypergraph
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash
         ];
 
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
@@ -518,7 +518,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
         ];
 

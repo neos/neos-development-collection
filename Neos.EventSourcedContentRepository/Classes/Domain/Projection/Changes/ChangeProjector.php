@@ -165,8 +165,8 @@ class ChangeProjector implements ProjectorInterface
                       AND c.contentStreamIdentifier = :contentStreamIdentifier
                       ',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
+                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
                     'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
                 ]
@@ -247,7 +247,7 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
             [
                 'contentStreamIdentifier' => $contentStreamIdentifier,
                 'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
-                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash()
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
         )->fetch();
 

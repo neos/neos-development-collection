@@ -59,7 +59,7 @@ WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
     AND desth.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = $this->parameters;
-        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->getHash();
+        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
         return new self($query, $parameters, $this->types);
     }

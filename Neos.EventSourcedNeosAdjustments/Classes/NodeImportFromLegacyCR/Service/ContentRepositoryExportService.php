@@ -465,7 +465,7 @@ class ContentRepositoryExportService
         }
 
         while ($dimensionSpacePoint !== null) {
-            $key = strtolower($parentPath) . '__' . $dimensionSpacePoint->getHash();
+            $key = strtolower($parentPath) . '__' . $dimensionSpacePoint->hash;
             if (isset($this->nodeAggregateIdentifiers[$key])) {
                 return $this->nodeAggregateIdentifiers[$key];
             }
@@ -478,7 +478,7 @@ class ContentRepositoryExportService
 
     private function recordNodeAggregateIdentifierAndNodeType(NodePath $nodePath, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName)
     {
-        $key = strtolower($nodePath->jsonSerialize()) . '__' . $dimensionSpacePoint->getHash();
+        $key = strtolower($nodePath->jsonSerialize()) . '__' . $dimensionSpacePoint->hash;
         if (isset($this->nodeAggregateIdentifiers[$key])) {
             throw new \RuntimeException('TODO: node identifier ' . $key . 'already known!!!');
         }

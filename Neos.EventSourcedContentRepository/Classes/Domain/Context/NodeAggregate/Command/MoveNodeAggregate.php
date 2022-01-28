@@ -115,7 +115,7 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
     {
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            new DimensionSpacePoint($array['dimensionSpacePoint']),
+            DimensionSpacePoint::instance($array['dimensionSpacePoint']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             isset($array['newParentNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newParentNodeAggregateIdentifier']) : null,
             isset($array['newPrecedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newPrecedingSiblingNodeAggregateIdentifier']) : null,

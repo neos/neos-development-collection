@@ -66,7 +66,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
             AND pn.origindimensionspacepointhash = :originDimensionSpacePointHash';
 
         $parameters = $this->parameters;
-        $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->getHash();
+        $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->hash;
 
         return new self($query, $parameters);
     }
@@ -77,7 +77,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
             AND ch.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = $this->parameters;
-        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->getHash();
+        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
         return new self($query, $parameters);
     }

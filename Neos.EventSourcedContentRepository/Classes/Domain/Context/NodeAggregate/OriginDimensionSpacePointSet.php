@@ -44,13 +44,13 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
         $this->points = [];
         foreach ($points as $index => $point) {
             if (is_array($point)) {
-                $point = new OriginDimensionSpacePoint($point);
+                $point = OriginDimensionSpacePoint::instance($point);
             }
 
             if (!$point instanceof OriginDimensionSpacePoint) {
                 throw new \InvalidArgumentException(sprintf('Point %s was not of type OriginDimensionSpacePoint', $index));
             }
-            $this->points[$point->getHash()] = $point;
+            $this->points[$point->hash] = $point;
         }
         $this->iterator = new \ArrayIterator($this->points);
     }
@@ -58,7 +58,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     public static function fromDimensionSpacePointSet(DimensionSpacePointSet $dimensionSpacePointSet): self
     {
         $originDimensionSpacePoints = [];
-        foreach ($dimensionSpacePointSet->getPoints() as $point) {
+        foreach ($dimensionSpacePointSet->points as $point) {
             $originDimensionSpacePoints[] = OriginDimensionSpacePoint::fromDimensionSpacePoint($point);
         }
 
@@ -69,7 +69,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     {
         $dimensionSpacePoints = [];
         foreach (json_decode($jsonString, true) as $coordinates) {
-            $dimensionSpacePoints[] = new OriginDimensionSpacePoint($coordinates);
+            $dimensionSpacePoints[] = OriginDimensionSpacePoint::instance($coordinates);
         }
 
         return new self($dimensionSpacePoints);
@@ -100,7 +100,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
 
     public function contains(OriginDimensionSpacePoint $point): bool
     {
-        return isset($this->points[$point->getHash()]);
+        return isset($this->points[$point->hash]);
     }
 
     public function __toString(): string

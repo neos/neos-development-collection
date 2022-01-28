@@ -76,7 +76,7 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
         $path = $request->getUri()->getPath();
 
         /** @todo no more paths! */
-        $isParseablebackendUri = WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($path);
+        $isParseableBackendUri = WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($path);
         $backendUriDimensionPresetDetector = new ContentDimensionDetection\BackendUriContentDimensionValueDetector();
         $dimensions = $this->dimensionSource->getContentDimensionsOrderedByPriority();
         $this->sortDimensionsByOffset($dimensions);
@@ -93,7 +93,7 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
                 }
             }
 
-            if ($isParseablebackendUri) {
+            if ($isParseableBackendUri) {
                 $dimensionValue = $backendUriDimensionPresetDetector->detectValue($contentDimension, $request);
                 if ($dimensionValue) {
                     $coordinates[$rawDimensionIdentifier] = (string)$dimensionValue;
@@ -124,7 +124,7 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
             }
         }
 
-        return new DimensionSpacePoint($coordinates);
+        return DimensionSpacePoint::instance($coordinates);
     }
 
     /**

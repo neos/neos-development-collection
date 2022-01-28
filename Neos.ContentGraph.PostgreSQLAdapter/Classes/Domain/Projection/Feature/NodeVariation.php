@@ -131,7 +131,7 @@ trait NodeVariation
             NodeRelationAnchorPoint::create(),
             $sourceNode->nodeAggregateIdentifier,
             $targetOrigin,
-            $targetOrigin->getHash(),
+            $targetOrigin->hash,
             $sourceNode->properties,
             $sourceNode->nodeTypeName,
             $sourceNode->classification,

@@ -54,7 +54,7 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
         return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
+            OriginDimensionSpacePoint::instance($array['originDimensionSpacePoint']),
             SerializedPropertyValues::fromArray($array['propertyValues']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );

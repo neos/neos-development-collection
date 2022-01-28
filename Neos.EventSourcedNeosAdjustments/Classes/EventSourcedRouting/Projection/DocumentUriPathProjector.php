@@ -153,7 +153,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 'nodeAggregateIdentifierPath' => $nodeAggregateIdentifierPath,
                 'siteNodeName' => $siteNodeName,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
-                'originDimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->getHash(),
+                'originDimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->hash,
                 'parentNodeAggregateIdentifier' => $parentNode->getNodeAggregateIdentifier(),
                 'precedingNodeAggregateIdentifier' => $precedingNode !== null ? $precedingNode->getNodeAggregateIdentifier() : null,
                 'succeedingNodeAggregateIdentifier' => $event->getSucceedingNodeAggregateIdentifier(),
@@ -205,7 +205,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     private function copyVariants(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $sourceOrigin, DimensionSpacePoint $targetOrigin, DimensionSpacePointSet $coveredSpacePoints): void
     {
-        $sourceNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($nodeAggregateIdentifier, $sourceOrigin->getHash()));
+        $sourceNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($nodeAggregateIdentifier, $sourceOrigin->hash));
         if ($sourceNode === null) {
             // Probably not a document node
             return;
@@ -315,7 +315,11 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 'mode' => $newPropertyValues['targetMode'] ?? $shortcutTarget['mode'],
                 'target' => $newPropertyValues['target'] ?? $shortcutTarget['target'],
             ];
-            $this->updateNodeByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint()->getHash(), ['shortcutTarget' => $shortcutTarget]);
+            $this->updateNodeByIdAndDimensionSpacePointHash(
+                $event->getNodeAggregateIdentifier(),
+                $event->getOriginDimensionSpacePoint()->hash,
+                ['shortcutTarget' => $shortcutTarget]
+            );
         }
 
         if (!isset($newPropertyValues['uriPathSegment'])) {
@@ -334,7 +338,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         $this->updateNodeQuery('SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1)) WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)', [
             'newUriPath' => $newUriPath,
             'oldUriPath' => $oldUriPath,
-            'dimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->getHash(),
+            'dimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->hash,
             'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
             'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
         ]);
@@ -538,16 +542,16 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             $this->updateNodeQuery(
                 'SET dimensionspacepointhash = :newDimensionSpacePointHash WHERE dimensionspacepointhash = :originalDimensionSpacePointHash',
                 [
-                'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-                'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                'originalDimensionSpacePointHash' => $event->getSource()->hash,
+                'newDimensionSpacePointHash' => $event->getTarget()->hash,
             ]
             );
 
             $this->updateNodeQuery(
                 'SET origindimensionspacepointhash = :newDimensionSpacePointHash WHERE origindimensionspacepointhash = :originalDimensionSpacePointHash',
                 [
-                'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-                'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                'originalDimensionSpacePointHash' => $event->getSource()->hash,
+                'newDimensionSpacePointHash' => $event->getTarget()->hash,
             ]
             );
         }
@@ -588,8 +592,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 WHERE
                     dimensionSpacePointHash = :sourceDimensionSpacePointHash
                 ', [
-                    'sourceDimensionSpacePointHash' => $event->getSource()->getHash(),
-                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'sourceDimensionSpacePointHash' => $event->getSource()->hash,
+                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
                 ]);
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to insert new dimension shine through: %s', $e->getMessage()), 1599646608, $e);

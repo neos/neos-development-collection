@@ -60,7 +60,7 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
+            DimensionSpacePoint::instance($array['coveredDimensionSpacePoint']),
             NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );

@@ -69,7 +69,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['nodeTypeName']),
-            new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
+            OriginDimensionSpacePoint::instance($array['originDimensionSpacePoint']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             NodeAggregateIdentifier::fromString($array['parentNodeAggregateIdentifier']),
             isset($array['succeedingSiblingNodeAggregateIdentifier'])

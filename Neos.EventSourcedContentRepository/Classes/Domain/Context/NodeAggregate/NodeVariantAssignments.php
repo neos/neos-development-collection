@@ -38,7 +38,7 @@ final class NodeVariantAssignments implements \IteratorAggregate, \JsonSerializa
         $this->iterator = new \ArrayIterator($this->assignments);
     }
 
-    public static function createFromArray(array $array): NodeVariantAssignments
+    public static function createFromArray(array $array): self
     {
         foreach ($array as &$item) {
             if (is_array($item)) {
@@ -48,25 +48,25 @@ final class NodeVariantAssignments implements \IteratorAggregate, \JsonSerializa
                 throw NodeVariantAssignmentCollectionIsInvalid::becauseItContainsSomethingOther();
             }
         }
-        return new static($array);
+        return new self($array);
     }
 
-    public static function create(): NodeVariantAssignments
+    public static function create(): self
     {
-        return new NodeVariantAssignments([]);
+        return new self([]);
     }
 
-    public function add(NodeVariantAssignment $assignment, DimensionSpacePoint $dimensionSpacePoint): NodeVariantAssignments
+    public function add(NodeVariantAssignment $assignment, DimensionSpacePoint $dimensionSpacePoint): self
     {
         $assignments = $this->assignments;
-        $assignments[$dimensionSpacePoint->getHash()] = $assignment;
+        $assignments[$dimensionSpacePoint->hash] = $assignment;
 
-        return new static($assignments);
+        return new self($assignments);
     }
 
     public function get(DimensionSpacePoint $dimensionSpacePoint): ?NodeVariantAssignment
     {
-        return $this->assignments[$dimensionSpacePoint->getHash()] ?? null;
+        return $this->assignments[$dimensionSpacePoint->hash] ?? null;
     }
 
     /**

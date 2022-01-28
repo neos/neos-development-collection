@@ -79,7 +79,7 @@ class NodeCreated extends AbstractFeedback
 
         return (
             (string)$this->getNode()->getContentStreamIdentifier() === (string)$feedback->getNode()->getContentStreamIdentifier() &&
-            $this->getNode()->getDimensionSpacePoint()->getHash() === $feedback->getNode()->getDimensionSpacePoint()->getHash() &&
+            $this->getNode()->getDimensionSpacePoint()->equals($feedback->getNode()->getDimensionSpacePoint()) &&
             (string)$this->getNode()->getNodeAggregateIdentifier() === (string)$feedback->getNode()->getNodeAggregateIdentifier()
         );
     }

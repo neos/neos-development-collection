@@ -207,7 +207,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
  AND h.dimensionspacepointhash = :dimensionSpacePointHash')
             ->parameter('parentNodeAggregateIdentifier', $parentNodeAggregateIdentifier)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints);
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c');
@@ -248,7 +248,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
  ')
                 ->parameter('nodeAggregateIdentifier', (string)$nodeAggregateIdentifier)
                 ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-                ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+                ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
             $query = self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
 
@@ -300,7 +300,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
  AND h.dimensionspacepointhash = :dimensionSpacePointHash')
             ->parameter('parentNodeNodeAggregateIdentifier', (string)$parentNodeNodeAggregateIdentifier)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c');
 
@@ -338,7 +338,7 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
         )
             ->parameter('nodeAggregateIdentifier', (string)$nodeAggregateIdentifier)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', (string)$this->getDimensionSpacePoint()->getHash())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash)
             ->parameter('name', (string)$name);
 
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'd', 'dh');
@@ -390,7 +390,7 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
         )
             ->parameter('destinationnodeaggregateidentifier', (string)$nodeAggregateIdentifier)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', (string)$this->getDimensionSpacePoint()->getHash())
+            ->parameter('dimensionSpacePointHash', (string)$this->getDimensionSpacePoint()->hash)
             ->parameter('name', (string)$name);
 
         if ($name) {
@@ -444,7 +444,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
         )
             ->parameter('childNodeAggregateIdentifier', (string)$childNodeAggregateIdentifier)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'p');
 
@@ -525,7 +525,7 @@ WHERE
             )
                 ->parameter('parentNodeAggregateIdentifier', (string)$parentNodeAggregateIdentifier)
                 ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-                ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash())
+                ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash)
                 ->parameter('edgeName', (string)$edgeName);
 
             self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c');
@@ -564,7 +564,7 @@ WHERE
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
         if ($nodeTypeConstraints) {
             self::addNodeTypeConstraintsToQuery($query);
@@ -605,7 +605,7 @@ WHERE
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
 
         $query->addToQuery('
@@ -655,7 +655,7 @@ WHERE
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
 
         $query->addToQuery('
@@ -735,7 +735,7 @@ WHERE
         select * from nodePath',
             [
                 'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->hash,
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
             ]
         )->fetchAll();
@@ -836,7 +836,7 @@ order by level asc, position asc;')
                 return (string)$nodeAggregateIdentifier;
             }, $entryNodeAggregateIdentifiers), Connection::PARAM_STR_ARRAY)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash)
             ->parameter('maximumLevels', $maximumLevels);
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###');
@@ -955,7 +955,7 @@ order by level asc, position asc;')
                 return (string)$nodeAggregateIdentifier;
             }, $entryNodeAggregateIdentifiers), Connection::PARAM_STR_ARRAY)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###', '');
         self::addSearchTermConstraintsToQuery($query, $searchTerm, '###SEARCH_TERM_CONSTRAINTS###', '');
@@ -984,7 +984,7 @@ SELECT COUNT(*) FROM neos_contentgraph_node n
  WHERE h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash')
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->hash);
 
         return (int) $query->execute($this->getDatabaseConnection())->fetch()['COUNT(*)'];
     }

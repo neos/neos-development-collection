@@ -93,7 +93,7 @@ final class NodeRecord
         $databaseConnection->insert(self::TABLE_NAME, [
             'relationanchorpoint' => (string) $this->relationAnchorPoint,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
-            'origindimensionspacepointhash' => $this->originDimensionSpacePoint->getHash(),
+            'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
             'nodetypename' => (string) $this->nodeTypeName,
             'classification' => (string) $this->classification,
@@ -111,7 +111,7 @@ final class NodeRecord
             self::TABLE_NAME,
             [
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
-                'origindimensionspacepointhash' => $this->originDimensionSpacePoint->getHash(),
+                'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
                 'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
                 'nodetypename' => (string) $this->nodeTypeName,
                 'classification' => (string) $this->classification,

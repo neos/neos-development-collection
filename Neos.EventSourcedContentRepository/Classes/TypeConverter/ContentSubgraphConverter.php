@@ -64,7 +64,7 @@ class ContentSubgraphConverter extends AbstractTypeConverter
 
         return $this->contentGraph->getSubgraphByIdentifier(
             ContentStreamIdentifier::fromString($sourceArray['contentStreamIdentifier']),
-            new DimensionSpacePoint($sourceArray['dimensionSpacePoint']['coordinates']),
+            DimensionSpacePoint::instance($sourceArray['dimensionSpacePoint']['coordinates']),
             VisibilityConstraints::withoutRestrictions()
         );
     }

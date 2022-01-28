@@ -78,7 +78,7 @@ class Change
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
-            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->getHash(),
+            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
             'deleted' => (int)$this->deleted,
@@ -98,7 +98,7 @@ class Change
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
-            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->getHash(),
+            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
         ]
         );
     }
@@ -112,7 +112,7 @@ class Change
         return new static(
             ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($databaseRow['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint(json_decode($databaseRow['originDimensionSpacePoint'], true)),
+            OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],
             (bool)$databaseRow['deleted']

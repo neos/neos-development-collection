@@ -130,8 +130,8 @@ class NodeHiddenStateProjector implements ProjectorInterface
                       AND nhs.contentstreamidentifier = :contentStreamIdentifier
                       ',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
+                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
                     'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
                 ]

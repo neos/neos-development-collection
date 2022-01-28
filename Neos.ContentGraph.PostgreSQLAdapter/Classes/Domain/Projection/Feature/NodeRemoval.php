@@ -53,7 +53,7 @@ trait NodeRemoval
                 );
 
                 if ($event->getAffectedOccupiedDimensionSpacePoints()->contains($nodeRecord->originDimensionSpacePoint)) {
-                    $nodeRecordsToBeRemoved[$nodeRecord->originDimensionSpacePoint->getHash()] = $nodeRecord;
+                    $nodeRecordsToBeRemoved[$nodeRecord->originDimensionSpacePoint->hash] = $nodeRecord;
                 }
 
                 $this->cascadeHierarchy($event->getContentStreamIdentifier(), $dimensionSpacePoint, $nodeRecord->relationAnchorPoint);

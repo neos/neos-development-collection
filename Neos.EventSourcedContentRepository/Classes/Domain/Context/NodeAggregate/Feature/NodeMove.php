@@ -128,7 +128,7 @@ trait NodeMove
             $succeedingSiblingAssignments = [];
             $parentAssignments = [];
             foreach ($nodeAggregate->getOccupiedDimensionSpacePoints() as $occupiedDimensionSpacePoint) {
-                $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->getHash()] = $this->resolveNewSucceedingSiblingsAssignments(
+                $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->hash] = $this->resolveNewSucceedingSiblingsAssignments(
                     $command->getContentStreamIdentifier(),
                     $nodeAggregate,
                     $command->getNewParentNodeAggregateIdentifier(),
@@ -137,11 +137,11 @@ trait NodeMove
                     $occupiedDimensionSpacePoint,
                     $affectedDimensionSpacePoints
                 );
-                $parentAssignments[$occupiedDimensionSpacePoint->getHash()] = $this->resolveNewParentAssignments(
+                $parentAssignments[$occupiedDimensionSpacePoint->hash] = $this->resolveNewParentAssignments(
                     $command->getContentStreamIdentifier(),
                     $nodeAggregate,
                     $command->getNewParentNodeAggregateIdentifier(),
-                    $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->getHash()],
+                    $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->hash],
                     $occupiedDimensionSpacePoint,
                     $affectedDimensionSpacePoints
                 );
@@ -387,9 +387,9 @@ trait NodeMove
         $nodeMoveMappings = [];
         foreach ($nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($affectedDimensionSpacePoints) as $coveredAffectedDimensionSpacePoint) {
             $occupiedAffectedDimensionSpacePoint = $nodeAggregate->getOccupationByCovered($coveredAffectedDimensionSpacePoint);
-            $parentAssignmentsForDimensionSpacePoint = $parentAssignments[$occupiedAffectedDimensionSpacePoint->getHash()];
-            $succeedingSiblingAssignmentsForDimensionSpacePoint = $succeedingSiblingAssignments[$occupiedAffectedDimensionSpacePoint->getHash()];
-            $nodeMoveMappings[$occupiedAffectedDimensionSpacePoint->getHash()] = new NodeMoveMapping(
+            $parentAssignmentsForDimensionSpacePoint = $parentAssignments[$occupiedAffectedDimensionSpacePoint->hash];
+            $succeedingSiblingAssignmentsForDimensionSpacePoint = $succeedingSiblingAssignments[$occupiedAffectedDimensionSpacePoint->hash];
+            $nodeMoveMappings[$occupiedAffectedDimensionSpacePoint->hash] = new NodeMoveMapping(
                 $occupiedAffectedDimensionSpacePoint,
                 $parentAssignmentsForDimensionSpacePoint,
                 $succeedingSiblingAssignmentsForDimensionSpacePoint

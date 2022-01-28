@@ -150,7 +150,7 @@ class BackendController extends ActionController
     /**
      * Displays the backend interface
      *
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node The node that will be displayed on the first tab
+     * @param NodeAddress $node The node that will be displayed on the first tab
      * @return void
      */
     public function indexAction(NodeAddress $node = null)
@@ -200,7 +200,7 @@ class BackendController extends ActionController
     }
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node
+     * @param NodeAddress $node
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function redirectToAction(NodeAddress $node)
@@ -219,6 +219,6 @@ class BackendController extends ActionController
             $coordinates[(string)$dimension->getIdentifier()] = (string)$dimension->getDefaultValue();
         }
 
-        return new DimensionSpacePoint($coordinates);
+        return DimensionSpacePoint::instance($coordinates);
     }
 }

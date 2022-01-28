@@ -166,7 +166,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function determineMetadata(DimensionSpacePoint $dimensionSpacePoint): array
     {
-        $metadata = $dimensionSpacePoint->getCoordinates();
+        $metadata = $dimensionSpacePoint->coordinates;
         array_walk($metadata, function (&$dimensionValue, $rawDimensionIdentifier) {
             $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
             $dimensionValue = [

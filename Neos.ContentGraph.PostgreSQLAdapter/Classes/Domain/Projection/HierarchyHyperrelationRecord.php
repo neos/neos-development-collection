@@ -132,7 +132,7 @@ final class HierarchyHyperrelationRecord
                 'contentstreamidentifier' => $this->contentStreamIdentifier,
                 'parentnodeanchor' => $this->parentNodeAnchor,
                 'dimensionspacepoint' => \json_encode($this->dimensionSpacePoint),
-                'dimensionspacepointhash' => $this->dimensionSpacePoint->getHash(),
+                'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
                 'childnodeanchors' => $this->childNodeAnchors->toDatabaseString()
             ]
         );
@@ -151,7 +151,7 @@ final class HierarchyHyperrelationRecord
         return [
             'contentstreamidentifier' => (string)$this->contentStreamIdentifier,
             'parentnodeanchor' => (string)$this->parentNodeAnchor,
-            'dimensionspacepointhash' => $this->dimensionSpacePoint->getHash()
+            'dimensionspacepointhash' => $this->dimensionSpacePoint->hash
         ];
     }
 }

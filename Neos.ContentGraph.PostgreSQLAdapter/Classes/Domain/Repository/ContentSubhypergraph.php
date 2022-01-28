@@ -372,7 +372,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $parameters = [
             'entryNodeAggregateIdentifiers' => $entryNodeAggregateIdentifiers,
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'dimensionSpacePointHash' => $this->dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'maximumLevels' => $maximumLevels
         ];
 
@@ -409,7 +409,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $parameters = [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'dimensionSpacePointHash' => $this->dimensionSpacePoint->getHash()
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash
         ];
 
         return $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric()[0];

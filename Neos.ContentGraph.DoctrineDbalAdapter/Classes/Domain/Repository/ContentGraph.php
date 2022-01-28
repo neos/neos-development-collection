@@ -69,7 +69,7 @@ final class ContentGraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash() . '-' . $visibilityConstraints->getHash();
+        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
             $this->subgraphs[$index] = new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints);
         }
@@ -100,7 +100,7 @@ final class ContentGraph implements ContentGraphInterface
                   AND h.contentstreamidentifier = :contentStreamIdentifier',
             [
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier
             ]
         )->fetch();
@@ -270,7 +270,7 @@ final class ContentGraph implements ContentGraphInterface
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
-            'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->getHash(),
+            'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash,
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
@@ -405,7 +405,7 @@ final class ContentGraph implements ContentGraphInterface
                       AND h.name = :nodeName';
         $parameters = [
             'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
-            'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->getHash(),
+            'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->hash,
             'contentStreamIdentifier' => (string) $contentStreamIdentifier,
             'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
             'nodeName' => (string) $nodeName
@@ -415,7 +415,8 @@ final class ContentGraph implements ContentGraphInterface
         ];
         $dimensionSpacePoints = [];
         foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $hierarchyRelationData) {
-            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true));
+            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']]
+                = DimensionSpacePoint::fromJsonString($hierarchyRelationData['dimensionspacepoint']);
         }
 
         return new DimensionSpacePointSet($dimensionSpacePoints);

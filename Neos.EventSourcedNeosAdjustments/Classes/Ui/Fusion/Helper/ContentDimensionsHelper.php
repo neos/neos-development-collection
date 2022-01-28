@@ -74,7 +74,7 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
     {
         // TODO: re-implement this here; currently EVERYTHING is allowed!!
         $allowedPresets = [];
-        foreach ($dimensions->getCoordinates() as $dimensionName => $dimensionValue) {
+        foreach ($dimensions->coordinates as $dimensionName => $dimensionValue) {
             $dimension = $this->contentDimensionSource->getDimension(new ContentDimensionIdentifier($dimensionName));
             $value = $dimension->getValue($dimensionValue);
             if ($value !== null) {

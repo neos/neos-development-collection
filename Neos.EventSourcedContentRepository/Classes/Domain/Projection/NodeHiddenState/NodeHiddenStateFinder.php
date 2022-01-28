@@ -44,7 +44,7 @@ final class NodeHiddenStateFinder
             ',
             [
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
             ]
         )->fetch();

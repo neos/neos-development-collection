@@ -45,11 +45,11 @@ final class ContentStreamCommandController extends CommandController
         $this->hypergraphProjector = $hypergraphProjector;
         $this->contentStreamIdentifier = ContentStreamIdentifier::fromString('cs-identifier');
         $this->dimensionSpacePoints = new DimensionSpacePointSet([
-            new DimensionSpacePoint(['language' => 'mul']),
-            new DimensionSpacePoint(['language' => 'de']),
-            new DimensionSpacePoint(['language' => 'gsw']),
-            new DimensionSpacePoint(['language' => 'en']),
-            new DimensionSpacePoint(['language' => 'fr'])
+            DimensionSpacePoint::instance(['language' => 'mul']),
+            DimensionSpacePoint::instance(['language' => 'de']),
+            DimensionSpacePoint::instance(['language' => 'gsw']),
+            DimensionSpacePoint::instance(['language' => 'en']),
+            DimensionSpacePoint::instance(['language' => 'fr'])
         ]);
         parent::__construct();
     }
@@ -89,7 +89,7 @@ final class ContentStreamCommandController extends CommandController
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     NodeTypeName::fromString('Neos.ContentRepository:Testing'),
-                    new OriginDimensionSpacePoint(['language' => 'mul']),
+                    OriginDimensionSpacePoint::instance(['language' => 'mul']),
                     $this->dimensionSpacePoints,
                     $parentNodeAggregateIdentifier,
                     null,

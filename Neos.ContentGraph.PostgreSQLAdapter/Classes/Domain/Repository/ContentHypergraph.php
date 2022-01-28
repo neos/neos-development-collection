@@ -64,7 +64,7 @@ final class ContentHypergraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ?ContentSubgraphInterface {
-        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash() . '-' . $visibilityConstraints->getHash();
+        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subhypergraphs[$index])) {
             $this->subhypergraphs[$index] = new ContentSubhypergraph(
                 $contentStreamIdentifier,
@@ -145,7 +145,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
-            'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->getHash()
+            'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash
         ];
 
         $nodeRows = $this->getDatabaseConnection()->executeQuery(

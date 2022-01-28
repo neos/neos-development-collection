@@ -48,14 +48,16 @@ final class DocumentNodeInfo
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
     {
         $source = $this->source;
-        $source['dimensionspacepointhash'] = $dimensionSpacePoint->getHash();
+        $source['dimensionspacepointhash'] = $dimensionSpacePoint->hash;
+
         return new static($source);
     }
 
     public function withOriginDimensionSpacePoint(DimensionSpacePoint $originDimensionSpacePoint): self
     {
         $source = $this->source;
-        $source['origindimensionspacepointhash'] = $originDimensionSpacePoint->getHash();
+        $source['origindimensionspacepointhash'] = $originDimensionSpacePoint->hash;
+
         return new static($source);
     }
 

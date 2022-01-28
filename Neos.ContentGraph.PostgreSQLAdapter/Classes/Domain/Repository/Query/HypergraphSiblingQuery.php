@@ -49,7 +49,7 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
         ];
 

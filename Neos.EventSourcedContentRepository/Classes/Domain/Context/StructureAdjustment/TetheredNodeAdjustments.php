@@ -239,7 +239,7 @@ class TetheredNodeAdjustments
                                 $nodeToMove->getOriginDimensionSpacePoint(),
                                 NodeVariantAssignments::createFromArray([]), // we do not want to assign new parents
                                 NodeVariantAssignments::createFromArray([
-                                    $nodeToMove->getOriginDimensionSpacePoint()->getHash() => new NodeVariantAssignment(
+                                    $nodeToMove->getOriginDimensionSpacePoint()->hash => new NodeVariantAssignment(
                                         $succeedingNode->getNodeAggregateIdentifier(),
                                         $succeedingNode->getOriginDimensionSpacePoint()
                                     )

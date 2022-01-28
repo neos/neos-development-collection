@@ -143,7 +143,7 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeSubtreeSnapshot::fromArray($array['nodeToInsert']),
-            new OriginDimensionSpacePoint($array['targetDimensionSpacePoint']),
+            OriginDimensionSpacePoint::instance($array['targetDimensionSpacePoint']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             NodeAggregateIdentifier::fromString($array['targetParentNodeAggregateIdentifier']),
             isset($array['targetSucceedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['targetSucceedingSiblingNodeAggregateIdentifier']) : null,

@@ -27,7 +27,7 @@ final class OriginDimensionSpacePoint extends DimensionSpacePoint
 {
     public static function fromArray(array $data): self
     {
-        return new self($data);
+        return self::instance($data);
     }
 
     /**
@@ -36,16 +36,16 @@ final class OriginDimensionSpacePoint extends DimensionSpacePoint
      */
     public static function fromJsonString(string $jsonString): self
     {
-        return new self(json_decode($jsonString, true));
+        return self::instance(json_decode($jsonString, true));
     }
 
     public static function fromDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
     {
-        return new self($dimensionSpacePoint->getCoordinates());
+        return self::instance($dimensionSpacePoint->coordinates);
     }
 
     public function toDimensionSpacePoint(): DimensionSpacePoint
     {
-        return new DimensionSpacePoint($this->getCoordinates());
+        return DimensionSpacePoint::instance(($this->coordinates));
     }
 }

@@ -186,9 +186,9 @@ class RenderContentOutOfBand extends AbstractFeedback
         }
 
         return (
-            (string)$this->getNode()->getContentStreamIdentifier() === (string)$feedback->getNode()->getContentStreamIdentifier() &&
-            $this->getNode()->getDimensionSpacePoint()->getHash() === $feedback->getNode()->getDimensionSpacePoint()->getHash() &&
-            (string)$this->getNode()->getNodeAggregateIdentifier() === (string)$feedback->getNode()->getNodeAggregateIdentifier() &&
+            $this->getNode()->getContentStreamIdentifier()->equals($feedback->getNode()->getContentStreamIdentifier()) &&
+            $this->getNode()->getDimensionSpacePoint()->equals($feedback->getNode()->getDimensionSpacePoint()) &&
+            $this->getNode()->getNodeAggregateIdentifier()->equals($feedback->getNode()->getNodeAggregateIdentifier()) &&
 
             $this->getReferenceData() == $feedback->getReferenceData()
         );

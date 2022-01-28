@@ -64,7 +64,7 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = $this->parameters;
-        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->getHash();
+        $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
         return new self($query, $parameters, $this->types);
     }
@@ -88,7 +88,7 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
             AND n.origindimensionspacepointhash = :originDimensionSpacePointHash';
 
         $parameters = $this->parameters;
-        $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->getHash();
+        $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->hash;
 
         return new self($query, $parameters, $this->types);
     }

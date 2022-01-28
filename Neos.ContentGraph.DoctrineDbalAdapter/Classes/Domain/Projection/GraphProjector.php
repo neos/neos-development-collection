@@ -88,12 +88,12 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
     final public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event)
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $dimensionSpacePoint = new DimensionSpacePoint([]);
+        $dimensionSpacePoint = DimensionSpacePoint::instance([]);
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->getNodeAggregateIdentifier(),
-            $dimensionSpacePoint->getCoordinates(),
-            $dimensionSpacePoint->getHash(),
+            $dimensionSpacePoint->coordinates,
+            $dimensionSpacePoint->hash,
             SerializedPropertyValues::fromArray([]),
             $event->getNodeTypeName(),
             $event->getNodeAggregateClassification()
@@ -237,7 +237,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
             $nodeRelationAnchorPoint,
             $nodeAggregateIdentifier,
             $originDimensionSpacePoint->jsonSerialize(),
-            $originDimensionSpacePoint->getHash(),
+            $originDimensionSpacePoint->hash,
             $propertyDefaultValuesAndTypes,
             $nodeTypeName,
             $nodeAggregateClassification,
@@ -772,7 +772,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                     $sourceNode->relationAnchorPoint,
                     $event->getContentStreamIdentifier(),
                     new DimensionSpacePointSet([$event->getSourceOrigin()])
-                )[$event->getSourceOrigin()->getHash()] ?? null;
+                )[$event->getSourceOrigin()->hash] ?? null;
                 // the null case is caught by the NodeAggregate or its command handler
                 foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
@@ -876,7 +876,7 @@ insert ignore into neos_contentgraph_restrictionrelation
             $sourceHierarchyRelation->name,
             $contentStreamIdentifier,
             $dimensionSpacePoint,
-            $dimensionSpacePoint->getHash(),
+            $dimensionSpacePoint->hash,
             $this->getRelationPosition(
                 $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
                 $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
@@ -903,7 +903,7 @@ insert ignore into neos_contentgraph_restrictionrelation
             $copyRelationAnchorPoint,
             $sourceNode->nodeAggregateIdentifier,
             $dimensionSpacePoint->jsonSerialize(),
-            $dimensionSpacePoint->getHash(),
+            $dimensionSpacePoint->hash,
             $sourceNode->properties,
             $sourceNode->nodeTypeName,
             $sourceNode->classification,
@@ -1050,7 +1050,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                      AND n.origindimensionspacepointhash = :dimensionSpacePointHash
                 ',
                 [
-                    'dimensionSpacePointHash' => $event->getSource()->getHash(),
+                    'dimensionSpacePointHash' => $event->getSource()->hash,
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
                 ]
             );
@@ -1058,7 +1058,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                 $relationAnchorPoint = NodeRelationAnchorPoint::fromString($res['relationanchorpoint']);
                 $this->updateNodeRecordWithCopyOnWrite($event->getContentStreamIdentifier(), $relationAnchorPoint, function (NodeRecord $nodeRecord) use ($event) {
                     $nodeRecord->originDimensionSpacePoint = $event->getTarget()->jsonSerialize();
-                    $nodeRecord->originDimensionSpacePointHash = $event->getTarget()->getHash();
+                    $nodeRecord->originDimensionSpacePointHash = $event->getTarget()->hash;
                 });
             }
 
@@ -1074,8 +1074,8 @@ insert ignore into neos_contentgraph_restrictionrelation
                       AND h.contentstreamidentifier = :contentStreamIdentifier
                       ',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
+                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
                     'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
                 ]
@@ -1092,8 +1092,8 @@ insert ignore into neos_contentgraph_restrictionrelation
                       AND r.contentstreamidentifier = :contentStreamIdentifier
                       ',
                 [
-                    'originalDimensionSpacePointHash' => $event->getSource()->getHash(),
-                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'originalDimensionSpacePointHash' => $event->getSource()->hash,
+                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
                 ]
             );
@@ -1129,8 +1129,8 @@ insert ignore into neos_contentgraph_restrictionrelation
                     AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash',
                 [
                     'contentStreamIdentifier' => $event->getContentStreamIdentifier()->jsonSerialize(),
-                    'sourceDimensionSpacePointHash' => $event->getSource()->getHash(),
-                    'newDimensionSpacePointHash' => $event->getTarget()->getHash(),
+                    'sourceDimensionSpacePointHash' => $event->getSource()->hash,
+                    'newDimensionSpacePointHash' => $event->getTarget()->hash,
                     'newDimensionSpacePoint' => json_encode($event->getTarget()->jsonSerialize()),
                 ]
             );
@@ -1155,8 +1155,8 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             ', [
                 'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
-                'sourceDimensionSpacePointHash' => (string)$event->getSource()->getHash(),
-                'targetDimensionSpacePointHash' => (string)$event->getTarget()->getHash()
+                'sourceDimensionSpacePointHash' => $event->getSource()->hash,
+                'targetDimensionSpacePointHash' => $event->getTarget()->hash
             ]);
         });
     }

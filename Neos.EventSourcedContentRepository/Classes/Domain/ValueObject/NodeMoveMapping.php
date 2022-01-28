@@ -46,7 +46,7 @@ final class NodeMoveMapping
     public static function fromArray(array $array): NodeMoveMapping
     {
         return new static(
-            new OriginDimensionSpacePoint($array['movedNodeOrigin']),
+            OriginDimensionSpacePoint::instance($array['movedNodeOrigin']),
             NodeVariantAssignments::createFromArray($array['newParentAssignments']),
             NodeVariantAssignments::createFromArray($array['newSucceedingSiblingAssignments'])
         );

@@ -161,7 +161,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      */
     private function resolveNodeAddress(NodeAddress $nodeAddress, string $host): ResolveResult
     {
-        $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($nodeAddress->getNodeAggregateIdentifier(), $nodeAddress->getDimensionSpacePoint()->getHash());
+        $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $nodeAddress->getNodeAggregateIdentifier(),
+            $nodeAddress->getDimensionSpacePoint()->hash
+        );
         if ($nodeInfo->isDisabled()) {
             throw new NodeNotFoundException(sprintf('The resolved node for address %s is disabled', $nodeAddress), 1599668357);
         }
@@ -200,7 +203,11 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      */
     private function matchUriPath(string $uriPath, DimensionSpacePoint $dimensionSpacePoint, string $host): MatchResult
     {
-        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash($this->getCurrentSiteNodeName($host), $uriPath, $dimensionSpacePoint->getHash());
+        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
+            $this->getCurrentSiteNodeName($host),
+            $uriPath,
+            $dimensionSpacePoint->hash
+        );
         $nodeAddress = new NodeAddress(
             $this->documentUriPathFinder->getLiveContentStreamIdentifier(),
             $dimensionSpacePoint,

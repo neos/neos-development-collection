@@ -50,7 +50,7 @@ class NodeAccessorManager
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): NodeAccessorInterface {
-        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash() . '-' . $visibilityConstraints->getHash();
+        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->accessors[$index])) {
             $this->accessors[$index] = $this->nodeAccessorChainFactory->build($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints);
         }

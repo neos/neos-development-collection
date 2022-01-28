@@ -71,7 +71,7 @@ class NodeHiddenState
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'dimensionSpacePoint' => json_encode($this->dimensionSpacePoint),
-            'dimensionSpacePointHash' => $this->dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'hidden' => (int)$this->hidden,
         ]);
     }

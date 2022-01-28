@@ -27,15 +27,15 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
         .*
         @                       # an "@" character
         (?P<WorkspaceName>       # the workspace name as capture group
-            [\w-]+                
+            [\w-]+
         )
-        (?:                     # the dimension part is optional                    
+        (?:                     # the dimension part is optional
             ;                   # semi-colon
             (?P<DimensionComponents>
                 .*
             )                   # everything until the rest of the string
         )?
-        $                       # we consume the full string    
+        $                       # we consume the full string
     /x';
 
     /**
@@ -96,7 +96,7 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
             parse_str($matches['DimensionComponents'], $coordinates);
         }
 
-        $dimensionSpacePoint = new DimensionSpacePoint($coordinates);
+        $dimensionSpacePoint = DimensionSpacePoint::instance($coordinates);
 
         return new WorkspaceNameAndDimensionSpacePointForUriSerialization($workspaceName, $dimensionSpacePoint);
     }
@@ -109,7 +109,7 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
     public function toBackendUriSuffix(): string
     {
         $dimensionComponents = [];
-        foreach ($this->dimensionSpacePoint->getCoordinates() as $dimensionName => $dimensionValue) {
+        foreach ($this->dimensionSpacePoint->coordinates as $dimensionName => $dimensionValue) {
             $dimensionComponents[] = $dimensionName . '=' . $dimensionValue;
         }
         $dimensionSuffix = '';

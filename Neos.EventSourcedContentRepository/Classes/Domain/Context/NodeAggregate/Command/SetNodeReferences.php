@@ -53,7 +53,7 @@ final class SetNodeReferences implements \JsonSerializable, RebasableToOtherCont
         return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['sourceOriginDimensionSpacePoint']),
+            OriginDimensionSpacePoint::instance($array['sourceOriginDimensionSpacePoint']),
             NodeAggregateIdentifierCollection::fromArray($array['destinationNodeAggregateIdentifiers']),
             PropertyName::fromString($array['referenceName']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
