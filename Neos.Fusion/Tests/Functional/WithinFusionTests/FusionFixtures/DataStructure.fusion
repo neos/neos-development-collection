@@ -1,0 +1,80 @@
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
+
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+data_structure_advanced_start_end_ordering = Neos.Fusion.Testing:TestCase {
+  @test.1 {
+    @afterRender = Neos.Fusion:Value {
+      expected = ${ {'e':'Xe', 'd':'Xd', 'foobar':'Xfoobar', 'f':'Xf', 'g':'Xg', '100':'X100', 'b':'Xb', 'a':'Xa', 'c':'Xc'} }
+      value = ${ self.assertSame(result, this.expected) }
+    }
+  }
+
+  @fusion.1 = Neos.Fusion:DataStructure {
+    a = Neos.Fusion:TestRenderer
+    a.test = 'a'
+    a.@position = 'end 10'
+
+    b = Neos.Fusion:TestRenderer
+    b.test = 'b'
+    b.@position = 'end'
+
+    c = Neos.Fusion:TestRenderer
+    c.test = 'c'
+    c.@position = 'end 20'
+
+    d = Neos.Fusion:TestRenderer
+    d.test = 'd'
+    d.@position = 'start'
+
+    e = Neos.Fusion:TestRenderer
+    e.test = 'e'
+    e.@position = 'start 10'
+
+    f = Neos.Fusion:TestRenderer
+    f.test = 'f'
+    f.@position = '50'
+
+    100 = Neos.Fusion:TestRenderer
+    100.test = '100'
+
+    foobar = Neos.Fusion:TestRenderer
+    foobar.test = 'foobar'
+
+    g = Neos.Fusion:TestRenderer
+    g.test = 'g'
+    g.@position = '90'
+  }
+}
+
+data_structure_nesting_with_and_without_object_name = Neos.Fusion.Testing:TestCase {
+
+  @test.1.@afterRender = ${ self.assertSame(result, {keyWithoutType: {bar: {baz: 123}}, keyWithType: 456, keyWithValue: 789}) }
+
+  @fusion.1 = Neos.Fusion:DataStructure {
+    keyWithoutType {
+      bar {
+        baz = 123
+      }
+    }
+    keyWithType = Neos.Fusion:Value {
+      value = 456
+    }
+    keyWithValue = 789
+  }
+}
+
+data_structure_nesting_with_non_existing_child_object = Neos.Fusion.Testing:TestCase {
+
+  @test.1.@beforeRender = ${ self.expectException('Neos\Fusion\Exception\MissingFusionImplementationException') }
+
+  @fusion.1 = Neos.Fusion:DataStructure {
+    keyWithoutType {
+      bar {
+        baz = 123
+      }
+    }
+    errorProperty = Neos.Fusion:InValidObject
+  }
+}

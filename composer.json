@@ -44,6 +44,7 @@
         "neos/diff": "self.version",
         "neos/fusion-afx": "self.version",
         "neos/fusion": "self.version",
+        "neos/fusion-testing": "self.version",
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
         "neos/neos": "self.version",
@@ -77,6 +78,9 @@
             ],
             "Neos\\Fusion\\": [
                 "Neos.Fusion/Classes"
+            ],
+            "Neos\\Fusion\\Testing\\": [
+                "Neos.Fusion.Testing/Classes"
             ],
             "Neos\\Media\\Browser\\": [
                 "Neos.Media.Browser/Classes"

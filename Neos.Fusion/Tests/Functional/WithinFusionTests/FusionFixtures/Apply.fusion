@@ -9,30 +9,30 @@ prototype(Neos.Fusion:EelValue) < prototype(Neos.Fusion:Value) {
   value = ${'original eel expression'}
 }
 
-applyTest.rendersOriginalEelExpression {
-  @scenario.unchangedEelValue.@after = ${ self.assertSame(actual, 'original eel expression') }
+apply_renders_original_eel_expression_test {
+  @test.unchangedEelValue.@afterRender = ${ self.assertSame(result, 'original eel expression') }
 
-  @provider.noApply = Neos.Fusion:EelValue
+  @fusion.noApply = Neos.Fusion:EelValue
 
-  @provider.applyWithStringReturn = Neos.Fusion:EelValue {
+  @fusion.applyWithStringReturn = Neos.Fusion:EelValue {
     @apply.alterValue = Neos.Fusion:Value {
       value = 'an fusion objects that retuns not an array!!!'
     }
   }
 
-  @provider.renderEelValueWithInvalidExpressionSpread = Neos.Fusion:EelValue {
+  @fusion.renderEelValueWithInvalidExpressionSpread = Neos.Fusion:EelValue {
     @apply.alterValue = ${'an expression but not an array!!!'}
   }
 }
 
-applyTest.renderEelValueWithSingleSpread {
-  @scenario.changedEelValue.@after = ${ self.assertSame(actual, 'altered eel expression') }
+apply_render_eel_value_with_single_spread_test {
+  @test.changedEelValue.@afterRender = ${ self.assertSame(result, 'altered eel expression') }
 
-  @provider.applyWithEelObject = Neos.Fusion:EelValue {
+  @fusion.applyWithEelObject = Neos.Fusion:EelValue {
     @apply.alterValue = ${{value: 'altered eel expression'}}
   }
 
-  @provider.applyWithFusionObject = Neos.Fusion:EelValue {
+  @fusion.applyWithFusionObject = Neos.Fusion:EelValue {
     @apply.alterValue = Neos.Fusion:DataStructure {
       value = 'altered eel expression'
     }

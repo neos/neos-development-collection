@@ -1,0 +1,29 @@
+{
+    "name": "neos/fusion-testing",
+    "type": "neos-package",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "description": "Fusion Testing Helper",
+    "require": {
+        "neos/fusion": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Fusion\\Testing\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Fusion\\Testing\\Tests\\": "Tests"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Fusion.Testing"
+        }
+    }
+}

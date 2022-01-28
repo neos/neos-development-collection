@@ -16,6 +16,9 @@
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6"
     },
+    "require-dev": {
+        "neos/fusion-testing": "*"
+    },
     "replace": {
         "typo3/typoscript": "self.version"
     },
