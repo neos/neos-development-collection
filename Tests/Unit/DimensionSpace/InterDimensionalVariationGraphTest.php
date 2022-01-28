@@ -648,11 +648,11 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $generalization = DimensionSpace\DimensionSpacePoint::instance(['dimensionA' => 'value1', 'dimensionB' => 'value1']);
         $peer = DimensionSpace\DimensionSpacePoint::instance(['dimensionA' => 'value1.2', 'dimensionB' => 'value1']);
 
-        $this->assertTrue($this->subject->getVariantType($specialization, $generalization)->equals(DimensionSpace\VariantType::TYPE_SPECIALIZATION));
-        $this->assertTrue($this->subject->getVariantType($generalization, $specialization)->equals(DimensionSpace\VariantType::TYPE_GENERALIZATION));
-        $this->assertTrue($this->subject->getVariantType($specialization, $peer)->equals(DimensionSpace\VariantType::TYPE_PEER));
-        $this->assertTrue($this->subject->getVariantType($peer, $specialization)->equals(DimensionSpace\VariantType::TYPE_PEER));
-        $this->assertTrue($this->subject->getVariantType($peer, $peer)->equals(DimensionSpace\VariantType::TYPE_SAME));
+        $this->assertTrue($this->subject->getVariantType($specialization, $generalization) === DimensionSpace\VariantType::TYPE_SPECIALIZATION);
+        $this->assertTrue($this->subject->getVariantType($generalization, $specialization) === DimensionSpace\VariantType::TYPE_GENERALIZATION);
+        $this->assertTrue($this->subject->getVariantType($specialization, $peer) === DimensionSpace\VariantType::TYPE_PEER);
+        $this->assertTrue($this->subject->getVariantType($peer, $specialization) === DimensionSpace\VariantType::TYPE_PEER);
+        $this->assertTrue($this->subject->getVariantType($peer, $peer) === DimensionSpace\VariantType::TYPE_SAME);
     }
 
     /**
