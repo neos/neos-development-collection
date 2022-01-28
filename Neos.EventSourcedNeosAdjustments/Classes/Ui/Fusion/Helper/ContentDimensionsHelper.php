@@ -58,7 +58,7 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
                 // TODO: make certain values hidable
                 $result[(string)$dimension->identifier]['presets'][$value->value] = [
                     // TODO: name, uriSegment!
-                    'values' => [$value->getValue()],
+                    'values' => [$value->value],
                     'label' => $value->getConfigurationValue('label')
                 ];
             }

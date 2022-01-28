@@ -53,9 +53,9 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             'market' => new ContentDimension(
                 new ContentDimensionIdentifier('market'),
                 [
-                    $world->getValue() => $world,
-                    $greatBritain->getValue() => $greatBritain,
-                    $germany->getValue() => $germany
+                    $world->value => $world,
+                    $greatBritain->value => $greatBritain,
+                    $germany->value => $germany
                 ],
                 $world,
                 [
@@ -71,8 +71,8 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             'seller' => new ContentDimension(
                 new ContentDimensionIdentifier('seller'),
                 [
-                    $defaultSeller->getValue() => $defaultSeller,
-                    $sellerA->getValue() => $sellerA
+                    $defaultSeller->value => $defaultSeller,
+                    $sellerA->value => $sellerA
                 ],
                 $defaultSeller,
                 [
@@ -90,8 +90,8 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             'channel' => new ContentDimension(
                 new ContentDimensionIdentifier('channel'),
                 [
-                    $defaultChannel->getValue() => $defaultChannel,
-                    $channelA->getValue() => $channelA
+                    $defaultChannel->value => $defaultChannel,
+                    $channelA->value => $channelA
                 ],
                 $defaultChannel,
                 [
@@ -109,8 +109,8 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             'language' => new ContentDimension(
                 new ContentDimensionIdentifier('language'),
                 [
-                    $english->getValue() => $english,
-                    $german->getValue() => $german
+                    $english->value => $english,
+                    $german->value => $german
                 ],
                 $english,
                 [],

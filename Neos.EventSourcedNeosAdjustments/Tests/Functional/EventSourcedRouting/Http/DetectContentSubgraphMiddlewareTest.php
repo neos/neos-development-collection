@@ -60,9 +60,9 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             'market' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('market'),
                 [
-                    $world->getValue() => $world,
-                    $greatBritain->getValue() => $greatBritain,
-                    $germany->getValue() => $germany
+                    $world->value => $world,
+                    $greatBritain->value => $greatBritain,
+                    $germany->value => $germany
                 ],
                 $world,
                 [
@@ -78,8 +78,8 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             'seller' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('seller'),
                 [
-                    $defaultSeller->getValue() => $defaultSeller,
-                    $sellerA->getValue() => $sellerA
+                    $defaultSeller->value => $defaultSeller,
+                    $sellerA->value => $sellerA
                 ],
                 $defaultSeller,
                 [
@@ -96,8 +96,8 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             'channel' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('channel'),
                 [
-                    $defaultChannel->getValue() => $defaultChannel,
-                    $channelA->getValue() => $channelA
+                    $defaultChannel->value => $defaultChannel,
+                    $channelA->value => $channelA
                 ],
                 $defaultChannel,
                 [
@@ -114,8 +114,8 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
             'language' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('language'),
                 [
-                    $english->getValue() => $english,
-                    $german->getValue() => $german
+                    $english->value => $english,
+                    $german->value => $german
                 ],
                 $english,
                 [],
