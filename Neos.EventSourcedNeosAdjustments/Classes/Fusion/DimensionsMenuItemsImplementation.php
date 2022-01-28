@@ -78,7 +78,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 
 
         $currentDimensionSpacePoint = $this->currentNode->getDimensionSpacePoint();
-        foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace()->getPoints() as $dimensionSpacePoint) {
+        foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {

@@ -245,7 +245,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         );
 
         // reconnect parent relations
-        $missingParentRelations = $visibleInDimensionSpacePoints->getPoints();
+        $missingParentRelations = $visibleInDimensionSpacePoints->points;
 
         if (!empty($missingParentRelations)) {
             // add yet missing parent relations
@@ -298,7 +298,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
         NodeName $relationName = null
     ): void {
-        foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
+        foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
                 $parentNodeAnchorPoint,
                 null,
