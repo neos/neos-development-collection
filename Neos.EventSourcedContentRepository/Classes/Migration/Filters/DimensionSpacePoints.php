@@ -59,7 +59,7 @@ class DimensionSpacePoints implements NodeBasedFilterInterface
         if ($this->includeSpecializations) {
             foreach ($this->points as $point) {
                 $variantType = $this->interDimensionalVariationGraph->getVariantType($node->getOriginDimensionSpacePoint(), $point);
-                if ($variantType->equals(VariantType::same()) || $variantType->equals(VariantType::specialization())) {
+                if ($variantType === VariantType::TYPE_SAME || $variantType === VariantType::TYPE_SPECIALIZATION) {
                     // this is true if the node is a specialization of $point (or if they are equal)
                     return true;
                 }

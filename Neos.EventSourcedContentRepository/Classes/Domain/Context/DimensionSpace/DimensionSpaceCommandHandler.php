@@ -56,7 +56,7 @@ final class DimensionSpaceCommandHandler
      */
     protected $contentGraph;
 
-    protected ContentDimensionZookeeper $contentDImensionZookeeper;
+    protected ContentDimensionZookeeper $contentDimensionZookeeper;
 
     protected DimensionSpacePointSet $allowedDimensionSubspace;
 
@@ -148,7 +148,7 @@ final class DimensionSpaceCommandHandler
 
     private function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $target, DimensionSpacePoint $source)
     {
-        if (!$this->interDimensionalVariationGraph->getVariantType($target, $source)->equals(VariantType::specialization())) {
+        if ($this->interDimensionalVariationGraph->getVariantType($target, $source) !== VariantType::TYPE_SPECIALIZATION) {
             throw new DimensionSpacePointIsNoSpecialization(sprintf('The Dimension space point %s is no specialization of %s.', $target, $source), 1617275140);
         }
     }

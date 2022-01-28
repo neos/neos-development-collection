@@ -39,18 +39,29 @@ trait NodeVariationInternals
         ReadableNodeAggregateInterface $nodeAggregate,
         UserIdentifier $initiatingUserIdentifier
     ): DomainEvents {
-        switch ($this->getInterDimensionalVariationGraph()->getVariantType($targetOrigin, $sourceOrigin)->getType()) {
-            case DimensionSpace\VariantType::TYPE_SPECIALIZATION:
-                $events = $this->handleCreateNodeSpecializationVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate, $initiatingUserIdentifier);
-            break;
-            case DimensionSpace\VariantType::TYPE_GENERALIZATION:
-                $events = $this->handleCreateNodeGeneralizationVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate, $initiatingUserIdentifier);
-            break;
-            case DimensionSpace\VariantType::TYPE_PEER:
-            default:
-                $events = $this->handleCreateNodePeerVariant($contentStreamIdentifier, $sourceOrigin, $targetOrigin, $nodeAggregate, $initiatingUserIdentifier);
-        }
-        return $events;
+        return match ($this->getInterDimensionalVariationGraph()->getVariantType($targetOrigin, $sourceOrigin)) {
+            DimensionSpace\VariantType::TYPE_SPECIALIZATION => $this->handleCreateNodeSpecializationVariant(
+                $contentStreamIdentifier,
+                $sourceOrigin,
+                $targetOrigin,
+                $nodeAggregate,
+                $initiatingUserIdentifier
+            ),
+            DimensionSpace\VariantType::TYPE_GENERALIZATION => $this->handleCreateNodeGeneralizationVariant(
+                $contentStreamIdentifier,
+                $sourceOrigin,
+                $targetOrigin,
+                $nodeAggregate,
+                $initiatingUserIdentifier
+            ),
+            default => $this->handleCreateNodePeerVariant(
+                $contentStreamIdentifier,
+                $sourceOrigin,
+                $targetOrigin,
+                $nodeAggregate,
+                $initiatingUserIdentifier
+            ),
+        };
     }
 
     protected function handleCreateNodeSpecializationVariant(
