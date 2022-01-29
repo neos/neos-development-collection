@@ -2,6 +2,8 @@ Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterfa
   className: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph'
 Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
   arguments:
+    1:
+      object: 'Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient'
     2:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
@@ -9,3 +11,5 @@ Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
         arguments:
           1:
             value: Neos_ContentGraph_DoctrineDbalAdapter_ProcessedEvents
+    3:
+      object: 'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph'

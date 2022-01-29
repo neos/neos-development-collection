@@ -187,6 +187,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     public function render(): string
     {
         $node = $this->arguments['node'];
+        if (!$node instanceof NodeInterface) {
+            $node = $this->getContextVariable($this->arguments['baseNodeName']);
+        }
         $nodeAddress = null;
 
         if ($node instanceof NodeInterface) {
@@ -214,7 +217,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         }
 
         $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($this->controllerContext->getRequest());
+        $uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());
         $uriBuilder->setFormat($this->arguments['format'])
             ->setCreateAbsoluteUri($this->arguments['absolute'])
             ->setArguments($this->arguments['arguments'])

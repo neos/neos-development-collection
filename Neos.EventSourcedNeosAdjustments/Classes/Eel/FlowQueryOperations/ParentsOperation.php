@@ -13,7 +13,6 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
@@ -72,13 +71,13 @@ class ParentsOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             $node = $contextNode;
             do {
-                try {
-                    $node = $this->nodeAccessorManager->accessorFor(
-                        $node->getContentStreamIdentifier(),
-                        $node->getDimensionSpacePoint(),
-                        $node->getVisibilityConstraints()
-                    )->findParentNode($node);
-                } catch (NodeException $exception) {
+                $node = $this->nodeAccessorManager->accessorFor(
+                    $node->getContentStreamIdentifier(),
+                    $node->getDimensionSpacePoint(),
+                    $node->getVisibilityConstraints()
+                )->findParentNode($node);
+                if ($node === null) {
+                    // no parent found
                     break;
                 }
                 // stop at sites

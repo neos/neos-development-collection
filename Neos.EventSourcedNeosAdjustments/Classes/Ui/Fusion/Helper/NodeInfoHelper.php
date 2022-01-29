@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
@@ -27,7 +26,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping\NodePropertyConverterSer
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 use Neos\Neos\Ui\Service\NodePolicyService;
@@ -249,16 +247,6 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         return false;
     }
 
-    public static function isNodeTypeAllowedAsChildNode(NodeBasedReadModelInterface $node, NodeType $nodeType)
-    {
-        if (self::isAutoCreated($node)) {
-            return $node->findParentNode()->getNodeType()->allowsGrandchildNodeType((string)$node->getNodeName(), $nodeType);
-        } else {
-            return $node->getNodeType()->allowsChildNodeType($nodeType);
-        }
-    }
-
-
     /**
      * Get information for all children of the given parent node.
      *
@@ -318,7 +306,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
 
             $nodePath = $nodeAccessor->findNodePath($node);
-            if (array_key_exists($nodePath, $renderedNodes)) {
+            if (array_key_exists($nodePath->jsonSerialize(), $renderedNodes)) {
                 $renderedNodes[(string)$nodePath]['matched'] = true;
             } elseif ($renderedNode = $this->renderNodeWithMinimalPropertiesAndChildrenInformation($node, $controllerContext, $baseNodeTypeOverride)) {
                 $renderedNode['matched'] = true;
@@ -327,21 +315,14 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
                 continue;
             }
 
-            /* @var $contentContext ContentContext */
-            $contentContext = $node->getContext();
-            // TODO: $node->getContext() not supported anymore
-            $siteNodePath = $contentContext->getCurrentSiteNode()->getPath();
             $parentNode = $nodeAccessor->findParentNode($node);
             if ($parentNode === null) {
                 // There are a multitude of reasons why a node might not have a parent and we should ignore these gracefully.
                 continue;
             }
 
-            // we additionally need to check that our parent nodes are underneath the site node; otherwise it might happen that
-            // we try to send the "/sites" node to the UI (which we cannot do, because this does not have an URL)
             $parentNodePath = $nodeAccessor->findNodePath($parentNode);
-            $parentNodeIsUnderneathSiteNode = (strpos((string)$parentNodePath, $siteNodePath) === 0);
-            while ($parentNode->getNodeType()->isOfType($baseNodeTypeOverride) && $parentNodeIsUnderneathSiteNode) {
+            while ($parentNode->getNodeType()->isOfType($baseNodeTypeOverride)) {
                 if (array_key_exists((string)$parentNodePath, $renderedNodes)) {
                     $renderedNodes[(string)$parentNodePath]['intermediate'] = true;
                 } else {
@@ -351,7 +332,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
                         $renderedNodes[(string)$parentNodePath] = $renderedParentNode;
                     }
                 }
-                $parentNode = $parentNode->getParent();
+                $parentNode = $nodeAccessor->findParentNode($parentNode);
                 if ($parentNode === null) {
                     // There are a multitude of reasons why a node might not have a parent and we should ignore these gracefully.
                     break;

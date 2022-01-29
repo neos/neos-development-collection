@@ -114,7 +114,8 @@ class NodePropertyConverterService
         if ($propertyName === '_hidden') {
             return $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden();
         }
-
+        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+        $node->getNodeType()->getFullConfiguration();
         $propertyType = $node->getNodeType()->getPropertyType($propertyName);
 
         // We handle "reference" and "references" differently than other properties; because we need to use another API for querying these references.

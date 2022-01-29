@@ -12,16 +12,21 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
 use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Nodes;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RenderContentOutOfBand;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
+use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 
@@ -69,9 +74,42 @@ abstract class AbstractStructuralChange extends AbstractChange
     protected $nodeAddressFactory;
 
     /**
+     * @Flow\Inject
+     * @var ContentGraphInterface
+     */
+    protected $contentGraph;
+
+    /**
      * @var NodeInterface
      */
     protected $cachedSiblingNode = null;
+
+    /**
+     * Used when creating nodes within non-default tree preset
+     *
+     * @var string|null
+     */
+    protected $baseNodeType = null;
+
+    /**
+     * Set the baseNodeType
+     *
+     * @param string $baseNodeType
+     */
+    public function setBaseNodeType(string $baseNodeType): void
+    {
+        $this->baseNodeType = $baseNodeType;
+    }
+
+    /**
+     * Get the baseNodeType
+     *
+     * @return string|null
+     */
+    public function getBaseNodeType(): ?string
+    {
+        return $this->baseNodeType;
+    }
 
     /**
      * Get the insertion mode (before|after|into) that is represented by this change
@@ -160,6 +198,9 @@ abstract class AbstractStructuralChange extends AbstractChange
         $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         $parentNode = $nodeAccessor->findParentNode($node);
         $updateParentNodeInfo->setNode($parentNode);
+        if ($this->baseNodeType) {
+            $updateParentNodeInfo->setBaseNodeType($this->baseNodeType);
+        }
 
         $this->feedbackCollection->add($updateNodeInfo);
         $this->feedbackCollection->add($updateParentNodeInfo);
@@ -191,6 +232,35 @@ abstract class AbstractStructuralChange extends AbstractChange
 
                 $this->feedbackCollection->add($reloadDocument);
             }
+        }
+    }
+
+    protected function nodeAccessorFor(NodeInterface $node): NodeAccessorInterface
+    {
+        return $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            $node->getVisibilityConstraints()
+        );
+    }
+
+    protected function findParentNode(NodeInterface $node): ?NodeInterface
+    {
+        return $this->nodeAccessorFor($node)->findParentNode($node);
+    }
+
+    protected function findChildNodes(NodeInterface $node): Nodes
+    {
+        return $this->nodeAccessorFor($node)->findChildNodes($node);
+    }
+
+    protected function isNodeTypeAllowedAsChildNode(NodeInterface $node, NodeType $nodeType)
+    {
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        if (NodeInfoHelper::isAutoCreated($node, $nodeAccessor)) {
+            return $nodeAccessor->findParentNode($node)->getNodeType()->allowsGrandchildNodeType((string)$node->getNodeName(), $nodeType);
+        } else {
+            return $node->getNodeType()->allowsChildNodeType($nodeType);
         }
     }
 }

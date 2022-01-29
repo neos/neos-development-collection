@@ -31,6 +31,7 @@ use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\Projection\ProjectorInterface;
+use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 
 final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvokeInterface, AfterInvokeInterface
@@ -47,11 +48,14 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     private Connection $dbal;
 
-    public function __construct(NodeTypeManager $nodeTypeManager, DocumentUriPathFinder $documentUriPathFinder, Connection $dbal)
+    private RouterCachingService $routerCachingService;
+
+    public function __construct(NodeTypeManager $nodeTypeManager, DocumentUriPathFinder $documentUriPathFinder, Connection $dbal, RouterCachingService $routerCachingService)
     {
         $this->nodeTypeManager = $nodeTypeManager;
         $this->documentUriPathFinder = $documentUriPathFinder;
         $this->dbal = $dbal;
+        $this->routerCachingService = $routerCachingService;
     }
 
     public function beforeInvoke(EventEnvelope $_): void
@@ -342,6 +346,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
             'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
         ]);
+        $this->routerCachingService->flushCachesForUriPath($oldUriPath);
     }
 
     public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void

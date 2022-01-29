@@ -168,4 +168,11 @@ final class Node implements NodeInterface
     {
         return $this->visibilityConstraints;
     }
+
+    public function equals(NodeInterface $other): bool
+    {
+        return $this->getContentStreamIdentifier()->equals($other->getContentStreamIdentifier())
+            && $this->getDimensionSpacePoint()->equals($other->getDimensionSpacePoint())
+            && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier());
+    }
 }

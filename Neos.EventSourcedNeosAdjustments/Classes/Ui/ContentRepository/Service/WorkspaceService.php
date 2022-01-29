@@ -13,8 +13,16 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorManager;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Changes\Change;
+use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Remove;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -27,6 +35,24 @@ use Neos\Neos\Domain\Service\UserService as DomainUserService;
  */
 class WorkspaceService
 {
+    /**
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
+    /**
+     * @Flow\Inject
+     * @var ChangeFinder
+     */
+    protected $changeFinder;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAccessorManager
+     */
+    protected $nodeAccessorManager;
+
     /**
      * @Flow\Inject
      * @var PublishingService
@@ -65,21 +91,57 @@ class WorkspaceService
      */
     public function getPublishableNodeInfo(WorkspaceName $workspaceName)
     {
-        $publishableNodes = $this->publishingService->getUnpublishedNodes($workspaceName);
+        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        if ($workspace->getBaseWorkspaceName() === null) {
+            return [];
+        }
+        $changes = $this->changeFinder->findByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
+        $unpublishedNodes = [];
+        foreach ($changes as $change) {
+            /* @var $change Change */
+            if ($change->removalAttachmentPoint) {
+                $nodeAddress = new NodeAddress(
+                    $change->contentStreamIdentifier,
+                    $change->originDimensionSpacePoint,
+                    $change->nodeAggregateIdentifier,
+                    $workspaceName
+                );
 
-        $publishableNodes = array_map(function ($node) {
-            $documentNode = (new FlowQuery([$node]))->closest('[instanceof Neos.Neos:Document]')->get(0);
-            if ($documentNode) {
-                return [
-                    'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
-                    'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()
+                /**
+                 * See {@see Remove::apply} -> Removal Attachment Point == closest document node.
+                 */
+                $documentNodeAddress = new NodeAddress(
+                    $change->contentStreamIdentifier,
+                    $change->originDimensionSpacePoint,
+                    $change->removalAttachmentPoint,
+                    $workspaceName
+                );
+
+                $unpublishedNodes[] = [
+                    'contextPath' => $nodeAddress->serializeForUri(),
+                    'documentContextPath' => $documentNodeAddress->serializeForUri()
                 ];
-            }
-        }, $publishableNodes);
+            } else {
+                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                    $workspace->getCurrentContentStreamIdentifier(),
+                    $change->originDimensionSpacePoint,
+                    VisibilityConstraints::withoutRestrictions()
+                );
+                $node = $nodeAccessor->findByIdentifier($change->nodeAggregateIdentifier);
 
-        return array_values(array_filter($publishableNodes, function ($item) {
+                if ($node instanceof NodeInterface) {
+                    $documentNode = (new FlowQuery([$node]))->closest('[instanceof Neos.Neos:Document]')->get(0);
+                    $unpublishedNodes[] = [
+                        'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
+                        'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()
+                    ];
+                }
+            }
+        }
+
+        return array_filter($unpublishedNodes, function ($item) {
             return (bool)$item;
-        }));
+        });
     }
 
     /**

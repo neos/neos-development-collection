@@ -17,10 +17,11 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraph
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
+use Neos\Flow\Security\Context;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Service\UserService;
 
 /**
  * The Workspace helper for EEL contexts
@@ -41,15 +42,16 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
 
     /**
      * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
-
-    /**
-     * @Flow\Inject
      * @var DomainUserService
      */
     protected $domainUserService;
+
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
+
 
     /**
      * @param ContentSubgraphInterface $contentSubgraph
@@ -84,7 +86,8 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
 
     public function getPersonalWorkspace()
     {
-        $personalWorkspaceName = new WorkspaceName($this->userService->getPersonalWorkspaceName());
+        $currentAccount = $this->securityContext->getAccount();
+        $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
         $personalWorkspace = $this->workspaceFinder->findOneByName($personalWorkspaceName);
 
         return [

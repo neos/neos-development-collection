@@ -14,7 +14,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
@@ -38,7 +37,7 @@ class CopyBefore extends AbstractStructuralChange
     {
         $nodeType = $this->getSubject()->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($this->getSiblingNode()->findParentNode(), $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($this->findParentNode($this->getSiblingNode()), $nodeType);
     }
 
     public function getMode()
@@ -57,9 +56,14 @@ class CopyBefore extends AbstractStructuralChange
             $subject = $this->getSubject();
 
             $succeedingSibling = $this->getSiblingNode();
-            $parentNodeOfSucceedingSibling = $succeedingSibling->findParentNode();
+            $parentNodeOfSucceedingSibling = $this->findParentNode($succeedingSibling);
 
             $command = CopyNodesRecursively::create(
+                $this->contentGraph->getSubgraphByIdentifier(
+                    $subject->getContentStreamIdentifier(),
+                    $subject->getDimensionSpacePoint(),
+                    $subject->getVisibilityConstraints()
+                ),
                 $subject,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($subject->getDimensionSpacePoint()),
                 UserIdentifier::forSystemUser(), // TODO
@@ -68,12 +72,12 @@ class CopyBefore extends AbstractStructuralChange
                 NodeName::fromString(uniqid('node-'))
             );
 
-            $this->contentCacheFlusher->registerNodeChange($subject);
-
             $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
                 ->blockUntilProjectionsAreUpToDate();
 
-            $newlyCreatedNode = $parentNodeOfSucceedingSibling->findNamedChildNode($command->getTargetNodeName());
+            $newlyCreatedNode = $this->nodeAccessorFor($parentNodeOfSucceedingSibling)->findChildNodeConnectedThroughEdgeName($parentNodeOfSucceedingSibling, $command->getTargetNodeName());
+            // we render content directly as response of this operation, so we need to flush the caches at the copy target
+            $this->contentCacheFlusher->flushNodeAggregate($newlyCreatedNode->getContentStreamIdentifier(), $newlyCreatedNode->getNodeAggregateIdentifier());
             $this->finish($newlyCreatedNode);
             // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed
             $this->addNodeCreatedFeedback($newlyCreatedNode);

@@ -21,7 +21,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateN
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class MoveInto extends AbstractStructuralChange
 {
@@ -87,7 +86,7 @@ class MoveInto extends AbstractStructuralChange
         $parent = $this->getParentNode();
         $nodeType = $this->getSubject()->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     /**
@@ -100,30 +99,36 @@ class MoveInto extends AbstractStructuralChange
         if ($this->canApply()) {
             // "subject" is the to-be-moved node
             $subject = $this->getSubject();
+            // "parentNode" is the node where the $subject should be moved INTO
+            $parentNode = $this->getParentNode();
 
             $nodeAccessor = $this->nodeAccessorManager->accessorFor($subject->getContentStreamIdentifier(), $subject->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-            $hasEqualParentNode = $nodeAccessor->findParentNode($subject)->getNodeAggregateIdentifier()->equals($this->getParentNode()->getNodeAggregateIdentifier());
+            $hasEqualParentNode = $nodeAccessor->findParentNode($subject)->getNodeAggregateIdentifier()->equals($parentNode->getNodeAggregateIdentifier());
 
-            $this->contentCacheFlusher->registerNodeChange($subject);
+            // we render content directly as response of this operation, so we need to flush the caches
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($subject->getContentStreamIdentifier(), $subject->getNodeAggregateIdentifier());
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
                 new MoveNodeAggregate(
                     $subject->getContentStreamIdentifier(),
                     $subject->getDimensionSpacePoint(),
                     $subject->getNodeAggregateIdentifier(),
-                    $hasEqualParentNode ? null : $this->getParentNode()->getNodeAggregateIdentifier(),
+                    $hasEqualParentNode ? null : $parentNode->getNodeAggregateIdentifier(),
                     null,
                     null,
                     RelationDistributionStrategy::gatherAll(),
                     $this->getInitiatingUserIdentifier()
                 )
             )->blockUntilProjectionsAreUpToDate();
+            $doFlushContentCache();
+            if (!$hasEqualParentNode) {
+                $this->contentCacheFlusher->flushNodeAggregate($parentNode->getContentStreamIdentifier(), $parentNode->getNodeAggregateIdentifier());
+            }
 
             $updateParentNodeInfo = new UpdateNodeInfo();
-            $updateParentNodeInfo->setNode($this->getParentNode());
-
+            $updateParentNodeInfo->setNode($parentNode);
             $this->feedbackCollection->add($updateParentNodeInfo);
 
-            $removeNode = new RemoveNode($subject, $this->getParentNode());
+            $removeNode = new RemoveNode($subject, $parentNode);
             $this->feedbackCollection->add($removeNode);
 
             $this->finish($subject);

@@ -15,7 +15,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
@@ -72,7 +71,7 @@ class CopyInto extends AbstractStructuralChange
     {
         $nodeType = $this->getSubject()->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($this->getParentNode(), $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($this->getParentNode(), $nodeType);
     }
 
     public function getMode()
@@ -89,8 +88,12 @@ class CopyInto extends AbstractStructuralChange
     {
         if ($this->canApply()) {
             $subject = $this->getSubject();
-
             $command = CopyNodesRecursively::create(
+                $this->contentGraph->getSubgraphByIdentifier(
+                    $subject->getContentStreamIdentifier(),
+                    $subject->getDimensionSpacePoint(),
+                    $subject->getVisibilityConstraints()
+                ),
                 $subject,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($subject->getDimensionSpacePoint()),
                 UserIdentifier::forSystemUser(), // TODO
@@ -99,12 +102,14 @@ class CopyInto extends AbstractStructuralChange
                 NodeName::fromString(uniqid('node-'))
             );
 
-            $this->contentCacheFlusher->registerNodeChange($subject);
 
             $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)
                 ->blockUntilProjectionsAreUpToDate();
 
-            $newlyCreatedNode = $this->getParentNode()->findNamedChildNode($command->getTargetNodeName());
+            $parentNode = $this->getParentNode();
+            $newlyCreatedNode = $this->nodeAccessorFor($parentNode)->findChildNodeConnectedThroughEdgeName($parentNode, $command->getTargetNodeName());
+            // we render content directly as response of this operation, so we need to flush the caches at the copy target
+            $this->contentCacheFlusher->flushNodeAggregate($newlyCreatedNode->getContentStreamIdentifier(), $newlyCreatedNode->getNodeAggregateIdentifier());
             $this->finish($newlyCreatedNode);
             // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed
             $this->addNodeCreatedFeedback($newlyCreatedNode);

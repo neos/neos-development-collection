@@ -5,7 +5,7 @@ index f0dc4bd8b..1e831ca3d 100644
 @@ -11,7 +11,7 @@ namespace Neos\Neos\Domain\Service;
   * source code.
   */
-
+ 
 -use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 +use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
  use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -41,10 +41,10 @@ index f0dc4bd8b..1e831ca3d 100644
 +    public function getMergedFusionObjectTree(NodeInterface $startNode)
      {
          $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
-
+ 
 @@ -151,10 +151,10 @@ class FusionService
      }
-
+ 
      /**
 -     * @param TraversableNodeInterface $siteNode
 +     * @param NodeInterface $siteNode
@@ -56,12 +56,12 @@ index f0dc4bd8b..1e831ca3d 100644
          return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
      }
 diff --git a/Neos.Neos/Classes/Domain/Service/SiteService.php b/Neos.Neos/Classes/Domain/Service/SiteService.php
-index c9ab62afc..3b722259f 100644
+index c9ab62afc..ae1bf4d51 100644
 --- a/Neos.Neos/Classes/Domain/Service/SiteService.php
 +++ b/Neos.Neos/Classes/Domain/Service/SiteService.php
 @@ -12,7 +12,10 @@ namespace Neos\Neos\Domain\Service;
   */
-
+ 
  use Neos\ContentRepository\Domain\Model\NodeInterface;
 +use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 +use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
@@ -73,7 +73,7 @@ index c9ab62afc..3b722259f 100644
 @@ -53,6 +56,12 @@ class SiteService
       */
      protected $siteRepository;
-
+ 
 +    /**
 +     * @Flow\Inject
 +     * @var NodeSiteResolvingService
@@ -93,7 +93,7 @@ index c9ab62afc..3b722259f 100644
       * @return void
       */
 -    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $propertyName)
-+    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeAddress $node, string $propertyName): void
++    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeAddress $node, string $propertyName)
      {
 -        $contentContext = $node->getContext();
 -        if (!$contentContext instanceof ContentContext) {
@@ -117,22 +117,26 @@ index c9ab62afc..3b722259f 100644
 +            // 👻
 +        }
      }
-
+ 
      /**
 diff --git a/Neos.Neos/Classes/View/FusionView.php b/Neos.Neos/Classes/View/FusionView.php
-index ce81f7601..41d1e9238 100644
+index 7af8ad843..190244177 100644
 --- a/Neos.Neos/Classes/View/FusionView.php
 +++ b/Neos.Neos/Classes/View/FusionView.php
-@@ -11,6 +11,7 @@ namespace Neos\Neos\View;
-  * source code.
+@@ -12,6 +12,7 @@ namespace Neos\Neos\View;
   */
-
-+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+ 
  use GuzzleHttp\Psr7\Message;
++use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
  use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
  use Neos\Flow\Annotations as Flow;
-@@ -206,7 +207,7 @@ class FusionView extends AbstractView
-      * @param TraversableNodeInterface $currentSiteNode
+ use Neos\Flow\Mvc\View\AbstractView;
+@@ -203,10 +204,10 @@ class FusionView extends AbstractView
+ 
+ 
+     /**
+-     * @param TraversableNodeInterface $currentSiteNode
++     * @param NodeInterface $currentSiteNode
       * @return \Neos\Fusion\Core\Runtime
       */
 -    protected function getFusionRuntime(TraversableNodeInterface $currentSiteNode)

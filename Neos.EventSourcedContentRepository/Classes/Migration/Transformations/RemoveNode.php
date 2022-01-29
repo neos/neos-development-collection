@@ -89,7 +89,7 @@ class RemoveNode implements NodeBasedTransformationInterface
             return CommandResult::createEmpty();
         }
 
-        return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(new RemoveNodeAggregate(
+        return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(RemoveNodeAggregate::create(
             $contentStreamForWriting,
             $node->getNodeAggregateIdentifier(),
             $coveredDimensionSpacePoint,

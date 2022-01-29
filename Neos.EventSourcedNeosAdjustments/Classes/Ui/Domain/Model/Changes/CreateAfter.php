@@ -12,8 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
-
 class CreateAfter extends AbstractCreate
 {
     /**
@@ -33,10 +31,10 @@ class CreateAfter extends AbstractCreate
      */
     public function canApply(): bool
     {
-        $parent = $this->getSubject()->findParentNode();
+        $parent = $this->findParentNode($this->getSubject());
         $nodeType = $this->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     /**
@@ -48,11 +46,11 @@ class CreateAfter extends AbstractCreate
     {
         if ($this->canApply()) {
             $subject = $this->getSubject();
-            $parentNode = $subject->findParentNode();
+            $parentNode = $this->findParentNode($subject);
 
             $succeedingSibling = null;
             try {
-                $succeedingSibling = $parentNode->findChildNodes()->next($subject);
+                $succeedingSibling = $this->findChildNodes($parentNode)->next($subject);
             } catch (\InvalidArgumentException $e) {
                 // do nothing; $succeedingSibling is null.
             }

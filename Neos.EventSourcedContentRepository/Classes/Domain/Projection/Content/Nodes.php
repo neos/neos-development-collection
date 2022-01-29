@@ -90,6 +90,78 @@ final class Nodes extends ImmutableArrayObject
 
     public function reverse(): self
     {
-        return new self(array_reverse($this->nodes));
+        return new self(array_reverse($this->getArrayCopy()));
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->count() === 0;
+    }
+
+    private function getNodeIndex(NodeInterface $subject): int
+    {
+        foreach ($this->getArrayCopy() as $index => $node) {
+            if ($node->equals($subject)) {
+                return $index;
+            }
+        }
+        throw new \InvalidArgumentException(sprintf('The node %s does not exist in this set', $subject->getNodeAggregateIdentifier()), 1542901216);
+    }
+
+    /**
+     * Returns the node before the given $referenceNode in this set. Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no preceding sibling
+     *
+     * @param NodeInterface $referenceNode
+     * @return NodeInterface
+     */
+    public function previous(NodeInterface $referenceNode): ?NodeInterface
+    {
+        $referenceNodeIndex = $this->getNodeIndex($referenceNode);
+        if ($referenceNodeIndex === 0) {
+            return null;
+        }
+        return $this[$referenceNodeIndex - 1];
+    }
+
+    /**
+     * Returns all nodes before the given $referenceNode in this set
+     */
+    public function previousAll(NodeInterface $referenceNode): self
+    {
+        $referenceNodeIndex = $this->getNodeIndex($referenceNode);
+
+        return new self(array_slice($this->getArrayCopy(), 0, $referenceNodeIndex));
+    }
+
+    /**
+     * Returns the node after the given $referenceNode in this set. Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no following sibling
+     */
+    public function next(NodeInterface $referenceNode): ?NodeInterface
+    {
+        $referenceNodeIndex = $this->getNodeIndex($referenceNode);
+        if ($referenceNodeIndex === $this->count() - 1) {
+            return null;
+        }
+
+        return $this[$referenceNodeIndex + 1];
+    }
+
+    /**
+     * Returns all nodes after the given $referenceNode in this set
+     */
+    public function nextAll(NodeInterface $referenceNode): self
+    {
+        $referenceNodeIndex = $this->getNodeIndex($referenceNode);
+
+        return new self(array_slice($this->getArrayCopy(), $referenceNodeIndex + 1));
+    }
+
+    /**
+     * Returns all nodes after the given $referenceNode in this set
+     */
+    public function until(NodeInterface $referenceNode): self
+    {
+        $referenceNodeIndex = $this->getNodeIndex($referenceNode);
+        return new self(array_slice($this->getArrayCopy(), $referenceNodeIndex + 1));
     }
 }

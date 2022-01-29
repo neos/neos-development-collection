@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class CreateBefore extends AbstractCreate
 {
@@ -33,10 +32,10 @@ class CreateBefore extends AbstractCreate
      */
     public function canApply(): bool
     {
-        $parent = $this->getSubject()->findParentNode();
+        $parent = $this->findParentNode($this->getSubject());
         $nodeType = $this->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     /**
@@ -48,7 +47,7 @@ class CreateBefore extends AbstractCreate
     {
         if ($this->canApply()) {
             $subject = $this->getSubject();
-            $parent = $subject->findParentNode();
+            $parent = $this->findParentNode($subject);
             $this->createNode($parent, $subject->getNodeAggregateIdentifier());
             $this->updateWorkspaceInfo();
         }

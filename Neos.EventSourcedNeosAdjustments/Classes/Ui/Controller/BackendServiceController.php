@@ -23,6 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
@@ -35,6 +36,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Context;
 use Neos\Neos\Ui\Fusion\Helper\WorkspaceHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -144,6 +146,12 @@ class BackendServiceController extends ActionController
     protected $propertyMapper;
 
     /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
+
+    /**
      * Set the controller context on the feedback collection after the controller
      * has been initialized
      *
@@ -191,7 +199,8 @@ class BackendServiceController extends ActionController
      */
     public function publishAllAction()
     {
-        $workspaceName = new WorkspaceName($this->userService->getPersonalWorkspaceName());
+        $currentAccount = $this->securityContext->getAccount();
+        $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
         $this->publishingService->publishWorkspace($workspaceName);
 
         $success = new Success();
@@ -213,7 +222,8 @@ class BackendServiceController extends ActionController
     public function publishAction(array $nodeContextPaths, string $targetWorkspaceName)
     {
         try {
-            $workspaceName = new WorkspaceName($this->userService->getPersonalWorkspaceName());
+            $currentAccount = $this->securityContext->getAccount();
+            $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
             $nodeAddresses = [];
             foreach ($nodeContextPaths as $contextPath) {
                 $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
@@ -251,7 +261,8 @@ class BackendServiceController extends ActionController
     public function discardAction(array $nodeContextPaths)
     {
         try {
-            $workspaceName = new WorkspaceName($this->userService->getPersonalWorkspaceName());
+            $currentAccount = $this->securityContext->getAccount();
+            $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
 
             $nodeAddresses = [];
             foreach ($nodeContextPaths as $contextPath) {
@@ -292,8 +303,10 @@ class BackendServiceController extends ActionController
     public function changeBaseWorkspaceAction(string $targetWorkspaceName, NodeInterface $documentNode)
     {
         try {
-            $targetWorkspace = $this->workspaceFinder->findOneByName($targetWorkspaceName);
-            $userWorkspace = $this->userService->getPersonalWorkspace();
+            $targetWorkspace = $this->workspaceFinder->findOneByName(new WorkspaceName($targetWorkspaceName));
+            $currentAccount = $this->securityContext->getAccount();
+            $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
+            $userWorkspace = $this->workspaceFinder->findOneByName($workspaceName);
 
             if (count($this->workspaceService->getPublishableNodeInfo($userWorkspace)) > 0) {
                 // TODO: proper error dialog

@@ -16,14 +16,14 @@ This is the package bundle you can install alongside a plain Neos to play around
 | ----------------------------------------- |:----------:|:----------------:|
 | **Basics**                                |            |                  |
 | Create/ Edit / Delete Nodes               |     ✅     |        ✅        |
-| Shortcut Handling                         |     ✅     |        ⏩        |
+| Shortcut Handling                         |     ✅     |        ✅        |
 | Query Nodes                               |     ✅     |        ✅        |
 | Cut / Copy / Paste                        |     ✅     |        ✅        |
 | Move Nodes                                |     ✅     |        ✅        |
 | Hide Nodes                                |     ✅     |        ✅        |
 | History                                   |    (✅)    |                  |
 | Basic Workspaces                          |     ✅     |        ✅        |
-| Workspace Module                          |     ✅     |         ⏩       |
+| Workspace Module                          |     ✅     |         ✅       |
 | Nested Workspaces                         |     ✅     |                  |
 | Undo / Redo                               |     🚫     |                  |
 | Setting Start / End time                  |     ✅     |                  |
@@ -62,13 +62,19 @@ This is the package bundle you can install alongside a plain Neos to play around
 | content merge conflict detection          |    🚫      |       ✅   |
 | content merge conflict resolution         |    🚫      |       ⏩   |
 | **User Interface**                        |            |                  |
-| Ensure node deletion can be published in UI    |   ✅     |                |
+| Ensure node deletion can be published in UI    |   ✅     |     ✅          |
 | Support Dimension Constraints             |   ✅     |               |
 | Publish Workspace                         |   ✅     |   ✅         |
 | Publish Current Page                      |   ✅     |   ✅          |
 | Discard all                               |   ✅     |   ✅          |
 | Discard Current Page                      |   ✅     |   ✅          |
 | Change node type in UI                    |   ✅     |   ✅          |
+
+## Package Compatibility
+
+- *Flowpack.NodeTemplates* is currently NOT supported because it works heavily with stateful Node objects.
+  In principle, it can be possible to build an API-compatible version based on the ES CR, by providing a "Node" shim
+  object.
 
 ## Requirements
 

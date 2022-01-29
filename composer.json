@@ -24,6 +24,9 @@
         "neos/event-sourced-neos-adjustments": "self.version"
     },
     "suggest": {},
+    "conflict": {
+        "flowpack/nodetemplates": "*"
+    },
     "autoload": {
         "psr-4": {
             "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [

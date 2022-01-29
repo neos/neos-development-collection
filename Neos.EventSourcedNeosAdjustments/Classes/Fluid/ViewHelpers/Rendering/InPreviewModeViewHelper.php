@@ -54,9 +54,22 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
  */
 class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
 {
+
     /**
-     * @param NodeInterface $node Optional Node to use context from
-     * @param string $mode Optional rendering mode name to check if this specific mode is active
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('node', \Neos\ContentRepository\Domain\Model\NodeInterface::class, 'Optional Node to use context from');
+        $this->registerArgument('mode', 'string', 'Optional rendering mode name to check if this specific mode is active');
+    }
+
+
+    /**
      * @return boolean
      */
     public function render(NodeInterface $node = null, $mode = null)

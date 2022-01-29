@@ -219,10 +219,11 @@ class Property extends AbstractChange
     {
         if ($this->canApply()) {
             $node = $this->getSubject();
-            $this->contentCacheFlusher->registerNodeChange($node);
 
             $propertyName = $this->getPropertyName();
 
+            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+            $node->getNodeType()->getFullConfiguration();
             $propertyType = $node->getNodeType()->getPropertyType($propertyName);
             $userIdentifier = $this->getInitiatingUserIdentifier();
 
@@ -333,17 +334,23 @@ class Property extends AbstractChange
             $reloadIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadIfChanged', $propertyName);
             if (!$this->getIsInline() && $node->getNodeType()->getConfiguration($reloadIfChangedConfigurationPath)) {
                 if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $nodeAccessor->findParentNode($node)->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+                    // we render content directly as response of this operation, so we need to flush the caches
+                    $this->contentCacheFlusher->flushNodeAggregate($node->getContentStreamIdentifier(), $node->getNodeAggregateIdentifier());
                     $reloadContentOutOfBand = new ReloadContentOutOfBand();
                     $reloadContentOutOfBand->setNode($node);
                     $reloadContentOutOfBand->setNodeDomAddress($this->getNodeDomAddress());
                     $this->feedbackCollection->add($reloadContentOutOfBand);
                 } else {
+                    // we render content directly as response of this operation, so we need to flush the caches
+                    $this->contentCacheFlusher->flushNodeAggregate($node->getContentStreamIdentifier(), $node->getNodeAggregateIdentifier());
                     $this->reloadDocument($node);
                 }
             }
 
             $reloadPageIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadPageIfChanged', $propertyName);
             if (!$this->getIsInline() && $node->getNodeType()->getConfiguration($reloadPageIfChangedConfigurationPath)) {
+                // we render content directly as response of this operation, so we need to flush the caches
+                $this->contentCacheFlusher->flushNodeAggregate($node->getContentStreamIdentifier(), $node->getNodeAggregateIdentifier());
                 $this->reloadDocument($node);
             }
 

@@ -84,12 +84,7 @@ class NeosUiDefaultNodesOperation extends AbstractOperation
         $nodes = [
             ((string)$siteNode->getNodeAggregateIdentifier()) => $siteNode
         ];
-        $currentNode = null;
-        try {
-            $currentNode = $nodeAccessor->findParentNode($documentNode);
-        } catch (NodeException $ignored) {
-            // parent does not exist
-        }
+        $currentNode = $nodeAccessor->findParentNode($documentNode);
         if ($currentNode) {
             $currentNodePath = $nodeAccessor->findNodePath($currentNode);
             $siteNodePath = $nodeAccessor->findNodePath($siteNode);

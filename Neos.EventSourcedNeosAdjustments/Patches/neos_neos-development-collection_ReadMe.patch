@@ -1,10 +1,10 @@
 diff --git a/Readme.rst b/Readme.rst
-index 6a23c0bd24410ae72eb070ff7728a2d3a2be9ff0..47384e2419246b7063bffaf0bd4ceb5f4ad74cef 100644
+index ea058a6a4..9bb4e8ad0 100644
 --- a/Readme.rst
 +++ b/Readme.rst
 @@ -68,3 +68,8 @@ To switch the branch you intend to work on:
- .. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 3.3 currently), or master for new features.
-
+ .. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 4.3 currently), or master for new features.
+ 
  For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
 +
 +Patched Version

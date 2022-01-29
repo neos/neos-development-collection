@@ -25,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeSpecializationVariantWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface
+final class NodeSpecializationVariantWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 

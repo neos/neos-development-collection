@@ -17,7 +17,6 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveN
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class MoveBefore extends AbstractStructuralChange
 {
@@ -35,10 +34,10 @@ class MoveBefore extends AbstractStructuralChange
      */
     public function canApply(): bool
     {
-        $parent = $this->getSiblingNode()->findParentNode();
+        $parent = $this->findParentNode($this->getSiblingNode());
         $nodeType = $this->getSubject()->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     public function getMode()
@@ -60,33 +59,39 @@ class MoveBefore extends AbstractStructuralChange
 
             $precedingSibling = null;
             try {
-                $precedingSibling = $subject->findParentNode()->findChildNodes()->previous($succeedingSibling);
+                $precedingSibling = $this->findChildNodes($this->findParentNode($subject))->previous($succeedingSibling);
             } catch (\InvalidArgumentException $e) {
                 // do nothing; $precedingSibling is null.
             }
 
-            $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($succeedingSibling->findParentNode()->getNodeAggregateIdentifier());
+            $hasEqualParentNode = $this->findParentNode($subject)->getNodeAggregateIdentifier()->equals($this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier());
 
-            $this->contentCacheFlusher->registerNodeChange($subject);
+            // we render content directly as response of this operation, so we need to flush the caches
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($subject->getContentStreamIdentifier(), $subject->getNodeAggregateIdentifier());
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
                 new MoveNodeAggregate(
                     $subject->getContentStreamIdentifier(),
                     $subject->getDimensionSpacePoint(),
                     $subject->getNodeAggregateIdentifier(),
-                    $hasEqualParentNode ? null : $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
+                    $hasEqualParentNode ? null : $this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier(),
                     $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
                     $succeedingSibling->getNodeAggregateIdentifier(),
                     RelationDistributionStrategy::gatherAll(),
                     $this->getInitiatingUserIdentifier()
                 )
             )->blockUntilProjectionsAreUpToDate();
+            $doFlushContentCache();
+            $parentOfSucceedingSibling = $this->findParentNode($succeedingSibling);
+            if ($parentOfSucceedingSibling) {
+                $this->contentCacheFlusher->flushNodeAggregate($parentOfSucceedingSibling->getContentStreamIdentifier(), $parentOfSucceedingSibling->getNodeAggregateIdentifier());
 
-            $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
-            $updateParentNodeInfo->setNode($succeedingSibling->findParentNode());
+                $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
+                $updateParentNodeInfo->setNode($parentOfSucceedingSibling);
 
-            $this->feedbackCollection->add($updateParentNodeInfo);
+                $this->feedbackCollection->add($updateParentNodeInfo);
+            }
 
-            $removeNode = new RemoveNode($subject, $this->getSiblingNode()->findParentNode());
+            $removeNode = new RemoveNode($subject, $this->findParentNode($this->getSiblingNode()));
             $this->feedbackCollection->add($removeNode);
 
             $this->finish($subject);

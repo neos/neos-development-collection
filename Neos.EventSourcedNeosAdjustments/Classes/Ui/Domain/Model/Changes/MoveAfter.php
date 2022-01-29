@@ -18,7 +18,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Move
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class MoveAfter extends AbstractStructuralChange
 {
@@ -36,10 +35,10 @@ class MoveAfter extends AbstractStructuralChange
      */
     public function canApply(): bool
     {
-        $parent = $this->getSiblingNode()->findParentNode();
+        $parent = $this->findParentNode($this->getSiblingNode());
         $nodeType = $this->getSubject()->getNodeType();
 
-        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($parent, $nodeType);
+        return $this->isNodeTypeAllowedAsChildNode($parent, $nodeType);
     }
 
     public function getMode()
@@ -58,16 +57,16 @@ class MoveAfter extends AbstractStructuralChange
             // "subject" is the to-be-moved node
             $subject = $this->getSubject();
             $precedingSibling = $this->getSiblingNode();
-            $parentNodeOfPreviousSibling = $precedingSibling->findParentNode();
+            $parentNodeOfPreviousSibling = $this->findParentNode($precedingSibling);
 
             $succeedingSibling = null;
             try {
-                $succeedingSibling = $parentNodeOfPreviousSibling->findChildNodes()->next($precedingSibling);
+                $succeedingSibling = $this->findChildNodes($parentNodeOfPreviousSibling)->next($precedingSibling);
             } catch (\InvalidArgumentException $e) {
                 // do nothing; $succeedingSibling is null.
             }
 
-            $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($parentNodeOfPreviousSibling->getNodeAggregateIdentifier());
+            $hasEqualParentNode = $this->findParentNode($subject)->getNodeAggregateIdentifier()->equals($parentNodeOfPreviousSibling->getNodeAggregateIdentifier());
 
             $command = new MoveNodeAggregate(
                 $subject->getContentStreamIdentifier(),
@@ -80,16 +79,20 @@ class MoveAfter extends AbstractStructuralChange
                 $this->getInitiatingUserIdentifier()
             );
 
-            $this->contentCacheFlusher->registerNodeChange($subject);
+            // we render content directly as response of this operation, so we need to flush the caches
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($subject->getContentStreamIdentifier(), $subject->getNodeAggregateIdentifier());
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)
                 ->blockUntilProjectionsAreUpToDate();
+            $doFlushContentCache();
+            if ($parentNodeOfPreviousSibling) {
+                $this->contentCacheFlusher->flushNodeAggregate($parentNodeOfPreviousSibling->getContentStreamIdentifier(), $parentNodeOfPreviousSibling->getNodeAggregateIdentifier());
 
-            $updateParentNodeInfo = new UpdateNodeInfo();
-            $updateParentNodeInfo->setNode($parentNodeOfPreviousSibling);
+                $updateParentNodeInfo = new UpdateNodeInfo();
+                $updateParentNodeInfo->setNode($parentNodeOfPreviousSibling);
+                $this->feedbackCollection->add($updateParentNodeInfo);
+            }
 
-            $this->feedbackCollection->add($updateParentNodeInfo);
-
-            $removeNode = new RemoveNode($subject, $this->getSiblingNode()->findParentNode());
+            $removeNode = new RemoveNode($subject, $this->findParentNode($this->getSiblingNode()));
             $this->feedbackCollection->add($removeNode);
 
             $this->finish($subject);

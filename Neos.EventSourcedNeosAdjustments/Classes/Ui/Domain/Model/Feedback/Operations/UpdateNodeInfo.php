@@ -49,6 +49,28 @@ class UpdateNodeInfo extends AbstractFeedback
 
     protected $isRecursive = false;
 
+    protected $baseNodeType = null;
+
+    /**
+     * Set the baseNodeType
+     *
+     * @param string|null $baseNodeType
+     */
+    public function setBaseNodeType(?string $baseNodeType): void
+    {
+        $this->baseNodeType = $baseNodeType;
+    }
+
+    /**
+     * Get the baseNodeType
+     *
+     * @return string|null
+     */
+    public function getBaseNodeType(): ?string
+    {
+        return $this->baseNodeType;
+    }
+
     /**
      * Set the node
      *

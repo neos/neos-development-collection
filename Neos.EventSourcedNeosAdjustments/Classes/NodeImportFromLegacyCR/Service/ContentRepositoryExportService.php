@@ -416,6 +416,8 @@ class ContentRepositoryExportService
     {
         $properties = [];
         foreach ($nodeData->getProperties() as $propertyName => $propertyValue) {
+            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+            $nodeData->getNodeType()->getFullConfiguration();
             $type = $nodeData->getNodeType()->getPropertyType($propertyName);
 
             if ($type === 'reference' || $type === 'references') {
@@ -441,6 +443,8 @@ class ContentRepositoryExportService
 
         foreach ($nodeData->getProperties() as $propertyName => $propertyValue) {
             try {
+                // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+                $nodeData->getNodeType()->getFullConfiguration();
                 $type = $nodeData->getNodeType()->getPropertyType($propertyName);
                 if ($type === 'reference' && !empty($propertyValue)) {
                     $references[$propertyName] = [NodeAggregateIdentifier::fromString($propertyValue)];
