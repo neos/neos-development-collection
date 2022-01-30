@@ -305,10 +305,10 @@ class Parser implements ParserInterface
         $this->expect(Token::COPY);
         $this->lazyExpect(Token::SPACE);
 
-        $sourcePath = $this->parseAssignedObjectPath(AstBuilder::getParentPath($currentPath));
+        $sourcePath = $this->parseAssignedObjectPath($this->astBuilder->getParentPath($currentPath));
 
-        $currentPathsPrototype = AstBuilder::objectPathIsPrototype($currentPath);
-        $sourcePathIsPrototype = AstBuilder::objectPathIsPrototype($sourcePath);
+        $currentPathsPrototype = $this->astBuilder->objectPathIsPrototype($currentPath);
+        $sourcePathIsPrototype = $this->astBuilder->objectPathIsPrototype($sourcePath);
         if ($currentPathsPrototype && $sourcePathIsPrototype) {
             // both are a prototype definition
             try {
