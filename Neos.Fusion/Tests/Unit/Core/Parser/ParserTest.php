@@ -17,7 +17,6 @@ use Neos\Flow\Tests\UnitTestCase;
 
 class ParserTest extends UnitTestCase
 {
-    //TODO what about dsl true``
     public function pathBlockTest(): array
     {
         return [
@@ -159,6 +158,7 @@ class ParserTest extends UnitTestCase
             return ['__objectType' => $name, '__value' => null, '__eelExpression' => null];
         };
         return[
+            ['/** doc comment */', []],
             [
                 <<<'Fusion'
                 a = 'b' // hallo ich bin ein comment
@@ -207,6 +207,7 @@ class ParserTest extends UnitTestCase
                 ['a' => "", 'b' => 123]
             ],
             ['/*fwefe*/ a = 123456', ['a' => 123456]],
+            ['/** doc comment */ a = 123', ['a' => 123]],
         ];
     }
 
@@ -798,6 +799,41 @@ class ParserTest extends UnitTestCase
         ];
     }
 
+    public function weirdDslNames(): \Generator
+    {
+        yield 'true as dsl key' => [
+            'foo = true`code`',
+            'true',
+            'code'
+        ];
+
+        yield 'null as dsl key' => [
+            'foo = null`code`',
+            'null',
+            'code'
+        ];
+
+        yield 'only number as dsl key' => [
+            'foo = 123456`code`',
+            '123456',
+            'code'
+        ];
+
+        yield 'number and string as dsl key' => [
+            'foo = 1foo`code`',
+            '1foo',
+            'code'
+        ];
+    }
+
+    public function dslWithBraceOnFirstLine(): \Generator
+    {
+        yield 'dsl with brace on end of first line' => [
+            'foo = dsl1`code {`',
+            'dsl1',
+            'code {'
+        ];
+    }
 
     /**
      * @test
@@ -847,5 +883,22 @@ class ParserTest extends UnitTestCase
         $parser = new Parser;
         $parser->parse($fusion);
         self::assertTrue(true);
+    }
+
+    /**
+     * @dataProvider weirdDslNames
+     * @dataProvider dslWithBraceOnFirstLine
+     * @test
+     */
+    public function dslIsRecognizedAndPassed($sourceCode, $expectedDslName, $expectedDslContent)
+    {
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['invokeAndParseDsl'])->getMock();
+
+        $parser
+            ->expects($this->exactly(1))
+            ->method('invokeAndParseDsl')
+            ->with($expectedDslName, $expectedDslContent);
+
+        $parser->parse($sourceCode);
     }
 }
