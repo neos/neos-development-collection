@@ -15,6 +15,11 @@ namespace Neos\Fusion\Core;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
+use Neos\Fusion\Core\Parser\AstBuilder;
+use Neos\Fusion\Core\Parser\FilePatternResolver;
+use Neos\Fusion\Core\Parser\Lexer;
+use Neos\Fusion\Core\Parser\MessageCreator;
+use Neos\Fusion\Core\Parser\Token;
 use Neos\Fusion\Exception\ParserException;
 use Neos\Fusion\Exception\ParserUnexpectedCharException;
 
