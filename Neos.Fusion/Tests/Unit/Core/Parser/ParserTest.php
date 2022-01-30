@@ -140,7 +140,14 @@ class ParserTest extends UnitTestCase
             a.b = "hello"
             a = null
             Fusion,
-            []
+            [
+                'a' => [
+                    'b' => 'hello',
+                    '__value' => null,
+                    '__eelExpression' => null,
+                    '__objectType' => null
+                ]
+            ]
         ];
 
         yield 'set value to null at nested level with previous content' => [
@@ -148,7 +155,16 @@ class ParserTest extends UnitTestCase
             a.b.c = "hello"
             a.b = null
             Fusion,
-            ['a' => []]
+            [
+                'a' => [
+                    'b' => [
+                        'c' => 'hello',
+                        '__value' => null,
+                        '__eelExpression' => null,
+                        '__objectType' => null
+                    ]
+                ]
+            ]
         ];
     }
 

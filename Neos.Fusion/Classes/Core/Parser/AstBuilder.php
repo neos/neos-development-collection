@@ -53,7 +53,7 @@ class AstBuilder
 
     public function removeValueInObjectTree(array $targetObjectPath): void
     {
-        $this->setValueInObjectTree($targetObjectPath, null);
+        $this->objectTree = Arrays::unsetValueByPath($this->objectTree, $targetObjectPath);
         $this->setValueInObjectTree($targetObjectPath, ['__stopInheritanceChain' => true]);
     }
 
@@ -113,11 +113,6 @@ class AstBuilder
         }
 
         // last part of the iteration, setting the final value
-        if (isset($objectTree[$currentKey]) && $value === null) {
-            unset($objectTree[$currentKey]);
-            return null;
-        }
-
         if (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey])) {
             if (is_array($value)) {
                 $objectTree[$currentKey] = Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
