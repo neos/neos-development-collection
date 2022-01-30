@@ -23,7 +23,7 @@ use Neos\Fusion\Exception\ParserUnexpectedCharException;
  *
  * @api
  */
-class Parser extends AbstractParser implements ParserInterface
+class Parser implements ParserInterface
 {
     /**
      * Reserved parse tree keys for internal usage.
@@ -93,6 +93,111 @@ class Parser extends AbstractParser implements ParserInterface
         }
 
         return $this->astBuilder->getObjectTree();
+    }
+
+    /**
+     * Consume the current token.
+     * Can only consume if accept was called before.
+     *
+     * @return Token
+     */
+    protected function consume(): Token
+    {
+        return  $this->lexer->consumeLookahead();
+    }
+
+    /**
+     * Accepts a token of a given type.
+     * The Lexer will look up the regex for the token and try to match it on the current string.
+     * First match wins.
+     *
+     * @param int $tokenType
+     * @return bool
+     */
+    protected function accept(int $tokenType): bool
+    {
+        $token = $this->lexer->getCachedLookaheadOrTryToGenerateLookaheadForTokenAndGetLookahead($tokenType);
+        if ($token === null) {
+            return false;
+        }
+        return $token->getType() === $tokenType;
+    }
+
+    /**
+     * Expects a token of a given type.
+     * The Lexer will look up the regex for the token and try to match it on the current string.
+     * First match wins.
+     *
+     * @param int $tokenType
+     * @return Token
+     * @throws ParserUnexpectedCharException
+     */
+    protected function expect(int $tokenType): Token
+    {
+        $token = $this->lexer->getCachedLookaheadOrTryToGenerateLookaheadForTokenAndGetLookahead($tokenType);
+        if ($token === null || $token->getType() !== $tokenType) {
+            $tokenReadable = Token::typeToString($tokenType);
+            throw new ParserUnexpectedCharException("Expected token: '$tokenReadable'.", 1635708717);
+        }
+        return $this->lexer->consumeLookahead();
+    }
+
+    /**
+     * Checks, if the token type matches the current, if so consume it and return true.
+     * @param int $tokenType
+     * @return bool|null
+     */
+    protected function lazyExpect(int $tokenType): ?bool
+    {
+        $token = $this->lexer->getCachedLookaheadOrTryToGenerateLookaheadForTokenAndGetLookahead($tokenType);
+        if ($token === null || $token->getType() !== $tokenType) {
+            return false;
+        }
+        $this->lexer->consumeLookahead();
+        return true;
+    }
+
+    /**
+     * OptionalBigGap
+     *  = ( NEWLINE / OptionalSmallGap )*
+     */
+    protected function lazyBigGap(): void
+    {
+        while (true) {
+            switch (true) {
+                case $this->accept(Token::SPACE):
+                case $this->accept(Token::NEWLINE):
+                case $this->accept(Token::SLASH_COMMENT):
+                case $this->accept(Token::HASH_COMMENT):
+                case $this->accept(Token::MULTILINE_COMMENT):
+                    $this->consume();
+                    break;
+
+                default:
+                    return;
+            }
+        }
+    }
+
+    /**
+     * OptionalSmallGap
+     *  = ( SPACE / SLASH_COMMENT / HASH_COMMENT / MULTILINE_COMMENT )*
+     */
+    protected function lazySmallGap(): void
+    {
+        while (true) {
+            switch (true) {
+                case $this->accept(Token::SPACE):
+                case $this->accept(Token::SLASH_COMMENT):
+                case $this->accept(Token::HASH_COMMENT):
+                case $this->accept(Token::MULTILINE_COMMENT):
+                    $this->consume();
+                    break;
+
+                default:
+                    return;
+            }
+        }
     }
 
     /**
@@ -221,7 +326,7 @@ class Parser extends AbstractParser implements ParserInterface
             return;
         }
 
-        if ($currentPathsPrototype || $sourcePathIsPrototype) {
+        if ($currentPathsPrototype xor $sourcePathIsPrototype) {
             // Only one of "source" or "target" is a prototype. We do not support copying a
             // non-prototype value to a prototype value or vice-versa.
             // delay throw since there might be syntax errors causing this.
