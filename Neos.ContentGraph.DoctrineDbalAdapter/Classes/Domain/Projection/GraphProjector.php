@@ -63,7 +63,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
 
     private DbalClient $databaseClient;
 
-    private $doingFullReplayOfProjection = false;
+    private bool $doingFullReplayOfProjection = false;
 
     public function __construct(
         DbalClient $eventStorageDatabaseClient,
@@ -92,10 +92,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     public function reset(): void
     {
         parent::reset();
-        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
-        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
-        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
-        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
+        $this->truncateDatabaseTables();
 
         /**
          * Performance optimization: reset() is only called at the start of a {@see ProjectionManager::replay()}.
@@ -104,6 +101,20 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
          */
         $this->doingFullReplayOfProjection = true;
         $this->assumeProjectorRunsSynchronously();
+    }
+
+    public function resetForTests(): void
+    {
+        parent::reset();
+        $this->truncateDatabaseTables();
+    }
+
+    private function truncateDatabaseTables(): void
+    {
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
+        $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
     }
 
     /**

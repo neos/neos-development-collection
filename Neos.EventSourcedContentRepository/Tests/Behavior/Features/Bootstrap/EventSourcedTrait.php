@@ -176,7 +176,11 @@ trait EventSourcedTrait
         $this->currentUserIdentifier = null;
         $this->currentNodes = null;
         foreach ($this->projectorsToBeReset as $projector) {
-            $projector->reset();
+            if (method_exists($projector, 'resetForTests')) {
+                $projector->resetForTests();
+            } else {
+                $projector->reset();
+            }
         }
     }
 
