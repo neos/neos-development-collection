@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\Exception;
+namespace Neos\Fusion\Core\Parser\Exception;
 
 /*
  * This file is part of the Neos.Fusion package.

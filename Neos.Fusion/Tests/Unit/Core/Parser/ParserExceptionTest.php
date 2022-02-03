@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  */
 
 use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Exception\ParserException;
+use Neos\Fusion\Core\Parser\Exception\ParserException;
 use Neos\Flow\Tests\UnitTestCase;
 
 class ParserExceptionTest extends UnitTestCase

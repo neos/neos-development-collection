@@ -18,10 +18,11 @@ use Neos\Fusion;
 use Neos\Fusion\Core\Parser\AstBuilder;
 use Neos\Fusion\Core\Parser\FilePatternResolver;
 use Neos\Fusion\Core\Parser\Lexer;
-use Neos\Fusion\Core\Parser\MessageCreator;
+use Neos\Fusion\Core\Parser\ExceptionMessage\MessageCreator;
+use Neos\Fusion\Core\Parser\ExceptionMessage\MessageLinePart;
 use Neos\Fusion\Core\Parser\Token;
-use Neos\Fusion\Exception\ParserException;
-use Neos\Fusion\Exception\ParserUnexpectedCharException;
+use Neos\Fusion\Core\Parser\Exception\ParserException;
+use Neos\Fusion\Core\Parser\Exception\ParserUnexpectedCharException;
 
 /**
  * The Fusion Parser
@@ -220,8 +221,8 @@ class Parser implements ParserInterface
         } catch (ParserUnexpectedCharException $e) {
             throw (new ParserException())
                 ->withCode($e->getCode())
-                ->withMessageCreator(function ($nextCharPrintable) use ($e) {
-                    return "Unexpected char $nextCharPrintable. {$e->getMessage()}";
+                ->withMessageCreator(function (MessageLinePart $nextLine) use ($e) {
+                    return "Unexpected char {$nextLine->charPrint()}. {$e->getMessage()}";
                 })
                 ->withPrevious($e)
                 ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())

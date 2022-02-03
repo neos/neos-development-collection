@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Fusion\Exception;
+namespace Neos\Fusion\Core\Parser\Exception;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -13,6 +13,7 @@ namespace Neos\Fusion\Exception;
  * source code.
  */
 
+use Neos\Fusion\Core\Parser\ExceptionMessage\MessageLinePart;
 use Neos\Fusion\Exception;
 
 /**
@@ -30,18 +31,17 @@ class ParserException extends Exception
     `x
     REGEX;
 
-    protected $fluentCode;
     protected $fluentFile;
     protected $fluentFusionCode;
     protected $fluentCursor;
+    protected $fluentShowColumn = true;
 
+    protected $fluentCode;
     /**
      * @var ?callable
      */
-    protected $fluentMessageCreator = null;
+    protected $fluentMessageCreator;
     protected $fluentPrevious = null;
-    protected $fluentUnexpectedChar = false;
-    protected $fluentShowColumn = true;
 
     protected $headingMessagePart;
     protected $asciiPreviewMessagePart;
@@ -112,7 +112,7 @@ class ParserException extends Exception
     }
 
     /**
-     * @param callable(string $nextCharPrint, string $nextChar, string $linePartAfterCursor, string $prevChar, string $linePartBeforeCursor):string $messageMaker
+     * @param callable(MessageLinePart $next, MessageLinePart $prev): string $messageMaker
      */
     public function withMessageCreator(callable $messageCreator): self
     {
@@ -136,7 +136,7 @@ class ParserException extends Exception
 
     protected function renderAndInitializeFullMessage(): string
     {
-        if ($this->fluentMessageCreator === null || is_callable($this->fluentMessageCreator) === false) {
+        if (is_callable($this->fluentMessageCreator) === false) {
             throw new \LogicException('A callable message creator must be specified.', 1637307774);
         }
 
@@ -155,39 +155,25 @@ class ParserException extends Exception
             ) = self::splitAtCursorGetLinePartsAndLineNumber($this->fluentFusionCode, $this->fluentCursor);
 
         $isEof = strlen($this->fluentFusionCode) === $this->fluentCursor;
+        $nextLine = new MessageLinePart($linePartAfterCursor, $isEof);
+        $prevLine = new MessageLinePart($linePartBeforeCursor);
+
         $columnNumber = mb_strlen($linePartBeforeCursor) + 1;
 
-        $nextChar = mb_substr($linePartAfterCursor, 0, 1);
-
-        $nextCharPrint = self::printable($nextChar, $isEof);
-
-        $prevChar = mb_substr($linePartBeforeCursor, -1);
-
-        $asciiPreviewMessagePart = self::renderErrorLinePreview(
+        $this->headingMessagePart = self::generateHeadingByFileName($this->fluentFile);
+        $this->asciiPreviewMessagePart = self::renderErrorLinePreview(
             $this->fluentFile,
             $linePartBeforeCursor . $linePartAfterCursor,
             $lineNumberCursor,
             $columnNumber,
             $this->fluentShowColumn
         );
-
-        $this->headingMessagePart = self::generateHeadingByFileName($this->fluentFile);
-        $this->asciiPreviewMessagePart = $asciiPreviewMessagePart;
         $this->helperMessagePart = ($this->fluentMessageCreator)(
-            $nextCharPrint,
-            $nextChar,
-            $linePartAfterCursor,
-            $prevChar,
-            $linePartBeforeCursor
+            $nextLine,
+            $prevLine,
         );
 
-        if (FLOW_SAPITYPE === 'Web') {
-            // if the exception is printed raw to the web, we need to put in there twice as many nonbreaking spaces as normal ones
-            // to make the preview a bit okay looking.
-            $asciiPreviewMessagePart = str_replace(' ', "\u{00A0}\u{00A0}", $asciiPreviewMessagePart);
-        }
-
-        $fullMessage = $this->headingMessagePart . PHP_EOL . $asciiPreviewMessagePart . PHP_EOL . $this->helperMessagePart;
+        $fullMessage = $this->headingMessagePart . PHP_EOL . $this->asciiPreviewMessagePart . PHP_EOL . $this->helperMessagePart;
         return $fullMessage;
     }
 
@@ -198,12 +184,7 @@ class ParserException extends Exception
         int $columnNumber,
         bool $renderColumnDetails = true
     ): string {
-        $body = $currentLine;
-        $fileNameAndPosition = $fileName ?? '<input>' . ':' . $lineNumber;
-
-        if ($renderColumnDetails) {
-            $fileNameAndPosition .= ':' . $columnNumber;
-        }
+        $fileNameAndPosition = ($fileName ?? '<input>') . ":$lineNumber" . ($renderColumnDetails ? ":$columnNumber" : '');
 
         $arrowColumn = '';
         if ($renderColumnDetails) {
@@ -211,12 +192,13 @@ class ParserException extends Exception
             $arrowColumn = "$spaceToArrow^— column $columnNumber";
         }
 
+        // convert the string length of a number to spaces, '72' becomes '  '.
         $indentLine = str_repeat(' ', strlen((string)$lineNumber));
 
         return <<<MESSAGE
             $fileNameAndPosition
             $indentLine |
-            $lineNumber | $body
+            $lineNumber | $currentLine
             $indentLine | $arrowColumn
             MESSAGE;
     }
@@ -250,77 +232,28 @@ class ParserException extends Exception
         for ($i = 0; $i < $stringLength; ++$i) {
             $char = $string[$i];
 
-            if ($i >= $cursor) {
+            // keep looping we still need to reach the cursor position
+            // but count the line breaks
+            // and save the current portion after a line break
+            if ($i < $cursor) {
                 if ($char === "\n") {
-                    break;
+                    ++$lineNumberCursor;
+                    $linePartBeforeCursor = '';
+                    continue;
                 }
-                $linePartAfterCursor .= $char;
+
+                $linePartBeforeCursor .= $char;
                 continue;
             }
 
+            // we arrived at chars in front of the cursor
             if ($char === "\n") {
-                ++$lineNumberCursor;
-                $linePartBeforeCursor = '';
-                continue;
+                break;
             }
-
-            $linePartBeforeCursor .= $char;
+            // collect the last line part until there is a break
+            $linePartAfterCursor .= $char;
         }
 
         return [$lineNumberCursor, $linePartAfterCursor, $linePartBeforeCursor];
-    }
-
-    protected static function printable(string $char, bool $isEof = false): string
-    {
-        if ($isEof) {
-            return '<EOF>';
-        }
-        if ($char === '') {
-            return '<new line>';
-        }
-
-        // https://github.com/parsica-php/parsica/blob/main/src/Internal/Ascii.php
-        switch (mb_ord($char)) {
-            case   0:
-                return "<null>";
-            case   9:
-                return "<horizontal tab>";
-            case  10:
-                return "<line feed>";
-            case  11:
-                return "<vertical tab>";
-            case  13:
-                return "<carriage return>";
-            case  25:
-                return "<end of medium>";
-            case  27:
-                return "<escape>";
-            case  32:
-                return "<space>";
-            case  34:
-                return "<double quote>";
-            case  39:
-                return "<single quote>";
-            case  47:
-                return "<slash>";
-            case  92:
-                return "<backslash>";
-            case 130:
-                return "<single low-9 quotation mark>";
-            case 132:
-                return "<double low-9 quotation mark>";
-            case 145:
-                return "<left single quotation mark>";
-            case 146:
-                return "<right single quotation mark>";
-            case 147:
-                return "<left double quotation mark>";
-            case 148:
-                return "<right double quotation mark>";
-            case 160:
-                return "<non-breaking space>";
-            default:
-                return "'$char'";
-        }
     }
 }

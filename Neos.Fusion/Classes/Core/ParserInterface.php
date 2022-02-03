@@ -15,7 +15,7 @@ namespace Neos\Fusion\Core;
 
 use Neos\Fusion;
 use Neos\Fusion\Core\Parser\AstBuilder;
-use Neos\Fusion\Exception\ParserException;
+use Neos\Fusion\Core\Parser\Exception\ParserException;
 
 /**
  * Contract for a Fusion parser
