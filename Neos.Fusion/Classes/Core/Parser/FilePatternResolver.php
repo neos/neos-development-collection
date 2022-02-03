@@ -65,7 +65,7 @@ class FilePatternResolver
         if ($filePattern[0] === '/') {
             throw new Fusion\Exception("cannot resolve absolute pattern: '$filePattern'", 1636144292);
         }
-        if (self::isPatternStreamWrapperThrowOnInvalid($filePattern) === false) {
+        if (self::isPatternStreamWrapper($filePattern) === false) {
             $filePattern = self::resolveRelativePath($filePattern, $filePathForRelativeResolves);
         }
         if (self::patternHasGlobbing($filePattern) === false) {
@@ -74,7 +74,7 @@ class FilePatternResolver
         return self::parseGlobPatternAndResolveFiles($filePattern, $defaultFileEndForUnspecificGlobbing);
     }
 
-    protected static function isPatternStreamWrapperThrowOnInvalid(string $filePattern): bool
+    protected static function isPatternStreamWrapper(string $filePattern): bool
     {
         if (preg_match('`^(?P<protocol>[^:]+)://`', $filePattern, $matches) !== 1) {
             return false;

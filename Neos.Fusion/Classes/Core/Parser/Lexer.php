@@ -13,9 +13,6 @@ namespace Neos\Fusion\Core\Parser;
  * source code.
  */
 
-/**
- * @internal
- */
 class Lexer
 {
     // Difference to: Neos\Eel\Package::EelExpressionRecognizer
@@ -66,7 +63,7 @@ class Lexer
         Token::INTEGER => '/^-?[0-9]+/',
         Token::FLOAT => '/^-?[0-9]+\.[0-9]+/',
 
-        Token::DSL_EXPRESSION_START => '/^[a-zA-Z0-9\.]+(?=`)/',
+        Token::DSL_EXPRESSION_START => '/^[a-zA-Z0-9\.]++(?=`)/',
         Token::DSL_EXPRESSION_CONTENT => '/^`[^`]*+`/',
         Token::EEL_EXPRESSION => self::PATTERN_EEL_EXPRESSION,
 
@@ -138,6 +135,16 @@ class Lexer
      */
     protected $lookahead = null;
 
+    /**
+     * Initializes the code
+     */
+    public function __construct(string $code)
+    {
+        $code = str_replace(["\r\n", "\r"], "\n", $code);
+        $this->code = $code;
+        $this->codeLen = strlen($code);
+    }
+
     public function getCode(): string
     {
         return $this->code;
@@ -146,16 +153,6 @@ class Lexer
     public function getCursor(): int
     {
         return $this->cursor;
-    }
-
-    /**
-     * Initializes the code
-     */
-    public function initialize(string $code): void
-    {
-        $code = str_replace(["\r\n", "\r"], "\n", $code);
-        $this->code = $code;
-        $this->codeLen = strlen($code);
     }
 
     public function consumeLookahead(): Token

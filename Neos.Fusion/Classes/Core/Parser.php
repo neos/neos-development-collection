@@ -38,6 +38,11 @@ class Parser implements ParserInterface
     public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
 
     /**
+     * @var Lexer
+     */
+    protected $lexer;
+
+    /**
      * @Flow\Inject
      * @var DslFactory
      */
@@ -80,13 +85,10 @@ class Parser implements ParserInterface
      */
     public function parse(string $sourceCode, string $contextPathAndFilename = null, $objectTreeUntilNow = null, bool $buildPrototypeHierarchy = true): array
     {
-        $this->astBuilder = self::initializeAstBuilder($objectTreeUntilNow);
-
-        // TODO use dependency Injection, but this test doesnt like it Neos.Fusion/Tests/Unit/Core/ParserTest.php
-        $this->lexer = new Lexer();
-        $this->lexer->initialize($sourceCode);
-
+        // TODO use dependency Injection ...
+        $this->lexer = new Lexer($sourceCode);
         $this->contextPathAndFilename = $contextPathAndFilename;
+        $this->astBuilder = self::initializeAstBuilder($objectTreeUntilNow);
 
         $this->parseFusion();
 
@@ -108,7 +110,7 @@ class Parser implements ParserInterface
      */
     protected function consume(): Token
     {
-        return  $this->lexer->consumeLookahead();
+        return $this->lexer->consumeLookahead();
     }
 
     /**

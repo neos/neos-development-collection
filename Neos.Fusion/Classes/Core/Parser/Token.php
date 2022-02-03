@@ -13,9 +13,8 @@ namespace Neos\Fusion\Core\Parser;
  * source code.
  */
 
-/**
- * @internal
- */
+use Neos\Flow\Annotations as Flow;
+
 class Token
 {
     public const EOF = 1;
@@ -98,14 +97,20 @@ class Token
      */
     public static function typeToString(int $type): string
     {
-        $reflection = new \ReflectionClass(self::class);
-        $constants = $reflection->getConstants();
-
-        $stringRepresentation = array_search($type, $constants, true);
+        $stringRepresentation = array_search($type, static::getConstants(), true);
 
         if ($stringRepresentation === false) {
             throw new \LogicException("Token of type '$type' does not exist", 1637307344);
         }
         return $stringRepresentation;
+    }
+
+    /**
+     * @Flow\CompileStatic
+     */
+    protected static function getConstants()
+    {
+        $reflection = new \ReflectionClass(self::class);
+        return $reflection->getConstants();
     }
 }
