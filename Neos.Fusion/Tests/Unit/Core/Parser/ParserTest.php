@@ -696,15 +696,15 @@ class ParserTest extends UnitTestCase
             Fusion];
     }
 
-    public function unexpectedCopyAssigment(): array
+    public function unexpectedCopyAssigment()
     {
+        yield 'copying from undefined path 1' => ['a < b', ['a' => null]];
+
+        yield 'copying from undefined path 2' => ['n.a < b', ['n' => ['a' => null]]];
+
+        yield 'copying from undefined path 3' => ['p < n.a', ['p' => null]];
+
         return [
-            ['a < b', ['b' => [], 'a' => []]],
-
-            ['n.a < b', ['b' => [], 'n' => ['a' => []]]],
-
-            ['p < n.a', ['n' => ['a' => []], 'p' => []]],
-
             [<<<'Fusion'
             b = "hui"
             a < b

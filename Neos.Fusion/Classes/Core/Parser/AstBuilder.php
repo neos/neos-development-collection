@@ -59,7 +59,8 @@ class AstBuilder
 
     public function copyValueInObjectTree(array $targetObjectPath, array $sourceObjectPath): void
     {
-        $originalValue = $this->getValueFromObjectTree($sourceObjectPath);
+        // retrieve a value in the object tree, specified by the object path array ($sourceObjectPath).
+        $originalValue = Arrays::getValueByPath($this->objectTree, $sourceObjectPath);
         $this->setValueInObjectTree($targetObjectPath, $originalValue);
     }
 
@@ -119,34 +120,6 @@ class AstBuilder
             return;
         }
         $pointer = $value;
-    }
-
-    /**
-     * Retrieves a value from a node in the object tree, specified by the object path array.
-     *
-     * @param array $objectPathArray The object path, specifying the node to retrieve the value of
-     * @param array|string|null $objectTree The current (sub-) tree, used internally - don't specify!
-     * @return array|scalar|null The value
-     */
-    protected function getValueFromObjectTree(array $objectPathArray, &$objectTree = null)
-    {
-        if ($objectTree === null) {
-            $objectTree = &$this->objectTree;
-        }
-
-        if (count($objectPathArray) > 0) {
-            $currentKey = array_shift($objectPathArray);
-            if (isset($objectTree[$currentKey]) === false) {
-                if (is_array($objectTree) === false) {
-                    $type = gettype($objectTree);
-                    throw new Fusion\Exception("Cannot access simple type ($type)'$objectTree' as array with key '$currentKey'.", 1637524436);
-                }
-                $objectTree[$currentKey] = [];
-            }
-            return self::getValueFromObjectTree($objectPathArray, $objectTree[$currentKey]);
-        }
-
-        return $objectTree;
     }
 
     /**
