@@ -85,47 +85,40 @@ class AstBuilder
      *
      * @param array $objectPathArray The object path, specifying the node / property to set
      * @param scalar|null|array $value The value to assign, is a non-array type or an array with __eelExpression etc.
-     * @param array|null $objectTree The current (sub-) tree, used internally - don't specify!
-     * @return array The modified object tree
      */
-    public function setValueInObjectTree(array $objectPathArray, $value, array &$objectTree = null): ?array
+    public function setValueInObjectTree(array $objectPathArray, $value): void
     {
-        if ($objectTree === null) {
-            $objectTree = &$this->objectTree;
-        }
+        self::arraySetOrMergeValueByPathWithCallback($this->objectTree, $objectPathArray, $value, static function($simpleType) {
+            return [
+                '__value' => $simpleType,
+                '__eelExpression' => null,
+                '__objectType' => null
+            ];
+        });
+    }
 
-        $currentKey = array_shift($objectPathArray);
-
-        // we still need to traverse further down
-        if (count($objectPathArray) > 0) {
-            if (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey]) === false) {
-                // the element one-level-down is already defined, but it is NOT an array. So we need to convert the simple type to __value
-                $objectTree[$currentKey] = [
-                    '__value' => $objectTree[$currentKey],
-                    '__eelExpression' => null,
-                    '__objectType' => null
-                ];
+    protected static function arraySetOrMergeValueByPathWithCallback(array &$subject, array $path, $value, callable $toArray): void
+    {
+        // points to the current path element, but inside the tree.
+        $pointer = &$subject;
+        foreach ($path as $pathSegment) {
+            // can be null because `&$foo['undefined'] === null`
+            if ($pointer === null) {
+                $pointer = [];
             }
-            if (isset($objectTree[$currentKey]) === false) {
-                $objectTree[$currentKey] = [];
+            if (is_array($pointer) === false) {
+                $pointer = $toArray($pointer);
             }
-            return self::setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
+            // set pointer to current path (we can access undefined indexes due to &)
+            $pointer = &$pointer[$pathSegment];
         }
-
-        // last part of the iteration, setting the final value
-        if (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey])) {
-            if (is_array($value)) {
-                $objectTree[$currentKey] = Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
-                return null;
-            }
-            $objectTree[$currentKey]['__value'] = $value;
-            $objectTree[$currentKey]['__eelExpression'] = null;
-            $objectTree[$currentKey]['__objectType'] = null;
-            return null;
+        // we got a reference &$pointer of the $path in the $subject array, setting the final value:
+        if (is_array($pointer)) {
+            $arrayValue = is_array($value) ? $value : $toArray($value);
+            $pointer = Arrays::arrayMergeRecursiveOverrule($pointer, $arrayValue);
+            return;
         }
-
-        $objectTree[$currentKey] = $value;
-        return null;
+        $pointer = $value;
     }
 
     /**

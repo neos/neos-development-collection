@@ -168,6 +168,145 @@ class ParserTest extends UnitTestCase
         ];
     }
 
+    public function simplePathToArray(): \Generator
+    {
+        yield 'simple string "opened" with meta' => [
+            <<<'Fusion'
+            foo = "bar"
+            foo.@baz = 1
+            Fusion,
+            [
+                'foo' => [
+                    '__value' => 'bar',
+                    '__eelExpression' => null,
+                    '__objectType' => null,
+                    '__meta' => [
+                        'baz' => 1
+                    ]
+                ]
+            ]
+        ];
+
+        yield 'simple string "opened" with nested path' => [
+            <<<'Fusion'
+            foo = "bar"
+            foo.baz = 1
+            Fusion,
+            [
+                'foo' => [
+                    '__value' => 'bar',
+                    '__eelExpression' => null,
+                    '__objectType' => null,
+                    'baz' => 1
+                ]
+            ]
+        ];
+
+        yield 'null path with nested' => [
+            <<<'Fusion'
+            foo = null
+            foo.bar = 1
+            Fusion,
+            ['foo' => ['bar' => 1]]
+        ];
+    }
+
+    public function overridePaths(): \Generator
+    {
+        yield 'eel expression is overridden by simple type' => [
+            <<<'Fusion'
+            foo = ${'bar'}
+            foo = "but"
+            Fusion,
+            ['foo' => [
+                '__eelExpression' => null,
+                '__value' => 'but',
+                '__objectType' => null,
+            ]]
+        ];
+
+        yield 'fusion object is overridden by simple type' => [
+            <<<'Fusion'
+            foo = Foo:Bar
+            foo = "but"
+            Fusion,
+            ['foo' => [
+                '__objectType' => null,
+                '__value' => 'but',
+                '__eelExpression' => null,
+            ]]
+        ];
+
+        yield 'simple type is overridden by simple type' => [
+            <<<'Fusion'
+            foo = 'bar'
+            foo = 'but'
+            Fusion,
+            ['foo' => 'but']
+        ];
+
+        yield 'simple type is overridden by eel' => [
+            <<<'Fusion'
+            foo = 'bar'
+            foo = ${eel}
+            Fusion,
+            ['foo' => [
+                '__eelExpression' => 'eel',
+                '__value' => null,
+                '__objectType' => null,
+            ]]
+        ];
+
+        yield 'simple type is overridden by object' => [
+            <<<'Fusion'
+            foo = 'bar'
+            foo = Foo:Bar
+            Fusion,
+            ['foo' => [
+                '__objectType' => 'Foo:Bar',
+                '__value' => null,
+                '__eelExpression' => null,
+            ]]
+        ];
+
+        yield 'fusion object or eel are overridden by simple type' => [
+            <<<'Fusion'
+            foo = Foo:Bar
+            foo = ${eel}
+            foo = 'but'
+            Fusion,
+            ['foo' => [
+                '__objectType' => null,
+                '__value' => 'but',
+                '__eelExpression' => null,
+            ]]
+        ];
+
+        yield 'fusion object is overridden by eel' => [
+            <<<'Fusion'
+            foo = Foo:Bar
+            foo = ${eel}
+            Fusion,
+            ['foo' => [
+                '__objectType' => null,
+                '__value' => null,
+                '__eelExpression' => 'eel',
+            ]]
+        ];
+
+        yield 'eel is overridden by fusion object' => [
+            <<<'Fusion'
+            foo = ${eel}
+            foo = Foo:Bar
+            Fusion,
+            ['foo' => [
+                '__eelExpression' => null,
+                '__value' => null,
+                '__objectType' => 'Foo:Bar',
+            ]]
+        ];
+    }
+
     public function commentsTest(): array
     {
         $obj = function (string $name): array {
@@ -234,11 +373,10 @@ class ParserTest extends UnitTestCase
                 <<<'Fusion'
                 a /* we are comments
                 and we are not every where  */ = 'b'
-                Fusion,
-                ['a' => 'b']
+                Fusion
             ],
-            ['a = /*fwefe*/ 123456', ['a' => 123456]],
-            ['a /*fwefe*/ = 123456', ['a' => 123456]],
+            ['a = /*fwefe*/ 123456'],
+            ['a /*fwefe*/ = 123456'],
             [
                 <<<'Fusion'
                 a /*
@@ -853,6 +991,8 @@ class ParserTest extends UnitTestCase
 
     /**
      * @test
+     * @dataProvider overridePaths
+     * @dataProvider simplePathToArray
      * @dataProvider commentsTest
      * @dataProvider unsetPathOrSetToNull
      * @dataProvider problematicPathIdNames
@@ -869,7 +1009,7 @@ class ParserTest extends UnitTestCase
      */
     public function itParsesToExpectedAst($fusion, $expectedAst): void
     {
-        $parser = new Parser;
+        $parser = new Parser();
         $parsedFusionAst = $parser->parse($fusion);
         self::assertSame($expectedAst, $parsedFusionAst);
     }
