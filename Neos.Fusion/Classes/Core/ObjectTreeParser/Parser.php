@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Fusion\Core;
+namespace Neos\Fusion\Core\ObjectTreeParser;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -15,14 +15,12 @@ namespace Neos\Fusion\Core;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
-use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
-use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
-use Neos\Fusion\Core\ObjectTreeParser\Lexer;
+use Neos\Fusion\Core\DslFactory;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageCreator;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
-use Neos\Fusion\Core\ObjectTreeParser\Token;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserUnexpectedCharException;
+use Neos\Fusion\Core\ParserInterface;
 
 /**
  * The Fusion Parser
