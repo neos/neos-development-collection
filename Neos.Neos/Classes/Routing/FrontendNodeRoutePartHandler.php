@@ -12,11 +12,14 @@ namespace Neos\Neos\Routing;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
@@ -33,7 +36,11 @@ use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use Neos\Neos\Routing\Exception\InvalidRequestPathException;
+use Neos\Neos\Routing\Exception\NoSiteException;
+use Neos\Neos\Routing\Exception\NoSiteNodeException;
 use Neos\Neos\Routing\Exception\NoSuchDimensionValueException;
+use Neos\Neos\Routing\Exception\NoSuchNodeException;
+use Neos\Neos\Routing\Exception\NoWorkspaceException;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -140,13 +147,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected function matchValue($requestPath)
     {
         try {
-            /** @var NodeInterface $node */
-            $node = null;
+            $nodeDetails = null;
 
             // Build context explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
-            $this->securityContext->withoutAuthorizationChecks(function () use (&$node, $requestPath) {
-                $node = $this->convertRequestPathToNode($requestPath);
+            $this->securityContext->withoutAuthorizationChecks(function () use (&$nodeDetails, $requestPath) {
+                $nodeDetails = $this->convertRequestPathToNode($requestPath);
             });
         } catch (Exception $exception) {
             $this->systemLogger->debug('FrontendNodeRoutePartHandler matchValue(): ' . $exception->getMessage());
@@ -156,14 +162,14 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
             return false;
         }
-        if (!$this->nodeTypeIsAllowed($node)) {
+        if (!$this->nodeTypeIsAllowed($nodeDetails['node'])) {
             return false;
         }
-        if ($this->onlyMatchSiteNodes() && $node !== $node->getContext()->getCurrentSiteNode()) {
+        if ($this->onlyMatchSiteNodes() && $nodeDetails['node'] !== $nodeDetails['node']->getContext()->getCurrentSiteNode()) {
             return false;
         }
 
-        return new MatchResult($node->getContextPath());
+        return new MatchResult($nodeDetails['node']->getContextPath(), $this->routeTagsFromIdentifiers($nodeDetails['affectedNodeIdentifiers']));
     }
 
     /**
@@ -173,14 +179,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * Note that $requestPath will be modified (passed by reference) by buildContextFromRequestPath().
      *
      * @param string $requestPath The request path, for example /the/node/path@some-workspace
-     * @return NodeInterface
-     * @throws \Neos\Neos\Routing\Exception\NoWorkspaceException
-     * @throws \Neos\Neos\Routing\Exception\NoSiteException
-     * @throws \Neos\Neos\Routing\Exception\NoSuchNodeException
-     * @throws \Neos\Neos\Routing\Exception\NoSiteNodeException
-     * @throws \Neos\Neos\Routing\Exception\InvalidRequestPathException
+     * @return array
+     * @throws NoWorkspaceException
+     * @throws NoSiteException
+     * @throws NoSuchNodeException
+     * @throws NoSiteNodeException
      */
-    protected function convertRequestPathToNode($requestPath)
+    private function convertRequestPathToNode(string $requestPath): array
     {
         $contentContext = $this->buildContextFromRequestPath($requestPath);
         $requestPathWithoutContext = $this->removeContextFromPath($requestPath);
@@ -202,18 +207,19 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         if ($requestPathWithoutContext === '') {
-            $node = $siteNode;
-        } else {
-            $requestPathWithoutContext = $this->truncateUriPathSuffix((string)$requestPathWithoutContext);
-            $relativeNodePath = $this->getRelativeNodePathByUriPathSegmentProperties($siteNode, $requestPathWithoutContext);
-            $node = ($relativeNodePath !== false) ? $siteNode->getNode($relativeNodePath) : null;
+            return ['node' => $siteNode, 'affectedNodeIdentifiers' => [(string)$siteNode->getNodeAggregateIdentifier()]];
         }
-
+        $requestPathWithoutContext = $this->truncateUriPathSuffix((string)$requestPathWithoutContext);
+        $nodeDetails = $this->getNodeDetailsByUriPathSegmentProperties($siteNode, $requestPathWithoutContext);
+        $node = $siteNode->getNode($nodeDetails['relativeNodePath']);
         if (!$node instanceof NodeInterface) {
-            throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
+            throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s" (node path: "%s")', $requestPath, $nodeDetails['relativeNodePath']), 1346949857);
         }
 
-        return $node;
+        return [
+            'node' => $node,
+            'affectedNodeIdentifiers' => $nodeDetails['affectedNodeIdentifiers'],
+        ];
     }
 
     /**
@@ -262,7 +268,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
         $siteNode = $contentContext->getCurrentSiteNode();
-        if ($this->onlyMatchSiteNodes() && $node !== $siteNode) {
+        if ($node !== $siteNode && $this->onlyMatchSiteNodes()) {
             return false;
         }
 
@@ -282,8 +288,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $this->systemLogger->debug('FrontendNodeRoutePartHandler resolveValue(): ' . $exception->getMessage());
             return false;
         }
-        $uriPath = $this->resolveRoutePathForNode($nodeOrUri);
-        return new ResolveResult($uriPath, $uriConstraints);
+        $foo = $this->resolveRoutePathForNode($nodeOrUri);
+        return new ResolveResult($foo['path'], $uriConstraints, $this->routeTagsFromIdentifiers($foo['affectedNodeIdentifiers']));
     }
 
     /**
@@ -493,9 +499,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * values according to the current context.
      *
      * @param NodeInterface $node The node where the generated path should lead to
-     * @return string The relative route path, possibly prefixed with a segment for identifying the current content dimension values
+     * @return array todo
      */
-    protected function resolveRoutePathForNode(NodeInterface $node)
+    protected function resolveRoutePathForNode(NodeInterface $node): array
     {
         $workspaceName = $node->getContext()->getWorkspaceName();
 
@@ -504,9 +510,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         $currentNodeIsSiteNode = ($node->getParentPath() === SiteService::SITES_ROOT_PATH);
         $dimensionsUriSegment = $this->getUriSegmentForDimensions($node->getContext()->getDimensions(), $currentNodeIsSiteNode);
-        $requestPath = $this->getRequestPathByNode($node);
+        $bla = $this->getRequestPathByNode($node);
 
-        return trim($dimensionsUriSegment . $requestPath, '/') . $nodeContextPathSuffix;
+        return [
+            'path' => trim($dimensionsUriSegment . $bla['path'], '/') . $nodeContextPathSuffix,
+            'affectedNodeIdentifiers' => $bla['affectedNodeIdentifiers'],
+        ];
     }
 
     /**
@@ -518,12 +527,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param NodeInterface $siteNode The site node, used as a starting point while traversing the tree
      * @param string $relativeRequestPath The request path, relative to the site's root path
-     * @throws \Neos\Neos\Routing\Exception\NoSuchNodeException
-     * @return string
+     * @return array
+     * @throws NoSuchNodeException|NodeException
      */
-    protected function getRelativeNodePathByUriPathSegmentProperties(NodeInterface $siteNode, $relativeRequestPath)
+    private function getNodeDetailsByUriPathSegmentProperties(NodeInterface $siteNode, string $relativeRequestPath): array
     {
         $relativeNodePathSegments = [];
+        $affectedNodeIdentifiers = [(string)$siteNode->getNodeAggregateIdentifier()];
         $node = $siteNode;
 
         foreach (explode('/', $relativeRequestPath) as $pathSegment) {
@@ -531,30 +541,35 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             foreach ($node->getChildNodes('Neos.Neos:Document') as $node) {
                 /** @var NodeInterface $node */
                 if ($node->getProperty('uriPathSegment') === $pathSegment) {
-                    $relativeNodePathSegments[] = $node->getName();
+                    $relativeNodePathSegments[] = (string)$node->getNodeName();
+                    $affectedNodeIdentifiers[] = (string)$node->getNodeAggregateIdentifier();
                     $foundNodeInThisSegment = true;
                     break;
                 }
             }
             if (!$foundNodeInThisSegment) {
-                return false;
+                throw new Exception\NoSuchNodeException(sprintf('No matching node found at segment "%s" for request path "%s"', $pathSegment, $relativeRequestPath), 1643983997);
             }
         }
 
-        return implode('/', $relativeNodePathSegments);
+        return [
+            'relativeNodePath' => implode('/', $relativeNodePathSegments),
+            'affectedNodeIdentifiers' => $affectedNodeIdentifiers,
+        ];
     }
 
     /**
      * Renders a request path based on the "uriPathSegment" properties of the nodes leading to the given node.
      *
      * @param NodeInterface $node The node where the generated path should lead to
-     * @return string A relative request path
+     * @return array
      * @throws Exception\MissingNodePropertyException if the given node doesn't have a "uriPathSegment" property set
      */
-    protected function getRequestPathByNode(NodeInterface $node)
+    protected function getRequestPathByNode(NodeInterface $node): array
     {
+        $affectedNodeIdentifiers = [];
         if ($node->getParentPath() === SiteService::SITES_ROOT_PATH) {
-            return '';
+            return ['path' => '', 'affectedNodeIdentifiers' => $affectedNodeIdentifiers];
         }
 
         // To allow building of paths to non-hidden nodes beneath hidden nodes, we assume
@@ -563,7 +578,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         // a request path, not in building one.
         $contextProperties = $node->getContext()->getProperties();
         $contextAllowingHiddenNodes = $this->contextFactory->create(array_merge($contextProperties, ['invisibleContentShown' => true]));
-        $currentNode = $contextAllowingHiddenNodes->getNodeByIdentifier($node->getIdentifier());
+        $currentNode = $contextAllowingHiddenNodes->getNodeByIdentifier((string)$node->getNodeAggregateIdentifier());
 
         $requestPathSegments = [];
         while ($currentNode instanceof NodeInterface && $currentNode->getParentPath() !== SiteService::SITES_ROOT_PATH) {
@@ -573,10 +588,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
             $pathSegment = $currentNode->getProperty('uriPathSegment');
             $requestPathSegments[] = $pathSegment;
-            $currentNode = $currentNode->getParent();
+            $affectedNodeIdentifiers[] = (string)$currentNode->getNodeAggregateIdentifier();
+            $currentNode = $currentNode->findParentNode();
         }
-
-        return implode('/', array_reverse($requestPathSegments));
+        $affectedNodeIdentifiers[] = (string)$currentNode->getNodeAggregateIdentifier();
+        return ['path' => implode('/', array_reverse($requestPathSegments)), 'affectedNodeIdentifiers' => $affectedNodeIdentifiers];
     }
 
     /**
@@ -811,4 +827,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return ltrim(trim($uriSegment, '_') . '/', '/');
         }
     }
+
+    private function routeTagsFromIdentifiers(array $identifiers): RouteTags
+    {
+        $validTags = array_filter($identifiers, static function($tag) {
+            return preg_match(FrontendInterface::PATTERN_TAG, $tag) === 1;
+        });
+        return RouteTags::createFromArray($validTags);
+    }
+
 }
