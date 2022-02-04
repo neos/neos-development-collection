@@ -830,10 +830,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
     private function routeTagsFromIdentifiers(array $identifiers): RouteTags
     {
-        $validTags = array_filter($identifiers, static function($tag) {
+        $validTags = array_filter($identifiers, static function ($tag) {
             return preg_match(FrontendInterface::PATTERN_TAG, $tag) === 1;
         });
         return RouteTags::createFromArray($validTags);
     }
-
 }
