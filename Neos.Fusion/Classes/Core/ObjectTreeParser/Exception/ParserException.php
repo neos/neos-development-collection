@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Fusion\Core\Parser\Exception;
+namespace Neos\Fusion\Core\ObjectTreeParser\Exception;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -13,7 +13,7 @@ namespace Neos\Fusion\Core\Parser\Exception;
  * source code.
  */
 
-use Neos\Fusion\Core\Parser\ExceptionMessage\MessageLinePart;
+use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
 use Neos\Fusion\Exception;
 
 /**

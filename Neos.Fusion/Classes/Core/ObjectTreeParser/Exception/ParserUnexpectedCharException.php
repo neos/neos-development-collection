@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\Core\Parser\Exception;
+namespace Neos\Fusion\Core\ObjectTreeParser\Exception;
 
 /*
  * This file is part of the Neos.Fusion package.

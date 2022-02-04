@@ -14,8 +14,8 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Fusion;
-use Neos\Fusion\Core\Parser\AstBuilder;
-use Neos\Fusion\Core\Parser\Exception\ParserException;
+use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
+use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 
 /**
  * Contract for a Fusion parser
@@ -30,7 +30,7 @@ interface ParserInterface
      *
      * @param string $sourceCode The Fusion source code to parse
      * @param string|null $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
-     * @param array|AstBuilder|null $objectTreeUntilNow Used internally for keeping track of the built object tree
+     * @param array|ObjectTree|null $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @return array A Fusion object tree, generated from the source code
      * @throws Fusion\Exception
      * @throws ParserException

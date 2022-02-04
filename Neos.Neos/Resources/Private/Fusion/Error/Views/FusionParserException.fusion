@@ -1,6 +1,6 @@
 
 prototype(Neos.Neos:Error.View.FusionParserException) < prototype(Neos.Fusion:Component) {
-  /** @var exception \Neos\Fusion\Core\Parser\Exception\ParserException */
+  /** @var exception \Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException */
   exception = ''
   flowPathRoot = ''
 

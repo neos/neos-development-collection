@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Fusion\Core\Parser;
+namespace Neos\Fusion\Core\ObjectTreeParser;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -16,11 +16,7 @@ namespace Neos\Fusion\Core\Parser;
 use Neos\Fusion;
 use Neos\Utility\Arrays;
 
-/**
- * Collection of methods for the Fusion Parser
- * @internal
- */
-class AstBuilder
+class ObjectTree
 {
     /**
      * The Fusion object tree
@@ -89,7 +85,7 @@ class AstBuilder
      */
     public function setValueInObjectTree(array $objectPathArray, $value): void
     {
-        self::arraySetOrMergeValueByPathWithCallback($this->objectTree, $objectPathArray, $value, static function($simpleType) {
+        self::arraySetOrMergeValueByPathWithCallback($this->objectTree, $objectPathArray, $value, static function ($simpleType) {
             return [
                 '__value' => $simpleType,
                 '__eelExpression' => null,

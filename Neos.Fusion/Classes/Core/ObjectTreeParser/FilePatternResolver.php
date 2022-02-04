@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Fusion\Core\Parser;
+namespace Neos\Fusion\Core\ObjectTreeParser;
 
 /*
  * This file is part of the Neos.Fusion package.

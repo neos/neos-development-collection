@@ -15,14 +15,14 @@ namespace Neos\Fusion\Core;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
-use Neos\Fusion\Core\Parser\AstBuilder;
-use Neos\Fusion\Core\Parser\FilePatternResolver;
-use Neos\Fusion\Core\Parser\Lexer;
-use Neos\Fusion\Core\Parser\ExceptionMessage\MessageCreator;
-use Neos\Fusion\Core\Parser\ExceptionMessage\MessageLinePart;
-use Neos\Fusion\Core\Parser\Token;
-use Neos\Fusion\Core\Parser\Exception\ParserException;
-use Neos\Fusion\Core\Parser\Exception\ParserUnexpectedCharException;
+use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
+use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
+use Neos\Fusion\Core\ObjectTreeParser\Lexer;
+use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageCreator;
+use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
+use Neos\Fusion\Core\ObjectTreeParser\Token;
+use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
+use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserUnexpectedCharException;
 
 /**
  * The Fusion Parser
@@ -51,9 +51,9 @@ class Parser implements ParserInterface
 
     /**
      * The Fusion object tree builder, used by this parser.
-     * @var AstBuilder
+     * @var ObjectTree
      */
-    protected $astBuilder;
+    protected $objectTree;
 
     /**
      * For nested blocks to determine the prefix
@@ -77,7 +77,7 @@ class Parser implements ParserInterface
      *
      * @param string $sourceCode The Fusion source code to parse
      * @param string|null $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
-     * @param array|AstBuilder|null $objectTreeUntilNow Used internally for keeping track of the built object tree
+     * @param array|ObjectTree|null $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be false for includes to only do that once at the end.
      * @return array A Fusion object tree, generated from the source code
      * @throws Fusion\Exception
@@ -89,7 +89,7 @@ class Parser implements ParserInterface
         // TODO use dependency Injection ...
         $this->lexer = new Lexer($sourceCode);
         $this->contextPathAndFilename = $contextPathAndFilename;
-        $this->astBuilder = self::initializeAstBuilder($objectTreeUntilNow);
+        $this->objectTree = self::initializeAstBuilder($objectTreeUntilNow);
 
         $this->parseFusion();
 
@@ -97,10 +97,10 @@ class Parser implements ParserInterface
             throw $this->delayedCombinedException;
         }
         if ($buildPrototypeHierarchy) {
-            $this->astBuilder->buildPrototypeHierarchy();
+            $this->objectTree->buildPrototypeHierarchy();
         }
 
-        return $this->astBuilder->getObjectTree();
+        return $this->objectTree->getObjectTree();
     }
 
     /**
@@ -291,7 +291,7 @@ class Parser implements ParserInterface
         $this->expect(Token::ASSIGNMENT);
         $this->lazyExpect(Token::SPACE);
         $value = $this->parsePathValue();
-        $this->astBuilder->setValueInObjectTree($currentPath, $value);
+        $this->objectTree->setValueInObjectTree($currentPath, $value);
     }
 
     /**
@@ -301,7 +301,7 @@ class Parser implements ParserInterface
     protected function parseValueUnset(array $currentPath): void
     {
         $this->expect(Token::UNSET);
-        $this->astBuilder->removeValueInObjectTree($currentPath);
+        $this->objectTree->removeValueInObjectTree($currentPath);
     }
 
     /**
@@ -313,14 +313,14 @@ class Parser implements ParserInterface
         $this->expect(Token::COPY);
         $this->lazyExpect(Token::SPACE);
 
-        $sourcePath = $this->parseAssignedObjectPath($this->astBuilder->getParentPath($currentPath));
+        $sourcePath = $this->parseAssignedObjectPath($this->objectTree->getParentPath($currentPath));
 
-        $currentPathsPrototype = $this->astBuilder->objectPathIsPrototype($currentPath);
-        $sourcePathIsPrototype = $this->astBuilder->objectPathIsPrototype($sourcePath);
+        $currentPathsPrototype = $this->objectTree->objectPathIsPrototype($currentPath);
+        $sourcePathIsPrototype = $this->objectTree->objectPathIsPrototype($sourcePath);
         if ($currentPathsPrototype && $sourcePathIsPrototype) {
             // both are a prototype definition
             try {
-                $this->astBuilder->inheritPrototypeInObjectTree($currentPath, $sourcePath);
+                $this->objectTree->inheritPrototypeInObjectTree($currentPath, $sourcePath);
             } catch (Fusion\Exception $e) {
                 // delay throw since there might be syntax errors causing this.
                 $this->delayedCombinedException = (new ParserException())
@@ -348,7 +348,7 @@ class Parser implements ParserInterface
             return;
         }
 
-        $this->astBuilder->copyValueInObjectTree($currentPath, $sourcePath);
+        $this->objectTree->copyValueInObjectTree($currentPath, $sourcePath);
     }
 
     /**
@@ -452,7 +452,7 @@ class Parser implements ParserInterface
             // Check if not trying to recursively include the current file via globbing
             if ($this->contextPathAndFilename === null
                 || stat($this->contextPathAndFilename) !== stat($file)) {
-                $parser->parse(file_get_contents($file), $file, $this->astBuilder, false);
+                $parser->parse(file_get_contents($file), $file, $this->objectTree, false);
             }
         }
     }
@@ -733,19 +733,19 @@ class Parser implements ParserInterface
     }
 
     /**
-     * @param array|AstBuilder|null $objectTreeUntilNow Used internally for keeping track of the built object tree
+     * @param array|ObjectTree|null $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @throws Fusion\Exception
      */
-    protected static function initializeAstBuilder($objectTreeUntilNow): AstBuilder
+    protected static function initializeAstBuilder($objectTreeUntilNow): ObjectTree
     {
-        if ($objectTreeUntilNow instanceof AstBuilder === false && is_null($objectTreeUntilNow) === false && is_array($objectTreeUntilNow) === false) {
+        if ($objectTreeUntilNow instanceof ObjectTree === false && is_null($objectTreeUntilNow) === false && is_array($objectTreeUntilNow) === false) {
             throw new Fusion\Exception('Cannot parse Fusion - $objectTreeUntilNow must be of type array or AstBuilder or null');
         }
         if ($objectTreeUntilNow === null) {
-            return new AstBuilder();
+            return new ObjectTree();
         }
         if (is_array($objectTreeUntilNow)) {
-            $astBuilder = new AstBuilder();
+            $astBuilder = new ObjectTree();
             $astBuilder->setObjectTree($objectTreeUntilNow);
             return $astBuilder;
         }
