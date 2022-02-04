@@ -11,6 +11,9 @@ namespace Neos\Neos\Tests\Unit\Routing;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -477,11 +480,11 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
-        $mockSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/examplecom/home@user-robert'));
+        $mockSubNode->method('getContextPath')->willReturn('/sites/examplecom/home@user-robert');
 
         $mockSubSubNode = $this->buildSubNode($mockSubNode, 'ae178bc9184');
         $mockSubSubNode->mockProperties['uriPathSegment'] = 'coffee-brands';
-        $mockSubSubNode->expects(self::any())->method('getContextPath')->will(self::returnValue('/sites/examplecom/home/ae178bc9184@user-robert'));
+        $mockSubSubNode->method('getContextPath')->willReturn('/sites/examplecom/home/ae178bc9184@user-robert');
         $mockSubSubNode->method('getPath')->willReturn('/sites/examplecom/home/ae178bc9184');
 
         $routeValues = ['node' => $mockSubSubNode];
@@ -939,32 +942,34 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     protected function buildNode(ContentContext $mockContext, $nodeName, $nodeTypeName = 'Neos.Neos:Document')
     {
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $mockNodeType->expects(self::any())->method('isOfType')->will(self::returnCallback(function ($expectedNodeTypeName) use ($nodeTypeName) {
+        $mockNodeType->method('isOfType')->willReturnCallback(function ($expectedNodeTypeName) use ($nodeTypeName) {
             return $expectedNodeTypeName === $nodeTypeName;
-        }));
+        });
 
-        $mockNode = $this->createMock(NodeInterface::class);
-        $mockNode->expects(self::any())->method('getContext')->will(self::returnValue($mockContext));
-        $mockNode->expects(self::any())->method('getName')->will(self::returnValue($nodeName));
-        $mockNode->expects(self::any())->method('getNodeType')->will(self::returnValue($mockNodeType));
-        $mockNode->expects(self::any())->method('getWorkspace')->will(self::returnValue($mockContext->getWorkspace()));
+        $mockNode = $this->createMock(Node::class);
+        $mockNode->method('getContext')->willReturn($mockContext);
+        //$mockNode->method('getName')->willReturn($nodeName);
+        $mockNode->method('getNodeName')->willReturn(NodeName::fromString($nodeName));
+        $mockNode->method('getNodeType')->willReturn($mockNodeType);
+        $mockNode->method('getWorkspace')->willReturn($mockContext->getWorkspace());
 
         $mockNodeIdentifier = Algorithms::generateUUID();
-        $mockNode->expects(self::any())->method('getIdentifier')->will(self::returnValue($mockNodeIdentifier));
+        $mockNode->method('getIdentifier')->willReturn($mockNodeIdentifier);
+        $mockNode->method('getNodeAggregateIdentifier')->willReturn(NodeAggregateIdentifier::fromString($mockNodeIdentifier));
         $mockContext->mockNodesByIdentifier[$mockNodeIdentifier] = $mockNode;
 
         // Parent node is set by buildSubNode()
         $mockNode->mockParentNode = null;
-        $mockNode->expects(self::any())->method('getParent')->will(self::returnCallback(function () use ($mockNode) {
+        $mockNode->method('getParent')->willReturnCallback(function () use ($mockNode) {
             return $mockNode->mockParentNode;
-        }));
+        });
 
         $mockNode->mockChildNodes = [];
-        $mockNode->expects(self::any())->method('getChildNodes')->will(self::returnCallback(function ($nodeTypeFilter) use ($mockNode) {
+        $mockNode->method('getChildNodes')->willReturnCallback(function ($nodeTypeFilter) use ($mockNode) {
             return $mockNode->mockChildNodes;
-        }));
+        });
 
-        $mockNode->expects(self::any())->method('getNode')->will(self::returnCallback(function ($relativeNodePath) use ($mockNode) {
+        $mockNode->method('getNode')->willReturnCallback(function ($relativeNodePath) use ($mockNode) {
             $foundNode = null;
             foreach ($mockNode->mockChildNodes as $nodeName => $mockChildNode) {
                 if ($nodeName === $relativeNodePath) {
@@ -972,20 +977,20 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
                 }
             }
             return $foundNode;
-        }));
+        });
 
         $mockNode->mockProperties = [];
-        $mockNode->expects(self::any())->method('getProperties')->will(self::returnCallback(function () use ($mockNode) {
+        $mockNode->method('getProperties')->willReturnCallback(function () use ($mockNode) {
             return $mockNode->mockProperties;
-        }));
+        });
 
         $mockNode->mockProperties = [];
-        $mockNode->expects(self::any())->method('getProperty')->will(self::returnCallback(function ($propertyName) use ($mockNode) {
-            return isset($mockNode->mockProperties[$propertyName]) ? $mockNode->mockProperties[$propertyName] : null;
-        }));
-        $mockNode->expects(self::any())->method('hasProperty')->will(self::returnCallback(function ($propertyName) use ($mockNode) {
+        $mockNode->method('getProperty')->willReturnCallback(function ($propertyName) use ($mockNode) {
+            return $mockNode->mockProperties[$propertyName] ?? null;
+        });
+        $mockNode->method('hasProperty')->willReturnCallback(function ($propertyName) use ($mockNode) {
             return array_key_exists($propertyName, $mockNode->mockProperties);
-        }));
+        });
 
         return $mockNode;
     }
@@ -993,9 +998,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     /**
      * Creates a mock site node
      *
-     * @param ContentContext $mockContext
+     * @param ContentContext|MockObject $mockContext
      * @param string $nodePath
-     * @return NodeInterface
+     * @return NodeInterface|MockObject
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     protected function buildSiteNode(ContentContext $mockContext, $nodePath)
@@ -1003,9 +1008,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $nodeName = substr($nodePath, strrpos($nodePath, '/') + 1);
         $parentNodePath = substr($nodePath, 0, strrpos($nodePath, '/'));
         $mockSiteNode = $this->buildNode($mockContext, $nodeName);
-        $mockSiteNode->expects(self::any())->method('getPath')->will(self::returnValue($nodePath));
-        $mockSiteNode->expects(self::any())->method('getParentPath')->will(self::returnValue($parentNodePath));
-        $mockContext->expects(self::any())->method('getCurrentSiteNode')->will(self::returnValue($mockSiteNode));
+        $mockSiteNode->method('getPath')->willReturn($nodePath);
+        $mockSiteNode->method('getParentPath')->willReturn($parentNodePath);
+        $mockContext->method('getCurrentSiteNode')->willReturn($mockSiteNode);
         return $mockSiteNode;
     }
 
@@ -1024,9 +1029,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockNode->mockParentNode = $mockParentNode;
 
         $mockParentNode->mockChildNodes[$nodeName] = $mockNode;
-        $mockNode->expects(self::any())->method('getChildNodes')->will(self::returnCallback(function ($nodeTypeFilter) use ($mockNode) {
+        $mockNode->method('getChildNodes')->willReturnCallback(function ($nodeTypeFilter) use ($mockNode) {
             return $mockNode->mockChildNodes;
-        }));
+        });
         $mockNode->method('getPath')->willReturn($mockParentNode->getPath() . '/' . $nodeName);
         return $mockNode;
     }
