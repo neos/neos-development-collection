@@ -14,20 +14,24 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Fusion;
+use Neos\Fusion\Core\ObjectTreeParser\Lexer;
+use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
+use Neos\Fusion\Core\ObjectTreeParser\PredictiveParser;
 
 /**
- * Contract for a Fusion parser
+ * The Fusion Parser
  *
  * @api
  */
-interface ParserInterface
+class Parser implements ParserInterface
 {
     /**
      * Reserved parse tree keys for internal usage.
      *
+     * @deprecated use ParserInterface::RESERVED_PARSE_TREE_KEYS
      * @var array
      */
-    public const RESERVED_PARSE_TREE_KEYS = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
+    public static $reservedParseTreeKeys = ParserInterface::RESERVED_PARSE_TREE_KEYS;
 
     /**
      * Parses the given Fusion source code and returns an object tree
@@ -40,5 +44,16 @@ interface ParserInterface
      * @throws Fusion\Exception
      * @api
      */
-    public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $objectTreeUntilNow = []): array;
+    public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $objectTreeUntilNow = []): array
+    {
+        $objectTree = new ObjectTree();
+        $objectTree->setObjectTree($objectTreeUntilNow);
+
+        $lexer = new Lexer($sourceCode);
+
+        PredictiveParser::parse($objectTree, $lexer, $contextPathAndFilename);
+
+        $objectTree->buildPrototypeHierarchy();
+        return $objectTree->getObjectTree();
+    }
 }

@@ -23,19 +23,10 @@ use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserUnexpectedCharException;
 use Neos\Fusion\Core\ParserInterface;
 
 /**
- * The Fusion Parser
- *
- * @api
+ * The Fusion Parser Engine
  */
-class Parser implements ParserInterface
+class PredictiveParser
 {
-    /**
-     * Reserved parse tree keys for internal usage.
-     *
-     * @var array
-     */
-    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
-
     /**
      * @var Lexer
      */
@@ -69,36 +60,24 @@ class Parser implements ParserInterface
      */
     protected $delayedCombinedException;
 
-    /**
-     * Parses the given Fusion source code and returns an object tree
-     * as the result.
-     *
-     * @param string $sourceCode The Fusion source code to parse
-     * @param string|null $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
-     * @param array|ObjectTree|null $objectTreeUntilNow Used internally for keeping track of the built object tree
-     * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be false for includes to only do that once at the end.
-     * @return array A Fusion object tree, generated from the source code
-     * @throws Fusion\Exception
-     * @throws ParserException
-     * @api
-     */
-    public function parse(string $sourceCode, string $contextPathAndFilename = null, $objectTreeUntilNow = null, bool $buildPrototypeHierarchy = true): array
+    protected function __construct(ObjectTree $objectTree, Lexer $lexer, ?string $contextPathAndFilename)
     {
-        // TODO use dependency Injection ...
-        $this->lexer = new Lexer($sourceCode);
+        $this->objectTree = $objectTree;
+        $this->lexer = $lexer;
         $this->contextPathAndFilename = $contextPathAndFilename;
-        $this->objectTree = self::initializeAstBuilder($objectTreeUntilNow);
+    }
 
-        $this->parseFusion();
+    public static function parse(ObjectTree $objectTree, Lexer $lexer, ?string $contextPathAndFilename = null): ObjectTree
+    {
+        $parser = new static($objectTree, $lexer, $contextPathAndFilename);
 
-        if ($this->delayedCombinedException !== null) {
-            throw $this->delayedCombinedException;
+        $parser->parseFusion();
+
+        if ($parser->delayedCombinedException !== null) {
+            throw $parser->delayedCombinedException;
         }
-        if ($buildPrototypeHierarchy) {
-            $this->objectTree->buildPrototypeHierarchy();
-        }
 
-        return $this->objectTree->getObjectTree();
+        return $parser->objectTree;
     }
 
     /**
@@ -441,7 +420,6 @@ class Parser implements ParserInterface
      */
     protected function includeAndParseFilesByPattern(string $filePattern): void
     {
-        $parser = new static();
         $filesToInclude = FilePatternResolver::resolveFilesByPattern($filePattern, $this->contextPathAndFilename, '.fusion');
         foreach ($filesToInclude as $file) {
             if (is_readable($file) === false) {
@@ -450,7 +428,7 @@ class Parser implements ParserInterface
             // Check if not trying to recursively include the current file via globbing
             if ($this->contextPathAndFilename === null
                 || stat($this->contextPathAndFilename) !== stat($file)) {
-                $parser->parse(file_get_contents($file), $file, $this->objectTree, false);
+                static::parse($this->objectTree, new Lexer(file_get_contents($file)), $file);
             }
         }
     }
@@ -665,8 +643,8 @@ class Parser implements ParserInterface
                 ->build();
         }
 
-        $parser = new static();
-        $temporaryAst = $parser->parse('value = ' . $transpiledFusion, $this->contextPathAndFilename, null, false);
+        $temporaryTree = static::parse(new ObjectTree(), new Lexer('value = ' . $transpiledFusion), $this->contextPathAndFilename);
+        $temporaryAst = $temporaryTree->getObjectTree();
         return $temporaryAst['value'];
     }
 
@@ -725,28 +703,8 @@ class Parser implements ParserInterface
     protected static function throwIfKeyIsReservedParseTreeKey(string $pathKey)
     {
         if (substr($pathKey, 0, 2) === '__'
-            && in_array($pathKey, self::$reservedParseTreeKeys, true)) {
+            && in_array($pathKey, ParserInterface::RESERVED_PARSE_TREE_KEYS, true)) {
             throw new Fusion\Exception("Reversed key '$pathKey' used.", 1437065270);
         }
-    }
-
-    /**
-     * @param array|ObjectTree|null $objectTreeUntilNow Used internally for keeping track of the built object tree
-     * @throws Fusion\Exception
-     */
-    protected static function initializeAstBuilder($objectTreeUntilNow): ObjectTree
-    {
-        if ($objectTreeUntilNow instanceof ObjectTree === false && is_null($objectTreeUntilNow) === false && is_array($objectTreeUntilNow) === false) {
-            throw new Fusion\Exception('Cannot parse Fusion - $objectTreeUntilNow must be of type array or AstBuilder or null');
-        }
-        if ($objectTreeUntilNow === null) {
-            return new ObjectTree();
-        }
-        if (is_array($objectTreeUntilNow)) {
-            $astBuilder = new ObjectTree();
-            $astBuilder->setObjectTree($objectTreeUntilNow);
-            return $astBuilder;
-        }
-        return $objectTreeUntilNow;
     }
 }
