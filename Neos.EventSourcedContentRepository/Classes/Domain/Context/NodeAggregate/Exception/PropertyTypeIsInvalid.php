@@ -20,9 +20,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a property type is invalid
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class PropertyTypeIsInvalid extends \DomainException
 {
     public static function becauseItIsReference(PropertyName $propertyName, NodeTypeName $nodeTypeName): self

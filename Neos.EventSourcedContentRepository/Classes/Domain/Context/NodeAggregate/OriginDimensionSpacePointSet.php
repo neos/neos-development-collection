@@ -136,14 +136,14 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
         return $this->points[$dimensionSpacePointHash] ?? null;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): never
     {
-        // not going to happen
+        throw new \BadMethodCallException('Cannot modify immutable OriginDimensionSpacePointSet', 1643467297);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): never
     {
-        // not going to happen
+        throw new \BadMethodCallException('Cannot modify immutable OriginDimensionSpacePointSet', 1643467297);
     }
 
     public function getUnion(OriginDimensionSpacePointSet $other): OriginDimensionSpacePointSet

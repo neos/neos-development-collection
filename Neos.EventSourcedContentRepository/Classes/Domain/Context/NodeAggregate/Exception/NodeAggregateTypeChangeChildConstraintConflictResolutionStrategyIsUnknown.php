@@ -12,10 +12,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown when trying to initialize an unknown
  * NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown extends \DomainException
 {
 }

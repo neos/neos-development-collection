@@ -13,9 +13,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if an invalid node variant selection strategy was tried to be initialized
  */
+#[Flow\Proxy(false)]
 final class NodeVariantSelectionStrategyIsInvalid extends \DomainException
 {
 }

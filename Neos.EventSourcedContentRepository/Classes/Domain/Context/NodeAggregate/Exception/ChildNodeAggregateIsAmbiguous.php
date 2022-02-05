@@ -12,9 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if a child node aggregate was tried to be fetched but is ambiguous
  */
+#[Flow\Proxy(false)]
 final class ChildNodeAggregateIsAmbiguous extends \DomainException
 {
 }

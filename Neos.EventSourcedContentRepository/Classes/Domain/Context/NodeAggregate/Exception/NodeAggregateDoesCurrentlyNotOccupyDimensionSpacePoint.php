@@ -13,9 +13,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if a node aggregate does currently not occupy a given dimension space point but is supposed to be
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint extends \DomainException
 {
 }

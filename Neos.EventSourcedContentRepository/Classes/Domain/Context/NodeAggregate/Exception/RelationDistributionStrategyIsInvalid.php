@@ -13,9 +13,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if an invalid relation distribution strategy was tried to be initialized
  */
+#[Flow\Proxy(false)]
 final class RelationDistributionStrategyIsInvalid extends \DomainException
 {
 }

@@ -49,10 +49,7 @@ final class PropertyCollection implements PropertyCollectionInterface
         return $this->serializedPropertyValues->propertyExists($offset);
     }
 
-    /**
-     * @return mixed|null
-     */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if (!$this->offsetExists($offset)) {
             return null;
@@ -66,17 +63,17 @@ final class PropertyCollection implements PropertyCollectionInterface
         return $this->deserializedPropertyValues[$offset];
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): never
     {
         throw new \RuntimeException("Do not use!");
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): never
     {
         throw new \RuntimeException("Do not use!");
     }
 
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return $this->iterator;
     }

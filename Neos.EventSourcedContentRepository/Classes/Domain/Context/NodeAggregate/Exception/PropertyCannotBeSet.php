@@ -20,9 +20,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a property was attempted to be set but cannot be
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class PropertyCannotBeSet extends \DomainException
 {
     public static function becauseTheValueDoesNotMatchTheConfiguredType(PropertyName $propertyName, string $attemptedType, string $configuredType): self

@@ -17,8 +17,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a node type is abstract but was not supposed to be
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeTypeIsAbstract extends \DomainException
 {
     public static function butWasNotSupposedToBe(NodeTypeName $nodeTypeName): self

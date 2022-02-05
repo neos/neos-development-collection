@@ -79,7 +79,7 @@ final class SerializedPropertyValue implements \JsonSerializable
         return $this->value;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'value' => $this->value,

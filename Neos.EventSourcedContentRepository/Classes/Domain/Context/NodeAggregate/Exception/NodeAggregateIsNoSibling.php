@@ -13,14 +13,16 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  */
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a node aggregate is no sibling of a reference node aggregate
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateIsNoSibling extends \DomainException
 {
     public static function butWasSupposedToBe(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeAggregateIdentifier $referenceNodeAggregateIdentifier): NodeAggregateIsNoSibling
     {
-        return new static('Node aggregate "' . $nodeAggregateIdentifier . '" is no sibling of "' . $referenceNodeAggregateIdentifier . '" but was supposed to be', 1571068801);
+        return new self('Node aggregate "' . $nodeAggregateIdentifier . '" is no sibling of "' . $referenceNodeAggregateIdentifier . '" but was supposed to be', 1571068801);
     }
 }

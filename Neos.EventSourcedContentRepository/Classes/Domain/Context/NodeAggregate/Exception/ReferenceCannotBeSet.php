@@ -19,9 +19,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a reference was attempted to be set but cannot be
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class ReferenceCannotBeSet extends \DomainException
 {
     public static function becauseTheNodeTypeDoesNotDeclareIt(PropertyName $propertyName, NodeTypeName $nodeTypeName): self

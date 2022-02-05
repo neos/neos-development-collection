@@ -35,10 +35,10 @@ final class PropertyName implements \JsonSerializable
 
     public static function fromString(string $value): self
     {
-        return new static($value);
+        return new self($value);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->value;
     }
