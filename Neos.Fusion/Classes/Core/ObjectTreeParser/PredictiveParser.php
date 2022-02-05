@@ -13,14 +13,34 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
-use Neos\Fusion\Core\DslFactory;
+
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFileAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementListAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\IncludeAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectDefinitionAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\BlockAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPathAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\PathSegmentAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\MetaPathAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\PrototypePathAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPathPartAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueAssignmentAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\PathValueAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionObjectValueAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\DslExpressionValueAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValueAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\SimpleValueAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\CharValueAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValueAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopyAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPathAst;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnsetAst;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageCreator;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserUnexpectedCharException;
-use Neos\Fusion\Core\ParserInterface;
 
 /**
  * The Fusion Parser Engine
@@ -33,51 +53,20 @@ class PredictiveParser
     protected $lexer;
 
     /**
-     * @Flow\Inject
-     * @var DslFactory
-     */
-    protected $dslFactory;
-
-    /**
-     * The Fusion object tree builder, used by this parser.
-     * @var ObjectTree
-     */
-    protected $objectTree;
-
-    /**
-     * For nested blocks to determine the prefix
-     * @var array
-     */
-    protected $currentObjectPathStack = [];
-
-    /**
-     * @var ?string
+     * @var string
      */
     protected $contextPathAndFilename;
 
-    /**
-     * @var ?ParserException
-     */
-    protected $delayedCombinedException;
-
-    protected function __construct(ObjectTree $objectTree, Lexer $lexer, ?string $contextPathAndFilename)
+    public function __construct(Lexer $lexer, ?string $contextPathAndFilename = null)
     {
-        $this->objectTree = $objectTree;
         $this->lexer = $lexer;
         $this->contextPathAndFilename = $contextPathAndFilename;
     }
 
-    public static function parse(ObjectTree $objectTree, Lexer $lexer, ?string $contextPathAndFilename = null): ObjectTree
+    public function parse(): FusionFileAst
     {
-        $parser = new static($objectTree, $lexer, $contextPathAndFilename);
-
-        $parser->parseFusion();
-
-        if ($parser->delayedCombinedException !== null) {
-            throw $parser->delayedCombinedException;
-        }
-
-        return $parser->objectTree;
+        $statementList = $this->parseFusion();
+        return new FusionFileAst($statementList, $this->contextPathAndFilename);
     }
 
     /**
@@ -189,10 +178,10 @@ class PredictiveParser
      * Fusion
      *  = StatementList
      */
-    protected function parseFusion(): void
+    protected function parseFusion(): StatementListAst
     {
         try {
-            $this->parseStatementList();
+            return $this->parseStatementList();
         } catch (ParserException $e) {
             throw $e;
         } catch (ParserUnexpectedCharException $e) {
@@ -221,35 +210,35 @@ class PredictiveParser
      *
      * @param int|null $stopLookahead When this tokenType is encountered the loop will be stopped
      */
-    protected function parseStatementList(int $stopLookahead = null): void
+    protected function parseStatementList(int $stopLookahead = null): StatementListAst
     {
+        $statements = [];
         $this->lazyBigGap();
         while ($this->accept(Token::EOF) === false
             && ($stopLookahead === null || $this->accept($stopLookahead) === false)) {
-            $this->parseStatement();
+            array_push($statements, $this->parseStatement());
             $this->lazyBigGap();
         }
+        return new StatementListAst(...$statements);
     }
 
     /**
      * Statement
-     *  = IncludeStatement / ObjectDefinition
+     *  = Include / ObjectDefinition
      */
-    protected function parseStatement(): void
+    protected function parseStatement(): StatementAst
     {
         // watch out for the order, its regex matching and first one wins.
         switch (true) {
             case $this->accept(Token::INCLUDE):
-                $this->parseIncludeStatement();
-                return;
+                return $this->parseInclude();
 
             case $this->accept(Token::PROTOTYPE_START):
             case $this->accept(Token::OBJECT_PATH_PART):
             case $this->accept(Token::META_PATH_START):
             case $this->accept(Token::CHAR):
             case $this->accept(Token::STRING):
-                $this->parseObjectDefinition();
-                return;
+                return $this->parseObjectDefinition();
         }
 
         throw (new ParserException())
@@ -260,109 +249,64 @@ class PredictiveParser
     }
 
     /**
-     * ValueAssignment
-     *  = ASSIGNMENT PathValue
+     * Include
+     *  = INCLUDE ( STRING / CHAR / FILE_PATTERN ) EndOfStatement
      */
-    protected function parseValueAssignment(array $currentPath): void
+    protected function parseInclude(): IncludeAst
     {
-        $this->expect(Token::ASSIGNMENT);
-        $this->lazyExpect(Token::SPACE);
-        $value = $this->parsePathValue();
-        $this->objectTree->setValueInObjectTree($currentPath, $value);
-    }
-
-    /**
-     * ValueUnset
-     *  = UNSET
-     */
-    protected function parseValueUnset(array $currentPath): void
-    {
-        $this->expect(Token::UNSET);
-        $this->objectTree->removeValueInObjectTree($currentPath);
-    }
-
-    /**
-     * ValueCopy
-     *  = COPY ObjectPathAssignment
-     */
-    protected function parseValueCopy(array $currentPath): void
-    {
-        $this->expect(Token::COPY);
+        $this->expect(Token::INCLUDE);
         $this->lazyExpect(Token::SPACE);
 
-        $sourcePath = $this->parseAssignedObjectPath($this->objectTree->getParentPath($currentPath));
-
-        $currentPathsPrototype = $this->objectTree->objectPathIsPrototype($currentPath);
-        $sourcePathIsPrototype = $this->objectTree->objectPathIsPrototype($sourcePath);
-        if ($currentPathsPrototype && $sourcePathIsPrototype) {
-            // both are a prototype definition
-            try {
-                $this->objectTree->inheritPrototypeInObjectTree($currentPath, $sourcePath);
-            } catch (Fusion\Exception $e) {
-                // delay throw since there might be syntax errors causing this.
-                $this->delayedCombinedException = (new ParserException())
-                    ->withCode($e->getCode())
-                    ->withMessage($e->getMessage())
-                    ->withoutColumnShown()
-                    ->withPrevious($this->delayedCombinedException)
-                    ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-                    ->build();
-            }
-            return;
+        switch (true) {
+            case $this->accept(Token::STRING):
+            case $this->accept(Token::CHAR):
+                $stringWrapped = $this->consume()->getValue();
+                $filePattern = substr($stringWrapped, 1, -1);
+                break;
+            case $this->accept(Token::FILE_PATTERN):
+                $filePattern = $this->consume()->getValue();
+                break;
+            default:
+                throw new ParserUnexpectedCharException('Expected file pattern in quotes or [a-zA-Z0-9.*:/_-]', 1635708717);
         }
 
-        if ($currentPathsPrototype xor $sourcePathIsPrototype) {
-            // Only one of "source" or "target" is a prototype. We do not support copying a
-            // non-prototype value to a prototype value or vice-versa.
-            // delay throw since there might be syntax errors causing this.
-            $this->delayedCombinedException = (new ParserException())
-                ->withCode(1358418015)
-                ->withMessage("Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.")
-                ->withoutColumnShown()
-                ->withPrevious($this->delayedCombinedException)
-                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-                ->build();
-            return;
-        }
+        $this->parseEndOfStatement();
 
-        $this->objectTree->copyValueInObjectTree($currentPath, $sourcePath);
+        return new IncludeAst($filePattern);
     }
 
     /**
      * ObjectDefinition
-     *  = ObjectPath ( ValueAssignment / ValueUnset / ValueCopy )? ( BlockStatement / EndOfStatement )
+     *  = ObjectPath ( ValueAssignment / ValueUnset / ValueCopy )? ( Block / EndOfStatement )
      */
-    protected function parseObjectDefinition(): void
+    protected function parseObjectDefinition(): ObjectDefinitionAst
     {
-        $currentPath = $this->parseObjectPath($this->getCurrentObjectPathPrefix());
+        $currentPath = $this->parseObjectPath();
         $this->lazyExpect(Token::SPACE);
         $cursorAfterObjectPath = $this->lexer->getCursor();
 
-        $operationWasParsed = null;
+        $operation = null;
         switch (true) {
             case $this->accept(Token::ASSIGNMENT):
-                $this->parseValueAssignment($currentPath);
+                $operation = $this->parseValueAssignment();
                 break;
 
             case $this->accept(Token::UNSET):
-                $this->parseValueUnset($currentPath);
+                $operation = $this->parseValueUnset();
                 break;
 
             case $this->accept(Token::COPY):
-                $this->parseValueCopy($currentPath);
+                $operation = $this->parseValueCopy();
                 break;
-
-            default:
-                $operationWasParsed = false;
         }
         $this->lazyExpect(Token::SPACE);
 
         if ($this->accept(Token::LBRACE)) {
-            $this->parseBlockStatement($currentPath);
-            return;
+            $block = $this->parseBlock();
+            return new ObjectDefinitionAst($currentPath, $operation, $block);
         }
 
-        if ($operationWasParsed === false) {
+        if ($operation === null) {
             throw (new ParserException())
                 ->withCode(1635708717)
                 ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())
@@ -372,65 +316,210 @@ class PredictiveParser
         }
 
         $this->parseEndOfStatement();
+        return new ObjectDefinitionAst($currentPath, $operation);
     }
 
     /**
-     * IncludeStatement
-     *  = INCLUDE ( StringLiteral / FILE_PATTERN ) EndOfStatement
+     * ObjectPath
+     *  = PathSegment ( '.' PathSegment )*
+     *
      */
-    protected function parseIncludeStatement(): void
+    protected function parseObjectPath(): ObjectPathAst
     {
-        $this->expect(Token::INCLUDE);
-        $this->lazyExpect(Token::SPACE);
+        $segments = [];
+        do {
+            array_push($segments, $this->parsePathSegment());
+        } while ($this->lazyExpect(Token::DOT));
+        return new ObjectPathAst(...$segments);
+    }
 
+    /**
+     * PathSegment
+     *  = ( PROTOTYPE_START FUSION_OBJECT_NAME ')' / OBJECT_PATH_PART / '@' OBJECT_PATH_PART / STRING / CHAR )
+     */
+    protected function parsePathSegment(): PathSegmentAst
+    {
         switch (true) {
+            case $this->accept(Token::PROTOTYPE_START):
+                $this->consume();
+                $prototypeName = $this->expect(Token::FUSION_OBJECT_NAME)->getValue();
+                $this->expect(Token::RPAREN);
+                return new PrototypePathAst($prototypeName);
+
+            case $this->accept(Token::OBJECT_PATH_PART):
+                $pathKey = $this->consume()->getValue();
+                return new ObjectPathPartAst($pathKey);
+
+            case $this->accept(Token::META_PATH_START):
+                $this->consume();
+                $metaPathKey = $this->expect(Token::OBJECT_PATH_PART)->getValue();
+                return new MetaPathAst($metaPathKey);
+
             case $this->accept(Token::STRING):
             case $this->accept(Token::CHAR):
-                $filePattern = $this->parseStringLiteral();
-                break;
-            case $this->accept(Token::FILE_PATTERN):
-                $filePattern = $this->consume()->getValue();
-                break;
-            default:
-                throw new ParserUnexpectedCharException('Expected file pattern in quotes or [a-zA-Z0-9.*:/_-]', 1635708717);
+                $stringWrapped = $this->consume()->getValue();
+                $quotedPathKey = substr($stringWrapped, 1, -1);
+                if ($quotedPathKey === '') {
+                    throw (new ParserException())
+                        ->withCode(1635708717)
+                        ->withMessage("A quoted path must not be empty")
+                        ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                        ->build();
+                }
+                return new ObjectPathPartAst($quotedPathKey);
         }
 
+        throw (new ParserException())
+            ->withCode(1635708755)
+            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+            ->withMessageCreator([MessageCreator::class, 'forParsePathSegment'])
+            ->build();
+    }
+
+    /**
+     * ValueAssignment
+     *  = ASSIGNMENT PathValue
+     */
+    protected function parseValueAssignment(): ValueAssignmentAst
+    {
+        $this->expect(Token::ASSIGNMENT);
+        $this->lazyExpect(Token::SPACE);
+        $value = $this->parsePathValue();
+        return new ValueAssignmentAst($value);
+    }
+
+    /**
+     * PathValue
+     *  = ( CHAR / STRING / DSL_EXPRESSION / FusionObject / EelExpression )
+     */
+    protected function parsePathValue(): PathValueAst
+    {
+        // watch out for the order, its regex matching and first one wins.
+        // sorted by likelihood
+        switch (true) {
+            case $this->accept(Token::CHAR):
+                $charWrapped = $this->consume()->getValue();
+                $charContent = substr($charWrapped, 1, -1);
+                return new CharValueAst($charContent);
+
+            case $this->accept(Token::STRING):
+                $stringWrapped = $this->consume()->getValue();
+                $stringContent = substr($stringWrapped, 1, -1);
+                return new StringValueAst($stringContent);
+
+            case $this->accept(Token::FUSION_OBJECT_NAME):
+                return new FusionObjectValueAst($this->consume()->getValue());
+
+            case $this->accept(Token::DSL_EXPRESSION_START):
+                return $this->parseDslExpression();
+
+            case $this->accept(Token::EEL_EXPRESSION):
+                $eelWrapped = $this->consume()->getValue();
+                $eelContent = substr($eelWrapped, 2, -1);
+                return new EelExpressionValueAst($eelContent);
+
+            case $this->accept(Token::FLOAT):
+                return new SimpleValueAst((float)$this->consume()->getValue());
+
+            case $this->accept(Token::INTEGER):
+                return new SimpleValueAst((int)$this->consume()->getValue());
+
+            case $this->accept(Token::TRUE_VALUE):
+                $this->consume();
+                return new SimpleValueAst(true);
+
+            case $this->accept(Token::FALSE_VALUE):
+                $this->consume();
+                return new SimpleValueAst(false);
+
+            case $this->accept(Token::NULL_VALUE):
+                $this->consume();
+                return new SimpleValueAst(null);
+        }
+
+        throw (new ParserException())
+            ->withCode(1635708717)
+            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+            ->withMessageCreator([MessageCreator::class, 'forParsePathValue'])
+            ->build();
+    }
+
+    /**
+     * DslExpression
+     *  = DSL_EXPRESSION_START DSL_EXPRESSION_CONTENT
+     */
+    protected function parseDslExpression(): DslExpressionValueAst
+    {
+        $dslIdentifier = $this->expect(Token::DSL_EXPRESSION_START)->getValue();
         try {
-            $this->includeAndParseFilesByPattern($filePattern);
-        } catch (ParserException $e) {
-            throw $e;
+            $dslCode = $this->expect(Token::DSL_EXPRESSION_CONTENT)->getValue();
         } catch (Fusion\Exception $e) {
             throw (new ParserException())
-                ->withCode($e->getCode())
-                ->withMessage($e->getMessage())
-                ->withoutColumnShown()
+                ->withCode(1490714685)
                 ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
+                ->withMessageCreator([MessageCreator::class, 'forParseDslExpression'])
+                ->build();
+        }
+        $dslCode = substr($dslCode, 1, -1);
+        return new DslExpressionValueAst($dslIdentifier, $dslCode);
+    }
+
+    /**
+     * ValueUnset
+     *  = UNSET
+     */
+    protected function parseValueUnset(): ValueUnsetAst
+    {
+        $this->expect(Token::UNSET);
+        return new ValueUnsetAst();
+    }
+
+    /**
+     * ValueCopy
+     *  = COPY ObjectPathAssignment
+     */
+    protected function parseValueCopy(): ValueCopyAst
+    {
+        $this->expect(Token::COPY);
+        $this->lazyExpect(Token::SPACE);
+        $sourcePath = $this->parseAssignedObjectPath();
+        return new ValueCopyAst($sourcePath);
+    }
+
+    /**
+     * AssignedObjectPath
+     *  = '.'? ObjectPath
+     */
+    protected function parseAssignedObjectPath(): AssignedObjectPathAst
+    {
+        $isRelative = $this->lazyExpect(Token::DOT);
+        return new AssignedObjectPathAst($this->parseObjectPath(), $isRelative);
+    }
+
+    /**
+     * Block:
+     *  = '{' StatementList? '}'
+     */
+    protected function parseBlock(): BlockAst
+    {
+        $this->expect(Token::LBRACE);
+        $cursorPositionStartOfBlock = $this->lexer->getCursor() - 1;
+        $this->parseEndOfStatement();
+
+        $statementList = $this->parseStatementList(Token::RBRACE);
+
+        try {
+            $this->expect(Token::RBRACE);
+        } catch (Fusion\Exception $e) {
+            throw (new ParserException())
+                ->withCode(1635708717)
+                ->withMessage('No closing brace "}" matched this starting block. Encountered <EOF>.')
+                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())
+                ->withCursor($cursorPositionStartOfBlock)
                 ->build();
         }
 
-        $this->parseEndOfStatement();
-    }
-
-    /**
-     * Parse an include files by pattern. Currently, we start a new parser object; but we could as well re-use
-     * the given one.
-     *
-     * @param string $filePattern The include-pattern, for example " FooBar" or " resource://....". Can also include wildcard mask for Fusion globbing.
-     * @throws Fusion\Exception
-     */
-    protected function includeAndParseFilesByPattern(string $filePattern): void
-    {
-        $filesToInclude = FilePatternResolver::resolveFilesByPattern($filePattern, $this->contextPathAndFilename, '.fusion');
-        foreach ($filesToInclude as $file) {
-            if (is_readable($file) === false) {
-                throw new Fusion\Exception("Could not read file '$file' of pattern '$filePattern'.", 1347977017);
-            }
-            // Check if not trying to recursively include the current file via globbing
-            if ($this->contextPathAndFilename === null
-                || stat($this->contextPathAndFilename) !== stat($file)) {
-                static::parse($this->objectTree, new Lexer(file_get_contents($file)), $file);
-            }
-        }
+        return new BlockAst($statementList);
     }
 
     /**
@@ -453,258 +542,5 @@ class PredictiveParser
             ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
             ->withMessageCreator([MessageCreator::class, 'forParseEndOfStatement'])
             ->build();
-    }
-
-    /**
-     * BlockStatement:
-     *  = { StatementList? }
-     */
-    protected function parseBlockStatement(array $path): void
-    {
-        $this->expect(Token::LBRACE);
-        $cursorPositionStartOfBlock = $this->lexer->getCursor() - 1;
-        $this->parseEndOfStatement();
-
-        array_push($this->currentObjectPathStack, $path);
-
-        $this->parseStatementList(Token::RBRACE);
-
-        try {
-            $this->expect(Token::RBRACE);
-        } catch (Fusion\Exception $e) {
-            throw (new ParserException())
-                ->withCode(1635708717)
-                ->withMessage('No closing brace "}" matched this starting block. Encountered <EOF>.')
-                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())
-                ->withCursor($cursorPositionStartOfBlock)
-                ->build();
-        }
-        array_pop($this->currentObjectPathStack);
-    }
-
-    /**
-     * AbsoluteObjectPath
-     *  = ( . )? ObjectPath
-     *
-     * @param array $relativePath If a dot is encountered a relative Path will be created. This determines the relation.
-     */
-    protected function parseAssignedObjectPath(array $relativePath): array
-    {
-        $objectPathPrefix = [];
-        if ($this->lazyExpect(Token::DOT)) {
-            $objectPathPrefix = $relativePath;
-        }
-        return $this->parseObjectPath($objectPathPrefix);
-    }
-
-    /**
-     * ObjectPath
-     *  = PathSegment ( . PathSegment )*
-     *
-     * @param array $objectPathPrefix The current base objectpath.
-     */
-    protected function parseObjectPath(array $objectPathPrefix = []): array
-    {
-        $objectPath = $objectPathPrefix;
-        do {
-            array_push($objectPath, ...$this->parsePathSegment());
-        } while ($this->lazyExpect(Token::DOT));
-        return $objectPath;
-    }
-
-    /**
-     * PathSegment
-     *  = ( PROTOTYPE_START FUSION_OBJECT_NAME ) / OBJECT_PATH_PART / @ OBJECT_PATH_PART / StringLiteral )
-     */
-    protected function parsePathSegment(): array
-    {
-        switch (true) {
-            case $this->accept(Token::PROTOTYPE_START):
-                $this->consume();
-                $prototypeName = $this->expect(Token::FUSION_OBJECT_NAME)->getValue();
-                $this->expect(Token::RPAREN);
-                return ['__prototypes', $prototypeName];
-
-            case $this->accept(Token::OBJECT_PATH_PART):
-                $pathKey = $this->consume()->getValue();
-                self::throwIfKeyIsReservedParseTreeKey($pathKey);
-                return [$pathKey];
-
-            case $this->accept(Token::META_PATH_START):
-                $this->consume();
-                $metaPathKey = $this->expect(Token::OBJECT_PATH_PART)->getValue();
-                return ['__meta', $metaPathKey];
-
-            case $this->accept(Token::STRING):
-            case $this->accept(Token::CHAR):
-                $quotedPathKey = $this->parseStringLiteral();
-                if ($quotedPathKey === '') {
-                    throw (new ParserException())
-                        ->withCode(1635708717)
-                        ->withMessage("A quoted path must not be empty")
-                        ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-                        ->build();
-                }
-                return [$quotedPathKey];
-        }
-
-        throw (new ParserException())
-            ->withCode(1635708755)
-            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-            ->withMessageCreator([MessageCreator::class, 'forParsePathSegment'])
-            ->build();
-    }
-
-    /**
-     * PathValue
-     *  = ( Literal / DSL_EXPRESSION / FusionObject / EelExpression )
-     */
-    protected function parsePathValue()
-    {
-        // watch out for the order, its regex matching and first one wins.
-        // sorted by likelihood
-        switch (true) {
-            case $this->accept(Token::CHAR):
-            case $this->accept(Token::STRING):
-                return $this->parseStringLiteral();
-
-            case $this->accept(Token::FUSION_OBJECT_NAME):
-                return $this->parseFusionObject();
-
-            case $this->accept(Token::DSL_EXPRESSION_START):
-                return $this->parseDslExpression();
-
-            case $this->accept(Token::EEL_EXPRESSION):
-                return $this->parseEelExpression();
-
-            case $this->accept(Token::FLOAT):
-                return (float)$this->consume()->getValue();
-
-            case $this->accept(Token::INTEGER):
-                return (int)$this->consume()->getValue();
-
-            case $this->accept(Token::TRUE_VALUE):
-                $this->consume();
-                return true;
-
-            case $this->accept(Token::FALSE_VALUE):
-                $this->consume();
-                return false;
-
-            case $this->accept(Token::NULL_VALUE):
-                $this->consume();
-                return null;
-        }
-
-        throw (new ParserException())
-            ->withCode(1635708717)
-            ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-            ->withMessageCreator([MessageCreator::class, 'forParsePathValue'])
-            ->build();
-    }
-
-    /**
-     * DslExpression
-     *  = DSL_EXPRESSION_START DSL_EXPRESSION_CONTENT
-     */
-    protected function parseDslExpression()
-    {
-        $dslIdentifier = $this->expect(Token::DSL_EXPRESSION_START)->getValue();
-        try {
-            $dslCode = $this->expect(Token::DSL_EXPRESSION_CONTENT)->getValue();
-        } catch (Fusion\Exception $e) {
-            throw (new ParserException())
-                ->withCode(1490714685)
-                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-                ->withMessageCreator([MessageCreator::class, 'forParseDslExpression'])
-                ->build();
-        }
-        $dslCode = substr($dslCode, 1, -1);
-        return $this->invokeAndParseDsl($dslIdentifier, $dslCode);
-    }
-
-    /**
-     * @param string $identifier
-     * @param string $code
-     * @return array|string|int|float|bool
-     * @throws Fusion\Exception
-     */
-    protected function invokeAndParseDsl(string $identifier, string $code)
-    {
-        $dslObject = $this->dslFactory->create($identifier);
-        try {
-            $transpiledFusion = $dslObject->transpile($code);
-        } catch (\Exception $e) {
-            // convert all exceptions from dsl transpilation to fusion exception and add file and line info
-            throw (new ParserException())
-                ->withCode(1180600696)
-                ->withMessage($e->getMessage())
-                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-                ->build();
-        }
-
-        $temporaryTree = static::parse(new ObjectTree(), new Lexer('value = ' . $transpiledFusion), $this->contextPathAndFilename);
-        $temporaryAst = $temporaryTree->getObjectTree();
-        return $temporaryAst['value'];
-    }
-
-    /**
-     * EelExpression
-     *  = EEL_EXPRESSION
-     */
-    protected function parseEelExpression(): array
-    {
-        $eelWrapped = $this->expect(Token::EEL_EXPRESSION)->getValue();
-        $eelContent = substr($eelWrapped, 2, -1);
-        $eelWithoutNewLines = str_replace("\n", '', $eelContent);
-        return [
-            '__eelExpression' => $eelWithoutNewLines, '__value' => null, '__objectType' => null
-        ];
-    }
-
-    /**
-     * FusionObject
-     *  = FUSION_OBJECT_NAME
-     */
-    protected function parseFusionObject(): array
-    {
-        return [
-            '__objectType' => $this->expect(Token::FUSION_OBJECT_NAME)->getValue(), '__value' => null, '__eelExpression' => null
-        ];
-    }
-
-    /**
-     * Literal
-     *  = ( STRING / CHAR )
-     *
-     */
-    protected function parseStringLiteral(): string
-    {
-        switch (true) {
-            case $this->accept(Token::STRING):
-                $stringWrapped = $this->consume()->getValue();
-                $stringContent = substr($stringWrapped, 1, -1);
-                return stripcslashes($stringContent);
-
-            case $this->accept(Token::CHAR):
-                $charWrapped = $this->consume()->getValue();
-                $charContent = substr($charWrapped, 1, -1);
-                return stripslashes($charContent);
-        }
-        throw new Fusion\Exception('Expected string literal', 1635708719);
-    }
-
-    protected function getCurrentObjectPathPrefix(): array
-    {
-        $lastElementOfStack = end($this->currentObjectPathStack);
-        return ($lastElementOfStack === false) ? [] : $lastElementOfStack;
-    }
-
-    protected static function throwIfKeyIsReservedParseTreeKey(string $pathKey)
-    {
-        if (substr($pathKey, 0, 2) === '__'
-            && in_array($pathKey, ParserInterface::RESERVED_PARSE_TREE_KEYS, true)) {
-            throw new Fusion\Exception("Reversed key '$pathKey' used.", 1437065270);
-        }
     }
 }

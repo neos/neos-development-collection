@@ -14,8 +14,11 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Fusion;
+use Neos\Fusion\Core\ObjectTreeParser\DslExpressionHandler;
+use Neos\Fusion\Core\ObjectTreeParser\FileIncludeHandler;
 use Neos\Fusion\Core\ObjectTreeParser\Lexer;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
+use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeAstVisitor;
 use Neos\Fusion\Core\ObjectTreeParser\PredictiveParser;
 
 /**
@@ -46,12 +49,14 @@ class Parser implements ParserInterface
      */
     public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $objectTreeUntilNow = []): array
     {
+        $lexer = new Lexer($sourceCode);
+        $fusionFileAst = (new PredictiveParser($lexer, $contextPathAndFilename))->parse();
+
         $objectTree = new ObjectTree();
         $objectTree->setObjectTree($objectTreeUntilNow);
 
-        $lexer = new Lexer($sourceCode);
-
-        PredictiveParser::parse($objectTree, $lexer, $contextPathAndFilename);
+        $objectTreeBuilder = new ObjectTreeAstVisitor($objectTree);
+        $objectTree = $objectTreeBuilder->visitFusionFileAst($fusionFileAst);
 
         $objectTree->buildPrototypeHierarchy();
         return $objectTree->getObjectTree();
