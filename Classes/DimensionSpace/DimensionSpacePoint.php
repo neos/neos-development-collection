@@ -67,10 +67,10 @@ class DimensionSpacePoint implements \JsonSerializable, \Stringable, CacheAwareI
                     throw new \InvalidArgumentException('Dimension value must not be empty', 1506076563);
                 }
             }
-            self::$instances[$hash] = new self($coordinates, $hash);
+            static::$instances[$hash] = new static($coordinates, $hash);
         }
 
-        return self::$instances[$hash];
+        return static::$instances[$hash];
     }
 
     /**
