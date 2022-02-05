@@ -28,6 +28,9 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 #[Flow\Proxy(false)]
 class DimensionSpacePoint implements \JsonSerializable, \Stringable, CacheAwareInterface, ProtectedContextAwareInterface
 {
+    /**
+     * @var array<string,DimensionSpacePoint>
+     */
     private static array $instances = [];
 
     protected function __construct(
@@ -41,36 +44,53 @@ class DimensionSpacePoint implements \JsonSerializable, \Stringable, CacheAwareI
     /**
      * @param array<string,string> $coordinates
      */
-    public static function instance(array $coordinates): static
+    public static function instance(array $coordinates): self
+    {
+        $hash = self::hashCoordinates($coordinates);
+        if (!isset(self::$instances[$hash])) {
+            self::validateCoordinates($coordinates);
+            self::$instances[$hash] = new self($coordinates, $hash);
+        }
+
+        return self::$instances[$hash];
+    }
+
+    /**
+     * @param array<string,string> $coordinates
+     */
+    final static protected function hashCoordinates(array $coordinates): string
     {
         $identityComponents = $coordinates;
         ksort($identityComponents);
-        $hash = md5(json_encode($identityComponents));
-        if (!isset(self::$instances[$hash])) {
-            foreach ($coordinates as $dimensionName => $dimensionValue) {
-                if (!is_string($dimensionName)) {
-                    throw new \InvalidArgumentException(
-                        sprintf('Dimension name "%s" is not a string', $dimensionName),
-                        1639733101
-                    );
-                }
-                if ($dimensionName === '') {
-                    throw new \InvalidArgumentException('Dimension name must not be empty', 1639733123);
-                }
-                if (!is_string($dimensionValue)) {
-                    throw new \InvalidArgumentException(
-                        sprintf('Dimension value for %s is not a string', $dimensionName),
-                        1506076562
-                    );
-                }
-                if ($dimensionValue === '') {
-                    throw new \InvalidArgumentException('Dimension value must not be empty', 1506076563);
-                }
-            }
-            static::$instances[$hash] = new static($coordinates, $hash);
-        }
 
-        return static::$instances[$hash];
+        return md5(json_encode($identityComponents));
+    }
+
+    /**
+     * @param array<string,string> $coordinates
+     */
+    final static protected function validateCoordinates(array $coordinates): void
+    {
+        foreach ($coordinates as $dimensionName => $dimensionValue) {
+            if (!is_string($dimensionName)) {
+                throw new \InvalidArgumentException(
+                    sprintf('Dimension name "%s" is not a string', $dimensionName),
+                    1639733101
+                );
+            }
+            if ($dimensionName === '') {
+                throw new \InvalidArgumentException('Dimension name must not be empty', 1639733123);
+            }
+            if (!is_string($dimensionValue)) {
+                throw new \InvalidArgumentException(
+                    sprintf('Dimension value for %s is not a string', $dimensionName),
+                    1506076562
+                );
+            }
+            if ($dimensionValue === '') {
+                throw new \InvalidArgumentException('Dimension value must not be empty', 1506076563);
+            }
+        }
     }
 
     /**

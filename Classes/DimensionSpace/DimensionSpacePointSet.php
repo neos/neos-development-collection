@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
  * A set of points in the dimension space.
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
+ * @implements \IteratorAggregate<string,DimensionSpacePoint>
  */
 #[Flow\Proxy(false)]
 final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \IteratorAggregate, \ArrayAccess, \Countable
