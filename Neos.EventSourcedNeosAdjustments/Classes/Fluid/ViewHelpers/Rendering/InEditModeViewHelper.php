@@ -11,8 +11,6 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-
 /**
  * ViewHelper to find out if Neos is rendering an edit mode.
  *

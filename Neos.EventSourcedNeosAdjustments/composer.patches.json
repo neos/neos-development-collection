@@ -4,6 +4,17 @@
       "neos_neos-development-collection_ReadMe": "Packages/CR/Neos.EventSourcedNeosAdjustments/Patches/neos_neos-development-collection_ReadMe.patch",
       "neos_neos-development-collection_upload-asset": "Packages/CR/Neos.EventSourcedNeosAdjustments/Patches/neos_neos-development-collection_upload-asset.patch",
       "neos_neos-development-collection_fusionAndSiteService": "Packages/CR/Neos.EventSourcedNeosAdjustments/Patches/neos_neos-development-collection_fusionAndSiteService.patch"
+    },
+    "neos/neos": {
+      "neos_neos_upload-asset": "Packages/CR/Neos.EventSourcedNeosAdjustments/Patches/neos_neos-development-collection_upload-asset.patch",
+      "neos_neos_fusionAndSiteService": "Packages/CR/Neos.EventSourcedNeosAdjustments/Patches/neos_neos-development-collection_fusionAndSiteService.patch"
+    },
+
+    "neos/content-repository-search": {
+      "neos_contentrepository_search": "Packages/CR/Neos.EventSourcedNeosAdjustments/Patches/neos_contentrepository_search.patch"
+    },
+    "flowpack/elasticsearch-contentrepositoryadaptor": {
+      "flowpack_elasticsearch_contentrepositoryadaptor": "Packages/CR/Neos.EventSourcedNeosAdjustments/Patches/flowpack_elasticsearch_contentrepositoryadaptor.patch"
     }
   }
 }
