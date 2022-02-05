@@ -2,9 +2,11 @@
 
 namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 
+use Neos\Flow\Annotations as Flow;
 
-// new ObjectDefinitionAst(ObjectPath $path, ValueAssignment|ValueUnset|ValueCopy $operation, ?BlockStatement $block);
-
+/**
+ * @Flow\Proxy(false)
+ */
 class ObjectDefinitionAst extends StatementAst
 {
     /**
