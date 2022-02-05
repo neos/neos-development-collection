@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The content dimension zookeeper
  */
-#[Flow\Proxy(false)]
 final class ContentDimensionZookeeper
 {
     /**

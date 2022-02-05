@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 use Neos\ContentRepository\Domain\Model\InterDimension\VariationEdge;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The configuration based content dimension source
  */
-#[Flow\Proxy(false)]
 final class ConfigurationBasedContentDimensionSource implements ContentDimensionSourceInterface
 {
     const CONSTRAINT_IDENTIFIER_WILDCARD = '*';

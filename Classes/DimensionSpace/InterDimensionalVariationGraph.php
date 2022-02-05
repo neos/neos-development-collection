@@ -15,13 +15,11 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The inter dimensional variation graph domain model
  * Represents the specialization and generalization mechanism between dimension space points
  */
-#[Flow\Proxy(false)]
 class InterDimensionalVariationGraph
 {
     /**
