@@ -694,6 +694,12 @@ class ParserTest extends UnitTestCase
                 b = ""
             }
             Fusion];
+
+        yield 'multiline path key' => [<<<'Fusion'
+            "multiline
+              does
+            work  " = 1
+            Fusion];
     }
 
     public function unexpectedCopyAssigment()
@@ -761,11 +767,6 @@ class ParserTest extends UnitTestCase
             [<<<'FUSION'
             "quo\"tes.mix\'ed".bla.'he\\\'.llo\\' = 1
             FUSION, ['quo"tes.mix\'ed' => ['bla' => ['he\\\'.llo\\' => 1]]]],
-            [<<<'Fusion'
-            "multiline
-              does
-            work  " = 1
-            Fusion, ["multiline\n  does\nwork  " => 1]],
         ];
     }
 
@@ -1048,11 +1049,11 @@ class ParserTest extends UnitTestCase
      */
     public function dslIsRecognizedAndPassed($sourceCode, $expectedDslName, $expectedDslContent)
     {
-        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['invokeAndParseDsl'])->getMock();
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
 
         $parser
             ->expects($this->exactly(1))
-            ->method('invokeAndParseDsl')
+            ->method('handleDslTranspile')
             ->with($expectedDslName, $expectedDslContent);
 
         $parser->parse($sourceCode);

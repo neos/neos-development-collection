@@ -208,15 +208,15 @@ class PredictiveParser
      * StatementList
      *  = ( Statement )*
      *
-     * @param int|null $stopLookahead When this tokenType is encountered the loop will be stopped
+     * @param ?int $stopLookahead When this tokenType is encountered the loop will be stopped
      */
-    protected function parseStatementList(int $stopLookahead = null): StatementListAst
+    protected function parseStatementList(?int $stopLookahead = null): StatementListAst
     {
         $statements = [];
         $this->lazyBigGap();
         while ($this->accept(Token::EOF) === false
             && ($stopLookahead === null || $this->accept($stopLookahead) === false)) {
-            array_push($statements, $this->parseStatement());
+            $statements[] = $this->parseStatement();
             $this->lazyBigGap();
         }
         return new StatementListAst(...$statements);
@@ -328,7 +328,7 @@ class PredictiveParser
     {
         $segments = [];
         do {
-            array_push($segments, $this->parsePathSegment());
+            $segments[] = $this->parsePathSegment();
         } while ($this->lazyExpect(Token::DOT));
         return new ObjectPathAst(...$segments);
     }

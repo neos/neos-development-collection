@@ -14,19 +14,14 @@ use Neos\Fusion\Core\ObjectTreeParser\Ast\MetaPathAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectDefinitionAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPathAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ObjectPathPartAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\PathSegmentAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\PathValueAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\PrototypePathAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\SimpleValueAst;
-use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementListAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\StringValueAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueAssignmentAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopyAst;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnsetAst;
-
 use Neos\Fusion;
-use Neos\Flow\Annotations as Flow;
 
 class ObjectTreeAstVisitor extends AstNodeVisitor
 {
@@ -47,26 +42,38 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
     protected $contextPathAndFilename;
 
     /**
-     * @Flow\Inject
-     * @var DslExpressionHandler
+     * @var callable
      */
-    protected $dslExpressionHandler;
+    protected $handleFileInclude;
 
     /**
-     * @Flow\Inject
-     * @var FileIncludeHandler
+     * @var callable
      */
-    protected $fileIncludeHandler;
+    protected $handleDslTranspile;
 
-    public function __construct(ObjectTree $objectTree)
+    public function __construct(ObjectTree $objectTree, callable $handleFileInclude, callable $handleDslTranspile)
     {
         $this->objectTree = $objectTree;
+        $this->handleFileInclude = $handleFileInclude;
+        $this->handleDslTranspile = $handleDslTranspile;
     }
 
     protected function getCurrentObjectPathPrefix(): array
     {
         $lastElementOfStack = end($this->currentObjectPathStack);
         return ($lastElementOfStack === false) ? [] : $lastElementOfStack;
+    }
+
+    protected static function validateParseTreeKey(string $pathKey)
+    {
+        // TODO show also line snipped (in exceptions), but for that to work we need to know the cursor position.
+        if (substr($pathKey, 0, 2) === '__'
+            && in_array($pathKey, Fusion\Core\ParserInterface::RESERVED_PARSE_TREE_KEYS, true)) {
+            throw new Fusion\Exception("Reversed key '$pathKey' used.", 1437065270);
+        }
+        if (strpos($pathKey, "\n") !== false) {
+            throw new Fusion\Exception("Key '$pathKey' cannot contain spaces.", 1644068086);
+        }
     }
 
     public function visitFusionFileAst(FusionFileAst $fusionFileAst): ObjectTree
@@ -83,14 +90,9 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         }
     }
 
-    public function visitStatementAst(StatementAst $statementAst)
-    {
-        throw new \BadMethodCallException();
-    }
-
     public function visitIncludeAst(IncludeAst $includeAst)
     {
-        $this->fileIncludeHandler->handle($this->objectTree, $includeAst->getFilePattern(), $this->contextPathAndFilename);
+        ($this->handleFileInclude)($this->objectTree, $includeAst->getFilePattern(), $this->contextPathAndFilename);
     }
 
     public function visitObjectDefinitionAst(ObjectDefinitionAst $objectDefinitionAst)
@@ -131,11 +133,6 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         return $path;
     }
 
-    public function visitPathSegmentAst(PathSegmentAst $pathSegmentAst): array
-    {
-        throw new \BadMethodCallException();
-    }
-
     public function visitMetaPathAst(MetaPathAst $metaPathAst): array
     {
         return ['__meta', $metaPathAst->getIdentifier()];
@@ -148,7 +145,9 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
     public function visitObjectPathPartAst(ObjectPathPartAst $objectPathPartAst): array
     {
-        return [stripslashes($objectPathPartAst->getIdentifier())];
+        $key = stripslashes($objectPathPartAst->getIdentifier());
+        self::validateParseTreeKey($key);
+        return [$key];
     }
 
     public function visitValueAssignmentAst(ValueAssignmentAst $valueAssignmentAst, array $currentPath = null)
@@ -160,11 +159,6 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         $this->objectTree->setValueInObjectTree($currentPath, $value);
     }
 
-    public function visitPathValueAst(PathValueAst $pathValueAst)
-    {
-        throw new \BadMethodCallException();
-    }
-
     public function visitFusionObjectValueAst(FusionObjectValueAst $fusionObjectValueAst)
     {
         return [
@@ -174,7 +168,7 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
 
     public function visitDslExpressionValueAst(DslExpressionValueAst $dslExpressionValueAst)
     {
-        return $this->dslExpressionHandler->handle($dslExpressionValueAst->getIdentifier(), $dslExpressionValueAst->getCode());
+        return ($this->handleDslTranspile)($dslExpressionValueAst->getIdentifier(), $dslExpressionValueAst->getCode());
     }
 
     public function visitEelExpressionValueAst(EelExpressionValueAst $eelExpressionValueAst)
@@ -214,16 +208,8 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
             try {
                 $this->objectTree->inheritPrototypeInObjectTree($currentPath, $sourcePath);
             } catch (Fusion\Exception $e) {
+                // TODO show also line snipped, but for that to work we need to know the cursor position.
                 throw $e;
-                // TODO
-                // delay throw since there might be syntax errors causing this.
-//                $this->delayedCombinedException = (new ParserException())
-//                    ->withCode($e->getCode())
-//                    ->withMessage($e->getMessage())
-//                    ->withoutColumnShown()
-//                    ->withPrevious($this->delayedCombinedException)
-//                    ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-//                    ->build();
             }
             return;
         }
@@ -233,17 +219,8 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
             // non-prototype value to a prototype value or vice-versa.
             // delay throw since there might be syntax errors causing this.
 
-            throw new Fusion\Exception();
-            // TODO
-//
-//            $this->delayedCombinedException = (new ParserException())
-//                ->withCode(1358418015)
-//                ->withMessage("Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.")
-//                ->withoutColumnShown()
-//                ->withPrevious($this->delayedCombinedException)
-//                ->withFile($this->contextPathAndFilename)->withFusion($this->lexer->getCode())->withCursor($this->lexer->getCursor())
-//                ->build();
-//            return;
+            // TODO show also line snipped, but for that to work we need to know the cursor position.
+            throw new Fusion\Exception("Cannot inherit, when one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.", 1358418015);
         }
 
         $this->objectTree->copyValueInObjectTree($currentPath, $sourcePath);

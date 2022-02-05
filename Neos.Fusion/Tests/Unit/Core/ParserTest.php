@@ -867,19 +867,19 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * Checks if dsl value is handed over to the invokeAndParseDsl method
+     * Checks if dsl value is handed over to the handleDslTranspile method
      *
      * @test
      */
     public function parserInvokesFusionDslParsingIfADslPatternIsDetected()
     {
-        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->setMethods(['invokeAndParseDsl'])->getMock();
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->setMethods(['handleDslTranspile'])->getMock();
 
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
 
         $parser
             ->expects($this->exactly(2))
-            ->method('invokeAndParseDsl')
+            ->method('handleDslTranspile')
             ->withConsecutive(
                 ['dsl1', 'example value'],
                 ['dsl2', 'another' . chr(10) . 'multiline' . chr(10) . 'value']

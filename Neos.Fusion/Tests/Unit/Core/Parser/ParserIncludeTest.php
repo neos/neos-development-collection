@@ -226,11 +226,11 @@ class ParserIncludeTest extends UnitTestCase
      */
     public function testFusionIncludesArePassedCorrectlyToIncludeAndParseFilesByPattern($fusion, $includePattern): void
     {
-        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['includeAndParseFilesByPattern'])->getMock();
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleFileInclude'])->getMock();
         $parser
             ->expects(self::once())
-            ->method('includeAndParseFilesByPattern')
-            ->with($includePattern);
+            ->method('handleFileInclude')
+            ->withConsecutive([self::anything(), $includePattern]);
 
         $parser->parse($fusion);
     }
@@ -263,10 +263,10 @@ class ParserIncludeTest extends UnitTestCase
         self::expectException(Fusion\Exception::class);
         self::expectExceptionCode(1635878683);
 
-        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['includeAndParseFilesByPattern'])->getMock();
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleFileInclude'])->getMock();
         $parser
-            ->expects(self::once())
-            ->method('includeAndParseFilesByPattern');
+            ->expects(self::never())
+            ->method('handleFileInclude');
 
         $parser->parse($fusion);
     }
