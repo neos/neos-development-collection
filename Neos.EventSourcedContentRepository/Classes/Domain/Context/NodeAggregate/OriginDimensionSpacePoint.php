@@ -1,5 +1,4 @@
 <?php
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -10,6 +9,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -25,6 +28,25 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
  */
 final class OriginDimensionSpacePoint extends DimensionSpacePoint
 {
+    /**
+     * @var array<string,OriginDimensionSpacePoint>
+     */
+    private static array $instances = [];
+
+    /**
+     * @param array<string,string> $coordinates
+     */
+    public static function instance(array $coordinates): self
+    {
+        $hash = self::hashCoordinates($coordinates);
+        if (!isset(self::$instances[$hash])) {
+            self::validateCoordinates($coordinates);
+            self::$instances[$hash] = new self($coordinates, $hash);
+        }
+
+        return self::$instances[$hash];
+    }
+
     public static function fromArray(array $data): self
     {
         return self::instance($data);
@@ -32,7 +54,6 @@ final class OriginDimensionSpacePoint extends DimensionSpacePoint
 
     /**
      * @param string $jsonString A JSON string representation, see jsonSerialize
-     * @return DimensionSpacePoint
      */
     public static function fromJsonString(string $jsonString): self
     {
