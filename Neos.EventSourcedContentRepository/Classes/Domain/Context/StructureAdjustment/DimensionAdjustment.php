@@ -30,8 +30,8 @@ class DimensionAdjustment
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {
                 foreach ($nodeAggregate->getCoverageByOccupant($node->getOriginDimensionSpacePoint()) as $coveredDimensionSpacePoint) {
-                    $variantType = $this->interDimensionalVariationGraph->getVariantType($coveredDimensionSpacePoint, $node->getOriginDimensionSpacePoint())->getType();
-                    if ($node->getOriginDimensionSpacePoint()->hash === $coveredDimensionSpacePoint->hash && $variantType !== VariantType::TYPE_SPECIALIZATION) {
+                    $variantType = $this->interDimensionalVariationGraph->getVariantType($coveredDimensionSpacePoint, $node->getOriginDimensionSpacePoint());
+                    if (!$node->getOriginDimensionSpacePoint()->equals($coveredDimensionSpacePoint) && $variantType !== VariantType::TYPE_SPECIALIZATION) {
                         $message = sprintf(
                             '
                                 The node has an Origin Dimension Space Point of %s,
@@ -44,7 +44,7 @@ class DimensionAdjustment
                             ',
                             json_encode($node->getOriginDimensionSpacePoint()->jsonSerialize()),
                             json_encode($coveredDimensionSpacePoint->jsonSerialize()),
-                            strtoupper($variantType)
+                            strtoupper($variantType->value)
                         );
 
                         yield StructureAdjustment::createForNode(

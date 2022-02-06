@@ -222,7 +222,7 @@ trait EventSourcedTrait
      */
     protected function currentNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        $currentNodes = $this->currentNodes->getArrayCopy();
+        $currentNodes = $this->currentNodes->getIterator()->getArrayCopy();
         $firstNode = reset($currentNodes);
         assert($firstNode instanceof NodeInterface);
         return $firstNode->getNodeAggregateIdentifier();
