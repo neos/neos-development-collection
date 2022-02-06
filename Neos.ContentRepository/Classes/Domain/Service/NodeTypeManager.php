@@ -184,7 +184,7 @@ class NodeTypeManager
      */
     protected function loadNodeTypes()
     {
-        $this->fullNodeTypeConfigurations = $this->fullConfigurationCache->get('fullNodeTypeConfigurations');
+        $this->fullNodeTypeConfigurations = $this->fullConfigurationCache->get('fullNodeTypeConfigurations') ?: null;
         $fillFullConfigurationCache = !is_array($this->fullNodeTypeConfigurations);
 
         $completeNodeTypeConfiguration = $this->configurationManager->getConfiguration('NodeTypes');
