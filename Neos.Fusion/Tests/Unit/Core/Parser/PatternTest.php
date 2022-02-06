@@ -310,8 +310,8 @@ class PatternTest extends UnitTestCase
     {
         $pattern = Parser::SCAN_PATTERN_VALUEOBJECTTYPE;
 
-        self::assertEquals(1, preg_match($pattern, 'Neos.Fusion:Foo'), 'It did not match a simple TS Object Type');
-        self::assertEquals(1, preg_match($pattern, 'Foo'), 'It matched an unqualified TS Object Type');
+        self::assertEquals(1, preg_match($pattern, 'Neos.Fusion:Foo'), 'It did not match a simple Fusion Object Type');
+        self::assertEquals(1, preg_match($pattern, 'Foo'), 'It matched an unqualified Fusion Object Type');
 
         $expected = [
             0 => 'Foo',
@@ -360,7 +360,7 @@ class PatternTest extends UnitTestCase
     {
         $pattern = Parser::SPLIT_PATTERN_COMMENTTYPE;
 
-        self::assertEquals(1, preg_match($pattern, $tsSnippet), 'It did not match a complex TS comment.');
+        self::assertEquals(1, preg_match($pattern, $tsSnippet), 'It did not match a complex Fusion comment.');
 
         $expected = [
             0 => $tsSnippet,

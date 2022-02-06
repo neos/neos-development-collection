@@ -34,7 +34,7 @@ class Parser implements ParserInterface
 	/x';
     const SCAN_PATTERN_OPENINGCONFINEMENT = '/
 		^\s*                      # beginning of line; with numerous whitespace
-		(?:                       # first part of a TS path
+		(?:                       # first part of a Fusion path
 			@?[a-zA-Z0-9:_\-]+              # Unquoted key
 			|"(?:\\\"|[^"])+"               # Double quoted key, supporting more characters like underscore and at sign
 			|\'(?:\\\\\'|[^\'])+\'          # Single quoted key, supporting more characters like underscore and at sign
@@ -552,7 +552,7 @@ class Parser implements ParserInterface
             } elseif ($sourceIsPrototypeDefinition && $targetIsPrototypeDefinition) {
                 // Both are prototype definitions, but at least one is nested (f.e. foo.prototype(Bar))
                 // Currently, it is not supported to override the prototypical inheritance in
-                // parts of the TS rendering tree.
+                // parts of the Fusion rendering tree.
                 // Although this might work conceptually, it makes reasoning about the prototypical
                 // inheritance tree a lot more complex; that's why we forbid it right away.
                 throw new Fusion\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)' . $this->renderCurrentFileAndLineInformation(), 1358418019);
