@@ -16,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
@@ -23,7 +24,6 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Exception\DimensionSpacePointAlreadyExists;
-use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
@@ -133,7 +133,7 @@ final class DimensionSpaceCommandHandler
     {
         $allowedDimensionSubspace = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
         if (!$allowedDimensionSubspace->contains($dimensionSpacePoint)) {
-            throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $dimensionSpacePoint), 1520260137);
+            throw DimensionSpacePointNotFound::becauseItIsNotWithinTheAllowedDimensionSubspace($dimensionSpacePoint);
         }
     }
 
@@ -149,7 +149,7 @@ final class DimensionSpaceCommandHandler
     private function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $target, DimensionSpacePoint $source)
     {
         if ($this->interDimensionalVariationGraph->getVariantType($target, $source) !== VariantType::TYPE_SPECIALIZATION) {
-            throw new DimensionSpacePointIsNoSpecialization(sprintf('The Dimension space point %s is no specialization of %s.', $target, $source), 1617275140);
+            throw DimensionSpacePointIsNoSpecialization::butWasSupposedToBe($target, $source);
         }
     }
 }

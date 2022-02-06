@@ -80,7 +80,7 @@ trait ConstraintChecks
     protected function requireDimensionSpacePointToExist(DimensionSpacePoint $dimensionSpacePoint): void
     {
         if (!$this->getAllowedDimensionSubspace()->contains($dimensionSpacePoint)) {
-            throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $dimensionSpacePoint), 1520260137);
+            throw DimensionSpacePointNotFound::becauseItIsNotWithinTheAllowedDimensionSubspace($dimensionSpacePoint);
         }
     }
 

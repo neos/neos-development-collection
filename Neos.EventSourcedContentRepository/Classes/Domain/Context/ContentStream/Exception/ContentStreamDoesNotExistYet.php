@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +10,16 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Except
  * source code.
  */
 
-use Neos\Flow\Exception;
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception;
+
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The exception to be thrown if a content stream does not exists yet but is expected to
  */
-final class ContentStreamDoesNotExistYet extends Exception
+#[Flow\Proxy(false)]
+final class ContentStreamDoesNotExistYet extends \DomainException
 {
 }

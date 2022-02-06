@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +10,17 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
+
 use Neos\EventSourcedContentRepository\Exception;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * BaseWorkspaceDoesNotExist
  */
+#[Flow\Proxy(false)]
 final class BaseWorkspaceDoesNotExist extends Exception
 {
 }
