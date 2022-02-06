@@ -6,7 +6,7 @@ Feature: Create a root node aggregate
   This is the tale of venerable root node aggregate Lady Elenode Rootford already persistent in the content graph for quite some time
   and Nody McNodeface, a new root node aggregate to be added.
 
-  Background:
+  Background: The stage is set
     Given I have no content dimensions
     And I have the following NodeTypes configuration:
     """
