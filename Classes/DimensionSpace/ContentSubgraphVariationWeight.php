@@ -66,10 +66,7 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable, \String
     public function decreaseBy(ContentSubgraphVariationWeight $other): ContentSubgraphVariationWeight
     {
         if (!$this->canBeComparedTo($other)) {
-            throw new Exception\ContentSubgraphVariationWeightsAreIncomparable(
-                'Weights ' . $this . ' and ' . $other . ' cannot be compared.',
-                1517474233
-            );
+            throw Exception\ContentSubgraphVariationWeightsAreIncomparable::butWereAttemptedTo($this, $other);
         }
         $decreasedWeight = [];
         foreach ($this->weight as $rawDimensionIdentifier => $weight) {

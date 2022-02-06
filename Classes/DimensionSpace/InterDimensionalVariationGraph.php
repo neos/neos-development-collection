@@ -275,10 +275,7 @@ class InterDimensionalVariationGraph
         DimensionSpacePointSet $excludedSet = null
     ): DimensionSpacePointSet {
         if (!$this->contentDimensionZookeeper->getAllowedDimensionSubspace()->contains($origin)) {
-            throw new Exception\DimensionSpacePointNotFound(
-                sprintf('%s was not found in the allowed dimension subspace', $origin),
-                1505929456
-            );
+            throw Exception\DimensionSpacePointNotFound::becauseItIsNotWithinTheAllowedDimensionSubspace($origin);
         } else {
             $specializations = [];
             if ($includeOrigin) {

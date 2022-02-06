@@ -14,9 +14,20 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The exception to be thrown if a dimension space point is tried to be used as a specialization of another one but isn't
  */
+#[Flow\Proxy(false)]
 class DimensionSpacePointIsNoSpecialization extends \DomainException
 {
+    public static function butWasSupposedToBe(DimensionSpacePoint $target, DimensionSpacePoint $source): self
+    {
+        return new self(sprintf(
+            'The Dimension space point %s is no specialization of %s.',
+            $target, $source
+        ), 1617275140);
+    }
 }

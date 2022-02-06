@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -522,7 +521,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
 
     public function testGetSpecializationSetThrowsExceptionForDimensionSpacePointOutsideTheAllowedSubspace()
     {
-        $this->expectException(DimensionSpacePointNotFound::class);
+        $this->expectException(DimensionSpace\Exception\DimensionSpacePointNotFound::class);
         $this->setUpVariationExample();
 
         $this->subject->getSpecializationSet(DimensionSpace\DimensionSpacePoint::instance(['undefinedDimension' => 'undefinedDimensionValue']));
