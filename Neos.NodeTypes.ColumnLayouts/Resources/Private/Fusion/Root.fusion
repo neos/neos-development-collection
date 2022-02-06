@@ -20,14 +20,14 @@ prototype(Neos.NodeTypes.ColumnLayouts:MultiColumnItem) < prototype(Neos.Neos:Co
     }
 }
 
-# Two Column TS Object
+# Two Column Fusion Object
 prototype(Neos.NodeTypes.ColumnLayouts:TwoColumn) >
 prototype(Neos.NodeTypes.ColumnLayouts:TwoColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn)
 
-# Three Column TS Object
+# Three Column Fusion Object
 prototype(Neos.NodeTypes.ColumnLayouts:ThreeColumn) >
 prototype(Neos.NodeTypes.ColumnLayouts:ThreeColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn)
 
-# Four Column TS Object
+# Four Column Fusion Object
 prototype(Neos.NodeTypes.ColumnLayouts:FourColumn) >
 prototype(Neos.NodeTypes.ColumnLayouts:FourColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn)
