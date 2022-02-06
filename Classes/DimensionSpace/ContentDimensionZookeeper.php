@@ -22,9 +22,10 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 final class ContentDimensionZookeeper
 {
     /**
+     * Needs to stay protected as long as we need to be able to reset it via ObjectAccess
      * @var array<int,array<string,Dimension\ContentDimensionValue>>
      */
-    private ?array $allowedCombinations = null;
+    protected ?array $allowedCombinations = null;
 
     public function __construct(
         private Dimension\ContentDimensionSourceInterface $contentDimensionSource

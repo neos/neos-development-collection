@@ -24,14 +24,16 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     const CONSTRAINT_IDENTIFIER_WILDCARD = '*';
 
     /**
+     * Needs to stay protected as long as we need to be able to reset it via ObjectAccess
      * @var array<string,mixed>
      */
-    private array $dimensionConfiguration;
+    protected array $dimensionConfiguration;
 
     /**
+     * Needs to stay protected as long as we need to be able to reset it via ObjectAccess
      * @var array<string,ContentDimension>
      */
-    private ?array $contentDimensions = null;
+    protected ?array $contentDimensions = null;
 
     /**
      * @param array<string,mixed> $dimensionConfiguration
