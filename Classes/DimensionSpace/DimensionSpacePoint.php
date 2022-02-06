@@ -176,9 +176,13 @@ class DimensionSpacePoint implements \JsonSerializable, \Stringable, CacheAwareI
         return $this->coordinates[(string)$dimensionIdentifier] ?? null;
     }
 
+    /**
+     * Equals check (as opposed to === same check, which is usually the preferred variant)
+     * Compares two hashes, since the DSPs themselves might be of different classes
+     */
     final public function equals(DimensionSpacePoint $other): bool
     {
-        return $this === $other;
+        return $this->hash === $other->hash;
     }
 
     /**
