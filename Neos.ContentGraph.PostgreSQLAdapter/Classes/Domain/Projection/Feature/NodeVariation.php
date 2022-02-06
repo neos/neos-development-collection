@@ -181,7 +181,7 @@ trait NodeVariation
                         AND dimensionspacepointhash = :affectedDimensionSpacePointHash
                         AND (SELECT relationanchorpoint FROM currentNodeAnchorPoint) = ANY(childnodeanchors)
                 ';
-            $parameters['affectedDimensionSpacePointHash'] = $affectedDimensionSpacePoint->getHash();
+            $parameters['affectedDimensionSpacePointHash'] = $affectedDimensionSpacePoint->hash;
             $this->getDatabaseConnection()->executeStatement($parentStatement, $parameters);
             $this->getDatabaseConnection()->executeStatement($childStatement, $parameters);
         }

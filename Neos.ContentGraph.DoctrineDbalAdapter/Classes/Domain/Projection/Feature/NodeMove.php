@@ -52,8 +52,8 @@ trait NodeMove
                     // corresponding new parent node (because we lateron need its relationAnchorPoint)
                     $newParentAssignment = $moveNodeMapping->getNewParentAssignments()->get($coveredDimensionSpacePoint);
                     if ($newParentAssignment) {
-                        // $newParentNodes[$coveredDimensionSpacePoint->getHash()] might be null (if the parent is not visible in this DimensionSpacePoint)
-                        $newParentNodes[$coveredDimensionSpacePoint->getHash()] = $this->projectionContentGraph->findNodeInAggregate(
+                        // $newParentNodes[$coveredDimensionSpacePoint->hash] might be null (if the parent is not visible in this DimensionSpacePoint)
+                        $newParentNodes[$coveredDimensionSpacePoint->hash] = $this->projectionContentGraph->findNodeInAggregate(
                             $event->getContentStreamIdentifier(),
                             $newParentAssignment->getNodeAggregateIdentifier(),
                             $coveredDimensionSpacePoint
@@ -81,11 +81,11 @@ trait NodeMove
                 }
 
                 foreach ($coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-                    $ingoingHierarchyRelation = $ingoingHierarchyRelations[$coveredDimensionSpacePoint->getHash()];
-                    if (isset($newParentNodes[$coveredDimensionSpacePoint->getHash()])) {
+                    $ingoingHierarchyRelation = $ingoingHierarchyRelations[$coveredDimensionSpacePoint->hash];
+                    if (isset($newParentNodes[$coveredDimensionSpacePoint->hash])) {
                         // CASE: we want to connect this hierarchy relation to a new parent.
-                        $newParentNode = $newParentNodes[$coveredDimensionSpacePoint->getHash()];
-                        $newSucceedingSibling = $newSucceedingSiblingNodes[$coveredDimensionSpacePoint->getHash()] ?? null;
+                        $newParentNode = $newParentNodes[$coveredDimensionSpacePoint->hash];
+                        $newSucceedingSibling = $newSucceedingSiblingNodes[$coveredDimensionSpacePoint->hash] ?? null;
                         $newPosition = $this->getRelationPosition(
                             $newParentNode->relationAnchorPoint,
                             null,
@@ -95,7 +95,7 @@ trait NodeMove
                         );
 
                         // this is the actual move
-                        $ingoingHierarchyRelation->assignNewParentNode($newParentNodes[$coveredDimensionSpacePoint->getHash()]->relationAnchorPoint, $newPosition, $this->getDatabaseConnection());
+                        $ingoingHierarchyRelation->assignNewParentNode($newParentNodes[$coveredDimensionSpacePoint->hash]->relationAnchorPoint, $newPosition, $this->getDatabaseConnection());
 
                         // re-build restriction relations
                         $this->cascadeRestrictionRelations(
@@ -104,10 +104,10 @@ trait NodeMove
                             $event->getNodeAggregateIdentifier(),
                             new DimensionSpacePointSet([$coveredDimensionSpacePoint])
                         );
-                    } elseif (isset($newSucceedingSiblingNodes[$coveredDimensionSpacePoint->getHash()])) {
+                    } elseif (isset($newSucceedingSiblingNodes[$coveredDimensionSpacePoint->hash])) {
                         // CASE: there is no new parent node, so we want to move within the EXISTING parent node (sorting)
 
-                        $newSucceedingSibling = $newSucceedingSiblingNodes[$coveredDimensionSpacePoint->getHash()];
+                        $newSucceedingSibling = $newSucceedingSiblingNodes[$coveredDimensionSpacePoint->hash];
                         $newPosition = $this->getRelationPosition(
                             null,
                             $nodeToBeMoved->relationAnchorPoint,

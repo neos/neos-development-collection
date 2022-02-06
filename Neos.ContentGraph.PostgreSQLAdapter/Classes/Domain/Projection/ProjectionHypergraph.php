@@ -143,7 +143,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
         ];
     }

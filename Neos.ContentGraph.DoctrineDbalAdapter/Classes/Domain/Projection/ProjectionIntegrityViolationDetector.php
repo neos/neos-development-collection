@@ -351,7 +351,7 @@ WHERE
                     [
                         'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge(),
                         'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                        'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
+                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAll();
 
@@ -402,7 +402,7 @@ WHERE
                     HAVING COUNT(DISTINCT(n.relationanchorpoint)) > 1',
                     [
                         'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                        'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
+                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAll();
 
@@ -438,7 +438,7 @@ WHERE
                     HAVING COUNT(DISTINCT(h.parentnodeanchor)) > 1',
                     [
                         'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                        'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
+                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAll();
 

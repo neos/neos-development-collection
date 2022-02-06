@@ -143,7 +143,7 @@ class ChangeProjector implements ProjectorInterface
                         'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
                         'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
                         'originDimensionSpacePoint' => json_encode($dimensionSpacePoint),
-                        'originDimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                        'originDimensionSpacePointHash' => $dimensionSpacePoint->hash,
                         'removalAttachmentPoint' => $event->getRemovalAttachmentPoint() !== null ? (string)$event->getRemovalAttachmentPoint() : null
                     ]
                 );

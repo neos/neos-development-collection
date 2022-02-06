@@ -93,7 +93,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             $this->insertNode([
                 'uriPath' => '',
                 'nodeAggregateIdentifierPath' => $event->getNodeAggregateIdentifier(),
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
             ]);
         }
@@ -120,7 +120,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         }
 
         foreach ($event->getCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
-            $parentNode = $this->tryGetNode(fn () =>$this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($event->getParentNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+            $parentNode = $this->tryGetNode(fn () =>$this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($event->getParentNodeAggregateIdentifier(), $dimensionSpacePoint->hash));
             if ($parentNode === null) {
                 // this should not happen
                 continue;
@@ -129,18 +129,18 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             $precedingNode = null;
 
             if ($event->getSucceedingNodeAggregateIdentifier() === null) {
-                $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getLastChildNode($parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+                $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getLastChildNode($parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->hash));
                 if ($precedingNode !== null) {
                     // make the new node the new succeeding node of the previously last child (= insert at the end of all children)
                     $this->updateNode($precedingNode, ['succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
                 }
             } else {
-                $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getPrecedingNode($event->getSucceedingNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+                $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getPrecedingNode($event->getSucceedingNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier(), $dimensionSpacePoint->hash));
                 if ($precedingNode !== null) {
                     // make the new node the new succeeding node of the previously preceding node of the specified succeeding node (= re-wire <preceding>-<succeeding> to <preceding>-<new node>)
                     $this->updateNode($precedingNode, ['succeedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
                 }
-                $this->updateNodeByIdAndDimensionSpacePointHash($event->getSucceedingNodeAggregateIdentifier(), $dimensionSpacePoint->getHash(), ['precedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
+                $this->updateNodeByIdAndDimensionSpacePointHash($event->getSucceedingNodeAggregateIdentifier(), $dimensionSpacePoint->hash, ['precedingNodeAggregateIdentifier' => $event->getNodeAggregateIdentifier()]);
             }
 
             $nodeAggregateIdentifierPath = $parentNode->getNodeAggregateIdentifierPath() . '/' . $event->getNodeAggregateIdentifier();
@@ -156,7 +156,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 'uriPath' => $uriPath,
                 'nodeAggregateIdentifierPath' => $nodeAggregateIdentifierPath,
                 'siteNodeName' => $siteNodeName,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'originDimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->hash,
                 'parentNodeAggregateIdentifier' => $parentNode->getNodeAggregateIdentifier(),
                 'precedingNodeAggregateIdentifier' => $precedingNode !== null ? $precedingNode->getNodeAggregateIdentifier() : null,
@@ -216,7 +216,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         }
         foreach ($coveredSpacePoints as $coveredSpacePoint) {
             // Especially when importing a site it can happen that variants are created in a "non-deterministic" order, so we need to first make sure a target variant doesn't exist:
-            $this->deleteNodeByIdAndDimensionSpacePointHash($nodeAggregateIdentifier, $coveredSpacePoint->getHash());
+            $this->deleteNodeByIdAndDimensionSpacePointHash($nodeAggregateIdentifier, $coveredSpacePoint->hash);
 
             $this->insertNode(
                 $sourceNode
@@ -233,7 +233,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             return;
         }
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->hash));
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -243,7 +243,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 return;
             }
             $this->updateNodeQuery('SET disabled = disabled + 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)', [
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateIdentifier' => $event->getNodeAggregateIdentifier(),
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]);
@@ -256,7 +256,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             return;
         }
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->hash));
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -266,7 +266,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 return;
             }
             $this->updateNodeQuery('SET disabled = disabled - 1 WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)', [
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]);
@@ -279,7 +279,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             return;
         }
         foreach ($event->getAffectedCoveredDimensionSpacePoints() as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->getHash()));
+            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash($event->getNodeAggregateIdentifier(), $dimensionSpacePoint->hash));
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -288,7 +288,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             $this->disconnectNodeFromSiblings($node);
 
             $this->deleteNodeQuery('WHERE dimensionSpacePointHash = :dimensionSpacePointHash AND (nodeAggregateIdentifier = :nodeAggregateIdentifier OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)', [
-                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
                 'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
             ]);

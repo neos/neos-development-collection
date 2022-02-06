@@ -349,7 +349,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
                 $relationName,
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,
-                $dimensionSpacePoint->getHash(),
+                $dimensionSpacePoint->hash,
                 $position
             );
 
