@@ -58,24 +58,6 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
         $this->handleDslTranspile = $handleDslTranspile;
     }
 
-    protected function getCurrentObjectPathPrefix(): array
-    {
-        $lastElementOfStack = end($this->currentObjectPathStack);
-        return ($lastElementOfStack === false) ? [] : $lastElementOfStack;
-    }
-
-    protected static function validateParseTreeKey(string $pathKey)
-    {
-        // TODO show also line snipped (in exceptions), but for that to work we need to know the cursor position.
-        if (substr($pathKey, 0, 2) === '__'
-            && in_array($pathKey, Fusion\Core\ParserInterface::RESERVED_PARSE_TREE_KEYS, true)) {
-            throw new Fusion\Exception("Reversed key '$pathKey' used.", 1437065270);
-        }
-        if (strpos($pathKey, "\n") !== false) {
-            throw new Fusion\Exception("Key '$pathKey' cannot contain spaces.", 1644068086);
-        }
-    }
-
     public function visitFusionFileAst(FusionFileAst $fusionFileAst): ObjectTree
     {
         $this->contextPathAndFilename = $fusionFileAst->getContextPathAndFileName();
@@ -241,5 +223,23 @@ class ObjectTreeAstVisitor extends AstNodeVisitor
             throw new \Exception();
         }
         $this->objectTree->removeValueInObjectTree($currentPath);
+    }
+
+    protected function getCurrentObjectPathPrefix(): array
+    {
+        $lastElementOfStack = end($this->currentObjectPathStack);
+        return ($lastElementOfStack === false) ? [] : $lastElementOfStack;
+    }
+
+    protected static function validateParseTreeKey(string $pathKey)
+    {
+        // TODO show also line snipped (in exceptions), but for that to work we need to know the cursor position.
+        if (substr($pathKey, 0, 2) === '__'
+            && in_array($pathKey, Fusion\Core\ParserInterface::RESERVED_PARSE_TREE_KEYS, true)) {
+            throw new Fusion\Exception("Reversed key '$pathKey' used.", 1437065270);
+        }
+        if (strpos($pathKey, "\n") !== false) {
+            throw new Fusion\Exception("Key '$pathKey' cannot contain spaces.", 1644068086);
+        }
     }
 }

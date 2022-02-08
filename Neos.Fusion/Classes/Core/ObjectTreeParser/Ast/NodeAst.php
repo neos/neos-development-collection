@@ -13,8 +13,11 @@ abstract class NodeAst
 {
     public function visit(AstNodeVisitor $visitor, ...$args)
     {
-        $classWithoutNamespace = basename(str_replace('\\', '/', static::class));
-
-        return $visitor->{'visit' . $classWithoutNamespace}($this, ...$args);
+        static $visitorMethod;
+        if (isset($visitorMethod) === false) {
+            $classWithoutNamespace = basename(str_replace('\\', '/', static::class));
+            $visitorMethod = 'visit' . $classWithoutNamespace;
+        }
+        return $visitor->$visitorMethod($this, ...$args);
     }
 }
