@@ -57,14 +57,10 @@ class PredictiveParser
      */
     protected $contextPathAndFilename;
 
-    public function __construct(Lexer $lexer, ?string $contextPathAndFilename = null)
+    public function parse(Lexer $lexer, ?string $contextPathAndFilename = null): FusionFileAst
     {
         $this->lexer = $lexer;
         $this->contextPathAndFilename = $contextPathAndFilename;
-    }
-
-    public function parse(): FusionFileAst
-    {
         $statementList = $this->parseFusion();
         return new FusionFileAst($statementList, $this->contextPathAndFilename);
     }

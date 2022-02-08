@@ -14,6 +14,7 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Fusion;
+use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFileAst;
 use Neos\Fusion\Core\ObjectTreeParser\FilePatternResolver;
 use Neos\Fusion\Core\ObjectTreeParser\Lexer;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTree;
@@ -42,6 +43,13 @@ class Parser implements ParserInterface
      */
     protected $dslFactory;
 
+// TODO use di, but the tests dont like its since it will not be injected, when mocked.
+//    /**
+//     * @Flow\Inject
+//     * @var PredictiveParser
+//     */
+//    protected $predictiveParser;
+
     /**
      * Parses the given Fusion source code and returns an object tree
      * as the result.
@@ -55,14 +63,12 @@ class Parser implements ParserInterface
      */
     public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $objectTreeUntilNow = []): array
     {
-        $lexer = new Lexer($sourceCode);
-        $fusionFileAst = (new PredictiveParser($lexer, $contextPathAndFilename))->parse();
+        $fusionFileAst = $this->getFusionFileAst($sourceCode, $contextPathAndFilename);
 
         $objectTree = new ObjectTree();
         $objectTree->setObjectTree($objectTreeUntilNow);
 
-        $objectTreeBuilder = new ObjectTreeAstVisitor($objectTree, [$this, 'handleFileInclude'], [$this, 'handleDslTranspile']);
-        $objectTree = $objectTreeBuilder->visitFusionFileAst($fusionFileAst);
+        $objectTree = $this->getObjectTreeAstVisitor($objectTree)->visitFusionFileAst($fusionFileAst);
 
         $objectTree->buildPrototypeHierarchy();
         return $objectTree->getObjectTree();
@@ -71,7 +77,7 @@ class Parser implements ParserInterface
     /**
      * @internal Exposed to be testable and easily transformable to closure.
      */
-    public function handleFileInclude(ObjectTree $objectTree, string $filePattern, ?string $contextPathAndFilename): ObjectTree
+    public function handleFileInclude(ObjectTree $objectTree, string $filePattern, ?string $contextPathAndFilename): void
     {
         $filesToInclude = FilePatternResolver::resolveFilesByPattern($filePattern, $contextPathAndFilename, '.fusion');
         foreach ($filesToInclude as $file) {
@@ -82,14 +88,10 @@ class Parser implements ParserInterface
             if ($contextPathAndFilename === null
                 || stat($contextPathAndFilename) !== stat($file)) {
 
-                $lexer = new Lexer(file_get_contents($file));
-
-                $fusionFileAst = (new PredictiveParser($lexer, $file))->parse();
-
-                (new ObjectTreeAstVisitor($objectTree, [$this, 'handleFileInclude'], [$this, 'handleDslTranspile']))->visitFusionFileAst($fusionFileAst);
+                $fusionFileAst = $this->getFusionFileAst(file_get_contents($file), $file);
+                $this->getObjectTreeAstVisitor($objectTree)->visitFusionFileAst($fusionFileAst);
             }
         }
-        return $objectTree;
     }
 
     /**
@@ -108,12 +110,25 @@ class Parser implements ParserInterface
         }
 
         $lexer = new Lexer('value = ' . $transpiledFusion);
-        $parser = new PredictiveParser($lexer);
-        $fusionFileAst = $parser->parse();
+        $fusionFileAst = (new PredictiveParser())->parse($lexer);
 
-        $objectTree = (new ObjectTreeAstVisitor(new ObjectTree(), [$this, 'handleFileInclude'], [$this, 'handleDslTranspile']))->visitFusionFileAst($fusionFileAst);
+        $objectTree = $this->getObjectTreeAstVisitor(new ObjectTree())->visitFusionFileAst($fusionFileAst);
 
         $temporaryAst = $objectTree->getObjectTree();
-        return $temporaryAst['value'];
+
+        $dslValue = $temporaryAst['value'];
+        return $dslValue;
+    }
+
+    protected function getObjectTreeAstVisitor(ObjectTree $objectTree): ObjectTreeAstVisitor
+    {
+        return new ObjectTreeAstVisitor($objectTree, [$this, 'handleFileInclude'], [$this, 'handleDslTranspile']);
+    }
+
+    protected function getFusionFileAst(string $sourceCode, ?string $contextPathAndFilename): FusionFileAst
+    {
+        $lexer = new Lexer($sourceCode);
+        $fusionFileAst = (new PredictiveParser())->parse($lexer, $contextPathAndFilename);
+        return $fusionFileAst;
     }
 }
