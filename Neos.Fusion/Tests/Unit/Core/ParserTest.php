@@ -37,47 +37,7 @@ class ParserTest extends UnitTestCase
      */
     public function setUp(): void
     {
-        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects(self::any())->method('isRegistered')->will(self::returnCallback([$this, 'objectManagerIsRegisteredCallback']));
-
-        $this->parser = $this->getAccessibleMock(Parser::class, ['dummy']);
-        $this->parser->_set('objectManager', $this->mockObjectManager);
-    }
-
-    /**
-     * call back for mocking the object factory
-     * @return object fixture objects ...
-     */
-    public function objectManagerCallback()
-    {
-        $arguments = array_merge(func_get_args(), [$this->mockObjectManager]);
-        $objectName = array_shift($arguments);
-
-        $class = new \ReflectionClass($objectName);
-        return ($class->getConstructor() !== null) ? $class->newInstanceArgs($arguments) : $class->newInstance();
-    }
-
-    /**
-     * Call back for mocking the object manager's isRegistered() method
-     * @return boolean
-     */
-    public function objectManagerIsRegisteredCallback()
-    {
-        $arguments = array_merge(func_get_args(), [$this->mockObjectManager]);
-        $objectName = array_shift($arguments);
-        switch ($objectName) {
-            case 'Neos\Fusion\Fixtures\Text':
-            case 'Neos\Fusion\Fixtures\Page':
-            case 'Neos\Fusion\Fixtures\ContentArray':
-            case 'Neos\Fusion\Fixtures\ObjectWithArrayProperty':
-            case 'Neos\Fusion\Processors\WrapProcessor':
-            case 'Neos\Fusion\Processors\SubstringProcessor':
-            case 'Neos\Fusion\Processors\MultiplyProcessor':
-            case 'Neos\SomeOther\Namespace\MyWrapProcessor':
-                return true;
-            default:
-                return false;
-        }
+        $this->parser = new Parser();
     }
 
     /**
