@@ -12,10 +12,14 @@ namespace Neos\EventSourcedNeosAdjustments;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathProjector;
 use Neos\EventSourcedNeosAdjustments\Ui\EditorContentStreamZookeeper;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
+use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 
 class Package extends BasePackage
 {
@@ -31,5 +35,17 @@ class Package extends BasePackage
     {
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
         $dispatcher->connect(AuthenticationProviderManager::class, 'authenticatedToken', EditorContentStreamZookeeper::class, 'relayEditorAuthentication');
+        $dispatcher->connect(DocumentUriPathProjector::class, 'documentUriPathChanged', function(string $oldUriPath, string $newUriPath, NodePropertiesWereSet $event) use ($bootstrap) {
+            /** @var RouterCachingService $routerCachingService */
+            $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);
+            $routerCachingService->flushCachesForUriPath($oldUriPath);
+
+            if (!$bootstrap->getObjectManager()->isRegistered(RedirectStorageInterface::class)) {
+                return;
+            }
+            /** @var RedirectStorageInterface $redirectStorage */
+            $redirectStorage = $bootstrap->getObjectManager()->get(RedirectStorageInterface::class);
+            $redirectStorage->addRedirect($oldUriPath, $newUriPath, 301, [], (string)$event->getInitiatingUserIdentifier(), 'via DocumentUriPathProjector');
+        });
     }
 }

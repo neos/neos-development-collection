@@ -30,10 +30,14 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ValueObject\DocumentNod
 use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventListener\BeforeInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
+use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
-use Neos\Flow\Mvc\Routing\RouterCachingService;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 
+/**
+ * @Flow\Scope("singleton")
+ */
 final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvokeInterface, AfterInvokeInterface
 {
     public const TABLE_NAME_DOCUMENT_URIS = 'neos_neos_projection_document_uri';
@@ -48,14 +52,11 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
 
     private Connection $dbal;
 
-    private RouterCachingService $routerCachingService;
-
-    public function __construct(NodeTypeManager $nodeTypeManager, DocumentUriPathFinder $documentUriPathFinder, Connection $dbal, RouterCachingService $routerCachingService)
+    public function __construct(NodeTypeManager $nodeTypeManager, DocumentUriPathFinder $documentUriPathFinder, Connection $dbal)
     {
         $this->nodeTypeManager = $nodeTypeManager;
         $this->documentUriPathFinder = $documentUriPathFinder;
         $this->dbal = $dbal;
-        $this->routerCachingService = $routerCachingService;
     }
 
     public function beforeInvoke(EventEnvelope $_): void
@@ -295,7 +296,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         }
     }
 
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
+    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event, RawEvent $rawEvent): void
     {
         if (!$this->isLiveContentStream($event->getContentStreamIdentifier())) {
             return;
@@ -342,7 +343,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
             'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
         ]);
-        $this->routerCachingService->flushCachesForUriPath($oldUriPath);
+        $this->dbal->commit();
+        $this->emitDocumentUriPathChanged($oldUriPath, $newUriPath, $event, $rawEvent);
     }
 
     public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
@@ -601,4 +603,17 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             }
         }
     }
+
+    /**
+     * @param string $oldUriPath
+     * @param string $newUriPath
+     * @param NodePropertiesWereSet $event
+     * @param RawEvent $rawEvent
+     * @return void
+     * @Flow\Signal
+     */
+    public function emitDocumentUriPathChanged(string $oldUriPath, string $newUriPath, NodePropertiesWereSet $event, RawEvent $rawEvent): void
+    {
+    }
+
 }
