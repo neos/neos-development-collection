@@ -12,6 +12,7 @@ namespace Neos\Fusion\Afx\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Parser as AfxParser;
 use Neos\Fusion\Afx\Exception\AfxException;
 
@@ -22,15 +23,17 @@ use Neos\Fusion\Afx\Exception\AfxException;
  */
 class AfxService
 {
-    const INDENTATION = '    ';
-    const SHORTHAND_META_PATHS = ['@if', '@process'];
+    protected const INDENTATION = '    ';
+    protected const SHORTHAND_META_PATHS = ['@if', '@process'];
 
     /**
      * @var string $afxCode the AFX code that is converted
      * @var string $indentation Indentation to start with
      * @return string
+     * @throws AfxException
+     * @throws AfxParserException
      */
-    public static function convertAfxToFusion($afxCode, $indentation = '')
+    public static function convertAfxToFusion(string $afxCode, string $indentation = ''): string
     {
         $parser = new AfxParser(trim($afxCode));
         $ast = $parser->parse();
@@ -38,153 +41,102 @@ class AfxService
         return $fusion;
     }
 
-    /**
-     * @param array $astNode
-     * @param string $indentation
-     * @return string
-     */
-    protected static function astToFusion($ast, $indentation = '')
+    protected static function astToFusion(array $ast, string $indentation = ''): string
     {
         switch ($ast['type']) {
             case 'expression':
-                return self::astExpressionToFusion($ast['payload'], $indentation);
-                break;
+                return self::astExpressionToFusion($ast['payload']);
             case 'string':
-                return self::astStringToFusion($ast['payload'], $indentation);
-                break;
+                return self::astStringToFusion($ast['payload']);
             case 'text':
-                return self::astTextToFusion($ast['payload'], $indentation);
-                break;
+                return self::astTextToFusion($ast['payload']);
             case 'boolean':
-                return self::astBooleanToFusion($ast['payload'], $indentation);
-                break;
+                return self::astBooleanToFusion($ast['payload']);
             case 'node':
                 return self::astNodeToFusion($ast['payload'], $indentation);
-                break;
             default:
-                throw new AfxException(sprintf('ast type %s is unkonwn', $ast['type']));
+                throw new AfxException(sprintf('ast type %s is unknown', $ast['type']));
         }
     }
 
-    /**
-     * @param array $payload
-     * @param string $indentation
-     * @return string
-     */
-    protected static function astBooleanToFusion($payload, $indentation = '')
+    protected static function astBooleanToFusion(bool $payload): string
     {
-        return 'true';
+        return $payload ? 'true' : 'false';
     }
 
-    /**
-     * @param array $payload
-     * @param string $indentation
-     * @return string
-     */
-    protected static function astExpressionToFusion($payload, $indentation = '')
+    protected static function astExpressionToFusion(string $payload): string
     {
         return '${' . $payload . '}';
     }
 
-    /**
-     * @param array $payload
-     * @param string $indentation
-     * @return string
-     */
-    protected static function astStringToFusion($payload, $indentation = '')
+    protected static function astStringToFusion(string $payload): string
     {
         return '\'' . addslashes($payload) . '\'';
     }
 
-    /**
-     * @param array $payload
-     * @param string $indentation
-     * @return string
-     */
-    protected static function astTextToFusion($payload, $indentation = '')
+    protected static function astTextToFusion(string $payload): string
     {
         return '\'' . addslashes($payload) . '\'';
     }
 
-    /**
-     * @param array $payload
-     * @param array $attributePrefix
-     * @param string $indentation
-     * @return string
-     */
-    protected static function propListToFusion($payload, $attributePrefix, $indentation = '')
+    protected static function propToFusion(array $attribute, string $attributePrefix, string $indentation = ''): string
+    {
+        $prop = $attribute['payload'];
+        $propName = $prop['identifier'];
+        $propFusion = self::astToFusion($prop, $indentation . self::INDENTATION);
+        return $indentation . self::INDENTATION . $attributePrefix . $propName . ' = ' . $propFusion . PHP_EOL;
+    }
+
+    protected static function propListToFusion(array $payload, string $attributePrefix, string $indentation = ''): string
     {
         $fusion = '';
         foreach ($payload as $attribute) {
             if ($attribute['type'] === 'prop') {
-                $prop = $attribute['payload'];
-                $propName = $prop['identifier'];
-                $propFusion = self::astToFusion($prop, $indentation . self::INDENTATION);
-                if ($propFusion !== null) {
-                    $fusion .= $indentation . self::INDENTATION . $attributePrefix . $propName . ' = ' . $propFusion . PHP_EOL;
-                }
+                $fusion .= self::propToFusion($attribute, $attributePrefix, $indentation);
             }
         }
         return $fusion;
     }
 
-    /**
-     * @param array $attributes
-     * @return array
-     */
-    protected static function generatePathForShorthandFusionMetaPath(array $attributes): array
-    {
-        // holds the incrementing index per attribute path
-        $indexes = [];
-        foreach ($attributes as &$attribute) {
-            if ($attribute['type'] !== 'prop') {
-                continue;
-            }
-
-            $path = &$attribute['payload']['identifier'];
-
-            $fusionPropertyPathSegments = explode('.', $path);
-            // f.x. '@if' (when shorthand) or 'hasTitle' (when no shorthand)
-            $lastPathSegment = end($fusionPropertyPathSegments);
-
-            if (in_array($lastPathSegment, self::SHORTHAND_META_PATHS, true)) {
-                $indexes[$path] ?? $indexes[$path] = 0;
-                // add f.x. '.if_1'
-                $path .= '.' . substr($lastPathSegment, 1) . '_' . ++$indexes[$path];
-            }
-        }
-        return $attributes;
-    }
-
-    /**
-     * @param array $payload
-     * @param string $indentation
-     * @return string
-     */
-    protected static function astNodeToFusion($payload, $indentation = '')
+    protected static function astNodeToFusion(array $payload, string $indentation = ''): string
     {
         $tagName = $payload['identifier'];
         $childrenPropertyName = 'content';
         $attributes = $payload['attributes'];
 
-        // filter attributes and remove @key, @path and @children attributes
-        $attributes = array_filter($attributes, function ($attribute) use (&$childrenPropertyName) {
-            if ($attribute['type'] === 'prop') {
-                if ($attribute['payload']['identifier'] === '@key' || $attribute['payload']['identifier'] === '@path') {
-                    return false;
-                } elseif ($attribute['payload']['identifier'] === '@children') {
-                    if ($attribute['payload']['type'] === 'string') {
-                        $childrenPropertyName = $attribute['payload']['payload'];
-                    } else {
-                        throw new AfxException(
-                            sprintf('@children only supports string payloads %s found', $attribute['payload']['type'])
-                        );
-                    }
-                    return false;
-                }
+        // Tag
+        if (strpos($tagName, ':') !== false) {
+            // Named fusion-object
+            $fusion = $tagName . ' {' . PHP_EOL;
+            // Attributes are not prefixed
+            $attributePrefix = '';
+        } else {
+            // Neos.Fusion:Tag
+            $fusion = 'Neos.Fusion:Tag {' . PHP_EOL;
+            $fusion .= $indentation . self::INDENTATION . 'tagName = \'' .  $tagName . '\'' . PHP_EOL;
+            // Attributes are rendered as tag-attributes
+            $attributePrefix = 'attributes.';
+            // Self closing Tags stay self closing
+            if ($payload['selfClosing'] === true) {
+                $fusion .= $indentation . self::INDENTATION . 'selfClosingTag = true' . PHP_EOL;
             }
-            return true;
-        });
+        }
+
+        $attributes =
+            self::attributesSortPropsAndGeneratePropLists(
+                self::attributesGeneratePathForShorthandFusionMetaPath(
+                    self::attributesRemoveKeyAndPathAndExtractChildrenName(
+                        $attributes,
+                        $childrenPropertyName
+                    )
+                )
+            );
+
+        $fusion .= self::renderFusionAttributes(
+            $attributes,
+            $attributePrefix,
+            $indentation,
+        );
 
         // filter children into path and content children
         $pathChildren = [];
@@ -196,108 +148,19 @@ class AfxService
                     foreach ($child['payload']['attributes'] as $attribute) {
                         if ($attribute['type'] === 'prop' && $attribute['payload']['identifier'] === '@path') {
                             $pathAttribute = $attribute['payload'];
-                            if ($pathAttribute['type'] === 'string') {
-                                $path = $pathAttribute['payload'];
-                            } else {
-                                throw new AfxException(
-                                    sprintf('@path only supports string payloads %s found', $pathAttribute['type'])
-                                );
+                            if ($pathAttribute['type'] !== 'string') {
+                                throw new AfxException(sprintf('@path only supports string payloads %s found', $pathAttribute['type']));
                             }
+                            $path = $pathAttribute['payload'];
                         }
-                    };
+                    }
 
-                    if ($path) {
+                    if (isset($path)) {
                         $pathChildren[$path] = $child;
                         continue;
                     }
                 }
                 $contentChildren[] = $child;
-            }
-        }
-
-        // Tag
-        if (strpos($tagName, ':') !== false) {
-            // Named fusion-object
-            $fusion = $tagName . ' {' . PHP_EOL;
-            // Attributes are not prefixed
-            $attributePrefix = '';
-        } else {
-            // Neos.Fusion:Tag
-            $fusion = 'Neos.Fusion:Tag {' . PHP_EOL;
-            $fusion .= $indentation . self::INDENTATION .'tagName = \'' .  $tagName . '\'' . PHP_EOL;
-            // Attributes are rendered as tag-attributes
-            $attributePrefix = 'attributes.';
-            // Self closing Tags stay self closing
-            if ($payload['selfClosing'] === true) {
-                $fusion .= $indentation . self::INDENTATION .'selfClosingTag = true' . PHP_EOL;
-            }
-        }
-
-        // Attributes
-        if ($attributes !== []) {
-            $spreadIsPresent = false;
-            $metaAttributes = [];
-            $fusionAttributes = [];
-            $spreadsOrAttributeLists = [];
-
-            $attributes = self::generatePathForShorthandFusionMetaPath($attributes);
-
-            // seperate between attributes (before the first spread), meta attributes
-            // spreads and attributes lists between and after spreads
-            foreach ($attributes as $attribute) {
-                if ($attribute['type'] === 'prop' && $attribute['payload']['identifier'][0] === '@') {
-                    $metaAttributes[] = $attribute;
-                } elseif ($attribute['type'] === 'prop' && $spreadIsPresent === false) {
-                    $fusionAttributes[] = $attribute;
-                } elseif ($attribute['type'] === 'spread') {
-                    $spreadsOrAttributeLists[] = $attribute;
-                    $spreadIsPresent = true;
-                } elseif ($attribute['type'] === 'prop') {
-                    $last = end($spreadsOrAttributeLists);
-                    $lastPos = key($spreadsOrAttributeLists);
-                    if ($last && $last['type'] === 'propList') {
-                        $last['payload'][] = $attribute;
-                        $spreadsOrAttributeLists[$lastPos] = $last;
-                    } else {
-                        $spreadsOrAttributeLists[] = [
-                            'type' => 'propList',
-                            'payload' => [$attribute]
-                        ];
-                    }
-                }
-            }
-
-            // attributes before the first spread render as fusion keys
-            if ($fusionAttributes !== []) {
-                $fusion .=  self::propListToFusion($fusionAttributes, $attributePrefix, $indentation);
-            }
-
-            // starting with the first spread we render spreads as @apply expressions
-            // and attributes as @apply of the respective propList
-            $spreadIndex = 1;
-            foreach ($spreadsOrAttributeLists as $attribute) {
-                if ($attribute['type'] === 'spread') {
-                    if ($attribute['payload']['type'] === 'expression') {
-                        $spreadFusion = self::astToFusion($attribute['payload'], $indentation . self::INDENTATION);
-                        if ($spreadFusion !== null) {
-                            $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@apply.spread_' . $spreadIndex . ' = ' . $spreadFusion . PHP_EOL;
-                        }
-                    } else {
-                        throw new AfxException(
-                            sprintf('Spreads only support expression payloads %s found', $attribute['payload']['type'])
-                        );
-                    }
-                } elseif ($attribute['type'] === 'propList') {
-                    $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@apply.spread_' . $spreadIndex . ' = Neos.Fusion:DataStructure {' . PHP_EOL;
-                    $fusion .=  self::propListToFusion($attribute['payload'], '', $indentation . self::INDENTATION);
-                    $fusion .= $indentation . self::INDENTATION . '}' . PHP_EOL;
-                }
-                $spreadIndex ++;
-            }
-
-            // meta attributes are rendered last
-            if ($metaAttributes !== []) {
-                $fusion .=  self::propListToFusion($metaAttributes, '', $indentation);
             }
         }
 
@@ -311,9 +174,7 @@ class AfxService
         // Content Children
         if ($contentChildren !== []) {
             $childFusion = self::astNodeListToFusion($contentChildren, $indentation . self::INDENTATION);
-            if ($childFusion) {
-                $fusion .= $indentation . self::INDENTATION . $childrenPropertyName . ' = ' . $childFusion . PHP_EOL;
-            }
+            $fusion .= $indentation . self::INDENTATION . $childrenPropertyName . ' = ' . $childFusion . PHP_EOL;
         }
 
         $fusion .= $indentation . '}';
@@ -321,20 +182,13 @@ class AfxService
         return $fusion;
     }
 
-    /**
-     * @param array $payload
-     * @param string $indentation
-     * @return string
-     */
-    protected static function astNodeListToFusion($payload, $indentation = '')
+    protected static function astNodeListToFusion(array $payload, string $indentation = ''): string
     {
-        $index = 1;
-
         // ignore blank text if it is connected to a newline
         $payload = array_map(function ($astNode) {
             if ($astNode['type'] === 'text') {
                 // remove whitespace connected to newlines at the beginning or end of text payloads
-                $astNode['payload'] = preg_replace('/(^[\\s]*\\n[\\s]*|[\\s]*\\n[\\s]*$)/u', '', $astNode['payload']);
+                $astNode['payload'] = preg_replace('/^[\\s]*\\n[\\s]*|[\\s]*\\n[\\s]*$/u', '', $astNode['payload']);
                 // collapse whitespace connected to newlines in the middle of text payloads to spaces
                 $astNode['payload'] = preg_replace('/([\\s]*\\n[\\s]*)+/u', ' ', $astNode['payload']);
             }
@@ -343,7 +197,7 @@ class AfxService
 
         // filter empty text nodes and comments
         $payload = array_filter($payload, function ($astNode) {
-            if ($astNode['type'] === 'text' && $astNode['payload'] == '') {
+            if ($astNode['type'] === 'text' && $astNode['payload'] === '') {
                 return false;
             }
             if ($astNode['type'] === 'comment') {
@@ -353,40 +207,173 @@ class AfxService
         });
 
         if (count($payload) === 0) {
-            return '\'\'';
-        } elseif (count($payload) === 1) {
+            return "''";
+        }
+
+        if (count($payload) === 1) {
             return self::astToFusion(array_shift($payload), $indentation);
-        } else {
-            $fusion = 'Neos.Fusion:Join {' . PHP_EOL;
-            foreach ($payload as $astNode) {
-                // detect key
-                $fusionName = 'item_' . $index;
-                if ($astNode['type'] === 'node' && $astNode['payload']['attributes'] !== []) {
-                    foreach ($astNode['payload']['attributes'] as $attribute) {
-                        if ($attribute['type'] === 'prop' && $attribute['payload']['identifier'] === '@key') {
-                            if ($attribute['payload']['type'] === 'string') {
-                                $fusionName = $attribute['payload']['payload'];
-                            } else {
-                                throw new AfxException(
-                                    sprintf(
-                                        '@key only supports string payloads %s was given',
-                                        $attribute['payload']['type']
-                                    )
-                                );
-                            }
+        }
+
+        $index = 0;
+        $fusion = 'Neos.Fusion:Join {' . PHP_EOL;
+        foreach ($payload as $astNode) {
+            // detect key
+            $fusionName = 'item_' . ++$index;
+            if ($astNode['type'] === 'node') {
+                foreach ($astNode['payload']['attributes'] as $attribute) {
+                    if ($attribute['type'] === 'prop'
+                        && $attribute['payload']['identifier'] === '@key') {
+                        if ($attribute['payload']['type'] !== 'string') {
+                            throw new AfxException(sprintf(
+                                '@key only supports string payloads %s was given',
+                                $attribute['payload']['type']
+                            ));
                         }
+                        $fusionName = $attribute['payload']['payload'];
                     }
                 }
-
-                // convert node
-                $nodeFusion = self::astToFusion($astNode, $indentation . self::INDENTATION);
-                if ($nodeFusion !== null) {
-                    $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $nodeFusion . PHP_EOL;
-                    $index++;
-                }
             }
-            $fusion .= $indentation . '}';
-            return $fusion;
+
+            // convert node
+            $nodeFusion = self::astToFusion($astNode, $indentation . self::INDENTATION);
+            $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $nodeFusion . PHP_EOL;
+        }
+        $fusion .= $indentation . '}';
+        return $fusion;
+    }
+
+    protected static function renderFusionAttributes(iterable $attributes, string $attributePrefix, string $indentation): string
+    {
+        $fusion = '';
+        $spreadIndex = 0;
+        foreach ($attributes as $attribute) {
+            switch ($attribute['type']) {
+                case 'prop':
+                    $isMeta = $attribute['payload']['identifier'][0] === '@';
+                    $fusion .= self::propToFusion($attribute, $isMeta ? '' : $attributePrefix);
+                    break;
+                case 'spread':
+                    if ($attribute['payload']['type'] !== 'expression') {
+                        throw new AfxException(sprintf('Spreads only support expression payloads %s found', $attribute['payload']['type']));
+                    }
+                    $spreadFusion = self::astToFusion($attribute['payload'], $indentation . self::INDENTATION);
+                    $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@apply.spread_' . ++$spreadIndex . ' = ' . $spreadFusion . PHP_EOL;
+                    break;
+                case 'propList':
+                    $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@apply.spread_' . ++$spreadIndex . ' = Neos.Fusion:DataStructure {' . PHP_EOL;
+                    $fusion .= self::propListToFusion($attribute['payload'], '', $indentation . self::INDENTATION);
+                    $fusion .= $indentation . self::INDENTATION . '}' . PHP_EOL;
+                    break;
+            }
+        }
+        return $fusion;
+    }
+
+    protected static function attributesSortPropsAndGeneratePropLists(iterable $attributes): \Generator
+    {
+        $delayedMetaAttributes = [];
+        $spreadIsPresent = false;
+        $currentPropListAfterSpread = null;
+
+        foreach ($attributes as $attribute) {
+            if ($attribute['type'] === 'prop'
+                && $attribute['payload']['identifier'][0] === '@') {
+                $delayedMetaAttributes[] = $attribute;
+                continue;
+            }
+
+            // starting with the first spread we render spreads as @apply expressions
+            // and attributes as @apply of the respective propList
+            if ($spreadIsPresent && $attribute['type'] === 'prop') {
+                if ($currentPropListAfterSpread === null) {
+                    $currentPropListAfterSpread = [
+                        'type' => 'propList',
+                        'payload' => [$attribute]
+                    ];
+                    continue;
+                }
+                $currentPropListAfterSpread['payload'][] = $attribute;
+                continue;
+            }
+
+            if ($attribute['type'] === 'spread') {
+                $spreadIsPresent = true;
+                if ($currentPropListAfterSpread !== null) {
+                    yield $currentPropListAfterSpread;
+                    $currentPropListAfterSpread = null;
+                }
+                yield $attribute;
+                continue;
+            }
+
+            // attributes before the first spread render as fusion keys
+            if ($attribute['type'] === 'prop') {
+                yield $attribute;
+                continue;
+            }
+        }
+
+        if ($currentPropListAfterSpread !== null) {
+            yield $currentPropListAfterSpread;
+        }
+
+        // meta attributes are rendered last
+        yield from $delayedMetaAttributes;
+    }
+
+    protected static function attributesGeneratePathForShorthandFusionMetaPath(iterable $attributes): \Generator
+    {
+        // holds the incrementing index per attribute path
+        $indexes = [];
+
+        foreach ($attributes as $attribute) {
+            if ($attribute['type'] !== 'prop') {
+                yield $attribute;
+                continue;
+            }
+            $path = &$attribute['payload']['identifier'];
+
+            $fusionPropertyPathSegments = explode('.', $path);
+            // f.x. '@if' (when shorthand) or 'hasTitle' (when no shorthand)
+            $lastPathSegment = end($fusionPropertyPathSegments);
+
+            if (in_array($lastPathSegment, self::SHORTHAND_META_PATHS, true)) {
+                isset($indexes[$path]) ?: $indexes[$path] = 0;
+
+                // add f.x. '.if_1'
+                $path .= '.' . substr($lastPathSegment, 1) . '_' . ++$indexes[$path];
+            }
+            yield $attribute;
+        }
+    }
+
+    /**
+     * filter attributes and remove {@key}, {@path} and {@children} attributes
+     * also extract the {@children} to the reference param
+     *
+     */
+    protected static function attributesRemoveKeyAndPathAndExtractChildrenName(iterable $attributes, string &$childrenPropertyName): \Generator
+    {
+        foreach ($attributes as $attribute) {
+            if ($attribute['type'] !== 'prop') {
+                yield $attribute;
+                continue;
+            }
+
+            if ($attribute['payload']['identifier'] === '@key'
+                || $attribute['payload']['identifier'] === '@path') {
+                continue;
+            }
+
+            if ($attribute['payload']['identifier'] === '@children') {
+                if ($attribute['payload']['type'] !== 'string') {
+                    throw new AfxException(sprintf('@children only supports string payloads %s found', $attribute['payload']['type']));
+                }
+                $childrenPropertyName = $attribute['payload']['payload'];
+                continue;
+            }
+
+            yield $attribute;
         }
     }
 }
