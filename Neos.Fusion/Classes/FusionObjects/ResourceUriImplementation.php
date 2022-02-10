@@ -21,7 +21,7 @@ use Neos\Fusion\Exception as FusionException;
 /**
  * A Fusion object to create resource URIs
  *
- * The following TS properties are evaluated:
+ * The following Fusion properties are evaluated:
  *  * path
  *  * package
  *  * resource
