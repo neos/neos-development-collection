@@ -46,7 +46,6 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
         }
         $dimensionValues = $this->parseDimensionsAndNodePathFromRequestPath($routePath);
         $this->truncateUriPathSuffix($routePath);
-        $remainingRequestPath = $this->truncateSplitString($routePath);
         $siteNodePath = $this->getCurrentSiteNodePath($parameters);
 
         $siteNode = null;
@@ -60,7 +59,6 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
         if ($node === $siteNode || !$this->nodeTypeIsAllowed($node)) {
             return false;
         }
-        $routePath .= $remainingRequestPath;
         return new MatchResult($node->getContextPath(), $this->routeTagsFromIdentifiers($affectedNodeIdentifiers));
     }
 
@@ -102,25 +100,6 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
     }
 
     // ---------------------
-
-    /**
-     * @param string $requestPath
-     * @return string
-     */
-    private function truncateSplitString(string &$requestPath): string
-    {
-        if ($this->splitString === '' || $this->splitString === '/') {
-            return '';
-        }
-        $splitStringPosition = strpos($requestPath, $this->splitString);
-        if ($splitStringPosition === false) {
-            return '';
-        }
-        $fullRequestPath = $requestPath;
-        $requestPath = substr($requestPath, 0, $splitStringPosition);
-
-        return substr($fullRequestPath, $splitStringPosition);
-    }
 
     /**
      * @throws Exception\InvalidRequestPathException
@@ -180,7 +159,7 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
             array_unshift($requestPathSegments, $pathSegment);
             break;
         } while ($requestPathSegments !== []);
-        $requestPath = implode('/', $requestPathSegments);
+        $requestPath = $requestPathSegments === [] ? '' : '/' . implode('/', $requestPathSegments);
         return $node;
     }
 
