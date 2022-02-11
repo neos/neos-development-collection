@@ -49,13 +49,13 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
         $siteNodePath = $this->getCurrentSiteNodePath($parameters);
 
         $siteNode = null;
-        $this->securityContext->withoutAuthorizationChecks(function() use (&$siteNode, $parameters, $dimensionValues, $siteNodePath) {
+        $node = null;
+        $affectedNodeIdentifiers = [];
+        $this->securityContext->withoutAuthorizationChecks(function() use ($parameters, $dimensionValues, $siteNodePath, &$routePath, &$siteNode, &$node, &$affectedNodeIdentifiers) {
             /** @var TraversableNodeInterface $siteNode */
             $siteNode = $this->getContext($parameters, $dimensionValues)->getNode($siteNodePath);
+            $node = $this->getNodeByRequestUriPath($siteNode, $routePath, $affectedNodeIdentifiers);
         });
-
-        $affectedNodeIdentifiers = [];
-        $node = $this->getNodeByRequestUriPath($siteNode, $routePath, $affectedNodeIdentifiers);
         if ($node === $siteNode || !$this->nodeTypeIsAllowed($node)) {
             return false;
         }
