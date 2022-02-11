@@ -51,7 +51,7 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
         $siteNode = null;
         $node = null;
         $affectedNodeIdentifiers = [];
-        $this->securityContext->withoutAuthorizationChecks(function() use ($parameters, $dimensionValues, $siteNodePath, &$routePath, &$siteNode, &$node, &$affectedNodeIdentifiers) {
+        $this->securityContext->withoutAuthorizationChecks(function () use ($parameters, $dimensionValues, $siteNodePath, &$routePath, &$siteNode, &$node, &$affectedNodeIdentifiers) {
             /** @var TraversableNodeInterface $siteNode */
             $siteNode = $this->getContext($parameters, $dimensionValues)->getNode($siteNodePath);
             $node = $this->getNodeByRequestUriPath($siteNode, $routePath, $affectedNodeIdentifiers);
@@ -180,7 +180,7 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
 
     private function routeTagsFromIdentifiers(array $identifiers): RouteTags
     {
-        return RouteTags::createFromArray(array_filter($identifiers, static fn($tag) => preg_match(FrontendInterface::PATTERN_TAG, $tag) === 1));
+        return RouteTags::createFromArray(array_filter($identifiers, static fn ($tag) => preg_match(FrontendInterface::PATTERN_TAG, $tag) === 1));
     }
 
     protected function resolveShortcutNode(TraversableNodeInterface $node)
@@ -247,5 +247,4 @@ final class FrontendNodeRoutePartHandler extends AbstractNodeRoutePartHandler im
         }
         return $uriConstraints;
     }
-
 }

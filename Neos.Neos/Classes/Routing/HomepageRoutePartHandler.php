@@ -22,7 +22,6 @@ use Neos\Flow\Mvc\Routing\Dto\RouteTags;
  */
 final class HomepageRoutePartHandler extends AbstractNodeRoutePartHandler
 {
-
     public function matchWithParameters(&$routePath, RouteParameters $parameters)
     {
         $dimensionValues = $this->parseDimensionsAndNodePathFromRequestPath($routePath);
