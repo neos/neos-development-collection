@@ -120,7 +120,7 @@ trait NodeCreation
                     $command->getNodeAggregateIdentifier(),
                     $command->getNodeTypeName(),
                     $coveredDimensionSpacePoints,
-                    NodeAggregateClassification::root(),
+                    NodeAggregateClassification::CLASSIFICATION_ROOT,
                     $command->getInitiatingUserIdentifier()
                 ),
                 Uuid::uuid4()->toString()
@@ -335,7 +335,7 @@ trait NodeCreation
                     $command->getParentNodeAggregateIdentifier(),
                     $command->getNodeName(),
                     $initialPropertyValues,
-                    NodeAggregateClassification::regular(),
+                    NodeAggregateClassification::CLASSIFICATION_REGULAR,
                     $command->getInitiatingUserIdentifier(),
                     $command->getSucceedingSiblingNodeAggregateIdentifier()
                 ),
@@ -440,7 +440,7 @@ trait NodeCreation
                     $parentNodeAggregateIdentifier,
                     $nodeName,
                     $initialPropertyValues,
-                    NodeAggregateClassification::tethered(),
+                    NodeAggregateClassification::CLASSIFICATION_TETHERED,
                     $command->getInitiatingUserIdentifier(),
                     $precedingNodeAggregateIdentifier
                 ),

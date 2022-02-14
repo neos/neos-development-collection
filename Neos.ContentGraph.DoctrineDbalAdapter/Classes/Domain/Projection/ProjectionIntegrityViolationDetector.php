@@ -160,7 +160,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
               AND h.name IS NULL
               GROUP BY n.nodeaggregateidentifier, h.contentstreamidentifier',
             [
-                'tethered' => (string)NodeAggregateClassification::tethered()
+                'tethered' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
             ]
         )->fetchAll();
 
@@ -585,7 +585,7 @@ WHERE
                     AND classification != :rootClassification',
                 [
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                    'rootClassification' => (string)NodeAggregateClassification::root()
+                    'rootClassification' => NodeAggregateClassification::CLASSIFICATION_ROOT->value
                 ]
             )->fetchAll();
 

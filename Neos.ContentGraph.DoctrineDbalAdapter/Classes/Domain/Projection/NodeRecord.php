@@ -151,7 +151,7 @@ class NodeRecord
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),
             NodeTypeName::fromString($databaseRow['nodetypename']),
-            NodeAggregateClassification::fromString($databaseRow['classification']),
+            NodeAggregateClassification::from($databaseRow['classification']),
             isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null
         );
     }

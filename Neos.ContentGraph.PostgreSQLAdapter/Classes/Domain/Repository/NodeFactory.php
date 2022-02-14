@@ -75,7 +75,7 @@ final class NodeFactory
             $nodeType,
             $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
             new PropertyCollection(SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true)), $this->propertyConverter),
-            NodeAggregateClassification::fromString($nodeRow['classification']),
+            NodeAggregateClassification::from($nodeRow['classification']),
             $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
             $visibilityConstraints
         );
@@ -150,7 +150,7 @@ final class NodeFactory
                 $contentStreamIdentifier
             );
             $nodeAggregateIdentifier = $nodeAggregateIdentifier ?: NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
-            $nodeAggregateClassification = $nodeAggregateClassification ?: NodeAggregateClassification::fromString($nodeRow['classification']);
+            $nodeAggregateClassification = $nodeAggregateClassification ?: NodeAggregateClassification::from($nodeRow['classification']);
             $nodeTypeName = $nodeTypeName ?: NodeTypeName::fromString($nodeRow['nodetypename']);
             if (!empty($nodeRow['nodename']) && is_null($nodeName)) {
                 $nodeName = NodeName::fromString($nodeRow['nodename']);
@@ -231,7 +231,7 @@ final class NodeFactory
             );
             $nodeAggregateIdentifiers[$key] = NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
             if (!isset($nodeAggregateClassifications[$key])) {
-                $nodeAggregateClassifications[$key] = NodeAggregateClassification::fromString($nodeRow['classification']);
+                $nodeAggregateClassifications[$key] = NodeAggregateClassification::from($nodeRow['classification']);
             }
             if (!isset($nodeTypeNames[$key])) {
                 $nodeTypeNames[$key] = NodeTypeName::fromString($nodeRow['nodetypename']);

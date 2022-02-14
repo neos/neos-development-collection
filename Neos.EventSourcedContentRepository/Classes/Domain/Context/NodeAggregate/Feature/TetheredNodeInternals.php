@@ -87,7 +87,7 @@ trait TetheredNodeInternals
                         $parentNode->getNodeAggregateIdentifier(),
                         $tetheredNodeName,
                         SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
-                        NodeAggregateClassification::tethered(),
+                        NodeAggregateClassification::CLASSIFICATION_TETHERED,
                         $initiatingUserIdentifier
                     ),
                     Uuid::uuid4()->toString()

@@ -349,7 +349,7 @@ final class ContentGraph implements ContentGraphInterface
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
-            'tetheredClassification' => (string)NodeAggregateClassification::tethered()
+            'tetheredClassification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();

@@ -560,7 +560,7 @@ class ContentRepositoryExportService
             $this->nodeAggregateIdentifierForSitesNode->getNodeAggregateIdentifier(),
             NodeTypeName::fromString('Neos.Neos:Sites'),
             $dimensionSpacePointSet,
-            NodeAggregateClassification::root(),
+            NodeAggregateClassification::CLASSIFICATION_ROOT,
             UserIdentifier::forSystemUser()
         );
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($this->contentStreamIdentifier)->getEventStreamName();

@@ -117,11 +117,11 @@ trait ProjectedNodeAggregateTrait
      */
     public function iExpectThisNodeAggregateToBeClassifiedAs(string $serializedExpectedClassification): void
     {
-        $expectedClassification = NodeAggregateClassification::fromString($serializedExpectedClassification);
+        $expectedClassification = NodeAggregateClassification::from($serializedExpectedClassification);
         $this->assertOnCurrentNodeAggregates(function (ReadableNodeAggregateInterface $nodeAggregate, string $adapterName) use ($expectedClassification) {
             Assert::assertTrue(
                 $expectedClassification->equals($nodeAggregate->getClassification()),
-                'Node aggregate classifications do not match in adapter "' . $adapterName . '". Expected "' . $expectedClassification . '", got "' . $nodeAggregate->getClassification() . '".'
+                'Node aggregate classifications do not match in adapter "' . $adapterName . '". Expected "' . $expectedClassification->value . '", got "' . $nodeAggregate->getClassification()->value . '".'
             );
         });
     }

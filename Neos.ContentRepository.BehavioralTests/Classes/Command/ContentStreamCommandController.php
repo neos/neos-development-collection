@@ -67,7 +67,7 @@ final class ContentStreamCommandController extends CommandController
             $rootNodeAggregateIdentifier,
             NodeTypeName::fromString('Neos.ContentRepository:Root'),
             $this->dimensionSpacePoints,
-            NodeAggregateClassification::root(),
+            NodeAggregateClassification::CLASSIFICATION_ROOT,
             UserIdentifier::forSystemUser()
         );
         $this->graphProjector->whenRootNodeAggregateWithNodeWasCreated($rootNodeAggregateWasCreated);
@@ -94,7 +94,7 @@ final class ContentStreamCommandController extends CommandController
                     $parentNodeAggregateIdentifier,
                     null,
                     SerializedPropertyValues::fromArray([]),
-                    NodeAggregateClassification::regular(),
+                    NodeAggregateClassification::CLASSIFICATION_REGULAR,
                     UserIdentifier::forSystemUser()
                 );
                 $this->graphProjector->whenNodeAggregateWithNodeWasCreated($nodeAggregateWasCreated);

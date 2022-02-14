@@ -226,11 +226,11 @@ trait ProjectedNodeTrait
      */
     public function iExpectThisNodeToBeClassifiedAs(string $serializedExpectedClassification): void
     {
-        $expectedClassification = NodeAggregateClassification::fromString($serializedExpectedClassification);
+        $expectedClassification = NodeAggregateClassification::from($serializedExpectedClassification);
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($expectedClassification) {
             Assert::assertTrue(
                 $expectedClassification->equals($currentNode->getClassification()),
-                'Node was expected to be classified as "' . $expectedClassification . '" but is as "' . $currentNode->getClassification() . '" in adapter "' . $adapterName . '"'
+                'Node was expected to be classified as "' . $expectedClassification->value . '" but is as "' . $currentNode->getClassification()->value . '" in adapter "' . $adapterName . '"'
             );
         });
     }

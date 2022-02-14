@@ -75,7 +75,7 @@ final class NodeFactory
             $nodeType,
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             new PropertyCollection(SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true)), $this->propertyConverter),
-            NodeAggregateClassification::fromString($nodeRow['classification']),
+            NodeAggregateClassification::from($nodeRow['classification']),
             $dimensionSpacePoint,
             $visibilityConstraints
         );
@@ -137,7 +137,7 @@ final class NodeFactory
         return new ContentProjection\NodeAggregate(
             current($nodesByOccupiedDimensionSpacePoints)->getContentStreamIdentifier(), // this line is safe because a nodeAggregate only exists if it at least contains one node.
             NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
-            NodeAggregateClassification::fromString($rawNodeAggregateClassification),
+            NodeAggregateClassification::from($rawNodeAggregateClassification),
             NodeTypeName::fromString($rawNodeTypeName),
             $rawNodeName ? NodeName::fromString($rawNodeName) : null,
             new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints),
@@ -178,7 +178,8 @@ final class NodeFactory
                 $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][] = $occupiedDimensionSpacePoint;
                 $nodeTypeNames[$rawNodeAggregateIdentifier] = $nodeTypeNames[$rawNodeAggregateIdentifier] ?? NodeTypeName::fromString($nodeRow['nodetypename']);
                 $nodeNames[$rawNodeAggregateIdentifier] = $nodeNames[$rawNodeAggregateIdentifier] ?? ($nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null);
-                $classificationByNodeAggregate[$rawNodeAggregateIdentifier] = $classificationByNodeAggregate[$rawNodeAggregateIdentifier] ?? NodeAggregateClassification::fromString($nodeRow['classification']);
+                $classificationByNodeAggregate[$rawNodeAggregateIdentifier] = $classificationByNodeAggregate[$rawNodeAggregateIdentifier]
+                    ?? NodeAggregateClassification::from($nodeRow['classification']);
             }
             // ... and coverage always ...
             $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['covereddimensionspacepoint']);

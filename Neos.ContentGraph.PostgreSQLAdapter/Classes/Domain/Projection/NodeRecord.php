@@ -80,7 +80,7 @@ final class NodeRecord
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromJsonString($databaseRow['properties']),
             NodeTypeName::fromString($databaseRow['nodetypename']),
-            NodeAggregateClassification::fromString($databaseRow['classification']),
+            NodeAggregateClassification::from($databaseRow['classification']),
             $databaseRow['nodename'] ? NodeName::fromString($databaseRow['nodename']) : null
         );
     }
@@ -96,7 +96,7 @@ final class NodeRecord
             'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
             'nodetypename' => (string) $this->nodeTypeName,
-            'classification' => (string) $this->classification,
+            'classification' => $this->classification->value,
             'properties' => json_encode($this->properties),
             'nodename' => (string) $this->nodeName
         ]);

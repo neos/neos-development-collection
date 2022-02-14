@@ -64,7 +64,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             $sourceNode->getNodeAggregateIdentifier(),
             $sourceNode->getNodeTypeName(),
             $sourceNode->getNodeName(),
-            NodeAggregateClassification::fromNode($sourceNode),
+            $sourceNode->getClassification(),
             $sourceNode->getProperties()->serialized(),
             NodeReferences::fromNodes($subgraph->findReferencedNodes($sourceNode->getNodeAggregateIdentifier())),
             $childNodes
@@ -189,11 +189,11 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             $childNodes[] = self::fromArray($childNode);
         }
 
-        return new static(
+        return new self(
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['nodeTypeName']),
             NodeName::fromString($array['nodeName']),
-            NodeAggregateClassification::fromString($array['nodeAggregateClassification']),
+            NodeAggregateClassification::from($array['nodeAggregateClassification']),
             SerializedPropertyValues::fromArray($array['propertyValues']),
             NodeReferences::fromArray($array['nodeReferences']),
             $childNodes
