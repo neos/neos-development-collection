@@ -51,7 +51,7 @@ class RemoveNode implements NodeBasedTransformationInterface
      */
     public function setStrategy(string $strategy): void
     {
-        $this->strategy = NodeVariantSelectionStrategyIdentifier::fromString($strategy);
+        $this->strategy = NodeVariantSelectionStrategyIdentifier::from($strategy);
     }
 
     /**
@@ -72,12 +72,12 @@ class RemoveNode implements NodeBasedTransformationInterface
     public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
     {
         if ($this->overriddenDimensionSpacePoint !== null && $this->strategy === null) {
-            $this->strategy = NodeVariantSelectionStrategyIdentifier::onlyGivenVariant();
+            $this->strategy = NodeVariantSelectionStrategyIdentifier::STRATEGY_ONLY_GIVEN_VARIANT;
         } elseif ($this->strategy === null) {
-            $this->strategy = NodeVariantSelectionStrategyIdentifier::virtualSpecializations();
+            $this->strategy = NodeVariantSelectionStrategyIdentifier::STRATEGY_VIRTUAL_SPECIALIZATIONS;
         }
 
-        if ($this->strategy->equals(NodeVariantSelectionStrategyIdentifier::allVariants())) {
+        if ($this->strategy === NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS) {
             throw new InvalidMigrationConfiguration('For RemoveNode, the strategy allVariants is not supported, as this would lead to nodes being deleted which might potentially not be matched by this filter.');
         }
 

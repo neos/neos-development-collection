@@ -392,7 +392,7 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
-                        NodeVariantSelectionStrategyIdentifier::virtualSpecializations(),
+                        NodeVariantSelectionStrategyIdentifier::STRATEGY_VIRTUAL_SPECIALIZATIONS,
                         UserIdentifier::forSystemUser()
                     )
                 )->blockUntilProjectionsAreUpToDate();

@@ -67,7 +67,7 @@ final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherCo
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             DimensionSpacePoint::instance($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy']),
+            NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }

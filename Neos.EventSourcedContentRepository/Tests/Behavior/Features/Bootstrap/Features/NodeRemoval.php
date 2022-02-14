@@ -62,7 +62,7 @@ trait NodeRemoval
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
             $coveredDimensionSpacePoint,
-            NodeVariantSelectionStrategyIdentifier::fromString($commandArguments['nodeVariantSelectionStrategy']),
+            NodeVariantSelectionStrategyIdentifier::from($commandArguments['nodeVariantSelectionStrategy']),
             $initiatingUserIdentifier
         );
 

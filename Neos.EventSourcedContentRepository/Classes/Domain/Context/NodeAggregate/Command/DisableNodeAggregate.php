@@ -61,13 +61,16 @@ final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherC
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    /**
+     * @param array<string,string|array> $array
+     */
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             DimensionSpacePoint::instance($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy']),
+            NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }

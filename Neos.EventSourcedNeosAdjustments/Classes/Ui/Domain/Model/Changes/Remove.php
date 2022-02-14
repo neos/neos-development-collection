@@ -84,7 +84,7 @@ class Remove extends AbstractChange
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getDimensionSpacePoint(),
-                NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS,
                 $this->getInitiatingUserIdentifier()
             );
             $closestDocumentParentNode = $this->closestDocumentParentNode($node);

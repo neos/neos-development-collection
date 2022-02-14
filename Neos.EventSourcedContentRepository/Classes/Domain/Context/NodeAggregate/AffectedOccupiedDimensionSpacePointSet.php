@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +10,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
@@ -22,8 +23,8 @@ use Neos\Flow\Annotations as Flow;
  * The set containing dimension space points
  * * occupied by a node aggregate
  * * and affected by a command
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class AffectedOccupiedDimensionSpacePointSet
 {
     public static function forStrategyIdentifier(
@@ -32,24 +33,19 @@ final class AffectedOccupiedDimensionSpacePointSet
         DimensionSpacePoint $referenceDimensionSpacePoint,
         InterDimensionalVariationGraph $variationGraph
     ): DimensionSpacePointSet {
-        switch ($identifier->getIdentifier()) {
-            case NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS:
-                return static::allVariants($nodeAggregate);
-            case NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS:
-                return static::allSpecializations(
-                    $nodeAggregate,
-                    $referenceDimensionSpacePoint,
-                    $variationGraph
-                );
-            case NodeVariantSelectionStrategyIdentifier::STRATEGY_VIRTUAL_SPECIALIZATIONS:
-                return static::virtualSpecializations(
-                    $nodeAggregate,
-                    $referenceDimensionSpacePoint
-                );
-            case NodeVariantSelectionStrategyIdentifier::STRATEGY_ONLY_GIVEN_VARIANT:
-            default:
-                return static::onlyGivenVariant($nodeAggregate, $referenceDimensionSpacePoint);
-        }
+        return match ($identifier) {
+            NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS => self::allVariants($nodeAggregate),
+            NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS => self::allSpecializations(
+                $nodeAggregate,
+                $referenceDimensionSpacePoint,
+                $variationGraph
+            ),
+            NodeVariantSelectionStrategyIdentifier::STRATEGY_VIRTUAL_SPECIALIZATIONS => self::virtualSpecializations(
+                $nodeAggregate,
+                $referenceDimensionSpacePoint
+            ),
+            default => self::onlyGivenVariant($nodeAggregate, $referenceDimensionSpacePoint),
+        };
     }
 
     /**

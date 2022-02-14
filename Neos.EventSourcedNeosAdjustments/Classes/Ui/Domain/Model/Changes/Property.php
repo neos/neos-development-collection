@@ -298,7 +298,7 @@ class Property extends AbstractChange
                                     $node->getContentStreamIdentifier(),
                                     $node->getNodeAggregateIdentifier(),
                                     $node->getOriginDimensionSpacePoint(),
-                                    NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                    NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS,
                                     $userIdentifier
                                 )
                             );
@@ -309,7 +309,7 @@ class Property extends AbstractChange
                                     $node->getContentStreamIdentifier(),
                                     $node->getNodeAggregateIdentifier(),
                                     $node->getOriginDimensionSpacePoint(),
-                                    NodeVariantSelectionStrategyIdentifier::allSpecializations(),
+                                    NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS,
                                     $userIdentifier
                                 )
                             );
