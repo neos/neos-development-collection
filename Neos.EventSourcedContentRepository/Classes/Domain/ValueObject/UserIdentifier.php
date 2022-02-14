@@ -1,9 +1,7 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,30 +10,39 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
-/**
- * User Identifier
- * @Flow\Proxy(false)
- */
-final class UserIdentifier implements \JsonSerializable
+#[Flow\Proxy(false)]
+final class UserIdentifier implements \JsonSerializable, \Stringable
 {
     const SYSTEM_USER_IDENTIFIER = 'system';
 
     /**
-     * @var string
+     * @var array<string,self>
      */
-    private $value;
+    private static array $instances;
 
-    private function __construct(string $value)
+    private function __construct(
+        public readonly string $value
+    ) {}
+
+    public static function instance(string $value): self
     {
-        $this->value = $value;
+        if (!isset(self::$instances[$value])) {
+            self::$instances[$value] = new self($value);
+        }
+
+        return self::$instances[$value];
     }
 
     public static function create(): self
     {
-        return new static(Algorithms::generateUUID());
+        return self::instance(Algorithms::generateUUID());
     }
 
     /**
@@ -43,17 +50,14 @@ final class UserIdentifier implements \JsonSerializable
      */
     public static function forSystemUser(): self
     {
-        return new static(self::SYSTEM_USER_IDENTIFIER);
+        return self::instance(self::SYSTEM_USER_IDENTIFIER);
     }
 
     public static function fromString(string $value): self
     {
-        return new static($value);
+        return self::instance($value);
     }
 
-    /**
-     * @return bool
-     */
     public function isSystemUser(): bool
     {
         return $this->value === self::SYSTEM_USER_IDENTIFIER;
