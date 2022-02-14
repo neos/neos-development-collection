@@ -116,16 +116,10 @@ trait NodeTypeChange
             $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $newNodeType, $nodeAggregate->getNodeName(), [$parentNodeAggregate->getIdentifier()]);
         }
 
-        switch ($command->getStrategy()->getStrategy()) {
-            case NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPYPATH:
-                $this->requireConstraintsImposedByHappyPathStrategyAreMet($nodeAggregate, $newNodeType);
-                break;
-            case NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE:
-                // no further constraints need to be satisfied in the delete case
-                break;
-            default:
-                throw new \RuntimeException('new strategy type "' . $command->getStrategy()->getStrategy() . '" - should never be thrown.');
-        }
+        match ($command->getStrategy()) {
+            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH => $this->requireConstraintsImposedByHappyPathStrategyAreMet($nodeAggregate, $newNodeType),
+            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE => null
+        };
 
         /**************
          * Preparation - make the command fully deterministic in case of rebase
@@ -152,7 +146,7 @@ trait NodeTypeChange
             );
 
             // remove disallowed nodes
-            if ($command->getStrategy()->getStrategy() === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
+            if ($command->getStrategy() === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
                 $events = $events->appendEvents($this->deleteDisallowedNodesWhenChangingNodeType($nodeAggregate, $newNodeType, $command->getInitiatingUserIdentifier()));
                 $events = $events->appendEvents($this->deleteObsoleteTetheredNodesWhenChangingNodeType($nodeAggregate, $newNodeType, $command->getInitiatingUserIdentifier()));
             }

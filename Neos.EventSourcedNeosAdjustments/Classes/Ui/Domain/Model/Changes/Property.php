@@ -287,7 +287,7 @@ class Property extends AbstractChange
                                 $node->getContentStreamIdentifier(),
                                 $node->getNodeAggregateIdentifier(),
                                 NodeTypeName::fromString($value),
-                                NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete(),
+                                NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE,
                                 $userIdentifier
                             )
                         );

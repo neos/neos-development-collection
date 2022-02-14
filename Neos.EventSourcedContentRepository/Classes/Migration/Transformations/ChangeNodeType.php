@@ -46,7 +46,7 @@ class ChangeNodeType implements NodeAggregateBasedTransformationInterface
     {
         $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
         // by default, we won't delete anything.
-        $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::happypath();
+        $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH;
     }
 
     /**
@@ -60,11 +60,9 @@ class ChangeNodeType implements NodeAggregateBasedTransformationInterface
 
     public function setForceDeleteNonMatchingChildren(bool $forceDeleteNonMatchingChildren)
     {
-        if ($forceDeleteNonMatchingChildren) {
-            $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::delete();
-        } else {
-            $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::happypath();
-        }
+        $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = $forceDeleteNonMatchingChildren
+            ? NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE
+            : NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH;
     }
 
     public function execute(ReadableNodeAggregateInterface $nodeAggregate, ContentStreamIdentifier $contentStreamForWriting): CommandResult

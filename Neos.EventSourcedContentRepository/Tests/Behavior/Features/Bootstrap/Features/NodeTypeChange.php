@@ -57,7 +57,7 @@ trait NodeTypeChange
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
             NodeTypeName::fromString($commandArguments['newNodeTypeName']),
-            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::fromString($commandArguments['strategy']),
+            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::from($commandArguments['strategy']),
             $initiatingUserIdentifier,
             $tetheredDescendantNodeAggregateIdentifiers
         );

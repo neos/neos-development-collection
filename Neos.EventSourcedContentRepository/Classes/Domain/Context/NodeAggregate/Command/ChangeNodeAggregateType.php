@@ -18,7 +18,6 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
@@ -67,7 +66,6 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
     /**
      * @param array $array
      * @return ChangeNodeAggregateType
-     * @throws NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown
      */
     public static function fromArray(array $array): self
     {
@@ -75,7 +73,7 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['newNodeTypeName']),
-            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::fromString($array['strategy']),
+            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::from($array['strategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             isset($array['tetheredDescendantNodeAggregateIdentifiers'])
                 ? NodeAggregateIdentifiersByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIdentifiers'])
