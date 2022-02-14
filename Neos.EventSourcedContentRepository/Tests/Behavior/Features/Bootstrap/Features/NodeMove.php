@@ -63,9 +63,9 @@ trait NodeMove
         $newSucceedingSiblingNodeAggregateIdentifier = isset($commandArguments['newSucceedingSiblingNodeAggregateIdentifier'])
             ? NodeAggregateIdentifier::fromString($commandArguments['newSucceedingSiblingNodeAggregateIdentifier'])
             : null;
-        $relationDistributionStrategy = isset($commandArguments['relationDistributionStrategy'])
-            ? RelationDistributionStrategy::fromString($commandArguments['relationDistributionStrategy'])
-            : RelationDistributionStrategy::gatherAll();
+        $relationDistributionStrategy = RelationDistributionStrategy::fromString(
+            $commandArguments['relationDistributionStrategy'] ?? null
+        );
         $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
             ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
             : $this->getCurrentUserIdentifier();

@@ -74,9 +74,9 @@ class MoveBefore extends AbstractStructuralChange
                     $subject->getDimensionSpacePoint(),
                     $subject->getNodeAggregateIdentifier(),
                     $hasEqualParentNode ? null : $this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier(),
-                    $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
+                    $precedingSibling?->getNodeAggregateIdentifier(),
                     $succeedingSibling->getNodeAggregateIdentifier(),
-                    RelationDistributionStrategy::gatherAll(),
+                    RelationDistributionStrategy::STRATEGY_GATHER_ALL,
                     $this->getInitiatingUserIdentifier()
                 )
             )->blockUntilProjectionsAreUpToDate();

@@ -237,19 +237,13 @@ trait NodeMove
         RelationDistributionStrategy $relationDistributionStrategy,
         DimensionSpace\DimensionSpacePoint $referenceDimensionSpacePoint
     ): DimensionSpacePointSet {
-        switch ($relationDistributionStrategy->getStrategy()) {
-            case RelationDistributionStrategy::STRATEGY_SCATTER:
-                return new DimensionSpacePointSet([$referenceDimensionSpacePoint]);
-                break;
-            case RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS:
-                return $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection(
-                    $this->getInterDimensionalVariationGraph()->getSpecializationSet($referenceDimensionSpacePoint)
-                );
-                break;
-            case RelationDistributionStrategy::STRATEGY_GATHER_ALL:
-            default:
-                return $nodeAggregate->getCoveredDimensionSpacePoints();
-        }
+        return match ($relationDistributionStrategy) {
+            RelationDistributionStrategy::STRATEGY_SCATTER => new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
+            RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS => $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection(
+                $this->getInterDimensionalVariationGraph()->getSpecializationSet($referenceDimensionSpacePoint)
+            ),
+            default => $nodeAggregate->getCoveredDimensionSpacePoints(),
+        };
     }
 
     /**

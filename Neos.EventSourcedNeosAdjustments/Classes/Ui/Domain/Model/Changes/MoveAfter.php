@@ -75,7 +75,7 @@ class MoveAfter extends AbstractStructuralChange
                 $hasEqualParentNode ? null : $parentNodeOfPreviousSibling->getNodeAggregateIdentifier(),
                 $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
                 $succeedingSibling ? $succeedingSibling->getNodeAggregateIdentifier() : null,
-                RelationDistributionStrategy::gatherAll(),
+                RelationDistributionStrategy::STRATEGY_GATHER_ALL,
                 $this->getInitiatingUserIdentifier()
             );
 

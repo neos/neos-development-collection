@@ -115,7 +115,7 @@ class MoveInto extends AbstractStructuralChange
                     $hasEqualParentNode ? null : $parentNode->getNodeAggregateIdentifier(),
                     null,
                     null,
-                    RelationDistributionStrategy::gatherAll(),
+                    RelationDistributionStrategy::STRATEGY_GATHER_ALL,
                     $this->getInitiatingUserIdentifier()
                 )
             )->blockUntilProjectionsAreUpToDate();
