@@ -76,7 +76,7 @@ class EmulatedLegacyContext
 
         $workspaceName = $this->getNodeAddressOfContextNode()->getWorkspaceName();
         if ($workspaceName) {
-            return $workspaceName->getName();
+            return $workspaceName->name;
         }
         return null;
     }

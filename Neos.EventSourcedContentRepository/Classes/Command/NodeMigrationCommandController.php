@@ -63,7 +63,7 @@ class NodeMigrationCommandController extends CommandController
                 $this->quit(1);
             }
 
-            $command = new ExecuteMigration($migrationConfiguration, new WorkspaceName($workspace));
+            $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::instance($workspace));
             $this->migrationCommandHandler->handleExecuteMigration($command);
             $this->outputLine();
             $this->outputLine('Successfully applied migration.');

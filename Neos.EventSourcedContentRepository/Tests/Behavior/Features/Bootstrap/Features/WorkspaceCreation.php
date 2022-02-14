@@ -52,7 +52,7 @@ trait WorkspaceCreation
             : $this->getCurrentUserIdentifier();
 
         $command = new CreateRootWorkspace(
-            new WorkspaceName($commandArguments['workspaceName']),
+            WorkspaceName::instance($commandArguments['workspaceName']),
             new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
             new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
             $userIdentifier,
@@ -91,8 +91,8 @@ trait WorkspaceCreation
             : $this->getCurrentUserIdentifier();
 
         $command = new CreateWorkspace(
-            new WorkspaceName($commandArguments['workspaceName']),
-            new WorkspaceName($commandArguments['baseWorkspaceName']),
+            WorkspaceName::instance($commandArguments['workspaceName']),
+            WorkspaceName::instance($commandArguments['baseWorkspaceName']),
             new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
             new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
             $userIdentifier,
@@ -122,7 +122,7 @@ trait WorkspaceCreation
             : ContentStreamIdentifier::create();
 
         $command = RebaseWorkspace::createFullyDeterministic(
-            new WorkspaceName($commandArguments['workspaceName']),
+            WorkspaceName::instance($commandArguments['workspaceName']),
             $userIdentifier,
             $rebasedContentStreamIdentifier,
         );

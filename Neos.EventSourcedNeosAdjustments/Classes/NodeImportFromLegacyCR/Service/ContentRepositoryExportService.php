@@ -543,7 +543,7 @@ class ContentRepositoryExportService
     {
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:live');
         $event = new RootWorkspaceWasCreated(
-            new WorkspaceName('live'),
+            WorkspaceName::forLive(),
             new WorkspaceTitle('Live'),
             new WorkspaceDescription(''),
             UserIdentifier::forSystemUser(),

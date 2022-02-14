@@ -245,7 +245,7 @@ class WorkspacesController extends AbstractModuleController
         //    $this->redirect('new');
         //}
 
-        $workspaceName = new WorkspaceName(Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5));
+        $workspaceName = WorkspaceName::instance(Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5));
         while ($this->workspaceFinder->findOneByName($workspaceName) instanceof Workspace) {
             $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5);
         }
@@ -505,7 +505,7 @@ class WorkspacesController extends AbstractModuleController
                 $this->getCurrentUserIdentifier()
             )
         )->blockUntilProjectionsAreUpToDate();
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getWorkspaceName()->getName()), htmlspecialchars($baseWorkspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getWorkspaceName()->name), htmlspecialchars($baseWorkspace->getWorkspaceName()->name)], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
 
@@ -523,7 +523,7 @@ class WorkspacesController extends AbstractModuleController
             )
         )->blockUntilProjectionsAreUpToDate();
 
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getName())], null, null, 'Modules', 'Neos.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->name)], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
 

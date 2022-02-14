@@ -303,7 +303,7 @@ class BackendServiceController extends ActionController
     public function changeBaseWorkspaceAction(string $targetWorkspaceName, NodeInterface $documentNode)
     {
         try {
-            $targetWorkspace = $this->workspaceFinder->findOneByName(new WorkspaceName($targetWorkspaceName));
+            $targetWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::instance($targetWorkspaceName));
             $currentAccount = $this->securityContext->getAccount();
             $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
             $userWorkspace = $this->workspaceFinder->findOneByName($workspaceName);

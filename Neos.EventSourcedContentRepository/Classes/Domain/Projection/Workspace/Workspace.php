@@ -152,15 +152,12 @@ class Workspace
      */
     public function getBaseWorkspaceName(): ?WorkspaceName
     {
-        return $this->baseWorkspaceName ? new WorkspaceName($this->baseWorkspaceName) : null;
+        return $this->baseWorkspaceName ? WorkspaceName::instance($this->baseWorkspaceName) : null;
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): WorkspaceName
     {
-        return new WorkspaceName($this->workspaceName);
+        return WorkspaceName::instance($this->workspaceName);
     }
 
     public function getWorkspaceTitle(): WorkspaceTitle

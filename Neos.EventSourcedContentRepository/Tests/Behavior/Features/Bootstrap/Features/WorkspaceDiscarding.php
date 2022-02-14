@@ -48,7 +48,7 @@ trait WorkspaceDiscarding
             : ContentStreamIdentifier::create();
 
         $command = DiscardWorkspace::createFullyDeterministic(
-            new WorkspaceName($commandArguments['workspaceName']),
+            WorkspaceName::instance($commandArguments['workspaceName']),
             $initiatingUserIdentifier,
             $newContentStreamIdentifier
         );
@@ -77,7 +77,7 @@ trait WorkspaceDiscarding
             : ContentStreamIdentifier::create();
 
         $command = DiscardIndividualNodesFromWorkspace::createFullyDeterministic(
-            new WorkspaceName($commandArguments['workspaceName']),
+            WorkspaceName::instance($commandArguments['workspaceName']),
             $nodeAddresses,
             $initiatingUserIdentifier,
             $newContentStreamIdentifier

@@ -92,7 +92,7 @@ class ContextOperation extends AbstractOperation
             }
 
             if (array_key_exists('workspaceName', $targetContext)) {
-                $workspaceName = new WorkspaceName($targetContext['workspaceName']);
+                $workspaceName = WorkspaceName::instance($targetContext['workspaceName']);
                 $workspace = $this->workspaceFinder->findOneByName($workspaceName);
 
                 $nodeAccessor = $this->nodeAccessorManager->accessorFor($workspace->getCurrentContentStreamIdentifier(), $nodeAccessor->getDimensionSpacePoint(), $visibilityConstraints);
