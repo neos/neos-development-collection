@@ -89,7 +89,7 @@ class AfxServiceTest extends TestCase
     {
         $afxCode = '<h1></h1><p></p><p></p>';
         $expectedFusion = <<<'EOF'
-            Neos.Fusion:Array {
+            Neos.Fusion:Join {
                 item_1 = Neos.Fusion:Tag {
                     tagName = 'h1'
                 }
@@ -111,7 +111,7 @@ class AfxServiceTest extends TestCase
     {
         $afxCode = 'Foo<h1></h1>Bar<p></p>Baz';
         $expectedFusion = <<<'EOF'
-            Neos.Fusion:Array {
+            Neos.Fusion:Join {
                 item_1 = 'Foo'
                 item_2 = Neos.Fusion:Tag {
                     tagName = 'h1'
@@ -133,7 +133,7 @@ class AfxServiceTest extends TestCase
     {
         $afxCode = '  <h1></h1><p></p>  ';
         $expectedFusion = <<<'EOF'
-            Neos.Fusion:Array {
+            Neos.Fusion:Join {
                 item_1 = Neos.Fusion:Tag {
                     tagName = 'h1'
                 }
@@ -152,7 +152,7 @@ class AfxServiceTest extends TestCase
     {
         $afxCode = '<h1></h1><p></p><p></p>';
         $expectedFusion = <<<'EOF'
-            Neos.Fusion:Array {
+            Neos.Fusion:Join {
                 item_1 = Neos.Fusion:Tag {
                     tagName = 'h1'
                 }
@@ -478,7 +478,7 @@ EOF;
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = Neos.Fusion:Array {
+                content = Neos.Fusion:Join {
                     item_1 = Neos.Fusion:Tag {
                         tagName = 'strong'
                         content = 'foo'
@@ -511,7 +511,7 @@ EOF;
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = Neos.Fusion:Array {
+                content = Neos.Fusion:Join {
                     item_1 = Neos.Fusion:Tag {
                         tagName = 'strong'
                         content = 'foo'
@@ -535,7 +535,7 @@ EOF;
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = Neos.Fusion:Array {
+                content = Neos.Fusion:Join {
                     key_one = Neos.Fusion:Tag {
                         tagName = 'strong'
                         content = 'foo'
@@ -559,7 +559,7 @@ EOF;
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = Neos.Fusion:Array {
+                content = Neos.Fusion:Join {
                     item_1 = 'a string'
                     item_2 = Neos.Fusion:Tag {
                         tagName = 'strong'
@@ -624,7 +624,7 @@ EOF;
                 propTwo = Vendor.Site:Prototype {
                     content = 'bar'
                 }
-                content = Neos.Fusion:Array {
+                content = Neos.Fusion:Join {
                     item_1 = Neos.Fusion:Tag {
                         tagName = 'div'
                         content = 'a tag'
@@ -673,7 +673,7 @@ EOF;
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = Neos.Fusion:Array {
+                content = Neos.Fusion:Join {
                     item_1 = ${eelExpression1}
                     item_2 = ${eelExpression2}
                     item_3 = ${eelExpression3}
@@ -695,7 +695,7 @@ EOF;
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = Neos.Fusion:Array {
+                content = Neos.Fusion:Join {
                     item_1 = ${eelExpression1}
                     item_2 = ' '
                     item_3 = ${eelExpression2}
@@ -717,7 +717,7 @@ EOF;
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = Neos.Fusion:Array {
+                content = Neos.Fusion:Join {
                     item_1 = 'String '
                     item_2 = ${eelExpression}
                     item_3 = ' String'
@@ -754,7 +754,7 @@ EOF;
                 stringBefore = 'string'
                 expressionBefore = ${expression}
                 @apply.spread_1 = ${spreadExpression}
-                @apply.spread_2 = Neos.Fusion:RawArray {
+                @apply.spread_2 = Neos.Fusion:DataStructure {
                     stringAfter = 'string'
                     expressionAfter = ${expression}
                 }
@@ -795,7 +795,7 @@ EOF;
                 attributes.stringBefore = 'string'
                 attributes.expressionBefore = ${expression}
                 attributes.@apply.spread_1 = ${spreadExpression}
-                attributes.@apply.spread_2 = Neos.Fusion:RawArray {
+                attributes.@apply.spread_2 = Neos.Fusion:DataStructure {
                     stringAfter = 'string'
                     expressionAfter = ${expression}
                 }
@@ -852,7 +852,7 @@ EOF;
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = Neos.Fusion:Array {
+                content = Neos.Fusion:Join {
                     item_1 = 'Example'
                     item_2 = 'Content'
                 }

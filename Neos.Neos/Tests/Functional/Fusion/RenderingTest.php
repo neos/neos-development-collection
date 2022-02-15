@@ -49,10 +49,10 @@ class RenderingTest extends AbstractNodeTest
     public function debugModeSettingWorks(): void
     {
         $output = $this->simulateRendering(null, true);
-        self::assertStringContainsString('<!-- Beginning to render TS path', $output);
+        self::assertStringContainsString('<!-- Beginning to render Fusion path', $output);
 
         $output = $this->simulateRendering();
-        $this->assertStringNotContainsString('<!-- Beginning to render TS path', $output);
+        $this->assertStringNotContainsString('<!-- Beginning to render Fusion path', $output);
     }
 
     /**

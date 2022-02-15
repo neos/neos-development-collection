@@ -65,6 +65,6 @@ To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.x
 To switch the branch you intend to work on:
 ``git checkout 7.1 && composer update``
 
-.. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 4.3 currently), or master for new features.
+.. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 5.3 currently), or master for new features.
 
 For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
