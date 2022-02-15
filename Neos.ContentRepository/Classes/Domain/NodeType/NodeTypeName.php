@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Domain\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +10,10 @@ namespace Neos\ContentRepository\Domain\NodeType;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Domain\NodeType;
+
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -21,27 +22,34 @@ use Neos\Flow\Annotations as Flow;
  * @Flow\Proxy(false)
  * @api
  */
-final class NodeTypeName implements \JsonSerializable
+final class NodeTypeName implements \JsonSerializable, \Stringable
 {
     const ROOT_NODE_TYPE_NAME = 'Neos.ContentRepository:Root';
 
     /**
-     * @var string
+     * @var array<string,self>
      */
-    private $value;
+    private static array $instances;
 
-    private function __construct(string $value)
+    private function __construct(
+        private string $value
+    ) {}
+
+    public static function instance(string $value): self
     {
         if ($value === '') {
             throw new \InvalidArgumentException('Node type name must not be empty.', 1505835958);
         }
+        if (!isset(self::$instances[$value])) {
+            self::$instances[$value] = new self($value);
+        }
 
-        $this->value = $value;
+        return self::$instances[$value];
     }
 
     public static function fromString(string $value): self
     {
-        return new static($value);
+        return self::instance($value);
     }
 
     public function getValue(): string
@@ -49,9 +57,9 @@ final class NodeTypeName implements \JsonSerializable
         return $this->value;
     }
 
-    public function equals(NodeTypeName $other): bool
+    public function equals(self $other): bool
     {
-        return $this->value === $other->getValue();
+        return $this === $other;
     }
 
     public function jsonSerialize(): string
@@ -59,7 +67,7 @@ final class NodeTypeName implements \JsonSerializable
         return $this->value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }
