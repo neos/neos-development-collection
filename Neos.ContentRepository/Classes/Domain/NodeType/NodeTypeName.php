@@ -33,7 +33,8 @@ final class NodeTypeName implements \JsonSerializable, \Stringable
 
     private function __construct(
         private string $value
-    ) {}
+    ) {
+    }
 
     public static function instance(string $value): self
     {
