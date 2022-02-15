@@ -99,7 +99,7 @@ class NodeRecord
             'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
             'nodetypename' => (string) $this->nodeTypeName,
-            'classification' => (string) $this->classification
+            'classification' => $this->classification->value
         ]);
     }
 
@@ -117,7 +117,7 @@ class NodeRecord
                 'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
                 'nodetypename' => (string) $this->nodeTypeName,
-                'classification' => (string) $this->classification
+                'classification' => $this->classification->value
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint

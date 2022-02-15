@@ -49,6 +49,11 @@ final class WorkspaceName implements \JsonSerializable, CacheAwareInterface, \St
         return self::$instances[$name];
     }
 
+    public static function fromString(string $value): self
+    {
+        return self::instance($value);
+    }
+
     public static function forLive(): self
     {
         return self::instance(self::WORKSPACE_NAME_LIVE);
