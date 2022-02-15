@@ -39,7 +39,7 @@ final class NodeTypeName implements \JsonSerializable, \Stringable
         }
     }
 
-    public static function instance(string $value): self
+    private static function instance(string $value): self
     {
         return self::$instances[$value] ??= new self($value);
     }
