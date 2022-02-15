@@ -128,7 +128,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
     /**
      * Replace the target attribute of link tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
-     * Additionally set rel="noopener" for external links.
+     * Additionally set rel="noopener external" for external links.
      *
      * @param string $processedContent
      * @return string
