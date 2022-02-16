@@ -25,7 +25,7 @@ final class UserIdentifier implements \JsonSerializable, \Stringable
     /**
      * @var array<string,self>
      */
-    private static array $instances;
+    private static array $instances = [];
 
     private function __construct(
         public readonly string $value
@@ -33,11 +33,7 @@ final class UserIdentifier implements \JsonSerializable, \Stringable
 
     public static function instance(string $value): self
     {
-        if (!isset(self::$instances[$value])) {
-            self::$instances[$value] = new self($value);
-        }
-
-        return self::$instances[$value];
+        return self::$instances[$value] ??= new self($value);
     }
 
     public static function create(): self

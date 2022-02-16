@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -30,23 +30,19 @@ final class WorkspaceName implements \JsonSerializable, CacheAwareInterface, \St
     /**
      * @var array<string,self>
      */
-    private static array $instances;
+    private static array $instances = [];
 
     private function __construct(
         public readonly string $name
-    ) {}
-
-    public static function instance(string $name): self
-    {
+    ) {
         if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $name) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
         }
+    }
 
-        if (!isset(self::$instances[$name])) {
-            self::$instances[$name] = new self($name);
-        }
-
-        return self::$instances[$name];
+    public static function instance(string $name): self
+    {
+        return self::$instances[$name] ??= new self($name);
     }
 
     public static function fromString(string $value): self
