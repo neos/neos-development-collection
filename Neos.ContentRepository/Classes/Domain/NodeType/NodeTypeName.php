@@ -29,22 +29,19 @@ final class NodeTypeName implements \JsonSerializable, \Stringable
     /**
      * @var array<string,self>
      */
-    private static array $instances;
+    private static array $instances = [];
 
     private function __construct(
         private string $value
-    ) {}
-
-    public static function instance(string $value): self
-    {
+    ) {
         if ($value === '') {
             throw new \InvalidArgumentException('Node type name must not be empty.', 1505835958);
         }
-        if (!isset(self::$instances[$value])) {
-            self::$instances[$value] = new self($value);
-        }
+    }
 
-        return self::$instances[$value];
+    public static function instance(string $value): self
+    {
+        return self::$instances[$value] ??= new self($value);
     }
 
     public static function fromString(string $value): self
