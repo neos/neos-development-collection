@@ -23,12 +23,12 @@ use Neos\Flow\Annotations as Flow;
  * a central concept in the Event-Sourced CR introduced with Neos 5.0.
  */
 #[Flow\Proxy(false)]
-final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInterface
+final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInterface, \Stringable
 {
     /**
      * @var array<string,self>
      */
-    private static array $instances;
+    private static array $instances = [];
 
     private function __construct(
         private string $value
@@ -36,11 +36,7 @@ final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInte
 
     public static function instance(string $value): self
     {
-        if (!isset(self::$instances[$value])) {
-            self::$instances[$value] = new self($value);
-        }
-
-        return self::$instances[$value];
+        return self::$instances[$value] ??= new self($value);
     }
 
     public static function fromString(string $value): self
