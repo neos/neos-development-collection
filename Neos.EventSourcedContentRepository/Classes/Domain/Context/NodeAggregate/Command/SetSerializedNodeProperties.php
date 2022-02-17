@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +10,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
+
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonSetNodePropertiesTrait;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
@@ -26,29 +27,21 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * Set property values for a given node (internal implementation).
  *
  * The property values contain the serialized types already, and include type information.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class SetSerializedNodeProperties implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-    use CommonSetNodePropertiesTrait;
-
-    private SerializedPropertyValues $propertyValues;
-
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        SerializedPropertyValues $propertyValues,
-        UserIdentifier $initiatingUserIdentifier
-    ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->propertyValues = $propertyValues;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-    }
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public readonly SerializedPropertyValues $propertyValues,
+        public readonly UserIdentifier $initiatingUserIdentifier
+    ) {}
 
+    /**
+     * @param array<string,mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(
@@ -61,16 +54,8 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
     }
 
     /**
-     * @return SerializedPropertyValues
      * @internal
-     */
-    public function getPropertyValues(): SerializedPropertyValues
-    {
-        return $this->propertyValues;
-    }
-
-    /**
-     * @internal
+     * @return array<string,mixed>
      */
     public function jsonSerialize(): array
     {
@@ -97,9 +82,9 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-            && $this->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+            $this->contentStreamIdentifier === $nodeAddress->getContentStreamIdentifier()
+                && $this->originDimensionSpacePoint === $nodeAddress->getDimensionSpacePoint()
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }
 }

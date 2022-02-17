@@ -47,21 +47,21 @@ trait NodeModification
     public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
     {
         $nodeTypeName = $this->contentGraph->findNodeAggregateByIdentifier(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier()
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier
         )->getNodeTypeName();
 
-        $this->validateProperties($command->getPropertyValues(), $nodeTypeName);
+        $this->validateProperties($command->propertyValues, $nodeTypeName);
 
         $lowLevelCommand = new SetSerializedNodeProperties(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier(),
-            $command->getOriginDimensionSpacePoint(),
+            $command->contentStreamIdentifier,
+            $command->nodeAggregateIdentifier,
+            $command->originDimensionSpacePoint,
             $this->getPropertyConverter()->serializePropertyValues(
-                $command->getPropertyValues(),
+                $command->propertyValues,
                 $this->requireNodeType($nodeTypeName)
             ),
-            $command->getInitiatingUserIdentifier()
+            $command->initiatingUserIdentifier
         );
 
         return $this->handleSetSerializedNodeProperties($lowLevelCommand);
@@ -73,27 +73,25 @@ trait NodeModification
 
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
             // Check if node exists
-            $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-            $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getOriginDimensionSpacePoint());
+            $nodeAggregate = $this->requireProjectedNodeAggregate($command->contentStreamIdentifier, $command->nodeAggregateIdentifier);
+            $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
 
             $events = DomainEvents::withSingleEvent(
                 DecoratedEvent::addIdentifier(
                     new NodePropertiesWereSet(
-                        $contentStreamIdentifier,
-                        $command->getNodeAggregateIdentifier(),
-                        $command->getOriginDimensionSpacePoint(),
-                        $command->getPropertyValues(),
-                        $command->getInitiatingUserIdentifier()
+                        $command->contentStreamIdentifier,
+                        $command->nodeAggregateIdentifier,
+                        $command->originDimensionSpacePoint,
+                        $command->propertyValues,
+                        $command->initiatingUserIdentifier
                     ),
                     Uuid::uuid4()->toString()
                 )
             );
 
             $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)->getEventStreamName(),
                 $events
             );
         });
