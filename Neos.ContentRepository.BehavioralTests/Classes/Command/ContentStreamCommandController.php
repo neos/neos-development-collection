@@ -89,7 +89,7 @@ final class ContentStreamCommandController extends CommandController
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     NodeTypeName::fromString('Neos.ContentRepository:Testing'),
-                    OriginDimensionSpacePoint::instance(['language' => 'mul']),
+                    OriginDimensionSpacePoint::fromArray(['language' => 'mul']),
                     $this->dimensionSpacePoints,
                     $parentNodeAggregateIdentifier,
                     null,

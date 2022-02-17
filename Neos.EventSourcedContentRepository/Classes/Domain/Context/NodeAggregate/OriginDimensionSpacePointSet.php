@@ -44,7 +44,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
         $this->points = [];
         foreach ($points as $index => $point) {
             if (is_array($point)) {
-                $point = OriginDimensionSpacePoint::instance($point);
+                $point = OriginDimensionSpacePoint::fromArray($point);
             }
 
             if (!$point instanceof OriginDimensionSpacePoint) {
@@ -69,7 +69,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     {
         $dimensionSpacePoints = [];
         foreach (json_decode($jsonString, true) as $coordinates) {
-            $dimensionSpacePoints[] = OriginDimensionSpacePoint::instance($coordinates);
+            $dimensionSpacePoints[] = OriginDimensionSpacePoint::fromArray($coordinates);
         }
 
         return new self($dimensionSpacePoints);
