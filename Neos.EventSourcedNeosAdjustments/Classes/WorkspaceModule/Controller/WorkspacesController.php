@@ -245,7 +245,7 @@ class WorkspacesController extends AbstractModuleController
         //    $this->redirect('new');
         //}
 
-        $workspaceName = WorkspaceName::instance(Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5));
+        $workspaceName = WorkspaceName::fromString(Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5));
         while ($this->workspaceFinder->findOneByName($workspaceName) instanceof Workspace) {
             $workspaceName = Utility::renderValidNodeName($title) . '-' . substr(base_convert(microtime(false), 10, 36), -5, 5);
         }

@@ -79,7 +79,7 @@ class MigrationCommandHandler
             $contentStreamForWriting = $command->getOrCreateContentStreamIdentifierForWriting($step);
             $this->contentStreamCommandHandler->handleCreateWorkspace(
                 new CreateWorkspace(
-                    WorkspaceName::instance($contentStreamForWriting->jsonSerialize()),
+                    WorkspaceName::fromString($contentStreamForWriting->jsonSerialize()),
                     $workspace->getWorkspaceName(),
                     WorkspaceTitle::fromString($contentStreamForWriting->jsonSerialize()),
                     WorkspaceDescription::fromString(''),

@@ -152,12 +152,12 @@ class Workspace
      */
     public function getBaseWorkspaceName(): ?WorkspaceName
     {
-        return $this->baseWorkspaceName ? WorkspaceName::instance($this->baseWorkspaceName) : null;
+        return $this->baseWorkspaceName ? WorkspaceName::fromString($this->baseWorkspaceName) : null;
     }
 
     public function getWorkspaceName(): WorkspaceName
     {
-        return WorkspaceName::instance($this->workspaceName);
+        return WorkspaceName::fromString($this->workspaceName);
     }
 
     public function getWorkspaceTitle(): WorkspaceTitle

@@ -265,9 +265,9 @@ trait EventSourcedTrait
      */
     public function workspacesPointToDifferentContentStreams(string $rawWorkspaceNameA, string $rawWorkspaceNameB): void
     {
-        $workspaceA = $this->workspaceFinder->findOneByName(WorkspaceName::instance($rawWorkspaceNameA));
+        $workspaceA = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($rawWorkspaceNameA));
         Assert::assertInstanceOf(Workspace::class, $workspaceA, 'Workspace "' . $rawWorkspaceNameA . '" does not exist.');
-        $workspaceB = $this->workspaceFinder->findOneByName(WorkspaceName::instance($rawWorkspaceNameB));
+        $workspaceB = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($rawWorkspaceNameB));
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
@@ -283,7 +283,7 @@ trait EventSourcedTrait
      */
     public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamIdentifier)
     {
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::instance($rawWorkspaceName));
+        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
 
         Assert::assertNotEquals($rawContentStreamIdentifier, (string)$workspace->getCurrentContentStreamIdentifier());
     }

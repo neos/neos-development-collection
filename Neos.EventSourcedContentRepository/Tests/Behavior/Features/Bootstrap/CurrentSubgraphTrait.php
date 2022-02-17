@@ -70,7 +70,7 @@ trait CurrentSubgraphTrait
      */
     public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
     {
-        $workspaceName = WorkspaceName::instance($workspaceName);
+        $workspaceName = WorkspaceName::fromString($workspaceName);
         $workspace = $this->getWorkspaceFinder()->findOneByName($workspaceName);
         if ($workspace === null) {
             throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);

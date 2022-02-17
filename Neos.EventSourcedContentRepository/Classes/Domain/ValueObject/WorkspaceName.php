@@ -40,7 +40,7 @@ final class WorkspaceName implements \JsonSerializable, CacheAwareInterface, \St
         }
     }
 
-    public static function instance(string $name): self
+    private static function instance(string $name): self
     {
         return self::$instances[$name] ??= new self($name);
     }

@@ -31,7 +31,7 @@ final class UserIdentifier implements \JsonSerializable, \Stringable
         public readonly string $value
     ) {}
 
-    public static function instance(string $value): self
+    private static function instance(string $value): self
     {
         return self::$instances[$value] ??= new self($value);
     }
