@@ -69,7 +69,7 @@ final class WorkspaceName implements \JsonSerializable
 
     public function toContentRepositoryWorkspaceName(): ContentRepository\ValueObject\WorkspaceName
     {
-        return ContentRepository\ValueObject\WorkspaceName::instance($this->name);
+        return ContentRepository\ValueObject\WorkspaceName::fromString($this->name);
     }
 
     /**

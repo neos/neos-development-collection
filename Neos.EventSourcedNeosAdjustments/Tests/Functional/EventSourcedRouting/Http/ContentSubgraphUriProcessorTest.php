@@ -133,7 +133,7 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 
         $contentQuery = new NodeAddress(
             ContentStreamIdentifier::create(),
-            DimensionSpacePoint::instance([
+            DimensionSpacePoint::fromArray([
                 'market' => 'GB',
                 'seller' => 'sellerA',
                 'channel' => 'channelA',

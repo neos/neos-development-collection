@@ -90,13 +90,13 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
             throw new \RuntimeException('TODO: Backend URI ' . $backendUri . ' could not be parsed.', 1519746339);
         }
 
-        $workspaceName = WorkspaceName::instance($matches['WorkspaceName']);
+        $workspaceName = WorkspaceName::fromString($matches['WorkspaceName']);
         $coordinates = [];
         if (isset($matches['DimensionComponents'])) {
             parse_str($matches['DimensionComponents'], $coordinates);
         }
 
-        $dimensionSpacePoint = DimensionSpacePoint::instance($coordinates);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($coordinates);
 
         return new WorkspaceNameAndDimensionSpacePointForUriSerialization($workspaceName, $dimensionSpacePoint);
     }

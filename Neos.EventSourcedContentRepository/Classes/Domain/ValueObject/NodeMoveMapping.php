@@ -43,10 +43,10 @@ final class NodeMoveMapping
         $this->newSucceedingSiblingAssignments = $newSucceedingSiblingAssignments;
     }
 
-    public static function fromArray(array $array): NodeMoveMapping
+    public static function fromArray(array $array): self
     {
-        return new static(
-            OriginDimensionSpacePoint::instance($array['movedNodeOrigin']),
+        return new self(
+            OriginDimensionSpacePoint::fromArray($array['movedNodeOrigin']),
             NodeVariantAssignments::createFromArray($array['newParentAssignments']),
             NodeVariantAssignments::createFromArray($array['newSucceedingSiblingAssignments'])
         );

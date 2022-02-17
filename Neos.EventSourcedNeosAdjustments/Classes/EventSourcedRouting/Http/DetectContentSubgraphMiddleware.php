@@ -124,7 +124,7 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
             }
         }
 
-        return DimensionSpacePoint::instance($coordinates);
+        return DimensionSpacePoint::fromArray($coordinates);
     }
 
     /**

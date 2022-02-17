@@ -53,11 +53,11 @@ final class CreateNodeVariant implements \JsonSerializable
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            OriginDimensionSpacePoint::instance($array['sourceOrigin']),
-            OriginDimensionSpacePoint::instance($array['targetOrigin']),
+            OriginDimensionSpacePoint::fromArray($array['sourceOrigin']),
+            OriginDimensionSpacePoint::fromArray($array['targetOrigin']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }

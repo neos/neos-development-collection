@@ -62,7 +62,7 @@ class NodeAddressFactory
         // when changing the serialization here
 
         list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdentifierSerialized) = explode('__', $nodeAddressSerialized);
-        $workspaceName = WorkspaceName::instance($workspaceNameSerialized);
+        $workspaceName = WorkspaceName::fromString($workspaceNameSerialized);
         $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifierSerialized);
 
@@ -79,7 +79,7 @@ class NodeAddressFactory
     public function createFromContextPath(string $contextPath): NodeAddress
     {
         $pathValues = NodePaths::explodeContextPath($contextPath);
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::instance($pathValues['workspaceName']));
+        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($pathValues['workspaceName']));
         $contentStreamIdentifier = $workspace->getCurrentContentStreamIdentifier();
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($pathValues['dimensions']);
         $nodePath = NodePath::fromString(\mb_strpos($pathValues['nodePath'], '/sites') === 0 ? \mb_substr($pathValues['nodePath'], 6) : $pathValues['nodePath']);

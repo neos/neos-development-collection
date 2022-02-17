@@ -228,6 +228,6 @@ class BackendController extends ActionController
             $coordinates[(string)$dimension->identifier] = (string)$dimension->defaultValue;
         }
 
-        return DimensionSpacePoint::instance($coordinates);
+        return DimensionSpacePoint::fromArray($coordinates);
     }
 }

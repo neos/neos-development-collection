@@ -244,7 +244,7 @@ trait ProjectedNodeTrait
         $expectedNodeTypeName = NodeTypeName::fromString($serializedExpectedNodeTypeName);
         $this->assertOnCurrentNodes(function (NodeInterface $currentNode, string $adapterName) use ($expectedNodeTypeName) {
             $actualNodeTypeName = $currentNode->getNodeTypeName();
-            Assert::assertTrue($expectedNodeTypeName->equals($actualNodeTypeName), 'Actual node type name "' . $actualNodeTypeName .'" does not match expected "' . $expectedNodeTypeName . '" in adapter "' . $adapterName . '"');
+            Assert::assertSame($expectedNodeTypeName, $actualNodeTypeName, 'Actual node type name "' . $actualNodeTypeName .'" does not match expected "' . $expectedNodeTypeName . '" in adapter "' . $adapterName . '"');
         });
     }
 

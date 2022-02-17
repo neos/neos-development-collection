@@ -65,7 +65,7 @@ final class SetNodeProperties
         return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            OriginDimensionSpacePoint::instance($array['originDimensionSpacePoint']),
+            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
             PropertyValuesToWrite::fromArray($array['propertyValues']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );

@@ -59,7 +59,7 @@ class UpdateWorkspaceInfo extends AbstractFeedback
      */
     public function setWorkspace(Workspace $workspace)
     {
-        $this->workspaceName = WorkspaceName::instance($workspace->getName());
+        $this->workspaceName = WorkspaceName::fromString($workspace->getName());
     }
 
     /**

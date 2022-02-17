@@ -42,11 +42,11 @@ final class NodeVariantAssignment implements \JsonSerializable
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
     }
 
-    public static function createFromArray(array $array): NodeVariantAssignment
+    public static function createFromArray(array $array): self
     {
-        return new static(
+        return new self(
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            OriginDimensionSpacePoint::instance($array['originDimensionSpacePoint'])
+            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint'])
         );
     }
 

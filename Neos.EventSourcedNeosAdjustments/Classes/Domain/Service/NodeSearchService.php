@@ -59,7 +59,7 @@ class NodeSearchService implements NodeSearchServiceInterface
 
     public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null): array
     {
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::instance($context->getWorkspaceName()));
+        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($context->getWorkspaceName()));
         if ($workspace === null) {
             return [];
         }

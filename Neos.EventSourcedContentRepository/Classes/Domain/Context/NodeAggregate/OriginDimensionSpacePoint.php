@@ -36,7 +36,7 @@ final class OriginDimensionSpacePoint extends DimensionSpacePoint
     /**
      * @param array<string,string> $coordinates
      */
-    public static function instance(array $coordinates): self
+    private static function instance(array $coordinates): self
     {
         $hash = self::hashCoordinates($coordinates);
         if (!isset(self::$instances[$hash])) {

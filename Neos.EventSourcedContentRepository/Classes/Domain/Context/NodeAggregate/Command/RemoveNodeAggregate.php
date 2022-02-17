@@ -86,10 +86,10 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            DimensionSpacePoint::instance($array['coveredDimensionSpacePoint']),
+            DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
             NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             isset($array['removalAttachmentPoint']) ? NodeAggregateIdentifier::fromString($array['removalAttachmentPoint']) : null

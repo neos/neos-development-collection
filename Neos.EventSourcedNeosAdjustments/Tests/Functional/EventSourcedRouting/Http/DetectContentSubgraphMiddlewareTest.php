@@ -145,7 +145,7 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         self::assertNull($this->routeParameters->getValue('workspaceName'));
         self::assertSame(1, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
-        $expectedDimensionSpacePoint = DimensionSpacePoint::instance([
+        $expectedDimensionSpacePoint = DimensionSpacePoint::fromArray([
             'market' => 'WORLD',
             'seller' => 'sellerA',
             'channel' => 'channelA',
@@ -172,7 +172,7 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         self::assertNull($this->routeParameters->getValue('workspaceName'));
         self::assertSame(1, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
-        $expectedDimensionSpacePoint = DimensionSpacePoint::instance([
+        $expectedDimensionSpacePoint = DimensionSpacePoint::fromArray([
             'market' => 'WORLD',
             'seller' => 'sellerA',
             'channel' => 'channelA',
@@ -198,7 +198,7 @@ class DetectContentSubgraphMiddlewareTest extends FunctionalTestCase
         self::assertNull($this->routeParameters->getValue('workspaceName'));
         self::assertSame(0, $this->routeParameters->getValue('uriPathSegmentOffset'));
 
-        $expectedDimensionSpacePoint = DimensionSpacePoint::instance([
+        $expectedDimensionSpacePoint = DimensionSpacePoint::fromArray([
             'market' => 'WORLD',
             'seller' => 'default',
             'channel' => 'default',
