@@ -81,7 +81,7 @@ class ParentsOperation extends AbstractOperation
                     break;
                 }
                 // stop at sites
-                if ($node->getNodeTypeName()->equals(NodeTypeName::fromString('Neos.Neos:Sites'))) {
+                if ($node->getNodeTypeName() === NodeTypeName::fromString('Neos.Neos:Sites')) {
                     break;
                 }
                 $parents[] = $node;
