@@ -70,7 +70,7 @@ final class NodeAddress
     {
         return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            DimensionSpacePoint::instance($array['dimensionSpacePoint']),
+            DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             isset($array['workspaceName']) ? WorkspaceName::fromString($array['workspaceName']) : null
         );

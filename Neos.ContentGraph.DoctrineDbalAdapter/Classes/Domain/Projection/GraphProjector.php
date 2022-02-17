@@ -124,7 +124,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector implements Be
     final public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event)
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $dimensionSpacePoint = DimensionSpacePoint::instance([]);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray([]);
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->getNodeAggregateIdentifier(),

@@ -130,7 +130,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     public function iSetTheFollowingPosition(TableNode $payloadTable): void
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
-        $dimensionSpacePoint = DimensionSpacePoint::instance($dataset['dimensionSpacePoint']);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
         $record = [
             'contentstreamidentifier' => $dataset['contentStreamIdentifier'],
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
@@ -188,7 +188,7 @@ trait ProjectionIntegrityViolationDetectionTrait
             'name' => $dataset['referenceName'],
             'nodeanchorpoint' => $this->findRelationAnchorPointByIdentifiers(
                 ContentStreamIdentifier::fromString($dataset['contentStreamIdentifier']),
-                DimensionSpacePoint::instance($dataset['dimensionSpacePoint']),
+                DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
                 NodeAggregateIdentifier::fromString($dataset['sourceNodeAggregateIdentifier'])
             ),
             'destinationnodeaggregateidentifier' => $dataset['destinationNodeAggregateIdentifier']
@@ -197,7 +197,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     private function transformDatasetToRestrictionRelationRecord(array $dataset): array
     {
-        $dimensionSpacePoint = DimensionSpacePoint::instance($dataset['dimensionSpacePoint']);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
 
         return [
             'contentstreamidentifier' => $dataset['contentStreamIdentifier'],
@@ -209,7 +209,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     private function transformDatasetToHierarchyRelationRecord(array $dataset): array
     {
-        $dimensionSpacePoint = DimensionSpacePoint::instance($dataset['dimensionSpacePoint']);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
         $parentNodeAggregateIdentifier = TestingNodeAggregateIdentifier::fromString($dataset['parentNodeAggregateIdentifier']);
         $childAggregateIdentifier = TestingNodeAggregateIdentifier::fromString($dataset['childNodeAggregateIdentifier']);
 
@@ -237,7 +237,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     private function findRelationAnchorPointByDataset(array $dataset): string
     {
-        $dimensionSpacePoint = DimensionSpacePoint::instance($dataset['originDimensionSpacePoint'] ?? $dataset['dimensionSpacePoint']);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'] ?? $dataset['dimensionSpacePoint']);
 
         return $this->findRelationAnchorPointByIdentifiers(
             ContentStreamIdentifier::fromString($dataset['contentStreamIdentifier']),

@@ -45,11 +45,11 @@ final class ContentStreamCommandController extends CommandController
         $this->hypergraphProjector = $hypergraphProjector;
         $this->contentStreamIdentifier = ContentStreamIdentifier::fromString('cs-identifier');
         $this->dimensionSpacePoints = new DimensionSpacePointSet([
-            DimensionSpacePoint::instance(['language' => 'mul']),
-            DimensionSpacePoint::instance(['language' => 'de']),
-            DimensionSpacePoint::instance(['language' => 'gsw']),
-            DimensionSpacePoint::instance(['language' => 'en']),
-            DimensionSpacePoint::instance(['language' => 'fr'])
+            DimensionSpacePoint::fromArray(['language' => 'mul']),
+            DimensionSpacePoint::fromArray(['language' => 'de']),
+            DimensionSpacePoint::fromArray(['language' => 'gsw']),
+            DimensionSpacePoint::fromArray(['language' => 'en']),
+            DimensionSpacePoint::fromArray(['language' => 'fr'])
         ]);
         parent::__construct();
     }

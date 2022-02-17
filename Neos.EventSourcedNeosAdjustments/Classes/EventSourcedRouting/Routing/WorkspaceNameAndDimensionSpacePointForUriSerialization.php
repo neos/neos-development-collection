@@ -96,7 +96,7 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
             parse_str($matches['DimensionComponents'], $coordinates);
         }
 
-        $dimensionSpacePoint = DimensionSpacePoint::instance($coordinates);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray($coordinates);
 
         return new WorkspaceNameAndDimensionSpacePointForUriSerialization($workspaceName, $dimensionSpacePoint);
     }
