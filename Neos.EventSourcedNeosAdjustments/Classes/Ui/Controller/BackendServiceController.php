@@ -453,7 +453,7 @@ class BackendServiceController extends ActionController
         /** @var NodeAddress $nodeAddress */
         foreach ($nodes as $nodeAddress) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $nodeAddress->getContentStreamIdentifier(),
+                $nodeAddress->contentStreamIdentifier,
                 $nodeAddress->getDimensionSpacePoint(),
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -493,10 +493,13 @@ class BackendServiceController extends ActionController
     public function getPolicyInformationAction(array $nodes)
     {
         $result = [];
-        /** @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $nodeAddress */
         foreach ($nodes as $nodeAddress) {
             $nodeAccessor = $this->nodeAccessorManager
-                ->accessorFor($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+                ->accessorFor(
+                    $nodeAddress->contentStreamIdentifier,
+                    $nodeAddress->getDimensionSpacePoint(),
+                    VisibilityConstraints::withoutRestrictions()
+                );
             $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
             $result[$nodeAddress->serializeForUri()] = ['policy' => $this->nodePolicyService->getNodePolicyInformation($node)];

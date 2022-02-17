@@ -117,7 +117,7 @@ final class SetNodeReferences implements \JsonSerializable, RebasableToOtherCont
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            $this->getContentStreamIdentifier()->equals($nodeAddress->getContentStreamIdentifier())
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->getSourceOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
                 && $this->getSourceNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );

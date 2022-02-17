@@ -69,7 +69,11 @@ class NodeService
     {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextPath);
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
         return $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
     }
 }

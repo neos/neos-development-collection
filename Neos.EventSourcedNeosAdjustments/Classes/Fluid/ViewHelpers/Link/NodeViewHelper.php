@@ -289,6 +289,10 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      */
     private function getNodeAccessorForNodeAddress(NodeAddress $nodeAddress): NodeAccessorInterface
     {
-        return $this->nodeAccessorManager->accessorFor($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        return $this->nodeAccessorManager->accessorFor(
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 }

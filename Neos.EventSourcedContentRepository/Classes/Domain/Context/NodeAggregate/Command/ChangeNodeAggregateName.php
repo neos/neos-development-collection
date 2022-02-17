@@ -102,8 +102,8 @@ final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOth
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }
 }

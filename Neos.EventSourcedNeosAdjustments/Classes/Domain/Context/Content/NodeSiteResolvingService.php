@@ -41,7 +41,7 @@ class NodeSiteResolvingService
     public function findSiteNodeForNodeAddress(NodeAddress $nodeAddress): ?NodeInterface
     {
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->contentStreamIdentifier,
             $nodeAddress->getDimensionSpacePoint(),
             $nodeAddress->isInLiveWorkspace() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions()
         );

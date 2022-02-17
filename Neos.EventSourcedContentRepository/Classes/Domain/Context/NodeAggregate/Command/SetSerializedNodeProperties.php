@@ -82,7 +82,7 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            $this->contentStreamIdentifier === $nodeAddress->getContentStreamIdentifier()
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->originDimensionSpacePoint === $nodeAddress->getDimensionSpacePoint()
                 && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
         );

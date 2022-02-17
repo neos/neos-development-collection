@@ -135,7 +135,7 @@ class EventSourcedNodeController extends ActionController
         $nodeAddress = $node;
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->contentStreamIdentifier,
             $nodeAddress->getDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -151,7 +151,7 @@ class EventSourcedNodeController extends ActionController
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->contentStreamIdentifier,
             $nodeAddress->getDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -198,7 +198,7 @@ class EventSourcedNodeController extends ActionController
         }
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->contentStreamIdentifier,
             $nodeAddress->getDimensionSpacePoint(),
             VisibilityConstraints::frontend()
         );
@@ -214,7 +214,7 @@ class EventSourcedNodeController extends ActionController
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress);
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->contentStreamIdentifier,
             $nodeAddress->getDimensionSpacePoint(),
             VisibilityConstraints::frontend()
         );

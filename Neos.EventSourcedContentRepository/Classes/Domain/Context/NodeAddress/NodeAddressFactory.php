@@ -104,7 +104,7 @@ class NodeAddressFactory
         }
 
         return new NodeAddress(
-            $baseNodeAddress->getContentStreamIdentifier(),
+            $baseNodeAddress->contentStreamIdentifier,
             $dimensionSpacePoint,
             $baseNodeAddress->getNodeAggregateIdentifier(),
             $baseNodeAddress->getWorkspaceName()
@@ -119,7 +119,7 @@ class NodeAddressFactory
         }
 
         return new NodeAddress(
-            $baseNodeAddress->getContentStreamIdentifier(),
+            $baseNodeAddress->contentStreamIdentifier,
             $baseNodeAddress->getDimensionSpacePoint(),
             $nodeAggregateIdentifier,
             $baseNodeAddress->getWorkspaceName()

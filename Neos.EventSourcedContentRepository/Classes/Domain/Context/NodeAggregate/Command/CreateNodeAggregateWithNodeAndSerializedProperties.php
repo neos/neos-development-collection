@@ -152,9 +152,9 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
-            && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
-            && $this->originDimensionSpacePoint->equals(OriginDimensionSpacePoint::fromDimensionSpacePoint($nodeAddress->getDimensionSpacePoint()))
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
+                && $this->originDimensionSpacePoint->equals(OriginDimensionSpacePoint::fromDimensionSpacePoint($nodeAddress->getDimensionSpacePoint()))
         );
     }
 }

@@ -174,9 +174,9 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
-            && $this->coveredDimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint())
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+                && $this->coveredDimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint())
         );
     }
 }

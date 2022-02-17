@@ -64,7 +64,12 @@ class NewNodeConverter extends AbstractTypeConverter
     {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($source);
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+
         return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
     }
 }

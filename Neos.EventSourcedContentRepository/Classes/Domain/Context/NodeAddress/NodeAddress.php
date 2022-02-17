@@ -1,10 +1,7 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,6 +9,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -29,16 +30,10 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
  *  in contentStreamIdentifier $contentStreamIdentifier
  *
  * It is used in Neos Routing to build a URI to a node.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeAddress
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    protected ContentStreamIdentifier $contentStreamIdentifier;
-
     /**
      * @var DimensionSpacePoint
      */
@@ -55,12 +50,11 @@ final class NodeAddress
     protected ?WorkspaceName $workspaceName;
 
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ?WorkspaceName $workspaceName
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->workspaceName = $workspaceName;
@@ -78,17 +72,22 @@ final class NodeAddress
 
     public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
     {
-        return new self($this->contentStreamIdentifier, $this->dimensionSpacePoint, $nodeAggregateIdentifier, $this->workspaceName);
+        return new self(
+            $this->contentStreamIdentifier,
+            $this->dimensionSpacePoint,
+            $nodeAggregateIdentifier,
+            $this->workspaceName
+        );
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
     {
-        return new self($this->contentStreamIdentifier, $dimensionSpacePoint, $this->nodeAggregateIdentifier, $this->workspaceName);
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
+        return new self(
+            $this->contentStreamIdentifier,
+            $dimensionSpacePoint,
+            $this->nodeAggregateIdentifier,
+            $this->workspaceName
+        );
     }
 
     public function getDimensionSpacePoint(): DimensionSpacePoint
@@ -118,7 +117,7 @@ final class NodeAddress
 
     public function isInLiveWorkspace(): bool
     {
-        return $this->workspaceName != null && $this->workspaceName->isLive();
+        return $this->workspaceName?->isLive() ?: false;
     }
 
     public function __toString(): string

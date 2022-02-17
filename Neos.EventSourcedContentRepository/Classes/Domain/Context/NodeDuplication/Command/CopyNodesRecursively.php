@@ -210,9 +210,9 @@ final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNode
     {
         $targetNodeAggregateIdentifier = $this->getNodeAggregateIdentifierMapping()->getNewNodeAggregateIdentifier($this->getNodeToInsert()->getNodeAggregateIdentifier());
         return (
-            $this->getContentStreamIdentifier()->equals($nodeAddress->getContentStreamIdentifier())
-            && $this->getTargetDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-            && $targetNodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
+            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+                && $this->getTargetDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
+                && $targetNodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }
 

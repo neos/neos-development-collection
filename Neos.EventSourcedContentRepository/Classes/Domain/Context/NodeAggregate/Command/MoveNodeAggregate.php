@@ -189,7 +189,7 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
 
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
-        return (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
+        return $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
             && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
             && $this->dimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint());
     }

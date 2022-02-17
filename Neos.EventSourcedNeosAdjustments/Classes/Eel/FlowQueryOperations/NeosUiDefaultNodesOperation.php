@@ -127,7 +127,11 @@ class NeosUiDefaultNodesOperation extends AbstractOperation
 
         foreach ($clipboardNodesContextPaths as $clipboardNodeContextPath) {
             $clipboardNodeAddress = $this->nodeAddressFactory->createFromUriString($clipboardNodeContextPath);
-            $clipboardNode = $this->nodeAccessorManager->accessorFor($clipboardNodeAddress->getContentStreamIdentifier(), $clipboardNodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions())->findByIdentifier($clipboardNodeAddress->getNodeAggregateIdentifier());
+            $clipboardNode = $this->nodeAccessorManager->accessorFor(
+                $clipboardNodeAddress->contentStreamIdentifier,
+                $clipboardNodeAddress->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            )->findByIdentifier($clipboardNodeAddress->getNodeAggregateIdentifier());
             if ($clipboardNode && !array_key_exists((string)$clipboardNode->getNodeAggregateIdentifier(), $nodes)) {
                 $nodes[(string)$clipboardNode->getNodeAggregateIdentifier()] = $clipboardNode;
             }
