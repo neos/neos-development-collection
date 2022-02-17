@@ -70,7 +70,7 @@ class VieSchemaBuilder
             $this->readNodeTypeConfiguration($nodeTypeName, $nodeType);
         }
 
-        unset($this->types['typo3:unstructured']);
+        unset($this->types['neoscms:unstructured']);
 
         foreach ($this->types as $nodeTypeName => $nodeTypeDefinition) {
             $this->types[$nodeTypeName]->subtypes = $this->getAllSubtypes($nodeTypeName);
@@ -92,10 +92,10 @@ class VieSchemaBuilder
 
         // Convert the Neos.Neos:ContentCollection element to support content-collection
         // TODO Move to node type definition
-        if (isset($this->types['typo3:Neos.Neos:ContentCollection'])) {
-            $this->addProperty('typo3:Neos.Neos:ContentCollection', 'typo3:content-collection', []);
-            $this->types['typo3:Neos.Neos:ContentCollection']->specific_properties[] = 'typo3:content-collection';
-            $this->properties['typo3:content-collection']->ranges = array_keys($this->types);
+        if (isset($this->types['neoscms:Neos.Neos:ContentCollection'])) {
+            $this->addProperty('neoscms:Neos.Neos:ContentCollection', 'neoscms:content-collection', []);
+            $this->types['neoscms:Neos.Neos:ContentCollection']->specific_properties[] = 'neoscms:content-collection';
+            $this->properties['neoscms:content-collection']->ranges = array_keys($this->types);
         }
 
         $this->configuration = (object) [
@@ -113,10 +113,10 @@ class VieSchemaBuilder
     protected function readNodeTypeConfiguration($nodeTypeName, NodeType $nodeType)
     {
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
-        $this->superTypeConfiguration['typo3:' . $nodeTypeName] = [];
+        $this->superTypeConfiguration['neoscms:' . $nodeTypeName] = [];
         /** @var NodeType $superType */
         foreach ($nodeType->getDeclaredSuperTypes() as $superType) {
-            $this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType->getName();
+            $this->superTypeConfiguration['neoscms:' . $nodeTypeName][] = 'neoscms:' . $superType->getName();
         }
 
         $nodeTypeProperties = [];
@@ -124,8 +124,8 @@ class VieSchemaBuilder
         if (isset($nodeTypeConfiguration['properties'])) {
             foreach ($nodeTypeConfiguration['properties'] as $property => $propertyConfiguration) {
                 // TODO Make sure we can configure the range for all multi column elements to define what types a column may contain
-                $this->addProperty('typo3:' . $nodeTypeName, 'typo3:' . $property, $propertyConfiguration);
-                $nodeTypeProperties[] = 'typo3:' . $property;
+                $this->addProperty('neoscms:' . $nodeTypeName, 'neoscms:' . $property, $propertyConfiguration);
+                $nodeTypeProperties[] = 'neoscms:' . $property;
             }
         }
 
@@ -140,14 +140,14 @@ class VieSchemaBuilder
             $metadata['abstract'] = true;
         }
 
-        $this->types['typo3:' . $nodeTypeName] = (object) [
+        $this->types['neoscms:' . $nodeTypeName] = (object) [
             'label' => $nodeType->getLabel() ?: $nodeTypeName,
-            'id' => 'typo3:' . $nodeTypeName,
+            'id' => 'neoscms:' . $nodeTypeName,
             'properties' => [],
             'specific_properties' => $nodeTypeProperties,
             'subtypes' => [],
             'metadata' => (object)$metadata,
-            'supertypes' => $this->superTypeConfiguration['typo3:' . $nodeTypeName],
+            'supertypes' => $this->superTypeConfiguration['neoscms:' . $nodeTypeName],
             'url' => 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
             'ancestors' => [],
             'comment' => '',

@@ -68,7 +68,7 @@ class ContentElementEditableService
 
         $attributes = [];
         $attributes['class'] = 'neos-inline-editable';
-        $attributes['property'] = 'typo3:' . $property ;
+        $attributes['property'] = 'neoscms:' . $property ;
         $attributes['data-neos-node-type'] = $node->getNodeType()->getName();
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');

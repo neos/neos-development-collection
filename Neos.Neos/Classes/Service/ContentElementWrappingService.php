@@ -213,14 +213,14 @@ class ContentElementWrappingService
      */
     protected function addGenericEditingMetadata(array $attributes, NodeInterface $node)
     {
-        $attributes['typeof'] = 'typo3:' . $node->getNodeType()->getName();
+        $attributes['typeof'] = 'neoscms:' . $node->getNodeType()->getName();
         $attributes['about'] = $node->getContextPath();
         $attributes['data-node-_identifier'] = $node->getIdentifier();
         $attributes['data-node-__workspace-name'] = $node->getWorkspace()->getName();
         $attributes['data-node-__label'] = $node->getLabel();
 
         if ($node->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
-            $attributes['rel'] = 'typo3:content-collection';
+            $attributes['rel'] = 'neoscms:content-collection';
         }
 
         // these properties are needed together with the current NodeType to evaluate Node Type Constraints

@@ -1,19 +1,19 @@
 {
 	"types":{
-		"typo3:Neos.Neos:ContentObject":{
+		"neoscms:Neos.Neos:ContentObject":{
 			"label":"Abstract content object",
-			"id":"typo3:Neos.Neos:ContentObject",
+			"id":"neoscms:Neos.Neos:ContentObject",
 			"properties":[
 
 			],
 			"specific_properties":[
-				"typo3:_hidden"
+				"neoscms:_hidden"
 			],
 			"subtypes":[
-				"typo3:Neos.Neos:MyFinalType",
-				"typo3:Neos.Neos:AbstractType",
-				"typo3:Neos.Neos:Text",
-				"typo3:Neos.Neos:TextWithImage"
+				"neoscms:Neos.Neos:MyFinalType",
+				"neoscms:Neos.Neos:AbstractType",
+				"neoscms:Neos.Neos:Text",
+				"neoscms:Neos.Neos:TextWithImage"
 			],
 			"metadata":{
 				"ui":{
@@ -31,14 +31,14 @@
 			"comment":"",
 			"comment_plain":""
 		},
-		"typo3:Neos.Neos:MyFinalType":{
+		"neoscms:Neos.Neos:MyFinalType":{
 			"label":"Abstract content object",
-			"id":"typo3:Neos.Neos:MyFinalType",
+			"id":"neoscms:Neos.Neos:MyFinalType",
 			"properties":[
 
 			],
 			"specific_properties":[
-				"typo3:_hidden"
+				"neoscms:_hidden"
 			],
 			"subtypes":[
 
@@ -49,23 +49,23 @@
 				}
 			},
 			"supertypes":[
-				"typo3:Neos.Neos:ContentObject"
+				"neoscms:Neos.Neos:ContentObject"
 			],
 			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
 			"ancestors":[
-				"typo3:Neos.Neos:ContentObject"
+				"neoscms:Neos.Neos:ContentObject"
 			],
 			"comment":"",
 			"comment_plain":""
 		},
-		"typo3:Neos.Neos:AbstractType":{
+		"neoscms:Neos.Neos:AbstractType":{
 			"label":"Abstract type",
-			"id":"typo3:Neos.Neos:AbstractType",
+			"id":"neoscms:Neos.Neos:AbstractType",
 			"properties":[
 
 			],
 			"specific_properties":[
-				"typo3:_hidden"
+				"neoscms:_hidden"
 			],
 			"subtypes":[
 
@@ -77,28 +77,28 @@
 				"abstract":true
 			},
 			"supertypes":[
-				"typo3:Neos.Neos:ContentObject"
+				"neoscms:Neos.Neos:ContentObject"
 			],
 			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
 			"ancestors":[
-				"typo3:Neos.Neos:ContentObject"
+				"neoscms:Neos.Neos:ContentObject"
 			],
 			"comment":"",
 			"comment_plain":""
 		},
-		"typo3:Neos.Neos:Text":{
+		"neoscms:Neos.Neos:Text":{
 			"label":"Text",
-			"id":"typo3:Neos.Neos:Text",
+			"id":"neoscms:Neos.Neos:Text",
 			"properties":[
 
 			],
 			"specific_properties":[
-				"typo3:_hidden",
-				"typo3:headline",
-				"typo3:text"
+				"neoscms:_hidden",
+				"neoscms:headline",
+				"neoscms:text"
 			],
 			"subtypes":[
-				"typo3:Neos.Neos:TextWithImage"
+				"neoscms:Neos.Neos:TextWithImage"
 			],
 			"metadata":{
 				"ui":{
@@ -106,26 +106,26 @@
 				}
 			},
 			"supertypes":[
-				"typo3:Neos.Neos:ContentObject"
+				"neoscms:Neos.Neos:ContentObject"
 			],
 			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
 			"ancestors":[
-				"typo3:Neos.Neos:ContentObject"
+				"neoscms:Neos.Neos:ContentObject"
 			],
 			"comment":"",
 			"comment_plain":""
 		},
-		"typo3:Neos.Neos:TextWithImage":{
+		"neoscms:Neos.Neos:TextWithImage":{
 			"label":"Text with image",
-			"id":"typo3:Neos.Neos:TextWithImage",
+			"id":"neoscms:Neos.Neos:TextWithImage",
 			"properties":[
 
 			],
 			"specific_properties":[
-				"typo3:_hidden",
-				"typo3:headline",
-				"typo3:text",
-				"typo3:image"
+				"neoscms:_hidden",
+				"neoscms:headline",
+				"neoscms:text",
+				"neoscms:image"
 			],
 			"subtypes":[
 
@@ -136,74 +136,74 @@
 				}
 			},
 			"supertypes":[
-				"typo3:Neos.Neos:Text"
+				"neoscms:Neos.Neos:Text"
 			],
 			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
 			"ancestors":[
-				"typo3:Neos.Neos:Text",
-				"typo3:Neos.Neos:ContentObject"
+				"neoscms:Neos.Neos:Text",
+				"neoscms:Neos.Neos:ContentObject"
 			],
 			"comment":"",
 			"comment_plain":""
 		}
 	},
 	"properties":{
-		"typo3:_hidden":{
-			"comment":"typo3:_hidden",
-			"comment_plain":"typo3:_hidden",
+		"neoscms:_hidden":{
+			"comment":"neoscms:_hidden",
+			"comment_plain":"neoscms:_hidden",
 			"domains":[
-				"typo3:Neos.Neos:ContentObject",
-				"typo3:Neos.Neos:MyFinalType",
-				"typo3:Neos.Neos:AbstractType",
-				"typo3:Neos.Neos:Text",
-				"typo3:Neos.Neos:TextWithImage"
+				"neoscms:Neos.Neos:ContentObject",
+				"neoscms:Neos.Neos:MyFinalType",
+				"neoscms:Neos.Neos:AbstractType",
+				"neoscms:Neos.Neos:Text",
+				"neoscms:Neos.Neos:TextWithImage"
 			],
-			"id":"typo3:_hidden",
-			"label":"typo3:_hidden",
+			"id":"neoscms:_hidden",
+			"label":"neoscms:_hidden",
 			"ranges":[
 
 			],
 			"min":0,
 			"max":-1
 		},
-		"typo3:headline":{
-			"comment":"typo3:headline",
-			"comment_plain":"typo3:headline",
+		"neoscms:headline":{
+			"comment":"neoscms:headline",
+			"comment_plain":"neoscms:headline",
 			"domains":[
-				"typo3:Neos.Neos:Text",
-				"typo3:Neos.Neos:TextWithImage"
+				"neoscms:Neos.Neos:Text",
+				"neoscms:Neos.Neos:TextWithImage"
 			],
-			"id":"typo3:headline",
-			"label":"typo3:headline",
+			"id":"neoscms:headline",
+			"label":"neoscms:headline",
 			"ranges":[
 
 			],
 			"min":0,
 			"max":-1
 		},
-		"typo3:text":{
-			"comment":"typo3:text",
-			"comment_plain":"typo3:text",
+		"neoscms:text":{
+			"comment":"neoscms:text",
+			"comment_plain":"neoscms:text",
 			"domains":[
-				"typo3:Neos.Neos:Text",
-				"typo3:Neos.Neos:TextWithImage"
+				"neoscms:Neos.Neos:Text",
+				"neoscms:Neos.Neos:TextWithImage"
 			],
-			"id":"typo3:text",
-			"label":"typo3:text",
+			"id":"neoscms:text",
+			"label":"neoscms:text",
 			"ranges":[
 
 			],
 			"min":0,
 			"max":-1
 		},
-		"typo3:image":{
-			"comment":"typo3:image",
-			"comment_plain":"typo3:image",
+		"neoscms:image":{
+			"comment":"neoscms:image",
+			"comment_plain":"neoscms:image",
 			"domains":[
-				"typo3:Neos.Neos:TextWithImage"
+				"neoscms:Neos.Neos:TextWithImage"
 			],
-			"id":"typo3:image",
-			"label":"typo3:image",
+			"id":"neoscms:image",
+			"label":"neoscms:image",
 			"ranges":[
 
 			],

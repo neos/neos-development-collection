@@ -142,11 +142,11 @@ class VieSchemaBuilderTest extends UnitTestCase
 
         self::assertEquals(
             [
-                'typo3:Neos.Neos:TextWithImage' => ['typo3:Neos.Neos:Text']
+                'neoscms:Neos.Neos:TextWithImage' => ['neoscms:Neos.Neos:Text']
             ],
             $this->vieSchemaBuilder->_get('superTypeConfiguration')
         );
-        $this->arrayHasKey('typo3:Neos.Neos:TextWithImage', $this->vieSchemaBuilder->_get('types'));
+        $this->arrayHasKey('neoscms:Neos.Neos:TextWithImage', $this->vieSchemaBuilder->_get('types'));
         self::assertEquals(4, count($this->vieSchemaBuilder->_get('properties')));
     }
 
