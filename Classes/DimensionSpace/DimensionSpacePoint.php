@@ -44,7 +44,7 @@ class DimensionSpacePoint implements \JsonSerializable, \Stringable, CacheAwareI
     /**
      * @param array<string,string> $coordinates
      */
-    public static function instance(array $coordinates): self
+    private static function instance(array $coordinates): self
     {
         $hash = self::hashCoordinates($coordinates);
         if (!isset(self::$instances[$hash])) {

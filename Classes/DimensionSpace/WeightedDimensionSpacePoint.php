@@ -46,7 +46,7 @@ final class WeightedDimensionSpacePoint
             $weightInDimensions[$dimensionName] = $dimensionValue->specializationDepth;
         }
         $this->dimensionValues = $contentDimensionValues;
-        $this->dimensionSpacePoint = DimensionSpacePoint::instance($coordinates);
+        $this->dimensionSpacePoint = DimensionSpacePoint::fromArray($coordinates);
         $this->weight = new ContentSubgraphVariationWeight($weightInDimensions);
     }
 

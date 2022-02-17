@@ -105,7 +105,7 @@ final class ContentDimensionZookeeper
                 $coordinates[$contentDimensionIdentifier] = (string)$contentDimensionValue;
             }
 
-            $point = DimensionSpacePoint::instance($coordinates);
+            $point = DimensionSpacePoint::fromArray($coordinates);
             $points[$point->hash] = $point;
         }
 

@@ -43,7 +43,7 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \I
         $points = [];
         foreach ($pointCandidates as $index => $pointCandidate) {
             if (is_array($pointCandidate)) {
-                $pointCandidate = DimensionSpacePoint::instance($pointCandidate);
+                $pointCandidate = DimensionSpacePoint::fromArray($pointCandidate);
             }
 
             if (!$pointCandidate instanceof DimensionSpacePoint) {

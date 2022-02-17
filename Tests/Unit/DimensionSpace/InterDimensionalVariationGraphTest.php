@@ -94,7 +94,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
 
         $this->assertSame(
             null,
-            $this->subject->getWeightedDimensionSpacePointByDimensionSpacePoint(DimensionSpace\DimensionSpacePoint::instance([
+            $this->subject->getWeightedDimensionSpacePointByDimensionSpacePoint(DimensionSpace\DimensionSpacePoint::fromArray([
                 'undefinedDimension' => 'undefinedDimensionValue'
             ]))
         );
@@ -237,7 +237,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
             $expectedIndexedSpecializations = [];
             $expectedWeightedSpecializations = [];
             foreach ($specializationRecordSet as $specializationRecord) {
-                $specialization = DimensionSpace\DimensionSpacePoint::instance([
+                $specialization = DimensionSpace\DimensionSpacePoint::fromArray([
                     'dimensionA' => $specializationRecord[0],
                     'dimensionB' => $specializationRecord[1]
                 ]);
@@ -245,7 +245,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
                 $expectedWeightedSpecializations[$specializationRecord[2]][$specialization->hash] = $specialization;
             }
 
-            $generalization = DimensionSpace\DimensionSpacePoint::instance([
+            $generalization = DimensionSpace\DimensionSpacePoint::fromArray([
                 'dimensionA' => $generalizationCoordinates[0],
                 'dimensionB' => $generalizationCoordinates[1]
             ]);
@@ -402,7 +402,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
             $expectedIndexedGeneralizations = [];
             $expectedWeightedGeneralizations = [];
             foreach ($generalizationRecordSet as $generalizationRecord) {
-                $generalization = DimensionSpace\DimensionSpacePoint::instance([
+                $generalization = DimensionSpace\DimensionSpacePoint::fromArray([
                     'dimensionA' => $generalizationRecord[0],
                     'dimensionB' => $generalizationRecord[1]
                 ]);
@@ -410,7 +410,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
                 $expectedWeightedGeneralizations[$generalizationRecord[2]] = $generalization;
             }
 
-            $specializedDimensionSpacePoint = DimensionSpace\DimensionSpacePoint::instance([
+            $specializedDimensionSpacePoint = DimensionSpace\DimensionSpacePoint::fromArray([
                 'dimensionA' => $specializationCoordinates[0],
                 'dimensionB' => $specializationCoordinates[1]
             ]);
@@ -501,12 +501,12 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
             $specializationCoordinates = $variationData[0];
             $primaryGeneralizationCoordinates = $variationData[1];
 
-            $specializationDimensionSpacePoint = DimensionSpace\DimensionSpacePoint::instance([
+            $specializationDimensionSpacePoint = DimensionSpace\DimensionSpacePoint::fromArray([
                 'dimensionA' => $specializationCoordinates[0],
                 'dimensionB' => $specializationCoordinates[1]
             ]);
             $expectedPrimaryGeneralizationSpacePoint = $primaryGeneralizationCoordinates
-                ? DimensionSpace\DimensionSpacePoint::instance([
+                ? DimensionSpace\DimensionSpacePoint::fromArray([
                     'dimensionA' => $primaryGeneralizationCoordinates[0],
                     'dimensionB' => $primaryGeneralizationCoordinates[1]
                 ])
@@ -524,14 +524,14 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $this->expectException(DimensionSpace\Exception\DimensionSpacePointNotFound::class);
         $this->setUpVariationExample();
 
-        $this->subject->getSpecializationSet(DimensionSpace\DimensionSpacePoint::instance(['undefinedDimension' => 'undefinedDimensionValue']));
+        $this->subject->getSpecializationSet(DimensionSpace\DimensionSpacePoint::fromArray(['undefinedDimension' => 'undefinedDimensionValue']));
     }
 
     public function testGetSpecializationSetReturnsEmptySetForOriginWithoutSpecializationsAndWithoutOriginInclusion()
     {
         $this->setUpVariationExample();
 
-        $origin = DimensionSpace\DimensionSpacePoint::instance([
+        $origin = DimensionSpace\DimensionSpacePoint::fromArray([
             'dimensionA' => 'value1.1.1',
             'dimensionB' => 'value1.1.1'
         ]);
@@ -546,7 +546,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     {
         $this->setUpVariationExample();
 
-        $origin = DimensionSpace\DimensionSpacePoint::instance([
+        $origin = DimensionSpace\DimensionSpacePoint::fromArray([
             'dimensionA' => 'value1.1.1',
             'dimensionB' => 'value1.1.1'
         ]);
@@ -561,26 +561,26 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     {
         $this->setUpVariationExample();
 
-        $origin = DimensionSpace\DimensionSpacePoint::instance([
+        $origin = DimensionSpace\DimensionSpacePoint::fromArray([
             'dimensionA' => 'value1.1',
             'dimensionB' => 'value1.1'
         ]);
 
         $this->assertEquals(
             new DimensionSpace\DimensionSpacePointSet([
-                DimensionSpace\DimensionSpacePoint::instance([
+                DimensionSpace\DimensionSpacePoint::fromArray([
                     'dimensionA' => 'value1.1',
                     'dimensionB' => 'value1.1'
                 ]),
-                DimensionSpace\DimensionSpacePoint::instance([
+                DimensionSpace\DimensionSpacePoint::fromArray([
                     'dimensionA' => 'value1.1',
                     'dimensionB' => 'value1.1.1'
                 ]),
-                DimensionSpace\DimensionSpacePoint::instance([
+                DimensionSpace\DimensionSpacePoint::fromArray([
                     'dimensionA' => 'value1.1.1',
                     'dimensionB' => 'value1.1'
                 ]),
-                DimensionSpace\DimensionSpacePoint::instance([
+                DimensionSpace\DimensionSpacePoint::fromArray([
                     'dimensionA' => 'value1.1.1',
                     'dimensionB' => 'value1.1.1'
                 ]),
@@ -643,9 +643,9 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     {
         $this->setUpVariationExample();
 
-        $specialization = DimensionSpace\DimensionSpacePoint::instance(['dimensionA' => 'value1.1', 'dimensionB' => 'value1']);
-        $generalization = DimensionSpace\DimensionSpacePoint::instance(['dimensionA' => 'value1', 'dimensionB' => 'value1']);
-        $peer = DimensionSpace\DimensionSpacePoint::instance(['dimensionA' => 'value1.2', 'dimensionB' => 'value1']);
+        $specialization = DimensionSpace\DimensionSpacePoint::fromArray(['dimensionA' => 'value1.1', 'dimensionB' => 'value1']);
+        $generalization = DimensionSpace\DimensionSpacePoint::fromArray(['dimensionA' => 'value1', 'dimensionB' => 'value1']);
+        $peer = DimensionSpace\DimensionSpacePoint::fromArray(['dimensionA' => 'value1.2', 'dimensionB' => 'value1']);
 
         $this->assertTrue($this->subject->getVariantType($specialization, $generalization) === DimensionSpace\VariantType::TYPE_SPECIALIZATION);
         $this->assertTrue($this->subject->getVariantType($generalization, $specialization) === DimensionSpace\VariantType::TYPE_GENERALIZATION);
