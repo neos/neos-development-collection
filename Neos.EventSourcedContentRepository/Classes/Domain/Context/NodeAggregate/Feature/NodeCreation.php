@@ -25,8 +25,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsNotOfTypeRoot;
@@ -186,29 +184,6 @@ trait NodeCreation
         }
 
         return PropertyValuesToWrite::fromArray($defaultValues);
-    }
-
-    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
-    {
-        $nodeTypeName = $this->contentGraph->findNodeAggregateByIdentifier(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier()
-        )->getNodeTypeName();
-
-        $this->validateProperties($command->getPropertyValues(), $nodeTypeName);
-
-        $lowLevelCommand = new SetSerializedNodeProperties(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier(),
-            $command->getOriginDimensionSpacePoint(),
-            $this->getPropertyConverter()->serializePropertyValues(
-                $command->getPropertyValues(),
-                $this->requireNodeType($nodeTypeName)
-            ),
-            $command->getInitiatingUserIdentifier()
-        );
-
-        return $this->handleSetSerializedNodeProperties($lowLevelCommand);
     }
 
     private function validateProperties(?PropertyValuesToWrite $propertyValues, NodeTypeName $nodeTypeName): void

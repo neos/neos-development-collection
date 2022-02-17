@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
@@ -42,6 +43,29 @@ trait NodeModification
     ): ReadableNodeAggregateInterface;
 
     abstract protected function getRuntimeBlocker(): RuntimeBlocker;
+
+    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
+    {
+        $nodeTypeName = $this->contentGraph->findNodeAggregateByIdentifier(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier()
+        )->getNodeTypeName();
+
+        $this->validateProperties($command->getPropertyValues(), $nodeTypeName);
+
+        $lowLevelCommand = new SetSerializedNodeProperties(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier(),
+            $command->getOriginDimensionSpacePoint(),
+            $this->getPropertyConverter()->serializePropertyValues(
+                $command->getPropertyValues(),
+                $this->requireNodeType($nodeTypeName)
+            ),
+            $command->getInitiatingUserIdentifier()
+        );
+
+        return $this->handleSetSerializedNodeProperties($lowLevelCommand);
+    }
 
     public function handleSetSerializedNodeProperties(SetSerializedNodeProperties $command): CommandResult
     {
