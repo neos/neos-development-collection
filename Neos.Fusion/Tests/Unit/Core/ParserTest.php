@@ -13,6 +13,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
 
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\ObjectTreeParser\PredictiveParser;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Exception;
 
@@ -873,7 +874,8 @@ class ParserTest extends UnitTestCase
      */
     public function parserInvokesFusionDslParsingIfADslPatternIsDetected()
     {
-        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->setMethods(['handleDslTranspile'])->getMock();
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
+        $parser->injectPredictiveParser(new PredictiveParser());
 
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
 

@@ -11,6 +11,7 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * source code.
  */
 
+use Neos\Fusion\Core\ObjectTreeParser\PredictiveParser;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion;
 use Neos\Flow\Tests\UnitTestCase;
@@ -1050,6 +1051,7 @@ class ParserTest extends UnitTestCase
     public function dslIsRecognizedAndPassed($sourceCode, $expectedDslName, $expectedDslContent)
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
+        $parser->injectPredictiveParser(new PredictiveParser());
 
         $parser
             ->expects($this->exactly(1))

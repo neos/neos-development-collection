@@ -43,12 +43,10 @@ class Parser implements ParserInterface
      */
     protected $dslFactory;
 
-// TODO use di, but the tests dont like its since it will not be injected, when mocked.
-//    /**
-//     * @Flow\Inject
-//     * @var PredictiveParser
-//     */
-//    protected $predictiveParser;
+    /**
+     * @var PredictiveParser
+     */
+    protected PredictiveParser $predictiveParser;
 
     /**
      * Parses the given Fusion source code and returns an object tree
@@ -74,10 +72,12 @@ class Parser implements ParserInterface
         return $objectTree->getObjectTree();
     }
 
-    /**
-     * @internal Exposed to be testable and easily transformable to closure.
-     */
-    public function handleFileInclude(ObjectTree $objectTree, string $filePattern, ?string $contextPathAndFilename): void
+    public function injectPredictiveParser(PredictiveParser $predictiveParser)
+    {
+        $this->predictiveParser = $predictiveParser;
+    }
+
+    protected function handleFileInclude(ObjectTree $objectTree, string $filePattern, ?string $contextPathAndFilename): void
     {
         $filesToInclude = FilePatternResolver::resolveFilesByPattern($filePattern, $contextPathAndFilename, '.fusion');
         foreach ($filesToInclude as $file) {
@@ -94,10 +94,7 @@ class Parser implements ParserInterface
         }
     }
 
-    /**
-     * @internal Exposed to be testable and easily transformable to closure.
-     */
-    public function handleDslTranspile(string $identifier, string $code)
+    protected function handleDslTranspile(string $identifier, string $code)
     {
         $dslObject = $this->dslFactory->create($identifier);
 
@@ -110,7 +107,7 @@ class Parser implements ParserInterface
         }
 
         $lexer = new Lexer('value = ' . $transpiledFusion);
-        $fusionFileAst = (new PredictiveParser())->parse($lexer);
+        $fusionFileAst = $this->predictiveParser->parse($lexer);
 
         $objectTree = $this->getObjectTreeAstVisitor(new ObjectTree())->visitFusionFileAst($fusionFileAst);
 
@@ -122,13 +119,17 @@ class Parser implements ParserInterface
 
     protected function getObjectTreeAstVisitor(ObjectTree $objectTree): ObjectTreeAstVisitor
     {
-        return new ObjectTreeAstVisitor($objectTree, [$this, 'handleFileInclude'], [$this, 'handleDslTranspile']);
+        return new ObjectTreeAstVisitor(
+            $objectTree,
+            \Closure::fromCallable('static::handleFileInclude'),
+            \Closure::fromCallable('static::handleDslTranspile')
+        );
     }
 
     protected function getFusionFileAst(string $sourceCode, ?string $contextPathAndFilename): FusionFileAst
     {
         $lexer = new Lexer($sourceCode);
-        $fusionFileAst = (new PredictiveParser())->parse($lexer, $contextPathAndFilename);
+        $fusionFileAst = $this->predictiveParser->parse($lexer, $contextPathAndFilename);
         return $fusionFileAst;
     }
 }
