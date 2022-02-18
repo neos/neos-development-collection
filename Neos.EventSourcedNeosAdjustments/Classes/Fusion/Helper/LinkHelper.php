@@ -166,7 +166,7 @@ class LinkHelper implements ProtectedContextAwareInterface
                     if ($contextNodeAddress === null) {
                         throw new \RuntimeException(sprintf('Failed to create node address for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
                     }
-                    $visibilityConstraints = $contextNodeAddress->getWorkspaceName()->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
+                    $visibilityConstraints = $contextNodeAddress->workspaceName->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
                     $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                         $contextNode->getContentStreamIdentifier(),
                         $contextNode->getDimensionSpacePoint(),

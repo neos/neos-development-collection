@@ -69,16 +69,11 @@ class EmulatedLegacyContext
         return $nodeAddress->isInLiveWorkspace();
     }
 
-
     public function getWorkspaceName(): ?string
     {
         $this->legacyLogger->info('context.workspaceName called', LogEnvironment::fromMethodName(__METHOD__));
 
-        $workspaceName = $this->getNodeAddressOfContextNode()->getWorkspaceName();
-        if ($workspaceName) {
-            return $workspaceName->name;
-        }
-        return null;
+        return $this->getNodeAddressOfContextNode()->workspaceName?->name;
     }
 
     public function getWorkspace(): EmulatedLegacyWorkspace

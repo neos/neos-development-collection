@@ -34,19 +34,12 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 #[Flow\Proxy(false)]
 final class NodeAddress
 {
-    /**
-     * @var WorkspaceName|null
-     */
-    protected ?WorkspaceName $workspaceName;
-
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
         public readonly DimensionSpacePoint $dimensionSpacePoint,
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?WorkspaceName $workspaceName
-    ) {
-        $this->workspaceName = $workspaceName;
-    }
+        public readonly ?WorkspaceName $workspaceName
+    ) {}
 
     public static function fromArray(array $array): self
     {
@@ -76,11 +69,6 @@ final class NodeAddress
             $this->nodeAggregateIdentifier,
             $this->workspaceName
         );
-    }
-
-    public function getWorkspaceName(): ?WorkspaceName
-    {
-        return $this->workspaceName;
     }
 
     public function serializeForUri(): string

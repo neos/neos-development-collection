@@ -46,7 +46,7 @@ class EmulatedLegacyWorkspace
 
     public function initializeObject()
     {
-        $this->workspace = $this->workspaceFinder->findOneByName($this->nodeAddressOfContextNode->getWorkspaceName());
+        $this->workspace = $this->workspaceFinder->findOneByName($this->nodeAddressOfContextNode->workspaceName);
     }
 
     public function getBaseWorkspace(): EmulatedLegacyBaseWorkspace
