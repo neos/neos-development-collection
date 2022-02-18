@@ -84,7 +84,7 @@ final class SetSerializedNodeProperties implements \JsonSerializable, RebasableT
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->originDimensionSpacePoint->equals($nodeAddress->dimensionSpacePoint)
-                && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }

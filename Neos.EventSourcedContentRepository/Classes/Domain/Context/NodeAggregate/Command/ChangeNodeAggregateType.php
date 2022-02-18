@@ -113,10 +113,8 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
 
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
-        return (
-            $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-                && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
-        );
+        return $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
+            && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier);
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self

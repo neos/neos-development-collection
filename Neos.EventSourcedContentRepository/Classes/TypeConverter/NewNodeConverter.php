@@ -70,6 +70,6 @@ class NewNodeConverter extends AbstractTypeConverter
             VisibilityConstraints::withoutRestrictions()
         );
 
-        return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
     }
 }

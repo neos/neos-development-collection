@@ -106,14 +106,14 @@ class NodeAddressFactory
         return new NodeAddress(
             $baseNodeAddress->contentStreamIdentifier,
             $dimensionSpacePoint,
-            $baseNodeAddress->getNodeAggregateIdentifier(),
+            $baseNodeAddress->nodeAggregateIdentifier,
             $baseNodeAddress->getWorkspaceName()
         );
     }
 
     public function adjustWithNodeAggregateIdentifier(NodeAddress $baseNodeAddress, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAddress
     {
-        if ($nodeAggregateIdentifier->jsonSerialize() === $baseNodeAddress->getNodeAggregateIdentifier()->jsonSerialize()) {
+        if ($nodeAggregateIdentifier->equals($baseNodeAddress->nodeAggregateIdentifier)) {
             // optimization if NodeAggregateIdentifier does not need adjusting
             return $baseNodeAddress;
         }
@@ -138,7 +138,7 @@ class NodeAddressFactory
         return new NodeAddress(
             $contentStreamIdentifier,
             $baseNodeAddress->dimensionSpacePoint,
-            $baseNodeAddress->getNodeAggregateIdentifier(),
+            $baseNodeAddress->nodeAggregateIdentifier,
             $workspaceName
         );
     }

@@ -108,7 +108,7 @@ class ServiceNodesController extends ActionController
         );
 
         if ($nodeIdentifiers === []) {
-            $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+            $entryNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
             $nodes = $nodeAccessor->findDescendants(
                 [$entryNode],
                 $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $nodeTypes)),

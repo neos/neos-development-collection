@@ -162,7 +162,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     private function resolveNodeAddress(NodeAddress $nodeAddress, string $host): ResolveResult
     {
         $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $nodeAddress->getNodeAggregateIdentifier(),
+            $nodeAddress->nodeAggregateIdentifier,
             $nodeAddress->dimensionSpacePoint->hash
         );
         if ($nodeInfo->isDisabled()) {

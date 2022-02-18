@@ -457,7 +457,7 @@ class BackendServiceController extends ActionController
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
-            $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+            $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
             // TODO finish implementation
             /*$otherNodeVariants = array_values(array_filter(array_map(function ($node) {
@@ -500,7 +500,7 @@ class BackendServiceController extends ActionController
                     $nodeAddress->dimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
                 );
-            $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+            $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
             $result[$nodeAddress->serializeForUri()] = ['policy' => $this->nodePolicyService->getNodePolicyInformation($node)];
         }

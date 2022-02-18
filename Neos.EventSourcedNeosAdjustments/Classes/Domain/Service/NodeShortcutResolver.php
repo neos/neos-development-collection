@@ -57,7 +57,7 @@ class NodeShortcutResolver
     public function resolveShortcutTarget(NodeAddress $nodeAddress)
     {
         $documentNodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $nodeAddress->getNodeAggregateIdentifier(),
+            $nodeAddress->nodeAggregateIdentifier,
             $nodeAddress->dimensionSpacePoint->hash
         );
         $resolvedTarget = $this->resolveNode($documentNodeInfo);

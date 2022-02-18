@@ -131,7 +131,7 @@ class NeosUiDefaultNodesOperation extends AbstractOperation
                 $clipboardNodeAddress->contentStreamIdentifier,
                 $clipboardNodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
-            )->findByIdentifier($clipboardNodeAddress->getNodeAggregateIdentifier());
+            )->findByIdentifier($clipboardNodeAddress->nodeAggregateIdentifier);
             if ($clipboardNode && !array_key_exists((string)$clipboardNode->getNodeAggregateIdentifier(), $nodes)) {
                 $nodes[(string)$clipboardNode->getNodeAggregateIdentifier()] = $clipboardNode;
             }

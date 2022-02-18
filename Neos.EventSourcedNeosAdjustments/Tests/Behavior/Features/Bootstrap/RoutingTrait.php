@@ -158,7 +158,7 @@ trait RoutingTrait
     {
         $nodeAddress = $this->match($this->requestUrl);
         Assert::assertTrue($nodeAddress->isInLiveWorkspace());
-        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->getNodeAggregateIdentifier());
+        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->nodeAggregateIdentifier);
         Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->contentStreamIdentifier);
         Assert::assertSame(
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),

@@ -119,7 +119,7 @@ final class SetNodeReferences implements \JsonSerializable, RebasableToOtherCont
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->sourceOriginDimensionSpacePoint->equals($nodeAddress->dimensionSpacePoint)
-                && $this->getSourceNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+                && $this->sourceNodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }

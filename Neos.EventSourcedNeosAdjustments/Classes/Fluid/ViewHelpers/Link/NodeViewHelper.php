@@ -201,9 +201,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         }
 
         $nodeAccessor = $this->getNodeAccessorForNodeAddress($nodeAddress);
-        $resolvedNode = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $resolvedNode = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
         if ($resolvedNode === null) {
-            throw new ViewHelperException(sprintf('Failed to resolve node "%s" on subgraph "%s"', $nodeAddress->getNodeAggregateIdentifier(), json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601372444);
+            throw new ViewHelperException(sprintf('Failed to resolve node "%s" on subgraph "%s"', $nodeAddress->nodeAggregateIdentifier, json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601372444);
         }
         if ($resolvedNode->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
             try {
@@ -212,7 +212,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 throw new ViewHelperException(sprintf('Failed to resolve shortcut node "%s" on subgraph "%s"', $resolvedNode->getNodeAggregateIdentifier(), json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601370239, $e);
             }
             if ($shortcutNodeAddress instanceof NodeAddress) {
-                $resolvedNode = $nodeAccessor->findByIdentifier($shortcutNodeAddress->getNodeAggregateIdentifier());
+                $resolvedNode = $nodeAccessor->findByIdentifier($shortcutNodeAddress->nodeAggregateIdentifier);
             }
         }
 
@@ -265,7 +265,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             // TODO: This can be simplified once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
             $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($documentNodeAddress);
             if ($siteNode === null) {
-                throw new ViewHelperException(sprintf('Failed to determine site node for aggregate node "%s" and subgraph "%s"', $documentNodeAddress->getNodeAggregateIdentifier(), json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601366598);
+                throw new ViewHelperException(sprintf('Failed to determine site node for aggregate node "%s" and subgraph "%s"', $documentNodeAddress->nodeAggregateIdentifier, json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601366598);
             }
             if ($path === '~') {
                 $targetNode = $siteNode;
@@ -276,7 +276,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $targetNode = $nodeAccessor->findNodeByPath(NodePath::fromString($path), $documentNode);
         }
         if ($targetNode === null) {
-            throw new ViewHelperException(sprintf('Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"', $path, $documentNodeAddress->getNodeAggregateIdentifier(), json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601311789);
+            throw new ViewHelperException(sprintf('Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"', $path, $documentNodeAddress->nodeAggregateIdentifier, json_encode($nodeAccessor, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1601311789);
         }
         return $documentNodeAddress->withNodeAggregateIdentifier($targetNode->getNodeAggregateIdentifier());
     }

@@ -124,7 +124,7 @@ final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherCo
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->coveredDimensionSpacePoint === $nodeAddress->dimensionSpacePoint
-                && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+                && $this->getNodeAggregateIdentifier()->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }

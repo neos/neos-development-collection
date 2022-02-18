@@ -45,7 +45,7 @@ class NodeSiteResolvingService
             $nodeAddress->dimensionSpacePoint,
             $nodeAddress->isInLiveWorkspace() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions()
         );
-        $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
         $previousNode = null;
         do {
             if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {

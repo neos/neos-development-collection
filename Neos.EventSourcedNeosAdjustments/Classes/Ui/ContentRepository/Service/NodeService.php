@@ -74,6 +74,6 @@ class NodeService
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        return $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        return $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
     }
 }

@@ -127,7 +127,7 @@ final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherC
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->coveredDimensionSpacePoint === $nodeAddress->dimensionSpacePoint
-                && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }

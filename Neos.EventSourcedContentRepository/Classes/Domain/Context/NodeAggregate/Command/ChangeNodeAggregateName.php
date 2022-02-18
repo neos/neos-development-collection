@@ -103,7 +103,7 @@ final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOth
     {
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-                && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
         );
     }
 }

@@ -153,7 +153,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
     {
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-                && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->nodeAggregateIdentifier)
                 && $this->originDimensionSpacePoint->equals($nodeAddress->dimensionSpacePoint)
         );
     }

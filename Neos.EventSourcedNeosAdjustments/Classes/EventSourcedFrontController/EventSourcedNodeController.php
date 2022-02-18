@@ -155,7 +155,7 @@ class EventSourcedNodeController extends ActionController
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
@@ -218,7 +218,7 @@ class EventSourcedNodeController extends ActionController
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::frontend()
         );
-        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
@@ -294,7 +294,7 @@ class EventSourcedNodeController extends ActionController
 
     private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress)
     {
-        $subtree = $subgraph->findSubtrees([$nodeAddress->getNodeAggregateIdentifier()], 10, $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document'));
+        $subtree = $subgraph->findSubtrees([$nodeAddress->nodeAggregateIdentifier], 10, $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document'));
         $subtree = $subtree->getChildren()[0];
 
         $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
