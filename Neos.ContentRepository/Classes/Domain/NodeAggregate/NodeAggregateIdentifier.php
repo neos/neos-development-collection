@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Domain\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +10,10 @@ namespace Neos\ContentRepository\Domain\NodeAggregate;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Domain\NodeAggregate;
+
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Utility;
 use Neos\Flow\Utility\Algorithms;
@@ -20,78 +21,56 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The NodeAggregateIdentifier supersedes the Node Identifier from Neos <= 4.x.
- *
- * @Flow\Proxy(false)
  */
-final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInterface
+#[Flow\Proxy(false)]
+final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInterface, \Stringable
 {
     /**
      * A preg pattern to match against node aggregate identifiers
      */
     const PATTERN = '/^([a-z0-9\-]{1,255})$/';
 
-    /**
-     * @var string
-     */
-    private $value;
-
-    private function __construct(string $value)
-    {
+    private function __construct(
+        private string $value
+    ) {
         if (!preg_match(self::PATTERN, $value)) {
             throw new \InvalidArgumentException('Invalid node aggregate identifier "' . $value . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).', 1505840197862);
         }
-        $this->value = $value;
     }
 
     public static function create(): self
     {
-        return new static(Algorithms::generateUUID());
+        return new self(Algorithms::generateUUID());
     }
 
     public static function fromString(string $value): self
     {
-        return new static($value);
+        return new self($value);
     }
 
     /**
-     * @param NodeName $childNodeName
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return static
      * @throws \Exception
      */
     public static function forAutoCreatedChildNode(NodeName $childNodeName, NodeAggregateIdentifier $nodeAggregateIdentifier): self
     {
-        return new static(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeAggregateIdentifier));
+        return new self(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeAggregateIdentifier));
     }
 
-    /**
-     * @param NodeAggregateIdentifier $other
-     * @return bool
-     */
     public function equals(NodeAggregateIdentifier $other): bool
     {
-        return $this->value === $other->value;
+        return $this->value === (string)$other;
     }
 
-    /**
-     * @return string
-     */
     public function jsonSerialize(): string
     {
         return $this->value;
     }
 
-    /**
-     * @return string
-     */
     public function __toString()
     {
         return $this->value;
     }
 
-    /**
-     * @return string
-     */
     public function getCacheEntryIdentifier(): string
     {
         return $this->value;
