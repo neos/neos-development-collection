@@ -129,7 +129,7 @@ class NeosUiDefaultNodesOperation extends AbstractOperation
             $clipboardNodeAddress = $this->nodeAddressFactory->createFromUriString($clipboardNodeContextPath);
             $clipboardNode = $this->nodeAccessorManager->accessorFor(
                 $clipboardNodeAddress->contentStreamIdentifier,
-                $clipboardNodeAddress->getDimensionSpacePoint(),
+                $clipboardNodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             )->findByIdentifier($clipboardNodeAddress->getNodeAggregateIdentifier());
             if ($clipboardNode && !array_key_exists((string)$clipboardNode->getNodeAggregateIdentifier(), $nodes)) {

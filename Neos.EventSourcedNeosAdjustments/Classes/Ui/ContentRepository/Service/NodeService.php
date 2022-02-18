@@ -71,7 +71,7 @@ class NodeService
 
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->getDimensionSpacePoint(),
+            $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
         return $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());

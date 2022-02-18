@@ -66,7 +66,7 @@ class NewNodeConverter extends AbstractTypeConverter
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->getDimensionSpacePoint(),
+            $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
 

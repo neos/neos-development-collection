@@ -454,7 +454,7 @@ class BackendServiceController extends ActionController
         foreach ($nodes as $nodeAddress) {
             $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                 $nodeAddress->contentStreamIdentifier,
-                $nodeAddress->getDimensionSpacePoint(),
+                $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
             $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());
@@ -497,7 +497,7 @@ class BackendServiceController extends ActionController
             $nodeAccessor = $this->nodeAccessorManager
                 ->accessorFor(
                     $nodeAddress->contentStreamIdentifier,
-                    $nodeAddress->getDimensionSpacePoint(),
+                    $nodeAddress->dimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
                 );
             $node = $nodeAccessor->findByIdentifier($nodeAddress->getNodeAggregateIdentifier());

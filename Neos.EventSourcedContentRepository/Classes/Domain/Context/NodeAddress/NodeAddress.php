@@ -35,11 +35,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 final class NodeAddress
 {
     /**
-     * @var DimensionSpacePoint
-     */
-    protected DimensionSpacePoint $dimensionSpacePoint;
-
-    /**
      * @var NodeAggregateIdentifier
      */
     protected NodeAggregateIdentifier $nodeAggregateIdentifier;
@@ -51,11 +46,10 @@ final class NodeAddress
 
     public function __construct(
         public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
+        public readonly DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ?WorkspaceName $workspaceName
     ) {
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->workspaceName = $workspaceName;
     }
@@ -88,11 +82,6 @@ final class NodeAddress
             $this->nodeAggregateIdentifier,
             $this->workspaceName
         );
-    }
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->dimensionSpacePoint;
     }
 
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier

@@ -160,7 +160,14 @@ trait RoutingTrait
         Assert::assertTrue($nodeAddress->isInLiveWorkspace());
         Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->getNodeAggregateIdentifier());
         Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->contentStreamIdentifier);
-        Assert::assertTrue($nodeAddress->getDimensionSpacePoint()->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), sprintf('Dimension space point "%s" did not match the expected "%s"', json_encode($nodeAddress->getDimensionSpacePoint()), $dimensionSpacePoint));
+        Assert::assertSame(
+            DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
+            $nodeAddress->dimensionSpacePoint,
+            sprintf(
+                'Dimension space point "%s" did not match the expected "%s"',
+                json_encode($nodeAddress->dimensionSpacePoint), $dimensionSpacePoint
+            )
+        );
     }
 
     /**

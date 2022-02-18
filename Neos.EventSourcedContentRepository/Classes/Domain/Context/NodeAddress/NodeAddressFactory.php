@@ -98,7 +98,7 @@ class NodeAddressFactory
 
     public function adjustWithDimensionSpacePoint(NodeAddress $baseNodeAddress, DimensionSpacePoint $dimensionSpacePoint): NodeAddress
     {
-        if ($dimensionSpacePoint->equals($baseNodeAddress->getDimensionSpacePoint())) {
+        if ($dimensionSpacePoint === $baseNodeAddress->dimensionSpacePoint) {
             // optimization if dimension space point does not need adjusting
             return $baseNodeAddress;
         }
@@ -120,7 +120,7 @@ class NodeAddressFactory
 
         return new NodeAddress(
             $baseNodeAddress->contentStreamIdentifier,
-            $baseNodeAddress->getDimensionSpacePoint(),
+            $baseNodeAddress->dimensionSpacePoint,
             $nodeAggregateIdentifier,
             $baseNodeAddress->getWorkspaceName()
         );
@@ -137,7 +137,7 @@ class NodeAddressFactory
 
         return new NodeAddress(
             $contentStreamIdentifier,
-            $baseNodeAddress->getDimensionSpacePoint(),
+            $baseNodeAddress->dimensionSpacePoint,
             $baseNodeAddress->getNodeAggregateIdentifier(),
             $workspaceName
         );

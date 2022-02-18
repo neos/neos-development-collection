@@ -103,7 +103,7 @@ class ServiceNodesController extends ActionController
         unset($contextNode);
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->getDimensionSpacePoint(),
+            $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
         );
 

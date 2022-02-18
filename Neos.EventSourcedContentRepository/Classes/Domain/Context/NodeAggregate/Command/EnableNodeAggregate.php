@@ -123,7 +123,7 @@ final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherCo
     {
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
-                && $this->getCoveredDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
+                && $this->coveredDimensionSpacePoint === $nodeAddress->dimensionSpacePoint
                 && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }

@@ -225,7 +225,7 @@ class NodeViewHelper extends AbstractViewHelper
     {
         return $this->nodeAccessorManager->accessorFor(
             $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->getDimensionSpacePoint(),
+            $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
     }

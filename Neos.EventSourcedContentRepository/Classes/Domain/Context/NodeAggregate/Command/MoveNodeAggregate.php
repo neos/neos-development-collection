@@ -191,6 +191,6 @@ final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherCont
     {
         return $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
             && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
-            && $this->dimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint());
+            && $this->dimensionSpacePoint === $nodeAddress->dimensionSpacePoint;
     }
 }

@@ -291,7 +291,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     {
         return $this->nodeAccessorManager->accessorFor(
             $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->getDimensionSpacePoint(),
+            $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
     }

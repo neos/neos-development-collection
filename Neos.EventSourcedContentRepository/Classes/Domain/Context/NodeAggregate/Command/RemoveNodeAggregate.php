@@ -176,7 +176,7 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
         return (
             $this->contentStreamIdentifier === $nodeAddress->contentStreamIdentifier
                 && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
-                && $this->coveredDimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint())
+                && $this->coveredDimensionSpacePoint === $nodeAddress->dimensionSpacePoint
         );
     }
 }

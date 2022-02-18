@@ -163,7 +163,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     {
         $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->getNodeAggregateIdentifier(),
-            $nodeAddress->getDimensionSpacePoint()->hash
+            $nodeAddress->dimensionSpacePoint->hash
         );
         if ($nodeInfo->isDisabled()) {
             throw new NodeNotFoundException(sprintf('The resolved node for address %s is disabled', $nodeAddress), 1599668357);
