@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress;
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -71,14 +72,17 @@ final class NodeAddress
         );
     }
 
+    /**
+     * @throws NodeAddressCannotBeSerializedException
+     */
     public function serializeForUri(): string
     {
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
         // when changing the serialization here
         if ($this->workspaceName === null) {
-            throw new \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException('The node Address ' . $this->__toString() . ' cannot be serialized because no workspace name was resolved.', 1531637028);
+            throw NodeAddressCannotBeSerializedException::becauseNoWorkspaceNameWasResolved($this);
         }
-        return $this->workspaceName->jsonSerialize() . '__' . $this->dimensionSpacePoint->serializeForUri() . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
+        return $this->workspaceName->name . '__' . $this->dimensionSpacePoint->serializeForUri() . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
     }
 
     public function isInLiveWorkspace(): bool

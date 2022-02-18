@@ -14,9 +14,17 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception;
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
 final class NodeAddressCannotBeSerializedException extends \Neos\EventSourcedContentRepository\Exception
 {
+    public static function becauseNoWorkspaceNameWasResolved(NodeAddress $nodeAddress): self
+    {
+        return new self(
+            'The node Address ' . $nodeAddress . ' cannot be serialized because no workspace name was resolved.',
+            1531637028
+        );
+    }
 }
