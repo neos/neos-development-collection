@@ -22,8 +22,10 @@ use Neos\Flow\Annotations as Flow;
  */
 final class QueryUtility
 {
-    public static function getRestrictionClause(VisibilityConstraints $visibilityConstraints, string $prefix = ''): string
-    {
+    public static function getRestrictionClause(
+        VisibilityConstraints $visibilityConstraints,
+        string $prefix = ''
+    ): string {
         if ($visibilityConstraints->isDisabledContentShown()) {
             return '';
         }

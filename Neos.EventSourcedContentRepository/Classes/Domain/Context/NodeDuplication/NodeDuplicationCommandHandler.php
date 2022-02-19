@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -115,7 +114,9 @@ final class NodeDuplicationCommandHandler
 
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
-        $this->requireDimensionSpacePointToExist($command->getTargetDimensionSpacePoint());
+        $this->requireDimensionSpacePointToExist(
+            $command->getTargetDimensionSpacePoint()->toDimensionSpacePoint()
+        );
         $nodeType = $this->requireNodeType($command->getNodeToInsert()->getNodeTypeName());
         $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
 
@@ -132,11 +133,11 @@ final class NodeDuplicationCommandHandler
         if ($command->getTargetSucceedingSiblingNodeAggregateIdentifier()) {
             $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getTargetSucceedingSiblingNodeAggregateIdentifier());
         }
-        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetDimensionSpacePoint());
+        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetDimensionSpacePoint()->toDimensionSpacePoint());
 
         // Calculate Covered Dimension Space Points: All points being specializations of the
         // given DSP, where the parent also exists.
-        $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint());
+        $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint()->toDimensionSpacePoint());
         $coveredDimensionSpacePoints = $specializations->getIntersection($parentNodeAggregate->getCoveredDimensionSpacePoints());
 
         // Constraint: The node name must be free in all these dimension space points
@@ -152,32 +153,39 @@ final class NodeDuplicationCommandHandler
 
         // Now, we can start creating the recursive structure.
         $events = DomainEvents::createEmpty();
-        $this->nodeAggregateEventPublisher->withCommand($command, function () use ($command, $nodeType, $parentNodeAggregate, $coveredDimensionSpacePoints, &$events) {
-            $this->createEventsForNodeToInsert(
-                $command->getContentStreamIdentifier(),
-                $command->getTargetDimensionSpacePoint(),
-                $coveredDimensionSpacePoints,
-                $command->getTargetParentNodeAggregateIdentifier(),
-                $command->getTargetSucceedingSiblingNodeAggregateIdentifier(),
-                $command->getTargetNodeName(),
-                $command->getNodeToInsert(),
-                $command->getNodeAggregateIdentifierMapping(),
-                $command->getInitiatingUserIdentifier(),
-                $events
-            );
+        $this->nodeAggregateEventPublisher->withCommand(
+            $command,
+            function () use ($command, $nodeType, $parentNodeAggregate, $coveredDimensionSpacePoints, &$events) {
+                $this->createEventsForNodeToInsert(
+                    $command->getContentStreamIdentifier(),
+                    $command->getTargetDimensionSpacePoint(),
+                    $coveredDimensionSpacePoints,
+                    $command->getTargetParentNodeAggregateIdentifier(),
+                    $command->getTargetSucceedingSiblingNodeAggregateIdentifier(),
+                    $command->getTargetNodeName(),
+                    $command->getNodeToInsert(),
+                    $command->getNodeAggregateIdentifierMapping(),
+                    $command->getInitiatingUserIdentifier(),
+                    $events
+                );
 
-            $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
-            $this->nodeAggregateEventPublisher->publishMany(
-                $contentStreamEventStreamName->getEventStreamName(),
-                $events
-            );
-        });
+                $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+                    $command->getContentStreamIdentifier()
+                );
+                $this->nodeAggregateEventPublisher->publishMany(
+                    $contentStreamEventStreamName->getEventStreamName(),
+                    $events
+                );
+            }
+        );
 
         return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
-    private function requireNewNodeAggregateIdentifiersToNotExist(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping)
-    {
+    private function requireNewNodeAggregateIdentifiersToNotExist(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
+    ) {
         foreach ($nodeAggregateIdentifierMapping->getAllNewNodeAggregateIdentifiers() as $nodeAggregateIdentifier) {
             $this->requireProjectedNodeAggregateToNotExist($contentStreamIdentifier, $nodeAggregateIdentifier);
         }
@@ -185,7 +193,7 @@ final class NodeDuplicationCommandHandler
 
     private function createEventsForNodeToInsert(
         ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
@@ -199,9 +207,11 @@ final class NodeDuplicationCommandHandler
             DecoratedEvent::addIdentifier(
                 new NodeAggregateWithNodeWasCreated(
                     $contentStreamIdentifier,
-                    $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier($nodeToInsert->getNodeAggregateIdentifier()),
+                    $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
+                        $nodeToInsert->getNodeAggregateIdentifier()
+                    ),
                     $nodeToInsert->getNodeTypeName(),
-                    OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint),
+                    $originDimensionSpacePoint,
                     $coveredDimensionSpacePoints,
                     $targetParentNodeAggregateIdentifier,
                     $targetNodeName,
@@ -217,10 +227,14 @@ final class NodeDuplicationCommandHandler
         foreach ($nodeToInsert->getChildNodesToInsert() as $childNodeToInsert) {
             $this->createEventsForNodeToInsert(
                 $contentStreamIdentifier,
-                $dimensionSpacePoint,
+                $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
-                $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier($nodeToInsert->getNodeAggregateIdentifier()), // the just-inserted node becomes the new parent node Identifier
-                null, // $childNodesToInsert is already in the correct order; so appending only is fine.
+                // the just-inserted node becomes the new parent node Identifier
+                $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
+                    $nodeToInsert->getNodeAggregateIdentifier()
+                ),
+                // $childNodesToInsert is already in the correct order; so appending only is fine.
+                null,
                 $childNodeToInsert->getNodeName(),
                 $childNodeToInsert,
                 $nodeAggregateIdentifierMapping,

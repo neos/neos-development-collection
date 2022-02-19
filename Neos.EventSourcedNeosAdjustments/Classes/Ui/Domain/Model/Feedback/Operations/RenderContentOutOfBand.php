@@ -186,10 +186,11 @@ class RenderContentOutOfBand extends AbstractFeedback
         }
 
         return (
-            $this->getNode()->getContentStreamIdentifier()->equals($feedback->getNode()->getContentStreamIdentifier()) &&
-            $this->getNode()->getDimensionSpacePoint()->equals($feedback->getNode()->getDimensionSpacePoint()) &&
-            $this->getNode()->getNodeAggregateIdentifier()->equals($feedback->getNode()->getNodeAggregateIdentifier()) &&
-
+            $this->getNode()->getContentStreamIdentifier()=== $feedback->getNode()->getContentStreamIdentifier() &&
+            $this->getNode()->getDimensionSpacePoint() === $feedback->getNode()->getDimensionSpacePoint() &&
+            $this->getNode()->getNodeAggregateIdentifier()->equals(
+                $feedback->getNode()->getNodeAggregateIdentifier()
+            ) &&
             $this->getReferenceData() == $feedback->getReferenceData()
         );
     }
@@ -218,8 +219,15 @@ class RenderContentOutOfBand extends AbstractFeedback
      */
     protected function renderContent(ControllerContext $controllerContext)
     {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->getNode()->getContentStreamIdentifier(), $this->getNode()->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $this->contentCache->flushByTag(sprintf('Node_%s', (string)$nodeAccessor->findParentNode($this->getNode())->getNodeAggregateIdentifier()));
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $this->getNode()->getContentStreamIdentifier(),
+            $this->getNode()->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $this->contentCache->flushByTag(sprintf(
+            'Node_%s',
+            $nodeAccessor->findParentNode($this->getNode())->getNodeAggregateIdentifier())
+        );
 
         $parentDomAddress = $this->getParentDomAddress();
 

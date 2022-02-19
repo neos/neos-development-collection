@@ -40,7 +40,8 @@ class CreateNodePrivilege extends AbstractNodePrivilege
      */
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
-        if ($subject instanceof CreateNodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
+        if ($subject instanceof CreateNodePrivilegeSubject === false
+            && $subject instanceof MethodPrivilegeSubject === false) {
             throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', CreateNodePrivilege::class, CreateNodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417014353);
         }
 
@@ -53,7 +54,9 @@ class CreateNodePrivilege extends AbstractNodePrivilege
 
             $joinPoint = $subject->getJoinPoint();
             $allowedCreationNodeTypes = $this->nodeContext->getCreationNodeTypes();
-            $actualNodeType = $joinPoint->getMethodName() === 'createNodeFromTemplate' ? $joinPoint->getMethodArgument('nodeTemplate')->getNodeType()->getName() : $joinPoint->getMethodArgument('nodeType')->getName();
+            $actualNodeType = $joinPoint->getMethodName() === 'createNodeFromTemplate'
+                ? $joinPoint->getMethodArgument('nodeTemplate')->getNodeType()->getName()
+                : $joinPoint->getMethodArgument('nodeType')->getName();
 
             if ($allowedCreationNodeTypes !== [] && !in_array($actualNodeType, $allowedCreationNodeTypes)) {
                 return false;
@@ -66,7 +69,12 @@ class CreateNodePrivilege extends AbstractNodePrivilege
             return $result;
         }
 
-        if ($this->nodeContext->getCreationNodeTypes() === [] || ($subject->hasCreationNodeType() === false) || in_array($subject->getCreationNodeType()->getName(), $this->nodeContext->getCreationNodeTypes()) === true) {
+        if ($this->nodeContext->getCreationNodeTypes() === []
+            || ($subject->hasCreationNodeType() === false)
+            || in_array(
+                $subject->getCreationNodeType()->getName(),
+                $this->nodeContext->getCreationNodeTypes()
+            ) === true) {
             return parent::matchesSubject($subject);
         }
         return false;
@@ -85,6 +93,7 @@ class CreateNodePrivilege extends AbstractNodePrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'method(' . CreateNodeVariant::class . '->__construct()) && method(' . CreateNodeAggregateWithNodeAndSerializedProperties::class . '->__construct())';
+        return 'method(' . CreateNodeVariant::class . '->__construct()) && method('
+            . CreateNodeAggregateWithNodeAndSerializedProperties::class . '->__construct())';
     }
 }

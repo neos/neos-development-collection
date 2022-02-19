@@ -90,7 +90,7 @@ class Change
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
             'deleted' => (int)$this->deleted,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint !== null ? (string)$this->removalAttachmentPoint : null
+            'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
         ]);
     }
 
@@ -102,7 +102,7 @@ class Change
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
             'deleted' => (int)$this->deleted,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint !== null ? (string)$this->removalAttachmentPoint : null
+            'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
         ],
             [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
@@ -126,7 +126,9 @@ class Change
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],
             (bool)$databaseRow['deleted'],
-            isset($databaseRow['removalAttachmentPoint']) ? NodeAggregateIdentifier::fromString($databaseRow['removalAttachmentPoint']) : null
+            isset($databaseRow['removalAttachmentPoint'])
+                ? NodeAggregateIdentifier::fromString($databaseRow['removalAttachmentPoint'])
+                : null
         );
     }
 }

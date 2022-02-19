@@ -64,8 +64,16 @@ class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('node', \Neos\ContentRepository\Domain\Model\NodeInterface::class, 'Optional Node to use context from');
-        $this->registerArgument('mode', 'string', 'Optional rendering mode name to check if this specific mode is active');
+        $this->registerArgument(
+            'node',
+            \Neos\ContentRepository\Domain\Model\NodeInterface::class,
+            'Optional Node to use context from'
+        );
+        $this->registerArgument(
+            'mode',
+            'string',
+            'Optional rendering mode name to check if this specific mode is active'
+        );
     }
 
 

@@ -25,9 +25,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 class NodeAddressFactory
 {
     /**
@@ -46,7 +44,11 @@ class NodeAddressFactory
     {
         $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($node->getContentStreamIdentifier());
         if ($workspace === null) {
-            throw new \RuntimeException('Cannot build a NodeAddress for traversable node of aggregate ' . $node->getNodeAggregateIdentifier() . ', because the content stream ' . $node->getContentStreamIdentifier() . ' is not assigned to a workspace.');
+            throw new \RuntimeException(
+                'Cannot build a NodeAddress for traversable node of aggregate ' . $node->getNodeAggregateIdentifier()
+                    . ', because the content stream ' . $node->getContentStreamIdentifier()
+                    . ' is not assigned to a workspace.'
+            );
         }
         return new NodeAddress(
             $node->getContentStreamIdentifier(),
@@ -61,14 +63,21 @@ class NodeAddressFactory
         // the reverse method is {@link NodeAddress::serializeForUri} - ensure to adjust it
         // when changing the serialization here
 
-        list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdentifierSerialized) = explode('__', $nodeAddressSerialized);
+        list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdentifierSerialized)
+            = explode('__', $nodeAddressSerialized);
         $workspaceName = WorkspaceName::fromString($workspaceNameSerialized);
         $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifierSerialized);
 
-        $contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)->getCurrentContentStreamIdentifier();
+        $contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)
+            ->getCurrentContentStreamIdentifier();
 
-        return new NodeAddress($contentStreamIdentifier, $dimensionSpacePoint, $nodeAggregateIdentifier, $workspaceName);
+        return new NodeAddress(
+            $contentStreamIdentifier,
+            $dimensionSpacePoint,
+            $nodeAggregateIdentifier,
+            $workspaceName
+        );
     }
 
     /**
@@ -82,9 +91,16 @@ class NodeAddressFactory
         $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($pathValues['workspaceName']));
         $contentStreamIdentifier = $workspace->getCurrentContentStreamIdentifier();
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($pathValues['dimensions']);
-        $nodePath = NodePath::fromString(\mb_strpos($pathValues['nodePath'], '/sites') === 0 ? \mb_substr($pathValues['nodePath'], 6) : $pathValues['nodePath']);
+        $nodePath = NodePath::fromString(\mb_strpos($pathValues['nodePath'], '/sites') === 0
+            ? \mb_substr($pathValues['nodePath'], 6)
+            : $pathValues['nodePath']
+        );
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+            $contentStreamIdentifier,
+            $dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        );
         $node = $subgraph->findNodeByPath(
             $nodePath,
             $this->contentGraph->findRootNodeAggregateByType(
@@ -93,11 +109,18 @@ class NodeAddressFactory
             )->getIdentifier()
         );
 
-        return new NodeAddress($contentStreamIdentifier, $dimensionSpacePoint, $node->getNodeAggregateIdentifier(), $workspace->getWorkspaceName());
+        return new NodeAddress(
+            $contentStreamIdentifier,
+            $dimensionSpacePoint,
+            $node->getNodeAggregateIdentifier(),
+            $workspace->getWorkspaceName()
+        );
     }
 
-    public function adjustWithDimensionSpacePoint(NodeAddress $baseNodeAddress, DimensionSpacePoint $dimensionSpacePoint): NodeAddress
-    {
+    public function adjustWithDimensionSpacePoint(
+        NodeAddress $baseNodeAddress,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): NodeAddress {
         if ($dimensionSpacePoint === $baseNodeAddress->dimensionSpacePoint) {
             // optimization if dimension space point does not need adjusting
             return $baseNodeAddress;
@@ -111,8 +134,10 @@ class NodeAddressFactory
         );
     }
 
-    public function adjustWithNodeAggregateIdentifier(NodeAddress $baseNodeAddress, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAddress
-    {
+    public function adjustWithNodeAggregateIdentifier(
+        NodeAddress $baseNodeAddress,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): NodeAddress {
         if ($nodeAggregateIdentifier->equals($baseNodeAddress->nodeAggregateIdentifier)) {
             // optimization if NodeAggregateIdentifier does not need adjusting
             return $baseNodeAddress;
@@ -133,7 +158,8 @@ class NodeAddressFactory
             return $baseNodeAddress;
         }
 
-        $contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)->getCurrentContentStreamIdentifier();
+        $contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)
+            ->getCurrentContentStreamIdentifier();
 
         return new NodeAddress(
             $contentStreamIdentifier,

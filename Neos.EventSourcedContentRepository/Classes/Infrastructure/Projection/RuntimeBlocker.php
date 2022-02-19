@@ -39,7 +39,9 @@ final class RuntimeBlocker
     ) {
         $this->eventPublisher = $eventPublisher;
         $this->eventToListenerMappingProvider = $eventToListenerMappingProvider;
-        $this->defaultProjectorsToBeBlocked = new ProcessedEventsAwareProjectorCollection($defaultProjectorsToBeBlocked);
+        $this->defaultProjectorsToBeBlocked = new ProcessedEventsAwareProjectorCollection(
+            $defaultProjectorsToBeBlocked
+        );
     }
 
     public function blockUntilProjectionsAreUpToDate(
@@ -57,10 +59,15 @@ final class RuntimeBlocker
         }
     }
 
-    private function filterPublishedEventsByListener(DomainEvents $publishedEvents, string $listenerClassName): DomainEvents
-    {
-        $eventStoreId = $this->eventToListenerMappingProvider->getEventStoreIdentifierForListenerClassName($listenerClassName);
-        $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)->filter(static function (EventToListenerMapping $mapping) use ($listenerClassName) {
+    private function filterPublishedEventsByListener(
+        DomainEvents $publishedEvents,
+        string $listenerClassName
+    ): DomainEvents {
+        $eventStoreId = $this->eventToListenerMappingProvider->getEventStoreIdentifierForListenerClassName(
+            $listenerClassName
+        );
+        $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)
+            ->filter(static function (EventToListenerMapping $mapping) use ($listenerClassName) {
             return $mapping->getListenerClassName() === $listenerClassName;
         });
         $eventClassNames = [];
@@ -87,7 +94,11 @@ final class RuntimeBlocker
                     $ids .= '   ' . $event->getIdentifier();
                 }
 
-                throw new \RuntimeException(sprintf('TIMEOUT while waiting for event(s) %s for projector "%s" - check the error logs for details.', $ids, get_class($projector)), 1550232279);
+                throw new \RuntimeException(sprintf(
+                    'TIMEOUT while waiting for event(s) %s for projector "%s" - check the error logs for details.',
+                    $ids,
+                    get_class($projector)
+                ), 1550232279);
             }
         }
     }

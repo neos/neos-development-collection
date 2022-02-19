@@ -55,42 +55,52 @@ trait NodeRemoval
         $this->getReadSideMemoryCacheManager()->disableCache();
 
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
-        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier()
+        );
         $this->requireDimensionSpacePointToExist($command->getCoveredDimensionSpacePoint());
         $this->requireNodeAggregateNotToBeTethered($nodeAggregate);
-        $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getCoveredDimensionSpacePoint());
+        $this->requireNodeAggregateToCoverDimensionSpacePoint(
+            $nodeAggregate,
+            $command->getCoveredDimensionSpacePoint()
+        );
 
         $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodeAggregateWasRemoved(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier(),
-                        AffectedOccupiedDimensionSpacePointSet::forStrategyIdentifier(
-                            $command->getNodeVariantSelectionStrategy(),
-                            $nodeAggregate,
-                            $command->getCoveredDimensionSpacePoint(),
-                            $this->getInterDimensionalVariationGraph()
+        $this->getNodeAggregateEventPublisher()->withCommand(
+            $command,
+            function () use ($command, $nodeAggregate, &$events) {
+                $events = DomainEvents::withSingleEvent(
+                    DecoratedEvent::addIdentifier(
+                        new NodeAggregateWasRemoved(
+                            $command->getContentStreamIdentifier(),
+                            $command->getNodeAggregateIdentifier(),
+                            AffectedOccupiedDimensionSpacePointSet::forStrategyIdentifier(
+                                $command->getNodeVariantSelectionStrategy(),
+                                $nodeAggregate,
+                                $nodeAggregate->getOccupationByCovered($command->getCoveredDimensionSpacePoint()),
+                                $this->getInterDimensionalVariationGraph()
+                            ),
+                            AffectedCoveredDimensionSpacePointSet::forStrategyIdentifier(
+                                $command->getNodeVariantSelectionStrategy(),
+                                $nodeAggregate,
+                                $command->getCoveredDimensionSpacePoint(),
+                                $this->getInterDimensionalVariationGraph()
+                            ),
+                            $command->getInitiatingUserIdentifier(),
+                            $command->getRemovalAttachmentPoint()
                         ),
-                        AffectedCoveredDimensionSpacePointSet::forStrategyIdentifier(
-                            $command->getNodeVariantSelectionStrategy(),
-                            $nodeAggregate,
-                            $command->getCoveredDimensionSpacePoint(),
-                            $this->getInterDimensionalVariationGraph()
-                        ),
-                        $command->getInitiatingUserIdentifier(),
-                        $command->getRemovalAttachmentPoint()
-                    ),
-                    Uuid::uuid4()->toString()
-                )
-            );
+                        Uuid::uuid4()->toString()
+                    )
+                );
 
-            $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
-                $events
-            );
-        });
+                $this->getNodeAggregateEventPublisher()->publishMany(
+                    ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())
+                        ->getEventStreamName(),
+                    $events
+                );
+            }
+        );
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());
     }
@@ -98,7 +108,10 @@ trait NodeRemoval
     protected function requireNodeAggregateNotToBeTethered(NodeAggregate $nodeAggregate)
     {
         if ($nodeAggregate->isTethered()) {
-            throw new TetheredNodeAggregateCannotBeRemoved('The node aggregate "' . $nodeAggregate->getIdentifier() . '" is tethered, and thus cannot be removed.', 1597753832);
+            throw new TetheredNodeAggregateCannotBeRemoved(
+                'The node aggregate "' . $nodeAggregate->getIdentifier() . '" is tethered, and thus cannot be removed.',
+                1597753832
+            );
         }
     }
 }

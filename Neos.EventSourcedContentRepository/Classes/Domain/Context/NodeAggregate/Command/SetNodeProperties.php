@@ -39,7 +39,8 @@ final class SetNodeProperties
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
         public readonly PropertyValuesToWrite $propertyValues,
         public readonly UserIdentifier $initiatingUserIdentifier
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string,mixed> $array

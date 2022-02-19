@@ -14,40 +14,22 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\Remo
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamFinder;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 class ContentStreamPruner
 {
+    protected ContentStreamFinder $contentStreamFinder;
 
-    /**
-     * @var ContentStreamFinder
-     */
-    protected $contentStreamFinder;
+    protected ContentStreamCommandHandler $contentStreamCommandHandler;
 
-    /**
-     * @var ContentStreamCommandHandler
-     */
-    protected $contentStreamCommandHandler;
+    protected Connection $connection;
 
-    /**
-     * @var Connection
-     */
-    protected $connection;
+    protected ?CommandResult $lastCommandResult;
 
-    /**
-     * @var ?CommandResult
-     */
-    protected $lastCommandResult;
-
-    /**
-     * ContentStreamPruner constructor.
-     * @param ContentStreamFinder $contentStreamFinder
-     * @param ContentStreamCommandHandler $contentStreamCommandHandler
-     * @param DbalClient $dbalClient
-     */
-    public function __construct(ContentStreamFinder $contentStreamFinder, ContentStreamCommandHandler $contentStreamCommandHandler, DbalClient $dbalClient)
-    {
+    public function __construct(
+        ContentStreamFinder $contentStreamFinder,
+        ContentStreamCommandHandler $contentStreamCommandHandler,
+        DbalClient $dbalClient
+    ) {
         $this->contentStreamFinder = $contentStreamFinder;
         $this->contentStreamCommandHandler = $contentStreamCommandHandler;
         $this->connection = $dbalClient->getConnection();
@@ -59,7 +41,8 @@ class ContentStreamPruner
      * NOTE: This still **keeps** the event stream as is; so it would be possible to re-construct the content stream
      *       at a later point in time (though we currently do not provide any API for it).
      *
-     *       To remove the deleted Content Streams, call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
+     *       To remove the deleted Content Streams,
+     *       call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
      *
      * @return ContentStreamIdentifier[] the removed content streams
      */
@@ -68,10 +51,12 @@ class ContentStreamPruner
         $unusedContentStreams = $this->contentStreamFinder->findUnusedContentStreams();
 
         foreach ($unusedContentStreams as $contentStream) {
-            $this->lastCommandResult = $this->contentStreamCommandHandler->handleRemoveContentStream(new RemoveContentStream(
-                $contentStream,
-                UserIdentifier::forSystemUser()
-            ));
+            $this->lastCommandResult = $this->contentStreamCommandHandler->handleRemoveContentStream(
+                new RemoveContentStream(
+                    $contentStream,
+                    UserIdentifier::forSystemUser()
+                )
+            );
         }
 
         return $unusedContentStreams;
@@ -96,7 +81,8 @@ class ContentStreamPruner
             $this->connection->executeUpdate(
                 'DELETE FROM neos_contentrepository_events WHERE stream = :stream',
                 [
-                    'stream' => (string)ContentStreamEventStreamName::fromContentStreamIdentifier($removedContentStream)->getEventStreamName()
+                    'stream' => (string)ContentStreamEventStreamName::fromContentStreamIdentifier($removedContentStream)
+                        ->getEventStreamName()
                 ]
             );
         }

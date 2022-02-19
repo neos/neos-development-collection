@@ -78,10 +78,17 @@ class NeosUiFilteredChildrenOperation extends AbstractOperation
 
         /** @var NodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($contextNode->getContentStreamIdentifier(), $contextNode->getDimensionSpacePoint(), $contextNode->getVisibilityConstraints());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $contextNode->getContentStreamIdentifier(),
+                $contextNode->getDimensionSpacePoint(),
+                $contextNode->getVisibilityConstraints()
+            );
 
             /** @var NodeInterface $childNode */
-            foreach ($nodeAccessor->findChildNodes($contextNode, $this->nodeTypeConstraintFactory->parseFilterString($filter)) as $childNode) {
+            foreach ($nodeAccessor->findChildNodes(
+                $contextNode,
+                $this->nodeTypeConstraintFactory->parseFilterString($filter)
+            ) as $childNode) {
                 if (!isset($outputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
                     $output[] = $childNode;
                     $outputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;

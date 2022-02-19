@@ -98,9 +98,11 @@ final class WorkspaceFinder
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @return Workspace|null
      */
-    public function findOneByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
-    {
-        if ($this->cacheEnabled === true && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
+    public function findOneByCurrentContentStreamIdentifier(
+        ContentStreamIdentifier $contentStreamIdentifier
+    ): ?Workspace {
+        if ($this->cacheEnabled
+            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
             return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
         }
 

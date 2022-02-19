@@ -3,6 +3,7 @@ namespace Neos\EventSourcedContentRepository\Command;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
+use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\Projection\ProjectionManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -20,9 +21,6 @@ use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Cli\CommandController;
 use Neos\Utility\ObjectAccess;
 
-/**
- *
- */
 class ContentStreamCommandController extends CommandController
 {
     /**
@@ -62,9 +60,10 @@ class ContentStreamCommandController extends CommandController
      */
     public function exportCommand(string $contentStreamIdentifier, int $startSequenceNumber = 0)
     {
-        $events = $this->contentRepositoryEventStore->load(StreamName::fromString($contentStreamIdentifier), $startSequenceNumber);
-
-        $normalizer = new EventNormalizer();
+        $events = $this->contentRepositoryEventStore->load(
+            StreamName::fromString($contentStreamIdentifier),
+            $startSequenceNumber
+        );
 
         $this->outputLine('[');
         $i = 0;
@@ -98,11 +97,11 @@ class ContentStreamCommandController extends CommandController
             $fileStream = fopen('php://stdin', 'r');
             $this->outputLine('Reading import data from standard in.');
         }
-
-        $normalizer = new EventNormalizer();
+        $normalizer = new EventNormalizer(new EventTypeResolver());
 
         $contentStreamToImportTo = ContentStreamIdentifier::fromString($contentStreamIdentifier);
-        $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamToImportTo)->getEventStreamName();
+        $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamToImportTo)
+            ->getEventStreamName();
 
         $this->outputLine('Clearing workspace projection to create the workspace to import to.');
         $workspaceProjection = $this->projectionManager->getProjection('workspace');
@@ -155,7 +154,8 @@ class ContentStreamCommandController extends CommandController
         fclose($fileStream);
         $this->outputLine('');
         $this->outputLine('Finished importing events.');
-        $this->outputLine('Your events and projections are probably out of sync now, <error>make sure you replay all projections via "./flow projection:replayall"</error>.');
+        $this->outputLine('Your events and projections are probably out of sync now,'
+            . ' <error>make sure you replay all projections via "./flow projection:replayall"</error>.');
     }
 
     /**

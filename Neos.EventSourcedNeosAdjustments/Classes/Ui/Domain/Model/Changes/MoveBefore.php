@@ -59,21 +59,28 @@ class MoveBefore extends AbstractStructuralChange
 
             $precedingSibling = null;
             try {
-                $precedingSibling = $this->findChildNodes($this->findParentNode($subject))->previous($succeedingSibling);
+                $precedingSibling = $this->findChildNodes($this->findParentNode($subject))
+                    ->previous($succeedingSibling);
             } catch (\InvalidArgumentException $e) {
                 // do nothing; $precedingSibling is null.
             }
 
-            $hasEqualParentNode = $this->findParentNode($subject)->getNodeAggregateIdentifier()->equals($this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier());
+            $hasEqualParentNode = $this->findParentNode($subject)->getNodeAggregateIdentifier()
+                ->equals($this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier());
 
             // we render content directly as response of this operation, so we need to flush the caches
-            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($subject->getContentStreamIdentifier(), $subject->getNodeAggregateIdentifier());
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate(
+                $subject->getContentStreamIdentifier(),
+                $subject->getNodeAggregateIdentifier()
+            );
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
                 new MoveNodeAggregate(
                     $subject->getContentStreamIdentifier(),
                     $subject->getDimensionSpacePoint(),
                     $subject->getNodeAggregateIdentifier(),
-                    $hasEqualParentNode ? null : $this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier(),
+                    $hasEqualParentNode
+                        ? null
+                        : $this->findParentNode($succeedingSibling)->getNodeAggregateIdentifier(),
                     $precedingSibling?->getNodeAggregateIdentifier(),
                     $succeedingSibling->getNodeAggregateIdentifier(),
                     RelationDistributionStrategy::STRATEGY_GATHER_ALL,
@@ -83,9 +90,13 @@ class MoveBefore extends AbstractStructuralChange
             $doFlushContentCache();
             $parentOfSucceedingSibling = $this->findParentNode($succeedingSibling);
             if ($parentOfSucceedingSibling) {
-                $this->contentCacheFlusher->flushNodeAggregate($parentOfSucceedingSibling->getContentStreamIdentifier(), $parentOfSucceedingSibling->getNodeAggregateIdentifier());
+                $this->contentCacheFlusher->flushNodeAggregate(
+                    $parentOfSucceedingSibling->getContentStreamIdentifier(),
+                    $parentOfSucceedingSibling->getNodeAggregateIdentifier()
+                );
 
-                $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
+                $updateParentNodeInfo
+                    = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
                 $updateParentNodeInfo->setNode($parentOfSucceedingSibling);
 
                 $this->feedbackCollection->add($updateParentNodeInfo);

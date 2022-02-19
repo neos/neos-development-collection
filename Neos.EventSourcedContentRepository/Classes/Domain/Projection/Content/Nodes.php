@@ -40,7 +40,10 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         $nodes = [];
         foreach ($collection as $item) {
             if (!$item instanceof NodeInterface) {
-                throw new \InvalidArgumentException('Nodes can only consist of ' . NodeInterface::class . ' objects.', 1618044512);
+                throw new \InvalidArgumentException(
+                    'Nodes can only consist of ' . NodeInterface::class . ' objects.',
+                    1618044512
+                );
             }
             $nodes[] = $item;
         }
@@ -126,11 +129,15 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
                 return $index;
             }
         }
-        throw new \InvalidArgumentException(sprintf('The node %s does not exist in this set', $subject->getNodeAggregateIdentifier()), 1542901216);
+        throw new \InvalidArgumentException(sprintf(
+            'The node %s does not exist in this set',
+            $subject->getNodeAggregateIdentifier()
+        ), 1542901216);
     }
 
     /**
-     * Returns the node before the given $referenceNode in this set. Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no preceding sibling
+     * Returns the node before the given $referenceNode in this set.
+     * Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no preceding sibling
      *
      * @param NodeInterface $referenceNode
      * @return NodeInterface
@@ -155,7 +162,8 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * Returns the node after the given $referenceNode in this set. Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no following sibling
+     * Returns the node after the given $referenceNode in this set.
+     * Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no following sibling
      */
     public function next(NodeInterface $referenceNode): ?NodeInterface
     {

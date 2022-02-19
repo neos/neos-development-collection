@@ -34,6 +34,9 @@ class NodesControllerAspect
     public function replaceNodesController(JoinPointInterface $joinPoint)
     {
         $controller = new ServiceNodesController();
-        $controller->processRequest($joinPoint->getMethodArgument('request'), $joinPoint->getMethodArgument('response'));
+        $controller->processRequest(
+            $joinPoint->getMethodArgument('request'),
+            $joinPoint->getMethodArgument('response')
+        );
     }
 }

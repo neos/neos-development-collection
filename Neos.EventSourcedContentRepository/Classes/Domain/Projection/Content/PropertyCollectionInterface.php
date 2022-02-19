@@ -18,7 +18,8 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValu
 /**
  * In the mid-term, this interface should be merged to the parent interface
  */
-interface PropertyCollectionInterface extends \Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface
+interface PropertyCollectionInterface
+    extends \Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface
 {
     public function serialized(): SerializedPropertyValues;
 }

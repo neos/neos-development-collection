@@ -41,7 +41,11 @@ final class ProcessedEventsAwareProjectorCollection implements \IteratorAggregat
         $processedEventsAwareProjectors = [];
         foreach ($collection as $projector) {
             if (!$projector instanceof ProcessedEventsAwareProjectorInterface) {
-                throw new \InvalidArgumentException('ProcessedEventsAwareProjectorCollection can only consist of ' . ProcessedEventsAwareProjectorInterface::class . ' objects.', 1616950763);
+                throw new \InvalidArgumentException(
+                    'ProcessedEventsAwareProjectorCollection can only consist of '
+                        . ProcessedEventsAwareProjectorInterface::class . ' objects.',
+                    1616950763
+                );
             }
             $processedEventsAwareProjectors[] = $projector;
         }

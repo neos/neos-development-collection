@@ -49,7 +49,10 @@ trait NodeVariation
                 $event->getSourceOrigin(),
                 $event->getNodeAggregateIdentifier()
             );
-            $specializedNode = $this->copyNodeToOriginDimensionSpacePoint($sourceNode, $event->getSpecializationOrigin());
+            $specializedNode = $this->copyNodeToOriginDimensionSpacePoint(
+                $sourceNode,
+                $event->getSpecializationOrigin()
+            );
 
             $this->assignNewChildNodeToAffectedHierarchyRelations(
                 $event->getContentStreamIdentifier(),
@@ -74,7 +77,10 @@ trait NodeVariation
                 $event->getSourceOrigin(),
                 $event->getNodeAggregateIdentifier()
             );
-            $generalizedNode = $this->copyNodeToOriginDimensionSpacePoint($sourceNode, $event->getGeneralizationOrigin());
+            $generalizedNode = $this->copyNodeToOriginDimensionSpacePoint(
+                $sourceNode,
+                $event->getGeneralizationOrigin()
+            );
 
             $this->replaceNodeRelationAnchorPoint(
                 $event->getContentStreamIdentifier(),
@@ -101,7 +107,10 @@ trait NodeVariation
                 $event->getSourceOrigin(),
                 $event->getNodeAggregateIdentifier()
             );
-            $peerNode = $this->copyNodeToOriginDimensionSpacePoint($sourceNode, $event->getPeerOrigin());
+            $peerNode = $this->copyNodeToOriginDimensionSpacePoint(
+                $sourceNode,
+                $event->getPeerOrigin()
+            );
 
             $this->replaceNodeRelationAnchorPoint(
                 $event->getContentStreamIdentifier(),
@@ -154,7 +163,8 @@ trait NodeVariation
         $currentNodeAnchorPointStatement = '
             WITH currentNodeAnchorPoint AS (
                 SELECT relationanchorpoint FROM ' . NodeRecord::TABLE_NAME . ' n
-                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' p ON n.relationanchorpoint = ANY(p.childnodeanchors)
+                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' p
+                    ON n.relationanchorpoint = ANY(p.childnodeanchors)
                 WHERE p.contentstreamidentifier = :contentStreamIdentifier
                 AND p.dimensionspacepointhash = :affectedDimensionSpacePointHash
                 AND n.nodeaggregateidentifier = :affectedNodeAggregateIdentifier
@@ -176,7 +186,11 @@ trait NodeVariation
             $childStatement = /** @lang PostgreSQL */
                 $currentNodeAnchorPointStatement . '
                 UPDATE ' . HierarchyHyperrelationRecord::TABLE_NAME . '
-                    SET childnodeanchors = array_replace(childnodeanchors, (SELECT relationanchorpoint FROM currentNodeAnchorPoint), :newNodeRelationAnchorPoint)
+                    SET childnodeanchors = array_replace(
+                        childnodeanchors,
+                        (SELECT relationanchorpoint FROM currentNodeAnchorPoint),
+                        :newNodeRelationAnchorPoint
+                    )
                     WHERE contentstreamidentifier = :contentStreamIdentifier
                         AND dimensionspacepointhash = :affectedDimensionSpacePointHash
                         AND (SELECT relationanchorpoint FROM currentNodeAnchorPoint) = ANY(childnodeanchors)
@@ -213,7 +227,8 @@ trait NodeVariation
                 $nodeAggregateIdentifier
             );
             foreach ($missingCoverage as $uncoveredDimensionSpacePoint) {
-                // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
+                // The parent node aggregate might be varied as well,
+                // so we need to find a parent node for each covered dimension space point
 
                 // First we check for an already existing hyperrelation
                 $hierarchyRelation = $this->getProjectionHyperGraph()->findChildHierarchyHyperrelationRecord(
@@ -232,9 +247,7 @@ trait NodeVariation
 
                     $hierarchyRelation->addChildNodeAnchor(
                         $targetRelationAnchor,
-                        $targetSucceedingSibling
-                            ? $targetSucceedingSibling->relationAnchorPoint
-                            : null,
+                        $targetSucceedingSibling?->relationAnchorPoint,
                         $this->getDatabaseConnection()
                     );
                 } else {

@@ -174,15 +174,27 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 return $node->getNodeAggregateIdentifier();
             }, $menuLevelCollection);
 
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->currentNode->getContentStreamIdentifier(), $this->currentNode->getDimensionSpacePoint(), VisibilityConstraints::frontend());
-            $childSubtree = $nodeAccessor->findSubtrees($menuLevelCollection, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $this->currentNode->getContentStreamIdentifier(),
+                $this->currentNode->getDimensionSpacePoint(),
+                VisibilityConstraints::frontend()
+            );
+            $childSubtree = $nodeAccessor->findSubtrees(
+                $menuLevelCollection,
+                $this->getMaximumLevels(),
+                $this->getNodeTypeConstraints()
+            );
         } else {
             $entryParentNode = $this->findMenuStartingPoint();
             if (!$entryParentNode) {
                 return [];
             }
 
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->currentNode->getContentStreamIdentifier(), $this->currentNode->getDimensionSpacePoint(), VisibilityConstraints::frontend());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $this->currentNode->getContentStreamIdentifier(),
+                $this->currentNode->getDimensionSpacePoint(),
+                VisibilityConstraints::frontend()
+            );
             $childSubtree = $nodeAccessor->findSubtrees([$entryParentNode], $this->getMaximumLevels(), $this->getNodeTypeConstraints());
             $childSubtree = $childSubtree->getChildren()[0];
         }
@@ -212,7 +224,13 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         }
 
         $traversableNode = $subtree->getNode();
-        return new MenuItem($traversableNode, MenuItemState::normal(), $subtree->getNode()->getLabel(), $subtree->getLevel(), $children);
+        return new MenuItem(
+            $traversableNode,
+            MenuItemState::normal(),
+            $subtree->getNode()->getLabel(),
+            $subtree->getLevel(),
+            $children
+        );
     }
 
 
@@ -232,7 +250,10 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         $startingPoint = $this->getStartingPoint();
 
         if (!isset($fusionContext['node']) && !$startingPoint) {
-            throw new FusionException('You must either set a "startingPoint" for the menu or "node" must be set in the Fusion context.', 1369596980);
+            throw new FusionException(
+                'You must either set a "startingPoint" for the menu or "node" must be set in the Fusion context.',
+                1369596980
+            );
         }
         /** @var NodeInterface $traversalStartingPoint */
         $traversalStartingPoint = $startingPoint ?: $fusionContext['node'];
@@ -241,31 +262,39 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         } elseif ($this->getEntryLevel() < 0) {
             $remainingIterations = abs($this->getEntryLevel());
             $entryParentNode = null;
-            $this->traverseUpUntilCondition($traversalStartingPoint, function (NodeInterface $node) use (&$remainingIterations, &$entryParentNode) {
-                if (!$this->getNodeTypeConstraints()->matches($node->getNodeTypeName())) {
-                    return false;
+            $this->traverseUpUntilCondition(
+                $traversalStartingPoint,
+                function (NodeInterface $node) use (&$remainingIterations, &$entryParentNode) {
+                    if (!$this->getNodeTypeConstraints()->matches($node->getNodeTypeName())) {
+                        return false;
+                    }
+
+                    if ($remainingIterations > 0) {
+                        $remainingIterations--;
+
+                        return true;
+                    } else {
+                        $entryParentNode = $node;
+
+                        return false;
+                    }
                 }
-
-                if ($remainingIterations > 0) {
-                    $remainingIterations--;
-
-                    return true;
-                } else {
-                    $entryParentNode = $node;
-
-                    return false;
-                }
-            });
+                );
         } else {
             $traversedHierarchy = [];
-            $constraints = $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(NodeTypeName::fromString('Neos.Neos:Sites'));
-            $this->traverseUpUntilCondition($traversalStartingPoint, function (NodeInterface $traversedNode) use (&$traversedHierarchy, $constraints) {
-                if (!$constraints->matches($traversedNode->getNodeTypeName())) {
-                    return false;
+            $constraints = $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(
+                NodeTypeName::fromString('Neos.Neos:Sites')
+            );
+            $this->traverseUpUntilCondition(
+                $traversalStartingPoint,
+                function (NodeInterface $traversedNode) use (&$traversedHierarchy, $constraints) {
+                    if (!$constraints->matches($traversedNode->getNodeTypeName())) {
+                        return false;
+                    }
+                    $traversedHierarchy[] = $traversedNode;
+                    return true;
                 }
-                $traversedHierarchy[] = $traversedNode;
-                return true;
-            });
+                );
             $traversedHierarchy = array_reverse($traversedHierarchy);
 
             $entryParentNode = $traversedHierarchy[$this->getEntryLevel() - 1] ?? null;
@@ -287,7 +316,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * the callback always gets the current NodeInterface passed as first parameter, and then its parent, and its parent etc etc.
+     * the callback always gets the current NodeInterface passed as first parameter,
+     * and then its parent, and its parent etc etc.
      * Until it has reached the root, or the return value of the closure is FALSE.
      *
      * @param NodeAccessorManager $nodeAccessorManager
@@ -298,7 +328,11 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         do {
             $shouldContinueTraversal = $callback($node);
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getVisibilityConstraints());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                $node->getVisibilityConstraints()
+            );
             $node = $nodeAccessor->findParentNode($node);
         } while ($shouldContinueTraversal !== false && $node !== null);
     }

@@ -66,26 +66,33 @@ class MoveAfter extends AbstractStructuralChange
                 // do nothing; $succeedingSibling is null.
             }
 
-            $hasEqualParentNode = $this->findParentNode($subject)->getNodeAggregateIdentifier()->equals($parentNodeOfPreviousSibling->getNodeAggregateIdentifier());
+            $hasEqualParentNode = $this->findParentNode($subject)->getNodeAggregateIdentifier()
+                ->equals($parentNodeOfPreviousSibling->getNodeAggregateIdentifier());
 
             $command = new MoveNodeAggregate(
                 $subject->getContentStreamIdentifier(),
                 $subject->getDimensionSpacePoint(),
                 $subject->getNodeAggregateIdentifier(),
                 $hasEqualParentNode ? null : $parentNodeOfPreviousSibling->getNodeAggregateIdentifier(),
-                $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
-                $succeedingSibling ? $succeedingSibling->getNodeAggregateIdentifier() : null,
+                $precedingSibling?->getNodeAggregateIdentifier(),
+                $succeedingSibling?->getNodeAggregateIdentifier(),
                 RelationDistributionStrategy::STRATEGY_GATHER_ALL,
                 $this->getInitiatingUserIdentifier()
             );
 
             // we render content directly as response of this operation, so we need to flush the caches
-            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($subject->getContentStreamIdentifier(), $subject->getNodeAggregateIdentifier());
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate(
+                $subject->getContentStreamIdentifier(),
+                $subject->getNodeAggregateIdentifier()
+            );
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)
                 ->blockUntilProjectionsAreUpToDate();
             $doFlushContentCache();
             if ($parentNodeOfPreviousSibling) {
-                $this->contentCacheFlusher->flushNodeAggregate($parentNodeOfPreviousSibling->getContentStreamIdentifier(), $parentNodeOfPreviousSibling->getNodeAggregateIdentifier());
+                $this->contentCacheFlusher->flushNodeAggregate(
+                    $parentNodeOfPreviousSibling->getContentStreamIdentifier(),
+                    $parentNodeOfPreviousSibling->getNodeAggregateIdentifier()
+                );
 
                 $updateParentNodeInfo = new UpdateNodeInfo();
                 $updateParentNodeInfo->setNode($parentNodeOfPreviousSibling);

@@ -64,7 +64,7 @@ final class ContentHypergraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ?ContentSubgraphInterface {
-        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
+        $index = $contentStreamIdentifier . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subhypergraphs[$index])) {
             $this->subhypergraphs[$index] = new ContentSubhypergraph(
                 $contentStreamIdentifier,
@@ -119,7 +119,10 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows, VisibilityConstraints::withoutRestrictions());
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            $nodeRows,
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
@@ -128,7 +131,8 @@ final class ContentHypergraph implements ContentGraphInterface
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate {
         $query = /** @lang PostgreSQL */ '
-            SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename, n.classification, n.properties, n.nodename, ph.contentstreamidentifier, ph.dimensionspacepoint
+            SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename,
+                   n.classification, n.properties, n.nodename, ph.contentstreamidentifier, ph.dimensionspacepoint
                 FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ph
                 JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
             WHERE ph.contentstreamidentifier = :contentStreamIdentifier
@@ -153,7 +157,10 @@ final class ContentHypergraph implements ContentGraphInterface
             $parameters
         )->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows, VisibilityConstraints::withoutRestrictions());
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            $nodeRows,
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 
     public function findParentNodeAggregates(
@@ -165,18 +172,27 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            $nodeRows,
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 
     public function findChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
     ): array {
-        $query = HypergraphChildQuery::create($contentStreamIdentifier, $parentNodeAggregateIdentifier);
+        $query = HypergraphChildQuery::create(
+            $contentStreamIdentifier,
+            $parentNodeAggregateIdentifier
+        );
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            $nodeRows,
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 
     public function findChildNodeAggregatesByName(
@@ -184,12 +200,18 @@ final class ContentHypergraph implements ContentGraphInterface
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $name
     ): array {
-        $query = HypergraphChildQuery::create($contentStreamIdentifier, $parentNodeAggregateIdentifier);
+        $query = HypergraphChildQuery::create(
+            $contentStreamIdentifier,
+            $parentNodeAggregateIdentifier
+        );
         $query = $query->withChildNodeName($name);
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            $nodeRows,
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 
     public function findTetheredChildNodeAggregates(
@@ -211,14 +233,19 @@ final class ContentHypergraph implements ContentGraphInterface
         OriginDimensionSpacePoint $parentNodeOriginOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet {
-        $query = HypergraphChildQuery::create($contentStreamIdentifier, $parentNodeAggregateIdentifier, ['ch.dimensionspacepoint, ch.dimensionspacepointhash']);
+        $query = HypergraphChildQuery::create(
+            $contentStreamIdentifier,
+            $parentNodeAggregateIdentifier,
+            ['ch.dimensionspacepoint, ch.dimensionspacepointhash']
+        );
         $query = $query->withChildNodeName($nodeName)
             ->withOriginDimensionSpacePoint($parentNodeOriginOriginDimensionSpacePoint)
             ->withDimensionSpacePoints($dimensionSpacePointsToCheck);
 
         $occupiedDimensionSpacePoints = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $row) {
-            $occupiedDimensionSpacePoints[$row['dimensionspacepointhash']] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
+            $occupiedDimensionSpacePoints[$row['dimensionspacepointhash']]
+                = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
         }
 
         return new DimensionSpacePointSet($occupiedDimensionSpacePoints);

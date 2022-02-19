@@ -35,7 +35,12 @@ class ReadNodePrivilege extends AbstractPrivilege
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
         if (!$subject instanceof NodePrivilegeSubject) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s", but we got a subject of type: "%s".', static::class, NodePrivilegeSubject::class, get_class($subject)), 1465979693);
+            throw new InvalidPrivilegeTypeException(sprintf(
+                'Privileges of type "%s" only support subjects of type "%s", but we got a subject of type: "%s".',
+                static::class,
+                NodePrivilegeSubject::class,
+                get_class($subject)
+            ), 1465979693);
         }
         $nodeContext = new NodePrivilegeContext($subject->getNode());
         $eelContext = new Context($nodeContext);

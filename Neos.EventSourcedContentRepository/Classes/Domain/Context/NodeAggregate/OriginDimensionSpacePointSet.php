@@ -21,9 +21,8 @@ use Neos\Flow\Annotations as Flow;
  * A set of points in the dimension space, occupied by nodes in a node aggregate
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class OriginDimensionSpacePointSet implements \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
@@ -48,7 +47,10 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
             }
 
             if (!$point instanceof OriginDimensionSpacePoint) {
-                throw new \InvalidArgumentException(sprintf('Point %s was not of type OriginDimensionSpacePoint', $index));
+                throw new \InvalidArgumentException(sprintf(
+                    'Point %s was not of type OriginDimensionSpacePoint',
+                    $index
+                ));
             }
             $this->points[$point->hash] = $point;
         }
@@ -65,14 +67,21 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
         return new self($originDimensionSpacePoints);
     }
 
-    public static function fromJsonString(string $jsonString): self
+    /**
+     * @var array<string,string> $array
+     */
+    public static function fromArray(array $array): self
     {
         $dimensionSpacePoints = [];
-        foreach (json_decode($jsonString, true) as $coordinates) {
+        foreach ($array as $coordinates) {
             $dimensionSpacePoints[] = OriginDimensionSpacePoint::fromArray($coordinates);
         }
-
         return new self($dimensionSpacePoints);
+    }
+
+    public static function fromJsonString(string $jsonString): self
+    {
+        return self::fromArray(json_decode($jsonString, true));
     }
 
     public function toDimensionSpacePointSet(): DimensionSpacePointSet

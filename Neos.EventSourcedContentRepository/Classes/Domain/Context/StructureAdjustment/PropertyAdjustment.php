@@ -23,9 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\StructureAdjustment\Dto\St
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 class PropertyAdjustment
 {
     use LoadNodeTypeTrait;
@@ -74,7 +72,8 @@ class PropertyAdjustment
                         yield StructureAdjustment::createForNode(
                             $node,
                             StructureAdjustment::OBSOLETE_PROPERTY,
-                            'The property "' . $propertyKey . '" is not defined anymore in the current NodeType schema. Suggesting to remove it.',
+                            'The property "' . $propertyKey
+                                . '" is not defined anymore in the current NodeType schema. Suggesting to remove it.',
                             function () use ($node, $propertyKey) {
                                 $this->readSideMemoryCacheManager->disableCache();
                                 return $this->removeProperty($node, $propertyKey);
@@ -86,7 +85,12 @@ class PropertyAdjustment
                     try {
                         $node->getProperty($propertyKey);
                     } catch (\Exception $e) {
-                        $message = sprintf('The property "%s" was not deserializable. Error was: %s %s. Remove the property?', $propertyKey, get_class($e), $e->getMessage());
+                        $message = sprintf(
+                            'The property "%s" was not deserializable. Error was: %s %s. Remove the property?',
+                            $propertyKey,
+                            get_class($e)
+                            , $e->getMessage()
+                        );
                         yield StructureAdjustment::createForNode(
                             $node,
                             StructureAdjustment::NON_DESERIALIZABLE_PROPERTY,
@@ -128,7 +132,8 @@ class PropertyAdjustment
 
     protected function addProperty(NodeInterface $node, string $propertyKey, $defaultValue): CommandResult
     {
-        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
+        // so we need to trigger another method beforehand.
         $node->getNodeType()->getFullConfiguration();
         $propertyType = $node->getNodeType()->getPropertyType($propertyKey);
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
@@ -138,8 +143,10 @@ class PropertyAdjustment
         return $this->publishNodePropertiesWereSet($node, $serializedPropertyValues);
     }
 
-    protected function publishNodePropertiesWereSet(NodeInterface $node, SerializedPropertyValues $serializedPropertyValues)
-    {
+    protected function publishNodePropertiesWereSet(
+        NodeInterface $node,
+        SerializedPropertyValues $serializedPropertyValues
+    ): CommandResult {
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
                 new NodePropertiesWereSet(

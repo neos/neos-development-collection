@@ -102,11 +102,19 @@ class MoveInto extends AbstractStructuralChange
             // "parentNode" is the node where the $subject should be moved INTO
             $parentNode = $this->getParentNode();
 
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($subject->getContentStreamIdentifier(), $subject->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-            $hasEqualParentNode = $nodeAccessor->findParentNode($subject)->getNodeAggregateIdentifier()->equals($parentNode->getNodeAggregateIdentifier());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $subject->getContentStreamIdentifier(),
+                $subject->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $hasEqualParentNode = $nodeAccessor->findParentNode($subject)->getNodeAggregateIdentifier()
+                ->equals($parentNode->getNodeAggregateIdentifier());
 
             // we render content directly as response of this operation, so we need to flush the caches
-            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($subject->getContentStreamIdentifier(), $subject->getNodeAggregateIdentifier());
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate(
+                $subject->getContentStreamIdentifier(),
+                $subject->getNodeAggregateIdentifier()
+            );
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate(
                 new MoveNodeAggregate(
                     $subject->getContentStreamIdentifier(),
@@ -121,7 +129,10 @@ class MoveInto extends AbstractStructuralChange
             )->blockUntilProjectionsAreUpToDate();
             $doFlushContentCache();
             if (!$hasEqualParentNode) {
-                $this->contentCacheFlusher->flushNodeAggregate($parentNode->getContentStreamIdentifier(), $parentNode->getNodeAggregateIdentifier());
+                $this->contentCacheFlusher->flushNodeAggregate(
+                    $parentNode->getContentStreamIdentifier(),
+                    $parentNode->getNodeAggregateIdentifier()
+                );
             }
 
             $updateParentNodeInfo = new UpdateNodeInfo();

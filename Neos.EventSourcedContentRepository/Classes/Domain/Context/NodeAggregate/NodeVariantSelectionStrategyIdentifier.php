@@ -18,8 +18,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The node variant selection strategy for node aggregates as selected when creating commands.
- * Used for calculating the affected dimension space points to e.g. build restriction relations to other node aggregates;
- * or to remove nodes.
+ * Used for calculating the affected dimension space points
+ * to e.g. build restriction relations to other node aggregates or to remove nodes.
  */
 #[Flow\Proxy(false)]
 enum NodeVariantSelectionStrategyIdentifier: string implements \JsonSerializable
@@ -30,7 +30,8 @@ enum NodeVariantSelectionStrategyIdentifier: string implements \JsonSerializable
     case STRATEGY_ONLY_GIVEN_VARIANT = 'onlyGivenVariant';
 
     /**
-     * The "virtual specializations" strategy, meaning only the specializations covered but unoccupied by this node aggregate are affected.
+     * The "virtual specializations" strategy,
+     * meaning only the specializations covered but unoccupied by this node aggregate are affected.
      */
     case STRATEGY_VIRTUAL_SPECIALIZATIONS = 'virtualSpecializations';
 

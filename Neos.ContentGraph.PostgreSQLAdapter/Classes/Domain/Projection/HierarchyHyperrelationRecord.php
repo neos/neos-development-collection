@@ -57,7 +57,9 @@ final class HierarchyHyperrelationRecord
             ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
             NodeRelationAnchorPoint::fromString($databaseRow['parentnodeanchor']),
             DimensionSpacePoint::fromJsonString($databaseRow['dimensionspacepoint']),
-            NodeRelationAnchorPoints::fromDatabaseString($databaseRow['childnodeanchors'])
+            NodeRelationAnchorPoints::fromDatabaseString(
+                $databaseRow['childnodeanchors']
+            )
         );
     }
 
@@ -82,7 +84,10 @@ final class HierarchyHyperrelationRecord
         Connection $databaseConnection
     ) {
         /** @todo do this directly in the database */
-        $childNodeAnchors = $this->childNodeAnchors->replace($oldChildNodeAnchor, $newChildNodeAnchor);
+        $childNodeAnchors = $this->childNodeAnchors->replace(
+            $oldChildNodeAnchor,
+            $newChildNodeAnchor
+        );
         $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
     }
 
@@ -92,7 +97,10 @@ final class HierarchyHyperrelationRecord
         Connection $databaseConnection
     ): void {
         /** @todo do this directly in the database */
-        $childNodeAnchors = $this->childNodeAnchors->add($childNodeAnchor, $succeedingSiblingAnchor);
+        $childNodeAnchors = $this->childNodeAnchors->add(
+            $childNodeAnchor,
+            $succeedingSiblingAnchor
+        );
         $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
     }
 
@@ -109,8 +117,10 @@ final class HierarchyHyperrelationRecord
         }
     }
 
-    private function updateChildNodeAnchors(NodeRelationAnchorPoints $childNodeAnchors, Connection $databaseConnection): void
-    {
+    private function updateChildNodeAnchors(
+        NodeRelationAnchorPoints $childNodeAnchors,
+        Connection $databaseConnection
+    ): void {
         $databaseConnection->update(
             self::TABLE_NAME,
             [

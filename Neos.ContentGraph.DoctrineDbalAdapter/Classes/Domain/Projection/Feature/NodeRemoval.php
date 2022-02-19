@@ -54,11 +54,16 @@ trait NodeRemoval
      * @param HierarchyRelation $ingoingRelation
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(HierarchyRelation $ingoingRelation)
-    {
+    protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(
+        HierarchyRelation $ingoingRelation
+    ) {
         $ingoingRelation->removeFromDatabase($this->getDatabaseConnection());
 
-        foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNode($ingoingRelation->childNodeAnchor, $ingoingRelation->contentStreamIdentifier, new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])) as $outgoingRelation) {
+        foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
+            $ingoingRelation->childNodeAnchor,
+            $ingoingRelation->contentStreamIdentifier,
+            new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])
+        ) as $outgoingRelation) {
             $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outgoingRelation);
         }
 

@@ -41,7 +41,9 @@ trait RemoveNodeAggregateTrait
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($tetheredNodeAggregate->getContentStreamIdentifier());
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $tetheredNodeAggregate->getContentStreamIdentifier()
+        );
         $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
 
         return CommandResult::fromPublishedEvents($events, $this->getRuntimeBlocker());

@@ -32,7 +32,11 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
             } elseif ($item instanceof NodeRelationAnchorPoint) {
                 $values[] = $item;
             } else {
-                throw new \InvalidArgumentException(get_class() . ' can only consist of ' . NodeRelationAnchorPoint::class . ' objects.', 1616603754);
+                throw new \InvalidArgumentException(
+                    'NodeRelationAnchorPoints can only consist of '
+                        . NodeRelationAnchorPoint::class . ' objects.',
+                    1616603754
+                );
             }
         }
 
@@ -48,8 +52,10 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
         return '{' . implode(',', $this->getArrayCopy()) .  '}';
     }
 
-    public function add(NodeRelationAnchorPoint $nodeRelationAnchorPoint, ?NodeRelationAnchorPoint $succeedingSibling): self
-    {
+    public function add(
+        NodeRelationAnchorPoint $nodeRelationAnchorPoint,
+        ?NodeRelationAnchorPoint $succeedingSibling
+    ): self {
         $childNodeAnchors = $this->getArrayCopy();
         if ($succeedingSibling) {
             $pivot = array_search($succeedingSibling, $childNodeAnchors);
@@ -65,8 +71,10 @@ final class NodeRelationAnchorPoints extends ImmutableArrayObject
         return self::fromArray($childNodeAnchors);
     }
 
-    public function replace(NodeRelationAnchorPoint $nodeRelationAnchorPoint, NodeRelationAnchorPoint $replacement): self
-    {
+    public function replace(
+        NodeRelationAnchorPoint $nodeRelationAnchorPoint,
+        NodeRelationAnchorPoint $replacement
+    ): self {
         $childNodeAnchors = $this->getArrayCopy();
         $position = array_search($nodeRelationAnchorPoint, $childNodeAnchors);
         array_splice($childNodeAnchors, $position, 1, $replacement);

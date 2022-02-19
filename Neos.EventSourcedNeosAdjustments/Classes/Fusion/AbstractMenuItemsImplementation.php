@@ -85,7 +85,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     {
         if ($this->items === null) {
             $fusionContext = $this->runtime->getCurrentContext();
-            $this->currentNode = isset($fusionContext['activeNode']) ? $fusionContext['activeNode'] : $fusionContext['documentNode'];
+            $this->currentNode = $fusionContext['activeNode'] ?? $fusionContext['documentNode'];
             $this->currentLevel = 1;
             $this->items = $this->buildItems();
         }
@@ -115,8 +115,8 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     abstract protected function buildItems();
 
     /**
-     * Return TRUE/FALSE if the node is currently hidden or not in the menu; taking the "renderHiddenInIndex" configuration
-     * of the Menu Fusion object into account.
+     * Return TRUE/FALSE if the node is currently hidden or not in the menu;
+     * taking the "renderHiddenInIndex" configuration of the Menu Fusion object into account.
      *
      * This method needs to be called inside buildItems() in the subclasses.
      *
@@ -144,7 +144,10 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     {
         if ($this->currentNodeRootline === null) {
             /** @todo replace this */
-            $nodeRootline = $this->currentNode->getContext()->getNodesOnPath($this->runtime->getCurrentContext()['site']->getPath(), $this->currentNode->getPath());
+            $nodeRootline = $this->currentNode->getContext()->getNodesOnPath(
+                $this->runtime->getCurrentContext()['site']->getPath(),
+                $this->currentNode->getPath()
+            );
             $this->currentNodeRootline = [];
 
             foreach ($nodeRootline as $rootlineElement) {

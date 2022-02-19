@@ -13,9 +13,9 @@ namespace Neos\EventSourcedContentRepository\Migration\Filters;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\VariantType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
@@ -35,7 +35,7 @@ class DimensionSpacePoints implements NodeBasedFilterInterface
 {
     protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
 
-    protected DimensionSpacePointSet $points;
+    protected OriginDimensionSpacePointSet $points;
 
     protected bool $includeSpecializations = false;
 
@@ -46,7 +46,7 @@ class DimensionSpacePoints implements NodeBasedFilterInterface
 
     public function setPoints(array $points): void
     {
-        $this->points = DimensionSpacePointSet::fromArray($points);
+        $this->points = OriginDimensionSpacePointSet::fromArray($points);
     }
 
     public function setIncludeSpecializations(bool $includeSpecializations): void
@@ -58,7 +58,10 @@ class DimensionSpacePoints implements NodeBasedFilterInterface
     {
         if ($this->includeSpecializations) {
             foreach ($this->points as $point) {
-                $variantType = $this->interDimensionalVariationGraph->getVariantType($node->getOriginDimensionSpacePoint(), $point);
+                $variantType = $this->interDimensionalVariationGraph->getVariantType(
+                    $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                    $point
+                );
                 if ($variantType === VariantType::TYPE_SAME || $variantType === VariantType::TYPE_SPECIALIZATION) {
                     // this is true if the node is a specialization of $point (or if they are equal)
                     return true;

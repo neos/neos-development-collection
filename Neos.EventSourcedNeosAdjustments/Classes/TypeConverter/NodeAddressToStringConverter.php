@@ -48,8 +48,12 @@ class NodeAddressToStringConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): string
-    {
+    public function convertFrom(
+        $source,
+        $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ): string {
         return $source->serializeForUri();
     }
 }

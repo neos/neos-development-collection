@@ -41,7 +41,8 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
         $query = /** @lang PostgreSQL */
             'SELECT ' . ($fieldsToFetch
                 ? implode(', ', $fieldsToFetch)
-                : 'cn.origindimensionspacepoint, cn.nodeaggregateidentifier, cn.nodetypename, cn.classification, cn.properties, cn.nodename,
+                : 'cn.origindimensionspacepoint, cn.nodeaggregateidentifier, cn.nodetypename,
+                    cn.classification, cn.properties, cn.nodename,
                     ch.contentstreamidentifier, ch.dimensionspacepoint') . '
             FROM ' . NodeRecord::TABLE_NAME .' pn
             JOIN (

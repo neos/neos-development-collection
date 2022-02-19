@@ -34,8 +34,11 @@ final class AllChildNodesByNodeIdentifierCache
         $this->isEnabled = $isEnabled;
     }
 
-    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, ?NodeTypeConstraints $nodeTypeConstraints, array $allChildNodes): void
-    {
+    public function add(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        ?NodeTypeConstraints $nodeTypeConstraints,
+        array $allChildNodes
+    ): void {
         if ($this->isEnabled === false) {
             return;
         }
@@ -45,25 +48,31 @@ final class AllChildNodesByNodeIdentifierCache
         $this->childNodes[$key][$nodeTypeConstraintsSerialized] = $allChildNodes;
     }
 
-    public function contains(NodeAggregateIdentifier $parentNodeAggregateIdentifier, ?NodeTypeConstraints $nodeTypeConstraints): bool
-    {
+    public function contains(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        ?NodeTypeConstraints $nodeTypeConstraints
+    ): bool {
         if ($this->isEnabled === false) {
             return false;
         }
 
         $key = (string)$parentNodeAggregateIdentifier;
-        $nodeTypeConstraintsSerialized = $nodeTypeConstraints ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : '*';
+        $nodeTypeConstraintsSerialized = $nodeTypeConstraints?->asLegacyNodeTypeFilterString() ?: '*';
         return isset($this->childNodes[$key][$nodeTypeConstraintsSerialized]) || isset($this->childNodes[$key]['*']);
     }
 
-    public function findChildNodes(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
-    {
+    public function findChildNodes(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): array {
         if ($this->isEnabled === false) {
             return [];
         }
 
         $key = (string)$parentNodeAggregateIdentifier;
-        $nodeTypeConstraintsSerialized = $nodeTypeConstraints ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : '*';
+        $nodeTypeConstraintsSerialized = $nodeTypeConstraints?->asLegacyNodeTypeFilterString() ?: '*';
         $result = [];
 
         if (isset($this->childNodes[$key][$nodeTypeConstraintsSerialized])) {

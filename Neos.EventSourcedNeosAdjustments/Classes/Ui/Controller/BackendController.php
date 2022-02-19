@@ -173,15 +173,28 @@ class BackendController extends ActionController
         }
 
         $currentAccount = $this->securityContext->getAccount();
-        $workspace = $this->workspaceFinder->findOneByName(NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName());
+        $workspace = $this->workspaceFinder->findOneByName(
+            NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
+                ->toContentRepositoryWorkspaceName()
+        );
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $workspace->getCurrentContentStreamIdentifier(),
+            $this->findDefaultDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
 
         // we assume that the ROOT node is always stored in the CR as "physical" node; so it is safe
         // to call the contentGraph here directly.
-        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($workspace->getCurrentContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
+        $rootNodeAggregate = $this->contentGraph->findRootNodeAggregateByType(
+            $workspace->getCurrentContentStreamIdentifier(),
+            NodeTypeName::fromString('Neos.Neos:Sites')
+        );
         $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($this->findDefaultDimensionSpacePoint());
-        $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($rootNode, NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
+        $siteNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName(
+            $rootNode,
+            NodeName::fromString($this->siteRepository->findDefault()->getNodeName())
+        );
 
         if (!$nodeAddress) {
             // TODO: fix resolving node address from session?

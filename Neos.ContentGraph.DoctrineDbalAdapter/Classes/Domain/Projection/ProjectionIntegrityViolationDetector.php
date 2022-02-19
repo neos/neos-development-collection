@@ -91,7 +91,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 LEFT JOIN neos_contentgraph_node p ON h.parentnodeanchor = p.relationanchorpoint
                 LEFT JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
                 WHERE h.parentnodeanchor != :rootNodeAnchor
-                GROUP BY p.nodeaggregateidentifier, c.nodeaggregateidentifier, h.dimensionspacepointhash, h.contentstreamidentifier
+                GROUP BY p.nodeaggregateidentifier, c.nodeaggregateidentifier,
+                         h.dimensionspacepointhash, h.contentstreamidentifier
                 HAVING uniquenessCounter > 1
                 ',
             [
@@ -240,7 +241,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($restrictionRelationRecordsWithoutOriginOrAffectedNode as $relationRecord) {
             $result->addError(new Error(
-                'Restriction relation ' . $relationRecord['originnodeaggregateidentifier'] . ' -> ' . $relationRecord['affectednodeaggregateidentifier']
+                'Restriction relation ' . $relationRecord['originnodeaggregateidentifier']
+                . ' -> ' . $relationRecord['affectednodeaggregateidentifier']
                 . ' does not connect two nodes in content stream ' . $relationRecord['contentstreamidentifier']
                 . ' and dimension space point ' . $relationRecord['dimensionspacepointhash'],
                 self::ERROR_CODE_RESTRICTION_INTEGRITY_IS_COMPROMISED
@@ -273,7 +275,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         $referenceRelationRecordsWithInvalidTarget = $this->client->getConnection()->executeQuery(
-            'SELECT sh.contentstreamidentifier AS contentstreamIdentifier, s.nodeaggregateidentifier AS sourceNodeAggregateIdentifier, r.destinationnodeaggregateidentifier AS destinationNodeAggregateIdentifier
+            'SELECT sh.contentstreamidentifier AS contentstreamIdentifier,
+                    s.nodeaggregateidentifier AS sourceNodeAggregateIdentifier,
+                    r.destinationnodeaggregateidentifier AS destinationNodeAggregateIdentifier
                 FROM neos_contentgraph_referencerelation r
                 INNER JOIN neos_contentgraph_node s ON r.nodeanchorpoint = s.relationanchorpoint
                 INNER JOIN neos_contentgraph_hierarchyrelation sh ON r.nodeanchorpoint = sh.childnodeanchor
@@ -300,7 +304,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     }
 
     /**
-     * This is provided by the database structure: reference relations with the same source and same name must have distinct positions
+     * This is provided by the database structure:
+     * reference relations with the same source and same name must have distinct positions
      * @inheritDoc
      */
     public function referencesAreDistinctlySorted(): Result
@@ -363,7 +368,8 @@ WHERE
                     $result->addError(new Error(
                         'Subgraph defined by content strean ' . $contentStreamIdentifier
                         . ' and dimension space point ' . (string) $dimensionSpacePoint
-                        . ' is cyclic for node aggregates ' . implode(',', $nodeAggregateIdentifiersInCycles),
+                        . ' is cyclic for node aggregates '
+                        . implode(',', $nodeAggregateIdentifiersInCycles),
                         self::ERROR_CODE_NODE_IS_DISCONNECTED_FROM_THE_ROOT
                     ));
                 }
@@ -463,7 +469,9 @@ WHERE
     {
         $result = new Result();
         foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
-            foreach ($this->findProjectedNodeAggregateIdentifiersInContentStream($contentStreamIdentifier) as $nodeAggregateIdentifier) {
+            foreach ($this->findProjectedNodeAggregateIdentifiersInContentStream(
+                $contentStreamIdentifier
+            ) as $nodeAggregateIdentifier) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.nodetypename FROM neos_contentgraph_node n
                         INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
@@ -479,9 +487,12 @@ WHERE
                     $result->addError(new Error(
                         'Node aggregate ' . $nodeAggregateIdentifier
                         . ' in content stream ' . $contentStreamIdentifier
-                        . ' is of ambiguous type ("' . implode('","', array_map(function (array $record) {
-                            return $record['nodetypename'];
-                        }, $nodeAggregateRecords)) . '")',
+                        . ' is of ambiguous type ("' . implode('","', array_map(
+                            function (array $record) {
+                                return $record['nodetypename'];
+                            },
+                            $nodeAggregateRecords
+                        )) . '")',
                         self::ERROR_CODE_NODE_AGGREGATE_IS_AMBIGUOUSLY_TYPED
                     ));
                 }
@@ -498,7 +509,9 @@ WHERE
     {
         $result = new Result();
         foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
-            foreach ($this->findProjectedNodeAggregateIdentifiersInContentStream($contentStreamIdentifier) as $nodeAggregateIdentifier) {
+            foreach ($this->findProjectedNodeAggregateIdentifiersInContentStream(
+                $contentStreamIdentifier
+            ) as $nodeAggregateIdentifier) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.classification FROM neos_contentgraph_node n
                         INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
@@ -514,9 +527,12 @@ WHERE
                     $result->addError(new Error(
                         'Node aggregate ' . $nodeAggregateIdentifier
                         . ' in content stream ' . $contentStreamIdentifier
-                        . ' is ambiguously classified ("' . implode('","', array_map(function (array $record) {
-                            return $record['classification'];
-                        }, $nodeAggregateRecords)) . '")',
+                        . ' is ambiguously classified ("' . implode('","', array_map(
+                            function (array $record) {
+                                return $record['classification'];
+                            },
+                            $nodeAggregateRecords
+                        )) . '")',
                         self::ERROR_CODE_NODE_AGGREGATE_IS_AMBIGUOUSLY_CLASSIFIED
                     ));
                 }
@@ -593,7 +609,8 @@ WHERE
                 $result->addError(new Error(
                     'Node aggregate ' . $nodeRecord['nodeaggregateidentifier']
                     . ' in content stream ' . $contentStreamIdentifier
-                    . ' does not cover its origin dimension space point ' . $nodeRecord['origindimensionspacepoint'] . '.',
+                    . ' does not cover its origin dimension space point ' . $nodeRecord['origindimensionspacepoint']
+                    . '.',
                     self::ERROR_CODE_NODE_DOES_NOT_COVER_ITS_ORIGIN
                 ));
             }
@@ -611,7 +628,10 @@ WHERE
     {
         $connection = $this->client->getConnection();
 
-        $rows = $connection->executeQuery('SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation')->fetchAll();
+        $rows = $connection->executeQuery(
+            'SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation'
+        )->fetchAll();
+
         return array_map(function (array $row) {
             return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
         }, $rows);
@@ -636,8 +656,9 @@ WHERE
     }
 
 
-    protected function findProjectedNodeAggregateIdentifiersInContentStream(ContentStreamIdentifier $contentStreamIdentifier): array
-    {
+    protected function findProjectedNodeAggregateIdentifiersInContentStream(
+        ContentStreamIdentifier $contentStreamIdentifier
+    ): array {
         $records = $this->client->getConnection()->executeQuery(
             'SELECT DISTINCT nodeaggregateidentifier FROM neos_contentgraph_node'
         )->fetchAll();

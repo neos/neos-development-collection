@@ -36,8 +36,10 @@ final class NodeVariantAssignment implements \JsonSerializable
      */
     private $originDimensionSpacePoint;
 
-    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, OriginDimensionSpacePoint $originDimensionSpacePoint)
-    {
+    public function __construct(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        OriginDimensionSpacePoint $originDimensionSpacePoint
+    ) {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
     }

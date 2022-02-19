@@ -123,7 +123,10 @@ class ContentRepositoryMigrateCommandController extends CommandController
     {
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         /** @var EventStorageInterface $eventStoreStorage */
-        $eventStoreStorage = $this->objectManager->get($this->eventStoreConfiguration['storage'], $this->eventStoreConfiguration['storageOptions'] ?? []);
+        $eventStoreStorage = $this->objectManager->get(
+            $this->eventStoreConfiguration['storage'],
+            $this->eventStoreConfiguration['storageOptions'] ?? []
+        );
 
         // We need to build an own $eventStore instance, because we need a custom EventPublisher.
         $eventPublisher = new ClosureEventPublisher();
@@ -148,11 +151,19 @@ class ContentRepositoryMigrateCommandController extends CommandController
         );
         $contentRepositoryExportService = new ContentRepositoryExportService($eventStore, $nodeAggregateCommandHandler);
 
-        $contentStreamProjectorInvoker = new EventListenerInvoker($eventStore, $this->contentStreamProjector, $this->dbal);
+        $contentStreamProjectorInvoker = new EventListenerInvoker(
+            $eventStore,
+            $this->contentStreamProjector,
+            $this->dbal
+        );
         $workspaceProjectorInvoker = new EventListenerInvoker($eventStore, $this->workspaceProjector, $this->dbal);
         $graphProjectorInvoker = new EventListenerInvoker($eventStore, $this->graphProjector, $this->dbal);
 
-        $eventPublisher->setClosure(static function () use ($contentStreamProjectorInvoker, $workspaceProjectorInvoker, $graphProjectorInvoker) {
+        $eventPublisher->setClosure(static function () use (
+            $contentStreamProjectorInvoker,
+            $workspaceProjectorInvoker,
+            $graphProjectorInvoker
+        ) {
             $contentStreamProjectorInvoker->catchUp();
             $workspaceProjectorInvoker->catchUp();
             $graphProjectorInvoker->catchUp();

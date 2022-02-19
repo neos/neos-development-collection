@@ -26,8 +26,11 @@ final class HostSuffixContentDimensionValueDetector implements ContentDimensionV
      * @param array|null $overrideOptions
      * @return Dimension\ContentDimensionValue|null
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue
-    {
+    public function detectValue(
+        Dimension\ContentDimension $contentDimension,
+        ServerRequestInterface $request,
+        array $overrideOptions = null
+    ): ?Dimension\ContentDimensionValue {
         $host = $request->getUri()->getHost();
         $hostLength = mb_strlen($host);
         foreach ($contentDimension->values as $contentDimensionValue) {

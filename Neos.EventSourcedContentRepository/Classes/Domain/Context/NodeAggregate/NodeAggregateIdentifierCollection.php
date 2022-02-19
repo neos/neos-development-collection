@@ -17,9 +17,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * An immutable collection of NodeAggregateIdentifiers
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \JsonSerializable
 {
     /**
@@ -31,7 +30,10 @@ final class NodeAggregateIdentifierCollection implements \IteratorAggregate, \Js
     {
         foreach ($nodeAggregateIdentifiers as $nodeAggregateIdentifier) {
             if (!$nodeAggregateIdentifier instanceof NodeAggregateIdentifier) {
-                throw new \InvalidArgumentException('NodeAggregateIdentifiers objects can only be composed of NodeAggregateIdentifiers.', 1614190761);
+                throw new \InvalidArgumentException(
+                    'NodeAggregateIdentifierCollection objects can only be composed of NodeAggregateIdentifiers.',
+                    1614190761
+                );
             }
         }
 

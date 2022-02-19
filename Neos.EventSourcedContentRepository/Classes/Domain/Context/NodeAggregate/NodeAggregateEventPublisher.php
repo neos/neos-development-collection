@@ -68,7 +68,10 @@ final class NodeAggregateEventPublisher
             throw new \RuntimeException('TODO: withCommand() has to have a command passed in');
         }
         if (!$command instanceof \JsonSerializable) {
-            throw new \RuntimeException(sprintf('withCommand() has to have a command implementing JsonSerializable passed in, given: %s', get_class($command)), 1547133201);
+            throw new \RuntimeException(sprintf(
+                'withCommand() has to have a command implementing JsonSerializable passed in, given: %s',
+                get_class($command)
+            ), 1547133201);
         }
         $this->command = $command;
 
@@ -79,7 +82,10 @@ final class NodeAggregateEventPublisher
                 // if command has not been reset, we know that publish() or publishMany() has never been called.
                 // Thus, we need to throw an exception; as we are not allowed to loose information.
 
-                throw new \RuntimeException(sprintf('TODO: Command %s did not lead to the creation of events', get_class($command)));
+                throw new \RuntimeException(sprintf(
+                    'TODO: Command %s did not lead to the creation of events',
+                    get_class($command)
+                ));
             }
             return $result;
         } finally {
@@ -88,26 +94,26 @@ final class NodeAggregateEventPublisher
     }
 
     /**
-     * @param StreamName $streamName
-     * @param DomainEventInterface $event
-     * @param int $expectedVersion
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function publish(StreamName $streamName, DomainEventInterface $event, int $expectedVersion = ExpectedVersion::ANY): void
-    {
+    public function publish(
+        StreamName $streamName,
+        DomainEventInterface $event,
+        int $expectedVersion = ExpectedVersion::ANY
+    ): void {
         $this->publishMany($streamName, DomainEvents::withSingleEvent($event), $expectedVersion);
     }
 
     /**
-     * @param StreamName $streamName
-     * @param DomainEvents $events
-     * @param int $expectedVersion
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function publishMany(StreamName $streamName, DomainEvents $events, int $expectedVersion = ExpectedVersion::ANY): void
-    {
+    public function publishMany(
+        StreamName $streamName,
+        DomainEvents $events,
+        int $expectedVersion = ExpectedVersion::ANY
+    ): void {
         if (count($events) === 0) {
             throw new \RuntimeException('TODO: publishMany() must be called with at least one event');
         }
@@ -117,10 +123,16 @@ final class NodeAggregateEventPublisher
             if ($event instanceof DecoratedEvent) {
                 $undecoratedEvent = $event->getWrappedEvent();
                 if (!$undecoratedEvent instanceof PublishableToOtherContentStreamsInterface) {
-                    throw new \RuntimeException(sprintf('TODO: Event %s has to implement PublishableToOtherContentStreamsInterface', get_class($event)));
+                    throw new \RuntimeException(sprintf(
+                        'TODO: Event %s has to implement PublishableToOtherContentStreamsInterface',
+                        get_class($event)
+                    ));
                 }
             } else {
-                throw new \RuntimeException(sprintf('TODO: You need to use DecoratedEvent, given: %s', get_class($event)));
+                throw new \RuntimeException(sprintf(
+                    'TODO: You need to use DecoratedEvent, given: %s',
+                    get_class($event)
+                ));
             }
 
 
@@ -128,7 +140,10 @@ final class NodeAggregateEventPublisher
                 $commandPayload = $this->command->jsonSerialize();
 
                 if (!isset($commandPayload['contentStreamIdentifier'])) {
-                    throw new \RuntimeException(sprintf('TODO: Command %s does not have a property "contentStreamIdentifier" (which is required).', get_class($this->command)));
+                    throw new \RuntimeException(sprintf(
+                        'TODO: Command %s does not have a property "contentStreamIdentifier" (which is required).',
+                        get_class($this->command)
+                    ));
                 }
                 $metadata = [
                     'commandClass' => get_class($this->command),

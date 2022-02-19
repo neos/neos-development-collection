@@ -25,5 +25,9 @@ use Neos\EventSourcedContentRepository\Domain\CommandResult;
  */
 interface NodeBasedTransformationInterface
 {
-    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult;
+    public function execute(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult;
 }

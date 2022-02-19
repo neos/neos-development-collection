@@ -30,7 +30,6 @@ use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
  */
 class ContentElementEditableService
 {
-
     /**
      * @Flow\Inject
      * @var PrivilegeManagerInterface
@@ -74,7 +73,8 @@ class ContentElementEditableService
 
         $attributes = [
             'data-__neos-property' => $property,
-            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri()
+            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)
+                ->serializeForUri()
         ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
@@ -82,6 +82,7 @@ class ContentElementEditableService
 
     private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier)
     {
-        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)->getWorkspaceName()->isLive();
+        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+            ->getWorkspaceName()->isLive();
     }
 }

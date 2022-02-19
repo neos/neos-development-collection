@@ -27,16 +27,19 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
      *
      * e.g. {main => my-main-node}
      *
-     * @var array|NodeAggregateIdentifier[]
+     * @var array<string,NodeAggregateIdentifier>
      */
-    protected $nodeAggregateIdentifiers = [];
+    protected array $nodeAggregateIdentifiers = [];
 
     public function __construct(array $nodeAggregateIdentifiers)
     {
         foreach ($nodeAggregateIdentifiers as $nodePath => $nodeAggregateIdentifier) {
             $nodePath = NodePath::fromString($nodePath);
             if (!$nodeAggregateIdentifier instanceof NodeAggregateIdentifier) {
-                throw new \InvalidArgumentException('NodeAggregateIdentifiersByNodePaths objects can only be composed of NodeAggregateIdentifiers.', 1541751553);
+                throw new \InvalidArgumentException(
+                    'NodeAggregateIdentifiersByNodePaths objects can only be composed of NodeAggregateIdentifiers.',
+                    1541751553
+                );
             }
 
             $this->nodeAggregateIdentifiers[(string)$nodePath] = $nodeAggregateIdentifier;
@@ -66,9 +69,9 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
         return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
     }
 
-    public function merge(NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers): NodeAggregateIdentifiersByNodePaths
+    public function merge(self $other): self
     {
-        return new NodeAggregateIdentifiersByNodePaths(array_merge($this->nodeAggregateIdentifiers, $nodeAggregateIdentifiers->getNodeAggregateIdentifiers()));
+        return new self(array_merge($this->nodeAggregateIdentifiers, $other->getNodeAggregateIdentifiers()));
     }
 
     public function getNodeAggregateIdentifier(NodePath $nodePath): ?NodeAggregateIdentifier
@@ -76,12 +79,12 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
         return $this->nodeAggregateIdentifiers[(string)$nodePath] ?? null;
     }
 
-    public function add(NodePath $nodePath, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregateIdentifiersByNodePaths
+    public function add(NodePath $nodePath, NodeAggregateIdentifier $nodeAggregateIdentifier): self
     {
         $nodeAggregateIdentifiers = $this->nodeAggregateIdentifiers;
         $nodeAggregateIdentifiers[(string)$nodePath] = $nodeAggregateIdentifier;
 
-        return new NodeAggregateIdentifiersByNodePaths($nodeAggregateIdentifiers);
+        return new self($nodeAggregateIdentifiers);
     }
 
     /**

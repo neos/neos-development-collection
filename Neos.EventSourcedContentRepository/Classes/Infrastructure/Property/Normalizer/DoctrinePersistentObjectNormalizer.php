@@ -39,7 +39,10 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
         return (
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), Entity::class) ||
             $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), ValueObject::class) ||
-            $this->reflectionService->isClassAnnotatedWith(TypeHandling::getTypeForValue($data), \Doctrine\ORM\Mapping\Entity::class)
+            $this->reflectionService->isClassAnnotatedWith(
+                TypeHandling::getTypeForValue($data),
+                \Doctrine\ORM\Mapping\Entity::class
+            )
         );
     }
 
@@ -59,7 +62,10 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
             return (
                 $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], Entity::class) ||
                 $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], ValueObject::class) ||
-                $this->reflectionService->isClassAnnotatedWith($data['__flow_object_type'], \Doctrine\ORM\Mapping\Entity::class)
+                $this->reflectionService->isClassAnnotatedWith(
+                    $data['__flow_object_type'],
+                    \Doctrine\ORM\Mapping\Entity::class
+                )
             );
         }
         return false;

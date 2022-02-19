@@ -40,6 +40,11 @@ class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return  'method(' . SetSerializedNodeProperties::class . '->__construct()) || method(' . SetNodeReferences::class . '->__construct()) || method(' . EnableNodeAggregate::class . '->__construct()) || method(' . DisableNodeAggregate::class . '->__construct()) || method(' . ChangeNodeAggregateName::class . '->__construct()) || method(' . ChangeNodeAggregateType::class . '->__construct())';
+        return  'method(' . SetSerializedNodeProperties::class . '->__construct()) || method('
+            . SetNodeReferences::class . '->__construct()) || method('
+            . EnableNodeAggregate::class . '->__construct()) || method('
+            . DisableNodeAggregate::class . '->__construct()) || method('
+            . ChangeNodeAggregateName::class . '->__construct()) || method('
+            . ChangeNodeAggregateType::class . '->__construct())';
     }
 }

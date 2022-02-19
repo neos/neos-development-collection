@@ -55,7 +55,11 @@ class NodeHelper implements ProtectedContextAwareInterface
             return $node;
         } else {
             if ((string)$nodePath === '') {
-                throw new Exception(sprintf('No content collection of type %s could be found in the current node and no node path was provided. You might want to configure the nodePath property with a relative path to the content collection.', $contentCollectionType), 1409300545);
+                throw new Exception(sprintf(
+                    'No content collection of type %s could be found in the current node and no node path was provided.'
+                        . ' You might want to configure the nodePath property with a relative path to the content collection.',
+                    $contentCollectionType
+                ), 1409300545);
             }
             $subNode = $this->findNodeByNodePath(
                 $node,
@@ -65,7 +69,15 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ($subNode !== null && $subNode->getNodeType()->isOfType($contentCollectionType)) {
                 return $subNode;
             } else {
-                throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:repair --node-type %s" command.', $contentCollectionType, $node->findNodePath(), $nodePath, (string)$node->getNodeType()), 1389352984);
+                throw new Exception(sprintf(
+                    'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
+                        . ' You might want to adjust your node type configuration and create the missing child node'
+                        . ' through the "flow node:repair --node-type %s" command.',
+                    $contentCollectionType,
+                    $node->findNodePath(),
+                    $nodePath,
+                    (string)$node->getNodeType()
+                ), 1389352984);
             }
         }
     }
@@ -102,7 +114,11 @@ class NodeHelper implements ProtectedContextAwareInterface
     private function findRootNode(NodeInterface $node): NodeInterface
     {
         while (true) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getVisibilityConstraints());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                $node->getVisibilityConstraints()
+            );
             $parentNode = $nodeAccessor->findParentNode($node);
             if ($parentNode === null) {
                 // there is no parent, so the root node was the node before
@@ -116,7 +132,11 @@ class NodeHelper implements ProtectedContextAwareInterface
     private function findNodeByPath(NodeInterface $node, NodePath $nodePath): ?NodeInterface
     {
         foreach ($nodePath->getParts() as $nodeName) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getVisibilityConstraints());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                $node->getVisibilityConstraints()
+            );
             $childNode = $nodeAccessor->findChildNodeConnectedThroughEdgeName($node, $nodeName);
             if ($childNode === null) {
                 // we cannot find the child node, so there is no node on this path

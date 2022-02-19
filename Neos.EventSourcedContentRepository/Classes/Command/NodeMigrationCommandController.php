@@ -22,18 +22,15 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Command controller for tasks related to node migration.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope("singleton")]
 class NodeMigrationCommandController extends CommandController
 {
-
     /**
      * @Flow\Inject
      * @var MigrationFactory
      */
     protected $migrationFactory;
-
 
     /**
      * @Flow\Inject
@@ -46,7 +43,8 @@ class NodeMigrationCommandController extends CommandController
      *
      * @param string $version The version of the migration configuration you want to use.
      * @param string $workspace The workspace where the migration should be applied; by default "live"
-     * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
+     * @param boolean $force Confirm application of this migration,
+     *                       only needed if the given migration contains any warnings.
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      * @see neos.contentrepository.migration:node:migrationstatus
@@ -59,7 +57,8 @@ class NodeMigrationCommandController extends CommandController
             $this->outputCommentsAndWarnings($migrationConfiguration);
             if ($migrationConfiguration->hasWarnings() && $force === false) {
                 $this->outputLine();
-                $this->outputLine('Migration has warnings. You need to confirm execution by adding the "--confirmation true" option to the command.');
+                $this->outputLine('Migration has warnings.'
+                    . ' You need to confirm execution by adding the "--confirmation true" option to the command.');
                 $this->quit(1);
             }
 

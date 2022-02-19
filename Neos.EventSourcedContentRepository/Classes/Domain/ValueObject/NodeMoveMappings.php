@@ -41,7 +41,11 @@ final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSer
             } elseif ($mapping instanceof NodeMoveMapping) {
                 $processedMappings[] = $mapping;
             } else {
-                throw new \InvalidArgumentException(sprintf('Invalid NodeMoveMapping. Expected instance of %s, got: %s', NodeMoveMapping::class, is_object($mapping) ? get_class($mapping) : gettype($mapping)), 1547811318);
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid NodeMoveMapping. Expected instance of %s, got: %s',
+                    NodeMoveMapping::class,
+                    is_object($mapping) ? get_class($mapping) : gettype($mapping)
+                ), 1547811318);
             }
         }
         return new static($processedMappings);

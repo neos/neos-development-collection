@@ -40,7 +40,8 @@ final class NodeAddress
         public readonly DimensionSpacePoint $dimensionSpacePoint,
         public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
         public readonly ?WorkspaceName $workspaceName
-    ) {}
+    ) {
+    }
 
     public static function fromArray(array $array): self
     {
@@ -82,7 +83,9 @@ final class NodeAddress
         if ($this->workspaceName === null) {
             throw NodeAddressCannotBeSerializedException::becauseNoWorkspaceNameWasResolved($this);
         }
-        return $this->workspaceName->name . '__' . $this->dimensionSpacePoint->serializeForUri() . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
+        return $this->workspaceName->name
+            . '__' . $this->dimensionSpacePoint->serializeForUri()
+            . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
     }
 
     public function isInLiveWorkspace(): bool

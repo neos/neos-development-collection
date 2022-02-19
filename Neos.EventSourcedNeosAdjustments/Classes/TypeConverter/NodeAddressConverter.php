@@ -59,8 +59,12 @@ class NodeAddressConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return NodeAddress
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): NodeAddress
-    {
+    public function convertFrom(
+        $source,
+        $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ): NodeAddress {
         if (\mb_substr_count($source, '__') === 2) {
             return $this->nodeAddressFactory->createFromUriString($source);
         }

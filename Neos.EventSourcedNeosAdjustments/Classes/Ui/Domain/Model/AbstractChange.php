@@ -82,7 +82,9 @@ abstract class AbstractChange implements ChangeInterface
         $flowQuery = new FlowQuery([$this->getSubject()]);
         $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
 
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($documentNode->getContentStreamIdentifier());
+        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+            $documentNode->getContentStreamIdentifier()
+        );
         $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspace->getWorkspaceName());
 
         $this->feedbackCollection->add($updateWorkspaceInfo);

@@ -21,8 +21,13 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final class NodeAggregateIsNoSibling extends \DomainException
 {
-    public static function butWasSupposedToBe(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeAggregateIdentifier $referenceNodeAggregateIdentifier): NodeAggregateIsNoSibling
-    {
-        return new self('Node aggregate "' . $nodeAggregateIdentifier . '" is no sibling of "' . $referenceNodeAggregateIdentifier . '" but was supposed to be', 1571068801);
+    public static function butWasSupposedToBe(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateIdentifier $referenceNodeAggregateIdentifier
+    ): NodeAggregateIsNoSibling {
+        return new self('Node aggregate "' . $nodeAggregateIdentifier . '" is no sibling of "'
+            . $referenceNodeAggregateIdentifier . '" but was supposed to be',
+            1571068801
+        );
     }
 }

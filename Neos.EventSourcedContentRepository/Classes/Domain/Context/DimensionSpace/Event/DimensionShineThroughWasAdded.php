@@ -16,6 +16,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\PublishableToOtherContentStreamsInterface;
 use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Add a Dimension Space Point Shine-Through; basically making all content available not just in the source(original) DSP, but also
@@ -27,25 +28,20 @@ use Neos\EventSourcing\Event\DomainEventInterface;
  *
  * NOTE: the target dimension space point must not contain any content.
  */
+#[Flow\Proxy(false)]
 final class DimensionShineThroughWasAdded implements DomainEventInterface, PublishableToOtherContentStreamsInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    private $source;
+    private DimensionSpacePoint $source;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    private $target;
+    private DimensionSpacePoint $target;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $source, DimensionSpacePoint $target)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $source,
+        DimensionSpacePoint $target
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->source = $source;
         $this->target = $target;
@@ -56,25 +52,19 @@ final class DimensionShineThroughWasAdded implements DomainEventInterface, Publi
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getSource(): DimensionSpacePoint
     {
         return $this->source;
     }
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getTarget(): DimensionSpacePoint
     {
         return $this->target;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new DimensionShineThroughWasAdded(
+        return new self(
             $targetContentStreamIdentifier,
             $this->source,
             $this->target

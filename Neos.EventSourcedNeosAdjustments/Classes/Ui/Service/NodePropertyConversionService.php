@@ -51,7 +51,8 @@ class NodePropertyConversionService
      */
     public function convert(NodeType $nodeType, $propertyName, $rawValue)
     {
-        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
+        // so we need to trigger another method beforehand.
         $nodeType->getFullConfiguration();
         $propertyType = $nodeType->getPropertyType($propertyName);
 
@@ -89,13 +90,22 @@ class NodePropertyConversionService
                     }
                 }
 
-                if ((is_string($rawValue) || is_array($rawValue)) && $this->objectManager->isRegistered($innerType) && $rawValue !== '') {
+                if ((is_string($rawValue) || is_array($rawValue))
+                    && $this->objectManager->isRegistered($innerType) && $rawValue !== '') {
                     $propertyMappingConfiguration = new MvcPropertyMappingConfiguration();
                     $propertyMappingConfiguration->allowOverrideTargetType();
                     $propertyMappingConfiguration->allowAllProperties();
                     $propertyMappingConfiguration->skipUnknownProperties();
-                    $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
-                    $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+                    $propertyMappingConfiguration->setTypeConverterOption(
+                        PersistentObjectConverter::class,
+                        PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED,
+                        true
+                    );
+                    $propertyMappingConfiguration->setTypeConverterOption(
+                        PersistentObjectConverter::class,
+                        PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+                        true
+                    );
 
                     return $this->propertyMapper->convert($rawValue, $propertyType, $propertyMappingConfiguration);
                 } else {

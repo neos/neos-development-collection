@@ -27,8 +27,11 @@ final class BackendUriContentDimensionValueDetector implements ContentDimensionV
      * @param array|null $overrideOptions
      * @return Dimension\ContentDimensionValue|null
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue
-    {
+    public function detectValue(
+        Dimension\ContentDimension $contentDimension,
+        ServerRequestInterface $request,
+        array $overrideOptions = null
+    ): ?Dimension\ContentDimensionValue {
         $path = $request->getUri()->getPath();
         $path = '/' . mb_substr($path, mb_strpos($path, '@'));
         if (mb_strpos($path, '.') !== false) {

@@ -85,7 +85,10 @@ class EmulatedLegacyContext
 
     public function __call($methodName, $args)
     {
-        $this->legacyLogger->warning('Context method not implemented', LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName));
+        $this->legacyLogger->warning(
+            'Context method not implemented',
+            LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName)
+        );
         return null;
     }
 

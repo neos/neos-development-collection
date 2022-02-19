@@ -59,11 +59,15 @@ final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSeria
             } elseif ($nodeReferenceValue instanceof NodeReference) {
                 $values[$nodeReferenceName] = $nodeReferenceValue;
             } else {
-                throw new \InvalidArgumentException(sprintf('Invalid nodeReferences value. Expected instance of %s, got: %s', NodeReference::class, is_object($nodeReferenceValue) ? get_class($nodeReferenceValue) : gettype($nodeReferenceValue)), 1546524480);
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid nodeReferences value. Expected instance of %s, got: %s',
+                    NodeReference::class,
+                    is_object($nodeReferenceValue) ? get_class($nodeReferenceValue) : gettype($nodeReferenceValue)
+                ), 1546524480);
             }
         }
 
-        return new static($values);
+        return new self($values);
     }
 
     public static function fromNodes(Nodes $nodeReferences): self
@@ -79,7 +83,7 @@ final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSeria
             }
         }
 
-        return new static($values);
+        return new self($values);
     }
 
     /**

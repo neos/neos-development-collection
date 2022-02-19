@@ -124,7 +124,7 @@ class WorkspaceService
             } else {
                 $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                     $workspace->getCurrentContentStreamIdentifier(),
-                    $change->originDimensionSpacePoint,
+                    $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()
                 );
                 $node = $nodeAccessor->findByIdentifier($change->nodeAggregateIdentifier);
@@ -133,7 +133,8 @@ class WorkspaceService
                     $documentNode = (new FlowQuery([$node]))->closest('[instanceof Neos.Neos:Document]')->get(0);
                     $unpublishedNodes[] = [
                         'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
-                        'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()
+                        'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)
+                            ->serializeForUri()
                     ];
                 }
             }

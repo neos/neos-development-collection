@@ -128,7 +128,9 @@ class EventSourcedNodeController extends ActionController
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
-     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called
+     * with unsafe requests from widgets or plugins that are rendered on the node
+     * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
     public function previewAction(NodeAddress $node)
     {
@@ -158,7 +160,10 @@ class EventSourcedNodeController extends ActionController
         $nodeInstance = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
         if (is_null($nodeInstance)) {
-            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
+            throw new NodeNotFoundException(
+                'The requested node does not exist or isn\'t accessible to the current user',
+                1430218623
+            );
         }
 
 
@@ -188,7 +193,9 @@ class EventSourcedNodeController extends ActionController
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
-     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called
+     * with unsafe requests from widgets or plugins that are rendered on the node
+     * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
     public function showAction(NodeAddress $node)
     {
@@ -248,7 +255,10 @@ class EventSourcedNodeController extends ActionController
         if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== null) {
             $node = $this->propertyMapper->convert($nodeContextPath, NodeInterface::class);
             if (!$node instanceof NodeInterface) {
-                throw new NodeNotFoundException(sprintf('The node with context path "%s" could not be resolved', $nodeContextPath), 1437051934);
+                throw new NodeNotFoundException(sprintf(
+                    'The node with context path "%s" could not be resolved',
+                    $nodeContextPath
+                ), 1437051934);
             }
             $this->view->assign('value', $node);
         }
@@ -275,7 +285,11 @@ class EventSourcedNodeController extends ActionController
         try {
             $resolvedTarget = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress);
         } catch (InvalidShortcutException $e) {
-            throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved: %s', $nodeAddress, $e->getMessage()), 1430218730, $e);
+            throw new NodeNotFoundException(sprintf(
+                'The shortcut node target of node "%s" could not be resolved: %s',
+                $nodeAddress,
+                $e->getMessage()
+            ), 1430218730, $e);
         }
         if ($resolvedTarget instanceof NodeAddress) {
             if ($resolvedTarget === $nodeAddress) {
@@ -284,7 +298,11 @@ class EventSourcedNodeController extends ActionController
             try {
                 $resolvedUri = NodeUriBuilder::fromRequest($this->request)->uriFor($nodeAddress);
             } catch (NoMatchingRouteException $e) {
-                throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved: %s', $nodeAddress, $e->getMessage()), 1599670695, $e);
+                throw new NodeNotFoundException(sprintf(
+                    'The shortcut node target of node "%s" could not be resolved: %s',
+                    $nodeAddress,
+                    $e->getMessage()
+                ), 1599670695, $e);
             }
         } else {
             $resolvedUri = $resolvedTarget;
@@ -294,7 +312,11 @@ class EventSourcedNodeController extends ActionController
 
     private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress)
     {
-        $subtree = $subgraph->findSubtrees([$nodeAddress->nodeAggregateIdentifier], 10, $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document'));
+        $subtree = $subgraph->findSubtrees(
+            [$nodeAddress->nodeAggregateIdentifier],
+            10,
+            $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document')
+        );
         $subtree = $subtree->getChildren()[0];
 
         $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
@@ -309,9 +331,14 @@ class EventSourcedNodeController extends ActionController
         }
     }
 
-    private static function fillCacheInternal(SubtreeInterface $subtree, NodeInterface $parentNode, NodePath $parentNodePath, InMemoryCache $inMemoryCache)
-    {
-        $parentNodeIdentifierByChildNodeIdentifierCache = $inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
+    private static function fillCacheInternal(
+        SubtreeInterface $subtree,
+        NodeInterface $parentNode,
+        NodePath $parentNodePath,
+        InMemoryCache $inMemoryCache
+    ) {
+        $parentNodeIdentifierByChildNodeIdentifierCache
+            = $inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdentifierCache();
         $nodePathCache = $inMemoryCache->getNodePathCache();
@@ -320,10 +347,17 @@ class EventSourcedNodeController extends ActionController
         if ($node->getNodeName() !== null) {
             $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
             $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
-            $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeAggregateIdentifier(), $node->getNodeName(), $node);
+            $namedChildNodeByNodeIdentifierCache->add(
+                $parentNode->getNodeAggregateIdentifier(),
+                $node->getNodeName(),
+                $node
+            );
         }
 
-        $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier());
+        $parentNodeIdentifierByChildNodeIdentifierCache->add(
+            $node->getNodeAggregateIdentifier(),
+            $parentNode->getNodeAggregateIdentifier()
+        );
 
         $allChildNodes = [];
         foreach ($subtree->getChildren() as $childSubtree) {

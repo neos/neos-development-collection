@@ -29,7 +29,8 @@ final class UserIdentifier implements \JsonSerializable, \Stringable
 
     private function __construct(
         public readonly string $value
-    ) {}
+    ) {
+    }
 
     private static function instance(string $value): self
     {

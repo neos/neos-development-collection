@@ -147,11 +147,11 @@ final class Node implements NodeInterface
         return $this->properties->offsetExists($propertyName);
     }
 
-
-
     public function getCacheEntryIdentifier(): string
     {
-        return 'Node_' . $this->getContentStreamIdentifier()->getCacheEntryIdentifier() . '_' . $this->getDimensionSpacePoint()->getCacheEntryIdentifier() . '_' .  $this->getNodeAggregateIdentifier()->getCacheEntryIdentifier();
+        return 'Node_' . $this->getContentStreamIdentifier()->getCacheEntryIdentifier()
+            . '_' . $this->getDimensionSpacePoint()->getCacheEntryIdentifier()
+            . '_' .  $this->getNodeAggregateIdentifier()->getCacheEntryIdentifier();
     }
 
     public function getLabel(): string

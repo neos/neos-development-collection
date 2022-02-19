@@ -23,10 +23,10 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Disable the given node aggregate in the given content stream in a dimension space point using a given strategy
- *
- * @Flow\Proxy(false)
  */
-final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class DisableNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 

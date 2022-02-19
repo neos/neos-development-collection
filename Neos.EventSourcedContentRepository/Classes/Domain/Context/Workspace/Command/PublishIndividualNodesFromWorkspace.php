@@ -21,9 +21,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Publish a set of nodes in a workspace
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class PublishIndividualNodesFromWorkspace
 {
     private WorkspaceName $workspaceName;
@@ -55,16 +54,16 @@ final class PublishIndividualNodesFromWorkspace
      */
     private ContentStreamIdentifier $contentStreamIdentifierForRemainingPart;
 
-
     /**
-     * @param WorkspaceName $workspaceName
      * @param array|NodeAddress[] $nodeAddresses
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifierForMatchingPart
-     * @param ContentStreamIdentifier $contentStreamIdentifierForRemainingPart
      */
-    private function __construct(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifierForMatchingPart, ContentStreamIdentifier $contentStreamIdentifierForRemainingPart)
-    {
+    private function __construct(
+        WorkspaceName $workspaceName,
+        array $nodeAddresses,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifierForMatchingPart,
+        ContentStreamIdentifier $contentStreamIdentifierForRemainingPart
+    ) {
         $this->workspaceName = $workspaceName;
         $this->nodeAddresses = $nodeAddresses;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
@@ -72,17 +71,38 @@ final class PublishIndividualNodesFromWorkspace
         $this->contentStreamIdentifierForRemainingPart = $contentStreamIdentifierForRemainingPart;
     }
 
-    public static function create(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier): self
-    {
-        return new self($workspaceName, $nodeAddresses, $initiatingUserIdentifier, ContentStreamIdentifier::create(), ContentStreamIdentifier::create());
+    public static function create(
+        WorkspaceName $workspaceName,
+        array $nodeAddresses,
+        UserIdentifier
+        $initiatingUserIdentifier
+    ): self {
+        return new self(
+            $workspaceName,
+            $nodeAddresses,
+            $initiatingUserIdentifier,
+            ContentStreamIdentifier::create(),
+            ContentStreamIdentifier::create()
+        );
     }
 
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
      */
-    public static function createFullyDeterministic(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifierForMatchingPart, ContentStreamIdentifier $contentStreamIdentifierForRemainingPart): self
-    {
-        return new self($workspaceName, $nodeAddresses, $initiatingUserIdentifier, $contentStreamIdentifierForMatchingPart, $contentStreamIdentifierForRemainingPart);
+    public static function createFullyDeterministic(
+        WorkspaceName $workspaceName,
+        array $nodeAddresses,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifierForMatchingPart,
+        ContentStreamIdentifier $contentStreamIdentifierForRemainingPart
+    ): self {
+        return new self(
+            $workspaceName,
+            $nodeAddresses,
+            $initiatingUserIdentifier,
+            $contentStreamIdentifierForMatchingPart,
+            $contentStreamIdentifierForRemainingPart
+        );
     }
 
     public function getWorkspaceName(): WorkspaceName

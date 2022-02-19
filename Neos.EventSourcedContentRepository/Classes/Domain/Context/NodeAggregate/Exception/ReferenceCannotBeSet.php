@@ -23,10 +23,13 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final class ReferenceCannotBeSet extends \DomainException
 {
-    public static function becauseTheNodeTypeDoesNotDeclareIt(PropertyName $propertyName, NodeTypeName $nodeTypeName): self
-    {
+    public static function becauseTheNodeTypeDoesNotDeclareIt(
+        PropertyName $propertyName,
+        NodeTypeName $nodeTypeName
+    ): self {
         return new self(
-            'Property "' . $propertyName . '" cannot be set because node type "' . $nodeTypeName . '" does not declare it.',
+            'Property "' . $propertyName . '" cannot be set because node type "'
+                . $nodeTypeName . '" does not declare it.',
             1618670106
         );
     }

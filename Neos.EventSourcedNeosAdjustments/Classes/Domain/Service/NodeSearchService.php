@@ -57,8 +57,12 @@ class NodeSearchService implements NodeSearchServiceInterface
      */
     protected $nodeTypeConstraintFactory;
 
-    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null): array
-    {
+    public function findByProperties(
+        $term,
+        array $searchNodeTypes,
+        Context $context,
+        NodeInterface $startingPoint = null
+    ): array {
         $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($context->getWorkspaceName()));
         if ($workspace === null) {
             return [];
@@ -66,7 +70,9 @@ class NodeSearchService implements NodeSearchServiceInterface
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(
             $workspace->getCurrentContentStreamIdentifier(),
             DimensionSpacePoint::fromLegacyDimensionArray($context->getDimensions()),
-            $context->isInvisibleContentShown() ? VisibilityConstraints::withoutRestrictions() : VisibilityConstraints::frontend()
+            $context->isInvisibleContentShown()
+                ? VisibilityConstraints::withoutRestrictions()
+                : VisibilityConstraints::frontend()
         );
         if ($startingPoint !== null) {
             $entryNodeIdentifier = $startingPoint->getNodeAggregateIdentifier();

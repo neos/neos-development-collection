@@ -64,24 +64,25 @@ class RenameProperty implements NodeBasedTransformationInterface
 
     /**
      * Remove the property from the given node.
-     *
-     * @param NodeInterface $node
-     * @param ContentStreamIdentifier $contentStreamForWriting
-     * @return CommandResult
      */
-    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         if ($node->hasProperty($this->oldPropertyName)) {
-            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
-                $contentStreamForWriting,
-                $node->getNodeAggregateIdentifier(),
-                $node->getOriginDimensionSpacePoint(),
-                SerializedPropertyValues::fromArray([
-                    $this->newPropertyName => $node->getProperties()->serialized()->getProperty($this->oldPropertyName),
-                    $this->oldPropertyName => null
-                ]),
-                UserIdentifier::forSystemUser()
-            ));
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
+                new SetSerializedNodeProperties(
+                    $contentStreamForWriting,
+                    $node->getNodeAggregateIdentifier(),
+                    $node->getOriginDimensionSpacePoint(),
+                    SerializedPropertyValues::fromArray([
+                        $this->newPropertyName => $node->getProperties()->serialized()->getProperty($this->oldPropertyName),
+                        $this->oldPropertyName => null
+                    ]),
+                    UserIdentifier::forSystemUser()
+                )
+            );
         }
 
         return CommandResult::createEmpty();

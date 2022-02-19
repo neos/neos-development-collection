@@ -39,7 +39,10 @@ trait NodeVariationInternals
         ReadableNodeAggregateInterface $nodeAggregate,
         UserIdentifier $initiatingUserIdentifier
     ): DomainEvents {
-        return match ($this->getInterDimensionalVariationGraph()->getVariantType($targetOrigin, $sourceOrigin)) {
+        return match ($this->getInterDimensionalVariationGraph()->getVariantType(
+            $targetOrigin->toDimensionSpacePoint(),
+            $sourceOrigin->toDimensionSpacePoint()
+        )) {
             DimensionSpace\VariantType::TYPE_SPECIALIZATION => $this->handleCreateNodeSpecializationVariant(
                 $contentStreamIdentifier,
                 $sourceOrigin,
@@ -116,7 +119,10 @@ trait NodeVariationInternals
             Uuid::uuid4()->toString()
         );
 
-        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates($contentStreamIdentifier, $nodeAggregate->getIdentifier()) as $tetheredChildNodeAggregate) {
+        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates(
+            $contentStreamIdentifier,
+            $nodeAggregate->getIdentifier()
+        ) as $tetheredChildNodeAggregate) {
             $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
                 $contentStreamIdentifier,
                 $sourceOrigin,
@@ -183,7 +189,10 @@ trait NodeVariationInternals
             Uuid::uuid4()->toString()
         );
 
-        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates($contentStreamIdentifier, $nodeAggregate->getIdentifier()) as $tetheredChildNodeAggregate) {
+        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates(
+            $contentStreamIdentifier,
+            $nodeAggregate->getIdentifier()
+        ) as $tetheredChildNodeAggregate) {
             $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
                 $contentStreamIdentifier,
                 $sourceOrigin,
@@ -250,7 +259,10 @@ trait NodeVariationInternals
             Uuid::uuid4()->toString()
         );
 
-        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates($contentStreamIdentifier, $nodeAggregate->getIdentifier()) as $tetheredChildNodeAggregate) {
+        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates(
+            $contentStreamIdentifier,
+            $nodeAggregate->getIdentifier()
+        ) as $tetheredChildNodeAggregate) {
             $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
                 $contentStreamIdentifier,
                 $sourceOrigin,
@@ -265,15 +277,20 @@ trait NodeVariationInternals
         return $events;
     }
 
-    private function calculateEffectiveVisibility(OriginDimensionSpacePoint $targetOrigin, ReadableNodeAggregateInterface $nodeAggregate): DimensionSpacePointSet
-    {
-        $specializations = $this->getInterDimensionalVariationGraph()->getIndexedSpecializations($targetOrigin);
+    private function calculateEffectiveVisibility(
+        OriginDimensionSpacePoint $targetOrigin,
+        ReadableNodeAggregateInterface $nodeAggregate
+    ): DimensionSpacePointSet {
+        $specializations = $this->getInterDimensionalVariationGraph()
+            ->getIndexedSpecializations($targetOrigin->toDimensionSpacePoint());
         $excludedSet = new DimensionSpacePointSet([]);
-        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()) as $occupiedSpecialization) {
+        foreach ($specializations->getIntersection(
+            $nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()
+        ) as $occupiedSpecialization) {
             $excludedSet = $excludedSet->getUnion($this->getInterDimensionalVariationGraph()->getSpecializationSet($occupiedSpecialization));
         }
         return $this->getInterDimensionalVariationGraph()->getSpecializationSet(
-            $targetOrigin,
+            $targetOrigin->toDimensionSpacePoint(),
             true,
             $excludedSet
         );

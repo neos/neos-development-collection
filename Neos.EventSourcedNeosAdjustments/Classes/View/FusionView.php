@@ -83,7 +83,11 @@ class FusionView extends AbstractView
      * @var array
      */
     protected $supportedOptions = [
-        'enableContentCache' => [null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
+        'enableContentCache' => [
+            null,
+            'Flag to enable content caching inside Fusion (overriding the global setting).',
+            'boolean'
+        ]
     ];
 
     /**
@@ -112,7 +116,8 @@ class FusionView extends AbstractView
 
     /**
      * @param string $output
-     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface otherwise the original output.
+     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface
+     *                                  otherwise the original output.
      */
     protected function parsePotentialRawHttpResponse($output)
     {
@@ -179,7 +184,11 @@ class FusionView extends AbstractView
     protected function getClosestDocumentNode(NodeInterface $node)
     {
         while ($node !== null && !$node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $node = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions())->findParentNode($node);
+            $node = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            )->findParentNode($node);
         }
         return $node;
     }
@@ -214,7 +223,7 @@ class FusionView extends AbstractView
      * @param NodeInterface $currentSiteNode
      * @return \Neos\Fusion\Core\Runtime
      */
-    protected function getFusionRuntime(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface $currentSiteNode)
+    protected function getFusionRuntime(NodeInterface $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);

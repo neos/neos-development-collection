@@ -41,6 +41,9 @@ final class HostPrefixContentDimensionValueUriProcessor implements ContentDimens
             }
         }
 
-        return $uriConstraints->withHostPrefix($contentDimensionValue->getConfigurationValue('resolution.value') ?: '', $prefixesToBeReplaced);
+        return $uriConstraints->withHostPrefix(
+            $contentDimensionValue->getConfigurationValue('resolution.value') ?: '',
+            $prefixesToBeReplaced
+        );
     }
 }

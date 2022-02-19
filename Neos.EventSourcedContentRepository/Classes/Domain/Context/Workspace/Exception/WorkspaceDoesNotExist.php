@@ -12,7 +12,6 @@
 
 declare(strict_types=1);
 
-
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
 use Neos\EventSourcedContentRepository\Exception;
 use Neos\Flow\Annotations as Flow;

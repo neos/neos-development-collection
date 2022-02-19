@@ -130,8 +130,11 @@ class HierarchyRelation
      * @param Connection $databaseConnection
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function assignNewParentNode(NodeRelationAnchorPoint $parentAnchorPoint, ?int $position, Connection $databaseConnection): void
-    {
+    public function assignNewParentNode(
+        NodeRelationAnchorPoint $parentAnchorPoint,
+        ?int $position,
+        Connection $databaseConnection
+    ): void {
         $data = [
             'parentnodeanchor' => $parentAnchorPoint
         ];

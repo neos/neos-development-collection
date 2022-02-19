@@ -16,7 +16,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValu
  */
 final class NodeSubtreeSnapshot implements \JsonSerializable
 {
-
     /**
      * @var NodeAggregateIdentifier
      */
@@ -81,11 +80,20 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
      * @param NodeReferences $nodeReferences
      * @param array|NodeSubtreeSnapshot[] $childNodes
      */
-    private function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, ?NodeName $nodeName, NodeAggregateClassification $nodeAggregateClassification, SerializedPropertyValues $propertyValues, NodeReferences $nodeReferences, array $childNodes)
-    {
+    private function __construct(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeName $nodeTypeName,
+        ?NodeName $nodeName,
+        NodeAggregateClassification $nodeAggregateClassification,
+        SerializedPropertyValues $propertyValues,
+        NodeReferences $nodeReferences,
+        array $childNodes
+    ) {
         foreach ($childNodes as $childNode) {
             if (!$childNode instanceof NodeSubtreeSnapshot) {
-                throw new \InvalidArgumentException('an element in $childNodes was not of type NodeSubtreeSnapshot, but ' . get_class($childNode));
+                throw new \InvalidArgumentException(
+                    'an element in $childNodes was not of type NodeSubtreeSnapshot, but ' . get_class($childNode)
+                );
             }
         }
 

@@ -26,8 +26,11 @@ final class HostPrefixContentDimensionValueDetector implements ContentDimensionV
      * @param array|null $overrideOptions
      * @return Dimension\ContentDimensionValue|null
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue
-    {
+    public function detectValue(
+        Dimension\ContentDimension $contentDimension,
+        ServerRequestInterface $request,
+        array $overrideOptions = null
+    ): ?Dimension\ContentDimensionValue {
         $host = $request->getUri()->getHost();
         foreach ($contentDimension->values as $contentDimensionValue) {
             $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value');

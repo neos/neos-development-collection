@@ -65,8 +65,13 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
             /** @var NodeInterface $node */
             $node = $currentContext['node'];
             $applicationContext = $this->environment->getContext();
-            if ($applicationContext->isProduction() && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess') && $node->getContext()->getWorkspaceName() !== 'live') {
-                $output = '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element' . $output . '</div></div>';
+            if ($applicationContext->isProduction()
+                && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+                && $node->getContext()->getWorkspaceName() !== 'live'
+            ) {
+                $output = '<div class="neos-rendering-exception">
+    <div class="neos-rendering-exception-title">Failed to render element' . $output . '</div>
+</div>';
             }
 
             return $this->contentElementWrappingService->wrapContentObject($node, $output, $fusionPath);

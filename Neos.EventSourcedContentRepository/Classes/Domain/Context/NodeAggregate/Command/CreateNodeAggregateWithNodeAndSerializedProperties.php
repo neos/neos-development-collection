@@ -27,10 +27,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
 /**
  * CreateNodeAggregateWithNode command
- *
- * @Flow\Proxy(false)
  */
-final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonSerializable,
+    RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     use CommonCreateNodeAggregateWithNodeTrait;
 
@@ -93,16 +93,15 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
     }
 
     /**
-     * Create a new CreateNodeAggregateWithNode command with all original values, except the tetheredDescendantNodeAggregateIdentifiers (where
-     * the passed in arguments are used).
+     * Create a new CreateNodeAggregateWithNode command with all original values,
+     * except the tetheredDescendantNodeAggregateIdentifiers (where the passed in arguments are used).
      *
      * Is needed to make this command fully deterministic before storing it at the events
      * - we need this
-     * @param NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
-     * @return self
      */
-    public function withTetheredDescendantNodeAggregateIdentifiers(NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers): self
-    {
+    public function withTetheredDescendantNodeAggregateIdentifiers(
+        NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
+    ): self {
         return new self(
             $this->contentStreamIdentifier,
             $this->nodeAggregateIdentifier,

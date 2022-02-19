@@ -33,9 +33,7 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 class TetheredNodeAdjustments
 {
     use NodeVariationInternals;
@@ -90,11 +88,19 @@ class TetheredNodeAdjustments
                 foreach ($expectedTetheredNodes as $tetheredNodeName => $expectedTetheredNodeType) {
                     $tetheredNodeName = NodeName::fromString($tetheredNodeName);
 
-                    $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-                    $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName($node->getNodeAggregateIdentifier(), $tetheredNodeName);
+                    $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                        $node->getContentStreamIdentifier(),
+                        $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                        VisibilityConstraints::withoutRestrictions()
+                    );
+                    $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
+                        $node->getNodeAggregateIdentifier(),
+                        $tetheredNodeName
+                    );
                     if ($tetheredNode === null) {
                         $foundMissingOrDisallowedTetheredNodes = true;
-                        // $nestedNode not found - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
+                        // $nestedNode not found
+                        // - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
                         yield StructureAdjustment::createForNode(
                             $node,
                             StructureAdjustment::TETHERED_NODE_MISSING,
@@ -102,9 +108,18 @@ class TetheredNodeAdjustments
                             function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
                                 $this->readSideMemoryCacheManager->disableCache();
 
-                                $events = $this->createEventsForMissingTetheredNode($nodeAggregate, $node, $tetheredNodeName, null, $expectedTetheredNodeType, UserIdentifier::forSystemUser());
+                                $events = $this->createEventsForMissingTetheredNode(
+                                    $nodeAggregate,
+                                    $node,
+                                    $tetheredNodeName,
+                                    null,
+                                    $expectedTetheredNodeType,
+                                    UserIdentifier::forSystemUser()
+                                );
 
-                                $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
+                                $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+                                    $node->getContentStreamIdentifier()
+                                );
                                 $this->getEventStore()->commit($streamName->getEventStreamName(), $events);
                                 return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
                             }
@@ -211,13 +226,16 @@ class TetheredNodeAdjustments
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param array $actualTetheredChildNodes array key: name of tethered child node. Value: the Node itself.
-     * @param array $expectedNodeOrdering an array depicting the expected tethered order, like ["node1", "node2"]
-     * @return CommandResult
+     * array key: name of tethered child node. Value: the Node itself.
+     * @param array<string,NodeInterface> $actualTetheredChildNodes
+     * an array depicting the expected tethered order, like ["node1", "node2"]
+     * @param array<int,string> $expectedNodeOrdering
      */
-    private function reorderNodes(ContentStreamIdentifier $contentStreamIdentifier, array $actualTetheredChildNodes, array $expectedNodeOrdering): CommandResult
-    {
+    private function reorderNodes(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        array $actualTetheredChildNodes,
+        array $expectedNodeOrdering
+    ): CommandResult {
         $events = DomainEvents::createEmpty();
 
         // we move from back to front through the expected ordering; as we always specify the **succeeding** sibling.

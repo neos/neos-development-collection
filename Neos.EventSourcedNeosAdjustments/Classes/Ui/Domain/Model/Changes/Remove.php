@@ -74,10 +74,15 @@ class Remove extends AbstractChange
             $node = $this->getSubject();
             $parentNode = $this->findParentNode($node);
 
-            // we have to remember what parts of the content cache to flush before we actually delete the node; otherwise we cannot find the parent nodes anymore.
-            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate($node->getContentStreamIdentifier(), $node->getNodeAggregateIdentifier());
+            // we have to remember what parts of the content cache to flush before we actually delete the node;
+            // otherwise we cannot find the parent nodes anymore.
+            $doFlushContentCache = $this->contentCacheFlusher->scheduleFlushNodeAggregate(
+                $node->getContentStreamIdentifier(),
+                $node->getNodeAggregateIdentifier()
+            );
 
-            // we have to schedule an the update workspace info before we actually delete the node; otherwise we cannot find the parent nodes anymore.
+            // we have to schedule an the update workspace info before we actually delete the node;
+            // otherwise we cannot find the parent nodes anymore.
             $this->updateWorkspaceInfo();
 
             $command = RemoveNodeAggregate::create(
@@ -89,7 +94,9 @@ class Remove extends AbstractChange
             );
             $closestDocumentParentNode = $this->closestDocumentParentNode($node);
             if ($closestDocumentParentNode !== null) {
-                $command = $command->withRemovalAttachmentPoint($closestDocumentParentNode->getNodeAggregateIdentifier());
+                $command = $command->withRemovalAttachmentPoint(
+                    $closestDocumentParentNode->getNodeAggregateIdentifier()
+                );
             }
 
             $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate(

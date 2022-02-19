@@ -66,7 +66,8 @@ class UnknownNodeTypeAdjustment
             yield StructureAdjustment::createForNodeAggregate(
                 $nodeAggregate,
                 StructureAdjustment::NODE_TYPE_MISSING,
-                'The node type "' . $nodeTypeName->jsonSerialize() . '" is not found; so the node should be removed (or converted)',
+                'The node type "' . $nodeTypeName->jsonSerialize()
+                    . '" is not found; so the node should be removed (or converted)',
                 function () use ($nodeAggregate) {
                     $this->readSideMemoryCacheManager->disableCache();
                     return $this->removeNodeAggregate($nodeAggregate);

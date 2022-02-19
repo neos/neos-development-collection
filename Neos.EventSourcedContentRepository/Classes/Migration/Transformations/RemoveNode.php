@@ -69,8 +69,11 @@ class RemoveNode implements NodeBasedTransformationInterface
      * @param ContentStreamIdentifier $contentStreamForWriting
      * @return CommandResult
      */
-    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         if ($this->overriddenDimensionSpacePoint !== null && $this->strategy === null) {
             $this->strategy = NodeVariantSelectionStrategyIdentifier::STRATEGY_ONLY_GIVEN_VARIANT;
         } elseif ($this->strategy === null) {
@@ -78,14 +81,17 @@ class RemoveNode implements NodeBasedTransformationInterface
         }
 
         if ($this->strategy === NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS) {
-            throw new InvalidMigrationConfiguration('For RemoveNode, the strategy allVariants is not supported, as this would lead to nodes being deleted which might potentially not be matched by this filter.');
+            throw new InvalidMigrationConfiguration(
+                'For RemoveNode, the strategy allVariants is not supported, as this would lead to nodes'
+                    . ' being deleted which might potentially not be matched by this filter.'
+            );
         }
 
         $coveredDimensionSpacePoint = $this->overriddenDimensionSpacePoint ?? $node->getOriginDimensionSpacePoint();
 
         if (!$coveredDimensionSpacePoints->contains($coveredDimensionSpacePoint)) {
-            // we are currently in a Node which has other covered dimension space points than the target ones, so we do not need
-            // to do anything.
+            // we are currently in a Node which has other covered dimension space points than the target ones,
+            // so we do not need to do anything.
             return CommandResult::createEmpty();
         }
 

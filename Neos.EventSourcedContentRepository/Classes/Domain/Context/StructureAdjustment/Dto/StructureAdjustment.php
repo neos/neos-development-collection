@@ -9,9 +9,7 @@ use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 class StructureAdjustment extends Message
 {
     const TETHERED_NODE_MISSING = 'TETHERED_NODE_MISSING';
@@ -58,7 +56,8 @@ class StructureAdjustment extends Message
         ?\Closure $remediation = null
     ): self {
         return new self(
-            'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- ' . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
+            'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- '
+                . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
                 'contentStream' => $node->getContentStreamIdentifier()->jsonSerialize(),
@@ -78,7 +77,8 @@ class StructureAdjustment extends Message
         ?\Closure $remediation = null
     ): self {
         return new self(
-            'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- ' . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
+            'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- '
+                . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
                 'contentStream' => $nodeAggregate->getContentStreamIdentifier()->jsonSerialize(),

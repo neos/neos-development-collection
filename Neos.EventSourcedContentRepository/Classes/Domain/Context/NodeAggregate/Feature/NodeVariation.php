@@ -37,8 +37,6 @@ trait NodeVariation
     abstract protected function getRuntimeBlocker(): RuntimeBlocker;
 
     /**
-     * @param CreateNodeVariant $command
-     * @return CommandResult
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
      * @throws DimensionSpacePointNotFound
@@ -52,9 +50,12 @@ trait NodeVariation
         $this->getReadSideMemoryCacheManager()->disableCache();
 
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
-        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $this->requireDimensionSpacePointToExist($command->getSourceOrigin());
-        $this->requireDimensionSpacePointToExist($command->getTargetOrigin());
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier()
+        );
+        $this->requireDimensionSpacePointToExist($command->getSourceOrigin()->toDimensionSpacePoint());
+        $this->requireDimensionSpacePointToExist($command->getTargetOrigin()->toDimensionSpacePoint());
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getSourceOrigin());
@@ -65,7 +66,7 @@ trait NodeVariation
             $command->getNodeAggregateIdentifier(),
             $command->getSourceOrigin()
         );
-        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetOrigin());
+        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetOrigin()->toDimensionSpacePoint());
 
         $events = $this->createEventsForVariations(
             $command->getContentStreamIdentifier(),

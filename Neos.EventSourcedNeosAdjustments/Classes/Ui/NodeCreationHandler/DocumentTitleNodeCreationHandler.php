@@ -47,7 +47,8 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 
     public function handle(CreateNodeAggregateWithNode $command, array $data): CreateNodeAggregateWithNode
     {
-        if (!$this->nodeTypeManager->getNodeType($command->getNodeTypeName()->getValue())->isOfType('Neos.Neos:Document')) {
+        if (!$this->nodeTypeManager->getNodeType($command->getNodeTypeName()->getValue())
+            ->isOfType('Neos.Neos:Document')) {
             return $command;
         }
         $propertyValues = $command->getInitialPropertyValues();

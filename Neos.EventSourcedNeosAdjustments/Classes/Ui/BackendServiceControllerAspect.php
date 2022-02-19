@@ -27,11 +27,14 @@ class BackendServiceControllerAspect
      /**
      * @Flow\Around("method(Neos\Neos\Ui\Controller\BackendServiceController->processRequest())")
      * @param JoinPointInterface $joinPoint the join point
-     * @return mixed
+     * @return void
      */
     public function replaceBackendServiceController(JoinPointInterface $joinPoint)
     {
         $controller = new BackendServiceController();
-        return $controller->processRequest($joinPoint->getMethodArgument('request'), $joinPoint->getMethodArgument('response'));
+        $controller->processRequest(
+            $joinPoint->getMethodArgument('request'),
+            $joinPoint->getMethodArgument('response')
+        );
     }
 }

@@ -132,9 +132,11 @@ class ReloadContentOutOfBand extends AbstractFeedback
         }
 
         return (
-            $this->getNode()->getContentStreamIdentifier()->equals($feedback->getNode()->getContentStreamIdentifier()) &&
-            $this->getNode()->getDimensionSpacePoint()->equals($feedback->getNode()->getDimensionSpacePoint()) &&
-            $this->getNode()->getNodeAggregateIdentifier()->equals($feedback->getNode()->getNodeAggregateIdentifier()) &&
+            $this->getNode()->getContentStreamIdentifier() === $feedback->getNode()->getContentStreamIdentifier() &&
+            $this->getNode()->getDimensionSpacePoint() === $feedback->getNode()->getDimensionSpacePoint() &&
+            $this->getNode()->getNodeAggregateIdentifier()->equals(
+                $feedback->getNode()->getNodeAggregateIdentifier()
+            ) &&
             $this->getNodeDomAddress() == $feedback->getNodeDomAddress()
         );
     }

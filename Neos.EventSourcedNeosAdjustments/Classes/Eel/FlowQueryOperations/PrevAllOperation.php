@@ -74,9 +74,11 @@ class PrevAllOperation extends AbstractOperation
                 $contextNode->getDimensionSpacePoint(),
                 $contextNode->getVisibilityConstraints()
             );
-
+            // @todo: implement NodeAccessor::getPrecedingSiblings
             foreach ($this->getPrevForNode($contextNode, $nodeAccessor) as $prevNode) {
-                if ($prevNode !== null && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])) {
+                if ($prevNode !== null
+                    && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])
+                ) {
                     $outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
                     $output[] = $prevNode;
                 }

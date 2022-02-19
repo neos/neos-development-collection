@@ -23,8 +23,8 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\SearchTerm;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
- * Base abstract class which implements delegation. Use this as basis to build custom NodeAccessors. See {@see NodeAccessorInterface} for a full
- * usage description.
+ * Base abstract class which implements delegation. Use this as basis to build custom NodeAccessors.
+ * See {@see NodeAccessorInterface} for a full usage description.
  */
 abstract class AbstractDelegatingNodeAccessor
 {
@@ -40,8 +40,12 @@ abstract class AbstractDelegatingNodeAccessor
         return $this->nextAccessor->findByIdentifier($nodeAggregateIdentifier);
     }
 
-    public function findChildNodes(NodeInterface $parentNode, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): iterable
-    {
+    public function findChildNodes(
+        NodeInterface $parentNode,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): iterable {
         return $this->nextAccessor->findChildNodes($parentNode, $nodeTypeConstraints, $limit, $offset);
     }
 
@@ -75,13 +79,19 @@ abstract class AbstractDelegatingNodeAccessor
         return $this->nextAccessor->findNodePath($node);
     }
 
-    public function findSubtrees(array $entryNodes, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface
-    {
+    public function findSubtrees(
+        array $entryNodes,
+        int $maximumLevels,
+        NodeTypeConstraints $nodeTypeConstraints
+    ): SubtreeInterface {
         return $this->nextAccessor->findSubtrees($entryNodes, $maximumLevels, $nodeTypeConstraints);
     }
 
-    public function findDescendants(array $entryNodes, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): iterable
-    {
+    public function findDescendants(
+        array $entryNodes,
+        NodeTypeConstraints $nodeTypeConstraints,
+        ?SearchTerm $searchTerm
+    ): iterable {
         return $this->nextAccessor->findDescendants($entryNodes, $nodeTypeConstraints, $searchTerm);
     }
 }

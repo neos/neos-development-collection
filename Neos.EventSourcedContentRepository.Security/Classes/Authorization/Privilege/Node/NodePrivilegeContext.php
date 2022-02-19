@@ -51,7 +51,8 @@ class NodePrivilegeContext
     /**
      * Matches if the selected node is an *ancestor* of the given node specified by $nodePathOrIdentifier
      *
-     * Example: isAncestorNodeOf('/sites/some/path') matches for the nodes "/sites", "/sites/some" and "/sites/some/path" but not for "/sites/some/other"
+     * Example: isAncestorNodeOf('/sites/some/path') matches for the nodes "/sites",
+     *  "/sites/some" and "/sites/some/path" but not for "/sites/some/other"
      *
      * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
      * @return boolean true if the given node matches otherwise false
@@ -69,7 +70,8 @@ class NodePrivilegeContext
     /**
      * Matches if the selected node is a *descendant* of the given node specified by $nodePathOrIdentifier
      *
-     * Example: isDescendantNodeOf('/sites/some/path') matches for the nodes "/sites/some/path", "/sites/some/path/subnode" but not for "/sites/some/other"
+     * Example: isDescendantNodeOf('/sites/some/path') matches for the nodes "/sites/some/path",
+     * "/sites/some/path/subnode" but not for "/sites/some/other"
      *
      * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
      * @return boolean true if the given node matches otherwise false
@@ -86,7 +88,8 @@ class NodePrivilegeContext
     /**
      * Matches if the selected node is a *descendant* or *ancestor* of the given node specified by $nodePathOrIdentifier
      *
-     * Example: isAncestorOrDescendantNodeOf('/sites/some') matches for the nodes "/sites", "/sites/some", "/sites/some/sub" but not "/sites/other"
+     * Example: isAncestorOrDescendantNodeOf('/sites/some') matches for the nodes "/sites", "/sites/some",
+     * "/sites/some/sub" but not "/sites/other"
      *
      * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
      * @return boolean true if the given node matches otherwise false
@@ -97,11 +100,14 @@ class NodePrivilegeContext
     }
 
     /**
-     * Matches if the selected node is of the given NodeType(s). If multiple types are specified, only one entry has to match
+     * Matches if the selected node is of the given NodeType(s).
+     * If multiple types are specified, only one entry has to match
      *
-     * Example: nodeIsOfType(['Neos.ContentRepository:NodeType1', 'Neos.ContentRepository:NodeType2']) matches if the selected node is of (sub) type *Neos.ContentRepository:NodeType1* or *Neos.ContentRepository:NodeType1*
+     * Example: nodeIsOfType(['Neos.ContentRepository:NodeType1', 'Neos.ContentRepository:NodeType2'] matches,
+     * if the selected node is of (sub) type *Neos.ContentRepository:NodeType1* or *Neos.ContentRepository:NodeType1*
      *
-     * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s), e.g. "Neos.Neos:Document"
+     * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s),
+     * e.g. "Neos.Neos:Document"
      * @return boolean true if the selected node matches the $nodeTypes, otherwise false
      */
     public function nodeIsOfType($nodeTypes)
@@ -124,7 +130,8 @@ class NodePrivilegeContext
     /**
      * Matches if the selected node belongs to one of the given $workspaceNames
      *
-     * Example: isInWorkspace(['live', 'user-admin']) matches if the selected node is in one of the workspaces "user-admin" or "live"
+     * Example: isInWorkspace(['live', 'user-admin']) matches,
+     * if the selected node is in one of the workspaces "user-admin" or "live"
      *
      * @param array $workspaceNames An array of workspace names, e.g. ["live", "user-admin"]
      * @return boolean true if the selected node matches the $workspaceNames, otherwise false
@@ -163,7 +170,10 @@ class NodePrivilegeContext
             return false;
         }
 
-        $preset = $this->contentDimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionValues[$dimensionName]);
+        $preset = $this->contentDimensionPresetSource->findPresetByDimensionValues(
+            $dimensionName,
+            $dimensionValues[$dimensionName]
+        );
 
         if ($preset === null) {
             return false;
@@ -178,10 +188,12 @@ class NodePrivilegeContext
     }
 
     /**
-     * Resolves the given $nodePathOrIdentifier and returns its absolute path and or a boolean if the result directly matches the currently selected node
+     * Resolves the given $nodePathOrIdentifier and returns its absolute path and or a boolean,
+     * if the result directly matches the currently selected node
      *
      * @param string $nodePathOrIdentifier identifier or absolute path for the node to resolve
-     * @return bool|string true if the node matches the selected node, false if the corresponding node does not exist. Otherwise the resolved absolute path with trailing slash
+     * @return bool|string true if the node matches the selected node, false if the corresponding node does not exist.
+     * Otherwise the resolved absolute path with trailing slash
      */
     protected function resolveNodePath($nodePathOrIdentifier)
     {

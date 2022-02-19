@@ -41,8 +41,11 @@ final class NamedChildNodeByNodeIdentifierCache
         $this->isEnabled = $isEnabled;
     }
 
-    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, ?NodeName $nodeName, NodeInterface $node): void
-    {
+    public function add(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        ?NodeName $nodeName,
+        NodeInterface $node
+    ): void {
         if ($this->isEnabled === false) {
             return;
         }

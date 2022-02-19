@@ -140,11 +140,16 @@ class NodeUriImplementation extends AbstractFusionObject
         } elseif ($node === '~') {
             // @todo fix me
             $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
-            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
+                $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)
+                    ->getNodeAggregateIdentifier()
+            );
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
             // @todo fix me
             $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
-            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(NodeAggregateIdentifier::fromString(\mb_substr($node, 7)));
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
+                NodeAggregateIdentifier::fromString(\mb_substr($node, 7))
+            );
         } else {
             return '';
         }

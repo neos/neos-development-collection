@@ -26,5 +26,9 @@ interface ContentDimensionValueDetectorInterface
      * @param array|null $overrideOptions
      * @return Dimension\ContentDimensionValue|null
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue;
+    public function detectValue(
+        Dimension\ContentDimension $contentDimension,
+        ServerRequestInterface $request,
+        array $overrideOptions = null
+    ): ?Dimension\ContentDimensionValue;
 }

@@ -33,7 +33,10 @@ final class CommandResult
     protected function __construct(DomainEvents $publishedEvents, ?RuntimeBlocker $runtimeBlocker)
     {
         if ($runtimeBlocker === null && !$publishedEvents->isEmpty()) {
-            throw new \InvalidArgumentException('The Runtime Blocker was not given, although the event list was non-empty. This should never happen.', 1639313989);
+            throw new \InvalidArgumentException(
+                'The Runtime Blocker was not given, although the event list was non-empty. This should never happen.',
+                1639313989
+            );
         }
         $this->publishedEvents = $publishedEvents;
         $this->runtimeBlocker = $runtimeBlocker;

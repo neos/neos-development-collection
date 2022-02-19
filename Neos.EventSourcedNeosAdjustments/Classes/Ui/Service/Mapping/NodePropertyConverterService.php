@@ -34,7 +34,8 @@ use Psr\Log\LoggerInterface;
 /**
  * Creates PropertyMappingConfigurations to map NodeType properties for the Neos interface.
  *
- * THIS IS DIRTY CODE. In the longer run, the neos UI should work DIRECTLY with serialized properties instead of the objects.
+ * THIS IS DIRTY CODE. In the longer run, the neos UI should work DIRECTLY with serialized properties
+ * instead of the objects.
  *
  * @Flow\Scope("singleton")
  */
@@ -112,23 +113,39 @@ class NodePropertyConverterService
     public function getProperty(NodeInterface $node, $propertyName)
     {
         if ($propertyName === '_hidden') {
-            return $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden();
+            return $this->nodeHiddenStateFinder->findHiddenState(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                $node->getNodeAggregateIdentifier()
+            )->isHidden();
         }
-        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+        // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call,
+        // so we need to trigger another method beforehand.
         $node->getNodeType()->getFullConfiguration();
         $propertyType = $node->getNodeType()->getPropertyType($propertyName);
 
-        // We handle "reference" and "references" differently than other properties; because we need to use another API for querying these references.
+        // We handle "reference" and "references" differently than other properties;
+        // because we need to use another API for querying these references.
         if ($propertyType === 'reference') {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-            $referenceIdentifiers = $this->toNodeIdentifierStrings($nodeAccessor->findReferencedNodes($node, PropertyName::fromString($propertyName)));
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $referenceIdentifiers = $this->toNodeIdentifierStrings(
+                $nodeAccessor->findReferencedNodes($node, PropertyName::fromString($propertyName))
+            );
             if (count($referenceIdentifiers) === 0) {
                 return null;
             } else {
                 return reset($referenceIdentifiers);
             }
         } elseif ($propertyType === 'references') {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
             $references = $nodeAccessor->findReferencedNodes($node, PropertyName::fromString($propertyName));
 
             return $this->toNodeIdentifierStrings($references);
@@ -205,8 +222,10 @@ class NodePropertyConverterService
     {
         $parsedType = TypeHandling::parseType($dataType);
 
-        // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects. Usually they expect the source to be an object already and break if not.
-        if (!TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue) && !is_array($propertyValue)) {
+        // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects.
+        // Usually they expect the source to be an object already and break if not.
+        if (!TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue)
+            && !is_array($propertyValue)) {
             return null;
         }
 
@@ -214,14 +233,21 @@ class NodePropertyConverterService
         if (!TypeHandling::isSimpleType($parsedType['type'])) {
             $conversionTargetType = 'array';
         }
-        // Technically the "string" hardcoded here is irrelevant as the configured type converter wins, but it cannot be the "elementType"
-        // because if the source is of the type $elementType then the PropertyMapper skips the type converter.
+        // Technically the "string" hardcoded here is irrelevant as the configured type converter wins,
+        // but it cannot be the "elementType" because if the source is of the type $elementType
+        // then the PropertyMapper skips the type converter.
         if ($parsedType['type'] === 'array' && $parsedType['elementType'] !== null) {
-            $conversionTargetType .= '<' . (TypeHandling::isSimpleType($parsedType['elementType']) ? $parsedType['elementType'] : 'string') . '>';
+            $conversionTargetType .= '<'
+                . (TypeHandling::isSimpleType($parsedType['elementType']) ? $parsedType['elementType'] : 'string')
+                . '>';
         }
 
         $propertyMappingConfiguration = $this->createConfiguration($dataType);
-        $convertedValue = $this->propertyMapper->convert($propertyValue, $conversionTargetType, $propertyMappingConfiguration);
+        $convertedValue = $this->propertyMapper->convert(
+            $propertyValue,
+            $conversionTargetType,
+            $propertyMappingConfiguration
+        );
         if ($convertedValue instanceof \Neos\Error\Messages\Error) {
             throw new PropertyException($convertedValue->getMessage(), $convertedValue->getCode());
         }
@@ -249,7 +275,8 @@ class NodePropertyConverterService
     }
 
     /**
-     * Create a property mapping configuration for the given dataType to convert a Node property value from the given dataType to a simple type.
+     * Create a property mapping configuration for the given dataType to convert a Node property value
+     * from the given dataType to a simple type.
      *
      * @param string $dataType
      * @return PropertyMappingConfigurationInterface
@@ -289,13 +316,18 @@ class NodePropertyConverterService
      */
     protected function setTypeConverterForType(PropertyMappingConfiguration $propertyMappingConfiguration, $dataType)
     {
-        if (!isset($this->typesConfiguration[$dataType]) || !isset($this->typesConfiguration[$dataType]['typeConverter'])) {
+        if (!isset($this->typesConfiguration[$dataType])
+            || !isset($this->typesConfiguration[$dataType]['typeConverter'])) {
             return false;
         }
 
         $typeConverter = $this->objectManager->get($this->typesConfiguration[$dataType]['typeConverter']);
         $propertyMappingConfiguration->setTypeConverter($typeConverter);
-        $this->setTypeConverterOptionsForType($propertyMappingConfiguration, $this->typesConfiguration[$dataType]['typeConverter'], $dataType);
+        $this->setTypeConverterOptionsForType(
+            $propertyMappingConfiguration,
+            $this->typesConfiguration[$dataType]['typeConverter'],
+            $dataType
+        );
 
         return true;
     }
@@ -306,9 +338,13 @@ class NodePropertyConverterService
      * @param string $dataType
      * @return void
      */
-    protected function setTypeConverterOptionsForType(PropertyMappingConfiguration $propertyMappingConfiguration, $typeConverterClass, $dataType)
-    {
-        if (!isset($this->typesConfiguration[$dataType]['typeConverterOptions']) || !is_array($this->typesConfiguration[$dataType]['typeConverterOptions'])) {
+    protected function setTypeConverterOptionsForType(
+        PropertyMappingConfiguration $propertyMappingConfiguration,
+        $typeConverterClass,
+        $dataType
+    ) {
+        if (!isset($this->typesConfiguration[$dataType]['typeConverterOptions'])
+            || !is_array($this->typesConfiguration[$dataType]['typeConverterOptions'])) {
             return;
         }
 

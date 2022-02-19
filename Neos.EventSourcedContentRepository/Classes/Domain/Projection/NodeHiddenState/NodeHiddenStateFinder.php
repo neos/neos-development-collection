@@ -32,8 +32,11 @@ final class NodeHiddenStateFinder
      */
     protected $client;
 
-    public function findHiddenState(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeHiddenState
-    {
+    public function findHiddenState(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): NodeHiddenState {
         $connection = $this->client->getConnection();
         $result = $connection->executeQuery(
             '

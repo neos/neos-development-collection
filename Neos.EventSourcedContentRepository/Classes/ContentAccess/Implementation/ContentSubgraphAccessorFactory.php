@@ -22,9 +22,7 @@ use Neos\EventSourcedContentRepository\ContentAccess\NodeAccessorInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 final class ContentSubgraphAccessorFactory implements NodeAccessorFactoryInterface
 {
     /**
@@ -33,13 +31,27 @@ final class ContentSubgraphAccessorFactory implements NodeAccessorFactoryInterfa
      */
     protected $contentGraph;
 
-    public function build(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints, ?NodeAccessorInterface $nextAccessor = null): NodeAccessorInterface
-    {
+    public function build(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints,
+        ?NodeAccessorInterface $nextAccessor = null
+    ): NodeAccessorInterface {
         if ($nextAccessor !== null) {
-            throw new InvalidAccessorConfiguration('The ContentSubgraphAccessor must be always configured LAST in the accessor chain, because it handles all calls exhaustively and NEVER delegates to the next accessor. You passed in ' . get_class($nextAccessor) . ' as $nextAccessor.', 1617949321);
+            throw new InvalidAccessorConfiguration(
+                'The ContentSubgraphAccessor must be always configured LAST in the accessor chain,'
+                    . ' because it handles all calls exhaustively and NEVER delegates to the next accessor.'
+                    . ' You passed in ' . get_class($nextAccessor) . ' as $nextAccessor.',
+                1617949321
+            );
         }
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints);
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+            $contentStreamIdentifier,
+            $dimensionSpacePoint,
+            $visibilityConstraints
+        );
+
         return new ContentSubgraphAccessor($subgraph);
     }
 }

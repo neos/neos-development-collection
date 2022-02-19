@@ -63,7 +63,8 @@ final class CreateNodeAggregateWithNode
         $this->succeedingSiblingNodeAggregateIdentifier = $succeedingSiblingNodeAggregateIdentifier;
         $this->nodeName = $nodeName;
         $this->initialPropertyValues = $initialPropertyValues ?: PropertyValuesToWrite::fromArray([]);
-        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers ?: new NodeAggregateIdentifiersByNodePaths([]);
+        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers
+            ?: new NodeAggregateIdentifiersByNodePaths([]);
     }
 
     public function withInitialPropertyValues(PropertyValuesToWrite $newInitialPropertyValues): self

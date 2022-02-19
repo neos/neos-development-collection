@@ -51,7 +51,8 @@ final class ContentStreamRepository
     public function findContentStream(ContentStreamIdentifier $contentStreamIdentifier): ?ContentStream
     {
         if (!isset($this->contentStreams[(string)$contentStreamIdentifier])) {
-            $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName();
+            $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)
+                ->getEventStreamName();
             $eventStream = $this->eventStore->load($eventStreamName);
             $eventStream->rewind();
             if (!$eventStream->valid()) {
@@ -59,7 +60,8 @@ final class ContentStreamRepository
                 return null;
             }
 
-            $this->contentStreams[(string)$contentStreamIdentifier] = new ContentStream($contentStreamIdentifier, $this->eventStore);
+            $this->contentStreams[(string)$contentStreamIdentifier]
+                = new ContentStream($contentStreamIdentifier, $this->eventStore);
         }
 
         return $this->contentStreams[(string)$contentStreamIdentifier];

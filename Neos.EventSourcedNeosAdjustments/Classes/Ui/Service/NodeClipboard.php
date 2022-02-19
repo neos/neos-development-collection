@@ -45,7 +45,10 @@ class NodeClipboard
      */
     public function copyNodes($nodeAddresses)
     {
-        $this->serializedNodeAddresses = array_map(fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(), $nodeAddresses);
+        $this->serializedNodeAddresses = array_map(
+            fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(),
+            $nodeAddresses
+        );
         $this->mode = self::MODE_COPY;
     }
 
@@ -59,7 +62,10 @@ class NodeClipboard
      */
     public function cutNodes($nodeAddresses)
     {
-        $this->serializedNodeAddresses = array_map(fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(), $nodeAddresses);
+        $this->serializedNodeAddresses = array_map(
+            fn (NodeAddress $nodeAddress) => $nodeAddress->serializeForUri(),
+            $nodeAddresses
+        );
         $this->mode = self::MODE_MOVE;
     }
 

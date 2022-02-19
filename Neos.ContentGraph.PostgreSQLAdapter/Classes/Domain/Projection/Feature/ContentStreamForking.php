@@ -36,8 +36,10 @@ trait ContentStreamForking
 
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
                 'INSERT INTO ' . HierarchyHyperrelationRecord::TABLE_NAME . '
-                    (contentstreamidentifier, parentnodeanchor, dimensionspacepoint, dimensionspacepointhash, childnodeanchors)
-                SELECT :targetContentStreamIdentifier, parentnodeanchor, dimensionspacepoint, dimensionspacepointhash, childnodeanchors
+                    (contentstreamidentifier, parentnodeanchor,
+                     dimensionspacepoint, dimensionspacepointhash, childnodeanchors)
+                SELECT :targetContentStreamIdentifier, parentnodeanchor,
+                    dimensionspacepoint, dimensionspacepointhash, childnodeanchors
                 FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' source
                 WHERE source.contentstreamidentifier = :sourceContentStreamIdentifier',
                 $parameters
@@ -45,8 +47,10 @@ trait ContentStreamForking
 
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
                 'INSERT INTO ' . RestrictionHyperrelationRecord::TABLE_NAME . '
-                    (contentstreamidentifier, dimensionspacepointhash, originnodeaggregateidentifier, affectednodeaggregateidentifiers)
-                SELECT :targetContentStreamIdentifier, dimensionspacepointhash, originnodeaggregateidentifier, affectednodeaggregateidentifiers
+                    (contentstreamidentifier, dimensionspacepointhash,
+                     originnodeaggregateidentifier, affectednodeaggregateidentifiers)
+                SELECT :targetContentStreamIdentifier, dimensionspacepointhash,
+                    originnodeaggregateidentifier, affectednodeaggregateidentifiers
                 FROM ' . RestrictionHyperrelationRecord::TABLE_NAME . ' source
                 WHERE source.contentstreamidentifier = :sourceContentStreamIdentifier',
                 $parameters

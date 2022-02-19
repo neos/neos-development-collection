@@ -120,12 +120,15 @@ class ContentElementWrappingService
      * @return string
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
-    public function wrapContentObject(NodeInterface $node, $content, $fusionPath, array $additionalAttributes = []): ?string
-    {
+    public function wrapContentObject(
+        NodeInterface $node,
+        $content,
+        $fusionPath,
+        array $additionalAttributes = []
+    ): ?string {
         if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
         }
-
 
         // TODO: reenable permissions
         //if ($this->nodeAuthorizationService->isGrantedToEditNode($node) === false) {
@@ -147,6 +150,7 @@ class ContentElementWrappingService
 
         $wrappedContent = $this->htmlAugmenter->addAttributes($content, $attributes, 'div');
         $nodeContextPath = $nodeAddress->serializeForUri();
+        /** @phpcsSuppress */
         $wrappedContent .= "<script data-neos-nodedata>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
 
         return $wrappedContent;
@@ -168,7 +172,11 @@ class ContentElementWrappingService
             return '';
         }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($documentNode->getContentStreamIdentifier(), $documentNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $documentNode->getContentStreamIdentifier(),
+            $documentNode->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
 
         foreach ($nodeAccessor->findChildNodes($documentNode) as $node) {
             if ($node->getNodeType()->isOfType('Neos.Neos:Document') === true) {
@@ -178,6 +186,7 @@ class ContentElementWrappingService
             if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
                 $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+                /** @phpcsSuppress */
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
             }
 
@@ -232,6 +241,7 @@ class ContentElementWrappingService
 
     private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier)
     {
-        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)->getWorkspaceName()->isLive();
+        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+            ->getWorkspaceName()->isLive();
     }
 }

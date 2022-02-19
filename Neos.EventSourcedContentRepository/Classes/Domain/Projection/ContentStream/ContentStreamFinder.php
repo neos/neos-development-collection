@@ -113,7 +113,9 @@ final class ContentStreamFinder
                     -- now, when a content stream is in use by a workspace, its source content stream is
                     -- also "transitively" in use.
                     SELECT sourceContentStreamIdentifier FROM neos_contentrepository_projection_contentstream_v1
-                    JOIN transitiveUsedContentStreams ON neos_contentrepository_projection_contentstream_v1.contentStreamIdentifier = transitiveUsedContentStreams.contentStreamIdentifier
+                    JOIN transitiveUsedContentStreams
+                        ON neos_contentrepository_projection_contentstream_v1.contentStreamIdentifier
+                            = transitiveUsedContentStreams.contentStreamIdentifier
                     WHERE
                         neos_contentrepository_projection_contentstream_v1.sourceContentStreamIdentifier IS NOT NULL
             )

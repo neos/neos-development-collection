@@ -93,15 +93,21 @@ class WorkspaceUserService
         }
 
         if ($workspace->isInternalWorkspace()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+            return $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+            );
         }
 
         if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
+            return $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
+            );
         }
 
         if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->getCurrentUser()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces');
+            return $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
+            );
         }
 
         return false;
@@ -125,6 +131,8 @@ class WorkspaceUserService
         // The privilege to manage shared workspaces is needed, because regular editors should not change ownerships
         // of their internal workspaces, even if it was technically possible, because they wouldn't be able to change
         // ownership back to themselves.
-        return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+        return $this->privilegeManager->isPrivilegeTargetGranted(
+            'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+        );
     }
 }

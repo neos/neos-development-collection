@@ -58,18 +58,23 @@ class RemoveProperty implements NodeBasedTransformationInterface
      * @return void
      * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         if ($node->hasProperty($this->propertyName)) {
-            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
-                $contentStreamForWriting,
-                $node->getNodeAggregateIdentifier(),
-                $node->getOriginDimensionSpacePoint(),
-                SerializedPropertyValues::fromArray([
-                    $this->propertyName => null
-                ]),
-                UserIdentifier::forSystemUser()
-            ));
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
+                new SetSerializedNodeProperties(
+                    $contentStreamForWriting,
+                    $node->getNodeAggregateIdentifier(),
+                    $node->getOriginDimensionSpacePoint(),
+                    SerializedPropertyValues::fromArray([
+                        $this->propertyName => null
+                    ]),
+                    UserIdentifier::forSystemUser()
+                )
+            );
         }
 
         return CommandResult::createEmpty();

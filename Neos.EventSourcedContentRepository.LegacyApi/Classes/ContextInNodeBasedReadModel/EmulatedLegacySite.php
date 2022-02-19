@@ -39,7 +39,10 @@ class EmulatedLegacySite
 
     public function getSiteResourcesPackageKey()
     {
-        $this->legacyLogger->info('context.currentSite.siteResourcesPackageKey called', LogEnvironment::fromMethodName(__METHOD__));
+        $this->legacyLogger->info(
+            'context.currentSite.siteResourcesPackageKey called',
+            LogEnvironment::fromMethodName(__METHOD__)
+        );
 
         $siteNode = $this->siteNodeUtility->findSiteNode($this->contextNode);
 
@@ -50,7 +53,10 @@ class EmulatedLegacySite
 
     public function __call($methodName, $args)
     {
-        $this->legacyLogger->warning('context.currentSite.* method not implemented', LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName));
+        $this->legacyLogger->warning(
+            'context.currentSite.* method not implemented',
+            LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName)
+        );
         return null;
     }
 }

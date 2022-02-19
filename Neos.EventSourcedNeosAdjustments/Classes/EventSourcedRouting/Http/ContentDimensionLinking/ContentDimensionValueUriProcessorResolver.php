@@ -24,20 +24,23 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimens
 final class ContentDimensionValueUriProcessorResolver
 {
     /**
-     * @param Dimension\ContentDimension $contentDimension
-     * @return ContentDimensionValueUriProcessorInterface
      * @throws Exception\InvalidContentDimensionValueUriProcessorException
      */
-    public function resolveContentDimensionValueUriProcessor(Dimension\ContentDimension $contentDimension): ContentDimensionValueUriProcessorInterface
-    {
-        $linkProcessorClassName = $contentDimension->getConfigurationValue('resolution.linkProcessorComponent.implementationClassName');
+    public function resolveContentDimensionValueUriProcessor(
+        Dimension\ContentDimension $contentDimension
+    ): ContentDimensionValueUriProcessorInterface {
+        $linkProcessorClassName = $contentDimension->getConfigurationValue(
+            'resolution.linkProcessorComponent.implementationClassName'
+        );
         if ($linkProcessorClassName) {
             if (class_exists($linkProcessorClassName)) {
                 $linkProcessor = new $linkProcessorClassName();
 
                 if (!$linkProcessor instanceof ContentDimensionValueUriProcessorInterface) {
                     throw new Exception\InvalidContentDimensionValueUriProcessorException(
-                        'Configured content dimension preset link processor "' . $linkProcessorClassName . '" does not implement ' . ContentDimensionValueUriProcessorInterface::class . '. Please check your dimension configuration.',
+                        'Configured content dimension preset link processor "' . $linkProcessorClassName
+                            . '" does not implement ' . ContentDimensionValueUriProcessorInterface::class
+                            . '. Please check your dimension configuration.',
                         1510839085
                     );
                 }
@@ -45,27 +48,27 @@ final class ContentDimensionValueUriProcessorResolver
                 return $linkProcessor;
             } else {
                 throw new Exception\InvalidContentDimensionValueUriProcessorException(
-                    'Could not resolve dimension preset detection component for dimension "' . $contentDimension->identifier . '". Class "' . $linkProcessorClassName . '" does not exist. Please check your dimension configuration.',
+                    'Could not resolve dimension preset detection component for dimension "'
+                        . $contentDimension->identifier . '". Class "'
+                        . $linkProcessorClassName . '" does not exist. Please check your dimension configuration.',
                     1510839089
                 );
             }
         }
 
         $rawResolutionMode = $contentDimension->getConfigurationValue('resolution.mode');
-        $resolutionMode = $rawResolutionMode ? new BasicContentDimensionResolutionMode($rawResolutionMode) : new BasicContentDimensionResolutionMode(BasicContentDimensionResolutionMode::RESOLUTION_MODE_NULL);
+        $resolutionMode = $rawResolutionMode
+            ? new BasicContentDimensionResolutionMode($rawResolutionMode)
+            : new BasicContentDimensionResolutionMode(BasicContentDimensionResolutionMode::RESOLUTION_MODE_NULL);
 
-        switch ($resolutionMode->getMode()) {
-            case BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX:
-                return new HostPrefixContentDimensionValueUriProcessor();
-                break;
-            case BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX:
-                return new HostSuffixContentDimensionValueUriProcessor();
-                break;
-            case BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT:
-                return new UriPathSegmentContentDimensionValueUriProcessor();
-            case BasicContentDimensionResolutionMode::RESOLUTION_MODE_NULL:
-            default:
-                return new NullContentDimensionValueUriProcessor();
-        }
+        return match ($resolutionMode->getMode()) {
+            BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX
+                => new HostPrefixContentDimensionValueUriProcessor(),
+            BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX
+                => new HostSuffixContentDimensionValueUriProcessor(),
+            BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
+                => new UriPathSegmentContentDimensionValueUriProcessor(),
+            default => new NullContentDimensionValueUriProcessor(),
+        };
     }
 }

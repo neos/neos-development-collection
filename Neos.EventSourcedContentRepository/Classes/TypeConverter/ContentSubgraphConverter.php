@@ -34,7 +34,6 @@ class ContentSubgraphConverter extends AbstractTypeConverter
      */
     protected $contentGraph;
 
-
     /**
      * @var array
      */
@@ -50,16 +49,16 @@ class ContentSubgraphConverter extends AbstractTypeConverter
      */
     protected $priority = 1;
 
-
     /**
-     * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return ContentSubgraphInterface
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): ContentSubgraphInterface
-    {
+    public function convertFrom(
+        mixed $source,
+        $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ): ContentSubgraphInterface {
         $sourceArray = json_decode($source, true);
 
         return $this->contentGraph->getSubgraphByIdentifier(

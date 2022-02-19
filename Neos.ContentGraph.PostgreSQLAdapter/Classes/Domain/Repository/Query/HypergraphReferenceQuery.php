@@ -33,7 +33,8 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
     ): self {
         $query = /** @lang PostgreSQL */'SELECT ' . $fieldsToFetch . ' FROM (
      SELECT originnodeanchor, destinationnodeaggregateidentifier, ordinality, "name"
-     FROM neos_contentgraph_referencehyperrelation, unnest(destinationnodeaggregateidentifiers) WITH ORDINALITY destinationnodeaggregateidentifier
+     FROM neos_contentgraph_referencehyperrelation, unnest(destinationnodeaggregateidentifiers)
+         WITH ORDINALITY destinationnodeaggregateidentifier
 ) r
 JOIN neos_contentgraph_node orgn ON orgn.relationanchorpoint = r.originnodeanchor
 JOIN neos_contentgraph_hierarchyhyperrelation orgh ON orgn.relationanchorpoint = ANY(orgh.childnodeanchors)
@@ -76,8 +77,9 @@ WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
         return new self($query, $parameters, $this->types);
     }
 
-    public function withDestinationNodeAggregateIdentifier(NodeAggregateIdentifier $destinationNodeAggregateIdentifier): self
-    {
+    public function withDestinationNodeAggregateIdentifier(
+        NodeAggregateIdentifier $destinationNodeAggregateIdentifier
+    ): self {
         $query = $this->query;
         $query .= '
     AND destn.nodeaggregateidentifier = :destinationNodeAggregateIdentifier';

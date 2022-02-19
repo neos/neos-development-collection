@@ -64,12 +64,16 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
         }
 
         /** @var Workspace $currentWorkspace */
-        $currentWorkspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentSubgraph->getContentStreamIdentifier());
+        $currentWorkspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+            $contentSubgraph->getContentStreamIdentifier()
+        );
         $workspaceChain = [];
         // TODO: Maybe write CTE here
         while ($currentWorkspace instanceof Workspace) {
             $workspaceChain[(string)$currentWorkspace->getWorkspaceName()] = $currentWorkspace;
-            $currentWorkspace = $currentWorkspace->getBaseWorkspaceName() ? $this->workspaceFinder->findOneByName($currentWorkspace->getBaseWorkspaceName()) : null;
+            $currentWorkspace = $currentWorkspace->getBaseWorkspaceName()
+                ? $this->workspaceFinder->findOneByName($currentWorkspace->getBaseWorkspaceName())
+                : null;
         }
 
         return $workspaceChain;
@@ -87,7 +91,9 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
     public function getPersonalWorkspace()
     {
         $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
+        $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier(
+            $currentAccount->getAccountIdentifier()
+        )->toContentRepositoryWorkspaceName();
         $personalWorkspace = $this->workspaceFinder->findOneByName($personalWorkspaceName);
 
         return [

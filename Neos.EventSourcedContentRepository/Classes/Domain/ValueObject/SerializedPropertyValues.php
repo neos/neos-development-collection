@@ -52,7 +52,11 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
             } elseif ($propertyValue instanceof SerializedPropertyValue) {
                 $values[$propertyName] = $propertyValue;
             } else {
-                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', SerializedPropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid property value. Expected instance of %s, got: %s',
+                    SerializedPropertyValue::class,
+                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)
+                ), 1546524480);
             }
         }
 
@@ -81,11 +85,6 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         return self::fromArray(\json_decode($jsonString, true));
     }
 
-    public static function fromNode(NodeInterface $node): self
-    {
-        return $node->getProperties();
-    }
-
     private static function assertTypeIsNoReference(string $propertyTypeFromSchema)
     {
         if ($propertyTypeFromSchema === 'reference' || $propertyTypeFromSchema === 'references') {
@@ -96,7 +95,10 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     public function merge(SerializedPropertyValues $other): SerializedPropertyValues
     {
         // here, we skip null values
-        return new SerializedPropertyValues(array_filter(array_merge($this->values, $other->getValues()), fn ($value) => $value !== null));
+        return new SerializedPropertyValues(array_filter(
+            array_merge($this->values, $other->getValues()),
+            fn ($value) => $value !== null)
+        );
     }
 
     public function propertyExists(string $propertyName): bool

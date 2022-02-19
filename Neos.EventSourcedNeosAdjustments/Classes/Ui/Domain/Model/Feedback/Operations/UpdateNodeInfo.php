@@ -134,7 +134,9 @@ class UpdateNodeInfo extends AbstractFeedback
             return false;
         }
 
-        return $this->getNode()->getNodeAggregateIdentifier()->equals($feedback->getNode()->getNodeAggregateIdentifier());
+        return $this->getNode()->getNodeAggregateIdentifier()->equals(
+            $feedback->getNode()->getNodeAggregateIdentifier()
+        );
     }
 
     /**
@@ -160,11 +162,19 @@ class UpdateNodeInfo extends AbstractFeedback
     public function serializeNodeRecursively(NodeInterface $node, ControllerContext $controllerContext)
     {
         $result = [
-            $this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
+            $this->nodeAddressFactory->createFromNode($node)->serializeForUri()
+               => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation(
+                $node,
+                $controllerContext
+            )
         ];
 
         if ($this->isRecursive === true) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+                $node->getContentStreamIdentifier(),
+                $node->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
             foreach ($nodeAccessor->findChildNodes($node) as $childNode) {
                 $result = array_merge($result, $this->serializeNodeRecursively($childNode, $controllerContext));
             }

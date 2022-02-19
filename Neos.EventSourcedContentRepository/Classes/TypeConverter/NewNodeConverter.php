@@ -50,18 +50,17 @@ class NewNodeConverter extends AbstractTypeConverter
     protected $contentGraph;
 
     /**
-     * TODO: Dependency to Neos; get rid of this!
-     *
      * @Flow\Inject
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
-    /**
-     *
-     */
-    public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType = null,
+        array $subProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($source);
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(

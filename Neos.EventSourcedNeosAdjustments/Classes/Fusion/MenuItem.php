@@ -19,8 +19,13 @@ final class MenuItem
 
     protected array $children;
 
-    public function __construct(NodeInterface $node, MenuItemState $state = null, string $label = null, int $menuLevel = 1, array $children = [])
-    {
+    public function __construct(
+        NodeInterface $node,
+        MenuItemState $state = null,
+        string $label = null,
+        int $menuLevel = 1,
+        array $children = []
+    ) {
         $this->node = $node;
         $this->state = $state;
         $this->label = $label;

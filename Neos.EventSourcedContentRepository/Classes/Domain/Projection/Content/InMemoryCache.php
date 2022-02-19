@@ -117,6 +117,7 @@ final class InMemoryCache
         $this->nodeByNodeAggregateIdentifierCache = new NodeByNodeAggregateIdentifierCache($isEnabled);
         $this->allChildNodesByNodeIdentifierCache = new AllChildNodesByNodeIdentifierCache($isEnabled);
         $this->namedChildNodeByNodeIdentifierCache = new NamedChildNodeByNodeIdentifierCache($isEnabled);
-        $this->parentNodeIdentifierByChildNodeIdentifierCache = new ParentNodeIdentifierByChildNodeIdentifierCache($isEnabled);
+        $this->parentNodeIdentifierByChildNodeIdentifierCache
+            = new ParentNodeIdentifierByChildNodeIdentifierCache($isEnabled);
     }
 }

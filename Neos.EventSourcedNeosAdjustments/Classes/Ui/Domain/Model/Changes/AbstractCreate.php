@@ -150,8 +150,10 @@ abstract class AbstractCreate extends AbstractStructuralChange
      * @return NodeInterface
      * @throws InvalidNodeCreationHandlerException|NodeNameIsAlreadyOccupied|NodeException
      */
-    protected function createNode(NodeInterface $parentNode, NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null): NodeInterface
-    {
+    protected function createNode(
+        NodeInterface $parentNode,
+        NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null
+    ): NodeInterface {
         // TODO: the $name=... line should be as expressed below
         // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());
         $nodeName = NodeName::fromString($this->getName() ?: uniqid('node-', false));
@@ -173,12 +175,17 @@ abstract class AbstractCreate extends AbstractStructuralChange
 
         $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)
             ->blockUntilProjectionsAreUpToDate();
-        $this->contentCacheFlusher->flushNodeAggregate($parentNode->getContentStreamIdentifier(), $parentNode->getNodeAggregateIdentifier());
+        $this->contentCacheFlusher->flushNodeAggregate(
+            $parentNode->getContentStreamIdentifier(),
+            $parentNode->getNodeAggregateIdentifier()
+        );
 
-        $newlyCreatedNode = $this->nodeAccessorFor($parentNode)->findChildNodeConnectedThroughEdgeName($parentNode, $nodeName);
+        $newlyCreatedNode = $this->nodeAccessorFor($parentNode)
+            ->findChildNodeConnectedThroughEdgeName($parentNode, $nodeName);
 
         $this->finish($newlyCreatedNode);
-        // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed
+        // NOTE: we need to run "finish" before "addNodeCreatedFeedback"
+        // to ensure the new node already exists when the last feedback is processed
         $this->addNodeCreatedFeedback($newlyCreatedNode);
         return $newlyCreatedNode;
     }
@@ -189,17 +196,24 @@ abstract class AbstractCreate extends AbstractStructuralChange
      * @return CreateNodeAggregateWithNode
      * @throws InvalidNodeCreationHandlerException
      */
-    protected function applyNodeCreationHandlers(CreateNodeAggregateWithNode $command, NodeTypeName $nodeTypeName): CreateNodeAggregateWithNode
-    {
+    protected function applyNodeCreationHandlers(
+        CreateNodeAggregateWithNode $command,
+        NodeTypeName $nodeTypeName
+    ): CreateNodeAggregateWithNode {
         $data = $this->getData() ?: [];
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
-        if (!isset($nodeType->getOptions()['nodeCreationHandlers']) || !is_array($nodeType->getOptions()['nodeCreationHandlers'])) {
+        if (!isset($nodeType->getOptions()['nodeCreationHandlers'])
+            || !is_array($nodeType->getOptions()['nodeCreationHandlers'])) {
             return $command;
         }
         foreach ($nodeType->getOptions()['nodeCreationHandlers'] as $nodeCreationHandlerConfiguration) {
             $nodeCreationHandler = new $nodeCreationHandlerConfiguration['nodeCreationHandler']();
             if (!$nodeCreationHandler instanceof NodeCreationHandlerInterface) {
-                throw new InvalidNodeCreationHandlerException(sprintf('Expected %s but got "%s"', NodeCreationHandlerInterface::class, get_class($nodeCreationHandler)), 1364759956);
+                throw new InvalidNodeCreationHandlerException(sprintf(
+                    'Expected %s but got "%s"',
+                    NodeCreationHandlerInterface::class,
+                    get_class($nodeCreationHandler)
+                ), 1364759956);
             }
             $command = $nodeCreationHandler->handle($command, $data);
         }

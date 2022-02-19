@@ -27,7 +27,10 @@ class CustomizedInternalRequestEngine extends InternalRequestEngine
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
-            throw new Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
+            throw new Http\Exception(
+                'The browser\'s internal request engine has only been designed for use within functional tests.',
+                1335523749
+            );
         }
 
         // TODO: THE FOLLOWING LINE THIS IS THE ONLY CHANGE NEEDED!!!
@@ -44,7 +47,10 @@ class CustomizedInternalRequestEngine extends InternalRequestEngine
         try {
             $baseComponentChain->handle($componentContext);
         } catch (\Throwable $throwable) {
-            $componentContext->replaceHttpResponse($this->prepareErrorResponse($throwable, $componentContext->getHttpResponse()));
+            $componentContext->replaceHttpResponse($this->prepareErrorResponse(
+                $throwable,
+                $componentContext->getHttpResponse())
+            );
         }
         $session = $this->bootstrap->getObjectManager()->get(SessionInterface::class);
         if ($session->isStarted()) {

@@ -200,7 +200,8 @@ class BackendServiceController extends ActionController
     public function publishAllAction()
     {
         $currentAccount = $this->securityContext->getAccount();
-        $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
+        $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
+            ->toContentRepositoryWorkspaceName();
         $this->publishingService->publishWorkspace($workspaceName);
 
         $success = new Success();
@@ -223,7 +224,8 @@ class BackendServiceController extends ActionController
     {
         try {
             $currentAccount = $this->securityContext->getAccount();
-            $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
+            $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
+                ->toContentRepositoryWorkspaceName();
             $nodeAddresses = [];
             foreach ($nodeContextPaths as $contextPath) {
                 $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
@@ -237,7 +239,11 @@ class BackendServiceController extends ActionController
             )->blockUntilProjectionsAreUpToDate();
 
             $success = new Success();
-            $success->setMessage(sprintf('Published %d change(s) to %s.', count($nodeContextPaths), $targetWorkspaceName));
+            $success->setMessage(sprintf(
+                'Published %d change(s) to %s.',
+                count($nodeContextPaths),
+                $targetWorkspaceName
+            ));
 
             $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspaceName);
             $this->feedbackCollection->add($success);
@@ -262,7 +268,8 @@ class BackendServiceController extends ActionController
     {
         try {
             $currentAccount = $this->securityContext->getAccount();
-            $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
+            $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
+                ->toContentRepositoryWorkspaceName();
 
             $nodeAddresses = [];
             foreach ($nodeContextPaths as $contextPath) {
@@ -305,12 +312,18 @@ class BackendServiceController extends ActionController
         try {
             $targetWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($targetWorkspaceName));
             $currentAccount = $this->securityContext->getAccount();
-            $workspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName();
+            $workspaceName = NeosWorkspaceName::fromAccountIdentifier(
+                $currentAccount->getAccountIdentifier()
+            )->toContentRepositoryWorkspaceName();
             $userWorkspace = $this->workspaceFinder->findOneByName($workspaceName);
 
             if (count($this->workspaceService->getPublishableNodeInfo($userWorkspace)) > 0) {
                 // TODO: proper error dialog
-                throw new \Exception('Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.');
+                throw new \Exception(
+                    'Your personal workspace currently contains unpublished changes.'
+                        . ' In order to switch to a different target workspace you need to either publish'
+                        . ' or discard pending changes first.'
+                );
             }
 
             $userWorkspace->setBaseWorkspace($targetWorkspace);
@@ -330,7 +343,8 @@ class BackendServiceController extends ActionController
             $contextProperties['workspaceName'] = $targetWorkspaceName;
             $contentContext = $this->contextFactory->create($contextProperties);
 
-            // If current document node doesn't exist in the base workspace, traverse its parents to find the one that exists
+            // If current document node doesn't exist in the base workspace,
+            // traverse its parents to find the one that exists
             $redirectNode = $documentNode;
             while (true) {
                 $redirectNodeInBaseWorkspace = $contentContext->getNodeByIdentifier($redirectNode->getIdentifier());
@@ -339,7 +353,11 @@ class BackendServiceController extends ActionController
                 } else {
                     $redirectNode = $redirectNode->getParent();
                     if (!$redirectNode) {
-                        throw new \Exception(sprintf('Wasn\'t able to locate any valid node in rootline of node %s in the workspace %s.', $documentNode->getContextPath(), $targetWorkspaceName), 1458814469);
+                        throw new \Exception(sprintf(
+                            'Wasn\'t able to locate any valid node in rootline of node %s in the workspace %s.',
+                            $documentNode->getContextPath(),
+                            $targetWorkspaceName
+                        ), 1458814469);
                     }
                 }
             }
@@ -502,7 +520,9 @@ class BackendServiceController extends ActionController
                 );
             $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
 
-            $result[$nodeAddress->serializeForUri()] = ['policy' => $this->nodePolicyService->getNodePolicyInformation($node)];
+            $result[$nodeAddress->serializeForUri()] = [
+                'policy' => $this->nodePolicyService->getNodePolicyInformation($node)
+            ];
         }
 
         $this->view->assign('value', $result);

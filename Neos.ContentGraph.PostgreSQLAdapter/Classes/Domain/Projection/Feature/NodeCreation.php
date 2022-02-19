@@ -103,7 +103,11 @@ trait NodeCreation
                             $succeedingSiblingNodeAnchor = $succeedingSiblingNode->relationAnchorPoint;
                         }
                     }
-                    $hierarchyRelation->addChildNodeAnchor($node->relationAnchorPoint, $succeedingSiblingNodeAnchor, $this->getDatabaseConnection());
+                    $hierarchyRelation->addChildNodeAnchor(
+                        $node->relationAnchorPoint,
+                        $succeedingSiblingNodeAnchor,
+                        $this->getDatabaseConnection()
+                    );
                 } else {
                     $parentNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
                         $event->getContentStreamIdentifier(),
@@ -146,7 +150,11 @@ trait NodeCreation
                 $parentNodeAnchor
             );
             if ($hierarchyRelation) {
-                $hierarchyRelation->addChildNodeAnchor($childNodeAnchor, $succeedingSiblingNodeAnchor, $this->getDatabaseConnection());
+                $hierarchyRelation->addChildNodeAnchor(
+                    $childNodeAnchor,
+                    $succeedingSiblingNodeAnchor,
+                    $this->getDatabaseConnection()
+                );
             } else {
                 $hierarchyRelation = new HierarchyHyperrelationRecord(
                     $contentStreamIdentifier,
@@ -174,7 +182,10 @@ trait NodeCreation
             $dimensionSpacePoint,
             $parentNodeAggregateIdentifier
         ) as $ingoingRestrictionRelation) {
-            $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier($affectedNodeAggregateIdentifier, $this->getDatabaseConnection());
+            $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier(
+                $affectedNodeAggregateIdentifier,
+                $this->getDatabaseConnection()
+            );
         }
     }
 

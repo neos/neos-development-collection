@@ -18,7 +18,7 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\ConstraintChecks;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeCreation;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeDisabling;
@@ -181,32 +181,47 @@ final class NodeAggregateCommandHandler
 
     /**
      * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
-     *
-     * @param Command\ChangeNodeAggregateType $command
-     * @throws NodeConstraintException
-     * @throws NodeTypeNotFoundException
-     * @throws NodeAggregatesTypeIsAmbiguous
-     * @return void
      */
     protected function checkConstraintsImposedByAncestors(Command\ChangeNodeAggregateType $command): void
     {
-        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier()
+        );
         $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
-        foreach ($this->contentGraph->findParentNodeAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier()) as $parentAggregate) {
+        foreach ($this->contentGraph->findParentNodeAggregates(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier()
+        ) as $parentAggregate) {
             $parentsNodeType = $this->nodeTypeManager->getNodeType((string)$parentAggregate->getNodeTypeName());
             if (!$parentsNodeType->allowsChildNodeType($newNodeType)) {
-                throw new NodeConstraintException('Node type ' . $command->getNewNodeTypeName() . ' is not allowed below nodes of type ' . $parentAggregate->getNodeTypeName());
+                throw new NodeConstraintException(
+                    'Node type ' . $command->getNewNodeTypeName()
+                        . ' is not allowed below nodes of type ' . $parentAggregate->getNodeTypeName()
+                );
             }
             if ($nodeAggregate->getNodeName()
                 && $parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->getNodeName())
-                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())->getName() !== (string)$command->getNewNodeTypeName()) {
-                throw new NodeConstraintException('Cannot change type of auto created child node' . $nodeAggregate->getNodeName() . ' to ' . $command->getNewNodeTypeName());
+                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())->getName()
+                    !== (string)$command->getNewNodeTypeName()
+            ) {
+                throw new NodeConstraintException(
+                    'Cannot change type of auto created child node' . $nodeAggregate->getNodeName()
+                        . ' to ' . $command->getNewNodeTypeName()
+                );
             }
-            foreach ($this->contentGraph->findParentNodeAggregates($command->getContentStreamIdentifier(), $parentAggregate->getIdentifier()) as $grandParentAggregate) {
+            foreach ($this->contentGraph->findParentNodeAggregates(
+                $command->getContentStreamIdentifier(),
+                $parentAggregate->getIdentifier()
+            ) as $grandParentAggregate) {
                 $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string)$grandParentAggregate->getNodeTypeName());
                 if ($parentAggregate->getNodeName()
                     && $grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->getNodeName())
-                    && !$grandParentsNodeType->allowsGrandchildNodeType((string) $parentAggregate->getNodeName(), $newNodeType)) {
+                    && !$grandParentsNodeType->allowsGrandchildNodeType(
+                        (string) $parentAggregate->getNodeName(),
+                        $newNodeType
+                    )
+                ) {
                     throw new NodeConstraintException('Node type "' . $command->getNewNodeTypeName() . '" is not allowed below auto created child nodes "' . $parentAggregate->getNodeName()
                         . '" of nodes of type "' . $grandParentAggregate->getNodeTypeName() . '"', 1520011791);
                 }
@@ -217,31 +232,51 @@ final class NodeAggregateCommandHandler
     /**
      * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
      *
-     * @param Command\ChangeNodeAggregateType $command
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
-     * @return \void
      */
-    protected function checkConstraintsImposedOnAlreadyPresentDescendants(Command\ChangeNodeAggregateType $command): void
+    protected function checkConstraintsImposedOnAlreadyPresentDescendants(ChangeNodeAggregateType $command): void
     {
         $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
 
-        foreach ($this->contentGraph->findChildNodeAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier()) as $childAggregate) {
+        foreach ($this->contentGraph->findChildNodeAggregates(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier()
+        ) as $childAggregate) {
             $childsNodeType = $this->nodeTypeManager->getNodeType((string)$childAggregate->getNodeTypeName());
             if (!$newNodeType->allowsChildNodeType($childsNodeType)) {
                 if (!$command->getStrategy()) {
-                    throw new NodeConstraintException('Node type ' . $command->getNewNodeTypeName() . ' does not allow children of type  ' . $childAggregate->getNodeTypeName()
-                        . ', which already exist. Please choose a resolution strategy.', 1520014467);
+                    throw new NodeConstraintException(
+                        'Node type ' . $command->getNewNodeTypeName()
+                            . ' does not allow children of type  ' . $childAggregate->getNodeTypeName()
+                            . ', which already exist. Please choose a resolution strategy.',
+                        1520014467
+                    );
                 }
             }
 
-            if ($childAggregate->getNodeName() && $newNodeType->hasAutoCreatedChildNode($childAggregate->getNodeName())) {
-                foreach ($this->contentGraph->findChildNodeAggregates($command->getContentStreamIdentifier(), $childAggregate->getIdentifier()) as $grandChildAggregate) {
-                    $grandChildsNodeType = $this->nodeTypeManager->getNodeType((string)$grandChildAggregate->getNodeTypeName());
-                    if ($childAggregate->getNodeName() && !$newNodeType->allowsGrandchildNodeType((string)$childAggregate->getNodeName(), $grandChildsNodeType)) {
+            if ($childAggregate->getNodeName() && $newNodeType->hasAutoCreatedChildNode(
+                $childAggregate->getNodeName()
+            )) {
+                foreach ($this->contentGraph->findChildNodeAggregates(
+                    $command->getContentStreamIdentifier(),
+                    $childAggregate->getIdentifier()
+                ) as $grandChildAggregate) {
+                    $grandChildsNodeType = $this->nodeTypeManager->getNodeType(
+                        (string)$grandChildAggregate->getNodeTypeName()
+                    );
+                    if ($childAggregate->getNodeName() && !$newNodeType->allowsGrandchildNodeType(
+                        (string)$childAggregate->getNodeName(),
+                        $grandChildsNodeType)
+                    ) {
                         if (!$command->getStrategy()) {
-                            throw new NodeConstraintException('Node type ' . $command->getNewNodeTypeName() . ' does not allow auto created child nodes "' . $childAggregate->getNodeName()
-                                . '" to have children of type  ' . $grandChildAggregate->getNodeTypeName() . ', which already exist. Please choose a resolution strategy.', 1520151998);
+                            throw new NodeConstraintException(
+                                'Node type ' . $command->getNewNodeTypeName()
+                                    . ' does not allow auto created child nodes "' . $childAggregate->getNodeName()
+                                    . '" to have children of type  ' . $grandChildAggregate->getNodeTypeName()
+                                    . ', which already exist. Please choose a resolution strategy.',
+                                1520151998
+                            );
                         }
                     }
                 }

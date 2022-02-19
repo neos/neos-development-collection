@@ -47,14 +47,8 @@ trait TetheredNodeInternals
      * This is the remediation action for non-existing tethered nodes.
      * It handles two cases:
      * - there is no tethered node IN ANY DimensionSpacePoint -> we can simply create it
-     * - there is a tethered node already in some DimensionSpacePoint -> we need to specialize/generalize/... the other Tethered Node.
-     *
-     * @param ReadableNodeAggregateInterface $parentNodeAggregate
-     * @param NodeInterface $parentNode
-     * @param NodeName $tetheredNodeName
-     * @param NodeType $expectedTetheredNodeType
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @return DomainEvents
+     * - there is a tethered node already in some DimensionSpacePoint
+     *   -> we need to specialize/generalize/... the other Tethered Node.
      * @throws \Exception
      */
     protected function createEventsForMissingTetheredNode(
@@ -65,7 +59,11 @@ trait TetheredNodeInternals
         NodeType $expectedTetheredNodeType,
         UserIdentifier $initiatingUserIdentifier
     ): DomainEvents {
-        $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName($parentNode->getContentStreamIdentifier(), $parentNode->getNodeAggregateIdentifier(), $tetheredNodeName);
+        $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName(
+            $parentNode->getContentStreamIdentifier(),
+            $parentNode->getNodeAggregateIdentifier(),
+            $tetheredNodeName
+        );
 
         $tmp = [];
         foreach ($childNodeAggregates as $childNodeAggregate) {
@@ -74,13 +72,16 @@ trait TetheredNodeInternals
         $childNodeAggregates = $tmp;
 
         if (count($childNodeAggregates) === 0) {
-
             // there is no tethered child node aggregate already; let's create it!
             $events = DomainEvents::withSingleEvent(
                 DecoratedEvent::addIdentifier(
                     new NodeAggregateWithNodeWasCreated(
                         $parentNode->getContentStreamIdentifier(),
-                        $tetheredNodeAggregateIdentifier !== null ? $tetheredNodeAggregateIdentifier : NodeAggregateIdentifier::forAutoCreatedChildNode($tetheredNodeName, $parentNode->getNodeAggregateIdentifier()),
+                        $tetheredNodeAggregateIdentifier
+                            ?: NodeAggregateIdentifier::forAutoCreatedChildNode(
+                                $tetheredNodeName,
+                                $parentNode->getNodeAggregateIdentifier()
+                            ),
                         NodeTypeName::fromString($expectedTetheredNodeType->getName()),
                         $parentNode->getOriginDimensionSpacePoint(),
                         $parentNodeAggregate->getCoverageByOccupant($parentNode->getOriginDimensionSpacePoint()),
@@ -96,7 +97,10 @@ trait TetheredNodeInternals
         } elseif (count($childNodeAggregates) === 1) {
             $childNodeAggregate = current($childNodeAggregates);
             if (!$childNodeAggregate->isTethered()) {
-                throw new \RuntimeException('We found a child node aggregate through the given node path; but it is not tethered. We do not support re-tethering yet (as this case should happen very rarely as far as we think).');
+                throw new \RuntimeException(
+                    'We found a child node aggregate through the given node path; but it is not tethered.'
+                        . ' We do not support re-tethering yet (as this case should happen very rarely as far as we think).'
+                );
             }
 
             $childNodeSource = $childNodeAggregate->getNodes()[0];
@@ -108,7 +112,10 @@ trait TetheredNodeInternals
                 $initiatingUserIdentifier
             );
         } else {
-            throw new \RuntimeException('There is >= 2 ChildNodeAggregates with the same name reachable from the parent - this is ambiguous and we should analyze how this may happen. That is very likely a bug.');
+            throw new \RuntimeException(
+                'There is >= 2 ChildNodeAggregates with the same name reachable from the parent' .
+                    '- this is ambiguous and we should analyze how this may happen. That is very likely a bug.'
+            );
         }
 
         return $events;

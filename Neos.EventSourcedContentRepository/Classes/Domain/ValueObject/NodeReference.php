@@ -38,6 +38,11 @@ final class NodeReference
         $this->iterator = new \ArrayIterator($this->values);
     }
 
+    public static function fromArray(array $values): self
+    {
+        return new self($values);
+    }
+
     /**
      * @param SerializedPropertyValue[] values
      *@return array|SerializedPropertyValue[]

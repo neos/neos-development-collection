@@ -19,9 +19,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Discard a workspace's changes
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class DiscardWorkspace
 {
     private WorkspaceName $workspaceName;
@@ -30,13 +29,14 @@ final class DiscardWorkspace
 
     /**
      * Content Stream Identifier of the newly created fork, which contains the remaining changes which were not removed
-     *
-     * @var ContentStreamIdentifier
      */
     private ContentStreamIdentifier $newContentStreamIdentifier;
 
-    private function __construct(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier)
-    {
+    private function __construct(
+        WorkspaceName $workspaceName,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $newContentStreamIdentifier
+    ) {
         $this->workspaceName = $workspaceName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
         $this->newContentStreamIdentifier = $newContentStreamIdentifier;
@@ -50,8 +50,11 @@ final class DiscardWorkspace
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
      */
-    public static function createFullyDeterministic(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $newContentStreamIdentifier): self
-    {
+    public static function createFullyDeterministic(
+        WorkspaceName $workspaceName,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $newContentStreamIdentifier
+    ): self {
         return new self($workspaceName, $initiatingUserIdentifier, $newContentStreamIdentifier);
     }
 

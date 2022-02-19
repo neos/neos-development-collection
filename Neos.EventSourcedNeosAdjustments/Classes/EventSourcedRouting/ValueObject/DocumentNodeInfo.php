@@ -6,6 +6,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Psr\Http\Message\UriInterface;
@@ -42,7 +43,7 @@ final class DocumentNodeInfo
 
     public static function fromDatabaseRow(array $row): self
     {
-        return new static($row);
+        return new self($row);
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
@@ -50,15 +51,15 @@ final class DocumentNodeInfo
         $source = $this->source;
         $source['dimensionspacepointhash'] = $dimensionSpacePoint->hash;
 
-        return new static($source);
+        return new self($source);
     }
 
-    public function withOriginDimensionSpacePoint(DimensionSpacePoint $originDimensionSpacePoint): self
+    public function withOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
     {
         $source = $this->source;
         $source['origindimensionspacepointhash'] = $originDimensionSpacePoint->hash;
 
-        return new static($source);
+        return new self($source);
     }
 
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
@@ -180,7 +181,11 @@ final class DocumentNodeInfo
             try {
                 $this->shortcutTarget = json_decode($this->source['shortcuttarget'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $e) {
-                throw new \RuntimeException(sprintf('Invalid shortcut target "%s": %s', $this->source['shortcuttarget'], $e->getMessage()), 1599036735, $e);
+                throw new \RuntimeException(sprintf(
+                    'Invalid shortcut target "%s": %s',
+                    $this->source['shortcuttarget'],
+                    $e->getMessage()
+                ), 1599036735, $e);
             }
             if ($this->shortcutTarget === null) {
                 $this->shortcutTarget = ['mode' => 'none', 'target' => null];
@@ -196,6 +201,7 @@ final class DocumentNodeInfo
 
     public function __toString(): string
     {
-        return ($this->source['nodeaggregateidentifier'] ?? '<unknown nodeAggregateIdentifier>') . '@' . ($this->source['dimensionspacepointhash'] ?? '<unkown dimensionSpacePointHash>');
+        return ($this->source['nodeaggregateidentifier'] ?? '<unknown nodeAggregateIdentifier>')
+            . '@' . ($this->source['dimensionspacepointhash'] ?? '<unkown dimensionSpacePointHash>');
     }
 }

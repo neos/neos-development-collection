@@ -195,7 +195,11 @@ abstract class AbstractStructuralChange extends AbstractChange
         $updateNodeInfo->recursive();
 
         $updateParentNodeInfo = new UpdateNodeInfo();
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
         $parentNode = $nodeAccessor->findParentNode($node);
         $updateParentNodeInfo->setNode($parentNode);
         if ($this->baseNodeType) {
@@ -207,17 +211,19 @@ abstract class AbstractStructuralChange extends AbstractChange
 
         $this->updateWorkspaceInfo();
 
-        if ($node->getNodeType()->isOfType('Neos.Neos:Content') && ($this->getParentDomAddress() || $this->getSiblingDomAddress())) {
-
+        if ($node->getNodeType()->isOfType('Neos.Neos:Content')
+            && ($this->getParentDomAddress() || $this->getSiblingDomAddress())) {
             // we can ONLY render out of band if:
-            // 1) the parent of our new (or copied or moved) node is a ContentCollection; so we can directly update an element of this content collection
+            // 1) the parent of our new (or copied or moved) node is a ContentCollection;
+            // so we can directly update an element of this content collection
             if ($parentNode->getNodeType()->isOfType('Neos.Neos:ContentCollection') &&
-
-                // 2) the parent DOM address (i.e. the closest RENDERED node in DOM is actually the ContentCollection; and
-                //    no other node in between
+                // 2) the parent DOM address (i.e. the closest RENDERED node in DOM is actually the ContentCollection;
+                // and no other node in between
                 $this->getParentDomAddress() &&
                 $this->getParentDomAddress()->getFusionPath() &&
-                $this->getParentDomAddress()->getContextPath() === $this->nodeAddressFactory->createFromNode($nodeAccessor->findParentNode($node))->serializeForUri()
+                $this->getParentDomAddress()->getContextPath() === $this->nodeAddressFactory->createFromNode(
+                    $nodeAccessor->findParentNode($node)
+                )->serializeForUri()
             ) {
                 $renderContentOutOfBand = new RenderContentOutOfBand();
                 $renderContentOutOfBand->setNode($node);
@@ -256,9 +262,16 @@ abstract class AbstractStructuralChange extends AbstractChange
 
     protected function isNodeTypeAllowedAsChildNode(NodeInterface $node, NodeType $nodeType)
     {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $node->getContentStreamIdentifier(),
+            $node->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
         if (NodeInfoHelper::isAutoCreated($node, $nodeAccessor)) {
-            return $nodeAccessor->findParentNode($node)->getNodeType()->allowsGrandchildNodeType((string)$node->getNodeName(), $nodeType);
+            return $nodeAccessor->findParentNode($node)->getNodeType()->allowsGrandchildNodeType(
+                (string)$node->getNodeName(),
+                $nodeType
+            );
         } else {
             return $node->getNodeType()->allowsChildNodeType($nodeType);
         }

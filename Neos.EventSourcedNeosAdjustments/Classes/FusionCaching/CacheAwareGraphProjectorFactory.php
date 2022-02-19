@@ -59,22 +59,35 @@ class CacheAwareGraphProjectorFactory
         VariableFrontend       $processedEventsCache,
         ProjectionContentGraph $projectionContentGraph
     ): GraphProjector {
-        $graphProjector = new GraphProjector($eventStorageDatabaseClient, $processedEventsCache, $projectionContentGraph);
+        $graphProjector = new GraphProjector(
+            $eventStorageDatabaseClient,
+            $processedEventsCache,
+            $projectionContentGraph
+        );
         $graphProjector->onBeforeInvoke(function (EventEnvelope $eventEnvelope, bool $doingFullReplayOfProjection) {
             if ($doingFullReplayOfProjection) {
-                // performance optimization: on full replay, we assume all caches to be flushed anyways - so we do not need to do it
-                // individually here.
+                // performance optimization: on full replay, we assume all caches to be flushed anyways
+                // - so we do not need to do it individually here.
                 return;
             }
 
             $domainEvent = $eventEnvelope->getDomainEvent();
             if ($domainEvent instanceof NodeAggregateWasRemoved) {
-                $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($domainEvent->getContentStreamIdentifier(), $domainEvent->getNodeAggregateIdentifier());
+                $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+                    $domainEvent->getContentStreamIdentifier(),
+                    $domainEvent->getNodeAggregateIdentifier()
+                );
                 if ($nodeAggregate) {
-                    $parentNodeAggregates = $this->contentGraph->findParentNodeAggregates($nodeAggregate->getContentStreamIdentifier(), $nodeAggregate->getIdentifier());
+                    $parentNodeAggregates = $this->contentGraph->findParentNodeAggregates(
+                        $nodeAggregate->getContentStreamIdentifier(),
+                        $nodeAggregate->getIdentifier()
+                    );
                     foreach ($parentNodeAggregates as $parentNodeAggregate) {
                         assert($parentNodeAggregate instanceof NodeAggregate);
-                        $this->scheduleCacheFlushJobForNodeAggregate($parentNodeAggregate->getContentStreamIdentifier(), $parentNodeAggregate->getIdentifier());
+                        $this->scheduleCacheFlushJobForNodeAggregate(
+                            $parentNodeAggregate->getContentStreamIdentifier(),
+                            $parentNodeAggregate->getIdentifier()
+                        );
                     }
                 }
             }
@@ -82,16 +95,21 @@ class CacheAwareGraphProjectorFactory
 
         $graphProjector->onAfterInvoke(function (EventEnvelope $eventEnvelope, bool $doingFullReplayOfProjection) {
             if ($doingFullReplayOfProjection) {
-                // performance optimization: on full replay, we assume all caches to be flushed anyways - so we do not need to do it
-                // individually here.
+                // performance optimization: on full replay, we assume all caches to be flushed anyways
+                // - so we do not need to do it individually here.
                 return;
             }
 
             $domainEvent = $eventEnvelope->getDomainEvent();
-            if (!($domainEvent instanceof NodeAggregateWasRemoved) && $domainEvent instanceof EmbedsContentStreamAndNodeAggregateIdentifier) {
+            if (!($domainEvent instanceof NodeAggregateWasRemoved)
+                && $domainEvent instanceof EmbedsContentStreamAndNodeAggregateIdentifier
+            ) {
                 $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($domainEvent->getContentStreamIdentifier(), $domainEvent->getNodeAggregateIdentifier());
                 if ($nodeAggregate) {
-                    $this->scheduleCacheFlushJobForNodeAggregate($nodeAggregate->getContentStreamIdentifier(), $nodeAggregate->getIdentifier());
+                    $this->scheduleCacheFlushJobForNodeAggregate(
+                        $nodeAggregate->getContentStreamIdentifier(),
+                        $nodeAggregate->getIdentifier()
+                    );
                 }
             }
         });
@@ -101,8 +119,10 @@ class CacheAwareGraphProjectorFactory
 
     protected array $cacheFlushes = [];
 
-    protected function scheduleCacheFlushJobForNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): void
-    {
+    protected function scheduleCacheFlushJobForNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): void {
         $this->cacheFlushes[] = [
             'csi' => $contentStreamIdentifier,
             'nai' => $nodeAggregateIdentifier

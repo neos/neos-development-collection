@@ -86,7 +86,8 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     protected function buildCacheEntryIdentifier()
     {
-        $this->cacheEntryIdentifier = md5($this->privilegeTarget->getIdentifier() . '__methodPrivilege' . '|' . $this->buildMethodPrivilegeMatcher());
+        $this->cacheEntryIdentifier = md5($this->privilegeTarget->getIdentifier()
+            . '__methodPrivilege' . '|' . $this->buildMethodPrivilegeMatcher());
     }
 
     /**
@@ -104,14 +105,21 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
     }
 
     /**
-     * @param PrivilegeSubjectInterface|NodePrivilegeSubject|MethodPrivilegeSubject $subject (one of NodePrivilegeSubject or MethodPrivilegeSubject)
+     * @param PrivilegeSubjectInterface|NodePrivilegeSubject|MethodPrivilegeSubject $subject
+     * (one of NodePrivilegeSubject or MethodPrivilegeSubject)
      * @return boolean
      * @throws InvalidPrivilegeTypeException
      */
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
-        if ($subject instanceof NodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', AbstractNodePrivilege::class, NodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417014368);
+        if (!$subject instanceof NodePrivilegeSubject && !$subject instanceof MethodPrivilegeSubject) {
+            throw new InvalidPrivilegeTypeException(sprintf(
+                'Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".',
+                AbstractNodePrivilege::class,
+                NodePrivilegeSubject::class,
+                MethodPrivilegeSubject::class,
+                get_class($subject)
+            ), 1417014368);
         }
 
         if ($subject instanceof MethodPrivilegeSubject) {
@@ -155,7 +163,11 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
             return;
         }
         $methodPrivilegeMatcher = $this->buildMethodPrivilegeMatcher();
-        $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', MethodPrivilege::class, $methodPrivilegeMatcher);
+        $methodPrivilegeTarget = new PrivilegeTarget(
+            $this->privilegeTarget->getIdentifier() . '__methodPrivilege',
+            MethodPrivilege::class,
+            $methodPrivilegeMatcher
+        );
         $methodPrivilegeTarget->injectObjectManager($this->objectManager);
         $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
     }

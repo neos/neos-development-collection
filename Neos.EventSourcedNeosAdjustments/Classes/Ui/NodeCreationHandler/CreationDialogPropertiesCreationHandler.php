@@ -35,7 +35,8 @@ class CreationDialogPropertiesCreationHandler implements NodeCreationHandlerInte
         $nodeType = $this->nodeTypeManager->getNodeType($command->getNodeTypeName()->getValue());
         $propertyValues = $command->getInitialPropertyValues();
         foreach ($nodeType->getConfiguration('properties') as $propertyName => $propertyConfiguration) {
-            if (!isset($propertyConfiguration['ui']['showInCreationDialog']) || $propertyConfiguration['ui']['showInCreationDialog'] !== true) {
+            if (!isset($propertyConfiguration['ui']['showInCreationDialog'])
+                || $propertyConfiguration['ui']['showInCreationDialog'] !== true) {
                 continue;
             }
             $propertyType = TypeHandling::normalizeType($propertyConfiguration['type'] ?? 'string');

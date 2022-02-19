@@ -50,8 +50,12 @@ class NodeConverter extends AbstractTypeConverter
      */
     protected $priority = 1;
 
-    public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType = null,
+        array $subProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         return $this->nodeAddressFactory->createFromNode($source)->serializeForUri();
     }
 }

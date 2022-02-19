@@ -30,13 +30,16 @@ trait NodeDisabling
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
-            $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint = $this->getProjectionHypergraph()->findDescendantNodeAggregateIdentifiers(
+            $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint
+                = $this->getProjectionHypergraph()->findDescendantNodeAggregateIdentifiers(
                 $event->getContentStreamIdentifier(),
                 $event->getAffectedDimensionSpacePoints(),
                 $event->getNodeAggregateIdentifier()
             );
 
-            foreach ($descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint as $dimensionSpacePointHash => $descendantNodeAggregateIdentifiers) {
+            foreach ($descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint
+                     as $dimensionSpacePointHash => $descendantNodeAggregateIdentifiers
+            ) {
                 $restrictionRelation = new RestrictionHyperrelationRecord(
                     $event->getContentStreamIdentifier(),
                     $dimensionSpacePointHash,

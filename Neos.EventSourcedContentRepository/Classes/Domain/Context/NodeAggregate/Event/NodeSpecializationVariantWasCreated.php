@@ -22,10 +22,10 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A node specialization variant was created
- *
- * @Flow\Proxy(false)
  */
-final class NodeSpecializationVariantWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+#[Flow\Proxy(false)]
+final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
+    PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -85,9 +85,9 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
         return $this->initiatingUserIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeSpecializationVariantWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodeSpecializationVariantWasCreated(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,

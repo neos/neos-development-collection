@@ -24,18 +24,25 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final class PropertyCannotBeSet extends \DomainException
 {
-    public static function becauseTheValueDoesNotMatchTheConfiguredType(PropertyName $propertyName, string $attemptedType, string $configuredType): self
-    {
+    public static function becauseTheValueDoesNotMatchTheConfiguredType(
+        PropertyName $propertyName,
+        string $attemptedType,
+        string $configuredType
+    ): self {
         return new self(
-            'Property "' . $propertyName . '" cannot be set to a value of type "' . $attemptedType . '", must be of type "' . $configuredType . '".',
+            'Property "' . $propertyName . '" cannot be set to a value of type "' . $attemptedType
+                . '", must be of type "' . $configuredType . '".',
             1615466573
         );
     }
 
-    public static function becauseTheNodeTypeDoesNotDeclareIt(PropertyName $propertyName, NodeTypeName $nodeTypeName): self
-    {
+    public static function becauseTheNodeTypeDoesNotDeclareIt(
+        PropertyName $propertyName,
+        NodeTypeName $nodeTypeName
+    ): self {
         return new self(
-            'Property "' . $propertyName . '" cannot be set because node type "' . $nodeTypeName . '" does not declare it.',
+            'Property "' . $propertyName . '" cannot be set because node type "'
+                . $nodeTypeName . '" does not declare it.',
             1615664798
         );
     }

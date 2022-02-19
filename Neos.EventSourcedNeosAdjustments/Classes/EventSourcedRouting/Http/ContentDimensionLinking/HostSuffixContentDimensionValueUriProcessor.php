@@ -41,6 +41,9 @@ final class HostSuffixContentDimensionValueUriProcessor implements ContentDimens
             }
         }
 
-        return $uriConstraints->withHostSuffix($contentDimensionValue->getConfigurationValue('resolution.value') ?: '', $hostSuffixesToBeReplaced);
+        return $uriConstraints->withHostSuffix(
+            $contentDimensionValue->getConfigurationValue('resolution.value') ?: '',
+            $hostSuffixesToBeReplaced
+        );
     }
 }

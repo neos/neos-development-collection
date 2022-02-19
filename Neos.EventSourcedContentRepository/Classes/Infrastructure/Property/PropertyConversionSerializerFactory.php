@@ -31,7 +31,8 @@ final class PropertyConversionSerializerFactory
 
     public function buildSerializer(): Serializer
     {
-        $propertyConvertersConfiguration = (new PositionalArraySorter($this->propertyConvertersConfiguration))->toArray();
+        $propertyConvertersConfiguration = (new PositionalArraySorter($this->propertyConvertersConfiguration))
+            ->toArray();
 
         $normalizers = [];
         foreach ($propertyConvertersConfiguration as $propertyConverterConfiguration) {

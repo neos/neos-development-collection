@@ -45,7 +45,8 @@ use Psr\Http\Message\UriInterface;
  *
  * @Flow\Scope("singleton")
  */
-final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart implements DynamicRoutePartInterface, ParameterAwareRoutePartInterface, FrontendNodeRoutePartHandlerInterface
+final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart implements DynamicRoutePartInterface,
+    ParameterAwareRoutePartInterface, FrontendNodeRoutePartHandlerInterface
 {
     private string $splitString = '';
 
@@ -111,7 +112,11 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $dimensionSpacePoint = $parameters->getValue('dimensionSpacePoint');
 
         try {
-            $matchResult = $this->matchUriPath($requestPath, $dimensionSpacePoint, $parameters->getValue('requestUriHost'));
+            $matchResult = $this->matchUriPath(
+                $requestPath,
+                $dimensionSpacePoint,
+                $parameters->getValue('requestUriHost')
+            );
         } catch (NodeNotFoundException $exception) {
             // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
             // (and other routes could still handle this).
@@ -166,7 +171,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $nodeAddress->dimensionSpacePoint->hash
         );
         if ($nodeInfo->isDisabled()) {
-            throw new NodeNotFoundException(sprintf('The resolved node for address %s is disabled', $nodeAddress), 1599668357);
+            throw new NodeNotFoundException(sprintf(
+                'The resolved node for address %s is disabled',
+                $nodeAddress
+            ), 1599668357);
         }
         if ($nodeInfo->isShortcut()) {
             $nodeInfo = $this->nodeShortcutResolver->resolveNode($nodeInfo);
@@ -308,11 +316,17 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     public function match(&$routePath)
     {
-        throw new \BadMethodCallException('match() is not supported by this Route Part Handler, use "matchWithParameters" instead', 1568287772);
+        throw new \BadMethodCallException(
+            'match() is not supported by this Route Part Handler, use "matchWithParameters" instead',
+            1568287772
+        );
     }
 
     public function resolve(array &$routeValues)
     {
-        throw new \BadMethodCallException('resolve() is not supported by this Route Part Handler, use "resolveWithParameters" instead', 1611600169);
+        throw new \BadMethodCallException(
+            'resolve() is not supported by this Route Part Handler, use "resolveWithParameters" instead',
+            1611600169
+        );
     }
 }

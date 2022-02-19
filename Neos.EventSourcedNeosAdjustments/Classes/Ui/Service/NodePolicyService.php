@@ -44,7 +44,8 @@ class NodePolicyService
 
     /**
      * @param ObjectManagerInterface $objectManager
-     * @return array the key is a Privilege class name; the value is "true" if privileges are configured for this class name.
+     * @return array the key is a Privilege class name;
+     *               the value is "true" if privileges are configured for this class name.
      * @Flow\CompileStatic
      */
     public static function getUsedPrivilegeClassNames(ObjectManagerInterface $objectManager): array
@@ -129,7 +130,10 @@ class NodePolicyService
     {
         $canRemove = true;
         if (isset(self::getUsedPrivilegeClassNames($this->objectManager)[RemoveNodePrivilege::class])) {
-            $canRemove = $this->privilegeManager->isGranted(RemoveNodePrivilege::class, new NodePrivilegeSubject($node));
+            $canRemove = $this->privilegeManager->isGranted(
+                RemoveNodePrivilege::class,
+                new NodePrivilegeSubject($node)
+            );
         }
 
         return $canRemove;

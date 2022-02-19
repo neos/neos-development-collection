@@ -118,7 +118,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         int $limit = null,
         int $offset = null
     ): Nodes {
-        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier);
+        $query = HypergraphChildQuery::create(
+            $this->contentStreamIdentifier,
+            $parentNodeAggregateIdentifier
+        );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
@@ -133,14 +136,21 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $childNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($childNodeRows, $this->visibilityConstraints);
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $childNodeRows,
+            $this->visibilityConstraints
+        );
     }
 
     public function countChildNodes(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null
     ): int {
-        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier, ['COUNT(*)']);
+        $query = HypergraphChildQuery::create(
+            $this->contentStreamIdentifier,
+            $parentNodeAggregateIdentifier,
+            ['COUNT(*)']
+        );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
@@ -191,7 +201,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
         $referencedNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodes($referencedNodeRows, $this->visibilityConstraints);
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $referencedNodeRows,
+            $this->visibilityConstraints
+        );
     }
 
     public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
@@ -215,7 +228,9 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): ?NodeInterface {
         $currentNode = $this->findNodeByNodeAggregateIdentifier($startingNodeAggregateIdentifier);
         if (!$currentNode) {
-            throw new \RuntimeException('Starting Node (identified by ' . $startingNodeAggregateIdentifier . ') does not exist.');
+            throw new \RuntimeException(
+                'Starting Node (identified by ' . $startingNodeAggregateIdentifier . ') does not exist.'
+            );
         }
         foreach ($path->getParts() as $edgeName) {
             $currentNode = $this->findChildNodeConnectedThroughEdgeName(
@@ -234,7 +249,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
     ): ?NodeInterface {
-        $query = HypergraphChildQuery::create($this->contentStreamIdentifier, $parentNodeAggregateIdentifier);
+        $query = HypergraphChildQuery::create(
+            $this->contentStreamIdentifier,
+            $parentNodeAggregateIdentifier
+        );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)
             ->withChildNodeName($edgeName);
@@ -256,7 +274,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): Nodes {
         return $this->findAnySiblings(
             $sibling,
-            HypergraphSiblingQueryMode::all(),
+            HypergraphSiblingQueryMode::MODE_ALL,
             $nodeTypeConstraints,
             $limit,
             $offset
@@ -271,7 +289,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): Nodes {
         return $this->findAnySiblings(
             $sibling,
-            HypergraphSiblingQueryMode::onlySucceeding(),
+            HypergraphSiblingQueryMode::MODE_ONLY_SUCCEEDING,
             $nodeTypeConstraints,
             $limit,
             $offset
@@ -286,7 +304,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): Nodes {
         return $this->findAnySiblings(
             $sibling,
-            HypergraphSiblingQueryMode::onlyPreceding(),
+            HypergraphSiblingQueryMode::MODE_ONLY_PRECEDING,
             $nodeTypeConstraints,
             $limit,
             $offset
@@ -380,7 +398,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             'entryNodeAggregateIdentifiers' => Connection::PARAM_STR_ARRAY
         ];
 
-        $nodeRows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative();
+        $nodeRows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+            ->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToSubtree($nodeRows, $this->visibilityConstraints);
     }

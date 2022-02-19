@@ -23,7 +23,8 @@ class CreateNodePrivilegeContext extends NodePrivilegeContext
     protected $creationNodeTypes;
 
     /**
-     * @param string|array $creationNodeTypes either an array of supported node type identifiers or a single node type identifier (for example "Neos.Neos:Document")
+     * @param string|array $creationNodeTypes either an array of supported node type identifiers
+     * or a single node type identifier (for example "Neos.Neos:Document")
      * @return boolean Has to return true, to evaluate the eel expression correctly in any case
      */
     public function createdNodeIsOfType($creationNodeTypes)

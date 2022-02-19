@@ -23,15 +23,16 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class BackendControllerAspect
 {
-
      /**
      * @Flow\Around("method(Neos\Neos\Ui\Controller\BackendController->processRequest())")
      * @param JoinPointInterface $joinPoint the join point
-     * @return mixed
      */
-    public function replaceBackendController(JoinPointInterface $joinPoint)
+    public function replaceBackendController(JoinPointInterface $joinPoint): void
     {
         $controller = new BackendController();
-        return $controller->processRequest($joinPoint->getMethodArgument('request'), $joinPoint->getMethodArgument('response'));
+        $controller->processRequest(
+            $joinPoint->getMethodArgument('request'),
+            $joinPoint->getMethodArgument('response')
+        );
     }
 }

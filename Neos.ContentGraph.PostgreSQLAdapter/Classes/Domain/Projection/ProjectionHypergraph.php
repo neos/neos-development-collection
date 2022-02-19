@@ -126,11 +126,10 @@ final class ProjectionHypergraph
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
 
-    public function findSucceedingSiblingNodeRecordByOrigin(
+    public function findSucceedingSiblingNodeRecordByOrigin(): ?NodeRecord {
 
-    ): ?NodeRecord {
-        $query = /** @lang PostgreSQL */
-            'SELECT * FROM neos_contentgraph_node sn,
+        //$query = /** @lang PostgreSQL */
+        /*    'SELECT * FROM neos_contentgraph_node sn,
     (
         SELECT n.relationanchorpoint, h.childnodeanchors, h.contentstreamidentifier, h.dimensionspacepointhash
             FROM neos_contentgraph_node n
@@ -145,7 +144,8 @@ final class ProjectionHypergraph
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
-        ];
+        ];*/
+        return null;
     }
 
     /**
@@ -492,7 +492,8 @@ final class ProjectionHypergraph
         ];
 
         $restrictionRelationRecords = [];
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative() as $row) {
+        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+                     ->fetchAllAssociative() as $row) {
             $restrictionRelationRecords[] = RestrictionHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -555,7 +556,8 @@ final class ProjectionHypergraph
                        n.relationanchorpoint,
                        h.dimensionspacepointhash
                     FROM ' . NodeRecord::TABLE_NAME . ' n
-                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                        ON n.relationanchorpoint = ANY(h.childnodeanchors)
                     WHERE n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
                         AND h.contentstreamidentifier = :contentStreamIdentifier
                         AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
@@ -570,7 +572,8 @@ final class ProjectionHypergraph
                         h.dimensionspacepointhash
                     FROM
                         descendantNodes p
-                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h ON h.parentnodeanchor = p.relationanchorpoint
+                    INNER JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                        ON h.parentnodeanchor = p.relationanchorpoint
                     INNER JOIN neos_contentgraph_node c ON c.relationanchorpoint = ANY(h.childnodeanchors)
                     WHERE
                         h.contentstreamidentifier = :contentStreamIdentifier
@@ -588,10 +591,13 @@ final class ProjectionHypergraph
             'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
         ];
 
-        $rows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAllAssociative();
+        $rows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+            ->fetchAllAssociative();
         $nodeAggregateIdentifiersByDimensionSpacePoint = [];
         foreach ($rows as $row) {
-            $nodeAggregateIdentifiersByDimensionSpacePoint[$row['dimensionspacepointhash']][$row['nodeaggregateidentifier']] = NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']);
+            $nodeAggregateIdentifiersByDimensionSpacePoint[$row['dimensionspacepointhash']]
+                [$row['nodeaggregateidentifier']]
+                = NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']);
         }
 
         return array_map(function (array $nodeAggregateIdentifiers) {
@@ -599,8 +605,10 @@ final class ProjectionHypergraph
         }, $nodeAggregateIdentifiersByDimensionSpacePoint);
     }
 
-    public function findReferenceRelationByOrigin(NodeRelationAnchorPoint $origin, PropertyName $name): ?ReferenceHyperrelationRecord
-    {
+    public function findReferenceRelationByOrigin(
+        NodeRelationAnchorPoint $origin,
+        PropertyName $name
+    ): ?ReferenceHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             'SELECT ref.*
             FROM ' . ReferenceHyperrelationRecord::TABLE_NAME .' ref

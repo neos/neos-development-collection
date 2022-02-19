@@ -23,6 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as AdjustmentsWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authentication;
@@ -34,7 +35,8 @@ use Neos\Party\Domain\Service\PartyService;
 /**
  * The service for keeping track of editors' content streams
  *
- * On authentication, workspaces may have to be created and content streams may have to be forked from live or rebased from older ones
+ * On authentication, workspaces may have to be created and content streams may have to be forked from live
+ * or rebased from older ones
  *
  * @Flow\Scope("singleton")
  */
@@ -71,8 +73,8 @@ final class EditorContentStreamZookeeper
     protected $workspaceCommandHandler;
 
     /**
-     * This method is called whenever a login happens (AuthenticationProviderManager::class, 'authenticatedToken'), using
-     * Signal/Slot
+     * This method is called whenever a login happens (AuthenticationProviderManager::class, 'authenticatedToken'),
+     * using Signal/Slot
      *
      * @param Authentication\TokenInterface $token
      * @throws \Exception
@@ -95,8 +97,10 @@ final class EditorContentStreamZookeeper
         if ($isEditor) {
             $user = $this->partyService->getAssignedPartyOfAccount($token->getAccount());
             if ($user instanceof User) {
+                $workspaceName = AdjustmentsWorkspaceName::fromAccountIdentifier(
+                    $token->getAccount()->getAccountIdentifier()
+                );
                 /** @var Workspace $workspace */
-                $workspaceName = \Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName::fromAccountIdentifier($token->getAccount()->getAccountIdentifier());
                 $workspace = $this->workspaceFinder->findOneByName($workspaceName->toContentRepositoryWorkspaceName());
 
                 $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
@@ -104,7 +108,9 @@ final class EditorContentStreamZookeeper
                     // @todo: find base workspace for user
                     $baseWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
                     $editorsNewContentStreamIdentifier = ContentStreamIdentifier::create();
-                    $similarlyNamedWorkspaces = $this->workspaceFinder->findByPrefix($workspaceName->toContentRepositoryWorkspaceName());
+                    $similarlyNamedWorkspaces = $this->workspaceFinder->findByPrefix(
+                        $workspaceName->toContentRepositoryWorkspaceName()
+                    );
                     if (!empty($similarlyNamedWorkspaces)) {
                         $workspaceName = $workspaceName->increment($similarlyNamedWorkspaces);
                     }

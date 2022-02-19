@@ -15,10 +15,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Comma
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RebasableToOtherContentStreamsInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * Add a Dimension Space Point Shine-Through; basically making all content available not just in the source(original) DSP, but also
- * in the target-DimensionSpacePoint.
+ * Add a Dimension Space Point Shine-Through;
+ * basically making all content available not just in the source(original) DSP,
+ * but also in the target-DimensionSpacePoint.
  *
  * NOTE: the Source Dimension Space Point must be a parent of the target Dimension Space Point.
  *
@@ -26,25 +28,20 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Reba
  *
  * NOTE: the target dimension space point must not contain any content.
  */
+#[Flow\Proxy(false)]
 final class AddDimensionShineThrough implements \JsonSerializable, RebasableToOtherContentStreamsInterface
 {
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private $contentStreamIdentifier;
+    private ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    private $source;
+    private DimensionSpacePoint $source;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    private $target;
+    private DimensionSpacePoint $target;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $source, DimensionSpacePoint $target)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $source,
+        DimensionSpacePoint $target
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->source = $source;
         $this->target = $target;
@@ -52,7 +49,7 @@ final class AddDimensionShineThrough implements \JsonSerializable, RebasableToOt
 
     public static function fromArray(array $array): self
     {
-        return new static(
+        return new self(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             DimensionSpacePoint::fromArray($array['source']),
             DimensionSpacePoint::fromArray($array['target'])
@@ -64,17 +61,11 @@ final class AddDimensionShineThrough implements \JsonSerializable, RebasableToOt
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getSource(): DimensionSpacePoint
     {
         return $this->source;
     }
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getTarget(): DimensionSpacePoint
     {
         return $this->target;
@@ -91,7 +82,7 @@ final class AddDimensionShineThrough implements \JsonSerializable, RebasableToOt
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new AddDimensionShineThrough(
+        return new self(
             $targetContentStreamIdentifier,
             $this->source,
             $this->target

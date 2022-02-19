@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\Flow\Annotations as Flow;
 
@@ -30,9 +28,9 @@ final class AffectedOccupiedDimensionSpacePointSet
     public static function forStrategyIdentifier(
         NodeVariantSelectionStrategyIdentifier $identifier,
         ReadableNodeAggregateInterface $nodeAggregate,
-        DimensionSpacePoint $referenceDimensionSpacePoint,
+        OriginDimensionSpacePoint $referenceDimensionSpacePoint,
         InterDimensionalVariationGraph $variationGraph
-    ): DimensionSpacePointSet {
+    ): OriginDimensionSpacePointSet {
         return match ($identifier) {
             NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_VARIANTS => self::allVariants($nodeAggregate),
             NodeVariantSelectionStrategyIdentifier::STRATEGY_ALL_SPECIALIZATIONS => self::allSpecializations(
@@ -49,66 +47,51 @@ final class AffectedOccupiedDimensionSpacePointSet
     }
 
     /**
-     * When only the the given dimension space point is to be selected,
+     * When only the given dimension space point is to be selected,
      * it is affected only if also occupied
-     *
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @param DimensionSpacePoint $referenceDimensionSpacePoint
-     * @return DimensionSpacePointSet
      */
     public static function onlyGivenVariant(
         ReadableNodeAggregateInterface $nodeAggregate,
-        DimensionSpacePoint $referenceDimensionSpacePoint
-    ): DimensionSpacePointSet {
+        OriginDimensionSpacePoint $referenceDimensionSpacePoint
+    ): OriginDimensionSpacePointSet {
         return $nodeAggregate->occupiesDimensionSpacePoint($referenceDimensionSpacePoint)
-            ? new DimensionSpacePointSet([$referenceDimensionSpacePoint])
-            : new DimensionSpacePointSet([]);
+            ? new OriginDimensionSpacePointSet([$referenceDimensionSpacePoint])
+            : new OriginDimensionSpacePointSet([]);
     }
 
     /**
      * When only the virtual specializations of the given dimension space point are to be selected,
      * only the given one is affected and only if also occupied
-     *
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @param DimensionSpacePoint $referenceDimensionSpacePoint
-     * @return DimensionSpacePointSet
      */
     public static function virtualSpecializations(
         ReadableNodeAggregateInterface $nodeAggregate,
-        DimensionSpacePoint $referenceDimensionSpacePoint
-    ): DimensionSpacePointSet {
+        OriginDimensionSpacePoint $referenceDimensionSpacePoint
+    ): OriginDimensionSpacePointSet {
         return $nodeAggregate->occupiesDimensionSpacePoint($referenceDimensionSpacePoint)
-            ? new DimensionSpacePointSet([$referenceDimensionSpacePoint])
-            : new DimensionSpacePointSet([]);
+            ? new OriginDimensionSpacePointSet([$referenceDimensionSpacePoint])
+            : new OriginDimensionSpacePointSet([]);
     }
 
     /**
      * When all specializations of the given dimension space point are to be selected,
      * then all of its specializations occupied by the node aggregate are affected
-     *
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @param DimensionSpacePoint $referenceDimensionSpacePoint
-     * @param InterDimensionalVariationGraph $variationGraph
-     * @return DimensionSpacePointSet
      */
     public static function allSpecializations(
         ReadableNodeAggregateInterface $nodeAggregate,
-        DimensionSpacePoint $referenceDimensionSpacePoint,
+        OriginDimensionSpacePoint $referenceDimensionSpacePoint,
         InterDimensionalVariationGraph $variationGraph
-    ): DimensionSpacePointSet {
-        return $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
-            ->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet());
+    ): OriginDimensionSpacePointSet {
+        return OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
+            $variationGraph->getSpecializationSet($referenceDimensionSpacePoint->toDimensionSpacePoint())
+        )->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints());
     }
 
     /**
      * When all variants of the given dimension space point are to be selected,
      * then all points occupied by the node aggregate are affected
-     *
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @return DimensionSpacePointSet
      */
-    public static function allVariants(ReadableNodeAggregateInterface $nodeAggregate): DimensionSpacePointSet
+    public static function allVariants(ReadableNodeAggregateInterface $nodeAggregate): OriginDimensionSpacePointSet
     {
-        return $nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet();
+        return $nodeAggregate->getOccupiedDimensionSpacePoints();
     }
 }

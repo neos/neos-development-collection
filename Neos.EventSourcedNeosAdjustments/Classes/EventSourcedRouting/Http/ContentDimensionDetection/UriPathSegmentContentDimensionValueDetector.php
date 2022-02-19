@@ -35,9 +35,14 @@ final class UriPathSegmentContentDimensionValueDetector implements ContentDimens
      * @param array|null $overrideOptions
      * @return Dimension\ContentDimensionValue|null
      */
-    public function detectValue(Dimension\ContentDimension $contentDimension, ServerRequestInterface $request, array $overrideOptions = null): ?Dimension\ContentDimensionValue
-    {
-        $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
+    public function detectValue(
+        Dimension\ContentDimension $contentDimension,
+        ServerRequestInterface $request,
+        array $overrideOptions = null
+    ): ?Dimension\ContentDimensionValue {
+        $options = $overrideOptions
+            ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions)
+            : $this->defaultOptions;
         $requestPath = $request->getUri()->getPath();
 
         if (!empty($requestPath) && $requestPath !== '/' && mb_strpos($requestPath, '/') !== false) {

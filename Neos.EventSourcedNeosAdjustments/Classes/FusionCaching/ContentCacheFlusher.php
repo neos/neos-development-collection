@@ -31,11 +31,13 @@ use Psr\Log\LoggerInterface;
  *
  * - when the projection changes: In this case, it is triggered by {@see CacheAwareGraphProjectorFactory} which creates
  *   {@see CacheFlushJob} instances (which in turn flush the cache).
- *   This is the relevant case if publishing a workspace - where we f.e. need to flush the cache for Live asynchronously.
+ *   This is the relevant case if publishing a workspace
+ *   - where we f.e. need to flush the cache for Live asynchronously.
  *
  * - explicitly through a Backend API request when we change the projection, block, and then render new content. In this
  *   scenario, it is important to flush the caches BETWEEN updating the projection and rendering the new content - this
- *   only works through an explicit call to {@see ContentCacheFlusher::flushNodeAggregate()} or {@see ContentCacheFlusher::scheduleFlushNodeAggregate()}.
+ *   only works through an explicit call to {@see ContentCacheFlusher::flushNodeAggregate()}
+ *   or {@see ContentCacheFlusher::scheduleFlushNodeAggregate()}.
  *
  * The method registerNodeChange() is triggered manually in the respective UI packages.
  *
@@ -74,53 +76,84 @@ class ContentCacheFlusher
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return void
      */
-    public function flushNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): void
-    {
+    public function flushNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): void {
         $doFlushContentCache = $this->scheduleFlushNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
         $doFlushContentCache();
     }
 
     /**
-     * Sometimes, you need to defer figuring out what to flush and the actual flushing to a later point in time. For example, when removing a node,
-     * we need to figure out what to flush while the node still exists, but do the flushing later when the node was removed.
+     * Sometimes, you need to defer figuring out what to flush and the actual flushing to a later point in time.
+     * For example, when removing a node, we need to figure out what to flush while the node still exists,
+     * but do the flushing later when the node was removed.
      *
-     * This can be done with this method: When calling this method, it *directly* finds out what needs to be flushed. The flushing itself, however,
-     * must then be triggered by calling the returned function.
+     * This can be done with this method: When calling this method, it *directly* finds out what needs to be flushed.
+     * The flushing itself, however, must then be triggered by calling the returned function.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return callable execute this function to actually trigger the content cache flushing
      */
-    public function scheduleFlushNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): callable
-    {
+    public function scheduleFlushNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): callable {
         $tagsToFlush = [];
 
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
         $this->registerChangeOnNodeIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier, $tagsToFlush);
-        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
+        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier
+        );
         if (!$nodeAggregate) {
             // Node Aggregate was removed in the meantime, so no need to clear caches on this one anymore.
             return function () {
             };
         }
 
-        $this->registerChangeOnNodeType($nodeAggregate->getNodeTypeName(), $contentStreamIdentifier, $nodeAggregateIdentifier, $tagsToFlush);
+        $this->registerChangeOnNodeType(
+            $nodeAggregate->getNodeTypeName(),
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            $tagsToFlush
+        );
 
-        $parentNodeAggregates = iterator_to_array($this->contentGraph->findParentNodeAggregates($contentStreamIdentifier, $nodeAggregateIdentifier));
+        $parentNodeAggregates = iterator_to_array($this->contentGraph->findParentNodeAggregates(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier
+        ));
         // we do not need these variables anymore here
         unset($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         while ($nodeAggregate = array_shift($parentNodeAggregates)) {
             assert($nodeAggregate instanceof NodeAggregate);
-            $tagName = 'DescendantOf_%' . $nodeAggregate->getContentStreamIdentifier() . '%_' . $nodeAggregate->getIdentifier();
-            $tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $nodeAggregate->getIdentifier());
+            $tagName = 'DescendantOf_%' . $nodeAggregate->getContentStreamIdentifier()
+                . '%_' . $nodeAggregate->getIdentifier();
+            $tagsToFlush[$tagName] = sprintf(
+                'which were tagged with "%s" because node "%s" has changed.',
+                $tagName,
+                $nodeAggregate->getIdentifier()
+            );
 
             // Legacy
             $legacyTagName = 'DescendantOf_' . $nodeAggregate->getIdentifier();
-            $tagsToFlush[$legacyTagName] = sprintf('which were tagged with legacy "%s" because node "%s" has changed.', $legacyTagName, $nodeAggregate->getIdentifier());
+            $tagsToFlush[$legacyTagName] = sprintf(
+                'which were tagged with legacy "%s" because node "%s" has changed.',
+                $legacyTagName,
+                $nodeAggregate->getIdentifier()
+            );
 
-            array_push($parentNodeAggregates, ...iterator_to_array($this->contentGraph->findParentNodeAggregates($nodeAggregate->getContentStreamIdentifier(), $nodeAggregate->getIdentifier())));
+            array_push(
+                $parentNodeAggregates,
+                ...iterator_to_array($this->contentGraph->findParentNodeAggregates(
+                    $nodeAggregate->getContentStreamIdentifier(),
+                    $nodeAggregate->getIdentifier()
+                ))
+            );
         }
         return function () use ($tagsToFlush) {
             $this->flushTags($tagsToFlush);
@@ -129,25 +162,39 @@ class ContentCacheFlusher
 
 
     /**
-     * Pleas use registerNodeChange() if possible. This method is a low-level api. If you do use this method make sure
-     * that $cacheIdentifier contains the workspacehash as well as the node identifier: $workspaceHash .'_'. $nodeIdentifier
+     * Please use registerNodeChange() if possible. This method is a low-level api. If you do use this method make sure
+     * that $cacheIdentifier contains the workspacehash as well as the node identifier:
+     * $workspaceHash .'_'. $nodeIdentifier
      * The workspacehash can be received via $this->getCachingHelper()->renderWorkspaceTagForContextNode($workpsacename)
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      */
-    private function registerChangeOnNodeIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, array &$tagsToFlush)
-    {
+    private function registerChangeOnNodeIdentifier(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        array &$tagsToFlush
+    ) {
         $cacheIdentifier = '%' . $contentStreamIdentifier . '%_' . $nodeAggregateIdentifier;
-        $tagsToFlush['Node_' . $cacheIdentifier] = sprintf('which were tagged with "Node_%s" because that identifier has changed.', $cacheIdentifier);
+        $tagsToFlush['Node_' . $cacheIdentifier] = sprintf(
+            'which were tagged with "Node_%s" because that identifier has changed.',
+            $cacheIdentifier
+        );
         $tagName = 'DescendantOf_' . $cacheIdentifier;
         $tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $cacheIdentifier);
 
         // Legacy
         $cacheIdentifier = (string)$nodeAggregateIdentifier;
-        $tagsToFlush['Node_' . $cacheIdentifier] = sprintf('which were tagged with "Node_%s" because that identifier has changed.', $cacheIdentifier);
+        $tagsToFlush['Node_' . $cacheIdentifier] = sprintf(
+            'which were tagged with "Node_%s" because that identifier has changed.',
+            $cacheIdentifier
+        );
         $tagName = 'DescendantOf_' . $cacheIdentifier;
-        $tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $cacheIdentifier);
+        $tagsToFlush[$tagName] = sprintf(
+            'which were tagged with "%s" because node "%s" has changed.',
+            $tagName,
+            $cacheIdentifier
+        );
     }
 
     /**
@@ -160,20 +207,36 @@ class ContentCacheFlusher
      * @param NodeAggregateIdentifier|null $referenceNodeIdentifier
      * @param array $tagsToFlush
      */
-    private function registerChangeOnNodeType(NodeTypeName $nodeTypeName, ContentStreamIdentifier $contentStreamIdentifier, ?NodeAggregateIdentifier $referenceNodeIdentifier, array &$tagsToFlush)
-    {
+    private function registerChangeOnNodeType(
+        NodeTypeName $nodeTypeName,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ?NodeAggregateIdentifier $referenceNodeIdentifier,
+        array &$tagsToFlush
+    ) {
         try {
-            $nodeTypesToFlush = $this->getAllImplementedNodeTypeNames($this->nodeTypeManager->getNodeType((string)$nodeTypeName));
+            $nodeTypesToFlush = $this->getAllImplementedNodeTypeNames(
+                $this->nodeTypeManager->getNodeType((string)$nodeTypeName)
+            );
         } catch (NodeTypeNotFoundException $e) {
             // as a fallback, we flush the single NodeType
             $nodeTypesToFlush = [(string)$nodeTypeName];
         }
 
         foreach ($nodeTypesToFlush as $nodeTypeNameToFlush) {
-            $tagsToFlush['NodeType_%' . $contentStreamIdentifier . '%_' . $nodeTypeNameToFlush] = sprintf('which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".', $nodeTypeNameToFlush, ($referenceNodeIdentifier ? $referenceNodeIdentifier : ''), $nodeTypeName);
+            $tagsToFlush['NodeType_%' . $contentStreamIdentifier . '%_' . $nodeTypeNameToFlush] = sprintf(
+                'which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".',
+                $nodeTypeNameToFlush,
+                ($referenceNodeIdentifier ?: ''),
+                $nodeTypeName
+            );
 
             // Legacy, but still used
-            $tagsToFlush['NodeType_' . $nodeTypeNameToFlush] = sprintf('which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".', $nodeTypeNameToFlush, ($referenceNodeIdentifier ? $referenceNodeIdentifier : ''), $nodeTypeName);
+            $tagsToFlush['NodeType_' . $nodeTypeNameToFlush] = sprintf(
+                'which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".',
+                $nodeTypeNameToFlush,
+                ($referenceNodeIdentifier ?: ''),
+                $nodeTypeName
+            );
         }
     }
 
@@ -188,7 +251,11 @@ class ContentCacheFlusher
         foreach ($tagsToFlush as $tag => $logMessage) {
             $affectedEntries = $this->contentCache->flushByTag($tag);
             if ($affectedEntries > 0) {
-                $this->systemLogger->debug(sprintf('Content cache: Removed %s entries %s', $affectedEntries, $logMessage));
+                $this->systemLogger->debug(sprintf(
+                    'Content cache: Removed %s entries %s',
+                    $affectedEntries,
+                    $logMessage
+                ));
             }
         }
     }
@@ -200,9 +267,13 @@ class ContentCacheFlusher
     protected function getAllImplementedNodeTypeNames(NodeType $nodeType)
     {
         $self = $this;
-        $types = array_reduce($nodeType->getDeclaredSuperTypes(), function (array $types, NodeType $superType) use ($self) {
-            return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
-        }, [$nodeType->getName()]);
+        $types = array_reduce(
+            $nodeType->getDeclaredSuperTypes(),
+            function (array $types, NodeType $superType) use ($self) {
+                return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
+            },
+            [$nodeType->getName()]
+        );
 
         $types = array_unique($types);
         return $types;

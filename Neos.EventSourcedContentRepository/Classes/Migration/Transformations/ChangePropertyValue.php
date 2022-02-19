@@ -128,22 +128,34 @@ class ChangePropertyValue implements NodeBasedTransformationInterface
         $this->currentValuePlaceholder = $currentValuePlaceholder;
     }
 
-    public function execute(NodeInterface $node, DimensionSpacePointSet $coveredDimensionSpacePoints, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        NodeInterface $node,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         if ($node->hasProperty($this->propertyName)) {
             $currentProperty = $node->getProperties()->serialized()->getProperty($this->propertyName);
-            $newValueWithReplacedCurrentValue = str_replace($this->currentValuePlaceholder, $currentProperty->getValue(), $this->newSerializedValue);
+            $newValueWithReplacedCurrentValue = str_replace(
+                $this->currentValuePlaceholder,
+                $currentProperty->getValue(),
+                $this->newSerializedValue
+            );
             $newValueWithReplacedSearch = str_replace($this->search, $this->replace, $newValueWithReplacedCurrentValue);
 
-            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(new SetSerializedNodeProperties(
-                $contentStreamForWriting,
-                $node->getNodeAggregateIdentifier(),
-                $node->getOriginDimensionSpacePoint(),
-                SerializedPropertyValues::fromArray([
-                    $this->propertyName => new SerializedPropertyValue($newValueWithReplacedSearch, $currentProperty->getType())
-                ]),
-                UserIdentifier::forSystemUser()
-            ));
+            return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
+                new SetSerializedNodeProperties(
+                    $contentStreamForWriting,
+                    $node->getNodeAggregateIdentifier(),
+                    $node->getOriginDimensionSpacePoint(),
+                    SerializedPropertyValues::fromArray([
+                        $this->propertyName => new SerializedPropertyValue(
+                            $newValueWithReplacedSearch,
+                            $currentProperty->getType()
+                        )
+                    ]),
+                    UserIdentifier::forSystemUser()
+                )
+            );
         }
 
         return CommandResult::createEmpty();

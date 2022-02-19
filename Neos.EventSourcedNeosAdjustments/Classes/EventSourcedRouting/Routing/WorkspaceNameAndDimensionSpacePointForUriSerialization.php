@@ -71,16 +71,11 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
         return (strpos($contextPath, '@') !== false);
     }
 
-
-
-    /**
-     * @param WorkspaceName $workspaceName
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return WorkspaceNameAndDimensionSpacePointForUriSerialization
-     */
-    public static function fromWorkspaceAndDimensionSpacePoint(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint): WorkspaceNameAndDimensionSpacePointForUriSerialization
-    {
-        return new WorkspaceNameAndDimensionSpacePointForUriSerialization($workspaceName, $dimensionSpacePoint);
+    public static function fromWorkspaceAndDimensionSpacePoint(
+        WorkspaceName $workspaceName,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): self {
+        return new self($workspaceName, $dimensionSpacePoint);
     }
 
     public static function fromBackendUri(string $backendUri): WorkspaceNameAndDimensionSpacePointForUriSerialization

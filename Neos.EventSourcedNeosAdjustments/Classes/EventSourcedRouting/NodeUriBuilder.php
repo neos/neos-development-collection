@@ -24,7 +24,8 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * Builds URIs to nodes, taking workspace (live / shared / user) into account.
- * This class can also be used in order to render "preview" URLs to nodes that are not in the live workspace (in the Neos Backend and shared workspaces)
+ * This class can also be used in order to render "preview" URLs to nodes
+ * that are not in the live workspace (in the Neos Backend and shared workspaces)
  */
 final class NodeUriBuilder
 {
@@ -52,11 +53,13 @@ final class NodeUriBuilder
      * If the node belongs to the live workspace, the public URL is generated
      * Otherwise a preview URI is rendered (@see previewUriFor())
      *
-     * Note: Shortcut nodes will are resolved in the RoutePartHandler thus the resulting URI will point to the shortcut target (node, asset or external URI)
+     * Note: Shortcut nodes will are resolved in the RoutePartHandler thus the resulting URI will point
+     * to the shortcut target (node, asset or external URI)
      *
      * @param NodeAddress $nodeAddress
      * @return UriInterface
-     * @throws NoMatchingRouteException | MissingActionNameException | HttpException | NodeAddressCannotBeSerializedException
+     * @throws NoMatchingRouteException | MissingActionNameException | HttpException
+     * @throws NodeAddressCannotBeSerializedException
      */
     public function uriFor(NodeAddress $nodeAddress): UriInterface
     {
@@ -72,10 +75,16 @@ final class NodeUriBuilder
      *
      * @param NodeAddress $nodeAddress
      * @return UriInterface
-     * @throws NoMatchingRouteException | MissingActionNameException | HttpException| NodeAddressCannotBeSerializedException
+     * @throws NoMatchingRouteException | MissingActionNameException | HttpException
+     * @throws NodeAddressCannotBeSerializedException
      */
     public function previewUriFor(NodeAddress $nodeAddress): UriInterface
     {
-        return new Uri($this->uriBuilder->uriFor('preview', ['node' => $nodeAddress->serializeForUri()], 'Frontend\Node', 'Neos.Neos'));
+        return new Uri($this->uriBuilder->uriFor(
+            'preview',
+            ['node' => $nodeAddress->serializeForUri()],
+            'Frontend\Node',
+            'Neos.Neos'
+        ));
     }
 }

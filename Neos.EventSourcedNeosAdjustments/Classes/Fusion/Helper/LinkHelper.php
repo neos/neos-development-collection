@@ -106,18 +106,30 @@ class LinkHelper implements ProtectedContextAwareInterface
     {
         $targetNode = $this->convertUriToObject($uri, $contextNode);
         if (!$targetNode instanceof NodeInterface) {
-            $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
+            $this->systemLogger->info(sprintf(
+                'Could not resolve "%s" to an existing node; The node was probably deleted.', $uri),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
             return null;
         }
         $targetNodeAddress = $this->nodeAddressFactory->createFromNode($targetNode);
         if ($targetNodeAddress === null) {
-            $this->systemLogger->info(sprintf('Could not create node address from node "%s".', $targetNode->getNodeAggregateIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
+            $this->systemLogger->info(sprintf(
+                'Could not create node address from node "%s".',
+                $targetNode->getNodeAggregateIdentifier()
+            ), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
         try {
-            $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())->uriFor($targetNodeAddress);
-        } catch (NodeAddressCannotBeSerializedException | HttpException | NoMatchingRouteException | MissingActionNameException $e) {
-            $this->systemLogger->info(sprintf('Failed to build URI for node "%s": %e', $targetNode->getNodeAggregateIdentifier(), $e->getMessage()), LogEnvironment::fromMethodName(__METHOD__));
+            $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
+                ->uriFor($targetNodeAddress);
+        } catch (NodeAddressCannotBeSerializedException | HttpException
+            | NoMatchingRouteException | MissingActionNameException $e) {
+            $this->systemLogger->info(sprintf(
+                'Failed to build URI for node "%s": %e',
+                $targetNode->getNodeAggregateIdentifier(),
+                $e->getMessage()
+            ), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
         if ($targetUri === null) {
@@ -137,7 +149,10 @@ class LinkHelper implements ProtectedContextAwareInterface
         }
         $asset = $this->assetRepository->findByIdentifier($uri->getHost());
         if ($asset === null) {
-            throw new \InvalidArgumentException(sprintf('Failed to resolve asset from URI "%s", probably the corresponding asset was deleted', $uri), 1601373937);
+            throw new \InvalidArgumentException(sprintf(
+                'Failed to resolve asset from URI "%s", probably the corresponding asset was deleted',
+                $uri
+            ), 1601373937);
         }
         return $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
     }
@@ -160,13 +175,21 @@ class LinkHelper implements ProtectedContextAwareInterface
             switch ($matches[1]) {
                 case 'node':
                     if ($contextNode === null) {
-                        throw new \RuntimeException('node:// URI conversion requires a context node to be passed', 1409734235);
+                        throw new \RuntimeException(
+                            'node:// URI conversion requires a context node to be passed',
+                            1409734235
+                        );
                     }
                     $contextNodeAddress = $this->nodeAddressFactory->createFromNode($contextNode);
                     if ($contextNodeAddress === null) {
-                        throw new \RuntimeException(sprintf('Failed to create node address for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
+                        throw new \RuntimeException(sprintf(
+                            'Failed to create node address for context node "%s"',
+                            $contextNode->getNodeAggregateIdentifier()
+                        ));
                     }
-                    $visibilityConstraints = $contextNodeAddress->workspaceName->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
+                    $visibilityConstraints = $contextNodeAddress->workspaceName->isLive()
+                        ? VisibilityConstraints::frontend()
+                        : VisibilityConstraints::withoutRestrictions();
                     $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                         $contextNode->getContentStreamIdentifier(),
                         $contextNode->getDimensionSpacePoint(),
@@ -176,7 +199,9 @@ class LinkHelper implements ProtectedContextAwareInterface
                         throw new \RuntimeException(sprintf('Failed to get SubContentGraph for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
                     }
 
-                    $node = $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($matches[2]));
+                    $node = $nodeAccessor->findByIdentifier(
+                        NodeAggregateIdentifier::fromString($matches[2])
+                    );
                     if ($node === null) {
                         return null;
                     }

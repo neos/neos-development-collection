@@ -140,9 +140,9 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return $this->occupiedDimensionSpacePoints;
     }
 
-    public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
+    public function occupiesDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): bool
     {
-        return $this->occupiedDimensionSpacePoints->contains(OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint));
+        return $this->occupiedDimensionSpacePoints->contains($originDimensionSpacePoint);
     }
 
     /**
@@ -155,10 +155,15 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return array_values($this->nodesByOccupiedDimensionSpacePoint);
     }
 
-    public function getNodeByOccupiedDimensionSpacePoint(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface
-    {
+    public function getNodeByOccupiedDimensionSpacePoint(
+        OriginDimensionSpacePoint $occupiedDimensionSpacePoint
+    ): NodeInterface {
         if (!$this->occupiedDimensionSpacePoints->contains($occupiedDimensionSpacePoint)) {
-            throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint('Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint, 1554902613);
+            throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint(
+                'Node aggregate "' . $this->nodeAggregateIdentifier
+                    . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint,
+                1554902613
+            );
         }
 
         return $this->nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash];
@@ -174,10 +179,15 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return $this->coveredDimensionSpacePoints->contains($dimensionSpacePoint);
     }
 
-    public function getCoverageByOccupant(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): DimensionSpacePointSet
-    {
+    public function getCoverageByOccupant(
+        OriginDimensionSpacePoint $occupiedDimensionSpacePoint
+    ): DimensionSpacePointSet {
         if (!isset($this->occupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash])) {
-            throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint('Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint, 1554902613);
+            throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint(
+                'Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not occupy dimension space point '
+                    . $occupiedDimensionSpacePoint,
+                1554902613
+            );
         }
 
         return $this->coverageByOccupant[$occupiedDimensionSpacePoint->hash];
@@ -194,7 +204,10 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): NodeInterface
     {
         if (!isset($this->coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash])) {
-            throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint('Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not cover dimension space point ' . $coveredDimensionSpacePoint, 1554902892);
+            throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
+                'Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not cover dimension space point '
+                    . $coveredDimensionSpacePoint, 1554902892
+            );
         }
 
         return $this->nodesByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->hash];
@@ -203,7 +216,10 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): OriginDimensionSpacePoint
     {
         if (!isset($this->occupationByCovered[$coveredDimensionSpacePoint->hash])) {
-            throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint('Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not cover dimension space point ' . $coveredDimensionSpacePoint, 1554902892);
+            throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
+                'Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not cover dimension space point ' . $coveredDimensionSpacePoint,
+                1554902892
+            );
         }
 
         return $this->occupationByCovered[$coveredDimensionSpacePoint->hash];

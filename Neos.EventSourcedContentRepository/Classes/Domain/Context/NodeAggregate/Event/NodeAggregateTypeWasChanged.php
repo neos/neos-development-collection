@@ -18,10 +18,9 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-final class NodeAggregateTypeWasChanged implements DomainEventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+#[Flow\Proxy(false)]
+final class NodeAggregateTypeWasChanged implements DomainEventInterface, PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     /**
      * @var ContentStreamIdentifier
@@ -38,11 +37,6 @@ final class NodeAggregateTypeWasChanged implements DomainEventInterface, Publish
      */
     private $newNodeTypeName;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $newNodeTypeName
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -70,7 +64,7 @@ final class NodeAggregateTypeWasChanged implements DomainEventInterface, Publish
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodeAggregateTypeWasChanged(
+        return new self(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->newNodeTypeName

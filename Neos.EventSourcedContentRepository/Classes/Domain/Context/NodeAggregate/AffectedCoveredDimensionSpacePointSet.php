@@ -81,7 +81,9 @@ final class AffectedCoveredDimensionSpacePointSet
             if ($specializedDimensionSpacePoint->equals($referenceDimensionSpacePoint)) {
                 continue;
             }
-            if ($nodeAggregate->occupiesDimensionSpacePoint($specializedDimensionSpacePoint)) {
+            if ($nodeAggregate->occupiesDimensionSpacePoint(
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($specializedDimensionSpacePoint))
+            ) {
                 $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getIntersection(
                     $variationGraph->getSpecializationSet($specializedDimensionSpacePoint)
                 );

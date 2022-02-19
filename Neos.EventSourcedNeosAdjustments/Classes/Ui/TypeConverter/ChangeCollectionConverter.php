@@ -96,11 +96,16 @@ class ChangeCollectionConverter extends AbstractTypeConverter
      * @param string $targetType not used
      * @param array $subProperties not used
      * @param \Neos\Flow\Property\PropertyMappingConfigurationInterface $configuration not used
-     * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
+     * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported
+     *               or could not be converted for other reasons
      * @throws \Exception
      */
-    public function convertFrom($source, $targetType, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType,
+        array $subProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         if (!is_array($source)) {
             return new Error(sprintf('Cannot convert %s to ChangeCollection.', gettype($source)));
         }
@@ -159,14 +164,17 @@ class ChangeCollectionConverter extends AbstractTypeConverter
         if (isset($changeData['payload'])) {
             foreach ($changeData['payload'] as $propertyName => $value) {
                 if (!in_array($propertyName, $this->disallowedPayloadProperties)) {
-                    $methodParameters = $this->reflectionService->getMethodParameters($changeClass, ObjectAccess::buildSetterMethodName($propertyName));
+                    $methodParameters = $this->reflectionService->getMethodParameters(
+                        $changeClass,
+                        ObjectAccess::buildSetterMethodName($propertyName)
+                    );
                     $methodParameter = current($methodParameters);
                     $targetType = $methodParameter['type'];
 
                     // Fixme: The type conversion runs depending on the target node property type inside Property::class
                     // This is why we are not allowed to modify the value in any way.
-                    // Without this condition the object was parsed to a string leading to fatal errors when changing images
-                    // in the UI.
+                    // Without this condition the object was parsed to a string leading to fatal errors
+                    // when changing images in the UI.
                     if ($propertyName !== 'value' && $targetType !== Property::class) {
                         $value = $this->propertyMapper->convert($value, $targetType);
                     }

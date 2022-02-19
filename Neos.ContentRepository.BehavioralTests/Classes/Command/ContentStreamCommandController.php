@@ -80,8 +80,12 @@ final class ContentStreamCommandController extends CommandController
     /**
      * @throws \Throwable
      */
-    private function createHierarchy(NodeAggregateIdentifier $parentNodeAggregateIdentifier, int $currentLevel, int $maximumLevel, int $numberOfNodes): void
-    {
+    private function createHierarchy(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        int $currentLevel,
+        int $maximumLevel,
+        int $numberOfNodes
+    ): void {
         if ($currentLevel <= $maximumLevel) {
             for ($i = 0; $i < $numberOfNodes; $i++) {
                 $nodeAggregateIdentifier = NodeAggregateIdentifier::create();

@@ -74,7 +74,10 @@ trait NodeModification
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
             // Check if node exists
-            $nodeAggregate = $this->requireProjectedNodeAggregate($command->contentStreamIdentifier, $command->nodeAggregateIdentifier);
+            $nodeAggregate = $this->requireProjectedNodeAggregate(
+                $command->contentStreamIdentifier,
+                $command->nodeAggregateIdentifier
+            );
             $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
 
             $events = DomainEvents::withSingleEvent(
@@ -91,7 +94,8 @@ trait NodeModification
             );
 
             $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)->getEventStreamName(),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+                    ->getEventStreamName(),
                 $events
             );
         });

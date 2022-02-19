@@ -38,7 +38,10 @@ final class NodeAggregateIdentifierMapping implements \JsonSerializable
         foreach ($nodeAggregateIdentifiers as $oldNodeAggregateIdentifier => $newNodeAggregateIdentifier) {
             $oldNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($oldNodeAggregateIdentifier);
             if (!$newNodeAggregateIdentifier instanceof NodeAggregateIdentifier) {
-                throw new \InvalidArgumentException('NodeAggregateIdentifierMapping objects can only be composed of NodeAggregateIdentifiers.', 1573042379);
+                throw new \InvalidArgumentException(
+                    'NodeAggregateIdentifierMapping objects can only be composed of NodeAggregateIdentifiers.',
+                    1573042379
+                );
             }
 
             $this->nodeAggregateIdentifiers[(string)$oldNodeAggregateIdentifier] = $newNodeAggregateIdentifier;
@@ -54,10 +57,13 @@ final class NodeAggregateIdentifierMapping implements \JsonSerializable
     public static function generateForNodeSubtreeSnapshot(NodeSubtreeSnapshot $nodeSubtreeSnapshot): self
     {
         $nodeAggregateIdentifierMapping = [];
-        $nodeSubtreeSnapshot->walk(function (NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdentifierMapping) {
-            // here, we create new random NodeAggregateIdentifiers.
-            $nodeAggregateIdentifierMapping[(string)$nodeSubtreeSnapshot->getNodeAggregateIdentifier()] = NodeAggregateIdentifier::create();
-        });
+        $nodeSubtreeSnapshot->walk(
+            function (NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdentifierMapping) {
+                // here, we create new random NodeAggregateIdentifiers.
+                $nodeAggregateIdentifierMapping[(string)$nodeSubtreeSnapshot->getNodeAggregateIdentifier()]
+                    = NodeAggregateIdentifier::create();
+            }
+        );
 
         return new self($nodeAggregateIdentifierMapping);
     }
@@ -66,14 +72,16 @@ final class NodeAggregateIdentifierMapping implements \JsonSerializable
     {
         $nodeAggregateIdentifiers = [];
         foreach ($array as $oldNodeAggregateIdentifier => $newNodeAggregateIdentifier) {
-            $nodeAggregateIdentifiers[$oldNodeAggregateIdentifier] = NodeAggregateIdentifier::fromString($newNodeAggregateIdentifier);
+            $nodeAggregateIdentifiers[$oldNodeAggregateIdentifier]
+                = NodeAggregateIdentifier::fromString($newNodeAggregateIdentifier);
         }
 
         return new self($nodeAggregateIdentifiers);
     }
 
-    public function getNewNodeAggregateIdentifier(NodeAggregateIdentifier $oldNodeAggregateIdentifier): ?NodeAggregateIdentifier
-    {
+    public function getNewNodeAggregateIdentifier(
+        NodeAggregateIdentifier $oldNodeAggregateIdentifier
+    ): ?NodeAggregateIdentifier {
         return $this->nodeAggregateIdentifiers[(string)$oldNodeAggregateIdentifier] ?? null;
     }
 

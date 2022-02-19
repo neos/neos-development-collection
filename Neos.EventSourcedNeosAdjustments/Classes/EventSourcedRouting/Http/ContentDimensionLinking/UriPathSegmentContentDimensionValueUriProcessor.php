@@ -42,7 +42,9 @@ final class UriPathSegmentContentDimensionValueUriProcessor implements ContentDi
         Dimension\ContentDimensionValue $contentDimensionValue,
         array $overrideOptions = null
     ): Routing\Dto\UriConstraints {
-        $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
+        $options = $overrideOptions
+            ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions)
+            : $this->defaultOptions;
         $pathSegmentPart = $options['offset'] > 0 ? $options['delimiter'] : '';
         $pathSegmentPart .= $contentDimensionValue->getConfigurationValue('resolution.value');
 

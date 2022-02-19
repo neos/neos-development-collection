@@ -75,25 +75,41 @@ class ChangeProjector implements ProjectorInterface
 
     public function whenNodePropertiesWereSet(NodePropertiesWereSet $event)
     {
-        $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint());
+        $this->markAsChanged(
+            $event->getContentStreamIdentifier(),
+            $event->getNodeAggregateIdentifier(),
+            $event->getOriginDimensionSpacePoint()
+        );
     }
 
     public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event)
     {
-        $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint());
+        $this->markAsChanged(
+            $event->getContentStreamIdentifier(),
+            $event->getNodeAggregateIdentifier(),
+            $event->getOriginDimensionSpacePoint()
+        );
     }
 
     public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)
     {
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
-            $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint));
+            $this->markAsChanged(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint)
+            );
         }
     }
 
     public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
     {
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
-            $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint));
+            $this->markAsChanged(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint)
+            );
         }
     }
 
@@ -127,7 +143,9 @@ class ChangeProjector implements ProjectorInterface
 
             foreach ($event->getAffectedOccupiedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $this->getDatabaseConnection()->executeUpdate(
-                    'INSERT INTO neos_contentrepository_projection_change (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint, originDimensionSpacePointHash, deleted, changed, moved, removalAttachmentPoint)
+                    'INSERT INTO neos_contentrepository_projection_change
+                            (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint,
+                             originDimensionSpacePointHash, deleted, changed, moved, removalAttachmentPoint)
                         VALUES (
                             :contentStreamIdentifier,
                             :nodeAggregateIdentifier,
@@ -187,7 +205,11 @@ class ChangeProjector implements ProjectorInterface
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }
-            $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
+            $change = $this->getChange(
+                $contentStreamIdentifier,
+                $nodeAggregateIdentifier,
+                $originDimensionSpacePoint
+            );
             if ($change === null) {
                 $change = new Change(
                     $contentStreamIdentifier,
@@ -216,7 +238,11 @@ class ChangeProjector implements ProjectorInterface
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }
-            $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
+            $change = $this->getChange(
+                $contentStreamIdentifier,
+                $nodeAggregateIdentifier,
+                $originDimensionSpacePoint
+            );
             if ($change === null) {
                 $change = new Change(
                     $contentStreamIdentifier,

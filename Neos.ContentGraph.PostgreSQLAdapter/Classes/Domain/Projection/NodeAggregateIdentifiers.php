@@ -43,7 +43,11 @@ final class NodeAggregateIdentifiers
             } elseif ($item instanceof NodeAggregateIdentifier) {
                 $values[(string)$item] = $item;
             } else {
-                throw new \InvalidArgumentException(get_class() . ' can only consist of ' . NodeAggregateIdentifier::class . ' objects.', 1616841637);
+                throw new \InvalidArgumentException(
+                    'NodeAggregateIdentifiers can only consist of '
+                        . NodeAggregateIdentifier::class . ' objects.',
+                    1616841637
+                );
             }
         }
 
@@ -68,8 +72,10 @@ final class NodeAggregateIdentifiers
         return '{' . implode(',', $this->identifiers) .  '}';
     }
 
-    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, ?NodeAggregateIdentifier $succeedingSibling = null): self
-    {
+    public function add(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $succeedingSibling = null
+    ): self {
         $nodeAggregateIdentifiers = $this->identifiers;
         if ($succeedingSibling) {
             $pivot = array_search($succeedingSibling, $nodeAggregateIdentifiers);

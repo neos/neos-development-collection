@@ -16,8 +16,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 
 /**
- * NOTE: we do NOT directly cache the Parent Node; but only the Parent Node Identifier; as then, the NodeByNodeIdentifierCache can be used properly - thus
- * it might increase the cache hit rate to split this apart.
+ * NOTE: we do NOT directly cache the Parent Node; but only the Parent Node Identifier;
+ * as then, the NodeByNodeIdentifierCache can be used properly
+ * - thus it might increase the cache hit rate to split this apart.
  */
 final class ParentNodeIdentifierByChildNodeIdentifierCache
 {
@@ -34,8 +35,10 @@ final class ParentNodeIdentifierByChildNodeIdentifierCache
         $this->isEnabled = $isEnabled;
     }
 
-    public function add(NodeAggregateIdentifier $childNodeAggregateIdentifier, NodeAggregateIdentifier $parentNodeAggregateIdentifier): void
-    {
+    public function add(
+        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier
+    ): void {
         if ($this->isEnabled === false) {
             return;
         }

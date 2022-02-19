@@ -54,8 +54,12 @@ class NodeHiddenState
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param bool $hidden
      */
-    public function __construct(?ContentStreamIdentifier $contentStreamIdentifier, ?NodeAggregateIdentifier $nodeAggregateIdentifier, ?DimensionSpacePoint $dimensionSpacePoint, ?bool $hidden)
-    {
+    public function __construct(
+        ?ContentStreamIdentifier $contentStreamIdentifier,
+        ?NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ?DimensionSpacePoint $dimensionSpacePoint,
+        ?bool $hidden
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;

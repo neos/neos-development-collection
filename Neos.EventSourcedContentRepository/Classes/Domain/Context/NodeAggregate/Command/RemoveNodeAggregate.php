@@ -21,10 +21,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -32,8 +31,6 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
 
     /**
      * One of the dimension space points covered by the node aggregate in which the user intends to remove it
-     *
-     * @var DimensionSpacePoint
      */
     private DimensionSpacePoint $coveredDimensionSpacePoint;
 
@@ -53,18 +50,16 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
      *
      * That's why we need this field: For the Neos UI, it stores the document node of the removed node (see Remove.php),
      * as that is what the UI needs lateron for the change display.
-     *
-     * @var NodeAggregateIdentifier|null
      */
     private ?NodeAggregateIdentifier $removalAttachmentPoint;
 
     public function __construct(
-        ContentStreamIdentifier                $contentStreamIdentifier,
-        NodeAggregateIdentifier                $nodeAggregateIdentifier,
-        DimensionSpacePoint                    $coveredDimensionSpacePoint,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
-        UserIdentifier                         $initiatingUserIdentifier,
-        ?NodeAggregateIdentifier               $removalAttachmentPoint = null
+        UserIdentifier $initiatingUserIdentifier,
+        ?NodeAggregateIdentifier $removalAttachmentPoint = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -75,13 +70,19 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
     }
 
     public static function create(
-        ContentStreamIdentifier                $contentStreamIdentifier,
-        NodeAggregateIdentifier                $nodeAggregateIdentifier,
-        DimensionSpacePoint                    $coveredDimensionSpacePoint,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
-        UserIdentifier                         $initiatingUserIdentifier
+        UserIdentifier $initiatingUserIdentifier
     ): self {
-        return new self($contentStreamIdentifier, $nodeAggregateIdentifier, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy, $initiatingUserIdentifier);
+        return new self(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            $coveredDimensionSpacePoint,
+            $nodeVariantSelectionStrategy,
+            $initiatingUserIdentifier
+        );
     }
 
     public static function fromArray(array $array): self
@@ -92,7 +93,9 @@ final class RemoveNodeAggregate implements \JsonSerializable, RebasableToOtherCo
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
             NodeVariantSelectionStrategyIdentifier::from($array['nodeVariantSelectionStrategy']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
-            isset($array['removalAttachmentPoint']) ? NodeAggregateIdentifier::fromString($array['removalAttachmentPoint']) : null
+            isset($array['removalAttachmentPoint'])
+                ? NodeAggregateIdentifier::fromString($array['removalAttachmentPoint'])
+                : null
         );
     }
 

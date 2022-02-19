@@ -58,7 +58,10 @@ class EmulatedLegacyWorkspace
 
     public function __call($methodName, $args)
     {
-        $this->legacyLogger->warning('context.workspace.* method not implemented', LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName));
+        $this->legacyLogger->warning(
+            'context.workspace.* method not implemented',
+            LogEnvironment::fromMethodName(EmulatedLegacyContext::class . '::' . $methodName)
+        );
         return null;
     }
 }

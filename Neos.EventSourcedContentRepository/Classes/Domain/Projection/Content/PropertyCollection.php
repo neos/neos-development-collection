@@ -37,8 +37,10 @@ final class PropertyCollection implements PropertyCollectionInterface
     /**
      * @internal do not create from userspace
      */
-    public function __construct(SerializedPropertyValues $serializedPropertyValues, PropertyConverter $propertyConverter)
-    {
+    public function __construct(
+        SerializedPropertyValues $serializedPropertyValues,
+        PropertyConverter $propertyConverter
+    ) {
         $this->serializedPropertyValues = $serializedPropertyValues;
         $this->iterator = new \ArrayIterator($serializedPropertyValues->getPlainValues());
         $this->propertyConverter = $propertyConverter;

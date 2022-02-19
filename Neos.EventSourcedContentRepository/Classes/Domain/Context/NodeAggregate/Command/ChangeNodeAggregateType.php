@@ -22,10 +22,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWit
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 
-/**
- * @Flow\Proxy(false)
- */
-final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 
@@ -146,12 +145,10 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
      * the passed in arguments are used).
      *
      * Is needed to make this command fully deterministic before storing it at the events.
-     *
-     * @param NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
-     * @return ChangeNodeAggregateType
      */
-    public function withTetheredDescendantNodeAggregateIdentifiers(NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers): self
-    {
+    public function withTetheredDescendantNodeAggregateIdentifiers(
+        NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
+    ): self {
         return new self(
             $this->contentStreamIdentifier,
             $this->nodeAggregateIdentifier,

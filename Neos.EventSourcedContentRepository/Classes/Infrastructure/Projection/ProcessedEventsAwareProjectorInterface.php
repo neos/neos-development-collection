@@ -7,7 +7,8 @@ use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventListener\AppliedEventsStorage\AppliedEventsStorageInterface;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 
-interface ProcessedEventsAwareProjectorInterface extends ProjectorInterface, AfterInvokeInterface, AppliedEventsStorageInterface
+interface ProcessedEventsAwareProjectorInterface extends ProjectorInterface, AfterInvokeInterface,
+    AppliedEventsStorageInterface
 {
     public function assumeProjectorRunsSynchronously(): void;
 

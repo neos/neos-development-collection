@@ -84,8 +84,12 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
 
     public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event)
     {
-        // TODO: How do we test this method? It's hard to design a BDD testcase failing if this method is commented out...
-        $this->updateContentStreamIdentifier($event->getNewSourceContentStreamIdentifier(), $event->getSourceWorkspaceName());
+        // TODO: How do we test this method?
+        // It's hard to design a BDD testcase failing if this method is commented out...
+        $this->updateContentStreamIdentifier(
+            $event->getNewSourceContentStreamIdentifier(),
+            $event->getSourceWorkspaceName()
+        );
 
         $this->markDependentWorkspacesAsOutdated($event->getTargetWorkspaceName());
 
@@ -97,8 +101,12 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
 
     public function whenWorkspaceWasPublished(WorkspaceWasPublished $event)
     {
-        // TODO: How do we test this method? It's hard to design a BDD testcase failing if this method is commented out...
-        $this->updateContentStreamIdentifier($event->getNewSourceContentStreamIdentifier(), $event->getSourceWorkspaceName());
+        // TODO: How do we test this method?
+        // It's hard to design a BDD testcase failing if this method is commented out...
+        $this->updateContentStreamIdentifier(
+            $event->getNewSourceContentStreamIdentifier(),
+            $event->getSourceWorkspaceName()
+        );
 
         $this->markDependentWorkspacesAsOutdated($event->getTargetWorkspaceName());
 
@@ -122,8 +130,10 @@ class WorkspaceProjector extends AbstractProcessedEventsAwareProjector
         $this->markWorkspaceAsOutdatedConflict($event->getWorkspaceName());
     }
 
-    private function updateContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier, WorkspaceName $workspaceName): void
-    {
+    private function updateContentStreamIdentifier(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        WorkspaceName $workspaceName
+    ): void {
         $this->getDatabaseConnection()->update(self::TABLE_NAME, [
             'currentContentStreamIdentifier' => $contentStreamIdentifier
         ], [

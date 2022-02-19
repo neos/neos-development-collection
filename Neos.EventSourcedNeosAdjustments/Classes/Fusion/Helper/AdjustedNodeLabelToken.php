@@ -43,7 +43,11 @@ class AdjustedNodeLabelToken extends NodeLabelToken
             $this->label = $this->node->getNodeType()->getName();
         }
 
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($this->node->getContentStreamIdentifier(), $this->node->getDimensionSpacePoint(), $this->node->getVisibilityConstraints());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $this->node->getContentStreamIdentifier(),
+            $this->node->getDimensionSpacePoint(),
+            $this->node->getVisibilityConstraints()
+        );
         if (empty($this->postfix) && NodeInfoHelper::isAutoCreated($this->node, $nodeAccessor)) {
             $this->postfix =  ' (' . $this->node->getNodeName()->jsonSerialize() . ')';
         }

@@ -97,8 +97,14 @@ class ServiceNodesController extends ActionController
      * @param NodeAddress $contextNode a node to use as context for the search
      * @return string
      */
-    public function indexAction($searchTerm = '', array $nodeIdentifiers = [], $workspaceName = 'live', array $dimensions = [], array $nodeTypes = ['Neos.Neos:Document'], NodeAddress $contextNode = null)
-    {
+    public function indexAction(
+        $searchTerm = '',
+        array $nodeIdentifiers = [],
+        $workspaceName = 'live',
+        array $dimensions = [],
+        array $nodeTypes = ['Neos.Neos:Document'],
+        NodeAddress $contextNode = null
+    ) {
         $nodeAddress = $contextNode;
         unset($contextNode);
         $nodeAccessor = $this->nodeAccessorManager->accessorFor(

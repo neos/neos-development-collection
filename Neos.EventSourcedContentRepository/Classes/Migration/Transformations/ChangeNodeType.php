@@ -27,33 +27,25 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  */
 class ChangeNodeType implements NodeAggregateBasedTransformationInterface
 {
-
-    /**
-     * @var NodeAggregateCommandHandler
-     */
-    protected $nodeAggregateCommandHandler;
+    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
 
     /**
      * The new Node Type to use as a string
-     *
-     * @var string
      */
-    protected $newType;
+    protected string $newType;
 
-    private NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+    private NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+        $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 
     public function __construct(NodeAggregateCommandHandler $nodeAggregateCommandHandler)
     {
         $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
         // by default, we won't delete anything.
-        $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH;
+        $this->nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+            = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH;
     }
 
-    /**
-     * @param string $newType
-     * @return void
-     */
-    public function setNewType($newType)
+    public function setNewType(string $newType): void
     {
         $this->newType = $newType;
     }
@@ -65,8 +57,10 @@ class ChangeNodeType implements NodeAggregateBasedTransformationInterface
             : NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH;
     }
 
-    public function execute(ReadableNodeAggregateInterface $nodeAggregate, ContentStreamIdentifier $contentStreamForWriting): CommandResult
-    {
+    public function execute(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        ContentStreamIdentifier $contentStreamForWriting
+    ): CommandResult {
         return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateType(new ChangeNodeAggregateType(
             $contentStreamForWriting,
             $nodeAggregate->getIdentifier(),

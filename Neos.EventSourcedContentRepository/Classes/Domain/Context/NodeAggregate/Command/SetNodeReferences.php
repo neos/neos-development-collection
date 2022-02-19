@@ -15,10 +15,10 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Create a named reference from source to destination node
- *
- * @Flow\Proxy(false)
  */
-final class SetNodeReferences implements \JsonSerializable, RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+#[Flow\Proxy(false)]
+final class SetNodeReferences implements \JsonSerializable, RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
 

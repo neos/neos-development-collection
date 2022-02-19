@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\AbstractDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 
@@ -23,10 +24,9 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
  * Example:
  * In a setup with dimension "language", a node that originates in English has English content,
  * but might be visible in other languages via fallback mechanisms.
- *
- * @Flow\Proxy(false)
  */
-final class OriginDimensionSpacePoint extends DimensionSpacePoint
+#[Flow\Proxy(false)]
+final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint
 {
     /**
      * @var array<string,OriginDimensionSpacePoint>
@@ -65,8 +65,24 @@ final class OriginDimensionSpacePoint extends DimensionSpacePoint
         return self::instance($dimensionSpacePoint->coordinates);
     }
 
+    /**
+     * Creates a dimension space point from a legacy dimension array in format
+     * ['language' => ['es'], 'country' => ['ar']]
+     *
+     * @param array<string,array<int,string>> $legacyDimensionValues
+     */
+    final public static function fromLegacyDimensionArray(array $legacyDimensionValues): self
+    {
+        $coordinates = [];
+        foreach ($legacyDimensionValues as $dimensionName => $rawDimensionValues) {
+            $coordinates[$dimensionName] = reset($rawDimensionValues);
+        }
+
+        return self::instance($coordinates);
+    }
+
     public function toDimensionSpacePoint(): DimensionSpacePoint
     {
-        return DimensionSpacePoint::instance(($this->coordinates));
+        return DimensionSpacePoint::fromArray(($this->coordinates));
     }
 }

@@ -57,7 +57,8 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
     {
         $uriPathSegmentUsed = false;
 
-        $existingParameters = $request->getAttribute(Http\ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
+        $existingParameters = $request->getAttribute(Http\ServerRequestAttributes::ROUTING_PARAMETERS)
+            ?? RouteParameters::createEmpty();
         $parameters = $existingParameters
             ->withParameter('dimensionSpacePoint', $this->detectDimensionSpacePoint($request, $uriPathSegmentUsed))
             ->withParameter('uriPathSegmentOffset', $uriPathSegmentUsed ? 1 : 0);
@@ -70,8 +71,10 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
      * @return DimensionSpacePoint
      * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
-    protected function detectDimensionSpacePoint(ServerRequestInterface $request, bool &$uriPathSegmentUsed): DimensionSpacePoint
-    {
+    protected function detectDimensionSpacePoint(
+        ServerRequestInterface $request,
+        bool &$uriPathSegmentUsed
+    ): DimensionSpacePoint {
         $coordinates = [];
         $path = $request->getUri()->getPath();
 
@@ -82,10 +85,12 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
         $this->sortDimensionsByOffset($dimensions);
         $uriPathSegmentOffset = 0;
         foreach ($dimensions as $rawDimensionIdentifier => $contentDimension) {
-            $detector = $this->contentDimensionPresetDetectorResolver->resolveContentDimensionValueDetector($contentDimension);
+            $detector = $this->contentDimensionPresetDetectorResolver
+                ->resolveContentDimensionValueDetector($contentDimension);
 
             $detectorOverrideOptions = $contentDimension->getConfigurationValue('resolution.options') ?? [];
-            $resolutionMode = $contentDimension->getConfigurationValue('resolution.mode') ?? BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT;
+            $resolutionMode = $contentDimension->getConfigurationValue('resolution.mode')
+                ?? BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT;
             if ($resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
                 $detectorOverrideOptions['delimiter'] = $this->uriPathSegmentDelimiter;
                 if (!isset($detectorOverrideOptions['offset'])) {
@@ -99,7 +104,11 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
                     $coordinates[$rawDimensionIdentifier] = (string)$dimensionValue;
                     if ($detector instanceof ContentDimensionDetection\UriPathSegmentContentDimensionValueDetector) {
                         // we might have to remove the uri path segment anyway
-                        $dimensionValueByUriPathSegment = $detector->detectValue($contentDimension, $request, $detectorOverrideOptions);
+                        $dimensionValueByUriPathSegment = $detector->detectValue(
+                            $contentDimension,
+                            $request,
+                            $detectorOverrideOptions
+                        );
                         if ($dimensionValueByUriPathSegment) {
                             $uriPathSegmentUsed = true;
                         }
@@ -117,8 +126,11 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
                 }
             } else {
                 $allowEmptyValue = ($detectorOverrideOptions['allowEmptyValue'] ?? false)
-                    || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $this->supportEmptySegmentForDimensions;
-                if ($allowEmptyValue || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $path === '/') {
+                    || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
+                        && $this->supportEmptySegmentForDimensions;
+                if ($allowEmptyValue || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
+                    && $path === '/'
+                ) {
                     $coordinates[$rawDimensionIdentifier] = (string)$contentDimension->defaultValue;
                 }
             }
@@ -131,7 +143,7 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
      * @param array|Dimension\ContentDimension[] $dimensions
      * @return void
      */
-    protected function sortDimensionsByOffset(array & $dimensions)
+    protected function sortDimensionsByOffset(array& $dimensions)
     {
         uasort($dimensions, function (Dimension\ContentDimension $dimensionA, Dimension\ContentDimension $dimensionB) {
             return ($dimensionA->getConfigurationValue('resolution.options.offset') ?: 0)
