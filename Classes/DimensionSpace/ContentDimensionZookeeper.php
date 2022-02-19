@@ -34,7 +34,8 @@ final class ContentDimensionZookeeper
 
     protected function initializeAllowedCombinations(): void
     {
-        if (!empty($this->contentDimensionSource->getContentDimensionsOrderedByPriority())) {
+        $orderedDimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
+        if (!empty($orderedDimensions)) {
             /** @var array<int,array<string,Dimension\ContentDimensionValue>> $dimensionCombinations */
             $dimensionCombinations = [];
             foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
@@ -64,12 +65,12 @@ final class ContentDimensionZookeeper
             foreach ($contentDimension->values as $currentDimensionValue) {
                 foreach ($dimensionCombination as $otherDimensionIdentifier => $otherDimensionValue) {
                     if (!$currentDimensionValue->canBeCombinedWith(
-                            new Dimension\ContentDimensionIdentifier($otherDimensionIdentifier),
-                            $otherDimensionValue
-                        )
-                        || !$otherDimensionValue->canBeCombinedWith(
-                            $contentDimension->identifier,
-                            $currentDimensionValue)
+                        new Dimension\ContentDimensionIdentifier($otherDimensionIdentifier),
+                        $otherDimensionValue
+                    ) || !$otherDimensionValue->canBeCombinedWith(
+                        $contentDimension->identifier,
+                        $currentDimensionValue
+                    )
                     ) {
                         continue 2;
                     }
@@ -91,8 +92,10 @@ final class ContentDimensionZookeeper
         if (is_null($this->allowedCombinations)) {
             $this->initializeAllowedCombinations();
         }
+        /** @var array<int,array<string,Dimension\ContentDimensionValue>> $allowedCombinations */
+        $allowedCombinations = $this->allowedCombinations;
 
-        return $this->allowedCombinations;
+        return $allowedCombinations;
     }
 
     public function getAllowedDimensionSubspace(): DimensionSpacePointSet

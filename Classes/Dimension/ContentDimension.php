@@ -56,7 +56,8 @@ final class ContentDimension
         $specializations = [];
         foreach ($variationEdges as $variationEdge) {
             $generalizations[(string)$variationEdge->specialization] = $variationEdge->generalization;
-            $specializations[(string)$variationEdge->generalization][(string)$variationEdge->specialization] = $variationEdge->specialization;
+            $specializations[(string)$variationEdge->generalization][(string)$variationEdge->specialization]
+                = $variationEdge->specialization;
         }
         $this->generalizations = $generalizations;
         $this->specializations = $specializations;

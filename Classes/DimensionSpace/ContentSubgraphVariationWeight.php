@@ -42,7 +42,10 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable, \String
         foreach ($weight as $dimensionIdentifier => $specializationDepth) {
             if (!$specializationDepth instanceof Dimension\ContentDimensionValueSpecializationDepth) {
                 throw new \InvalidArgumentException(
-                    sprintf('Weight component %s was not of type ContentDimensionValueSpecializationDepth', $specializationDepth),
+                    sprintf(
+                        'Weight component %s was not of type ContentDimensionValueSpecializationDepth',
+                        $specializationDepth
+                    ),
                     1531477454
                 );
             }
@@ -71,7 +74,12 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable, \String
         $decreasedWeight = [];
         foreach ($this->weight as $rawDimensionIdentifier => $weight) {
             $dimensionIdentifier = new Dimension\ContentDimensionIdentifier($rawDimensionIdentifier);
-            $decreasedWeight[$rawDimensionIdentifier] = $weight->decreaseBy($other->getWeightInDimension($dimensionIdentifier));
+            /**
+             * @var Dimension\ContentDimensionValueSpecializationDepth $otherWeight
+             * Null is already excluded by canBeComparedTo above
+             */
+            $otherWeight = $other->getWeightInDimension($dimensionIdentifier);
+            $decreasedWeight[$rawDimensionIdentifier] = $weight->decreaseBy($otherWeight);
         }
 
         return new ContentSubgraphVariationWeight($decreasedWeight);
@@ -97,8 +105,11 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable, \String
         return $this->weight;
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function __toString(): string
     {
-        return json_encode($this);
+        return json_encode($this, JSON_THROW_ON_ERROR);
     }
 }

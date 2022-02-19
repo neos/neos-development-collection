@@ -72,7 +72,9 @@ final class DimensionSpacePoint extends AbstractDimensionSpacePoint
     {
         $coordinates = [];
         foreach ($legacyDimensionValues as $dimensionName => $rawDimensionValues) {
-            $coordinates[$dimensionName] = reset($rawDimensionValues);
+            /** @var string $primaryDimensionValue */
+            $primaryDimensionValue = reset($rawDimensionValues);
+            $coordinates[$dimensionName] = $primaryDimensionValue;
         }
 
         return self::instance($coordinates);

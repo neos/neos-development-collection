@@ -23,8 +23,9 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 class DimensionSpacePointNotFound extends \DomainException
 {
-    public static function becauseItIsNotWithinTheAllowedDimensionSubspace(DimensionSpacePoint $dimensionSpacePoint): self
-    {
+    public static function becauseItIsNotWithinTheAllowedDimensionSubspace(
+        DimensionSpacePoint $dimensionSpacePoint
+    ): self {
         return new self(
             sprintf('%s was not found in the allowed dimension subspace', $dimensionSpacePoint),
             1505929456

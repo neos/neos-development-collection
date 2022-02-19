@@ -29,7 +29,9 @@ final class ContentDimensionValue implements \Stringable
      */
     public function __construct(
         public readonly string $value,
+        /** @codingStandardsIgnoreStart */
         public readonly ContentDimensionValueSpecializationDepth $specializationDepth = new ContentDimensionValueSpecializationDepth(0),
+        /** @codingStandardsIgnoreEnd */
         public readonly ContentDimensionConstraintSet $constraints = new ContentDimensionConstraintSet([]),
         /**
          * General configuration like UI, detection etc.

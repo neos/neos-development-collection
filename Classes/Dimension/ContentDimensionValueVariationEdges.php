@@ -13,10 +13,13 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
 use Neos\Flow\Annotations as Flow;
 
 /**
  * A set of content dimension value variation edges
+ *
+ * @implements \IteratorAggregate<int,ContentDimensionValueVariationEdge>
  */
 #[Flow\Proxy(false)]
 final class ContentDimensionValueVariationEdges implements \IteratorAggregate
@@ -25,6 +28,11 @@ final class ContentDimensionValueVariationEdges implements \IteratorAggregate
      * @var array<int,ContentDimensionValueVariationEdge>
      */
     private array $edges;
+
+    /**
+     * @var \ArrayIterator<int,ContentDimensionValueVariationEdge>
+     */
+    private \ArrayIterator $iterator;
 
     /**
      * @param array<int,ContentDimensionValueVariationEdge> $array
@@ -41,6 +49,7 @@ final class ContentDimensionValueVariationEdges implements \IteratorAggregate
         }
 
         $this->edges = $array;
+        $this->iterator = new \ArrayIterator($this->edges);
     }
 
     public static function createEmpty(): self
@@ -49,11 +58,11 @@ final class ContentDimensionValueVariationEdges implements \IteratorAggregate
     }
 
     /**
-     * @return \ArrayIterator<string,ContentDimensionValueVariationEdge>|ContentDimensionValueVariationEdge[]
+     * @return \ArrayIterator<int,ContentDimensionValueVariationEdge>|ContentDimensionValueVariationEdge[]
      */
     public function getIterator(): \ArrayIterator
     {
-        return new \ArrayIterator($this->edges);
+        return $this->iterator;
     }
 
     public function isEmpty(): bool

@@ -26,7 +26,11 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
  * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
  */
 #[Flow\Proxy(false)]
-abstract class AbstractDimensionSpacePoint implements \JsonSerializable, \Stringable, CacheAwareInterface, ProtectedContextAwareInterface
+abstract class AbstractDimensionSpacePoint implements
+    \JsonSerializable,
+    \Stringable,
+    CacheAwareInterface,
+    ProtectedContextAwareInterface
 {
     protected function __construct(
         /**
@@ -34,23 +38,25 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable, \String
          */
         public readonly array $coordinates,
         public readonly string $hash
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string,string> $coordinates
+     * @throws \JsonException
      */
-    final static protected function hashCoordinates(array $coordinates): string
+    final protected static function hashCoordinates(array $coordinates): string
     {
         $identityComponents = $coordinates;
         ksort($identityComponents);
 
-        return md5(json_encode($identityComponents));
+        return md5(json_encode($identityComponents, JSON_THROW_ON_ERROR));
     }
 
     /**
      * @param array<string,string> $coordinates
      */
-    final static protected function validateCoordinates(array $coordinates): void
+    final protected static function validateCoordinates(array $coordinates): void
     {
         foreach ($coordinates as $dimensionName => $dimensionValue) {
             if (!is_string($dimensionName)) {
@@ -75,7 +81,8 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable, \String
     }
 
     /**
-     * A variant VarA is a "Direct Variant in Dimension Dim" of another variant VarB, if VarA and VarB are sharing all dimension values except in "Dim",
+     * A variant VarA is a "Direct Variant in Dimension Dim" of another variant VarB,
+     * if VarA and VarB are sharing all dimension values except in "Dim",
      * AND they have differing dimension values in "Dim". Thus, VarA and VarB only vary in the given "Dim".
      * It does not say anything about how VarA and VarB relate (if it is specialization, peer or generalization).
      */
@@ -86,7 +93,8 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable, \String
         if (!$this->hasCoordinate($contentDimensionIdentifier) || !$other->hasCoordinate($contentDimensionIdentifier)) {
             return false;
         }
-        if ($this->coordinates[(string)$contentDimensionIdentifier] === $other->coordinates[(string)$contentDimensionIdentifier]) {
+        if ($this->coordinates[(string)$contentDimensionIdentifier]
+            === $other->coordinates[(string)$contentDimensionIdentifier]) {
             return false;
         }
 
@@ -130,9 +138,12 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable, \String
         return $legacyDimensions;
     }
 
+    /**
+     * @throws \JsonException
+     */
     final public function serializeForUri(): string
     {
-        return base64_encode(json_encode($this->coordinates));
+        return base64_encode(json_encode($this->coordinates, JSON_THROW_ON_ERROR));
     }
 
     /**
@@ -156,8 +167,11 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable, \String
         return true;
     }
 
+    /**
+     * @throws \JsonException
+     */
     final public function __toString(): string
     {
-        return json_encode($this);
+        return json_encode($this, JSON_THROW_ON_ERROR);
     }
 }

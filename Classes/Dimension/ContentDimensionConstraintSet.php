@@ -13,6 +13,7 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -69,8 +70,10 @@ final class ContentDimensionConstraintSet implements \IteratorAggregate
         return $this->constraints[(string)$dimensionIdentifier] ?? null;
     }
 
-    public function allowsCombinationWith(ContentDimensionIdentifier $contentDimensionIdentifier, ContentDimensionValue $contentDimensionValue): bool
-    {
+    public function allowsCombinationWith(
+        ContentDimensionIdentifier $contentDimensionIdentifier,
+        ContentDimensionValue $contentDimensionValue
+    ): bool {
         return isset($this->constraints[(string)$contentDimensionIdentifier])
             ? $this->constraints[(string)$contentDimensionIdentifier]->allowsCombinationWith($contentDimensionValue)
             : true;

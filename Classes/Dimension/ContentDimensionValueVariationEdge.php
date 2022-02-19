@@ -13,6 +13,7 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
+
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -24,5 +25,6 @@ final class ContentDimensionValueVariationEdge
     public function __construct(
         public readonly ContentDimensionValue $specialization,
         public readonly ContentDimensionValue $generalization,
-    ) {}
+    ) {
+    }
 }

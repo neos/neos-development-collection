@@ -40,5 +40,4 @@ class ContentDimensionDefaultValueIsMissing extends \DomainException
             1516639145
         );
     }
-
 }

@@ -21,9 +21,15 @@ use Neos\Flow\Annotations as Flow;
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
  * @implements \IteratorAggregate<string,DimensionSpacePoint>
+ * @implements \ArrayAccess<string,DimensionSpacePoint>
  */
 #[Flow\Proxy(false)]
-final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \IteratorAggregate, \ArrayAccess, \Countable
+final class DimensionSpacePointSet implements
+    \JsonSerializable,
+    \Stringable,
+    \IteratorAggregate,
+    \ArrayAccess,
+    \Countable
 {
     /**
      * @var array<string,DimensionSpacePoint>
@@ -36,7 +42,8 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \I
     public readonly \ArrayIterator $iterator;
 
     /**
-     * @param array<string,DimensionSpacePoint|array> $pointCandidates Array of dimension space points
+     * @param array<string,DimensionSpacePoint|array<string,string>> $pointCandidates
+     *        An array of DimensionSpacePoints or coordinates
      */
     public function __construct(array $pointCandidates)
     {
@@ -55,6 +62,9 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \I
         $this->iterator = new \ArrayIterator($this->points);
     }
 
+    /**
+     * @param array<string,DimensionSpacePoint|array<string,string>> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self($array);
@@ -65,6 +75,9 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \I
         return new self(\json_decode($jsonString, true));
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function getPointHashes(): array
     {
         return array_keys($this->points);
@@ -85,12 +98,12 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \I
         return $this->points[$offset] ?? null;
     }
 
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         // not going to happen
     }
 
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         // not going to happen
     }
@@ -110,6 +123,9 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \I
         return new DimensionSpacePointSet(array_diff_key($this->points, $other->points));
     }
 
+    /**
+     * @return array<int,DimensionSpacePoint>
+     */
     public function jsonSerialize(): array
     {
         return array_values($this->points);
@@ -120,6 +136,11 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \I
         return count($this->points);
     }
 
+    public function isEmpty(): bool
+    {
+        return count($this->points) === 0;
+    }
+
     /**
      * @return \ArrayIterator<string,DimensionSpacePoint>|DimensionSpacePoint[]
      */
@@ -128,8 +149,11 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Stringable, \I
         return $this->iterator;
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function __toString(): string
     {
-        return json_encode($this);
+        return json_encode($this, JSON_THROW_ON_ERROR);
     }
 }

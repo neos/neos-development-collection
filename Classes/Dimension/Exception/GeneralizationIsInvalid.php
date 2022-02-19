@@ -27,6 +27,9 @@ class GeneralizationIsInvalid extends \DomainException
         ContentDimensionValue $comparedValue,
         ContentDimensionIdentifier $dimensionIdentifier
     ): self {
-        return new self('"' . $comparedValue . '" is no specialization of "' . $value . '" in dimension "' . $dimensionIdentifier . '".');
+        return new self(
+            '"' . $comparedValue . '" is no specialization of "' . $value
+                . '" in dimension "' . $dimensionIdentifier . '".'
+        );
     }
 }

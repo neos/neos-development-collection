@@ -53,6 +53,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     protected function initializeDimensions(): void
     {
         if (!empty($this->dimensionConfiguration)) {
+            $this->contentDimensions = [];
             foreach ($this->dimensionConfiguration as $rawDimensionIdentifier => $dimensionConfiguration) {
                 $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
                 $values = [];
@@ -97,15 +98,15 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     }
 
     /**
-     * @param array<string,ContentDimensionValue> $values
-     * @param array<int,VariationEdge> $variationEdges
+     * @param array<string,ContentDimensionValue> &$values
+     * @param array<int,VariationEdge> &$variationEdges
      * @param array<string,mixed> $configuration
      * @throws Exception\ContentDimensionValueIsInvalid
      */
     protected function extractDimensionValuesAndVariations(
         string $rawValue,
-        array& $values,
-        array& $variationEdges,
+        array &$values,
+        array &$variationEdges,
         array $configuration,
         ?ContentDimensionValue $generalization,
         ContentDimensionValueSpecializationDepth $specializationDepth
@@ -116,7 +117,25 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
             foreach ($configuration['constraints'] as $rawDimensionIdentifier => $currentConstraints) {
                 $wildcardAllowed = true;
                 $identifierRestrictions = [];
+                if (!is_string($rawDimensionIdentifier)) {
+                    throw new \InvalidArgumentException(
+                        'Dimension combination constraints must be indexed by dimension name, '
+                            . $rawDimensionIdentifier . ' given.'
+                    );
+                }
                 foreach ($currentConstraints as $rawDimensionValue => $allowed) {
+                    if (!is_string($rawDimensionValue)) {
+                        throw new \InvalidArgumentException(
+                            'Dimension value combination constraints must be indexed by dimension value, '
+                                . $rawDimensionValue . ' given.'
+                        );
+                    }
+                    if (!is_bool($allowed)) {
+                        throw new \InvalidArgumentException(
+                            'Dimension combination constraints must be boolean, '
+                                . $allowed . ' given.'
+                        );
+                    }
                     if ($rawDimensionValue === self::CONSTRAINT_IDENTIFIER_WILDCARD) {
                         $wildcardAllowed = $allowed;
                     } else {
@@ -144,8 +163,14 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
 
         if (isset($configuration['specializations'])) {
             foreach ($configuration['specializations'] as $rawSpecializationValue => $specializationConfiguration) {
-                $this->extractDimensionValuesAndVariations($rawSpecializationValue, $values, $variationEdges,
-                    $specializationConfiguration, $value, $specializationDepth->increment());
+                $this->extractDimensionValuesAndVariations(
+                    $rawSpecializationValue,
+                    $values,
+                    $variationEdges,
+                    $specializationConfiguration,
+                    $value,
+                    $specializationDepth->increment()
+                );
             }
         }
     }
@@ -179,7 +204,9 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
         if (is_null($this->contentDimensions)) {
             $this->initializeDimensions();
         }
+        /** @var array<string,ContentDimension> $contentDimensions */
+        $contentDimensions = $this->contentDimensions;
 
-        return $this->contentDimensions;
+        return $contentDimensions;
     }
 }

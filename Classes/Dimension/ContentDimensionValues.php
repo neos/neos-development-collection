@@ -80,7 +80,7 @@ final class ContentDimensionValues implements \IteratorAggregate
     {
         return array_filter(
             $this->values,
-            function(ContentDimensionValue $value): bool {
+            function (ContentDimensionValue $value): bool {
                 return $value->specializationDepth->isZero();
             }
         );

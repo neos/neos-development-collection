@@ -18,7 +18,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentSubgraphVariatio
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The exception to be thrown if two content subgraph variation weights are to be compared that cannot, e.g. if they compose of different dimension combinations
+ * The exception to be thrown if two content subgraph variation weights are to be compared that cannot,
+ * e.g. if they compose of different dimension combinations
  */
 #[Flow\Proxy(false)]
 class ContentSubgraphVariationWeightsAreIncomparable extends \DomainException
@@ -26,7 +27,7 @@ class ContentSubgraphVariationWeightsAreIncomparable extends \DomainException
     public static function butWereAttemptedTo(
         ContentSubgraphVariationWeight $first,
         ContentSubgraphVariationWeight $second
-    ): self{
+    ): self {
         return new self(
             'Weights ' . $first . ' and ' . $second . ' cannot be compared.',
             1517474233
