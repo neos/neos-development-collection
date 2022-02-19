@@ -160,8 +160,8 @@ class ChildrenOperation extends AbstractOperation
                         }
 
                         if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[
-                            (string)$resolvedNode->getNodeAggregateIdentifier()]
-                        )) {
+                            (string)$resolvedNode->getNodeAggregateIdentifier()
+                        ])) {
                             $filteredOutput[] = $resolvedNode;
                             $filteredOutputNodeIdentifiers[(string)$resolvedNode->getNodeAggregateIdentifier()] = true;
                         }
@@ -182,7 +182,8 @@ class ChildrenOperation extends AbstractOperation
                             $contextNode,
                             $this->nodeTypeConstraintFactory->parseFilterString(
                                 implode(',', $allowedNodeTypes)
-                            ));
+                            )
+                        );
 
                         foreach ($childNodes as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[

@@ -21,7 +21,9 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-final class NodePeerVariantWasCreated implements DomainEventInterface, PublishableToOtherContentStreamsInterface,
+final class NodePeerVariantWasCreated implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;

@@ -399,12 +399,10 @@ trait NodeMove
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array($precedingSiblingIdentifier
             ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier)
-            : Nodes::empty()
-        );
+            : Nodes::empty());
         $succeedingSiblingCandidates = iterator_to_array($succeedingSiblingIdentifier
             ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingIdentifier)
-            : Nodes::empty()
-        );
+            : Nodes::empty());
         $maximumIndex = max(count($succeedingSiblingCandidates), count($precedingSiblingCandidates));
         for ($i = 0; $i < $maximumIndex; $i++) {
             // try successors of same distance first
@@ -461,8 +459,8 @@ trait NodeMove
         ?DimensionSpacePointSet $affectedDimensionSpacePoints
     ): NodeMoveMappings {
         $nodeMoveMappings = [];
-        foreach ($nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($affectedDimensionSpacePoints)
-                 as $coveredAffectedDimensionSpacePoint) {
+        foreach ($nodeAggregate->getCoveredDimensionSpacePoints()
+                     ->getIntersection($affectedDimensionSpacePoints) as $coveredAffectedDimensionSpacePoint) {
             $occupiedAffectedDimensionSpacePoint = $nodeAggregate->getOccupationByCovered(
                 $coveredAffectedDimensionSpacePoint
             );

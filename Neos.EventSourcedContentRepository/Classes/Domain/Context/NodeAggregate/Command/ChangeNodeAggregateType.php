@@ -20,10 +20,14 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+/** @codingStandardsIgnoreEnd */
 
 #[Flow\Proxy(false)]
-final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOtherContentStreamsInterface,
+final class ChangeNodeAggregateType implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;
@@ -141,8 +145,8 @@ final class ChangeNodeAggregateType implements \JsonSerializable, RebasableToOth
     }
 
     /**
-     * Create a new ChangeNodeAggregateType command with all original values, except the tetheredDescendantNodeAggregateIdentifiers (where
-     * the passed in arguments are used).
+     * Create a new ChangeNodeAggregateType command with all original values,
+     * except the tetheredDescendantNodeAggregateIdentifiers (where the passed in arguments are used).
      *
      * Is needed to make this command fully deterministic before storing it at the events.
      */

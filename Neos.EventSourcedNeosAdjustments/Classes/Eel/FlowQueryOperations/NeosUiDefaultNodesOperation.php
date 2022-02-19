@@ -109,7 +109,12 @@ class NeosUiDefaultNodesOperation extends AbstractOperation
             ((string)$siteNode->getNodeAggregateIdentifier()) => $siteNode
         ];
 
-        $gatherNodesRecursively = function (&$nodes, NodeInterface $baseNode, $level = 0) use (
+        $gatherNodesRecursively = function (
+            &$nodes,
+            NodeInterface
+            $baseNode,
+            $level = 0
+        ) use (
             &$gatherNodesRecursively,
             $baseNodeTypeConstraints,
             $loadingDepth,

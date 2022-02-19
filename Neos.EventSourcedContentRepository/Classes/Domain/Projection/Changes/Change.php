@@ -99,17 +99,17 @@ class Change
         $databaseConnection->update(
             'neos_contentrepository_projection_change',
             [
-            'changed' => (int)$this->changed,
-            'moved' => (int)$this->moved,
-            'deleted' => (int)$this->deleted,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
-        ],
+                'changed' => (int)$this->changed,
+                'moved' => (int)$this->moved,
+                'deleted' => (int)$this->deleted,
+                'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
+            ],
             [
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
-            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
-            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
-        ]
+                'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
+                'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
+                'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+                'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
+            ]
         );
     }
 

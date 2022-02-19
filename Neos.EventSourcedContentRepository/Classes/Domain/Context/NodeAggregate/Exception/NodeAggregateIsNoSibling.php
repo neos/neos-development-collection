@@ -25,8 +25,9 @@ final class NodeAggregateIsNoSibling extends \DomainException
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeAggregateIdentifier $referenceNodeAggregateIdentifier
     ): NodeAggregateIsNoSibling {
-        return new self('Node aggregate "' . $nodeAggregateIdentifier . '" is no sibling of "'
-            . $referenceNodeAggregateIdentifier . '" but was supposed to be',
+        return new self(
+            'Node aggregate "' . $nodeAggregateIdentifier . '" is no sibling of "'
+                . $referenceNodeAggregateIdentifier . '" but was supposed to be',
             1571068801
         );
     }

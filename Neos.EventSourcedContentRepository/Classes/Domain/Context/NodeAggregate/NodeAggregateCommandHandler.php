@@ -214,7 +214,9 @@ final class NodeAggregateCommandHandler
                 $command->getContentStreamIdentifier(),
                 $parentAggregate->getIdentifier()
             ) as $grandParentAggregate) {
-                $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string)$grandParentAggregate->getNodeTypeName());
+                $grandParentsNodeType = $this->nodeTypeManager->getNodeType(
+                    (string)$grandParentAggregate->getNodeTypeName()
+                );
                 if ($parentAggregate->getNodeName()
                     && $grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->getNodeName())
                     && !$grandParentsNodeType->allowsGrandchildNodeType(
@@ -222,8 +224,12 @@ final class NodeAggregateCommandHandler
                         $newNodeType
                     )
                 ) {
-                    throw new NodeConstraintException('Node type "' . $command->getNewNodeTypeName() . '" is not allowed below auto created child nodes "' . $parentAggregate->getNodeName()
-                        . '" of nodes of type "' . $grandParentAggregate->getNodeTypeName() . '"', 1520011791);
+                    throw new NodeConstraintException(
+                        'Node type "' . $command->getNewNodeTypeName()
+                            . '" is not allowed below auto created child nodes "' . $parentAggregate->getNodeName()
+                            . '" of nodes of type "' . $grandParentAggregate->getNodeTypeName() . '"',
+                        1520011791
+                    );
                 }
             }
         }
@@ -267,8 +273,8 @@ final class NodeAggregateCommandHandler
                     );
                     if ($childAggregate->getNodeName() && !$newNodeType->allowsGrandchildNodeType(
                         (string)$childAggregate->getNodeName(),
-                        $grandChildsNodeType)
-                    ) {
+                        $grandChildsNodeType
+                    )) {
                         if (!$command->getStrategy()) {
                             throw new NodeConstraintException(
                                 'Node type ' . $command->getNewNodeTypeName()

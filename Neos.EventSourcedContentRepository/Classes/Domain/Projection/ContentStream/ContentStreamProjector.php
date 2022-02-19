@@ -160,12 +160,18 @@ class ContentStreamProjector extends AbstractProcessedEventsAwareProjector
         );
 
         // the previous content stream is no longer in use
-        $this->updateStateForContentStream($event->getPreviousContentStreamIdentifier(), ContentStreamFinder::STATE_NO_LONGER_IN_USE);
+        $this->updateStateForContentStream(
+            $event->getPreviousContentStreamIdentifier(),
+            ContentStreamFinder::STATE_NO_LONGER_IN_USE
+        );
     }
 
     public function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event)
     {
-        $this->updateStateForContentStream($event->getCandidateContentStreamIdentifier(), ContentStreamFinder::STATE_REBASE_ERROR);
+        $this->updateStateForContentStream(
+            $event->getCandidateContentStreamIdentifier(),
+            ContentStreamFinder::STATE_REBASE_ERROR
+        );
     }
 
     public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event)

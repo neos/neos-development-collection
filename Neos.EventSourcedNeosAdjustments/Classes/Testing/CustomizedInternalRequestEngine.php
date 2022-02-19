@@ -49,8 +49,8 @@ class CustomizedInternalRequestEngine extends InternalRequestEngine
         } catch (\Throwable $throwable) {
             $componentContext->replaceHttpResponse($this->prepareErrorResponse(
                 $throwable,
-                $componentContext->getHttpResponse())
-            );
+                $componentContext->getHttpResponse()
+            ));
         }
         $session = $this->bootstrap->getObjectManager()->get(SessionInterface::class);
         if ($session->isStarted()) {

@@ -114,7 +114,8 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
     {
         if (!$subject instanceof NodePrivilegeSubject && !$subject instanceof MethodPrivilegeSubject) {
             throw new InvalidPrivilegeTypeException(sprintf(
-                'Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".',
+                'Privileges of type "%s" only support subjects of type "%s" or "%s",'
+                    . ' but we got a subject of type: "%s".',
                 AbstractNodePrivilege::class,
                 NodePrivilegeSubject::class,
                 MethodPrivilegeSubject::class,
@@ -169,7 +170,10 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
             $methodPrivilegeMatcher
         );
         $methodPrivilegeTarget->injectObjectManager($this->objectManager);
-        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
+        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege(
+            $this->getPermission(),
+            $this->getParameters()
+        );
     }
 
     /**

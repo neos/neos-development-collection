@@ -327,7 +327,12 @@ class EventSourcedNodeController extends ActionController
         $nodePathCache->add($currentDocumentNode->getNodeAggregateIdentifier(), $nodePathOfDocumentNode);
 
         foreach ($subtree->getChildren() as $childSubtree) {
-            self::fillCacheInternal($childSubtree, $currentDocumentNode, $nodePathOfDocumentNode, $subgraph->getInMemoryCache());
+            self::fillCacheInternal(
+                $childSubtree,
+                $currentDocumentNode,
+                $nodePathOfDocumentNode,
+                $subgraph->getInMemoryCache()
+            );
         }
     }
 

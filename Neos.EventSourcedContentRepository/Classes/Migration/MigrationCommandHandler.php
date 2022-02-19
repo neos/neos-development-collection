@@ -99,7 +99,11 @@ class MigrationCommandHandler
                 )
             )->blockUntilProjectionsAreUpToDate();
             /** array $migrationDescription */
-            $this->executeSubMigration($migrationDescription, $workspace->getCurrentContentStreamIdentifier(), $contentStreamForWriting)->blockUntilProjectionsAreUpToDate();
+            $this->executeSubMigration(
+                $migrationDescription,
+                $workspace->getCurrentContentStreamIdentifier(),
+                $contentStreamForWriting
+            )->blockUntilProjectionsAreUpToDate();
 
             // TODO: WORKSPACE NAME pass through
             $contentStreamForReading = $contentStreamForWriting;

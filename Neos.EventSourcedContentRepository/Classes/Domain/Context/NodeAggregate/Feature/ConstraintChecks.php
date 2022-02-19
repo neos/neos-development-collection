@@ -28,11 +28,13 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDisablesDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsDescendant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsTethered;
@@ -97,7 +99,10 @@ trait ConstraintChecks
         try {
             return $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
         } catch (NodeTypeNotFoundException $exception) {
-            throw new NodeTypeNotFound('Node type "' . $nodeTypeName . '" is unknown to the node type manager.', 1541671070);
+            throw new NodeTypeNotFound(
+                'Node type "' . $nodeTypeName . '" is unknown to the node type manager.',
+                1541671070
+            );
         }
     }
 
@@ -238,7 +243,10 @@ trait ConstraintChecks
     ): void {
         // !!! IF YOU ADJUST THIS METHOD, also adjust the method below.
         if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
-            throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed for child nodes of type ' . $parentsNodeType->getName());
+            throw new NodeConstraintException(
+                'Node type "' . $nodeType . '" is not allowed for child nodes of type '
+                    . $parentsNodeType->getName()
+            );
         }
         if ($nodeName
             && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
@@ -277,9 +285,16 @@ trait ConstraintChecks
         ?NodeName $parentNodeName,
         NodeType $nodeType
     ): void {
-        if (!$this->areNodeTypeConstraintsImposedByGrandparentValid($grandParentsNodeType, $parentNodeName, $nodeType)) {
-            throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentNodeName
-                . '" of nodes of type "' . $grandParentsNodeType->getName() . '"', 1520011791);
+        if (!$this->areNodeTypeConstraintsImposedByGrandparentValid(
+            $grandParentsNodeType,
+            $parentNodeName,
+            $nodeType
+        )) {
+            throw new NodeConstraintException(
+                'Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentNodeName
+                    . '" of nodes of type "' . $grandParentsNodeType->getName() . '"',
+                1520011791
+            );
         }
     }
 
@@ -288,7 +303,8 @@ trait ConstraintChecks
         ?NodeName $parentNodeName,
         NodeType $nodeType
     ): bool {
-        // WORKAROUND: $nodeType->hasAutoCreatedChildNode() is missing the "initialize" call, so we need to trigger another method beforehand.
+        // WORKAROUND: $nodeType->hasAutoCreatedChildNode() is missing the "initialize" call,
+        // so we need to trigger another method beforehand.
         $grandParentsNodeType->getFullConfiguration();
         $nodeType->getFullConfiguration();
 
@@ -377,7 +393,8 @@ trait ConstraintChecks
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): void {
-        if ($nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes() !== $dimensionSpacePointSet->getPointHashes()) {
+        if ($nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes()
+            !== $dimensionSpacePointSet->getPointHashes()) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
                 $nodeAggregate->getIdentifier(),
                 $dimensionSpacePointSet,
@@ -462,13 +479,14 @@ trait ConstraintChecks
         if ($nodeName === null) {
             return;
         }
-        $dimensionSpacePointsOccupiedByChildNodeName = $this->getContentGraph()->getDimensionSpacePointsOccupiedByChildNodeName(
-            $contentStreamIdentifier,
-            $nodeName,
-            $parentNodeAggregateIdentifier,
-            $parentOriginDimensionSpacePoint,
-            $dimensionSpacePoints
-        );
+        $dimensionSpacePointsOccupiedByChildNodeName = $this->getContentGraph()
+            ->getDimensionSpacePointsOccupiedByChildNodeName(
+                $contentStreamIdentifier,
+                $nodeName,
+                $parentNodeAggregateIdentifier,
+                $parentOriginDimensionSpacePoint,
+                $dimensionSpacePoints
+            );
         if (count($dimensionSpacePointsOccupiedByChildNodeName) > 0) {
             throw new NodeNameIsAlreadyOccupied(
                 'Child node name "' . $nodeName . '" is already occupied for parent "'
@@ -500,9 +518,8 @@ trait ConstraintChecks
             $nodeName
         );
         foreach ($childNodeAggregates as $childNodeAggregate) {
-            $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->getCoveredDimensionSpacePoints()->getIntersection(
-                $dimensionSpacePointsToBeCovered
-            );
+            $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->getCoveredDimensionSpacePoints()
+                ->getIntersection($dimensionSpacePointsToBeCovered);
             if (!empty($alreadyCoveredDimensionSpacePoints)) {
                 throw new NodeNameIsAlreadyCovered(
                     'Node name "' . $nodeName . '" is already covered in dimension space points '
@@ -559,7 +576,8 @@ trait ConstraintChecks
                 'Node aggregate "' . $nodeAggregate->getIdentifier()
                     . '" currently does not disable dimension space point '
                     . json_encode($dimensionSpacePoint) . '.',
-                1557735431);
+                1557735431
+            );
         }
     }
 

@@ -160,8 +160,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                 $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getPrecedingNode(
                     $event->getSucceedingNodeAggregateIdentifier(),
                     $parentNode->getNodeAggregateIdentifier(),
-                    $dimensionSpacePoint->hash)
-                );
+                    $dimensionSpacePoint->hash
+                ));
                 if ($precedingNode !== null) {
                     // make the new node the new succeeding node of the previously preceding node
                     // of the specified succeeding node (= re-wire <preceding>-<succeeding> to <preceding>-<new node>)
@@ -330,8 +330,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
             $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                 $event->getNodeAggregateIdentifier(),
-                $dimensionSpacePoint->hash)
-            );
+                $dimensionSpacePoint->hash
+            ));
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -437,13 +437,15 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                     AND (
                         nodeAggregateIdentifier = :nodeAggregateIdentifier
                         OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix
-                    )', [
-            'newUriPath' => $newUriPath,
-            'oldUriPath' => $oldUriPath,
-            'dimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->hash,
-            'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
-            'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
-        ]);
+                    )',
+            [
+                'newUriPath' => $newUriPath,
+                'oldUriPath' => $oldUriPath,
+                'dimensionSpacePointHash' => $event->getOriginDimensionSpacePoint()->hash,
+                'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
+                'childNodeAggregateIdentifierPathPrefix' => $node->getNodeAggregateIdentifierPath() . '/%',
+            ]
+        );
         $this->dbal->commit();
         $this->emitDocumentUriPathChanged($oldUriPath, $newUriPath, $event, $rawEvent);
     }
@@ -496,7 +498,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
             $disabledDelta++;
         }
         $this->updateNodeQuery(
-            /** @phpcsSuppress */
+            /** @codingStandardsIgnoreStart */
             'SET
                 nodeAggregateIdentifierPath = TRIM(TRAILING "/" FROM CONCAT(:newParentNodeAggregateIdentifierPath, "/", TRIM(LEADING "/" FROM SUBSTRING(nodeAggregateIdentifierPath, :sourceNodeAggregateIdentifierPathOffset)))),
                 uriPath = TRIM("/" FROM CONCAT(:newParentUriPath, "/", TRIM(LEADING "/" FROM SUBSTRING(uriPath, :sourceUriPathOffset)))),
@@ -506,6 +508,7 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
                     AND (nodeAggregateIdentifier = :nodeAggregateIdentifier
                     OR nodeAggregateIdentifierPath LIKE :childNodeAggregateIdentifierPathPrefix)
             ',
+            /** @codingStandardsIgnoreEnd */
             [
                 'nodeAggregateIdentifier' => $node->getNodeAggregateIdentifier(),
                 'newParentNodeAggregateIdentifierPath' => $newParentNode->getNodeAggregateIdentifierPath(),
@@ -567,8 +570,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
     {
         try {
             return $closure();
-        } /** @noinspection BadExceptionsProcessingInspection,PhpRedundantCatchClauseInspection */
-        catch (NodeNotFoundException $_) {
+        } catch (NodeNotFoundException $_) {
+            /** @noinspection BadExceptionsProcessingInspection,PhpRedundantCatchClauseInspection */
             return null;
         }
     }
@@ -641,7 +644,8 @@ final class DocumentUriPathProjector implements ProjectorInterface, BeforeInvoke
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to delete node "%s": %s',
-                $nodeAggregateIdentifier, $e->getMessage()
+                $nodeAggregateIdentifier,
+                $e->getMessage()
             ), 1599655284, $e);
         }
     }

@@ -163,10 +163,10 @@ class UpdateNodeInfo extends AbstractFeedback
     {
         $result = [
             $this->nodeAddressFactory->createFromNode($node)->serializeForUri()
-               => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation(
-                $node,
-                $controllerContext
-            )
+                => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation(
+                    $node,
+                    $controllerContext
+                )
         ];
 
         if ($this->isRecursive === true) {

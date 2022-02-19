@@ -12,7 +12,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Traits\CommonCreateNodeAggregateWithNodeTrait;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -29,8 +31,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * CreateNodeAggregateWithNode command
  */
 #[Flow\Proxy(false)]
-final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonSerializable,
-    RebasableToOtherContentStreamsInterface, MatchableWithNodeAddressInterface
+final class CreateNodeAggregateWithNodeAndSerializedProperties implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
+    MatchableWithNodeAddressInterface
 {
     use CommonCreateNodeAggregateWithNodeTrait;
 
@@ -60,7 +64,8 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements \JsonS
         $this->succeedingSiblingNodeAggregateIdentifier = $succeedingSiblingNodeAggregateIdentifier;
         $this->nodeName = $nodeName;
         $this->initialPropertyValues = $initialPropertyValues ?: SerializedPropertyValues::fromArray([]);
-        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers ?: new NodeAggregateIdentifiersByNodePaths([]);
+        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers
+            ?: new NodeAggregateIdentifiersByNodePaths([]);
     }
 
     public static function fromArray(array $array): self

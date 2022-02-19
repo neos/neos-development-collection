@@ -159,7 +159,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
 
         $nodeInfo = $this->getBasicNodeInformation($node);
         $nodeInfo['properties'] = [
-            // if we are only rendering the tree state, ensure _isHidden is sent to hidden nodes are correctly shown in the tree.
+            // if we are only rendering the tree state,
+            // ensure _isHidden is sent to hidden nodes are correctly shown in the tree.
             '_hidden' => $this->nodeHiddenStateFinder->findHiddenState(
                 $node->getContentStreamIdentifier(),
                 $node->getDimensionSpacePoint(),

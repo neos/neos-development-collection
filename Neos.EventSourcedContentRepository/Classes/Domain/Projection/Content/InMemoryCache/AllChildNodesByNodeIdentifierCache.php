@@ -44,7 +44,9 @@ final class AllChildNodesByNodeIdentifierCache
         }
 
         $key = (string)$parentNodeAggregateIdentifier;
-        $nodeTypeConstraintsSerialized = $nodeTypeConstraints ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : '*';
+        $nodeTypeConstraintsSerialized = $nodeTypeConstraints
+            ? $nodeTypeConstraints->asLegacyNodeTypeFilterString()
+            : '*';
         $this->childNodes[$key][$nodeTypeConstraintsSerialized] = $allChildNodes;
     }
 

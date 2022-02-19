@@ -42,7 +42,9 @@ class NodeAddressFactory
 
     public function createFromNode(NodeInterface $node): NodeAddress
     {
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($node->getContentStreamIdentifier());
+        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+            $node->getContentStreamIdentifier()
+        );
         if ($workspace === null) {
             throw new \RuntimeException(
                 'Cannot build a NodeAddress for traversable node of aggregate ' . $node->getNodeAggregateIdentifier()
@@ -93,8 +95,7 @@ class NodeAddressFactory
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($pathValues['dimensions']);
         $nodePath = NodePath::fromString(\mb_strpos($pathValues['nodePath'], '/sites') === 0
             ? \mb_substr($pathValues['nodePath'], 6)
-            : $pathValues['nodePath']
-        );
+            : $pathValues['nodePath']);
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $contentStreamIdentifier,

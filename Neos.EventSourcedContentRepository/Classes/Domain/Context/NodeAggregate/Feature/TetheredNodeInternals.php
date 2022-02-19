@@ -99,7 +99,8 @@ trait TetheredNodeInternals
             if (!$childNodeAggregate->isTethered()) {
                 throw new \RuntimeException(
                     'We found a child node aggregate through the given node path; but it is not tethered.'
-                        . ' We do not support re-tethering yet (as this case should happen very rarely as far as we think).'
+                        . ' We do not support re-tethering yet'
+                        . ' (as this case should happen very rarely as far as we think).'
                 );
             }
 

@@ -42,7 +42,8 @@ final class NodeImplementationClassNameIsInvalid extends \DomainException
     public static function becauseTheClassImplementsTheDeprecatedLegacyInterface(string $attemptedClassName): self
     {
         return new self(
-            'The given node implementation class "' . $attemptedClassName . '" implements the deprecated legacy NodeInterface.',
+            'The given node implementation class "' . $attemptedClassName
+                . '" implements the deprecated legacy NodeInterface.',
             1615415586
         );
     }

@@ -263,7 +263,9 @@ class FindOperation extends AbstractOperation
                 $entryPoint['nodes'],
                 $this->nodeTypeConstraintFactory->parseFilterString(
                     $nodeTypeName->jsonSerialize()
-                ), null) as $descendant) {
+                ),
+                null
+            ) as $descendant) {
                 $result[] = $descendant;
             }
         }

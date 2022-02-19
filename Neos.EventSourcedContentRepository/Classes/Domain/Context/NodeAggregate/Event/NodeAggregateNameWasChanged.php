@@ -20,7 +20,9 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-final class NodeAggregateNameWasChanged implements DomainEventInterface, PublishableToOtherContentStreamsInterface,
+final class NodeAggregateNameWasChanged implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;

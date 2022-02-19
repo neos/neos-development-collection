@@ -31,7 +31,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -159,8 +161,8 @@ trait NodeTypeChange
             $newNodeType,
             $command->getTetheredDescendantNodeAggregateIdentifiers()
         );
-        // Write the auto-created descendant node aggregate identifiers back to the command; so that when rebasing the command, it stays
-        // fully deterministic.
+        // Write the auto-created descendant node aggregate identifiers back to the command;
+        // so that when rebasing the command, it stays fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIdentifiers($descendantNodeAggregateIdentifiers);
 
         /**************
@@ -182,9 +184,9 @@ trait NodeTypeChange
                 );
 
                 // remove disallowed nodes
-                if ($command->getStrategy()
-                    === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE)
-                {
+                /** @codingStandardsIgnoreStart */
+                if ($command->getStrategy() === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
+                /** @codingStandardsIgnoreEnd */
                     $events = $events->appendEvents($this->deleteDisallowedNodesWhenChangingNodeType(
                         $nodeAggregate,
                         $newNodeType,
@@ -265,16 +267,18 @@ trait NodeTypeChange
                 $this->requireNodeType($childNodeAggregate->getNodeTypeName())
             );
 
-            // we do not need to test for grandparents here, as we did not modify the grandparents. Thus, if it was allowed before, it is allowed now.
+            // we do not need to test for grandparents here, as we did not modify the grandparents.
+            // Thus, if it was allowed before, it is allowed now.
 
-            // additionally, we need to look one level down to the grandchildren as well - as it could happen that these are
-            // affected by our constraint checks as well.
+            // additionally, we need to look one level down to the grandchildren as well
+            // - as it could happen that these are affected by our constraint checks as well.
             $grandchildNodeAggregates = $this->getContentGraph()->findChildNodeAggregates(
                 $childNodeAggregate->getContentStreamIdentifier(),
                 $childNodeAggregate->getIdentifier()
             );
             foreach ($grandchildNodeAggregates as $grandchildNodeAggregate) {
-                // we do not need to test for the parent of grandchild (=child), as we do not change the child's node type.
+                // we do not need to test for the parent of grandchild (=child),
+                // as we do not change the child's node type.
                 // we however need to check for the grandparent node type.
                 $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet(
                     $newNodeType, // the grandparent node type changes
@@ -286,8 +290,8 @@ trait NodeTypeChange
     }
 
     /**
-     * NOTE: when changing this method, {@see NodeTypeChange::requireConstraintsImposedByHappyPathStrategyAreMet} needs to be modified as well (as they
-     * are structurally the same)
+     * NOTE: when changing this method, {@see NodeTypeChange::requireConstraintsImposedByHappyPathStrategyAreMet}
+     * needs to be modified as well (as they are structurally the same)
      */
     private function deleteDisallowedNodesWhenChangingNodeType(
         ReadableNodeAggregateInterface $nodeAggregate,
@@ -308,7 +312,7 @@ trait NodeTypeChange
                 $newNodeType,
                 $childNodeAggregate->getNodeName(),
                 $this->requireNodeType($childNodeAggregate->getNodeTypeName())
-                )) {
+            )) {
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints.
                 // We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
@@ -333,13 +337,16 @@ trait NodeTypeChange
                 $childNodeAggregate->getIdentifier()
             );
             foreach ($grandchildNodeAggregates as $grandchildNodeAggregate) {
-                // we do not need to test for the parent of grandchild (=child), as we do not change the child's node type.
+                // we do not need to test for the parent of grandchild (=child),
+                // as we do not change the child's node type.
                 // we however need to check for the grandparent node type.
-                if ($childNodeAggregate->getNodeName() !== null && !$this->areNodeTypeConstraintsImposedByGrandparentValid(
-                    $newNodeType, // the grandparent node type changes
-                    $childNodeAggregate->getNodeName(),
-                    $this->requireNodeType($grandchildNodeAggregate->getNodeTypeName())
-                )) {
+                if ($childNodeAggregate->getNodeName() !== null
+                    && !$this->areNodeTypeConstraintsImposedByGrandparentValid(
+                        $newNodeType, // the grandparent node type changes
+                        $childNodeAggregate->getNodeName(),
+                        $this->requireNodeType($grandchildNodeAggregate->getNodeTypeName())
+                    )
+                ) {
                     // this aggregate (or parts thereof) are DISALLOWED according to constraints.
                     // We now need to find out which edges we need to remove,
                     $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
@@ -375,7 +382,8 @@ trait NodeTypeChange
 
         foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
             if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->getNodeName()])) {
-                // this aggregate (or parts thereof) are DISALLOWED according to constraints. We now need to find out which edges we need to remove,
+                // this aggregate (or parts thereof) are DISALLOWED according to constraints.
+                // We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
                     $nodeAggregate,
                     $tetheredNodeAggregate

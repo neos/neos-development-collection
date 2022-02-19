@@ -12,7 +12,9 @@ namespace Neos\EventSourcedContentRepository\Security\Authorization\Privilege\No
  */
 
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
@@ -42,7 +44,14 @@ class CreateNodePrivilege extends AbstractNodePrivilege
     {
         if ($subject instanceof CreateNodePrivilegeSubject === false
             && $subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', CreateNodePrivilege::class, CreateNodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417014353);
+            throw new InvalidPrivilegeTypeException(sprintf(
+                'Privileges of type "%s" only support subjects of type "%s" or "%s",'
+                    . ' but we got a subject of type: "%s".',
+                CreateNodePrivilege::class,
+                CreateNodePrivilegeSubject::class,
+                MethodPrivilegeSubject::class,
+                get_class($subject)
+            ), 1417014353);
         }
 
         $this->initialize();

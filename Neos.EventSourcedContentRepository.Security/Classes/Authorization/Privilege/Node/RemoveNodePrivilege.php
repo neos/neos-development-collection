@@ -31,7 +31,8 @@ class RemoveNodePrivilege extends AbstractNodePrivilege
     {
         if (!$subject instanceof NodePrivilegeSubject && !$subject instanceof MethodPrivilegeSubject) {
             throw new InvalidPrivilegeTypeException(sprintf(
-                'Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".',
+                'Privileges of type "%s" only support subjects of type "%s" or "%s",'
+                    . ' but we got a subject of type: "%s".',
                 RemoveNodePrivilege::class,
                 NodePrivilegeSubject::class,
                 MethodPrivilegeSubject::class,

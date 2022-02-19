@@ -45,7 +45,9 @@ trait NodeReferencing
         $this->getReadSideMemoryCacheManager()->disableCache();
 
         $this->requireContentStreamToExist($command->getContentStreamIdentifier());
-        $this->requireDimensionSpacePointToExist($command->getSourceOriginDimensionSpacePoint()->toDimensionSpacePoint());
+        $this->requireDimensionSpacePointToExist(
+            $command->getSourceOriginDimensionSpacePoint()->toDimensionSpacePoint()
+        );
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
             $command->getContentStreamIdentifier(),
             $command->getSourceNodeAggregateIdentifier()

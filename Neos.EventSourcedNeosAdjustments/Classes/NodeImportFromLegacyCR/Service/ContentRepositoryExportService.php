@@ -50,7 +50,9 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\Helpers\NodeAggregateIdentifierAndNodeTypeForLegacyImport;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -281,7 +283,9 @@ class ContentRepositoryExportService
     {
         $nodePath = NodePath::fromString(strtolower($nodeData->getPath()));
 
-        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromLegacyDimensionArray($nodeData->getDimensionValues());
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromLegacyDimensionArray(
+            $nodeData->getDimensionValues()
+        );
 
         $parentNodeAggregateIdentifierAndNodeType = $this->findParentNodeAggregateIdentifierAndNodeType(
             $nodeData->getParentPath(),
@@ -332,8 +336,8 @@ class ContentRepositoryExportService
 
             $isTethered = false;
             if ($this->nodeTypeManager->hasNodeType(
-                (string)$parentNodeAggregateIdentifierAndNodeType->getNodeTypeName())
-            ) {
+                (string)$parentNodeAggregateIdentifierAndNodeType->getNodeTypeName()
+            )) {
                 $nodeTypeOfParent = $this->nodeTypeManager->getNodeType(
                     (string)$parentNodeAggregateIdentifierAndNodeType->getNodeTypeName()
                 );
@@ -373,10 +377,11 @@ class ContentRepositoryExportService
                         UserIdentifier::forSystemUser()
                     ))->blockUntilProjectionsAreUpToDate();
                 } else {
-                    $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes(
-                        $nodePath,
-                        $nodeTypeName
-                    );
+                    $nodeAggregateIdentifiersByNodePaths
+                        = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes(
+                            $nodePath,
+                            $nodeTypeName
+                        );
                     $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode(
                         new CreateNodeAggregateWithNode(
                             $this->contentStreamIdentifier,
@@ -418,7 +423,8 @@ class ContentRepositoryExportService
                 )->blockUntilProjectionsAreUpToDate();
             }
 
-            $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = $originDimensionSpacePoint;
+            $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier]
+                = $originDimensionSpacePoint;
         } catch (\Exception $e) {
             throw $e;
             $message = 'There was an error exporting the node ' . $nodeAggregateIdentifier . ' at path ' . $nodePath
@@ -430,8 +436,9 @@ class ContentRepositoryExportService
 
     protected function contentStreamName($suffix = null): StreamName
     {
-        return StreamName::fromString('Neos.ContentRepository:ContentStream:'
-            . $this->contentStreamIdentifier . ($suffix ? ':' . $suffix : '')
+        return StreamName::fromString(
+            'Neos.ContentRepository:ContentStream:'
+                . $this->contentStreamIdentifier . ($suffix ? ':' . $suffix : '')
         );
     }
 
@@ -562,12 +569,13 @@ class ContentRepositoryExportService
                 $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($tetheredChildren[0]->getIdentifier());
                 $nodeAggregateIdentifiersByNodePath[$nodeName] = $nodeAggregateIdentifier;
 
-                $nestedNodeAggregateIdentifiersByNodePath = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes(
-                    $nodePathOfTetheredNode,
-                    NodeTypeName::fromString($childNodeType->getName())
-                );
-                foreach ($nestedNodeAggregateIdentifiersByNodePath->getNodeAggregateIdentifiers()
-                         as $nodePathString => $nodeAggregateIdentifier) {
+                $nestedNodeAggregateIdentifiersByNodePath
+                    = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes(
+                        $nodePathOfTetheredNode,
+                        NodeTypeName::fromString($childNodeType->getName())
+                    );
+                $nodeAggregateIdentifiers = $nestedNodeAggregateIdentifiersByNodePath->getNodeAggregateIdentifiers();
+                foreach ($nodeAggregateIdentifiers as $nodePathString => $nodeAggregateIdentifier) {
                     $nodeAggregateIdentifiersByNodePath[$nodeName . '/' . $nodePathString] = $nodeAggregateIdentifier;
                 }
             }

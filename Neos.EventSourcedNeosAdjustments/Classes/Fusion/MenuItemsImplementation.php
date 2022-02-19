@@ -195,7 +195,11 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 $this->currentNode->getDimensionSpacePoint(),
                 VisibilityConstraints::frontend()
             );
-            $childSubtree = $nodeAccessor->findSubtrees([$entryParentNode], $this->getMaximumLevels(), $this->getNodeTypeConstraints());
+            $childSubtree = $nodeAccessor->findSubtrees(
+                [$entryParentNode],
+                $this->getMaximumLevels(),
+                $this->getNodeTypeConstraints()
+            );
             $childSubtree = $childSubtree->getChildren()[0];
         }
 
@@ -279,7 +283,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                         return false;
                     }
                 }
-                );
+            );
         } else {
             $traversedHierarchy = [];
             $constraints = $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(
@@ -294,7 +298,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                     $traversedHierarchy[] = $traversedNode;
                     return true;
                 }
-                );
+            );
             $traversedHierarchy = array_reverse($traversedHierarchy);
 
             $entryParentNode = $traversedHierarchy[$this->getEntryLevel() - 1] ?? null;

@@ -25,8 +25,10 @@ use Neos\Flow\Annotations as Flow;
  * A root node aggregate and its initial node were created
  */
 #[Flow\Proxy(false)]
-final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
-    PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateIdentifier
+final class RootNodeAggregateWithNodeWasCreated implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateIdentifier
 {
     /**
      * @var ContentStreamIdentifier

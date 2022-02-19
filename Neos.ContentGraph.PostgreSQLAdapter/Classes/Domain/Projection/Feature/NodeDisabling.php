@@ -32,14 +32,14 @@ trait NodeDisabling
         $this->transactional(function () use ($event) {
             $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint
                 = $this->getProjectionHypergraph()->findDescendantNodeAggregateIdentifiers(
-                $event->getContentStreamIdentifier(),
-                $event->getAffectedDimensionSpacePoints(),
-                $event->getNodeAggregateIdentifier()
-            );
+                    $event->getContentStreamIdentifier(),
+                    $event->getAffectedDimensionSpacePoints(),
+                    $event->getNodeAggregateIdentifier()
+                );
 
-            foreach ($descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint
-                     as $dimensionSpacePointHash => $descendantNodeAggregateIdentifiers
-            ) {
+            /** @codingStandardsIgnoreStart */
+            foreach ($descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint as $dimensionSpacePointHash => $descendantNodeAggregateIdentifiers) {
+            /** @codingStandardsIgnoreEnd */
                 $restrictionRelation = new RestrictionHyperrelationRecord(
                     $event->getContentStreamIdentifier(),
                     $dimensionSpacePointHash,

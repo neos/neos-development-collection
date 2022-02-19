@@ -287,7 +287,9 @@ trait NodeVariationInternals
         foreach ($specializations->getIntersection(
             $nodeAggregate->getOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()
         ) as $occupiedSpecialization) {
-            $excludedSet = $excludedSet->getUnion($this->getInterDimensionalVariationGraph()->getSpecializationSet($occupiedSpecialization));
+            $excludedSet = $excludedSet->getUnion(
+                $this->getInterDimensionalVariationGraph()->getSpecializationSet($occupiedSpecialization)
+            );
         }
         return $this->getInterDimensionalVariationGraph()->getSpecializationSet(
             $targetOrigin->toDimensionSpacePoint(),

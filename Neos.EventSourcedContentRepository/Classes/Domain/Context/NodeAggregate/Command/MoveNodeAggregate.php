@@ -39,7 +39,9 @@ use Neos\Flow\Annotations as Flow;
  * - See the PHPDoc of the attributes (a few lines down) for the exact behavior.
  */
 #[Flow\Proxy(false)]
-final class MoveNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface,
+final class MoveNodeAggregate implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface
 {
     /**

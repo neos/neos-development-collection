@@ -23,7 +23,9 @@ use Neos\Flow\Annotations as Flow;
  * A node aggregate was disabled
  */
 #[Flow\Proxy(false)]
-final class NodeAggregateWasDisabled implements DomainEventInterface, PublishableToOtherContentStreamsInterface,
+final class NodeAggregateWasDisabled implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
     /**

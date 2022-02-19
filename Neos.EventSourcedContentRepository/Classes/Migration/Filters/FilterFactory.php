@@ -113,6 +113,9 @@ class FilterFactory
             return $resolvedObjectName;
         }
 
-        throw new MigrationException('A filter with the name "' . $name . '" or "' . $possibleFullFilterName . '" could not be found.', 1343199467);
+        throw new MigrationException(
+            'A filter with the name "' . $name . '" or "' . $possibleFullFilterName . '" could not be found.',
+            1343199467
+        );
     }
 }

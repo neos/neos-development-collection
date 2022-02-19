@@ -150,8 +150,9 @@ class ContentElementWrappingService
 
         $wrappedContent = $this->htmlAugmenter->addAttributes($content, $attributes, 'div');
         $nodeContextPath = $nodeAddress->serializeForUri();
-        /** @phpcsSuppress */
+        /** @codingStandardsIgnoreStart */
         $wrappedContent .= "<script data-neos-nodedata>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
+        /** @codingStandardsIgnoreEnd */
 
         return $wrappedContent;
     }
@@ -186,8 +187,9 @@ class ContentElementWrappingService
             if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
                 $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
-                /** @phpcsSuppress */
+                /** @codingStandardsIgnoreStart */
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
+                /** @codingStandardsIgnoreEnd */
             }
 
             $nestedNodes = $nodeAccessor->findChildNodes($node);

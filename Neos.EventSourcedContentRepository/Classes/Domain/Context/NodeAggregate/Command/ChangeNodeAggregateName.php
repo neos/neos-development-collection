@@ -26,7 +26,9 @@ use Neos\Flow\Annotations as Flow;
  * as then the Node Name is used for querying.
  */
 #[Flow\Proxy(false)]
-final class ChangeNodeAggregateName implements \JsonSerializable, RebasableToOtherContentStreamsInterface,
+final class ChangeNodeAggregateName implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;

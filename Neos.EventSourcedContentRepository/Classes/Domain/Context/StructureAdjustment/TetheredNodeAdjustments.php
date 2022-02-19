@@ -132,14 +132,18 @@ class TetheredNodeAdjustments
             }
 
             // find disallowed tethered nodes
-            $tetheredNodeAggregates = $this->contentGraph->findTetheredChildNodeAggregates($nodeAggregate->getContentStreamIdentifier(), $nodeAggregate->getIdentifier());
+            $tetheredNodeAggregates = $this->contentGraph->findTetheredChildNodeAggregates(
+                $nodeAggregate->getContentStreamIdentifier(),
+                $nodeAggregate->getIdentifier()
+            );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->getNodeName()])) {
                     $foundMissingOrDisallowedTetheredNodes = true;
                     yield StructureAdjustment::createForNodeAggregate(
                         $tetheredNodeAggregate,
                         StructureAdjustment::DISALLOWED_TETHERED_NODE,
-                        'The tethered child node "' . $tetheredNodeAggregate->getNodeName()->jsonSerialize() . '" should be removed.',
+                        'The tethered child node "'
+                            . $tetheredNodeAggregate->getNodeName()->jsonSerialize() . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
                             $this->readSideMemoryCacheManager->disableCache();
                             return $this->removeNodeAggregate($tetheredNodeAggregate);
@@ -151,7 +155,11 @@ class TetheredNodeAdjustments
             // find wrongly ordered tethered nodes
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($nodeAggregate->getNodes() as $node) {
-                    $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getOriginDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+                    $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                        $node->getContentStreamIdentifier(),
+                        $node->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                        VisibilityConstraints::withoutRestrictions()
+                    );
                     $childNodes = $subgraph->findChildNodes($node->getNodeAggregateIdentifier());
 
                     /** is indexed by node name, and the value is the tethered node itself */
@@ -167,7 +175,10 @@ class TetheredNodeAdjustments
                         yield StructureAdjustment::createForNode(
                             $node,
                             StructureAdjustment::TETHERED_NODE_WRONGLY_ORDERED,
-                            'Tethered nodes wrongly ordered, expected: ' . implode(', ', array_keys($expectedTetheredNodes)) . ' - actual: ' . implode(', ', array_keys($actualTetheredChildNodes)),
+                            'Tethered nodes wrongly ordered, expected: '
+                                . implode(', ', array_keys($expectedTetheredNodes))
+                                . ' - actual: '
+                                . implode(', ', array_keys($actualTetheredChildNodes)),
                             function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
                                 $this->readSideMemoryCacheManager->disableCache();
                                 return $this->reorderNodes(

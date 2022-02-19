@@ -25,7 +25,9 @@ use Neos\Flow\Annotations as Flow;
  * Enable the given node aggregate in the given content stream in a dimension space point using a given strategy
  */
 #[Flow\Proxy(false)]
-final class EnableNodeAggregate implements \JsonSerializable, RebasableToOtherContentStreamsInterface,
+final class EnableNodeAggregate implements
+    \JsonSerializable,
+    RebasableToOtherContentStreamsInterface,
     MatchableWithNodeAddressInterface
 {
     private ContentStreamIdentifier $contentStreamIdentifier;

@@ -226,8 +226,8 @@ class RenderContentOutOfBand extends AbstractFeedback
         );
         $this->contentCache->flushByTag(sprintf(
             'Node_%s',
-            $nodeAccessor->findParentNode($this->getNode())->getNodeAggregateIdentifier())
-        );
+            $nodeAccessor->findParentNode($this->getNode())->getNodeAggregateIdentifier()
+        ));
 
         $parentDomAddress = $this->getParentDomAddress();
 

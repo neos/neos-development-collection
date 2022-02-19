@@ -118,7 +118,9 @@ class ChangeProjector implements ProjectorInterface
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event)
     {
         $this->transactional(function () use ($event) {
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($event->getContentStreamIdentifier());
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
+                $event->getContentStreamIdentifier()
+            );
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
@@ -134,7 +136,8 @@ class ChangeProjector implements ProjectorInterface
                 [
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
                     'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                    'affectedDimensionSpacePointHashes' => $event->getAffectedOccupiedDimensionSpacePoints()->getPointHashes()
+                    'affectedDimensionSpacePointHashes' => $event->getAffectedOccupiedDimensionSpacePoints()
+                        ->getPointHashes()
                 ],
                 [
                     'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
@@ -162,7 +165,7 @@ class ChangeProjector implements ProjectorInterface
                         'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
                         'originDimensionSpacePoint' => json_encode($dimensionSpacePoint),
                         'originDimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                        'removalAttachmentPoint' => $event->getRemovalAttachmentPoint() !== null ? (string)$event->getRemovalAttachmentPoint() : null
+                        'removalAttachmentPoint' => $event->getRemovalAttachmentPoint()?->__toString()
                     ]
                 );
             }
@@ -197,8 +200,13 @@ class ChangeProjector implements ProjectorInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
-        $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
-            // HACK: basically we are not allowed to read other Projection's finder methods here; but we nevertheless do it.
+        $this->transactional(function () use (
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            $originDimensionSpacePoint
+        ) {
+            // HACK: basically we are not allowed to read other Projection's finder methods here;
+            // but we nevertheless do it.
             // we can maybe figure out another way of solving this lateron.
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
@@ -232,7 +240,11 @@ class ChangeProjector implements ProjectorInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
-        $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
+        $this->transactional(function () use (
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            $originDimensionSpacePoint
+        ) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything

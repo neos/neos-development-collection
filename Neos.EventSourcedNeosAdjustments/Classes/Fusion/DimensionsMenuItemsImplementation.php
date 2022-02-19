@@ -118,10 +118,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             usort($menuItems, function (array $menuItemA, array $menuItemB) use ($order) {
                 return $order[$menuItemA['node']->getDimensionSpacePoint()->getCoordinate(
                     $this->getContentDimensionIdentifierToLimitTo()
-                    )]
-                    <=> $order[$menuItemB['node']->getDimensionSpacePoint()->getCoordinate(
-                        $this->getContentDimensionIdentifierToLimitTo()
-                    )];
+                )] <=> $order[$menuItemB['node']->getDimensionSpacePoint()->getCoordinate(
+                    $this->getContentDimensionIdentifierToLimitTo()
+                )];
             });
         }
 
@@ -143,10 +142,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 $this->currentNode->getDimensionSpacePoint(),
                 $this->getContentDimensionIdentifierToLimitTo()
             )
-            && (empty($this->getValuesToRestrictTo()) || in_array(
-                    $dimensionSpacePoint->getCoordinate($this->getContentDimensionIdentifierToLimitTo()),
-                    $this->getValuesToRestrictTo()
-                ));
+            && (
+                empty($this->getValuesToRestrictTo())
+                    || in_array(
+                        $dimensionSpacePoint->getCoordinate($this->getContentDimensionIdentifierToLimitTo()),
+                        $this->getValuesToRestrictTo()
+                    )
+            );
     }
 
     /**

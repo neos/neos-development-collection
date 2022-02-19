@@ -106,8 +106,11 @@ class LinkHelper implements ProtectedContextAwareInterface
     {
         $targetNode = $this->convertUriToObject($uri, $contextNode);
         if (!$targetNode instanceof NodeInterface) {
-            $this->systemLogger->info(sprintf(
-                'Could not resolve "%s" to an existing node; The node was probably deleted.', $uri),
+            $this->systemLogger->info(
+                sprintf(
+                    'Could not resolve "%s" to an existing node; The node was probably deleted.',
+                    $uri
+                ),
                 LogEnvironment::fromMethodName(__METHOD__)
             );
             return null;
@@ -196,7 +199,10 @@ class LinkHelper implements ProtectedContextAwareInterface
                         $visibilityConstraints
                     );
                     if ($nodeAccessor === null) {
-                        throw new \RuntimeException(sprintf('Failed to get SubContentGraph for context node "%s"', $contextNode->getNodeAggregateIdentifier()));
+                        throw new \RuntimeException(sprintf(
+                            'Failed to get SubContentGraph for context node "%s"',
+                            $contextNode->getNodeAggregateIdentifier()
+                        ));
                     }
 
                     $node = $nodeAccessor->findByIdentifier(

@@ -19,7 +19,9 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-final class NodeAggregateTypeWasChanged implements DomainEventInterface, PublishableToOtherContentStreamsInterface,
+final class NodeAggregateTypeWasChanged implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
     /**

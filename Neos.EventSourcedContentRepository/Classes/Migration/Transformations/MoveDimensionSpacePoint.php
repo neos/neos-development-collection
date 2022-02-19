@@ -15,6 +15,9 @@ namespace Neos\EventSourcedContentRepository\Migration\Transformations;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+/** @codingStandardsIgnoreStart */
+use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Command\MoveDimensionSpacePoint as MoveDimensionSpacePointCommand;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\DimensionSpaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\CommandResult;
 
@@ -54,10 +57,12 @@ class MoveDimensionSpacePoint implements GlobalTransformationInterface
         ContentStreamIdentifier $contentStreamForReading,
         ContentStreamIdentifier $contentStreamForWriting
     ): CommandResult {
-        return $this->dimensionSpacePointCommandHandler->handleMoveDimensionSpacePoint(new \Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\Command\MoveDimensionSpacePoint(
-            $contentStreamForWriting,
-            $this->from,
-            $this->to
-        ));
+        return $this->dimensionSpacePointCommandHandler->handleMoveDimensionSpacePoint(
+            new MoveDimensionSpacePointCommand(
+                $contentStreamForWriting,
+                $this->from,
+                $this->to
+            )
+        );
     }
 }

@@ -61,7 +61,11 @@ class ImplementLegacyApiInNodeBasedReadModelInterfaceAspect
 
         /* @var NodeInterface $traversableNode */
         $traversableNode = $joinPoint->getProxy();
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor($traversableNode->getContentStreamIdentifier(), $traversableNode->getDimensionSpacePoint(), $traversableNode->getVisibilityConstraints());
+        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
+            $traversableNode->getContentStreamIdentifier(),
+            $traversableNode->getDimensionSpacePoint(),
+            $traversableNode->getVisibilityConstraints()
+        );
         return $nodeAccessor->findNodePath($traversableNode)->getDepth();
     }
 

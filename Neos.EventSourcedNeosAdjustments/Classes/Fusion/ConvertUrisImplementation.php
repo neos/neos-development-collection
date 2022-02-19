@@ -138,7 +138,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     case 'asset':
                         $asset = $this->assetRepository->findByIdentifier($matches[2]);
                         if ($asset !== null) {
-                            $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+                            $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri(
+                                $asset->getResource()
+                            );
                             $this->runtime->addCacheTag('asset', $matches[2]);
                         }
                         break;

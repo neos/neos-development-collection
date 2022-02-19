@@ -396,7 +396,8 @@ class WorkspacesController extends AbstractModuleController
         } catch (\Exception $exception) {
             $message = $this->translator->translateById(
                 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes',
-                [$workspace->getTitle()], null,
+                [$workspace->getTitle()],
+                null,
                 null,
                 'Modules',
                 'Neos.Neos'
@@ -618,7 +619,8 @@ class WorkspacesController extends AbstractModuleController
             [
                 htmlspecialchars($workspace->getWorkspaceName()->name),
                 htmlspecialchars($baseWorkspace->getWorkspaceName()->name)
-            ], null,
+            ],
+            null,
             null,
             'Modules',
             'Neos.Neos'

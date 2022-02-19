@@ -88,7 +88,9 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     private static function assertTypeIsNoReference(string $propertyTypeFromSchema)
     {
         if ($propertyTypeFromSchema === 'reference' || $propertyTypeFromSchema === 'references') {
-            throw new \RuntimeException('TODO: references cannot be serialized; you need to use the SetNodeReferences command instead.');
+            throw new \RuntimeException(
+                'TODO: references cannot be serialized; you need to use the SetNodeReferences command instead.'
+            );
         }
     }
 
@@ -97,8 +99,8 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         // here, we skip null values
         return new SerializedPropertyValues(array_filter(
             array_merge($this->values, $other->getValues()),
-            fn ($value) => $value !== null)
-        );
+            fn ($value) => $value !== null
+        ));
     }
 
     public function propertyExists(string $propertyName): bool

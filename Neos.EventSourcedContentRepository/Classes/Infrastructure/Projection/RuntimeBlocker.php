@@ -68,8 +68,8 @@ final class RuntimeBlocker
         );
         $listenerMappings = $this->eventToListenerMappingProvider->getMappingsForEventStore($eventStoreId)
             ->filter(static function (EventToListenerMapping $mapping) use ($listenerClassName) {
-            return $mapping->getListenerClassName() === $listenerClassName;
-        });
+                return $mapping->getListenerClassName() === $listenerClassName;
+            });
         $eventClassNames = [];
         foreach ($listenerMappings as $mapping) {
             $eventClassNames[$mapping->getEventClassName()] = true;

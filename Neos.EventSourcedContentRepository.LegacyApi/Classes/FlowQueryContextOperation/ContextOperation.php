@@ -94,7 +94,9 @@ class ContextOperation extends AbstractOperation
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
 
-                $visibilityConstraints = ($invisibleContentShown ? VisibilityConstraints::withoutRestrictions() : VisibilityConstraints::frontend());
+                $visibilityConstraints = $invisibleContentShown
+                    ? VisibilityConstraints::withoutRestrictions()
+                    : VisibilityConstraints::frontend();
                 $nodeAccessor = $this->nodeAccessorManager->accessorFor(
                     $nodeAccessor->getContentStreamIdentifier(),
                     $nodeAccessor->getDimensionSpacePoint(),
@@ -115,7 +117,7 @@ class ContextOperation extends AbstractOperation
 
             $nodeInModifiedSubgraph = $nodeAccessor->findByIdentifier($contextNode->getNodeAggregateIdentifier());
             if ($nodeInModifiedSubgraph !== null) {
-                $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->jsonSerialize()] = $nodeInModifiedSubgraph;
+                $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->__toString()] = $nodeInModifiedSubgraph;
             }
         }
 

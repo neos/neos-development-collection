@@ -34,7 +34,9 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  *
  * @Flow\Proxy(false)
  */
-final class CopyNodesRecursively implements \JsonSerializable, MatchableWithNodeAddressInterface,
+final class CopyNodesRecursively implements
+    \JsonSerializable,
+    MatchableWithNodeAddressInterface,
     RebasableToOtherContentStreamsInterface
 {
     /**

@@ -18,7 +18,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\ContentDimensionValueUriProcessorResolver;
+/** @codingStandardsIgnoreEnd */
 
 /**
  * The default content subgraph URI processor
@@ -67,8 +69,8 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
             $uriPathSegmentConstraints = UriConstraints::create();
             $allUriPathSegmentDetectableDimensionPresetsAreDefault = true;
 
-            foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority()
-                     as $rawContentDimensionIdentifier => $contentDimension) {
+            $orderedDimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
+            foreach ($orderedDimensions as $rawContentDimensionIdentifier => $contentDimension) {
                 $resolutionOptions = $contentDimension->getConfigurationValue('resolution.options') ?? [];
                 $resolutionMode = $contentDimension->getConfigurationValue('resolution.mode')
                     ? new BasicContentDimensionResolutionMode(
@@ -118,7 +120,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
      * @param array|Dimension\ContentDimension[] $dimensions
      * @return void
      */
-    protected function sortDimensionsByOffset(array& $dimensions)
+    protected function sortDimensionsByOffset(array &$dimensions)
     {
         uasort($dimensions, function (Dimension\ContentDimension $dimensionA, Dimension\ContentDimension $dimensionB) {
             return ($dimensionA->getConfigurationValue('resolution.options.offset') ?: 0)

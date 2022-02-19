@@ -29,7 +29,8 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
  *     CH
  *
  * ...and you check for "language=DE", then ONLY the node with originDimensionSpacePoint language=DE will match.
- * ...and you check for "language=DE" and includeSpecializations=TRUE, then the nodes with originDimensionSpacePoint language=DE and language=CH will match.
+ * ...and you check for "language=DE" and includeSpecializations=TRUE,
+ *    then the nodes with originDimensionSpacePoint language=DE and language=CH will match.
  */
 class DimensionSpacePoints implements NodeBasedFilterInterface
 {

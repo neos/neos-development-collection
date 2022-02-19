@@ -24,7 +24,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\Co
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RebasableToOtherContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
@@ -335,7 +337,8 @@ final class WorkspaceCommandHandler
             return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
         } catch (ConcurrencyException $e) {
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf(
-                'The base workspace has been modified in the meantime; please rebase. Expected version %d of source content stream %s',
+                'The base workspace has been modified in the meantime; please rebase.'
+                    . ' Expected version %d of source content stream %s',
                 $contentStreamWasForked->getVersionOfSourceContentStream(),
                 $baseContentStreamIdentifier
             ));
@@ -569,7 +572,8 @@ final class WorkspaceCommandHandler
                 return $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command);
             default:
                 throw new \Exception(sprintf(
-                    'TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.',
+                    'TODO: Command %s is not supported by handleRebaseWorkspace() currently...'
+                        . ' Please implement it there.',
                     get_class($command)
                 ));
         }

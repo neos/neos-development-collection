@@ -39,7 +39,8 @@ final class ContentDimensionValueDetectorResolver
                 $detector = new $detectorClassName();
                 if (!$detector instanceof ContentDimensionValueDetectorInterface) {
                     throw new Exception\InvalidContentDimensionValueDetectorException(
-                        '"' . $detectorClassName . '", configured as content dimension value detector for content dimension "'
+                        '"' . $detectorClassName
+                            . '", configured as content dimension value detector for content dimension "'
                             . $contentDimension->identifier . '", does not implement '
                             . ContentDimensionValueDetectorInterface::class
                             . '. Please check your dimension configuration.',

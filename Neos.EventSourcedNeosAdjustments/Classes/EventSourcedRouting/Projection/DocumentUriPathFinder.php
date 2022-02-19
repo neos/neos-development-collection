@@ -41,10 +41,11 @@ final class DocumentUriPathFinder
         string $uriPath,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
-        return $this->fetchSingle('dimensionSpacePointHash = :dimensionSpacePointHash
-            AND siteNodeName = :siteNodeName
-            AND uriPath = :uriPath
-            AND disabled = 0',
+        return $this->fetchSingle(
+            'dimensionSpacePointHash = :dimensionSpacePointHash
+                AND siteNodeName = :siteNodeName
+                AND uriPath = :uriPath
+                AND disabled = 0',
             compact('dimensionSpacePointHash', 'siteNodeName', 'uriPath')
         );
     }
@@ -64,8 +65,9 @@ final class DocumentUriPathFinder
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
-        return $this->fetchSingle('nodeAggregateIdentifier = :nodeAggregateIdentifier
-            AND dimensionSpacePointHash = :dimensionSpacePointHash',
+        return $this->fetchSingle(
+            'nodeAggregateIdentifier = :nodeAggregateIdentifier
+                AND dimensionSpacePointHash = :dimensionSpacePointHash',
             compact('nodeAggregateIdentifier', 'dimensionSpacePointHash')
         );
     }
@@ -107,9 +109,10 @@ final class DocumentUriPathFinder
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
-        return $this->fetchSingle('dimensionSpacePointHash = :dimensionSpacePointHash
-            AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier
-            AND succeedingNodeAggregateIdentifier = :succeedingNodeAggregateIdentifier',
+        return $this->fetchSingle(
+            'dimensionSpacePointHash = :dimensionSpacePointHash
+                AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier
+                AND succeedingNodeAggregateIdentifier = :succeedingNodeAggregateIdentifier',
             compact(
                 'dimensionSpacePointHash',
                 'parentNodeAggregateIdentifier',
@@ -132,10 +135,11 @@ final class DocumentUriPathFinder
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
-        return $this->fetchSingle('dimensionSpacePointHash = :dimensionSpacePointHash
-            AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier
-            AND precedingNodeAggregateIdentifier IS NULL
-            AND disabled = 0',
+        return $this->fetchSingle(
+            'dimensionSpacePointHash = :dimensionSpacePointHash
+                AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier
+                AND precedingNodeAggregateIdentifier IS NULL
+                AND disabled = 0',
             compact('dimensionSpacePointHash', 'parentNodeAggregateIdentifier')
         );
     }

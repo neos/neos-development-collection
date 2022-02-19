@@ -231,7 +231,8 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument(
             'baseNodeName',
             'string',
-            'The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths',
+            'The name of the base node inside the Fusion context to use for the ContentContext'
+                . ' or resolving relative paths',
             false,
             'documentNode'
         );
@@ -240,7 +241,8 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             'string',
             'The variable the node will be assigned to for the rendered child content',
             false,
-            'linkedNode');
+            'linkedNode'
+        );
     }
 
     /**

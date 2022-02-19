@@ -42,10 +42,10 @@ trait NodeRemoval
 
                 $ingoingHierarchyRelation = $this->getProjectionHypergraph()
                     ->findHierarchyHyperrelationRecordByChildNodeAnchor(
-                    $event->getContentStreamIdentifier(),
-                    $dimensionSpacePoint,
-                    $nodeRecord->relationAnchorPoint
-                );
+                        $event->getContentStreamIdentifier(),
+                        $dimensionSpacePoint,
+                        $nodeRecord->relationAnchorPoint
+                    );
                 $ingoingHierarchyRelation->removeChildNodeAnchor(
                     $nodeRecord->relationAnchorPoint,
                     $this->getDatabaseConnection()

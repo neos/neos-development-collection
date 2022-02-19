@@ -104,7 +104,10 @@ class CacheAwareGraphProjectorFactory
             if (!($domainEvent instanceof NodeAggregateWasRemoved)
                 && $domainEvent instanceof EmbedsContentStreamAndNodeAggregateIdentifier
             ) {
-                $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($domainEvent->getContentStreamIdentifier(), $domainEvent->getNodeAggregateIdentifier());
+                $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+                    $domainEvent->getContentStreamIdentifier(),
+                    $domainEvent->getNodeAggregateIdentifier()
+                );
                 if ($nodeAggregate) {
                     $this->scheduleCacheFlushJobForNodeAggregate(
                         $nodeAggregate->getContentStreamIdentifier(),

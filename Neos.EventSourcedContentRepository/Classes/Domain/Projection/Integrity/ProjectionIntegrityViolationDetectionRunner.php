@@ -35,11 +35,9 @@ final class ProjectionIntegrityViolationDetectionRunner
         $result->merge($this->projectionIntegrityViolationDetector->nodeAggregateIdentifiersAreUniquePerSubgraph());
         $result->merge($this->projectionIntegrityViolationDetector->allNodesHaveAtMostOneParentPerSubgraph());
         $result->merge($this->projectionIntegrityViolationDetector
-            ->nodeAggregatesAreConsistentlyTypedPerContentStream()
-        );
+            ->nodeAggregatesAreConsistentlyTypedPerContentStream());
         $result->merge($this->projectionIntegrityViolationDetector
-            ->nodeAggregatesAreConsistentlyClassifiedPerContentStream()
-        );
+            ->nodeAggregatesAreConsistentlyClassifiedPerContentStream());
         $result->merge($this->projectionIntegrityViolationDetector->referenceIntegrityIsProvided());
         $result->merge($this->projectionIntegrityViolationDetector->referencesAreDistinctlySorted());
         $result->merge($this->projectionIntegrityViolationDetector->restrictionIntegrityIsProvided());

@@ -128,8 +128,9 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
                 $allowEmptyValue = ($detectorOverrideOptions['allowEmptyValue'] ?? false)
                     || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
                         && $this->supportEmptySegmentForDimensions;
-                if ($allowEmptyValue || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
-                    && $path === '/'
+                if ($allowEmptyValue
+                    || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
+                        && $path === '/'
                 ) {
                     $coordinates[$rawDimensionIdentifier] = (string)$contentDimension->defaultValue;
                 }
@@ -143,7 +144,7 @@ final class DetectContentSubgraphMiddleware implements MiddlewareInterface
      * @param array|Dimension\ContentDimension[] $dimensions
      * @return void
      */
-    protected function sortDimensionsByOffset(array& $dimensions)
+    protected function sortDimensionsByOffset(array &$dimensions)
     {
         uasort($dimensions, function (Dimension\ContentDimension $dimensionA, Dimension\ContentDimension $dimensionB) {
             return ($dimensionA->getConfigurationValue('resolution.options.offset') ?: 0)

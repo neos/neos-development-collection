@@ -181,7 +181,11 @@ class ContentCacheFlusher
             $cacheIdentifier
         );
         $tagName = 'DescendantOf_' . $cacheIdentifier;
-        $tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $cacheIdentifier);
+        $tagsToFlush[$tagName] = sprintf(
+            'which were tagged with "%s" because node "%s" has changed.',
+            $tagName,
+            $cacheIdentifier
+        );
 
         // Legacy
         $cacheIdentifier = (string)$nodeAggregateIdentifier;

@@ -82,8 +82,10 @@ final class AffectedCoveredDimensionSpacePointSet
                 continue;
             }
             if ($nodeAggregate->occupiesDimensionSpacePoint(
-                OriginDimensionSpacePoint::fromDimensionSpacePoint($specializedDimensionSpacePoint))
-            ) {
+                OriginDimensionSpacePoint::fromDimensionSpacePoint(
+                    $specializedDimensionSpacePoint
+                )
+            )) {
                 $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getIntersection(
                     $variationGraph->getSpecializationSet($specializedDimensionSpacePoint)
                 );

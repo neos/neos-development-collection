@@ -19,8 +19,9 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Add a Dimension Space Point Shine-Through; basically making all content available not just in the source(original) DSP, but also
- * in the target-DimensionSpacePoint.
+ * Add a Dimension Space Point Shine-Through;
+ * basically making all content available not just in the source(original) DSP,
+ * but also in the target-DimensionSpacePoint.
  *
  * NOTE: the Source Dimension Space Point must be a parent of the target Dimension Space Point.
  *

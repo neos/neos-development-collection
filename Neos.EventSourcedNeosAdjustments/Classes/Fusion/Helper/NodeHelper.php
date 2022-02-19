@@ -26,7 +26,6 @@ use Neos\Neos\Fusion\Helper\NodeLabelToken;
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {
-
     /**
      * @Flow\Inject
      * @var NodeAddressFactory
@@ -57,7 +56,8 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ((string)$nodePath === '') {
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node and no node path was provided.'
-                        . ' You might want to configure the nodePath property with a relative path to the content collection.',
+                        . ' You might want to configure the nodePath property'
+                        . ' with a relative path to the content collection.',
                     $contentCollectionType
                 ), 1409300545);
             }

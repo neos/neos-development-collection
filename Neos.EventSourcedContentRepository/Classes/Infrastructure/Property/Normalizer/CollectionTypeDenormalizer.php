@@ -17,7 +17,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * Understands collections of objects in the array<Type> notation used by Flow.
  */
-final class CollectionTypeDenormalizer implements DenormalizerInterface, SerializerAwareInterface,
+final class CollectionTypeDenormalizer implements
+    DenormalizerInterface,
+    SerializerAwareInterface,
     CacheableSupportsMethodInterface
 {
     /**

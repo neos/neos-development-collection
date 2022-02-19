@@ -24,7 +24,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsNotOfTypeRoot;
@@ -302,8 +304,13 @@ trait NodeCreation
         $events = DomainEvents::createEmpty();
         $this->getNodeAggregateEventPublisher()->withCommand(
             $command,
-            function () use ($command, $nodeType, $parentNodeAggregate, $coveredDimensionSpacePoints,
-                $descendantNodeAggregateIdentifiers, &$events
+            function () use (
+                $command,
+                $nodeType,
+                $parentNodeAggregate,
+                $coveredDimensionSpacePoints,
+                $descendantNodeAggregateIdentifiers,
+                &$events
             ) {
                 $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType);
                 $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());

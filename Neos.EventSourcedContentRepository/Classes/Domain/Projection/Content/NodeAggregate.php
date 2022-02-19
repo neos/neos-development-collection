@@ -17,8 +17,10 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
@@ -184,7 +186,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     ): DimensionSpacePointSet {
         if (!isset($this->occupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash])) {
             throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint(
-                'Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not occupy dimension space point '
+                'Node aggregate "' . $this->nodeAggregateIdentifier
+                    . '" does currently not occupy dimension space point '
                     . $occupiedDimensionSpacePoint,
                 1554902613
             );
@@ -205,8 +208,10 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     {
         if (!isset($this->coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash])) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
-                'Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not cover dimension space point '
-                    . $coveredDimensionSpacePoint, 1554902892
+                'Node aggregate "' . $this->nodeAggregateIdentifier
+                    . '" does currently not cover dimension space point '
+                    . $coveredDimensionSpacePoint,
+                1554902892
             );
         }
 
@@ -217,7 +222,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     {
         if (!isset($this->occupationByCovered[$coveredDimensionSpacePoint->hash])) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
-                'Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not cover dimension space point ' . $coveredDimensionSpacePoint,
+                'Node aggregate "' . $this->nodeAggregateIdentifier
+                    . '" does currently not cover dimension space point ' . $coveredDimensionSpacePoint,
                 1554902892
             );
         }

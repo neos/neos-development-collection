@@ -19,7 +19,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
+/** @codingStandardsIgnoreStart */
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
+/** @codingStandardsIgnoreEnd */
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
@@ -45,8 +47,10 @@ use Psr\Http\Message\UriInterface;
  *
  * @Flow\Scope("singleton")
  */
-final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart implements DynamicRoutePartInterface,
-    ParameterAwareRoutePartInterface, FrontendNodeRoutePartHandlerInterface
+final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart implements
+    DynamicRoutePartInterface,
+    ParameterAwareRoutePartInterface,
+    FrontendNodeRoutePartHandlerInterface
 {
     private string $splitString = '';
 

@@ -16,7 +16,9 @@ use Neos\Flow\Annotations as Flow;
  * A named reference from source to destination node was created
  */
 #[Flow\Proxy(false)]
-final class NodeReferencesWereSet implements DomainEventInterface, PublishableToOtherContentStreamsInterface,
+final class NodeReferencesWereSet implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;

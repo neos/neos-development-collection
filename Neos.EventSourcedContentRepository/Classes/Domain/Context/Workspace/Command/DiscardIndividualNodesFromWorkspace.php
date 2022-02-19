@@ -54,8 +54,11 @@ final class DiscardIndividualNodesFromWorkspace
         $this->newContentStreamIdentifier = $newContentStreamIdentifier;
     }
 
-    public static function create(WorkspaceName $workspaceName, array $nodeAddresses, UserIdentifier $initiatingUserIdentifier): self
-    {
+    public static function create(
+        WorkspaceName $workspaceName,
+        array $nodeAddresses,
+        UserIdentifier $initiatingUserIdentifier
+    ): self {
         return new self(
             $workspaceName,
             $nodeAddresses,

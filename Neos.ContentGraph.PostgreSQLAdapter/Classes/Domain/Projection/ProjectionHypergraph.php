@@ -126,8 +126,8 @@ final class ProjectionHypergraph
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
     }
 
-    public function findSucceedingSiblingNodeRecordByOrigin(): ?NodeRecord {
-
+    public function findSucceedingSiblingNodeRecordByOrigin(): ?NodeRecord
+    {
         //$query = /** @lang PostgreSQL */
         /*    'SELECT * FROM neos_contentgraph_node sn,
     (

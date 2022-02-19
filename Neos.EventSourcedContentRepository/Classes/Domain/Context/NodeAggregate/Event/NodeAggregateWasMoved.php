@@ -21,7 +21,9 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeAggregateWasMoved implements DomainEventInterface, PublishableToOtherContentStreamsInterface,
+final class NodeAggregateWasMoved implements
+    DomainEventInterface,
+    PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateIdentifier
 {
     private ContentStreamIdentifier $contentStreamIdentifier;

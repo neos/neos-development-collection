@@ -49,7 +49,8 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
     {
         if (!$subject instanceof PropertyAwareNodePrivilegeSubject && !$subject instanceof MethodPrivilegeSubject) {
             throw new InvalidPrivilegeTypeException(sprintf(
-                'Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".',
+                'Privileges of type "%s" only support subjects of type "%s" or "%s",'
+                    . ' but we got a subject of type: "%s".',
                 ReadNodePropertyPrivilege::class,
                 PropertyAwareNodePrivilegeSubject::class,
                 MethodPrivilegeSubject::class,
@@ -86,7 +87,10 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
             return parent::matchesSubject($nodePrivilegeSubject);
         }
-        if ($subject->hasPropertyName() && !in_array($subject->getPropertyName(), $this->nodeContext->getNodePropertyNames())) {
+        if ($subject->hasPropertyName() && !in_array(
+            $subject->getPropertyName(),
+            $this->nodeContext->getNodePropertyNames()
+        )) {
             return false;
         }
         return parent::matchesSubject($subject);

@@ -123,22 +123,43 @@ final class NodeDuplicationCommandHandler
         // Constraint: Does the target parent node allow nodes of this type?
         // NOTE: we only check this for the *root* node of the to-be-inserted structure; and not for its
         // children (as we want to create the structure as-is; assuming it was already valid beforehand).
-        $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getTargetNodeName(), [$command->getTargetParentNodeAggregateIdentifier()]);
+        $this->requireConstraintsImposedByAncestorsAreMet(
+            $command->getContentStreamIdentifier(),
+            $nodeType,
+            $command->getTargetNodeName(),
+            [$command->getTargetParentNodeAggregateIdentifier()]
+        );
 
         // Constraint: The new nodeAggregateIdentifiers are not allowed to exist yet.
-        $this->requireNewNodeAggregateIdentifiersToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifierMapping());
+        $this->requireNewNodeAggregateIdentifiersToNotExist(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifierMapping()
+        );
 
         // Constraint: the parent node must exist in the command's DimensionSpacePoint as well
-        $parentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getTargetParentNodeAggregateIdentifier());
+        $parentNodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->getContentStreamIdentifier(),
+            $command->getTargetParentNodeAggregateIdentifier()
+        );
         if ($command->getTargetSucceedingSiblingNodeAggregateIdentifier()) {
-            $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getTargetSucceedingSiblingNodeAggregateIdentifier());
+            $this->requireProjectedNodeAggregate(
+                $command->getContentStreamIdentifier(),
+                $command->getTargetSucceedingSiblingNodeAggregateIdentifier()
+            );
         }
-        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetDimensionSpacePoint()->toDimensionSpacePoint());
+        $this->requireNodeAggregateToCoverDimensionSpacePoint(
+            $parentNodeAggregate,
+            $command->getTargetDimensionSpacePoint()->toDimensionSpacePoint()
+        );
 
         // Calculate Covered Dimension Space Points: All points being specializations of the
         // given DSP, where the parent also exists.
-        $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint()->toDimensionSpacePoint());
-        $coveredDimensionSpacePoints = $specializations->getIntersection($parentNodeAggregate->getCoveredDimensionSpacePoints());
+        $specializations = $this->interDimensionalVariationGraph->getSpecializationSet(
+            $command->getTargetDimensionSpacePoint()->toDimensionSpacePoint()
+        );
+        $coveredDimensionSpacePoints = $specializations->getIntersection(
+            $parentNodeAggregate->getCoveredDimensionSpacePoints()
+        );
 
         // Constraint: The node name must be free in all these dimension space points
         if ($command->getTargetNodeName()) {

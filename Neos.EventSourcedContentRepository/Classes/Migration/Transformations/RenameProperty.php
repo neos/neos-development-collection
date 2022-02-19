@@ -77,7 +77,8 @@ class RenameProperty implements NodeBasedTransformationInterface
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
                     SerializedPropertyValues::fromArray([
-                        $this->newPropertyName => $node->getProperties()->serialized()->getProperty($this->oldPropertyName),
+                        $this->newPropertyName => $node->getProperties()->serialized()
+                            ->getProperty($this->oldPropertyName),
                         $this->oldPropertyName => null
                     ]),
                     UserIdentifier::forSystemUser()

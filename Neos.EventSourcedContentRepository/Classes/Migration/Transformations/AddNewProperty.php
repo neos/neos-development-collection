@@ -66,7 +66,7 @@ class AddNewProperty implements NodeBasedTransformationInterface
     ): CommandResult {
         if (!$node->hasProperty($this->newPropertyName)) {
             return $this->nodeAggregateCommandHandler->handleSetSerializedNodeProperties(
-                    new SetSerializedNodeProperties(
+                new SetSerializedNodeProperties(
                     $contentStreamForWriting,
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),

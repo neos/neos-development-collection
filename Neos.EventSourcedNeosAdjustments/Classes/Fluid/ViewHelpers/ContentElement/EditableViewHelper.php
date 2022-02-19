@@ -112,9 +112,8 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
                 throw new ViewHelperException(sprintf(
                     'The property "%1$s" was not set as a template variable. If you use this ViewHelper in a partial,'
                         . ' make sure to pass the node property "%1$s" as an argument.',
-                    $propertyName),
-                    1384507046)
-                ;
+                    $propertyName
+                ), 1384507046);
             }
             $content = $this->templateVariableContainer->get($propertyName);
         }
